@@ -21,6 +21,16 @@ git remote add origin https://github.com/zzapc/ZAPC-LIB.git
 
 :: Subir a la rama main
 git branch -M main
+# Reescribe el historial para eliminar el archivo con el secreto
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch DOC/MG_SAP4.JSON" \
+  --prune-empty --tag-name-filter cat -- --all
+
 git push -u origin main --force --all
+
+
+
+ 
+
 
 pause
