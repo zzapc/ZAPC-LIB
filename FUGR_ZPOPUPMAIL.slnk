@@ -1,0 +1,1369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FUGR AREA="ZPOPUPMAIL" SPRAS="S" AREAT="Popup mail">
+ <functionGroupDocumentation/>
+ <mainprogram NAME="SAPLZPOPUPMAIL" VARCL="X" DBAPL="S" DBNA="D$" SUBC="F" APPL="S" RMAND="100" RLOAD="S" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+  <textPool>
+   <language SPRAS="S">
+    <textElement ID="R" LENGTH="0 "/>
+   </language>
+  </textPool>
+  <dynpros>
+   <dynpro PROG="SAPLZPOPUPMAIL" DNUM="0300" TYPE="M" FNUM="0300" BZMX="31 " BZBR="188 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="31 " NOCO="188 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Popups edición mails">
+    <dynprofield FNAM="GRID" DIDX="001F" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="BC" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="05" ADEZ="3C"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0300.
+
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_0300.</dynproflowsource>
+   </dynpro>
+   <dynpro PROG="SAPLZPOPUPMAIL" DNUM="2000" TYPE="M" FNUM="2000" BZMX="33 " BZBR="120 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="35 " NOCO="127 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Popup mail">
+    <dynprofield FNAM="MDEST" DIDX="0003" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="101" AGLT="00" ADEZ="00" STXT="Destinatarios"/>
+    <dynprofield FNAM="V_DESTINATARIO" DIDX="0073" FLG1="81" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="02" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="STRG" ITYP="g" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="PD" DIDX="0002" FLG1="00" FLG2="00" FLG3="00" FILL="P" FMB1="30" FMB2="00" LENG="16" LINE="02" COLN="77" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="102" AGLT="00" ADEZ="00" STXT="@XE\QLista emails@" RES1="                                                                                                                                                                        POPUP_DEST"/>
+    <dynprofield FNAM="MCOPIA" DIDX="0003" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="04" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="103" AGLT="00" ADEZ="00" STXT="Copia"/>
+    <dynprofield FNAM="V_COPIA" DIDX="0073" FLG1="81" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="05" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="STRG" ITYP="g" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="PC" DIDX="0002" FLG1="00" FLG2="00" FLG3="00" FILL="P" FMB1="30" FMB2="00" LENG="1C" LINE="05" COLN="77" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="104" AGLT="00" ADEZ="00" STXT="@XE\QLista emails copia@" RES1="                                                                                                                                                                        POPUP_COPIA"/>
+    <dynprofield FNAM="MCCO" DIDX="0003" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="07" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="105" AGLT="00" ADEZ="00" STXT="CCO"/>
+    <dynprofield FNAM="V_CCO" DIDX="0073" FLG1="81" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="08" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="STRG" ITYP="g" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="PO" DIDX="0002" FLG1="00" FLG2="00" FLG3="00" FILL="P" FMB1="30" FMB2="00" LENG="23" LINE="08" COLN="77" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="106" AGLT="00" ADEZ="00" STXT="@XE\QLista emails copia oculta@" RES1="                                                                                                                                                                        POPUP_CCO"/>
+    <dynprofield FNAM="MEMISOR" DIDX="0003" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="0A" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="107" AGLT="00" ADEZ="00" STXT="Emisor"/>
+    <dynprofield FNAM="V_EMISOR" DIDX="0076" FLG1="81" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="0B" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="STRG" ITYP="g" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="MASUNTO" DIDX="0003" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="0D" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="108" AGLT="00" ADEZ="00" STXT="Asunto"/>
+    <dynprofield FNAM="V_ASUNTO" DIDX="0076" FLG1="81" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="0E" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield DIDX="0012" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="78" LINE="10" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="109" AGLT="00" ADEZ="00"/>
+    <dynprofield FNAM="MAIL" DIDX="000E" FLG1="00" FLG2="00" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="75" LINE="11" COLN="03" LANF="00" LBLK="00" LREP="00" AUTH="110" AGLT="01" ADEZ="01"/>
+    <dynprofield FNAM="BADJ" DIDX="001C" FLG1="00" FLG2="00" FLG3="00" FILL="P" FMB1="30" FMB2="00" LENG="1E" LINE="1F" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="111" AGLT="00" ADEZ="00" STXT="Sin adjuntos" RES1="                                                                                                                                                                        ADJ"/>
+    <dynprofield FNAM="V_INFO" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FMB1="39" FMB2="00" LENG="75" LINE="20" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="_____________________________________________________________________________________________________________________"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_2000.
+
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_2000.</dynproflowsource>
+   </dynpro>
+   <dynpro PROG="SAPLZPOPUPMAIL" DNUM="3000" TYPE="M" FNUM="3000" BZMX="27 " BZBR="119 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="120 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Adjuntos">
+    <dynprofield FNAM="GRID" DIDX="001B" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="77" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="05" ADEZ="05"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_3000.
+
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_3000.</dynproflowsource>
+   </dynpro>
+   <dynpro PROG="SAPLZPOPUPMAIL" DNUM="3100" TYPE="M" FNUM="3100" BZMX="27 " BZBR="119 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="120 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Adjuntos">
+    <dynprofield FNAM="GRID" DIDX="001B" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="77" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="05" ADEZ="05"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_3100.
+
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_3100.</dynproflowsource>
+   </dynpro>
+  </dynpros>
+  <pfstatus>
+   <pfstatus_tit CODE="001" TEXT="&amp; &amp; &amp; &amp;"/>
+  </pfstatus>
+  <source>*******************************************************************
+*   System-defined Include-files.                                 *
+*******************************************************************
+  INCLUDE LZPOPUPMAILTOP.                    &quot; Global Data
+  INCLUDE LZPOPUPMAILUXX.                    &quot; Function Modules
+
+*******************************************************************
+*   User-defined Include-files (if necessary).                    *
+*******************************************************************
+* INCLUDE LZPOPUPMAILF...                    &quot; Subprograms
+* INCLUDE LZPOPUPMAILO...                    &quot; PBO-Modules
+* INCLUDE LZPOPUPMAILI...                    &quot; PAI-Modules
+
+INCLUDE LZPOPUPMAILO01.
+
+INCLUDE lzpopupmaili01.</source>
+ </mainprogram>
+ <includeprograms>
+  <include NAME="LZPOPUPMAILI01" VARCL="X" SUBC="I" APPL="S" RMAND="012" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZPOPUPMAILI01.
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0300  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0300 INPUT.
+
+  CASE sy-ucomm.
+    WHEN &apos;OK&apos;.
+      o_grid_mails-&gt;comprobar_cambios( ).
+      LEAVE TO SCREEN 0.
+    WHEN &apos;CANCEL&apos;.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+ENDMODULE.</include_source>
+  </include>
+  <include NAME="LZPOPUPMAILO01" VARCL="X" SUBC="I" APPL="S" RMAND="100" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZPOPUPMAILO01 .
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  LZPOPUPMAILO01  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_2000 OUTPUT.
+  DATA i_exc(40) OCCURS 0.
+
+  CLEAR i_exc.
+  IF v_enviar_mail IS INITIAL.
+    APPEND &apos;MAIL&apos; TO i_exc.
+  ELSE.
+    APPEND &apos;OK&apos; TO i_exc.
+  ENDIF.
+*  SET PF-STATUS &apos;MAIL&apos; EXCLUDING i_exc.
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  IF v_enviar_mail IS INITIAL.
+    o_alv_mail-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos;  icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos;  ).
+  ELSE.
+    o_alv_mail-&gt;add_button( button = &apos;F01&apos; text = &apos;Enviar mail&apos;  icon = &apos;@1S@&apos; qinfo = &apos;Enviar mail&apos; ).
+  ENDIF.
+  o_alv_mail-&gt;add_button( button = &apos;F02&apos; text = &apos;Cancelar&apos;  icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+  IF v_html = &apos;X&apos;.
+    o_alv_mail-&gt;add_button( button = &apos;F03&apos; text = &apos;Previsualizar&apos;  icon = icon_htm qinfo = &apos;Previsualizar mail&apos; ).
+  ENDIF.
+  IF v_titulo_popup IS INITIAL.
+    SET TITLEBAR &apos;200&apos;.
+  ELSE.
+    SET TITLEBAR &apos;201&apos; WITH v_titulo_popup.
+  ENDIF.
+
+  IF o_texto IS INITIAL.
+    CREATE OBJECT o_texto
+      EXPORTING
+        controlname = &apos;MAIL&apos;.
+
+    IF i_textos[] IS INITIAL.
+      o_texto-&gt;set_editor( string = v_texto ).
+    ELSE.
+      o_texto-&gt;set_editor( lines = i_textos[] ).
+    ENDIF.
+  ENDIF.
+  IF v_mostrar_destinatario = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO,PC&apos; variable = v_mostrar_destinatario input = &apos;0&apos; ).
+  ELSEIF v_mostrar_copia = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO&apos; variable = v_mostrar_destinatario input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PC&apos; variable = v_mostrar_destinatario  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO,PC&apos; variable = v_mostrar_destinatario ).
+  ENDIF.
+  IF v_mostrar_copia = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA,PC&apos; variable = v_mostrar_copia input = &apos;0&apos; ).
+  ELSEIF v_mostrar_copia = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA&apos; variable = v_mostrar_copia input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PC&apos; variable = v_mostrar_copia  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA,PC&apos; variable = v_mostrar_copia ).
+  ENDIF.
+
+  IF v_mostrar_cco = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO,PO&apos; variable = v_mostrar_cco input = &apos;0&apos; ).
+  ELSEIF v_mostrar_cco = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO&apos; variable = v_mostrar_cco input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PO&apos; variable = v_mostrar_cco  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO,PO&apos; variable = v_mostrar_cco ).
+  ENDIF.
+
+
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_EMISOR&apos; variable = v_mostrar_emisor ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_INFO&apos; variable = v_info ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;BADJ&apos; variable = v_boton_adjuntos ).
+
+ENDMODULE.                 &quot; LZPOPUPMAILO01  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_2000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_2000 INPUT.
+  DATA l_msg TYPE bapi_msg.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      IF v_enviar_mail IS INITIAL.
+        o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+        LEAVE TO SCREEN 0.
+      ELSE.
+        o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+
+        DATA i_adj TYPE TABLE OF rmps_post_content.
+        FIELD-SYMBOLS &lt;v_adj&gt; TYPE t_adjuntos.
+        DATA l_adj TYPE rmps_post_content.
+        CLEAR i_adj.
+        LOOP AT v_i_adjuntos ASSIGNING &lt;v_adj&gt;.
+          CLEAR l_adj.
+          MOVE-CORRESPONDING &lt;v_adj&gt; TO l_adj.
+          APPEND l_adj TO i_adj.
+        ENDLOOP.
+        zcl_ap_envio_mail=&gt;mail( EXPORTING subject   = v_asunto
+                                 direccion = v_destinatario
+                                 lista_distribucion = v_lista_distribucion
+                                 i_adjuntos = i_adj
+                                 controlar_salida = &apos;X&apos;
+                                 texto     = v_texto
+                                 html     = v_html
+                                 dest_copia = v_copia
+                                 dest_copia_oculta = v_cco
+                                 emisor     = v_emisor
+                                 clave      = v_clave
+                                 plantilla  = v_plantilla
+                           IMPORTING message   = v_message ).
+
+        IF v_message IS INITIAL.
+          MESSAGE &apos;Se ha enviado el mail&apos; TYPE &apos;S&apos;.
+        ELSE.
+          CONCATENATE &apos;Error enviando el mail&apos; v_message INTO l_msg SEPARATED BY space.
+          MESSAGE l_msg TYPE &apos;I&apos;.
+        ENDIF.
+*                               i_textos  = i_textos[] ).
+
+        IF NOT v_proceso_log IS INITIAL.
+          zcl_ap_log=&gt;set_log( proceso = v_proceso_log
+                               p1 = &apos;Se envía mail con popup&apos; p2 = v_asunto p3 = &apos;a&apos; p4 = v_destinatario
+                               msgty = &apos;S&apos; ).
+        ENDIF.
+
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN &apos;F02&apos;.
+      v_cancel = &apos;X&apos;.
+      LEAVE TO SCREEN 0.
+
+    WHEN &apos;POPUP_DEST&apos;.
+      DATA cancelado TYPE char1.
+      DATA i_mails   TYPE zest_sel_mail_t.
+
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails destino&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_destinatario
+          i_mails   = i_mails.
+      IF strlen( v_destinatario ) &gt; 512.
+        v_mostrar_destinatario = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;POPUP_COPIA&apos;.
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails copia&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_copia
+          i_mails   = i_mails.
+      IF strlen( v_copia ) &gt; 512.
+        v_mostrar_copia = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;POPUP_CCO&apos;.
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails copia oculta&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_cco
+          i_mails   = i_mails.
+      IF strlen( v_cco ) &gt; 512.
+        v_mostrar_cco = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;ADJ&apos;.
+      IF NOT o_alv_popup IS INITIAL.
+        o_alv_popup-&gt;free( ).
+      ENDIF.
+      LOOP AT v_i_adjuntos ASSIGNING &lt;v_adj&gt; WHERE filename IS INITIAL AND subject NE &apos;&apos;.
+        &lt;v_adj&gt;-filename = &lt;v_adj&gt;-subject.
+      ENDLOOP.
+
+      DATA v_buttons           TYPE zcl_ap_alv=&gt;t_buttons.
+      PERFORM get_boton IN PROGRAM zap_status CHANGING v_buttons.
+      PERFORM clear_botones IN PROGRAM zap_status.
+      CALL SCREEN 3000 STARTING AT 3 3 ENDING AT 80 10.
+      PERFORM set_boton IN PROGRAM zap_status USING v_buttons.
+
+    WHEN &apos;F03&apos;.
+      o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+      cl_demo_output=&gt;display_html( v_texto ).
+  ENDCASE.
+
+ENDMODULE.                 &quot; USER_COMMAND_2000  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_3000  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_3000 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+  SET TITLEBAR &apos;300&apos;.
+
+  IF o_alv_popup IS INITIAL.
+    CREATE OBJECT o_alv_popup
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv_popup-&gt;add_button( button = &apos;F05&apos; text = &apos;Volver&apos;  icon = icon_arrow_left ).
+    o_alv_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Adjuntar desde PC&apos;  icon = icon_system_save ).
+    IF NOT v_gos IS INITIAL.
+      o_alv_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Adjuntar desde GOS&apos; icon = icon_gos_services_attachment ).
+    ENDIF.
+    o_alv_popup-&gt;add_button( button = &apos;F04&apos; text = &apos;Borrar adjunto&apos;  icon = icon_delete ).
+
+    o_alv_popup-&gt;constructor_tabla( EXPORTING campo_check = &apos;CHECK&apos; sel = &apos;M&apos; no_layout = &apos;X&apos;
+          cprog            = &apos;SAPZPOPUP_MAIL&apos;
+          container_name   = &apos;GRID&apos;
+          botones_standard = &apos;&apos;
+          restriccion_layout = if_salv_c_layout=&gt;restrict_user_independant
+      CHANGING t_tabla = v_i_adjuntos ).
+
+    o_alv_popup-&gt;set_field_quitar( &apos;DOC_TYPE,BINARY,SUBJECT,DOCSIZE,CHECK,CONT_TEXT,CONT_HEX&apos; ).
+    o_alv_popup-&gt;set_field_noout( &apos;OBJTP,OBJYR,OBJNO&apos; ).
+    o_alv_popup-&gt;set_field_text( campo = &apos;FILENAME&apos; valor = &apos;Fichero&apos; ).
+    o_alv_popup-&gt;set_field_hotspot( campo = &apos;FILENAME&apos; ).
+    o_alv_popup-&gt;show( ).
+
+  ENDIF.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_3000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_3000 INPUT.
+  DATA: l_xstring TYPE xstring,
+        l_string  TYPE string.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      DATA l_v_adj TYPE t_adjuntos.
+      CLEAR l_v_adj.
+      zcl_ap_ficheros=&gt;leer_xstring( EXPORTING popup_select_fichero = &apos;X&apos; local = &apos;X&apos;
+                                     IMPORTING xstring = l_xstring
+                                               fichero_salida = l_string ).
+      IF NOT l_string IS INITIAL.
+        l_string = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_string con_extension = &apos;X&apos; ).
+        IF strlen( l_string ) &gt; 240.
+          MESSAGE &apos;Nombre de fichero demasiado largo&apos; TYPE &apos;I&apos;.
+          RETURN.
+        ENDIF.
+
+        l_v_adj-filename = l_string.
+        l_adj = NEW zcl_ap_envio_mail( )-&gt;add_adjunto( titulo = l_v_adj-filename
+                                                   xstring = l_xstring ).
+        MOVE-CORRESPONDING l_adj TO l_v_adj.
+        IF l_v_adj-filename IS INITIAL.
+          l_v_adj-filename = l_v_adj-subject.
+        ENDIF.
+
+* Quiamos los puntos del nombre del fichero porque dan problemas.
+        DATA(l_nombre_fichero) = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_v_adj-filename con_extension = &apos;&apos; ).
+
+
+        DATA l_extension TYPE text20.
+        CALL FUNCTION &apos;TRINT_FILE_GET_EXTENSION&apos;
+          EXPORTING
+            filename  = l_v_adj-filename
+            uppercase = &apos;&apos;
+          IMPORTING
+            extension = l_extension.
+
+        IF l_nombre_fichero CS &apos;.&apos;.
+          REPLACE ALL OCCURRENCES OF &apos;.&apos; IN l_nombre_fichero WITH &apos;_&apos;.
+          CONCATENATE l_v_adj-filename &apos;.&apos; l_extension INTO l_v_adj-filename.
+        ENDIF.
+        IF to_upper( l_extension ) = &apos;PDF&apos;.
+          l_v_adj-doc_type = &apos;PDF&apos;.
+        ENDIF.
+
+        APPEND l_v_adj TO v_i_adjuntos.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+      ENDIF.
+
+    WHEN &apos;F03&apos;.
+      IF v_i_gos IS INITIAL.
+        MESSAGE &apos;No hay adjuntos en GOS&apos; TYPE &apos;I&apos;.
+      ELSE.
+        DATA v_buttons2           TYPE zcl_ap_alv=&gt;t_buttons.
+        PERFORM get_boton IN PROGRAM zap_status CHANGING v_buttons2.
+        PERFORM clear_botones IN PROGRAM zap_status.
+        CALL SCREEN 3100 STARTING AT 5 5 ENDING AT 82 12.
+        PERFORM set_boton IN PROGRAM zap_status USING v_buttons2.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+      ENDIF.
+
+    WHEN &apos;F04&apos;.
+      DATA l_hay_sel.
+      o_alv_popup-&gt;get_seleccion( IMPORTING hay_sel = l_hay_sel CHANGING t_tabla = v_i_adjuntos ).
+      IF l_hay_sel IS INITIAL.
+        MESSAGE &apos;Seleccione algún adjunto&apos; TYPE &apos;I&apos;.
+      ELSE.
+        DELETE v_i_adjuntos WHERE check = &apos;X&apos;.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+        o_alv_popup-&gt;set_seleccion( CHANGING t_tabla = v_i_adjuntos ).
+      ENDIF.
+
+    WHEN &apos;F05&apos;.
+      o_alv_popup-&gt;free( ).
+      CLEAR o_alv_popup.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+
+MODULE status_3100 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+  SET TITLEBAR &apos;310&apos;.
+
+  IF o_alv_popup_gos IS INITIAL.
+    CREATE OBJECT o_alv_popup_gos
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv_popup_gos-&gt;add_button( button = &apos;F05&apos; text = &apos;Volver&apos;  icon = icon_arrow_left ).
+    o_alv_popup_gos-&gt;add_button( button = &apos;F01&apos; text = &apos;Adjuntar&apos;  icon = icon_system_save ).
+
+    o_alv_popup_gos-&gt;constructor_tabla( EXPORTING campo_check = &apos;CHECK&apos; sel = &apos;M&apos; no_layout = &apos;X&apos;
+          cprog            = &apos;SAPZPOPUP_MAIL&apos;
+          container_name   = &apos;GRID&apos;
+          botones_standard = &apos;&apos;
+          restriccion_layout = if_salv_c_layout=&gt;restrict_user_independant
+      CHANGING t_tabla = v_i_gos ).
+
+    o_alv_popup_gos-&gt;set_field_quitar( &apos;DOC_TYPE,BINARY,SUBJECT,DOCSIZE,CHECK,CONT_TEXT,CONT_HEX&apos; ).
+    o_alv_popup_gos-&gt;set_field_noout( &apos;OBJTP,OBJYR,OBJNO&apos; ).
+    o_alv_popup_gos-&gt;set_field_text( campo = &apos;FILENAME&apos; valor = &apos;Fichero&apos; ).
+    o_alv_popup_gos-&gt;set_field_hotspot( campo = &apos;FILENAME&apos; ).
+    o_alv_popup_gos-&gt;show( ).
+
+  ENDIF.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_3000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_3100 INPUT.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      o_alv_popup_gos-&gt;get_seleccion( IMPORTING hay_sel = l_hay_sel CHANGING t_tabla = v_i_gos ).
+      IF l_hay_sel IS INITIAL.
+        MESSAGE &apos;Seleccione algún fichero&apos; TYPE &apos;I&apos;.
+      ELSE.
+        LOOP AT v_i_gos ASSIGNING &lt;v_adj&gt; WHERE check = &apos;X&apos;.
+          APPEND &lt;v_adj&gt; TO v_i_adjuntos.
+        ENDLOOP.
+        o_alv_popup_gos-&gt;free( ).
+        CLEAR o_alv_popup_gos.
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN &apos;F05&apos;.
+      o_alv_popup_gos-&gt;free( ).
+      CLEAR o_alv_popup_gos.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0300 OUTPUT.
+  IF v_visualizar = &apos;X&apos;.
+    DATA exc TYPE TABLE OF char20.
+    CLEAR exc.
+    APPEND &apos;CANCEL&apos; TO exc.
+  ENDIF.
+  SET PF-STATUS &apos;OK_CANCEL&apos; OF PROGRAM &apos;ZAP_STATUS&apos; EXCLUDING exc.
+  SET TITLEBAR &apos;100&apos; OF PROGRAM &apos;ZAP_STATUS&apos; WITH v_titulo.
+
+  IF o_grid_mails IS INITIAL.
+    o_event_mails = NEW #( ).
+    o_grid_mails = NEW zcl_ap_alv_grid( estructura     = &apos;&apos;
+                                        o_event        = o_event_mails
+                                        obj_contenedor = &apos;GRID&apos;
+                                        nombre_layout  = &apos;Z_POPUP_DEST_MAIL&apos; ).
+
+    o_grid_mails-&gt;set_layout(  no_toolbar = &apos;X&apos; ancho_optimizado = &apos;&apos; ).
+    o_grid_mails-&gt;set_campos_tabint( i_mails_f ).
+    IF v_visualizar IS INITIAL.
+      o_grid_mails-&gt;set_field_input( &apos;EMAIL&apos; ).
+    ENDIF.
+    o_grid_mails-&gt;set_field_text( &apos;EMAIL&apos; ).
+    o_grid_mails-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_grid_mails-&gt;show( CHANGING tabla = i_mails_f ).
+  ENDIF.
+
+ENDMODULE.</include_source>
+  </include>
+  <include NAME="LZPOPUPMAILO01" VARCL="X" SUBC="I" APPL="S" RMAND="100" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZPOPUPMAILO01 .
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  LZPOPUPMAILO01  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_2000 OUTPUT.
+  DATA i_exc(40) OCCURS 0.
+
+  CLEAR i_exc.
+  IF v_enviar_mail IS INITIAL.
+    APPEND &apos;MAIL&apos; TO i_exc.
+  ELSE.
+    APPEND &apos;OK&apos; TO i_exc.
+  ENDIF.
+*  SET PF-STATUS &apos;MAIL&apos; EXCLUDING i_exc.
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  IF v_enviar_mail IS INITIAL.
+    o_alv_mail-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos;  icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos;  ).
+  ELSE.
+    o_alv_mail-&gt;add_button( button = &apos;F01&apos; text = &apos;Enviar mail&apos;  icon = &apos;@1S@&apos; qinfo = &apos;Enviar mail&apos; ).
+  ENDIF.
+  o_alv_mail-&gt;add_button( button = &apos;F02&apos; text = &apos;Cancelar&apos;  icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+  IF v_html = &apos;X&apos;.
+    o_alv_mail-&gt;add_button( button = &apos;F03&apos; text = &apos;Previsualizar&apos;  icon = icon_htm qinfo = &apos;Previsualizar mail&apos; ).
+  ENDIF.
+  IF v_titulo_popup IS INITIAL.
+    SET TITLEBAR &apos;200&apos;.
+  ELSE.
+    SET TITLEBAR &apos;201&apos; WITH v_titulo_popup.
+  ENDIF.
+
+  IF o_texto IS INITIAL.
+    CREATE OBJECT o_texto
+      EXPORTING
+        controlname = &apos;MAIL&apos;.
+
+    IF i_textos[] IS INITIAL.
+      o_texto-&gt;set_editor( string = v_texto ).
+    ELSE.
+      o_texto-&gt;set_editor( lines = i_textos[] ).
+    ENDIF.
+  ENDIF.
+  IF v_mostrar_destinatario = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO,PC&apos; variable = v_mostrar_destinatario input = &apos;0&apos; ).
+  ELSEIF v_mostrar_copia = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO&apos; variable = v_mostrar_destinatario input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PC&apos; variable = v_mostrar_destinatario  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_DESTINATARIO,PC&apos; variable = v_mostrar_destinatario ).
+  ENDIF.
+  IF v_mostrar_copia = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA,PC&apos; variable = v_mostrar_copia input = &apos;0&apos; ).
+  ELSEIF v_mostrar_copia = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA&apos; variable = v_mostrar_copia input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PC&apos; variable = v_mostrar_copia  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_COPIA,PC&apos; variable = v_mostrar_copia ).
+  ENDIF.
+
+  IF v_mostrar_cco = &apos;V&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO,PO&apos; variable = v_mostrar_cco input = &apos;0&apos; ).
+  ELSEIF v_mostrar_cco = &apos;R&apos;.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO&apos; variable = v_mostrar_cco input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PO&apos; variable = v_mostrar_cco  ).
+  ELSE.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_CCO,PO&apos; variable = v_mostrar_cco ).
+  ENDIF.
+
+
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_EMISOR&apos; variable = v_mostrar_emisor ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_INFO&apos; variable = v_info ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;BADJ&apos; variable = v_boton_adjuntos ).
+
+ENDMODULE.                 &quot; LZPOPUPMAILO01  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_2000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_2000 INPUT.
+  DATA l_msg TYPE bapi_msg.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      IF v_enviar_mail IS INITIAL.
+        o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+        LEAVE TO SCREEN 0.
+      ELSE.
+        o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+
+        DATA i_adj TYPE TABLE OF rmps_post_content.
+        FIELD-SYMBOLS &lt;v_adj&gt; TYPE t_adjuntos.
+        DATA l_adj TYPE rmps_post_content.
+        CLEAR i_adj.
+        LOOP AT v_i_adjuntos ASSIGNING &lt;v_adj&gt;.
+          CLEAR l_adj.
+          MOVE-CORRESPONDING &lt;v_adj&gt; TO l_adj.
+          APPEND l_adj TO i_adj.
+        ENDLOOP.
+        zcl_ap_envio_mail=&gt;mail( EXPORTING subject   = v_asunto
+                                 direccion = v_destinatario
+                                 lista_distribucion = v_lista_distribucion
+                                 i_adjuntos = i_adj
+                                 controlar_salida = &apos;X&apos;
+                                 texto     = v_texto
+                                 html     = v_html
+                                 dest_copia = v_copia
+                                 dest_copia_oculta = v_cco
+                                 emisor     = v_emisor
+                                 clave      = v_clave
+                                 plantilla  = v_plantilla
+                           IMPORTING message   = v_message ).
+
+        IF v_message IS INITIAL.
+          MESSAGE &apos;Se ha enviado el mail&apos; TYPE &apos;S&apos;.
+        ELSE.
+          CONCATENATE &apos;Error enviando el mail&apos; v_message INTO l_msg SEPARATED BY space.
+          MESSAGE l_msg TYPE &apos;I&apos;.
+        ENDIF.
+*                               i_textos  = i_textos[] ).
+
+        IF NOT v_proceso_log IS INITIAL.
+          zcl_ap_log=&gt;set_log( proceso = v_proceso_log
+                               p1 = &apos;Se envía mail con popup&apos; p2 = v_asunto p3 = &apos;a&apos; p4 = v_destinatario
+                               msgty = &apos;S&apos; ).
+        ENDIF.
+
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN &apos;F02&apos;.
+      v_cancel = &apos;X&apos;.
+      LEAVE TO SCREEN 0.
+
+    WHEN &apos;POPUP_DEST&apos;.
+      DATA cancelado TYPE char1.
+      DATA i_mails   TYPE zest_sel_mail_t.
+
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails destino&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_destinatario
+          i_mails   = i_mails.
+      IF strlen( v_destinatario ) &gt; 512.
+        v_mostrar_destinatario = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;POPUP_COPIA&apos;.
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails copia&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_copia
+          i_mails   = i_mails.
+      IF strlen( v_copia ) &gt; 512.
+        v_mostrar_copia = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;POPUP_CCO&apos;.
+      CALL FUNCTION &apos;Z_POPUP_DEST_MAIL&apos;
+        EXPORTING
+          titulo    = &apos;Mails copia oculta&apos;
+        IMPORTING
+          cancelado = cancelado
+        CHANGING
+          mails     = v_cco
+          i_mails   = i_mails.
+      IF strlen( v_cco ) &gt; 512.
+        v_mostrar_cco = &apos;R&apos;.
+      ENDIF.
+
+    WHEN &apos;ADJ&apos;.
+      IF NOT o_alv_popup IS INITIAL.
+        o_alv_popup-&gt;free( ).
+      ENDIF.
+      LOOP AT v_i_adjuntos ASSIGNING &lt;v_adj&gt; WHERE filename IS INITIAL AND subject NE &apos;&apos;.
+        &lt;v_adj&gt;-filename = &lt;v_adj&gt;-subject.
+      ENDLOOP.
+
+      DATA v_buttons           TYPE zcl_ap_alv=&gt;t_buttons.
+      PERFORM get_boton IN PROGRAM zap_status CHANGING v_buttons.
+      PERFORM clear_botones IN PROGRAM zap_status.
+      CALL SCREEN 3000 STARTING AT 3 3 ENDING AT 80 10.
+      PERFORM set_boton IN PROGRAM zap_status USING v_buttons.
+
+    WHEN &apos;F03&apos;.
+      o_texto-&gt;get_editor( IMPORTING string = v_texto ).
+      cl_demo_output=&gt;display_html( v_texto ).
+  ENDCASE.
+
+ENDMODULE.                 &quot; USER_COMMAND_2000  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_3000  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_3000 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+  SET TITLEBAR &apos;300&apos;.
+
+  IF o_alv_popup IS INITIAL.
+    CREATE OBJECT o_alv_popup
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv_popup-&gt;add_button( button = &apos;F05&apos; text = &apos;Volver&apos;  icon = icon_arrow_left ).
+    o_alv_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Adjuntar desde PC&apos;  icon = icon_system_save ).
+    IF NOT v_gos IS INITIAL.
+      o_alv_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Adjuntar desde GOS&apos; icon = icon_gos_services_attachment ).
+    ENDIF.
+    o_alv_popup-&gt;add_button( button = &apos;F04&apos; text = &apos;Borrar adjunto&apos;  icon = icon_delete ).
+
+    o_alv_popup-&gt;constructor_tabla( EXPORTING campo_check = &apos;CHECK&apos; sel = &apos;M&apos; no_layout = &apos;X&apos;
+          cprog            = &apos;SAPZPOPUP_MAIL&apos;
+          container_name   = &apos;GRID&apos;
+          botones_standard = &apos;&apos;
+          restriccion_layout = if_salv_c_layout=&gt;restrict_user_independant
+      CHANGING t_tabla = v_i_adjuntos ).
+
+    o_alv_popup-&gt;set_field_quitar( &apos;DOC_TYPE,BINARY,SUBJECT,DOCSIZE,CHECK,CONT_TEXT,CONT_HEX&apos; ).
+    o_alv_popup-&gt;set_field_noout( &apos;OBJTP,OBJYR,OBJNO&apos; ).
+    o_alv_popup-&gt;set_field_text( campo = &apos;FILENAME&apos; valor = &apos;Fichero&apos; ).
+    o_alv_popup-&gt;set_field_hotspot( campo = &apos;FILENAME&apos; ).
+    o_alv_popup-&gt;show( ).
+
+  ENDIF.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_3000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_3000 INPUT.
+  DATA: l_xstring TYPE xstring,
+        l_string  TYPE string.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      DATA l_v_adj TYPE t_adjuntos.
+      CLEAR l_v_adj.
+      zcl_ap_ficheros=&gt;leer_xstring( EXPORTING popup_select_fichero = &apos;X&apos; local = &apos;X&apos;
+                                     IMPORTING xstring = l_xstring
+                                               fichero_salida = l_string ).
+      IF NOT l_string IS INITIAL.
+        l_string = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_string con_extension = &apos;X&apos; ).
+        IF strlen( l_string ) &gt; 240.
+          MESSAGE &apos;Nombre de fichero demasiado largo&apos; TYPE &apos;I&apos;.
+          RETURN.
+        ENDIF.
+
+        l_v_adj-filename = l_string.
+        l_adj = NEW zcl_ap_envio_mail( )-&gt;add_adjunto( titulo = l_v_adj-filename
+                                                   xstring = l_xstring ).
+        MOVE-CORRESPONDING l_adj TO l_v_adj.
+        IF l_v_adj-filename IS INITIAL.
+          l_v_adj-filename = l_v_adj-subject.
+        ENDIF.
+
+* Quiamos los puntos del nombre del fichero porque dan problemas.
+        DATA(l_nombre_fichero) = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_v_adj-filename con_extension = &apos;&apos; ).
+
+
+        DATA l_extension TYPE text20.
+        CALL FUNCTION &apos;TRINT_FILE_GET_EXTENSION&apos;
+          EXPORTING
+            filename  = l_v_adj-filename
+            uppercase = &apos;&apos;
+          IMPORTING
+            extension = l_extension.
+
+        IF l_nombre_fichero CS &apos;.&apos;.
+          REPLACE ALL OCCURRENCES OF &apos;.&apos; IN l_nombre_fichero WITH &apos;_&apos;.
+          CONCATENATE l_v_adj-filename &apos;.&apos; l_extension INTO l_v_adj-filename.
+        ENDIF.
+        IF to_upper( l_extension ) = &apos;PDF&apos;.
+          l_v_adj-doc_type = &apos;PDF&apos;.
+        ENDIF.
+
+        APPEND l_v_adj TO v_i_adjuntos.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+      ENDIF.
+
+    WHEN &apos;F03&apos;.
+      IF v_i_gos IS INITIAL.
+        MESSAGE &apos;No hay adjuntos en GOS&apos; TYPE &apos;I&apos;.
+      ELSE.
+        DATA v_buttons2           TYPE zcl_ap_alv=&gt;t_buttons.
+        PERFORM get_boton IN PROGRAM zap_status CHANGING v_buttons2.
+        PERFORM clear_botones IN PROGRAM zap_status.
+        CALL SCREEN 3100 STARTING AT 5 5 ENDING AT 82 12.
+        PERFORM set_boton IN PROGRAM zap_status USING v_buttons2.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+      ENDIF.
+
+    WHEN &apos;F04&apos;.
+      DATA l_hay_sel.
+      o_alv_popup-&gt;get_seleccion( IMPORTING hay_sel = l_hay_sel CHANGING t_tabla = v_i_adjuntos ).
+      IF l_hay_sel IS INITIAL.
+        MESSAGE &apos;Seleccione algún adjunto&apos; TYPE &apos;I&apos;.
+      ELSE.
+        DELETE v_i_adjuntos WHERE check = &apos;X&apos;.
+
+        DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+        __concat2 l_string &apos;Nº de adjuntos&apos; sy-tfill.
+        CONCATENATE icon_attachment l_string INTO l_string SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = l_string repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+
+        o_alv_popup-&gt;refresh( ).
+        o_alv_popup-&gt;set_seleccion( CHANGING t_tabla = v_i_adjuntos ).
+      ENDIF.
+
+    WHEN &apos;F05&apos;.
+      o_alv_popup-&gt;free( ).
+      CLEAR o_alv_popup.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+
+MODULE status_3100 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+  SET TITLEBAR &apos;310&apos;.
+
+  IF o_alv_popup_gos IS INITIAL.
+    CREATE OBJECT o_alv_popup_gos
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv_popup_gos-&gt;add_button( button = &apos;F05&apos; text = &apos;Volver&apos;  icon = icon_arrow_left ).
+    o_alv_popup_gos-&gt;add_button( button = &apos;F01&apos; text = &apos;Adjuntar&apos;  icon = icon_system_save ).
+
+    o_alv_popup_gos-&gt;constructor_tabla( EXPORTING campo_check = &apos;CHECK&apos; sel = &apos;M&apos; no_layout = &apos;X&apos;
+          cprog            = &apos;SAPZPOPUP_MAIL&apos;
+          container_name   = &apos;GRID&apos;
+          botones_standard = &apos;&apos;
+          restriccion_layout = if_salv_c_layout=&gt;restrict_user_independant
+      CHANGING t_tabla = v_i_gos ).
+
+    o_alv_popup_gos-&gt;set_field_quitar( &apos;DOC_TYPE,BINARY,SUBJECT,DOCSIZE,CHECK,CONT_TEXT,CONT_HEX&apos; ).
+    o_alv_popup_gos-&gt;set_field_noout( &apos;OBJTP,OBJYR,OBJNO&apos; ).
+    o_alv_popup_gos-&gt;set_field_text( campo = &apos;FILENAME&apos; valor = &apos;Fichero&apos; ).
+    o_alv_popup_gos-&gt;set_field_hotspot( campo = &apos;FILENAME&apos; ).
+    o_alv_popup_gos-&gt;show( ).
+
+  ENDIF.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_3000  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_3100 INPUT.
+
+  CASE sy-ucomm.
+    WHEN &apos;F01&apos;.
+      o_alv_popup_gos-&gt;get_seleccion( IMPORTING hay_sel = l_hay_sel CHANGING t_tabla = v_i_gos ).
+      IF l_hay_sel IS INITIAL.
+        MESSAGE &apos;Seleccione algún fichero&apos; TYPE &apos;I&apos;.
+      ELSE.
+        LOOP AT v_i_gos ASSIGNING &lt;v_adj&gt; WHERE check = &apos;X&apos;.
+          APPEND &lt;v_adj&gt; TO v_i_adjuntos.
+        ENDLOOP.
+        o_alv_popup_gos-&gt;free( ).
+        CLEAR o_alv_popup_gos.
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN &apos;F05&apos;.
+      o_alv_popup_gos-&gt;free( ).
+      CLEAR o_alv_popup_gos.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0300 OUTPUT.
+  IF v_visualizar = &apos;X&apos;.
+    DATA exc TYPE TABLE OF char20.
+    CLEAR exc.
+    APPEND &apos;CANCEL&apos; TO exc.
+  ENDIF.
+  SET PF-STATUS &apos;OK_CANCEL&apos; OF PROGRAM &apos;ZAP_STATUS&apos; EXCLUDING exc.
+  SET TITLEBAR &apos;100&apos; OF PROGRAM &apos;ZAP_STATUS&apos; WITH v_titulo.
+
+  IF o_grid_mails IS INITIAL.
+    o_event_mails = NEW #( ).
+    o_grid_mails = NEW zcl_ap_alv_grid( estructura     = &apos;&apos;
+                                        o_event        = o_event_mails
+                                        obj_contenedor = &apos;GRID&apos;
+                                        nombre_layout  = &apos;Z_POPUP_DEST_MAIL&apos; ).
+
+    o_grid_mails-&gt;set_layout(  no_toolbar = &apos;X&apos; ancho_optimizado = &apos;&apos; ).
+    o_grid_mails-&gt;set_campos_tabint( i_mails_f ).
+    IF v_visualizar IS INITIAL.
+      o_grid_mails-&gt;set_field_input( &apos;EMAIL&apos; ).
+    ENDIF.
+    o_grid_mails-&gt;set_field_text( &apos;EMAIL&apos; ).
+    o_grid_mails-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_grid_mails-&gt;show( CHANGING tabla = i_mails_f ).
+  ENDIF.
+
+ENDMODULE.</include_source>
+  </include>
+  <include NAME="LZPOPUPMAILTOP" VARCL="X" DBAPL="S" DBNA="D$" SUBC="I" APPL="S" RMAND="100" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+   <include_source>FUNCTION-POOL zpopupmail.                   &quot;MESSAGE-ID ..
+
+TYPES: BEGIN OF t_adjuntos,
+         check.
+        INCLUDE TYPE rmps_post_content.
+TYPES: END OF t_adjuntos.
+
+DATA: v_asunto               TYPE string,
+      v_emisor               TYPE string,
+      v_destinatario         TYPE string,
+      v_copia                TYPE string,
+      v_lista_distribucion   TYPE c,
+      v_texto                TYPE string,
+      v_mostrar_emisor       TYPE string,
+      v_mostrar_destinatario TYPE string,
+      v_mostrar_copia        TYPE string,
+      v_mostrar_cco          TYPE string,
+      v_enviar_mail          TYPE string,
+      v_i_adjuntos           TYPE TABLE OF t_adjuntos,
+      o_texto                TYPE REF TO zcl_ap_control_texto,
+      v_cancel,
+      i_textos               TYPE TABLE OF solisti1 WITH HEADER LINE,
+      v_proceso_log          TYPE string,
+      v_titulo_popup         TYPE string,
+      o_alv_mail             TYPE REF TO zcl_ap_alv,
+      v_info                 TYPE string,
+      v_html                 TYPE abap_bool,
+      v_message              TYPE bapi_msg,
+      v_cco                  TYPE string,
+      v_boton_adjuntos       TYPE string,
+      v_i_gos                TYPE TABLE OF t_adjuntos,
+      v_gos                  TYPE sibftypeid,
+      v_clave                type string,
+      v_plantilla            type ZAP_TEXTOS_MAIL,
+      I_MAILS_F              TYPE ZEST_SEL_MAIL_T,
+      v_titulo               type string,
+      v_visualizar           type xfeld.
+
+CLASS lcl_alv_popup DEFINITION INHERITING FROM zcl_ap_alv.
+  PUBLIC SECTION.
+    METHODS: handle_link_click REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_alv_popup IMPLEMENTATION.
+  METHOD handle_link_click.
+    DATA l_xstring TYPE xstring.
+    FIELD-SYMBOLS &lt;v_adj&gt; TYPE t_adjuntos.
+    READ TABLE v_i_adjuntos ASSIGNING &lt;v_adj&gt; INDEX row.
+    IF sy-subrc = 0.
+      IF NOT &lt;v_adj&gt;-cont_hex IS INITIAL.
+        l_xstring  = cl_bcs_convert=&gt;solix_to_xstring( it_solix = &lt;v_adj&gt;-cont_hex ).
+        zcl_ap_ficheros=&gt;visualizar( xstring = l_xstring fichero = &lt;v_adj&gt;-filename bin_filesize = &lt;v_adj&gt;-docsize ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+CLASS lcl_alv_popup_gos DEFINITION INHERITING FROM zcl_ap_alv.
+  PUBLIC SECTION.
+    METHODS: handle_link_click REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_alv_popup_gos IMPLEMENTATION.
+  METHOD handle_link_click.
+    DATA l_xstring TYPE xstring.
+    FIELD-SYMBOLS &lt;gos&gt; TYPE t_adjuntos.
+    READ TABLE v_i_gos ASSIGNING &lt;gos&gt; INDEX row.
+    IF sy-subrc = 0.
+      IF NOT &lt;gos&gt;-cont_hex IS INITIAL.
+        l_xstring  = cl_bcs_convert=&gt;solix_to_xstring( it_solix = &lt;gos&gt;-cont_hex ).
+        zcl_ap_ficheros=&gt;visualizar( xstring = l_xstring fichero = &lt;gos&gt;-filename ).
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+
+
+DATA: o_alv_popup     TYPE REF TO lcl_alv_popup,
+      o_alv_popup_gos TYPE REF TO lcl_alv_popup_gos,
+      o_grid_mails    TYPE REF TO zcl_ap_alv_grid,
+      o_event_mails   TYPE REF TO zcl_ap_alv_grid_eventos.</include_source>
+  </include>
+ </includeprograms>
+ <functionmodules>
+  <functionmodule NAME="Z_POPUP_MAIL" STEXT="Popup envío mail">
+   <importing PARAMETER="MOSTRAR_EMISOR" DEFAULT="&apos; &apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="MOSTRAR_DESTINATARIO" DEFAULT="&apos;X&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="MOSTRAR_CCO" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="MOSTRAR_COPIA" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="ENVIAR_MAIL" DEFAULT="&apos;X&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="LISTA_DISTRIBUCION" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="I_ADJUNTOS" OPTIONAL="X" REFERENCE="X" TYP="RMPS_T_POST_CONTENT"/>
+   <importing PARAMETER="NO_MOSTRAR_POPUP" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="PROCESO_LOG" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="TITULO_POPUP" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="HTML" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="BOTON_ADJUNTOS" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="GOS" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="SIBFTYPEID"/>
+   <importing PARAMETER="CLAVE_GOS" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="AR_OBJECT" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="TOA01-AR_OBJECT"/>
+   <importing PARAMETER="CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="PLANTILLA" OPTIONAL="X" REFERENCE="X" TYP="ZAP_TEXTOS_MAIL"/>
+   <exporting PARAMETER="MESSAGE" REFERENCE="X" TYP="BAPI_MSG"/>
+   <changing PARAMETER="SUBJECT" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="DIRECCION" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="EMISOR" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="TEXTO" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="COPIA" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="CCO" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <tables PARAMETER="I_TEXTO" DBSTRUCT="SOLISTI1" OPTIONAL="X"/>
+   <exceptions EXCEPTION="ENVIO_CANCELADO"/>
+   <documentation PARAMETER="MOSTRAR_EMISOR" KIND="P" INDEX=" 001"/>
+   <documentation PARAMETER="MOSTRAR_DESTINATARIO" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="MOSTRAR_CCO" KIND="P" STEXT="Mostrar copia oculta" INDEX=" 003"/>
+   <documentation PARAMETER="MOSTRAR_COPIA" KIND="P" STEXT="Mostrar copia" INDEX=" 004"/>
+   <documentation PARAMETER="ENVIAR_MAIL" KIND="P" INDEX=" 005"/>
+   <documentation PARAMETER="LISTA_DISTRIBUCION" KIND="P" INDEX=" 006"/>
+   <documentation PARAMETER="I_ADJUNTOS" KIND="P" STEXT="Tabla transferencia contenidos correo entr." INDEX=" 007"/>
+   <documentation PARAMETER="NO_MOSTRAR_POPUP" KIND="P" INDEX=" 008"/>
+   <documentation PARAMETER="PROCESO_LOG" KIND="P" INDEX=" 009"/>
+   <documentation PARAMETER="TITULO_POPUP" KIND="P" INDEX=" 010"/>
+   <documentation PARAMETER="HTML" KIND="P" INDEX=" 011"/>
+   <documentation PARAMETER="BOTON_ADJUNTOS" KIND="P" INDEX=" 012"/>
+   <documentation PARAMETER="GOS" KIND="P" STEXT="Tipo de objetos en referencias de objeto persistentes" INDEX=" 013"/>
+   <documentation PARAMETER="CLAVE_GOS" KIND="P" INDEX=" 014"/>
+   <documentation PARAMETER="AR_OBJECT" KIND="P" STEXT="Clase documentos" INDEX=" 015"/>
+   <documentation PARAMETER="CLAVE" KIND="P" INDEX=" 016"/>
+   <documentation PARAMETER="PLANTILLA" KIND="P" STEXT="Textos mail" INDEX=" 017"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 018"/>
+   <documentation PARAMETER="I_TEXTO" KIND="P" STEXT="SAPoffice: Lista simple con longitud columna 255" INDEX=" 019"/>
+   <documentation PARAMETER="SUBJECT" KIND="P" INDEX=" 020"/>
+   <documentation PARAMETER="DIRECCION" KIND="P" INDEX=" 021"/>
+   <documentation PARAMETER="EMISOR" KIND="P" INDEX=" 022"/>
+   <documentation PARAMETER="TEXTO" KIND="P" INDEX=" 023"/>
+   <documentation PARAMETER="COPIA" KIND="P" INDEX=" 024"/>
+   <documentation PARAMETER="CCO" KIND="P" INDEX=" 025"/>
+   <documentation PARAMETER="ENVIO_CANCELADO" KIND="X" STEXT="Envio cancelado" INDEX=" 026"/>
+   <fm_source_new>DATA: l_msg    TYPE string,
+        l_altura TYPE i VALUE 23.
+
+  v_asunto = subject.
+  v_emisor = emisor.
+  v_copia  = copia.
+  v_cco = cco.
+  v_destinatario = direccion.
+  v_texto = texto.
+
+  v_mostrar_emisor = mostrar_emisor.
+  v_mostrar_destinatario = mostrar_destinatario.
+  v_mostrar_copia = mostrar_copia.
+  v_mostrar_cco = mostrar_cco.
+  IF mostrar_copia = &apos;X&apos; AND strlen( copia ) &gt; 512.
+    v_mostrar_copia = &apos;R&apos;.
+  ENDIF.
+  v_enviar_mail = enviar_mail.
+  v_lista_distribucion = lista_distribucion.
+  v_gos = gos.
+  v_clave = clave.
+  v_plantilla = plantilla.
+
+  FIELD-SYMBOLS &lt;adj&gt; TYPE rmps_post_content.
+  DATA l_v_adj TYPE t_adjuntos.
+  CLEAR v_i_adjuntos.
+  LOOP AT i_adjuntos ASSIGNING &lt;adj&gt;.
+    CLEAR l_v_adj.
+    MOVE-CORRESPONDING &lt;adj&gt; TO l_v_adj.
+    APPEND l_v_adj TO v_i_adjuntos.
+  ENDLOOP.
+
+  CLEAR v_i_gos.
+  IF NOT v_gos IS INITIAL.
+    IF ar_object IS INITIAL.
+      DATA: i_adj TYPE rmps_t_post_content.
+      zcl_ap_gos=&gt;get_file_list( EXPORTING typeid = v_gos instid = clave_gos get_adj_mail = &apos;X&apos; CHANGING i_adjuntos_mail = i_adj ).
+      LOOP AT i_adj ASSIGNING &lt;adj&gt;.
+        CLEAR l_v_adj.
+        MOVE-CORRESPONDING &lt;adj&gt; TO l_v_adj.
+        IF l_v_adj-filename IS INITIAL.
+          l_v_adj-filename = l_v_adj-subject.
+        ENDIF.
+        APPEND l_v_adj TO v_i_gos.
+      ENDLOOP.
+    ELSE.
+      DATA: i_docs TYPE zal_files_m_t,
+            l_adj  TYPE rmps_post_content.
+      FIELD-SYMBOLS &lt;doc&gt; TYPE zal_files_m.
+      IF ar_object = &apos;*&apos;.
+        i_docs = zcl_ap_gos=&gt;get_archivelink_files_m( sap_object = v_gos object_id = clave_gos ar_object = &apos;&apos; get_contenido = &apos;X&apos; ).
+      ELSE.
+        i_docs = zcl_ap_gos=&gt;get_archivelink_files_m( sap_object = v_gos object_id = clave_gos ar_object = ar_object get_contenido = &apos;X&apos; ).
+      ENDIF.
+      LOOP AT i_docs ASSIGNING &lt;doc&gt;.
+        l_adj = NEW zcl_ap_envio_mail( )-&gt;add_adjunto( titulo = &lt;doc&gt;-fichero
+                                                    xstring = &lt;doc&gt;-contenido ).
+        MOVE-CORRESPONDING l_adj TO l_v_adj.
+        IF l_v_adj-filename IS INITIAL.
+          l_v_adj-filename = l_v_adj-subject.
+        ENDIF.
+        APPEND l_v_adj TO v_i_gos.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+  v_proceso_log = proceso_log.
+  v_titulo_popup = titulo_popup.
+  v_html = html.
+  IF boton_adjuntos = &apos;X&apos; OR NOT i_adjuntos IS INITIAL.
+    v_boton_adjuntos = &apos;X&apos;.
+  ENDIF.
+
+  i_textos[] = i_texto[].
+
+  CLEAR: v_cancel.
+
+  CLEAR o_alv_mail.
+
+  CREATE OBJECT o_alv_mail
+    EXPORTING
+      tabla = &apos;&apos;.
+
+  IF no_mostrar_popup = &apos;X&apos;.
+    IF NOT v_proceso_log IS INITIAL.
+      zcl_ap_log=&gt;set_log( proceso = v_proceso_log
+                           p1 = &apos;Se envía mail&apos; p2 = v_asunto p3 = &apos;a&apos; p4 = v_destinatario
+                           msgty = &apos;S&apos; ).
+    ENDIF.
+
+    zcl_ap_envio_mail=&gt;mail( EXPORTING subject   = v_asunto
+                                       direccion = v_destinatario
+                                       lista_distribucion = v_lista_distribucion
+                                       dest_copia = v_copia
+                                       dest_copia_oculta = v_cco
+                                       emisor     = v_emisor
+                                       i_adjuntos = i_adjuntos
+                                       texto     = v_texto
+                                       i_textos  = i_textos[]
+                                       html      = v_html
+                                       clave     = v_clave
+                                       plantilla = v_plantilla
+                             IMPORTING message   = v_message ).
+    IF v_message IS INITIAL.
+      MESSAGE &apos;Se ha enviado el mail&apos; TYPE &apos;S&apos;.
+    ELSE.
+      CONCATENATE &apos;Error enviando el mail&apos; v_message INTO l_msg SEPARATED BY space.
+      MESSAGE l_msg TYPE &apos;I&apos;.
+    ENDIF.
+  ELSE.
+    IF NOT o_texto IS INITIAL..
+      o_texto-&gt;destroy( ).
+      CLEAR o_texto.
+    ENDIF.
+
+    CLEAR v_info.
+    IF NOT v_i_adjuntos[] IS INITIAL.
+      DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
+      __concat2 v_info &apos;Nº de adjuntos&apos; sy-tfill.
+
+      IF v_boton_adjuntos = &apos;X&apos;.
+        CONCATENATE icon_attachment v_info INTO v_info SEPARATED BY space.
+        zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = v_info repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+        CLEAR v_info.
+      ENDIF.
+    ELSE.
+      zcl_ap_dynpro=&gt;modificar_texto( campo = &apos;BADJ&apos; texto = &apos;Sin adjuntos&apos; repid = sy-repid dynnr = &apos;2000&apos; ancho = 30 ).
+    ENDIF.
+
+    DATA l_buttons           TYPE zcl_ap_alv=&gt;t_buttons.
+    PERFORM get_boton IN PROGRAM zap_status CHANGING l_buttons.
+    PERFORM clear_botones IN PROGRAM zap_status.
+    IF v_mostrar_emisor = &apos;X&apos;. ADD 3 TO l_altura. ENDIF.
+    IF v_mostrar_destinatario = &apos;X&apos;. ADD 3 TO l_altura. ENDIF.
+    IF v_mostrar_copia = &apos;X&apos;. ADD 3 TO l_altura. ENDIF.
+    IF v_mostrar_cco = &apos;X&apos;. ADD 3 TO l_altura. ENDIF.
+    CALL SCREEN 2000 STARTING AT 1 1 ENDING AT 120 l_altura.
+    PERFORM set_boton IN PROGRAM zap_status USING l_buttons.
+
+
+    IF NOT o_texto IS INITIAL.
+      o_texto-&gt;destroy( ).
+      CLEAR o_texto.
+    ENDIF.
+
+    IF v_cancel IS INITIAL.
+      texto     = v_texto.
+      subject   = v_asunto.
+      direccion = v_destinatario.
+      emisor    = v_emisor.
+      message   = v_message.
+      copia     = v_copia.
+    ELSE.
+      IF NOT v_proceso_log IS INITIAL.
+        zcl_ap_log=&gt;set_log( proceso = v_proceso_log
+                             p1 = &apos;Se cancela envío del mail&apos; p2 = v_asunto p3 = &apos;a&apos; p4 = v_destinatario
+                             msgty = &apos;E&apos; ).
+      ENDIF.
+
+      RAISE envio_cancelado.
+    ENDIF.
+  ENDIF.</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_POPUP_DEST_MAIL" STEXT="Popup destinatarios mail">
+   <importing PARAMETER="TITULO" DEFAULT="&apos;Direcciones de mail&apos;" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="VISUALIZAR" DEFAULT="&apos;&apos;" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <exporting PARAMETER="CANCELADO" REFERENCE="X" TYP="CHAR1"/>
+   <changing PARAMETER="MAILS" REFERENCE="X" TYP="ANY"/>
+   <changing PARAMETER="I_MAILS" OPTIONAL="X" REFERENCE="X" TYP="ZEST_SEL_MAIL_T"/>
+   <documentation PARAMETER="TITULO" KIND="P" INDEX=" 001"/>
+   <documentation PARAMETER="VISUALIZAR" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="CANCELADO" KIND="P" STEXT="Indicador de una posición" INDEX=" 003"/>
+   <documentation PARAMETER="MAILS" KIND="P" STEXT="Lista emails" INDEX=" 004"/>
+   <documentation PARAMETER="I_MAILS" KIND="P" STEXT="Tabla mails" INDEX=" 005"/>
+   <fm_source>v_titulo = titulo.
+  v_visualizar = visualizar.
+
+  IF NOT o_grid_mails IS INITIAL.
+    o_grid_mails-&gt;free( ).
+    CLEAR o_grid_mails.
+  ENDIF.
+
+  IF NOT mails IS INITIAL.
+    CLEAR i_mails.
+    SPLIT mails AT &apos;,&apos; INTO TABLE DATA(i_m).
+    LOOP AT i_m ASSIGNING FIELD-SYMBOL(&lt;m&gt;).
+      APPEND VALUE #( email = &lt;m&gt; ) TO i_mails.
+    ENDLOOP.
+  ENDIF.
+  DELETE i_mails WHERE email = &apos;&apos;.
+
+  IF visualizar IS INITIAL.
+    DO 100 TIMES.
+      APPEND VALUE #( ) TO i_mails.
+    ENDDO.
+  ENDIF.
+
+  i_mails_f = i_mails.
+
+  CALL SCREEN 0300 STARTING AT 3 3 ENDING AT 136 13.
+
+  IF sy-ucomm = &apos;CANCEL&apos;.
+    cancelado = &apos;X&apos;.
+  ELSE.
+    i_mails = i_mails_f.
+    DELETE i_mails WHERE email = &apos;&apos;.
+    CLEAR mails.
+    LOOP AT i_mails ASSIGNING FIELD-SYMBOL(&lt;mail&gt;).
+      IF mails IS INITIAL.
+        mails = &lt;mail&gt;.
+      ELSE.
+        mails = mails &amp;&amp; `,` &amp;&amp; &lt;mail&gt;-email.
+      ENDIF.
+    ENDLOOP.
+  ENDIF.
+
+  IF NOT o_grid_mails IS INITIAL.
+    o_grid_mails-&gt;free( ).
+    CLEAR o_grid_mails.
+  ENDIF.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_MAIL_REMOTO" REMOTE="R" STEXT="Envío mail en otro proceso paralelo">
+   <importing PARAMETER="LISTA_DISTRIBUCION" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <importing PARAMETER="I_ADJUNTOS" OPTIONAL="X" TYP="RMPS_T_POST_CONTENT"/>
+   <importing PARAMETER="HTML" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <importing PARAMETER="CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ZAP_MAIL_LOG-CLAVE"/>
+   <importing PARAMETER="SUBJECT" TYP="STRING"/>
+   <importing PARAMETER="DIRECCION" TYP="STRING"/>
+   <importing PARAMETER="EMISOR" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="TEXTO" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="COPIA" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CCO" OPTIONAL="X" TYP="STRING"/>
+   <exporting PARAMETER="MESSAGE" TYP="BAPI_MSG"/>
+   <tables PARAMETER="I_TEXTO" DBSTRUCT="SOLISTI1" OPTIONAL="X"/>
+   <documentation PARAMETER="LISTA_DISTRIBUCION" KIND="P" STEXT="Casilla de selección" INDEX=" 001"/>
+   <documentation PARAMETER="I_ADJUNTOS" KIND="P" STEXT="Tabla transferencia contenidos correo entr." INDEX=" 002"/>
+   <documentation PARAMETER="HTML" KIND="P" STEXT="Casilla de selección" INDEX=" 003"/>
+   <documentation PARAMETER="CLAVE" KIND="P" STEXT="Textos mail" INDEX=" 004"/>
+   <documentation PARAMETER="SUBJECT" KIND="P" INDEX=" 005"/>
+   <documentation PARAMETER="DIRECCION" KIND="P" INDEX=" 006"/>
+   <documentation PARAMETER="EMISOR" KIND="P" INDEX=" 007"/>
+   <documentation PARAMETER="TEXTO" KIND="P" INDEX=" 008"/>
+   <documentation PARAMETER="COPIA" KIND="P" INDEX=" 009"/>
+   <documentation PARAMETER="CCO" KIND="P" INDEX=" 010"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 011"/>
+   <documentation PARAMETER="I_TEXTO" KIND="P" STEXT="SAPoffice: Lista simple con longitud columna 255" INDEX=" 012"/>
+   <fm_source_new>zcl_ap_envio_mail=&gt;mail( EXPORTING subject   = subject
+                                     direccion = direccion
+                                     emisor    = emisor
+                                     texto     = texto
+                                     i_textos   = i_texto[]
+                                     dest_copia     = copia
+                                     dest_copia_oculta       = cco
+                                     clave     = clave
+                                     lista_distribucion = lista_distribucion
+                                     commit    = &apos;X&apos;
+                           IMPORTING message   = message ).</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+ </functionmodules>
+</FUGR>

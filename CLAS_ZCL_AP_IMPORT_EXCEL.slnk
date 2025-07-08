@@ -1,0 +1,1445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_IMPORT_EXCEL" VERSION="1" LANGU="S" DESCRIPT="Importar Fichero Excel" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+types: tt_excel type table of kcde_cells.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="RED" ENTRY="Leyendo registro" LENGTH="16 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_IMPORT_EXCEL" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <typeUsage CLSNAME="ZCL_AP_IMPORT_EXCEL" TYPEGROUP="TRUXS" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <forwardDeclaration>TRUXS</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="EXCEL" VERSION="1" LANGU="S" DESCRIPT="Celdas en estructura plana para upload flexible Excel" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="KCDE_CELLS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="I_EXCEL" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_EXCEL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="EXPORTAR_TABLA" VERSION="1" LANGU="S" DESCRIPT="Exportar contenido de tabla" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="EXPORTAR_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="EXPORTAR_TABLA" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Debería ser extensión XML" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>method EXPORTAR_TABLA.
+  DATA: v_default_file_name TYPE string,
+        v_filename          TYPE string,
+        v_file_path         TYPE string,
+        wa_table            TYPE dd02l,
+        check_path          TYPE string,
+        v_select            TYPE string,
+        t_fieldcat          TYPE lvc_t_fcat,
+        v_xml_version       TYPE string,
+        v_xml_flavour       TYPE string,
+        v_xstring           TYPE xstring,
+        v_size              TYPE i,
+        gt_bintab           TYPE solix_tab.
+
+  DATA: r_data        TYPE REF TO data,
+        r_structdescr TYPE REF TO cl_abap_structdescr,
+        r_table       TYPE REF TO cl_salv_table,
+        r_columns     TYPE REF TO cl_salv_columns_table,
+        r_aggreg      TYPE REF TO cl_salv_aggregations,
+        r_result_data TYPE REF TO cl_salv_ex_result_data_table.
+
+  FIELD-SYMBOLS: &lt;table&gt; TYPE ANY TABLE,
+                 &lt;fs_component&gt; TYPE abap_compdescr.
+
+  CREATE DATA r_data TYPE STANDARD TABLE OF (tabla).
+  ASSIGN r_data-&gt;* TO &lt;table&gt;.
+
+* Get all columns for select
+  r_structdescr ?= cl_abap_structdescr=&gt;describe_by_name( tabla ).
+  IF r_structdescr IS BOUND.
+    LOOP AT r_structdescr-&gt;components[] ASSIGNING &lt;fs_component&gt;.
+      CONCATENATE v_select &lt;fs_component&gt;-name INTO v_select SEPARATED BY space.
+    ENDLOOP.
+  ENDIF.
+
+* Select all data
+  SELECT (v_select) FROM (tabla) INTO TABLE &lt;table&gt;.
+
+  TRY.
+      cl_salv_table=&gt;factory(
+      EXPORTING
+        list_display = abap_false
+      IMPORTING
+        r_salv_table = r_table
+      CHANGING
+        t_table     = &lt;table&gt; ).
+    CATCH cx_salv_msg.
+  ENDTRY.
+
+* Get columns and aggregation to create fieldcatalog
+  r_columns  = r_table-&gt;get_columns( ).
+  r_aggreg   = r_table-&gt;get_aggregations( ).
+  t_fieldcat = cl_salv_controller_metadata=&gt;get_lvc_fieldcatalog(
+                                r_columns     = r_columns
+                                r_aggregations = r_aggreg ).
+
+* Create result data table
+  IF cl_salv_bs_a_xml_base=&gt;get_version( ) EQ if_salv_bs_xml=&gt;version_25 OR
+     cl_salv_bs_a_xml_base=&gt;get_version( ) EQ if_salv_bs_xml=&gt;version_26.
+
+    r_result_data = cl_salv_ex_util=&gt;factory_result_data_table(
+        r_data                     = r_data
+        t_fieldcatalog             = t_fieldcat
+    ).
+
+* Get XML version
+    CASE cl_salv_bs_a_xml_base=&gt;get_version( ).
+      WHEN if_salv_bs_xml=&gt;version_25.
+        v_xml_version = if_salv_bs_xml=&gt;version_25.
+      WHEN if_salv_bs_xml=&gt;version_26.
+        v_xml_version = if_salv_bs_xml=&gt;version_26.
+    ENDCASE.
+
+* Get XML flavour
+    v_xml_flavour = if_salv_bs_c_tt=&gt;c_tt_xml_flavour_export.
+
+* Create excel data
+    CALL METHOD cl_salv_bs_tt_util=&gt;if_salv_bs_tt_util~transform
+      EXPORTING
+        xml_type      = if_salv_bs_xml=&gt;c_type_mhtml
+        xml_version   = v_xml_version
+        r_result_data = r_result_data
+        xml_flavour   = v_xml_flavour
+        gui_type      = if_salv_bs_xml=&gt;c_gui_type_gui
+      IMPORTING
+        xml           = v_xstring.
+  ENDIF.
+
+  IF v_xstring IS NOT INITIAL.
+    CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+      EXPORTING
+        buffer        = v_xstring
+      IMPORTING
+        output_length = v_size
+      TABLES
+        binary_tab    = gt_bintab.
+
+    CALL METHOD cl_gui_frontend_services=&gt;gui_download
+      EXPORTING
+        bin_filesize            = v_size
+        filename                = fichero
+        filetype                = &apos;BIN&apos;
+      CHANGING
+        data_tab                = gt_bintab
+      EXCEPTIONS
+        file_write_error        = 1
+        no_batch                = 2
+        gui_refuse_filetransfer = 3
+        invalid_type            = 4
+        no_authority            = 5
+        unknown_error           = 6
+        header_not_allowed      = 7
+        separator_not_allowed   = 8
+        filesize_not_allowed    = 9
+        header_too_long         = 10
+        dp_error_create         = 11
+        dp_error_send           = 12
+        dp_error_write          = 13
+        unknown_dp_error        = 14
+        access_denied           = 15
+        dp_out_of_memory        = 16
+        disk_full               = 17
+        dp_timeout              = 18
+        file_not_found          = 19
+        dataprovider_exception  = 20
+        control_flush_error     = 21
+        not_supported_by_gui    = 22
+        error_no_gui            = 23
+        OTHERS                  = 24.
+    IF sy-subrc &lt;&gt; 0.
+*  MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*             WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="CLIENT" VERSION="1" LANGU="S" DESCRIPT="Identificación del mandante del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MANDT" PARVALUE="SY-MANDT"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="LOGICAL_FILENAME" VERSION="1" LANGU="S" DESCRIPT="Nombre lógico del fichero" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="PARAMETER_1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="PARAMETER_2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="PARAMETER_3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="USE_PRESENTATION_SERVER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="WITH_FILE_EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="USE_BUFFER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="ELEMINATE_BLANKS" VERSION="1" LANGU="S" DESCRIPT="Marca de selección para una entrada en un campo dynpro" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATAR" PARVALUE="SY-DATAR"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="INCLUDING_DIR" VERSION="1" LANGU="S" DESCRIPT="Marca de selección para una entrada en un campo dynpro" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATAR" PARVALUE="SY-DATAR"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="EMERGENCY_FLAG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="FILE_FORMAT" VERSION="1" LANGU="S" DESCRIPT="Formato de los datos a transferir (upload/download)" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="FILENAME-FILEFORMAT"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="FILE_NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="OPERATING_SYSTEM" VERSION="1" LANGU="S" DESCRIPT="Sistema operativo del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-OPSYS" PARVALUE="SY-OPSYS"/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_GET_NAME" SCONAME="FILE_NOT_FOUND" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method FILE_GET_NAME.
+
+  data: len            type i,                              &quot;#EC NEEDED
+        work_path(255) type c,
+        work_file(255) type c,
+        work_fnam(255) type c,
+        param_1(255)   type c,
+        param_2(255)   type c,
+        param_3(255)   type c.
+
+  data: begin of i_filename.
+          include type filename.
+  data: end   of i_filename.
+
+  data: begin of i_path.
+          include type path.
+  data: end   of i_path.
+
+  data: begin of i_opsystem.
+          include type opsystem.
+  data: end   of i_opsystem.
+
+  data: begin of i_filesys.
+          include type filesys.
+  data: end   of i_filesys.
+
+  data  ld_pres_server_platform   type i.
+
+  field-symbols: &lt;string&gt; type any.
+
+* in den folgenden Strukturen werden die zuletzt aus der DB eingelesenen
+* Daten gepuffert, bei rekurs. Aufrufen des FBs werden sie modifiziert
+  statics: begin of buf_filename.
+          include type filename.
+  statics: end   of buf_filename.
+
+  statics: begin of buf_path.
+          include type path.
+  statics: end   of buf_path.
+
+  statics: begin of buf_opsystem.
+          include type opsystem.
+  statics: end   of buf_opsystem.
+
+  statics: begin of buf_filesys.
+          include type filesys.
+  statics: end   of buf_filesys.
+
+
+*---------------------------------------------------------------------
+*    Initialisierung
+*---------------------------------------------------------------------
+
+* Rückgabeparameter initializieren
+  clear: emergency_flag,
+         file_format,
+         file_name.
+
+* fülle die Arbeitsbereiche mit dem Puffer
+  i_filename = buf_filename.
+  i_path     = buf_path.
+  i_opsystem = buf_opsystem.
+  i_filesys  = buf_filesys.
+
+*---------------------------------------------------------------------
+*    Ermittlung des phys. Dateinamens
+*---------------------------------------------------------------------
+
+* phys. Dateinamen, Dateianhang und logischen Dateipfad besorgen
+  if    logical_filename ne i_filename-fileintern
+     or client           ne i_filename-mandt
+     or use_buffer       eq space.
+    select single * from filename client specified
+                    into i_filename
+                    where mandt      eq client
+                    and   fileintern eq logical_filename.
+    if sy-subrc ne 0.
+      data filenameci type filenameci.
+      select single * from filenameci into filenameci
+                      where fileintern eq logical_filename.
+      if sy-subrc ne 0.
+        message e001(sg)
+          with logical_filename
+          raising file_not_found.
+      else.
+        move-corresponding filenameci to i_filename.
+        move client to i_filename-mandt.
+      endif.
+    endif.
+  endif.
+
+* begin &quot;n1497003
+  if  i_filename-fileformat = &apos;DIR&apos;
+  and including_dir = abap_false.
+    message e001(sg)
+      with logical_filename
+      raising file_not_found.
+  endif.
+* end &quot;n1497003
+
+  work_file = i_filename-fileextern.
+
+* Laufzeitvariablen in Phys. Dateinamen ersetzen
+  param_1 = parameter_1.
+  param_2 = parameter_2.
+  param_3 = parameter_3.
+  perform replace_parameters_file in PROGRAM SAPLSFIL
+    using
+      param_1
+      param_2
+      param_3
+    changing
+      work_file.
+
+  perform eleminate_blanks in PROGRAM SAPLSFIL
+    using
+      work_file
+      eleminate_blanks.
+
+* Verarbeitung beenden, wenn kein logischer Pfad vorhanden
+  if i_filename-pathintern eq space.
+
+    file_name   = work_file.
+    file_format = i_filename-fileformat.
+
+    exit.
+  endif.
+
+*---------------------------------------------------------------------
+*    Ermittlung des phys. Verzeichnisses in symbolischer Form
+*---------------------------------------------------------------------
+
+* Syntaxgruppe des Betriebssystems besorgen
+  if use_presentation_server ne space.
+    call method cl_gui_frontend_services=&gt;get_platform
+      receiving
+        platform             = ld_pres_server_platform
+      exceptions
+        error_no_gui         = 1
+        cntl_error           = 2
+        not_supported_by_gui = 3
+        others               = 4.
+    if sy-subrc ne 0.
+      raise file_not_found.
+    endif.
+    case ld_pres_server_platform.
+      when 1.
+        operating_system = &apos;WN32_95&apos;.
+      when 2.
+        operating_system = &apos;WN32_98&apos;.
+      when 3 or 4 or 5 or 14 or 15 or 16 or 17. &quot;Windows all versions
+        operating_system = &apos;WN32&apos;.
+      when 6 or 13.                                         &quot; MAC
+        operating_system = &apos;MC&apos; .
+      when 7.                                               &quot; OS/2
+        operating_system = &apos;PM&apos;.
+      when 8 or 9 or 10 or 11 or 12.                      &quot; UNIX/LINUX
+        operating_system = &apos;MF&apos;.
+    endcase.
+  endif.
+  if i_opsystem-opsys ne operating_system.
+    select  single *
+      from  opsystem
+      into  i_opsystem
+      where opsys eq operating_system.
+    if  sy-subrc           ne 0
+     or i_opsystem-filesys eq space.
+      perform emergency_action in PROGRAM SAPLSFIL
+        using
+          work_file
+          operating_system
+          including_dir                                     &quot;n1497003
+        changing
+          work_fnam.
+
+      perform eleminate_blanks in PROGRAM SAPLSFIL
+        using
+          work_fnam
+          eleminate_blanks.
+
+      file_name      = work_fnam.
+      file_format    = i_filename-fileformat.
+      emergency_flag = &apos;X&apos;.
+
+
+      exit.                    &quot;&lt;--- Leave this function module
+    endif.
+  endif.
+
+* plattformspezifischen Pfad besorgen
+  if use_buffer ne space.
+    if i_path-pathintern ne i_filename-pathintern
+    or i_path-filesys    ne i_opsystem-filesys.
+      select  single *
+        from  path
+        into  i_path
+        where pathintern eq i_filename-pathintern
+        and   filesys    eq i_opsystem-filesys.
+      if sy-subrc ne 0.
+        perform emergency_action in PROGRAM SAPLSFIL
+          using
+            work_file
+            operating_system
+            including_dir                                   &quot;n1497003
+          changing
+            work_fnam.
+
+        perform eleminate_blanks in PROGRAM SAPLSFIL
+          using
+            work_fnam
+            eleminate_blanks.
+
+        file_name      = work_fnam.
+        file_format    = i_filename-fileformat.
+        emergency_flag = &apos;X&apos;.
+
+
+        exit.                    &quot;&lt;--- Leave this function module
+      endif.
+    endif.
+  else.
+    select  single *
+      from  path
+      into  i_path
+      where pathintern eq i_filename-pathintern
+      and   filesys    eq i_opsystem-filesys.
+    if sy-subrc ne 0.
+      perform emergency_action in PROGRAM SAPLSFIL
+        using
+          work_file
+          operating_system
+          including_dir                                     &quot;n1497003
+        changing
+          work_fnam.
+
+      perform eleminate_blanks in PROGRAM SAPLSFIL
+        using
+          work_fnam
+          eleminate_blanks.
+
+
+      file_name      = work_fnam.
+      file_format    = i_filename-fileformat.
+      emergency_flag = &apos;X&apos;.
+
+
+
+
+      exit.                    &quot;&lt;--- Leave this function module
+    endif.
+  endif.
+  work_path = i_path-pathextern.
+
+*---------------------------------------------------------------------
+*    Plattformspezifische Bildung des gesamten Pfadnamens
+*---------------------------------------------------------------------
+
+* plattformspezifische Parameter besorgen
+  if i_filesys-filesys ne i_opsystem-filesys.
+    select  single *
+      from  filesys
+      into  i_filesys
+      where filesys eq i_opsystem-filesys.
+    if sy-subrc ne 0.  &quot;Unbekannte Syntaxgruppe
+      clear i_filesys.
+      i_filesys-filesys   = i_opsystem-filesys.
+      i_filesys-fsysactiv = &apos;X&apos;.
+    endif.
+    if i_filesys-namelen eq 0.
+      i_filesys-namelen = 50.
+    endif.
+  endif.
+
+* Dateiname ab der maximalen Länge abschneiden
+  assign work_file(i_filesys-namelen) to &lt;string&gt;.
+  work_file = &lt;string&gt;.
+
+  if including_dir = abap_false.                            &quot;n1497003
+* Dateianhang erzeugen
+    if  with_file_extension   ne space
+    and i_filename-fileformat ne space
+    and i_filesys-fileext     ne space.
+      concatenate work_file &apos;.&apos; i_filename-fileformat
+        into work_file.
+    endif.
+  endif.                                                    &quot;n1497003
+
+* Laufzeitvariablen in phys. Pfad ersetzen
+  perform replace_parameters_path in PROGRAM SAPLSFIL
+    using
+      work_file
+      param_1
+      param_2
+      param_3
+    changing
+      work_path.
+
+  file_format = i_filename-fileformat.
+
+  perform eleminate_blanks in PROGRAM SAPLSFIL
+    using
+      work_path
+      eleminate_blanks.
+
+
+  file_name   = work_path.
+
+*---------------------------------------------------------------------
+*    Abschlußverarbeitung
+*---------------------------------------------------------------------
+
+* aktualisiere Puffer: i_filename, buf_filename etc. evtl. modifiziert
+  buf_filename = i_filename.
+  buf_path     = i_path.
+  buf_opsystem = i_opsystem.
+  buf_filesys  = i_filesys.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" VERSION="1" LANGU="S" DESCRIPT="Lee fichero CSV y convierte a tabla" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_FILENAME" VERSION="1" LANGU="S" DESCRIPT="Nombre lógico del fichero" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_SERVERTYP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TRUXS_SERVER" PARVALUE="&apos;APP&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_FILEFORMAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TRUXS_FILEFORMAT" PARVALUE="&apos;CSV&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_FIELD_SEPERATOR" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 1" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR01" PARVALUE="&apos;;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_LINE_HEADER" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 1" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR01" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="UNIR_SI_NO_SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="E_BIN_FILELENGTH" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="I_TAB_RECEIVER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="FILE_NOT_FOUND" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="CLOSE_FAILED" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="AUTHORIZATION_FAILED" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="3 "/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="OPEN_FAILED" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="4 "/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="FILE_READ_AND_CONVERT_SAP_DATA" SCONAME="CONVERSION_FAILED" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="5 "/>
+  <source>method FILE_READ_AND_CONVERT_SAP_DATA.
+  CONSTANTS:
+    c_ole_header       TYPE tfdir-funcname VALUE &apos;LOAD_&apos;,
+    c_fm_header        TYPE tfdir-funcname VALUE &apos;TEXT_CONVERT_&apos;,
+    c_fm_trailer       TYPE tfdir-funcname VALUE &apos;_TO_SAP&apos;,
+    c_file_type_binary TYPE  rlgrap-filetype VALUE &apos;BIN&apos;,
+    c_file_type_xml    TYPE  rlgrap-filetype VALUE &apos;XML&apos;,
+    c_file_type_ascii  TYPE  rlgrap-filetype VALUE &apos;ASC&apos;.
+  DATA:
+    l_type,
+    l_component       TYPE i,
+    l_sys_cp          TYPE tcp00-cpcodepage, &quot;system codepage
+    l_lan_cp          TYPE tcp00-cpcodepage, &quot;language codepage
+    l_tcp00           TYPE tcp00,
+    i_tab_input_data  TYPE truxs_t_text_data,
+    i_tab_xinput_data TYPE truxs_xml_table,
+    s_input_data      LIKE LINE OF i_tab_input_data,
+    l_fm_name         TYPE tfdir-funcname,
+    l_tfdir           TYPE tfdir,
+    l_text80(80)      TYPE c,
+    l_return(40)      TYPE c,
+    l_file_format     TYPE filename-fileformat,
+    l_totalsize       TYPE i,
+    l_file_name       TYPE rlgrap-filename.
+  DATA: l_file_name_string TYPE string,
+        l_file_format_10   TYPE char10,
+        l_string           TYPE string.
+  FIELD-SYMBOLS: &lt;fs_itab&gt; TYPE table.
+  FIELD-SYMBOLS: &lt;fs_struc&gt; TYPE any.
+
+  CASE i_fileformat.
+    WHEN c_file_type_binary.
+      ASSIGN i_tab_receiver[] TO &lt;fs_itab&gt;.
+    WHEN c_file_type_xml.
+      ASSIGN i_tab_xinput_data[] TO &lt;fs_itab&gt;.
+    WHEN OTHERS.
+      ASSIGN i_tab_input_data[] TO &lt;fs_itab&gt;.
+  ENDCASE.
+
+*  assign local copy of initial line of &lt;fs_itab&gt; to &lt;fs_struc&gt;.
+  DATA: nueva_linea TYPE REF TO data.
+  CREATE DATA nueva_linea LIKE LINE OF &lt;fs_itab&gt;.
+  ASSIGN nueva_linea-&gt;* TO &lt;fs_struc&gt;.
+
+* Get physical file name first
+  file_get_name( EXPORTING logical_filename = i_filename
+                 IMPORTING
+      file_format      = l_file_format
+      file_name        = l_file_name
+    EXCEPTIONS
+      OTHERS           = 4 ).
+
+  IF sy-subrc &lt;&gt; 0.
+    CLEAR: sy-msgid, sy-msgno, sy-msgty.
+    IF l_file_format IS INITIAL.
+      l_file_format = c_file_type_ascii.
+    ELSE.
+      IF i_fileformat = c_file_type_xml.
+        l_file_format = c_file_type_binary.
+      ELSE.
+        l_file_format = c_file_type_ascii.
+      ENDIF.
+    ENDIF.
+    l_file_name   = i_filename.
+  ENDIF.
+
+* Read data from application server
+  IF i_servertyp = &apos;APP&apos;.
+*   check code page first
+    CALL FUNCTION &apos;SYSTEM_CODEPAGE&apos;
+      IMPORTING
+        codepage = l_sys_cp.
+    SELECT SINGLE * FROM tcp00 INTO l_tcp00 WHERE cpcodepage = l_sys_cp.
+    CALL FUNCTION &apos;SCP_CODEPAGE_FOR_LANGUAGE&apos;
+      EXPORTING
+        language = sy-langu
+      IMPORTING
+        codepage = l_lan_cp
+      EXCEPTIONS
+        OTHERS   = 4.
+    IF sy-subrc &lt;&gt; 0.
+      l_lan_cp = l_sys_cp.
+    ENDIF.
+
+*   Handle the file now
+    IF l_file_format = c_file_type_ascii.
+      IF codepage IS INITIAL.
+        OPEN DATASET l_file_name FOR INPUT IN TEXT MODE
+                                       ENCODING DEFAULT.
+      ELSE.
+        OPEN DATASET l_file_name FOR INPUT IN LEGACY TEXT MODE CODE PAGE codepage.
+      ENDIF.
+    ELSE.
+      OPEN DATASET l_file_name FOR INPUT IN BINARY MODE.
+    ENDIF.
+    CATCH SYSTEM-EXCEPTIONS file_access_errors = 4.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE e890(ux) WITH l_file_name RAISING open_failed.
+      ENDIF.
+    ENDCATCH.
+    CLEAR sy-subrc.
+    WHILE sy-subrc = 0.
+      READ DATASET l_file_name INTO &lt;fs_struc&gt;.
+      CATCH SYSTEM-EXCEPTIONS file_access_errors = 4.
+        IF sy-subrc &lt;&gt; 0.
+          EXIT.
+        ENDIF.
+      ENDCATCH.
+
+      IF unir_si_no_separador IS INITIAL.
+        APPEND &lt;fs_struc&gt; TO &lt;fs_itab&gt;.
+      ELSE.
+        IF l_string IS INITIAL.
+          l_string = &lt;fs_struc&gt;.
+        ELSE.
+          CONCATENATE l_string cl_abap_char_utilities=&gt;cr_lf &lt;fs_struc&gt; INTO l_string.
+        ENDIF.
+        IF zcl_ap_string=&gt;ultimo_caracter( &lt;fs_struc&gt; ) = i_field_seperator.
+          APPEND l_string TO &lt;fs_itab&gt;.
+          CLEAR l_string.
+        ENDIF.
+      ENDIF.
+      IF sy-batch IS INITIAL.
+        l_text80 = sy-tabix.
+        CONDENSE l_text80 NO-GAPS.
+        CONCATENATE TEXT-red l_text80 INTO l_text80
+                     SEPARATED BY space.
+        CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+          EXPORTING
+            percentage = 0
+            text       = l_text80
+          EXCEPTIONS
+            OTHERS     = 0.
+      ENDIF.
+    ENDWHILE.
+    IF i_fileformat &lt;&gt; c_file_type_binary AND
+      i_fileformat &lt;&gt; c_file_type_xml.
+      IF l_lan_cp &lt;&gt; l_sys_cp.
+        DATA: ld_lan_cp TYPE abap_encod.
+        ld_lan_cp = l_lan_cp.
+        CALL FUNCTION &apos;TRANSLATE_CODEPAGE_IN&apos;
+          EXPORTING
+            codepage_from = ld_lan_cp
+          TABLES
+            t_data        = &lt;fs_itab&gt;
+          EXCEPTIONS
+            OTHERS        = 0.
+
+      ENDIF.
+    ENDIF.
+
+    CLOSE DATASET l_file_name.
+    CATCH SYSTEM-EXCEPTIONS file_access_errors = 4.
+      IF sy-subrc = 4.
+        MESSAGE e891(ux) WITH l_file_name RAISING close_failed.
+      ENDIF.
+    ENDCATCH.
+  ENDIF.
+
+* Upload data from presentation server
+  IF i_servertyp = &apos;PRS&apos;.
+*   CALL FUNCTION &apos;WS_UPLOAD&apos;
+    MOVE l_file_name TO l_file_name_string.
+    MOVE l_file_format TO l_file_format_10.
+    CALL METHOD cl_gui_frontend_services=&gt;gui_upload
+      EXPORTING
+        filename        = l_file_name_string
+        filetype        = l_file_format_10
+      IMPORTING
+        filelength      = l_totalsize
+      CHANGING
+        data_tab        = &lt;fs_itab&gt;
+      EXCEPTIONS
+        file_read_error = 4
+        file_open_error = 8
+        OTHERS          = 8.
+
+    CASE sy-subrc.
+      WHEN 0.
+      WHEN 4.
+        MESSAGE e890(ux) WITH l_file_name RAISING file_not_found.
+      WHEN OTHERS.
+        MESSAGE e890(ux) WITH l_file_name RAISING file_not_found.
+    ENDCASE.
+  ENDIF.
+* Upload data from OLE2 server
+  IF i_servertyp = &apos;OLE2&apos;.
+    CALL FUNCTION &apos;WS_QUERY&apos;
+      EXPORTING
+        query    = &apos;FL&apos;
+        filename = l_file_name
+      IMPORTING
+        return   = l_return
+      EXCEPTIONS
+        OTHERS   = 4.
+    IF sy-subrc &lt;&gt; 0 OR l_return IS INITIAL OR l_return = &apos;0&apos;.
+      MESSAGE e890(ux) WITH l_file_name RAISING file_not_found.
+    ENDIF.
+  ENDIF.
+
+  CASE i_fileformat.
+    WHEN space.
+      i_tab_receiver[] = &lt;fs_itab&gt;.
+    WHEN c_file_type_binary.
+    WHEN c_file_type_ascii.
+*     i_tab_receiver[] = i_tab_input_data[].
+      CALL FUNCTION &apos;TEXT_CONVERT_TEX_TO_SAP&apos;
+        EXPORTING
+          i_line_header        = i_line_header
+          i_tab_raw_data       = i_tab_input_data[]
+          i_filename           = l_file_name
+        TABLES
+          i_tab_converted_data = i_tab_receiver
+        EXCEPTIONS
+          OTHERS               = 4.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                                           RAISING conversion_failed.
+      ENDIF.
+    WHEN OTHERS.
+      IF i_fileformat = &apos;CSV&apos; AND i_field_seperator NE &apos;;&apos;.
+        CALL FUNCTION &apos;TEXT_CONVERT_TEX_TO_SAP&apos;
+          EXPORTING
+            i_field_seperator    = i_field_seperator
+            i_line_header        = i_line_header
+            i_tab_raw_data       = &lt;fs_itab&gt;
+            i_filename           =  l_file_name
+          TABLES
+            i_tab_converted_data = i_tab_receiver
+          EXCEPTIONS
+            OTHERS               = 4.
+
+        if sy-subrc ne 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                RAISING conversion_failed.
+        endif.
+      ELSE.
+        l_fm_name    = c_fm_header.
+        l_fm_name+13 = i_fileformat.
+        l_fm_name+23 = c_fm_trailer.
+        CONDENSE l_fm_name NO-GAPS.
+        SELECT SINGLE * FROM tfdir INTO l_tfdir
+                                   WHERE funcname = l_fm_name.
+        IF sy-subrc = 0.
+          CALL FUNCTION l_fm_name
+            EXPORTING
+              i_fileformat         = i_fileformat
+              i_field_seperator    = i_field_seperator
+              i_line_header        = i_line_header
+              i_tab_raw_data       = &lt;fs_itab&gt;
+              i_filename           = l_file_name
+              i_totalsize          = l_totalsize
+            TABLES
+              i_tab_converted_data = i_tab_receiver
+            EXCEPTIONS
+              OTHERS               = 4.
+        ELSE.
+          MESSAGE e046(fl) WITH l_fm_name RAISING conversion_failed.
+        ENDIF.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                                             RAISING conversion_failed.
+        ENDIF.
+      ENDIF.
+  ENDCASE.
+  e_bin_filelength = l_totalsize.
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_MAX_ROW" VERSION="1" LANGU="S" DESCRIPT="Devuelve máxima fila leida" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_MAX_ROW" SCONAME="MAX_ROW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>method GET_MAX_ROW.
+
+  DESCRIBE TABLE i_excel LINES sy-tfill.
+  READ TABLE i_excel INTO excel INDEX sy-tfill.
+  max_row = excel-row.
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el valor de una coordenada" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_VALOR" SCONAME="FILA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_VALOR" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_VALOR" SCONAME="COL_AGRUPADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 32, con mayúsculas/minúsculas" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="KCD_TEXT32"/>
+  <source>method GET_VALOR.
+data: l_ROW	type KCD_EX_ROW_N,
+      l_COL	type KCD_EX_COL_N.
+
+  l_row = fila.
+  zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_row ).
+  l_col = columna.
+  zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_col ).
+
+  clear valor.
+  read table i_excel into excel with key row = l_row
+                                         col = l_col
+                                binary search.
+  if sy-subrc = 0.
+    valor = excel-value.
+  else.
+    if col_agrupada = &apos;X&apos;.
+      loop at i_excel into excel where row &lt;= l_row
+                                   and col = l_col.
+        valor = excel-value.
+      endloop.
+    endif.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" VERSION="1" LANGU="S" DESCRIPT="Importar fichero Excel en tabla SAP" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Fichero local para upload/download" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" SCONAME="LINE_HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" SCONAME="POPUP_SELECT_FILE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla con datos del fichero Excel" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR" SCONAME="ERROR_IMPORT_EXCEL" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method IMPORTAR.
+
+  TYPE-POOLS: truxs.
+  DATA: it_raw TYPE truxs_t_text_data,
+        l_fichero TYPE localfile.
+
+  IF popup_select_file = &apos;X&apos;.
+    l_fichero = zcl_ap_ficheros=&gt;popup_select_fichero( file_filter = zcl_ap_ficheros=&gt;c_filtro_xls ).
+  else.
+    l_fichero = fichero.
+  endif.
+
+  check not l_fichero is initial.
+
+* load excel file into internal table
+  CALL FUNCTION &apos;TEXT_CONVERT_XLS_TO_SAP&apos;
+    EXPORTING
+      i_line_header        = line_header
+      i_tab_raw_data       = it_raw       &quot; work table
+      i_filename           = l_fichero
+    TABLES
+      i_tab_converted_data = tabla    &quot; excel data
+    EXCEPTIONS
+      conversion_failed    = 1
+      OTHERS               = 2.
+* error check
+  IF sy-subrc &lt;&gt; 0.
+    IF NOT sy-msgno IS INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 RAISING error_import_excel.
+    ELSE.
+      RAISE error_import_excel.
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" VERSION="1" LANGU="S" DESCRIPT="Importar fichero CSV en tabla SAP" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Fichero local para upload/download" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="LINE_HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="POPUP_SELECT_FILE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="FIELD_SEPARATOR" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="FILEFORMAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TRUXS_FILEFORMAT" PARVALUE="&apos;CSV&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="UNIR_SI_NO_SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla con datos del fichero Excel" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORTAR_CSV" SCONAME="ERROR_IMPORT_EXCEL" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method IMPORTAR_CSV.
+
+  TYPE-POOLS: truxs.
+  DATA: it_raw TYPE truxs_t_text_data,
+        l_fichero TYPE localfile,
+        l_server TYPE truxs_server.
+
+  IF popup_select_file = &apos;X&apos;.
+    l_fichero = zcl_ap_ficheros=&gt;popup_select_fichero(  ).
+  ELSE.
+    l_fichero = fichero.
+  ENDIF.
+
+  CHECK NOT l_fichero IS INITIAL.
+
+*  sy-tfill = STRLEN( l_fichero ).
+*  IF sy-tfill &gt; 60.
+*    MESSAGE &apos;Función limitada a ruta ficheros máx. 60 carácteres&apos; TYPE &apos;E&apos;.
+*  ENDIF.
+
+  IF servidor IS INITIAL.
+    l_server = &apos;PRS&apos;.
+  ELSE.
+    l_server = &apos;APP&apos;.
+  ENDIF.
+
+*  CALL FUNCTION &apos;FILE_READ_AND_CONVERT_SAP_DATA&apos;
+  file_read_and_convert_sap_data(
+   EXPORTING
+     i_filename                 = l_fichero
+     i_servertyp                = l_server
+   i_fileformat               = fileformat
+   i_field_seperator          = field_separator
+   i_line_header              = line_header
+   codepage                   = codepage
+   unir_si_no_separador       = unir_si_no_separador
+ IMPORTING
+*   E_BIN_FILELENGTH           =
+*    TABLES
+     i_tab_receiver             = tabla
+  EXCEPTIONS
+    file_not_found             = 1
+    close_failed               = 2
+    authorization_failed       = 3
+    open_failed                = 4
+    conversion_failed          = 5
+    OTHERS                     = 6 ).
+* error check
+  IF sy-subrc &lt;&gt; 0.
+    IF NOT sy-msgno IS INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      CASE sy-subrc.
+        WHEN 1. message = &apos;Fichero no encontrado&apos;.
+        WHEN 2. message = &apos;Error al cerrar fichero&apos;.
+        WHEN 3. message = &apos;No hay autorización para leer fichero&apos;.
+        WHEN 4. message = &apos;Error al abrir fichero&apos;.
+        WHEN 5. message = &apos;Error de conversión&apos;.
+        WHEN OTHERS. message = &apos;Error al procesar fichero&apos;.
+      ENDCASE.
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORT_XLS" VERSION="1" LANGU="S" DESCRIPT="Importar fichero Excel en tabla SAP" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORT_XLS" SCONAME="I_FILENAME" VERSION="1" LANGU="S" DESCRIPT="Fichero local para upload/download" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LOCALFILE"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORT_XLS" SCONAME="I_STRUCTURE" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORT_XLS" SCONAME="E_TB_DATA" VERSION="1" LANGU="S" DESCRIPT="Tabla con datos del fichero Excel" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="DATA"/>
+  <exception CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="IMPORT_XLS" SCONAME="ERROR_IMPORT_EXCEL" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method IMPORT_XLS.
+
+* declarations
+* dynamic internal table
+  FIELD-SYMBOLS: &lt;tb_data&gt; TYPE STANDARD TABLE.
+* variables excel import
+  TYPE-POOLS: truxs.
+  DATA:
+    tb_data TYPE REF TO data,
+    it_raw TYPE truxs_t_text_data.
+
+* create dynamic table from structure name
+  CREATE DATA tb_data TYPE TABLE OF (i_structure).
+  ASSIGN tb_data-&gt;* TO &lt;tb_data&gt;.
+
+* load excel file into internal table
+  CALL FUNCTION &apos;TEXT_CONVERT_XLS_TO_SAP&apos;
+    EXPORTING
+      i_line_header        = &apos;X&apos;
+      i_tab_raw_data       = it_raw       &quot; work table
+      i_filename           = i_filename
+    TABLES
+      i_tab_converted_data = &lt;tb_data&gt;    &quot; excel data
+    EXCEPTIONS
+      conversion_failed    = 1
+      OTHERS               = 2.
+* error check
+  IF sy-subrc &lt;&gt; 0.
+    IF NOT sy-msgno IS INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 RAISING error_import_excel.
+    ELSE.
+      RAISE error_import_excel.
+    ENDIF.
+  ELSE.
+    e_tb_data = &lt;tb_data&gt;.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="INPUT_DATA2SAP_DATA" VERSION="1" LANGU="S" DESCRIPT="Datos externos a Datos SAP" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="INPUT_DATA2SAP_DATA" SCONAME="SUBRC" VERSION="1" LANGU="S" DESCRIPT="Código retorno de sentencias ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="INPUT_DATA2SAP_DATA" SCONAME="TARGET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="INPUT_DATA2SAP_DATA" SCONAME="SOURCE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD input_data2sap_data.
+  DATA: pi_field_type TYPE c.
+  DATA: l_date TYPE sydatum.
+  DATA: l_decimals TYPE i.
+  DATA: l_decimals_target TYPE i.
+  FIELD-SYMBOLS: &lt;fs_type_x&gt; TYPE x.
+
+  DESCRIBE FIELD target TYPE pi_field_type.
+
+  CLEAR subrc.
+
+  CASE pi_field_type.
+    WHEN &apos;C&apos;.
+      target = source.
+
+    WHEN &apos;D&apos;.
+* Bitte beachten:
+* Die Funktion CONVERT_DATE_TO_INTERNAL erwartet das Datum analog den
+* Einstellungen in den Festwerten des Benutzers. Ist dort das Format
+* TT.MM.JJJJ eingestellt, dann muss der Routine das Datum in der
+* Form 31.12.1999 oder 31121999 übergeben werden.
+* Ist bei den Benutzerfestwerten das amerikanische Format JJJJ.MM.TT
+* eingestellt, dann erwartet die Funktion das Datum in der Form
+* 1999.12.31 oder 19991231
+* Einige Excel Datumsformate haben die Eigenart, zusätzliche Leerzeichen
+* und Punkte in das Datum einzufügen. Deshalb werden Punkte in der
+* DO Schleife entfernt und anschliessend noch die Leerzeichen durch
+* den condense entfernt.
+      DO 3 TIMES.
+        REPLACE &apos;.&apos; WITH &apos; &apos; INTO source.
+      ENDDO.
+      CONDENSE source NO-GAPS.
+
+      IF  NOT source IS INITIAL   &quot;Space
+      AND source &lt;&gt; &apos;00.00.0000&apos;
+      AND source &lt;&gt; &apos;00000000&apos;.
+        CALL FUNCTION &apos;CONVERT_DATE_TO_INTERNAL&apos;
+          EXPORTING
+            date_external = source
+          IMPORTING
+            date_internal = target
+          EXCEPTIONS
+            error_message = 4
+            OTHERS        = 4.
+        IF sy-subrc &lt;&gt; 0.
+          subrc = 4.
+        ENDIF.
+      ENDIF.
+
+    WHEN &apos;T&apos;.
+      IF NOT source IS INITIAL AND source &lt;&gt; &apos;00:00:00&apos;.
+        CALL FUNCTION &apos;CONVERT_TIME_INPUT&apos;
+          EXPORTING
+            input         = source
+          IMPORTING
+            output        = target
+          EXCEPTIONS
+            error_message = 4
+            OTHERS        = 4.
+        IF sy-subrc &lt;&gt; 0.
+          subrc = 4.
+        ENDIF.
+      ENDIF.
+    WHEN &apos;X&apos;.
+      ASSIGN source TO &lt;fs_type_x&gt; .
+      IF sy-subrc &lt;&gt; 0.
+        subrc = 8.
+      ENDIF.
+      target = &lt;fs_type_x&gt; .
+    WHEN &apos;N&apos;.
+      DESCRIBE FIELD target DECIMALS l_decimals_target.
+      prepare_number( CHANGING PARAMETER = source decimal_pos = l_decimals ).
+      IF source CN &apos;1234567890 &apos;.
+        subrc = 8.
+      ELSE.
+        l_decimals_target = l_decimals_target - l_decimals.
+        target = source * ( 10 ** ( l_decimals_target ) ).
+      ENDIF.
+    WHEN &apos;I&apos;.
+      DESCRIBE FIELD target DECIMALS l_decimals_target.
+      prepare_number( CHANGING PARAMETER = source decimal_pos = l_decimals ).
+      IF source CN &apos;1234567890 &apos;.
+        subrc = 8.
+      ELSE.
+        l_decimals_target = l_decimals_target - l_decimals.
+        target = source * ( 10 ** ( l_decimals_target ) ).
+      ENDIF.
+    WHEN &apos;P&apos;.
+      DESCRIBE FIELD target DECIMALS l_decimals_target.
+      prepare_number( CHANGING PARAMETER = source decimal_pos = l_decimals ).
+* OSS VW problem
+      DATA l_len_source TYPE i.
+      DATA l_len_target TYPE i.
+      DESCRIBE FIELD target LENGTH l_len_target
+                               IN BYTE MODE.
+      l_len_target = ( l_len_target * 2 ) - 1.
+      l_len_source = STRLEN( source ).
+      IF l_len_source &gt; l_len_target.
+        l_decimals_target = l_decimals_target -  l_len_target +
+                            l_len_source.
+        source = source(l_len_target).
+      ENDIF.
+* OSS VW problem
+      IF source CN &apos;1234567890 -+&apos;.
+        subrc = 8.
+      ELSE.
+        l_decimals_target = l_decimals_target - l_decimals.
+        move source TO target.
+        target = target * ( 10 ** ( l_decimals_target ) ).
+      ENDIF.
+    WHEN &apos;F&apos;.
+      CALL FUNCTION &apos;CHAR_FLTP_CONVERSION&apos;
+        EXPORTING
+          string = source
+        IMPORTING
+          flstr  = target
+        EXCEPTIONS
+          OTHERS = 4.
+      IF sy-subrc &lt;&gt; 0.
+        subrc = 4.
+      ENDIF.
+    WHEN OTHERS.
+      target = source.
+  ENDCASE.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" VERSION="1" LANGU="S" DESCRIPT="Recupera coordenadas excel" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" SCONAME="COL_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" SCONAME="ROW_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" SCONAME="COL_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="10"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LEER" SCONAME="ROW_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1000"/>
+  <source>method LEER.
+data l_FILENAME type  RLGRAP-FILENAME.
+
+  l_filename = fichero.
+
+  call function &apos;KCD_EXCEL_OLE_TO_INT_CONVERT&apos;
+    exporting
+      filename                = l_filename
+      i_begin_col             = col_ini
+      i_begin_row             = row_ini
+      i_end_col               = col_fin
+      i_end_row               = row_fin
+    tables
+      intern                  = i_excel
+    exceptions
+      inconsistent_parameters = 1
+      upload_ole              = 2
+      others                  = 3.
+  if sy-subrc ne 0.
+    case sy-subrc.
+      when 2.
+        message e398(00) with &apos;Error al leer el fichero&apos; l_filename.
+      when others.
+        message e398(00) with &apos;Error&apos; sy-subrc
+                              &apos;al cargar fichero Excel&apos;.
+    endcase.
+  else.
+    sort i_Excel.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS" VERSION="1" LANGU="S" DESCRIPT="Convierte una linea en formato CSV a datos" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS" SCONAME="FIELD_SEPARATOR" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS" SCONAME="LINEA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD LINEA_CSV_2_DATOS.
+  DATA: i_fichero TYPE TABLE OF text4096,
+        l_fichero TYPE text4096,
+        i_datos   TYPE REF TO data.
+
+  FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
+
+  CREATE DATA i_datos like table of datos.
+  ASSIGN i_datos-&gt;* TO &lt;tabla&gt;.
+
+  l_fichero = linea.
+  APPEND l_fichero  TO i_fichero.
+  CALL FUNCTION &apos;TEXT_CONVERT_TEX_TO_SAP&apos;
+    EXPORTING
+      i_field_seperator          = field_separator
+*    I_LINE_HEADER              =
+      i_tab_raw_data             = i_fichero
+*   I_FILENAME                 =
+    TABLES
+      i_tab_converted_data       = &lt;tabla&gt;
+    EXCEPTIONS
+      conversion_failed          = 1
+      OTHERS                     = 2.
+
+  IF sy-subrc NE 0.
+    MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER  sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+  ELSE.
+    READ TABLE &lt;tabla&gt; INTO datos INDEX 1.
+    if sy-subrc ne 0.
+      message = &apos;Error en conversión CSV&apos;.
+    endif.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS_INT" VERSION="1" LANGU="S" DESCRIPT="Convierte una linea en formato CSV a datos" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS_INT" SCONAME="FIELD_SEPARATOR" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS_INT" SCONAME="LINEA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS_INT" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_CSV_2_DATOS_INT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD LINEA_CSV_2_DATOS_INT.
+  FIELD-SYMBOLS: &lt;f_source&gt; TYPE ANY , &lt;f_target&gt; TYPE ANY.
+
+  DATA:
+        l_percentage(4)  TYPE c,
+        l_text80(80),
+        l_text6(6),
+        l_itab_entries LIKE sy-tabix,
+        l_tabix LIKE sy-tabix,
+        l_start_string LIKE sy-fdpos,
+        l_token_next LIKE sy-fdpos,
+        l_end_string LIKE sy-fdpos,
+        l_eol_string LIKE sy-fdpos,
+        l_len_string(6) TYPE n,
+        l_field_type,
+        l_field_decimals,
+        l_struc_index LIKE sy-index,
+        l_linea(65000),
+        l_subrc TYPE i.
+
+  l_linea = linea.
+  DESCRIBE FIELD datos LENGTH l_eol_string IN CHARACTER MODE.
+
+  DO.
+    l_token_next = 2.
+    l_struc_index = l_struc_index + 1.
+    IF NOT field_separator IS INITIAL.
+      SEARCH l_linea FOR field_separator STARTING AT
+                                                  l_start_string
+                                                  ENDING AT
+                                                  l_eol_string.
+      IF sy-subrc &lt;&gt; 0.
+        IF l_start_string &lt; l_eol_string.
+          sy-fdpos = l_eol_string - l_start_string + 1.
+          CLEAR sy-subrc.
+        ELSE.
+          EXIT.
+        ENDIF.
+      ENDIF.
+      IF sy-subrc = 0.
+        l_end_string = l_start_string + sy-fdpos - 1.
+        l_len_string = l_end_string - l_start_string + 1.
+*         Check leading control character
+        IF l_len_string &gt;= 4.
+          l_start_string = l_start_string - 1.
+          ASSIGN l_linea+l_start_string(3)
+                         TO &lt;f_source&gt;.
+          l_start_string = l_start_string + 1.
+          IF sy-subrc = 0 AND &lt;f_source&gt; = &apos;&quot;&quot;&quot;&apos;.
+            l_start_string = l_start_string + 3.
+            l_end_string = l_end_string - 1.
+            l_len_string = l_end_string - l_start_string + 1.
+            l_token_next = l_token_next + 1.
+          ENDIF.
+        ENDIF.
+        IF l_len_string &gt; 0.
+          l_start_string = l_start_string - 1.
+          ASSIGN l_linea+l_start_string(l_len_string)
+                         TO &lt;f_source&gt;.
+        ELSE.
+*           if l_start_string = 1.
+*             l_struc_index = l_struc_index - 1.
+*           endif.
+          l_start_string = l_start_string + l_token_next - 1.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      ASSIGN COMPONENT l_struc_index OF
+             STRUCTURE datos TO &lt;f_target&gt;.
+      IF sy-subrc = 0.
+        DESCRIBE FIELD &lt;f_target&gt; LENGTH l_len_string
+                                  IN CHARACTER MODE.
+        ASSIGN l_linea+l_start_string(l_len_string)
+             TO &lt;f_source&gt;.
+        l_end_string = l_len_string + l_start_string - 1.
+        l_token_next = 1.
+      ENDIF.
+    ENDIF.
+    IF sy-subrc = 0.
+      ASSIGN COMPONENT l_struc_index OF
+             STRUCTURE datos TO &lt;f_target&gt;.
+    ENDIF.
+    IF sy-subrc = 0.
+      CLEAR &lt;f_target&gt;.
+      CHECK l_len_string &gt; 0.
+      input_data2sap_data( CHANGING source = &lt;f_source&gt;
+                                    target = &lt;f_target&gt; subrc = l_subrc ).
+      IF l_subrc &lt;&gt; 0.
+        DESCRIBE FIELD &lt;f_target&gt; TYPE l_field_type.
+      ENDIF.
+      CASE sy-subrc.
+        WHEN 0.
+        WHEN 4.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                  INTO message.
+
+        WHEN 8.
+          MESSAGE ID &apos;UX&apos; TYPE &apos;E&apos; NUMBER &apos;899&apos;
+                  WITH l_field_type  &lt;f_source&gt;
+                       l_struc_index l_tabix
+                  INTO message.
+      ENDCASE.
+      l_start_string = l_end_string + l_token_next.
+*&gt;&gt;&gt;&gt;&gt; Lines Deleted &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; MurawskiW / 588278
+    ELSE.
+      EXIT.
+    ENDIF.
+  ENDDO.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_DATOS_2_CSV" VERSION="1" LANGU="S" DESCRIPT="Convierte una linea en formato SAP a CSV" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_DATOS_2_CSV" SCONAME="FIELD_SEPARATOR" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_DATOS_2_CSV" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_DATOS_2_CSV" SCONAME="LINEA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="LINEA_DATOS_2_CSV" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD linea_datos_2_csv.
+  DATA: i_fichero TYPE TABLE OF text4096,
+        l_fichero TYPE text4096,
+        i_datos   TYPE REF TO data.
+
+  FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
+
+  CREATE DATA i_datos LIKE TABLE OF datos.
+  ASSIGN i_datos-&gt;* TO &lt;tabla&gt;.
+  APPEND datos TO &lt;tabla&gt;.
+
+  CALL FUNCTION &apos;SAP_CONVERT_TO_TEX_FORMAT&apos;
+    EXPORTING
+      i_field_seperator    = field_separator
+*     I_LINE_HEADER        =
+*     I_FILENAME           =
+*     I_APPL_KEEP          = &apos; &apos;
+    TABLES
+      i_tab_sap_data       = &lt;tabla&gt;
+    CHANGING
+      i_tab_converted_data = i_fichero
+    EXCEPTIONS
+      conversion_failed    = 1
+      OTHERS               = 2.
+
+  IF sy-subrc NE 0.
+    MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER  sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+  ELSE.
+    READ TABLE i_fichero INTO l_fichero INDEX 1.
+    IF sy-subrc NE 0.
+      message = &apos;Error en conversión CSV&apos;.
+    ELSE.
+      linea = l_fichero.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="PREPARE_NUMBER" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="PREPARE_NUMBER" SCONAME="PARAMETER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="PREPARE_NUMBER" SCONAME="DECIMAL_POS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <source>method PREPARE_NUMBER.
+  data l_strlen type i.
+  data l_last_decimal type i.
+  data l_hlpvz type i.
+
+  l_strlen = strlen( parameter ).
+  clear: sy-subrc, decimal_pos.
+  while sy-subrc = 0.
+    if parameter ca &apos;.&apos;.
+      if sy-fdpos  &gt; l_last_decimal.
+        l_last_decimal = sy-fdpos + 1.
+      endif.
+    endif.
+    replace &apos;.&apos; with space into parameter.
+  endwhile.
+  clear sy-subrc.
+  while sy-subrc =  0.
+    if parameter ca &apos;,&apos;.
+      if sy-fdpos  &gt; l_last_decimal.
+        l_last_decimal = sy-fdpos + 1.
+      endif.
+    endif.
+    replace &apos;,&apos; with space into parameter.
+  endwhile.
+  clear sy-subrc.
+  while sy-subrc =  0.
+    if parameter ca &apos;;&apos;.
+      if sy-fdpos  &gt; l_last_decimal.
+        l_last_decimal = sy-fdpos + 1.
+      endif.
+    endif.
+    replace &apos;;&apos; with space into parameter.
+  endwhile.
+  clear sy-subrc.
+  while sy-subrc =  0.
+    if parameter ca &apos;/&apos;.
+      if sy-fdpos  &gt; l_last_decimal.
+        l_last_decimal = sy-fdpos + 1.
+      endif.
+    endif.
+    replace &apos;/&apos; with space into parameter.
+  endwhile.
+  if not l_last_decimal is initial.
+    l_hlpvz = l_strlen - 1.
+    if parameter+l_hlpvz(1) = &apos;-&apos;.
+      decimal_pos = l_strlen - l_last_decimal - 1.
+    else.
+      decimal_pos = l_strlen - l_last_decimal.
+    endif.
+  endif.
+  condense parameter no-gaps.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_COLUMNA" VERSION="1" LANGU="S" DESCRIPT="Busca en que columna se encuentra un valor" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_COLUMNA" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_COLUMNA" SCONAME="ROW" VERSION="1" LANGU="S" DESCRIPT="Upload flexible Excel: número de línea" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KCD_EX_ROW_N"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_COLUMNA" SCONAME="COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>method SEARCH_COLUMNA.
+
+  LOOP AT i_excel INTO excel WHERE row = row AND value = valor.
+    col = excel-col.
+    EXIT.
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_FILA" VERSION="1" LANGU="S" DESCRIPT="Busca en que fila se encuentra un valor" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_FILA" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_FILA" SCONAME="COL" VERSION="1" LANGU="S" DESCRIPT="Upload flexible Excel: número de línea" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KCD_EX_COL_N"/>
+  <parameter CLSNAME="ZCL_AP_IMPORT_EXCEL" CMPNAME="SEARCH_FILA" SCONAME="ROW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>method SEARCH_FILA.
+
+  LOOP AT i_excel INTO excel WHERE col = col AND value = valor.
+    row = excel-row.
+    EXIT.
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+</CLAS>

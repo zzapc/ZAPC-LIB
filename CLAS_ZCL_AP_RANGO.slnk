@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_RANGO" VERSION="1" LANGU="S" DESCRIPT="Rangos" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGE_C3" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="12 " SRCCOLUMN2="20 " TYPESRC_LENG="155 " TYPESRC="BEGIN OF range_c3,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char4,
+        high   TYPE char4,
+      END OF range_c3
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="TAB_RANGE_C3" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="13 " SRCCOLUMN1="10 " SRCROW2="13 " SRCCOLUMN2="83 " TYPESRC_LENG="76 " TYPESRC="tab_range_c3 TYPE STANDARD TABLE OF range_c3 WITH KEY sign option low high
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGE_C4" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="15 " SRCCOLUMN1="6 " SRCROW2="20 " SRCCOLUMN2="20 " TYPESRC_LENG="155 " TYPESRC="BEGIN OF range_c4,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char4,
+        high   TYPE char4,
+      END OF range_c4
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="TAB_RANGE_C4" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="21 " SRCCOLUMN1="10 " SRCROW2="21 " SRCCOLUMN2="53 " TYPESRC_LENG="46 " TYPESRC="tab_range_c4 TYPE STANDARD TABLE OF range_c4
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGE_C10" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="23 " SRCCOLUMN1="6 " SRCROW2="28 " SRCCOLUMN2="21 " TYPESRC_LENG="159 " TYPESRC="BEGIN OF range_c10,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char10,
+        high   TYPE char10,
+      END OF range_c10
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="TAB_RANGE_C10" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " TYPTYPE="4" SRCROW1="29 " SRCCOLUMN1="10 " SRCROW2="29 " SRCCOLUMN2="55 " TYPESRC_LENG="48 " TYPESRC="tab_range_c10 TYPE STANDARD TABLE OF range_c10
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGE_C20" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " TYPTYPE="4" SRCROW1="31 " SRCCOLUMN1="6 " SRCROW2="36 " SRCCOLUMN2="21 " TYPESRC_LENG="159 " TYPESRC="BEGIN OF range_c20,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char20,
+        high   TYPE char20,
+      END OF range_c20
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="TAB_RANGE_C20" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " TYPTYPE="4" SRCROW1="37 " SRCCOLUMN1="10 " SRCROW2="37 " SRCCOLUMN2="55 " TYPESRC_LENG="48 " TYPESRC="tab_range_c20 TYPE STANDARD TABLE OF range_c20
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGE_C30" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " TYPTYPE="4" SRCROW1="39 " SRCCOLUMN1="6 " SRCROW2="44 " SRCCOLUMN2="21 " TYPESRC_LENG="159 " TYPESRC="BEGIN OF range_c30,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char30,
+        high   TYPE char30,
+      END OF range_c30
+"/>
+ <types CLSNAME="ZCL_AP_RANGO" CMPNAME="TAB_RANGE_C30" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " TYPTYPE="4" SRCROW1="45 " SRCCOLUMN1="10 " SRCROW2="45 " SRCCOLUMN2="55 " TYPESRC_LENG="48 " TYPESRC="tab_range_c30 TYPE STANDARD TABLE OF range_c30
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="DES" ENTRY="Desde" LENGTH="5 "/>
+   <textElement ID="I" KEY="HAS" ENTRY="hasta" LENGTH="5 "/>
+   <textElement ID="I" KEY="SLV" ENTRY="Seleccione valor" LENGTH="26 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_RANGO" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <typeClasDef CLSNAME="ZCL_AP_RANGO" TYPEGROUP="CL_RSDRC_SELDR_SRVS" VERSION="1" TPUTYPE="1" IMPLICIT="X"/>
+ <attribute CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGO_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Rangos para fecha" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TPMY_R_DATE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="ASSIGN" VERSION="1" LANGU="S" DESCRIPT="Asigna rango" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="ASSIGN" SCONAME="T_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD assign.
+    DATA: lr_data TYPE REF TO data,
+          l_rango TYPE rstt_s_range_string.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CREATE DATA lr_data LIKE LINE OF t_rango.
+
+    ASSIGN lr_data-&gt;* TO &lt;fs&gt;.
+
+    CLEAR t_rango.
+    LOOP AT rango INTO l_rango.
+      MOVE-CORRESPONDING l_rango TO &lt;fs&gt;.
+      APPEND &lt;fs&gt; TO t_rango.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="CONSTRUCTOR" SCONAME="RANGO_INICIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="CONSTRUCTOR" SCONAME="VALOR_INICIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="CONSTRUCTOR" SCONAME="EXCLUIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="CONSTRUCTOR" SCONAME="FILTRAR_POR_VALOR_INICIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    IF NOT rango_inicial IS INITIAL.
+      get( rango_inicial ).
+    ENDIF.
+
+    IF excluir IS INITIAL.
+      IF    NOT valor_inicial             IS INITIAL
+         OR     filtrar_por_valor_inicial  = &apos;X&apos;.
+        set_eq( valor_inicial ).
+      ENDIF.
+    ELSE.
+      set_eq( valor = valor_inicial sign = &apos;E&apos; ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Borra datos" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD free.
+    CLEAR: rango,
+           rango_fechas.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="GET" VERSION="1" LANGU="S" DESCRIPT="Inicializa el rango de la clase con otro externo" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET" SCONAME="T_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get.
+    DATA l_rango TYPE rstt_s_range_string.
+
+    FIELD-SYMBOLS &lt;rango&gt; TYPE any.
+
+    LOOP AT t_rango ASSIGNING &lt;rango&gt;.
+      MOVE-CORRESPONDING &lt;rango&gt; TO l_rango.
+      APPEND l_rango TO rango.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_DESCRIPCION_RANGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve string con descripción rango" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_DESCRIPCION_RANGO" SCONAME="RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_DESCRIPCION_RANGO" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_DESCRIPCION_RANGO" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_descripcion_rango.
+    DATA: l_hay_hasta TYPE c LENGTH 1,
+          l_valor     TYPE c LENGTH 40,
+          l_hasta     TYPE c LENGTH 20.
+
+    FIELD-SYMBOLS: &lt;fs&gt;   TYPE any,
+                   &lt;low&gt;  TYPE any,
+                   &lt;high&gt; TYPE any.
+
+    LOOP AT rango ASSIGNING &lt;fs&gt;.
+      CLEAR l_hay_hasta.
+      ASSIGN (&apos;&lt;FS&gt;-LOW&apos;) TO &lt;low&gt;.
+      IF sy-subrc = 0.
+        WRITE &lt;low&gt; TO l_valor.
+        IF quitar_ceros = &apos;X&apos;.
+          zcl_ap_string=&gt;quitar_ceros_c( CHANGING  cadena = l_valor ).
+        ENDIF.
+      ENDIF.
+
+      ASSIGN (&apos;&lt;FS&gt;-HIGH&apos;) TO &lt;high&gt;.
+      IF sy-subrc = 0.
+        IF NOT &lt;high&gt; IS INITIAL.
+          WRITE &lt;high&gt; TO l_hasta.
+
+          IF quitar_ceros = &apos;X&apos;.
+            zcl_ap_string=&gt;quitar_ceros_c( CHANGING  cadena = l_hasta ).
+          ENDIF.
+
+          CONCATENATE &apos;Desde&apos;(des) l_valor &apos;hasta&apos;(has) l_hasta INTO string
+                      SEPARATED BY space.
+          l_hay_hasta = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+
+      IF l_hay_hasta = &apos;X&apos;.
+        EXIT.
+      ELSE.
+        IF string IS INITIAL.
+          string = l_valor.
+        ELSE.
+          CONCATENATE string &apos;,&apos; l_valor INTO string.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve un campo a partir de tabla" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="CAMPO_CHECK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;CHECK&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="VALOR_CHECK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_TABLA_CAMPO" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_tabla_campo.
+    DATA l_rango TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;rango&gt;  TYPE any,
+                   &lt;opcion&gt; TYPE any,
+                   &lt;sign&gt;   TYPE any,
+                   &lt;linea&gt;  TYPE any,
+                   &lt;check&gt;  TYPE any,
+                   &lt;campo&gt;  TYPE any,
+                   &lt;low&gt;    TYPE any.
+
+    CREATE DATA l_rango LIKE LINE OF rango.
+
+    ASSIGN l_rango-&gt;* TO &lt;rango&gt;.
+
+    ASSIGN (&apos;&lt;RANGO&gt;-OPTION&apos;) TO &lt;opcion&gt;.
+    IF sy-subrc = 0.
+      &lt;opcion&gt; = option.
+    ENDIF.
+
+    ASSIGN (&apos;&lt;RANGO&gt;-SIGN&apos;) TO &lt;sign&gt;.
+    IF sy-subrc = 0.
+      &lt;sign&gt; = sign.
+    ENDIF.
+
+    LOOP AT tabla ASSIGNING &lt;linea&gt;.
+
+      IF NOT campo_check IS INITIAL.
+        ASSIGN COMPONENT campo_check OF STRUCTURE &lt;linea&gt; TO &lt;check&gt;.
+        IF sy-subrc = 0.
+          IF &lt;check&gt; &lt;&gt; valor_check.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      ASSIGN COMPONENT campo OF STRUCTURE &lt;linea&gt; TO &lt;campo&gt;.
+      IF sy-subrc = 0.
+        ASSIGN (&apos;&lt;RANGO&gt;-LOW&apos;) TO &lt;low&gt;.
+        IF sy-subrc = 0.
+          &lt;low&gt; = &lt;campo&gt;.
+          COLLECT &lt;rango&gt; INTO rango.
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el primer valor del rango" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_VALOR" SCONAME="RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_VALOR" SCONAME="POPUP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_VALOR" SCONAME="ERROR_SI_VARIOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_valor.
+    DATA: l_lista TYPE spopli,
+          i_lista TYPE ccseq_t_values.
+
+    FIELD-SYMBOLS: &lt;rango&gt; TYPE any,
+                   &lt;valor&gt; TYPE any.
+
+    CLEAR valor.
+
+    IF popup IS INITIAL AND error_si_varios IS INITIAL.
+      ASSIGN rango[ 1 ] TO &lt;rango&gt;.
+      IF sy-subrc = 0.
+        ASSIGN (&apos;&lt;RANGO&gt;-LOW&apos;) TO &lt;valor&gt;.
+        IF sy-subrc = 0.
+          valor = &lt;valor&gt;.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      LOOP AT rango ASSIGNING &lt;rango&gt;.
+        ASSIGN (&apos;&lt;RANGO&gt;-LOW&apos;) TO &lt;valor&gt;.
+        IF sy-subrc = 0.
+          IF NOT &lt;valor&gt; IS INITIAL.
+            l_lista-varoption = &lt;valor&gt;.
+            COLLECT l_lista INTO i_lista.
+          ENDIF.
+        ENDIF.
+        ASSIGN (&apos;&lt;RANGO&gt;-HIGH&apos;) TO &lt;valor&gt;.
+        IF sy-subrc = 0.
+          IF NOT &lt;valor&gt; IS INITIAL.
+            l_lista-varoption = &lt;valor&gt;.
+            COLLECT l_lista INTO i_lista.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      DESCRIBE TABLE i_lista LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_lista INTO l_lista INDEX 1.
+        valor = l_lista-varoption.
+      ELSEIF sy-tfill &gt; 1.
+        IF popup = &apos;X&apos;.
+          valor = zcl_ap_popup=&gt;lista_opciones( titulo = &apos;Seleccione valor&apos;(slv) i_lista = i_lista ).
+        ELSE.
+          valor = &apos;!ERROR!&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" VERSION="1" LANGU="S" DESCRIPT="Intersección de rangos" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="RANGO1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="RANGO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="EXCLUSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="CUMPLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="RANGO_INTERSECCION" VERSION="1" LANGU="S" DESCRIPT="Rango ampliado en SID" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="RSDD_T_RANGE"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="INTERSECCION" SCONAME="INTERSECT" VERSION="1" LANGU="S" DESCRIPT="SELDR_A in SELDR_B enthalten ?" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="CL_RSDRC_SELDR_SRVS=&gt;TN_INTERSECT"/>
+  <source>METHOD interseccion.
+    DATA: l_rango        TYPE rrrangesid,
+          ld_i_t_range_a TYPE rsdd_t_range,
+          ld_i_t_range_b TYPE rsdd_t_range,
+          ld_i_chanm     TYPE rsd_chanm,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          ld_e_keyfl1    TYPE rs_bool.
+
+    FIELD-SYMBOLS: &lt;option_r1&gt; TYPE any,
+                   &lt;option_r2&gt; TYPE any.
+
+    CLEAR: cumple,
+           rango_interseccion.
+    IF rango1 IS INITIAL OR rango2 IS INITIAL.
+      cumple = &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    LOOP AT rango1 ASSIGNING FIELD-SYMBOL(&lt;r1&gt;).
+      MOVE-CORRESPONDING &lt;r1&gt; TO l_rango.
+      ASSIGN COMPONENT &apos;OPTION&apos; OF STRUCTURE &lt;r1&gt; TO &lt;option_r1&gt;.
+      l_rango-opt   = &lt;option_r1&gt;.
+      l_rango-keyfl = &apos;X&apos;.
+      APPEND l_rango TO ld_i_t_range_a.
+    ENDLOOP.
+
+    LOOP AT rango2 ASSIGNING FIELD-SYMBOL(&lt;r2&gt;).
+      MOVE-CORRESPONDING &lt;r2&gt; TO l_rango.
+      ASSIGN COMPONENT &apos;OPTION&apos; OF STRUCTURE &lt;r1&gt; TO &lt;option_r2&gt;.
+      l_rango-opt   = &lt;option_r2&gt;.
+      l_rango-keyfl = &apos;X&apos;.
+      APPEND l_rango TO ld_i_t_range_b.
+    ENDLOOP.
+
+    CALL FUNCTION &apos;RRK_RANGE_INTERSECT&apos;
+      EXPORTING
+        i_chanm      = ld_i_chanm
+        i_check_is   = &apos;X&apos;
+*       i_keyfl1_a   = ld_i_keyfl1_a
+        i_t_range_a  = ld_i_t_range_a
+        i_t_range_b  = ld_i_t_range_b
+      IMPORTING
+        e_t_range    = rango_interseccion
+        e_keyfl1     = ld_e_keyfl1
+        e_intersect  = intersect
+      EXCEPTIONS
+        not_possible = 1
+        empty        = 2
+        x_message    = 3.
+    IF sy-subrc = 0.
+      LOOP AT rango_interseccion ASSIGNING FIELD-SYMBOL(&lt;rango&gt;) WHERE sign = &apos;E&apos;.
+        IF line_exists( rango_interseccion[ sign = &apos;I&apos; opt = &lt;rango&gt;-opt low = &lt;rango&gt;-low high = &lt;rango&gt;-high ] ).
+*        DELETE rango_interseccion WHERE sign = &apos;I&apos; AND option = &lt;rango&gt;-option AND low = &lt;rango&gt;-low AND high = &lt;rango&gt;-high.
+          exclusion = &apos;X&apos;.
+          RETURN.
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT rango_interseccion IS INITIAL.
+        cumple = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGO_STRING_TO_N10" VERSION="1" LANGU="S" DESCRIPT="Convierte rango string a N10" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGO_STRING_TO_N10" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="RANGO_STRING_TO_N10" SCONAME="RANGO_N10" VERSION="1" LANGU="S" DESCRIPT="Tabla ámbito de valores para campo numérico (10 posiciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LXHME_RANGE_N10_T"/>
+  <source>METHOD rango_string_to_n10.
+    DATA l_rangon10 TYPE lxhme_range_n10.
+
+    FIELD-SYMBOLS &lt;rango&gt; TYPE rstt_s_range_string.
+
+    LOOP AT rango ASSIGNING &lt;rango&gt;.
+      CLEAR l_rangon10.
+      MOVE-CORRESPONDING &lt;rango&gt; TO l_rangon10.
+      APPEND l_rangon10 TO rango_n10.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT" VERSION="1" LANGU="S" DESCRIPT="Añade linea BT" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT" SCONAME="LOW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT" SCONAME="HIGH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;BT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <source>METHOD set_bt.
+    set_bt_st( EXPORTING low = low high = high option = option sign = sign
+               CHANGING  t_rango = rango ).
+
+    transform( low ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" VERSION="1" LANGU="S" DESCRIPT="Añade linea BT static" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" SCONAME="LOW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" SCONAME="HIGH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;BT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_BT_ST" SCONAME="T_RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD set_bt_st.
+    DATA l_linea TYPE rstt_s_range_string.
+
+    CLEAR l_linea.
+    l_linea-option = option.
+    l_linea-sign   = sign.
+    l_linea-low    = low.
+    IF high IS INITIAL.
+      l_linea-high = low.
+    ELSE.
+      l_linea-high = high.
+    ENDIF.
+    COLLECT l_linea INTO t_rango.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" VERSION="1" LANGU="S" DESCRIPT="Añade linea EQ" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" SCONAME="ES_LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ" SCONAME="SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;,&apos;"/>
+  <source>METHOD set_eq.
+    DATA: i_lista  TYPE TABLE OF string,
+          l_string TYPE string.
+
+    IF es_lista IS INITIAL.
+      set_eq_st( EXPORTING valor = valor option = option sign = sign
+                 CHANGING  t_rango = rango ).
+
+      transform( valor ).
+    ELSE.
+      SPLIT valor AT separador INTO TABLE i_lista.
+      LOOP AT i_lista INTO l_string.
+        set_eq_st( EXPORTING valor = l_string option = option sign = sign
+                   CHANGING  t_rango = rango ).
+
+        transform( l_string ).
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" VERSION="1" LANGU="S" DESCRIPT="Añade linea EQ n10" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" SCONAME="NO_INITIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10" SCONAME="T_RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="LXHME_RANGE_N10_T"/>
+  <source>METHOD set_eq_n10.
+    DATA l_linea TYPE lxhme_range_n10.
+
+    IF no_initial = &apos;&apos; OR NOT valor IS INITIAL.
+      CLEAR l_linea.
+      l_linea-option = option.
+      l_linea-sign   = sign.
+      l_linea-low    = valor.
+      COLLECT l_linea INTO t_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" VERSION="1" LANGU="S" DESCRIPT="Añade linea EQ n10" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" SCONAME="NO_INITIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_N10C" SCONAME="T_RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LXHME_RANGE_N10_T"/>
+  <source>METHOD set_eq_n10c.
+    DATA l_linea TYPE lxhme_range_n10.
+
+    IF no_initial = &apos;&apos; OR NOT valor IS INITIAL.
+      CLEAR l_linea.
+      l_linea-option = option.
+      l_linea-sign   = sign.
+      l_linea-low    = valor.
+      COLLECT l_linea INTO t_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" VERSION="1" LANGU="S" DESCRIPT="Añade linea EQ static" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" SCONAME="NO_INITIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_ST" SCONAME="T_RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD set_eq_st.
+    DATA l_linea TYPE rstt_s_range_string.
+
+    IF no_initial = &apos;&apos; OR NOT valor IS INITIAL.
+      CLEAR l_linea.
+      l_linea-option = option.
+      l_linea-sign   = sign.
+      l_linea-low    = valor.
+      COLLECT l_linea INTO t_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" VERSION="1" LANGU="S" DESCRIPT="Añade linea EQ static" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" SCONAME="OPTION" VERSION="1" LANGU="S" DESCRIPT="ABAP: Opción de selección (EQ/BT/CP/...)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_OPTI" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" SCONAME="SIGN" VERSION="1" LANGU="S" DESCRIPT="ABAP: indicador para incluir/excluir valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TVARV_SIGN" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" SCONAME="NO_INITIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="SET_EQ_STR" SCONAME="T_RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD set_eq_str.
+    DATA l_linea TYPE rstt_s_range_string.
+
+    IF no_initial = &apos;&apos; OR NOT valor IS INITIAL.
+      CLEAR l_linea.
+      l_linea-option = option.
+      l_linea-sign   = sign.
+      l_linea-low    = valor.
+      COLLECT l_linea INTO t_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="TABLA_N10_TO_RANGO_COND" VERSION="1" LANGU="S" DESCRIPT="Obtiene un rango condensado a partir de una tabla N10" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="TABLA_N10_TO_RANGO_COND" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla números entrega" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="TABLA_N10_TO_RANGO_COND" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Tabla ámbito de valores para campo numérico (10 posiciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LXHME_RANGE_N10_T"/>
+  <source>METHOD tabla_n10_to_rango_cond.
+    DATA: i_tabla_n10 TYPE vbeln_vl_t,
+          l_rango     TYPE lxhme_range_n10,
+          l_next      TYPE vbeln_vl,
+          l_append    TYPE c LENGTH 1.
+
+    i_tabla_n10 = tabla.
+    SORT i_tabla_n10.
+    LOOP AT i_tabla_n10 ASSIGNING FIELD-SYMBOL(&lt;n10&gt;).
+      DATA(l_tabix) = sy-tabix.
+      IF NOT &lt;n10&gt; CO &apos;0123456789&apos;.
+        IF l_rango IS INITIAL.
+          l_rango-option = &apos;EQ&apos;.
+          l_rango-sign   = &apos;I&apos;.
+          l_rango-low    = &lt;n10&gt;.
+          APPEND l_rango TO rango.
+          CLEAR l_rango.
+        ELSE.
+          l_rango-option = &apos;BT&apos;.
+          l_rango-high   = &lt;n10&gt;.
+          APPEND l_rango TO rango.
+          CLEAR l_rango.
+        ENDIF.
+      ELSE.
+        l_next = &lt;n10&gt; + 1.
+        __poner_ceros l_next.
+        l_tabix = l_tabix + 1.
+        ASSIGN i_tabla_n10[ l_tabix ] TO FIELD-SYMBOL(&lt;n10_next&gt;).
+        IF sy-subrc &lt;&gt; 0.
+* No hay ninguno siguiente, es el último
+          IF l_rango IS INITIAL.
+            l_rango-option = &apos;EQ&apos;.
+            l_rango-sign   = &apos;I&apos;.
+            l_rango-low    = &lt;n10&gt;.
+            APPEND l_rango TO rango.
+            CLEAR l_rango.
+          ELSE.
+            l_rango-option = &apos;BT&apos;.
+            l_rango-high   = &lt;n10&gt;.
+            APPEND l_rango TO rango.
+            CLEAR l_rango.
+          ENDIF.
+        ELSE.
+* Hay un consecutivo.
+* Si el siguiente es el que esperamos, dejamos abierto.
+          IF &lt;n10_next&gt; = l_next.
+            IF l_rango IS INITIAL.
+              l_rango-option = &apos;BT&apos;.
+              l_rango-sign   = &apos;I&apos;.
+              l_rango-low    = &lt;n10&gt;.
+            ENDIF.
+          ELSE.
+* Si no, cerramos.
+            IF l_rango IS INITIAL.
+              l_rango-option = &apos;EQ&apos;.
+              l_rango-sign   = &apos;I&apos;.
+              l_rango-low    = &lt;n10&gt;.
+              APPEND l_rango TO rango.
+              CLEAR l_rango.
+            ELSE.
+              l_rango-option = &apos;BT&apos;.
+              l_rango-high   = &lt;n10&gt;.
+              APPEND l_rango TO rango.
+              CLEAR l_rango.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_RANGO" CMPNAME="TRANSFORM" VERSION="1" LANGU="S" DESCRIPT="Transforma rango" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_RANGO" CMPNAME="TRANSFORM" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD transform.
+    DATA: l_tipo   TYPE c LENGTH 1,
+          l_rango  TYPE rstt_s_range_string,
+          l_fechas TYPE tpms_r_date.
+
+    CLEAR rango_fechas.
+    DESCRIBE FIELD campo TYPE l_tipo.
+    CASE l_tipo.
+      WHEN &apos;D&apos;.
+        LOOP AT rango INTO l_rango.
+          MOVE-CORRESPONDING l_rango TO l_fechas.
+          APPEND l_fechas TO rango_fechas.
+        ENDLOOP.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

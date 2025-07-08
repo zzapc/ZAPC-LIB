@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_CONTROL_CAMBIOS" VERSION="1" LANGU="S" DESCRIPT="Control de cambios" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_CONTROL_CAMBIOS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" VERSION="1" LANGU="S" DESCRIPT="Devuelve si en algún momento ha existido el registro" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="TABKEY" VERSION="1" LANGU="S" DESCRIPT="Clave de la línea de tabla modificada" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABKEY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="VALUE_NEW" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-VALUE_NEW" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="VALUE_OLD" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="I_CDPOS" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla en base a la estructura generada iscdpos" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ISCDPOS_TAB"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="EXISTE_REGISTRO" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_registro.
+    CLEAR: existe, i_cdpos.
+
+    IF NOT value_old IS INITIAL AND NOT value_old IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_old  = value_old
+                           value_new  = value_new ).
+    ELSEIF NOT value_new IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_new  = value_new ).
+    ELSEIF NOT value_old IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_old  = value_old ).
+    ENDIF.
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey &lt;&gt; tabkey.
+    ENDIF.
+
+    IF NOT i_cdpos IS INITIAL.
+      existe = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" VERSION="1" LANGU="S" DESCRIPT="Cambios cabecera" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="USERNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de la persona que ha modif.documento de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-USERNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="UDATE" VERSION="1" LANGU="S" DESCRIPT="Fecha de creación del documento de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-UDATE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="UTIME" VERSION="1" LANGU="S" DESCRIPT="Hora de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-UTIME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Transación en la que se efectuó una modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-TCODE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="CHANGE_IND" VERSION="1" LANGU="S" DESCRIPT="Clase modificación (U, I, E, D) en el objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-CHANGE_IND" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDHDR" SCONAME="I_CDHDR" VERSION="1" LANGU="S" DESCRIPT="Tabla interna CDHDR" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDHDR_TAB"/>
+  <source>METHOD get_cdhdr.
+    DATA: r_objectid    TYPE RANGE OF cdhdr-objectid,
+          r_username    TYPE RANGE OF cdhdr-username,
+          r_udate       TYPE RANGE OF cdhdr-udate,
+          r_utime       TYPE RANGE OF cdhdr-utime,
+          r_tcode       TYPE RANGE OF cdhdr-tcode,
+          r_change_ind  TYPE RANGE OF cdhdr-change_ind,
+          lr_objectid   LIKE LINE OF r_objectid,
+          lr_username   LIKE LINE OF r_username,
+          lr_udate      LIKE LINE OF r_udate,
+          lr_utime      LIKE LINE OF r_utime,
+          lr_tcode      LIKE LINE OF r_tcode,
+          lr_change_ind LIKE LINE OF r_change_ind.
+
+    DEFINE add_campo.
+      IF NOT &amp;1 IS INITIAL.
+        lr_&amp;1-option = &apos;EQ&apos;.
+        lr_&amp;1-sign   = &apos;I&apos;.
+        lr_&amp;1-low    = &amp;1.
+        APPEND lr_&amp;1 TO r_&amp;1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    add_campo: objectid, username, udate, utime, tcode,
+               change_ind.
+
+    SELECT * FROM cdhdr
+      INTO TABLE i_cdhdr
+     WHERE objectclas  = objectclas
+       AND objectid   IN r_objectid
+       AND username   IN r_username
+       AND udate      IN r_udate
+       AND utime      IN r_utime
+       AND tcode      IN r_tcode
+       AND change_ind IN r_change_ind
+     ORDER BY PRIMARY KEY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" VERSION="1" LANGU="S" DESCRIPT="Cambios posiciones" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="USERNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de la persona que ha modif.documento de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-USERNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="UDATE" VERSION="1" LANGU="S" DESCRIPT="Fecha de creación del documento de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-UDATE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="UTIME" VERSION="1" LANGU="S" DESCRIPT="Hora de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-UTIME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Transación en la que se efectuó una modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-TCODE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="CHANGE_IND" VERSION="1" LANGU="S" DESCRIPT="Clase modificación (U, I, E, D) en el objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-CHANGE_IND" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="CHNGIND" VERSION="1" LANGU="S" DESCRIPT="Tipo de modificación (U, I, E, D)" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-CHNGIND" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="VALUE_NEW" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.nuevo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-VALUE_NEW" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="VALUE_OLD" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_CDPOS" SCONAME="I_CDPOS" VERSION="1" LANGU="S" DESCRIPT="Tabla interna CDHDR" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ISCDPOS_TAB"/>
+  <source>METHOD get_cdpos.
+    DATA: r_tabname    TYPE RANGE OF cdpos-tabname,
+          r_fname      TYPE RANGE OF cdpos-fname,
+          r_chngind    TYPE RANGE OF cdpos-chngind,
+          r_value_new  TYPE RANGE OF cdpos-value_new,
+          r_value_old  TYPE RANGE OF cdpos-value_old,
+          i_cdhdr      TYPE cdhdr_tab,
+          l_cdpos      TYPE iscdpos,
+          l_cdhdr      TYPE cdhdr,
+          lr_tabname   LIKE LINE OF r_tabname,
+          lr_fname     LIKE LINE OF r_fname,
+          lr_chngind   LIKE LINE OF r_chngind,
+          lr_value_new LIKE LINE OF r_value_new,
+          lr_value_old LIKE LINE OF r_value_old.
+
+    DEFINE add_campo.
+      IF &amp;1 IS SUPPLIED.
+        lr_&amp;1-option = &apos;EQ&apos;.
+        lr_&amp;1-sign   = &apos;I&apos;.
+        lr_&amp;1-low    = &amp;1.
+        APPEND lr_&amp;1 TO r_&amp;1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    add_campo: tabname, fname, chngind, value_new, value_old.
+
+    i_cdhdr = get_cdhdr( objectclas = objectclas
+               objectid   = objectid
+               username   = username
+               udate      = udate
+               utime      = utime
+               tcode      = tcode
+               change_ind = change_ind ).
+
+    IF i_cdhdr IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT * FROM  cdpos                             &quot;#EC CI_NO_TRANSFORM
+      INTO CORRESPONDING FIELDS OF TABLE i_cdpos
+       FOR ALL ENTRIES IN i_cdhdr
+     WHERE objectclas  = i_cdhdr-objectclas
+       AND objectid    = i_cdhdr-objectid
+       AND changenr    = i_cdhdr-changenr
+       AND tabname    IN r_tabname
+       AND fname      IN r_fname
+       AND chngind    IN r_chngind
+       AND value_new  IN r_value_new
+       AND value_old  IN r_value_old
+      ORDER BY PRIMARY KEY.
+
+    LOOP AT i_cdpos INTO l_cdpos.
+      READ TABLE i_cdhdr INTO l_cdhdr
+           WITH KEY changenr = l_cdpos-changenr.
+      IF sy-subrc = 0.
+        MOVE-CORRESPONDING l_cdhdr TO l_cdpos.
+        MODIFY i_cdpos FROM l_cdpos.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve la fecha del último cambio de valor" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="TABKEY" VERSION="1" LANGU="S" DESCRIPT="Clave de la línea de tabla modificada" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABKEY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_FECHA_ULT_CAMBIO" SCONAME="VALUE_OLD" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD"/>
+  <source>METHOD get_fecha_ult_cambio.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey &lt;&gt; tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    DESCRIBE TABLE i_cdpos LINES sy-tfill.
+    READ TABLE i_cdpos INTO l_cdpos INDEX sy-tfill.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-udate.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el anterior valor del campo dado" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="TABKEY" VERSION="1" LANGU="S" DESCRIPT="Clave de la línea de tabla modificada" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABKEY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PREVIO_VALOR_CAMPO" SCONAME="VALUE_OLD" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD"/>
+  <source>METHOD get_previo_valor_campo.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cont  TYPE i,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey &lt;&gt; tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    l_cont = lines( i_cdpos ).
+    READ TABLE i_cdpos INTO l_cdpos INDEX l_cont.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-value_old.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el primer valor del campo dado" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="TABKEY" VERSION="1" LANGU="S" DESCRIPT="Clave de la línea de tabla modificada" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABKEY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_PRIMER_VALOR_CAMPO" SCONAME="VALUE_OLD" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD"/>
+  <source>METHOD get_primer_valor_campo.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey &lt;&gt; tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    READ TABLE i_cdpos INTO l_cdpos INDEX 1.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-value_old.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el valor que tenía en una fecha dada" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="OBJECTID" VERSION="1" LANGU="S" DESCRIPT="Valor de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="TABNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="FNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-FNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="TABKEY" VERSION="1" LANGU="S" DESCRIPT="Clave de la línea de tabla modificada" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDPOS-TABKEY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GET_VALOR_A_FECHA" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Contenido cpo.antiguo del campo modificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDPOS-VALUE_OLD"/>
+  <source>METHOD get_valor_a_fecha.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey &lt;&gt; tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY udate DESCENDING utime DESCENDING.
+
+    valor = &apos;?&apos;.
+    LOOP AT i_cdpos INTO l_cdpos.
+      IF l_cdpos-udate &gt; fecha.
+        valor = l_cdpos-value_old.
+      ELSE.
+        IF valor = &apos;?&apos;.
+          valor = l_cdpos-value_new.
+          EXIT.
+        ELSE.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GUARDAR_CAMBIOS_CDHDR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="GUARDAR_CAMBIOS_CDHDR" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD guardar_cambios_cdhdr.
+* https://blogs.sap.com/2017/05/03/change-log-for-z-table-maintenance-via-scdo/
+* Crear primero entrada mediante transacción SCDO
+* Se visualiza con CHANGEDOCU_READ o RSSCD100 o ZCONTROL_CAMBIOS
+
+    TYPES: BEGIN OF ty_tcdrp,
+             object     TYPE cdobjectcl,
+             reportname TYPE cdreport,
+           END OF   ty_tcdrp,
+           BEGIN OF ty_view_tab,
+             object  TYPE cdobjectcl,
+             tabname TYPE cdtabname,
+           END OF   ty_view_tab.
+
+    &quot; Get tabnames
+    &quot; DD: Interface for reading a view from the ABAP/4 Dictionary
+    DATA vim_view_name TYPE ddobjname.
+    DATA: lt_dd26v     TYPE TABLE OF dd26v,
+          lrt_tabname  TYPE RANGE OF tabname,
+          lt_obj       TYPE STANDARD TABLE OF ty_view_tab,
+          lt_tcdrp     TYPE STANDARD TABLE OF ty_tcdrp,
+          lv_fugn      TYPE funct_pool,
+          lv_namesprog TYPE namespace,
+          lv_program   TYPE progname,
+          lv_namesfunc TYPE namespace,
+          lv_funcgroup TYPE progname,
+          lv_object    TYPE cdobjectcl,
+          lv_table     TYPE cdtabname,
+          lt_ptab      TYPE STANDARD TABLE OF string,
+          lv_prog      TYPE string,
+          lv_mess      TYPE string,
+          lv_sid       TYPE string.
+
+    vim_view_name = tabla.
+    CALL FUNCTION &apos;DDIF_VIEW_GET&apos;
+      EXPORTING
+        name          = vim_view_name
+      TABLES
+        dd26v_tab     = lt_dd26v
+      EXCEPTIONS
+        illegal_input = 1
+        OTHERS        = 2.
+    IF sy-subrc IS NOT INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+    IF lt_dd26v IS INITIAL.
+      APPEND INITIAL LINE TO lrt_tabname ASSIGNING FIELD-SYMBOL(&lt;lrs_tabname&gt;).
+      &lt;lrs_tabname&gt;-sign   = &apos;I&apos;.
+      &lt;lrs_tabname&gt;-option = &apos;EQ&apos;.
+      &lt;lrs_tabname&gt;-low    = vim_view_name.
+    ELSE.
+      SORT lt_dd26v BY tabname.
+      DELETE ADJACENT DUPLICATES FROM lt_dd26v COMPARING tabname.
+
+      DELETE lt_dd26v WHERE tabname(1) &lt;&gt; &apos;Z&apos;. &quot; En vístas sólo tablas Z
+      &quot;*-
+      LOOP AT lt_dd26v INTO DATA(ls_dd26v).
+        APPEND INITIAL LINE TO lrt_tabname ASSIGNING &lt;lrs_tabname&gt;.
+        &lt;lrs_tabname&gt;-sign   = &apos;I&apos;.
+        &lt;lrs_tabname&gt;-option = &apos;EQ&apos;.
+        &lt;lrs_tabname&gt;-low    = ls_dd26v-tabname.
+      ENDLOOP.
+    ENDIF.
+    &quot; Objects for change document creation
+    SELECT object tabname FROM tcdob                    &quot;#EC CI_GENBUFF
+      INTO TABLE lt_obj
+      WHERE tabname IN lrt_tabname
+      ORDER BY PRIMARY KEY.
+    ##WARN_OK.
+    IF sy-subrc IS NOT INITIAL.
+      &quot; No change document objects found
+      MESSAGE i899(cd).
+      RETURN.
+    ENDIF.
+    &quot; Information on Include Reports Generated by RSSCD000
+    SELECT object reportname
+      FROM tcdrp
+      INTO TABLE lt_tcdrp
+      FOR ALL ENTRIES IN lt_obj
+      WHERE object = lt_obj-object
+      ##WARN_OK.
+    IF sy-subrc IS NOT INITIAL.
+      &quot; Update program does not yet exist
+      MESSAGE i446(m2).
+      RETURN.
+    ENDIF.
+    &quot; View Directory
+    SELECT SINGLE area
+      FROM tvdir
+      INTO lv_fugn
+      WHERE tabname = vim_view_name.
+    &quot;*-
+    LOOP AT lt_obj ASSIGNING FIELD-SYMBOL(&lt;ls_obj&gt;).
+      ASSIGN lt_tcdrp[ object = &lt;ls_obj&gt;-object ] TO FIELD-SYMBOL(&lt;ls_tcdrp&gt;).
+      IF sy-subrc IS NOT INITIAL.
+        CONTINUE.
+      ENDIF.
+      &quot; Split namespace
+      CLEAR: lv_namesprog, lv_program.
+      lv_program = &lt;ls_tcdrp&gt;-reportname.
+      CALL FUNCTION &apos;RS_NAME_SPLIT_NAMESPACE&apos;
+        EXPORTING
+          name_with_namespace    = lv_program
+        IMPORTING
+          namespace              = lv_namesprog
+          name_without_namespace = lv_program
+        EXCEPTIONS
+          delimiter_error        = 1
+          OTHERS                 = 2.
+      IF sy-subrc &lt;&gt; 0.
+        lv_program = &lt;ls_tcdrp&gt;-reportname.
+      ENDIF.
+      CLEAR: lv_namesfunc, lv_funcgroup.
+      lv_funcgroup = lv_fugn.
+      CALL FUNCTION &apos;RS_NAME_SPLIT_NAMESPACE&apos;
+        EXPORTING
+          name_with_namespace    = lv_funcgroup
+        IMPORTING
+          namespace              = lv_namesfunc
+          name_without_namespace = lv_funcgroup
+        EXCEPTIONS
+          delimiter_error        = 1
+          OTHERS                 = 2.
+      IF sy-subrc &lt;&gt; 0.
+        lv_funcgroup = lv_fugn.
+      ENDIF.
+      &quot; Namespace conversion
+      lv_object = &lt;ls_obj&gt;-object.
+      IF lv_object(1) = &apos;/&apos;.
+        SHIFT lv_object LEFT DELETING LEADING &apos;/&apos;.
+        REPLACE FIRST OCCURRENCE OF &apos;/&apos; IN lv_object WITH &apos;_&apos;.
+      ENDIF.
+      lv_table = &lt;ls_obj&gt;-tabname.
+      IF lv_table(1) = &apos;/&apos;.
+        SHIFT lv_table LEFT DELETING LEADING &apos;/&apos;.
+        REPLACE FIRST OCCURRENCE OF &apos;/&apos; IN lv_table WITH &apos;_&apos;.
+      ENDIF.
+      &quot; Subroutine pool
+      APPEND ##NO_TEXT:
+             `PROGRAM SUBPOOL.` TO lt_ptab,
+             |  INCLUDE { lv_namesprog }F{ lv_program }CDT.| TO lt_ptab,
+             |  INCLUDE { lv_namesprog }F{ lv_program }CDC.| TO lt_ptab,
+             `  FORM f_process.` TO lt_ptab,
+             `    TYPES:  BEGIN OF total.` TO lt_ptab,
+             |            INCLUDE STRUCTURE { vim_view_name }.| TO lt_ptab,
+             `            INCLUDE STRUCTURE vimflagtab.` TO lt_ptab,
+             `    TYPES:  END OF total.` TO lt_ptab,
+             `    FIELD-SYMBOLS: &lt;fs_total&gt;       TYPE ANY TABLE,` TO lt_ptab,
+             `                   &lt;fs_total_wa&gt;    TYPE total,` TO lt_ptab,
+             `                   &lt;fs_x_namtab&gt;    TYPE ANY TABLE,` TO lt_ptab,
+             `                   &lt;fs_x_namtab_wa&gt; TYPE vimnamtab,` TO lt_ptab,
+             `                   &lt;fs_field&gt;       TYPE any.` TO lt_ptab,
+             |    DATA: lv_tabname(40) TYPE c VALUE &apos;({ lv_namesfunc }SAPL{ lv_funcgroup })TOTAL[]&apos;,| TO lt_ptab,
+             `          lv_cond_line  TYPE string,` TO lt_ptab,
+             `          lv_cond_line2 TYPE string.` TO lt_ptab,
+             `    ASSIGN (lv_tabname) TO &lt;fs_total&gt;.` TO lt_ptab,
+             `    LOOP AT &lt;fs_total&gt; ASSIGNING &lt;fs_total_wa&gt; CASTING.` TO lt_ptab,
+             `      CASE &lt;fs_total_wa&gt;-action.` TO lt_ptab,
+             `        WHEN &apos;U&apos;. &quot; Update` TO lt_ptab,
+             |          lv_tabname = &apos;({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]&apos;.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO &lt;fs_x_namtab&gt;.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ &apos;X&apos; AND viewfield NE &apos;MANDT&apos;|.` TO lt_ptab,
+             `          LOOP AT &lt;fs_x_namtab&gt; ASSIGNING &lt;fs_x_namtab_wa&gt; WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT &lt;fs_x_namtab_wa&gt;-viewfield OF STRUCTURE &lt;fs_total_wa&gt; TO &lt;fs_field&gt;.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              lv_cond_line = lv_cond_line &amp;&amp; |AND | &amp;&amp; ` TO lt_ptab,
+             `                             &lt;fs_x_namtab_wa&gt;-viewfield &amp;&amp; | EQ &apos;| &amp;&amp; &lt;fs_field&gt; &amp;&amp; |&apos; |.` TO lt_ptab,
+             `              objectid = objectid &amp;&amp; &lt;fs_field&gt;.` TO lt_ptab,
+             `              UNASSIGN &lt;fs_field&gt;.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `            SHIFT lv_cond_line LEFT BY 3 PLACES.` TO lt_ptab,
+             `            SELECT SINGLE *` TO lt_ptab,
+             |              FROM { &lt;ls_obj&gt;-tabname }| TO lt_ptab,
+             |              INTO *{ &lt;ls_obj&gt;-tabname }| TO lt_ptab,
+             `              WHERE (lv_cond_line).` TO lt_ptab,
+             |            MOVE-CORRESPONDING &lt;fs_total_wa&gt; TO { &lt;ls_obj&gt;-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = &apos;U&apos;.` TO lt_ptab,
+             |            upd_{ lv_table } = &apos;U&apos;.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `        WHEN &apos;N&apos;. &quot; New` TO lt_ptab,
+             |          lv_tabname = &apos;({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]&apos;.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO &lt;fs_x_namtab&gt;.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ &apos;X&apos; AND viewfield NE &apos;MANDT&apos;|.` TO lt_ptab,
+             `          LOOP AT &lt;fs_x_namtab&gt; ASSIGNING &lt;fs_x_namtab_wa&gt; WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT &lt;fs_x_namtab_wa&gt;-viewfield OF STRUCTURE &lt;fs_total_wa&gt; TO &lt;fs_field&gt;.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              objectid = objectid &amp;&amp; &lt;fs_field&gt;.` TO lt_ptab,
+             `              UNASSIGN &lt;fs_field&gt;.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             |            MOVE-CORRESPONDING &lt;fs_total_wa&gt; TO { &lt;ls_obj&gt;-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = &apos;I&apos;.` TO lt_ptab,
+             |            upd_{ lv_table } = &apos;I&apos;.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `        WHEN &apos;D&apos;. &quot; Delete` TO lt_ptab,
+             |          lv_tabname = &apos;({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]&apos;.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO &lt;fs_x_namtab&gt;.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ &apos;X&apos; AND viewfield NE &apos;MANDT&apos;|.` TO lt_ptab,
+             `          LOOP AT &lt;fs_x_namtab&gt; ASSIGNING &lt;fs_x_namtab_wa&gt; WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT &lt;fs_x_namtab_wa&gt;-viewfield OF STRUCTURE &lt;fs_total_wa&gt; TO &lt;fs_field&gt;.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              objectid = objectid &amp;&amp; &lt;fs_field&gt;.` TO lt_ptab,
+             `              UNASSIGN &lt;fs_field&gt;.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             |            MOVE-CORRESPONDING &lt;fs_total_wa&gt; TO *{ &lt;ls_obj&gt;-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = &apos;D&apos;.` TO lt_ptab,
+             |            upd_{ lv_table } = &apos;D&apos;.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `      ENDCASE.` TO lt_ptab,
+             |      CLEAR: lv_cond_line, lv_cond_line2, objectid, { &lt;ls_obj&gt;-tabname }, *{ &lt;ls_obj&gt;-tabname }.| TO lt_ptab,
+             `    ENDLOOP.` TO lt_ptab,
+             `  ENDFORM.` TO lt_ptab.
+      &quot;*-
+      GENERATE SUBROUTINE POOL lt_ptab NAME lv_prog    &quot;#EC CI_GENERATE
+               MESSAGE lv_mess
+               SHORTDUMP-ID lv_sid.
+      IF sy-subrc = 0.
+        PERFORM (&apos;F_PROCESS&apos;) IN PROGRAM (lv_prog) IF FOUND.
+      ELSEIF sy-subrc = 4.
+        MESSAGE lv_mess TYPE &apos;I&apos;.
+      ELSEIF sy-subrc = 8.
+        MESSAGE lv_sid TYPE &apos;I&apos;.
+      ENDIF.
+      CLEAR lt_ptab.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" VERSION="1" LANGU="S" DESCRIPT="Devuelve si hay modificación en los ultimos X segundos" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="OBJECTID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="USERNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de la persona que ha modif.documento de modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-USERNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Transación en la que se efectuó una modificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CDHDR-TCODE"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="SEGUNDOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="5"/>
+  <parameter CLSNAME="ZCL_AP_CONTROL_CAMBIOS" CMPNAME="HAY_MOD" SCONAME="CHANGE_IND" VERSION="1" LANGU="S" DESCRIPT="Clase modificación (U, I, E, D) en el objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CDHDR-CHANGE_IND"/>
+  <source>METHOD hay_mod.
+    DATA: l_utime    TYPE sy-uzeit,
+          l_segundos TYPE i,
+          l_udate    TYPE sy-datum,
+          i_cdhdr    TYPE cdhdr_tab,
+          l_cdhdr    TYPE cdhdr.
+
+    l_utime = &apos;000000&apos;.
+    l_segundos = sy-uzeit - l_utime.
+    IF l_segundos &gt; segundos.
+      l_udate = sy-datum.
+    ELSE.
+      l_udate = sy-datum - 1.
+    ENDIF.
+
+    i_cdhdr = zcl_ap_control_cambios=&gt;get_cdhdr(
+                  objectclas = objectclas
+                  objectid   = objectid
+                  username   = username
+                  udate      = l_udate
+                  tcode      = tcode ).
+
+    SORT i_cdhdr BY udate DESCENDING utime DESCENDING.
+    READ TABLE i_cdhdr INTO l_cdhdr INDEX 1.
+    IF sy-subrc = 0.
+      l_utime = sy-uzeit - segundos.
+      IF    l_cdhdr-udate &gt; l_udate
+         OR ( l_cdhdr-udate = l_udate AND l_cdhdr-utime &gt;= l_utime ).
+        change_ind = l_cdhdr-change_ind.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

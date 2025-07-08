@@ -1,0 +1,212 @@
+
+class ZCL_AP_ORDEN_PM definition
+  public
+  create public .
+
+public section.
+
+  class-methods IMPRIMIR_FORMULARIO
+    importing
+      !AUFNR type AUFNR
+      !WORKPAPER type WWORKPAPER-WORKPAPER
+      !DEVICE type ITCPP-TDDEVICE default 'PREVIEW'
+      !TDDEST type RSPOPNAME default ''
+      !GET_AREA_OTF type ANY default ''
+      !GET_AREA_PDF type ANY default ''
+      !LANGU type SY-LANGU default SY-LANGU
+    exporting
+      !I_OTFDATA type TT_ITCOO
+      !PDF type FPCONTENT .
+  class-methods CERRAR_ORDEN
+    importing
+      !AUFNR type AUFNR
+      !FECHA_CIERRE type DATS optional
+      !HORA_CIERRE type UZEIT optional
+      !COMMIT type ABAP_BOOL default 'X'
+    exporting
+      !MESSAGE type BAPI_MSG
+      !I_RETURN type BAPIRET2_T .
+  class-methods GET_TEXTO_STRING
+    importing
+      !AUFNR type AUFNR
+      !ID type TDID default 'KOPF'
+      !SPRAS type STXH-TDSPRAS default SY-LANGU
+    returning
+      value(STRING) type STRING .
+protected section.
+private section.
+endclass. "ZCL_AP_ORDEN_PM definition
+class ZCL_AP_ORDEN_PM implementation.
+  METHOD cerrar_orden.
+
+    CLEAR i_return.
+
+    SELECT SINGLE objnr FROM aufk
+      INTO @DATA(l_objnr)
+     WHERE aufnr = @aufnr.
+
+    SELECT SINGLE objnr FROM jest
+      INTO l_objnr
+     WHERE objnr = l_objnr
+       AND stat  = 'I0045' "Cierre técnico
+       AND inact = ''.
+    IF sy-subrc = 0.
+      message = 'Orden ya estaba cerrada'.
+    ELSE.
+      DATA(i_methods) = VALUE bapi_alm_order_method_t( ( refnumber = '000001' objecttype = 'HEADER'  method = 'TECHNICALCOMPLETE' objectkey = aufnr )
+                                                       ( refnumber = '000000' objecttype = ''        method = 'SAVE'              objectkey = aufnr ) ).
+      IF NOT fecha_cierre IS INITIAL.
+        DATA(i_header)  = VALUE bapi_alm_order_header_t( ( orderid   = aufnr teco_ref_date = fecha_cierre teco_ref_time = hora_cierre ) ).
+      ENDIF.
+      DATA(i_header_up)  = VALUE  bapi_alm_order_header_ut( ( orderid   = aufnr ) ).
+
+      CALL FUNCTION 'BAPI_ALM_ORDER_MAINTAIN'
+        TABLES
+          it_methods   = i_methods
+          it_header    = i_header
+          it_header_up = i_header_up
+          return       = i_return.
+
+      IF zcl_orden=>contiene_status( objnr = l_objnr status_int = 'I0045' ). "Cerrado técnicamente
+        CLEAR i_return.
+      ENDIF.
+
+* A veces falla por un error raro y no sé porqué en esos casos intentamos batchinput.
+      IF commit = 'X'.
+        IF line_exists( i_return[ type = 'E' number = '162' ] ).
+          DATA: o_bi      TYPE REF TO zcl_ap_batch_input,
+                l_mensaje TYPE bapireturn1-message.
+          CREATE OBJECT o_bi.
+
+          o_bi->inicio( ).
+
+* Orden MT: acceso modificar/visualizar
+          o_bi->dynpro( program = 'SAPLCOIH' dynpro = '0101').
+          o_bi->campos( campo = 'BDC_OKCODE' valor = '/00').
+          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
+
+          o_bi->dynpro( program = 'SAPLCOIH' dynpro = '3000').
+          o_bi->campos( campo = 'BDC_OKCODE' valor = '=ARCH').
+
+          o_bi->dynpro( program = 'SAPLCOI0' dynpro = '1000').
+          o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT').
+          o_bi->campos( campo = 'RIARCH-ADDAT' valor = fecha_cierre ). " Orden PM: fecha de referencia
+          o_bi->campos( campo = 'RIARCH-ADUHR' valor = hora_cierre ). " Hora para la fecha de referencia
+
+          l_mensaje = o_bi->llamar_transaccion( tcode = 'IW32' modo = 'N').
+          IF zcl_orden=>contiene_status( objnr = l_objnr status_int = 'I0045' ). "Cerrado técnicamente
+            CLEAR i_return.
+          ENDIF.
+
+        ENDIF.
+      ENDIF.
+
+      IF line_exists( i_return[ type = 'E' ] ).
+        LOOP AT i_return ASSIGNING FIELD-SYMBOL(<return>) WHERE type = 'E' AND id NE 'IWO_BAPI2'.
+          CONCATENATE message <return>-message INTO <return>-message SEPARATED BY space.
+        ENDLOOP.
+      ELSE.
+        IF commit = 'X'.
+          CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+            EXPORTING
+              wait = 'X'.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+  METHOD get_texto_string.
+
+    DATA l_name TYPE stxh-tdname.
+
+    l_name = sy-mandt && aufnr.
+    string = zcl_ap_textos=>get_texto_string( id     = id
+                                              name   = l_name
+                                              spras  = spras
+                                              object = 'AUFK'
+                                              memory = 'X'
+                                              elim_regexp = ':.()' ).
+
+  ENDMETHOD.
+  METHOD imprimir_formulario.
+    DATA: caufvd       TYPE caufvd,
+          iloa         TYPE iloa,
+          riwo1        TYPE riwo1,
+          iaffhd       TYPE TABLE OF affhd,
+          iafvgd       TYPE TABLE OF afvgd,
+          iresbd       TYPE TABLE OF resbd,
+          iripw0       TYPE TABLE OF ripw0,
+          op_print_tab TYPE TABLE OF riprt1,
+          ihpad_tab    TYPE TABLE OF ihpad,
+          ihsg_tab     TYPE TABLE OF ihsg,
+          ihgns_tab    TYPE TABLE OF ihgns,
+          kbedp_tab    TYPE TABLE OF kbedp,
+          wworkpaper   TYPE wworkpaper,
+          iworkpaper   TYPE TABLE OF wworkpaper.
+
+    IF tddest IS INITIAL.
+      wworkpaper-tddest = zcl_ap_usuario=>get_impresora( ).
+    ELSE.
+      wworkpaper-tddest = tddest.
+    ENDIF.
+    wworkpaper-pm_appl = 'O'.
+    wworkpaper-workpaper = workpaper.
+    wworkpaper-selected = 'X'.
+    wworkpaper-print_lang = sy-langu.
+    APPEND wworkpaper TO iworkpaper.
+
+    CALL FUNCTION 'PM_ORDER_DATA_READ'
+      EXPORTING
+        order_number    = aufnr
+*       CALL_FROM_NOTIF =
+      IMPORTING
+        wcaufvd         = caufvd
+        wiloa           = iloa
+        wriwo1          = riwo1
+      TABLES
+        iaffhd          = iaffhd
+        iafvgd          = iafvgd
+        iresbd          = iresbd
+        iripw0          = iripw0
+        op_print_tab    = op_print_tab
+        ihpad_tab       = ihpad_tab
+        ihsg_tab        = ihsg_tab
+        ihgns_tab       = ihgns_tab
+        kbedp_tab       = kbedp_tab
+      EXCEPTIONS
+        order_not_found = 1
+        OTHERS          = 2.
+    IF sy-subrc <> 0.
+* Implement suitable error handling here
+    ENDIF.
+
+    CALL FUNCTION 'PM_ORDER_PRINT_CONTROL'   " IN DIALOG !!!!!!!
+      EXPORTING
+        device       = device
+        caufvd       = caufvd       " order data !!!
+        riwo1        = riwo1
+        iloa         = iloa                    "
+*       iviqmel      = iviqmel
+*       n_riwo1      = riwo1
+*       riwo00       = riwo00
+*       iv_vrgng     = lv_vrgng
+      TABLES
+        iafvgd       = iafvgd
+        iresbd       = iresbd
+        iripw0       = iripw0
+        iaffhd       = iaffhd
+        kbedp_tab    = kbedp_tab    "capacities and split
+        ihpad_tab    = ihpad_tab
+        ihsg_tab     = ihsg_tab     " special permnission
+        ihgns_tab    = ihgns_tab    " special permnission
+        op_print_tab = op_print_tab
+        iworkpaper   = iworkpaper   " papers to display
+*       idocuments   = lt_documents
+*       iviqmfe      = iviqmfe
+*       iviqmma      = iviqmma
+*       iviqmsm      = iviqmsm
+*       iviqmur      = iviqmur
+*       iqkat        = iqkat
+        n_ihpad_tab  = ihpad_tab.
+
+  ENDMETHOD.

@@ -1,0 +1,37 @@
+*&---------------------------------------------------------------------*
+*& Report  ZCACHE
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+REPORT  zcache.
+
+TABLES: wlc_options,  gsuobjc, alpfparam.
+
+DATA zcache TYPE zcache.
+
+SELECT-OPTIONS: s_report FOR wlc_options-report_name,
+                s_clave	 FOR gsuobjc-object,
+                s_subcla FOR alpfparam-description.
+
+PARAMETERS: p_test AS CHECKBOX DEFAULT 'X'.
+
+START-OF-SELECTION.
+
+  SELECT COUNT( * ) FROM  zcache
+    INTO sy-tfill
+         WHERE  report    IN s_report
+         AND    clave     IN s_clave
+         AND    subclave  IN s_subcla.
+  IF sy-tfill > 0.
+    IF p_test IS INITIAL.
+      DELETE FROM  zcache
+             WHERE  report    IN s_report
+             AND    clave     IN s_clave
+             AND    subclave  IN s_subcla.
+    ENDIF.
+
+    WRITE: / 'Se han borrado', sy-tfill, 'registros'.
+  ENDIF.

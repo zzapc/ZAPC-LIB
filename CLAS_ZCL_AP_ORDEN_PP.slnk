@@ -1,0 +1,2899 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_ORDEN_PP" VERSION="1" LANGU="S" DESCRIPT="Orden Producción" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="TT_SALDOS_LIQ" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="6 " SRCCOLUMN1="10 " SRCROW2="6 " SRCCOLUMN2="65 " TYPESRC_LENG="58 " TYPESRC="tt_saldos_liq           TYPE STANDARD TABLE OF kabr_gsum
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="TT_KAPM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="10 " SRCROW2="7 " SRCCOLUMN2="51 " TYPESRC_LENG="44 " TYPESRC="tt_kapm                 TYPE TABLE OF kapm
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="T_BAPI_ORDER_HEADER1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="10 " SRCROW2="8 " SRCCOLUMN2="65 " TYPESRC_LENG="58 " TYPESRC="t_bapi_order_header1    TYPE TABLE OF bapi_order_header1
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="T_BAPI_ORDER_ITEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="10 " SRCROW2="9 " SRCCOLUMN2="62 " TYPESRC_LENG="55 " TYPESRC="t_bapi_order_item       TYPE TABLE OF bapi_order_item
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="T_BAPI_ORDER_PHASE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="10 " SRCCOLUMN1="10 " SRCROW2="10 " SRCCOLUMN2="63 " TYPESRC_LENG="56 " TYPESRC="t_bapi_order_phase      TYPE TABLE OF bapi_order_phase
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="T_BAPI_ORDER_COMPONENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " TYPTYPE="4" SRCROW1="11 " SRCCOLUMN1="10 " SRCROW2="11 " SRCCOLUMN2="67 " TYPESRC_LENG="60 " TYPESRC="t_bapi_order_component  TYPE TABLE OF bapi_order_component
+"/>
+ <types CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="T_BAPI_ORDER_OPERATION1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " TYPTYPE="4" SRCROW1="12 " SRCCOLUMN1="10 " SRCROW2="12 " SRCCOLUMN2="68 " TYPESRC_LENG="61 " TYPESRC="t_bapi_order_operation1 TYPE TABLE OF bapi_order_operation1
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+TYPES: BEGIN OF t_status_orden,
+         aufnr TYPE aufnr,
+         vornr TYPE vornr,
+         txt04 TYPE j_txt04,
+         istat TYPE j_istat,
+       END OF t_status_orden,
+       tt_status_orden TYPE TABLE OF t_status_orden.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="CSO" ENTRY="&gt;Se cambia el estatus de la orden a" LENGTH="70 "/>
+   <textElement ID="I" KEY="DLO" ENTRY="de la orden" LENGTH="21 "/>
+   <textElement ID="I" KEY="EAC" ENTRY="Error anulando cierre" LENGTH="42 "/>
+   <textElement ID="I" KEY="ECO" ENTRY="Error cerrando orden" LENGTH="40 "/>
+   <textElement ID="I" KEY="ESQ" ENTRY="Esquema" LENGTH="17 "/>
+   <textElement ID="I" KEY="ESX" ENTRY="&gt;Estatus" LENGTH="18 "/>
+   <textElement ID="I" KEY="HEN" ENTRY="Ha habido un error durante la notificación" LENGTH="84 "/>
+   <textElement ID="I" KEY="LOP" ENTRY="La operación" LENGTH="22 "/>
+   <textElement ID="I" KEY="LOR" ENTRY="La orden" LENGTH="18 "/>
+   <textElement ID="I" KEY="MBL" ENTRY="Material Bloqueado" LENGTH="28 "/>
+   <textElement ID="I" KEY="MQP" ENTRY="mayor que el propuesto" LENGTH="44 "/>
+   <textElement ID="I" KEY="NCC" ENTRY="No se ha podido consumir los componentes indicados" LENGTH="100 "/>
+   <textElement ID="I" KEY="NCN" ENTRY="no contiene ningún status" LENGTH="50 "/>
+   <textElement ID="I" KEY="NCS" ENTRY="no contiene status" LENGTH="28 "/>
+   <textElement ID="I" KEY="NDO" ENTRY="No se ha podido determinar_orden" LENGTH="64 "/>
+   <textElement ID="I" KEY="NEN" ENTRY="No existe la notificacion" LENGTH="50 "/>
+   <textElement ID="I" KEY="NEO" ENTRY="No existe la orden" LENGTH="28 "/>
+   <textElement ID="I" KEY="NHN" ENTRY="No hacemos nada" LENGTH="25 "/>
+   <textElement ID="I" KEY="NIC" ENTRY="No implementado el cambio de status" LENGTH="70 "/>
+   <textElement ID="I" KEY="NTO" ENTRY="no tiene operación" LENGTH="28 "/>
+   <textElement ID="I" KEY="OCT" ENTRY="&gt;Orden no estaba cerrada técnicamente" LENGTH="74 "/>
+   <textElement ID="I" KEY="ONE" ENTRY="Orden no tiene asociado esquema de estatus" LENGTH="84 "/>
+   <textElement ID="I" KEY="OYC" ENTRY="&gt;Orden ya estaba cerrada técnicamente" LENGTH="74 "/>
+   <textElement ID="I" KEY="OYE" ENTRY="&gt;Orden ya está en estado" LENGTH="48 "/>
+   <textElement ID="I" KEY="OYL" ENTRY="&gt;Orden ya estaba liberada" LENGTH="50 "/>
+   <textElement ID="I" KEY="SAC" ENTRY="&gt;Se ha anulado cierre técnicamente la orden" LENGTH="86 "/>
+   <textElement ID="I" KEY="SCT" ENTRY="&gt;Se ha cerrado técnicamente la orden" LENGTH="72 "/>
+   <textElement ID="I" KEY="SOV" ENTRY="Seleccione orden a visualizar" LENGTH="58 "/>
+   <textElement ID="I" KEY="YEN" ENTRY="ya está notificada fin" LENGTH="44 "/>
+   <textElement ID="I" KEY="YNF" ENTRY="ya está notificada fin" LENGTH="44 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_ORDEN_PP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="AFKO" VERSION="1" LANGU="S" DESCRIPT="Datos cabecera orden p.órdenes PCP" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="AFKO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="AFRU" VERSION="1" LANGU="S" DESCRIPT="Notificaciones de orden" EXPOSURE="2" STATE="1" EDITORDER="16 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="AFRU" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="AUFK" VERSION="1" LANGU="S" DESCRIPT="Datos maestros de órdenes" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="AUFK" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAUFVD" VERSION="1" LANGU="S" DESCRIPT="Estructura diálogo p.cabeceras y posición de orden" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CAUFVD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="COMPONENT" VERSION="1" LANGU="S" DESCRIPT="Componentes de orden" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_ORDER_COMPONENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_ABIE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="26 " ATTDECLTYP="1" ATTVALUE="&apos;I0001&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="JEST-STAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_CERR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="25 " ATTDECLTYP="1" ATTVALUE="&apos;I0046&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="J_ISTAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_CTEC" VERSION="1" LANGU="S" DESCRIPT="Status de sistema" EXPOSURE="2" STATE="1" EDITORDER="23 " ATTDECLTYP="1" ATTVALUE="&apos;I0045&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="J_ISTAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_LIB" VERSION="1" LANGU="S" DESCRIPT="Estatus LIB." EXPOSURE="2" STATE="1" EDITORDER="22 " ATTDECLTYP="1" ATTVALUE="&apos;I0002&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="JEST-STAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_NOTI" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="29 " ATTDECLTYP="1" ATTVALUE="&apos;I0009&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="JEST-STAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_NOTP" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="28 " ATTDECLTYP="1" ATTVALUE="&apos;I0010&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="JEST-STAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_PLAN" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " ATTDECLTYP="1" ATTVALUE="&apos;I0513&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="JEST-STAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="C_STATUS_PTBO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="24 " ATTDECLTYP="1" ATTVALUE="&apos;I0076&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="J_ISTAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="G_T_KKBCS" VERSION="1" LANGU="S" DESCRIPT="Tabla para KKBCS" EXPOSURE="2" STATE="1" EDITORDER="20 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="KKBCS_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="G_T_KKBCS_OUT" VERSION="1" LANGU="S" DESCRIPT="Tabla de salida KKBCS" EXPOSURE="2" STATE="1" EDITORDER="18 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="KKBCS_OUT_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="HEADER" VERSION="1" LANGU="S" DESCRIPT="Datos de cabecera de la orden" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_ORDER_HEADER1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_COMPONENT" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla BAPI_ORDER_COMPONENT" EXPOSURE="2" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_ORDER_COMPONENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_DETAIL_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla de mensajes para BAPIs de notificación" EXPOSURE="2" STATE="1" EDITORDER="17 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="COCF_T_BAPI_RETURN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_HEADER" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_ORDER_HEADER1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_OPERATION" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla BAPI_ORDER_OPERATION1" EXPOSURE="2" STATE="1" EDITORDER="13 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_ORDER_OPERATION1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_PHASE" VERSION="1" LANGU="S" DESCRIPT="Datos de fase de orden" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_ORDER_PHASE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_POSITION" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para BAPI_ORDER_ITEM" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_ORDER_ITEM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla para estructura BAPIRET1" EXPOSURE="2" STATE="1" EDITORDER="14 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET1_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="I_STATUS_ORDEN" VERSION="1" LANGU="S" DESCRIPT="Status de las ordenes" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_STATUS_ORDEN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="KKBCS" VERSION="1" LANGU="S" DESCRIPT="Objeto CO de la vista CM (costes y cantidades a emplear)" EXPOSURE="2" STATE="1" EDITORDER="21 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="KKBCS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="KKBCS_OUT" VERSION="1" LANGU="S" DESCRIPT="Tabla de salida KKBCS" EXPOSURE="2" STATE="1" EDITORDER="19 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="KKBCS_OUT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="OPERATION" VERSION="1" LANGU="S" DESCRIPT="Datos de operación de orden" EXPOSURE="2" STATE="1" EDITORDER="12 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_ORDER_OPERATION1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="PHASE" VERSION="1" LANGU="S" DESCRIPT="Datos de fase de orden" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_ORDER_PHASE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="POSITION" VERSION="1" LANGU="S" DESCRIPT="Posición de la orden" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_ORDER_ITEM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="15 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" VERSION="1" LANGU="S" DESCRIPT="Anular notificación" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" SCONAME="RUECK" VERSION="1" LANGU="S" DESCRIPT="Número de notificación de la operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RUECK"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" SCONAME="RMZHL" VERSION="1" LANGU="S" DESCRIPT="Contador de notificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RMZHL"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" SCONAME="POSTG_DATE" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_PI_CONFIRM-POSTG_DATE" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN-MESSAGE"/>
+  <source>METHOD anular_notificacion.
+    CLEAR: i_return, return, afru.
+
+    CALL FUNCTION &apos;BAPI_PRODORDCONF_CANCEL&apos;
+      EXPORTING
+        confirmation        = rueck
+        confirmationcounter = rmzhl
+        postg_date          = postg_date
+*       CONF_TEXT           =
+      IMPORTING
+        return              = return
+*       LOCKED              =
+        created_conf_no     = afru-rueck
+        created_conf_count  = afru-rmzhl.
+
+    IF NOT afru IS INITIAL.
+      IF commit = &apos;X&apos;.
+        zcl_ap_dev=&gt;commit( ).
+      ENDIF.
+
+      SELECT SINGLE * FROM afru
+        INTO afru
+       WHERE rueck = afru-rueck
+         AND rmzhl = afru-rmzhl.
+    ELSE.
+      mensaje = return-message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" VERSION="1" LANGU="S" DESCRIPT="Anular notificación Orden de proceso" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" SCONAME="RUECK" VERSION="1" LANGU="S" DESCRIPT="Número de notificación de la operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RUECK"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" SCONAME="RMZHL" VERSION="1" LANGU="S" DESCRIPT="Contador de notificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RMZHL"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" SCONAME="POSTG_DATE" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_PI_CONFIRM-POSTG_DATE" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_OP" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN-MESSAGE"/>
+  <source>METHOD anular_notificacion_op.
+    CLEAR: i_return, return, afru.
+
+    CALL FUNCTION &apos;BAPI_PROCORDCONF_CANCEL&apos;
+      EXPORTING
+        confirmation        = rueck
+        confirmationcounter = rmzhl
+        postg_date          = postg_date
+*       CONF_TEXT           =
+      IMPORTING
+        return              = return
+*       LOCKED              =
+        created_conf_no     = afru-rueck
+        created_conf_count  = afru-rmzhl.
+
+    IF NOT afru IS INITIAL.
+      IF commit = &apos;X&apos;.
+        zcl_ap_dev=&gt;commit( ).
+      ENDIF.
+
+      SELECT SINGLE * FROM afru
+        INTO afru
+       WHERE rueck = afru-rueck
+         AND rmzhl = afru-rmzhl.
+      IF sy-subrc &lt;&gt; 0.
+        mensaje = return-message.
+      ENDIF.
+    ELSE.
+      mensaje = return-message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" VERSION="1" LANGU="S" DESCRIPT="Anular notificación (STATIC)" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="RUECK" VERSION="1" LANGU="S" DESCRIPT="Número de notificación de la operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RUECK"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="RMZHL" VERSION="1" LANGU="S" DESCRIPT="Contador de notificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RMZHL"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="POSTG_DATE" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_PI_CONFIRM-POSTG_DATE" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN-MESSAGE"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ANULAR_NOTIFICACION_ST" SCONAME="AFRU" VERSION="1" LANGU="S" DESCRIPT="Notificaciones de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="AFRU"/>
+  <source>METHOD anular_notificacion_st.
+    DATA: l_aufnr TYPE aufnr,
+          o_orden TYPE REF TO zcl_ap_orden_pp.
+
+    SELECT SINGLE aufnr FROM afru
+      INTO l_aufnr
+     WHERE rueck = rueck
+       AND rmzhl = rmzhl.
+    IF sy-subrc &lt;&gt; 0.
+      mensaje = &apos;No existe la notificacion&apos;(nen).
+    ELSEIF l_aufnr IS INITIAL.
+      mensaje = &apos;No se ha podido determinar_orden&apos;(ndo).
+    ELSE.
+      o_orden = NEW #(
+          aufnr = l_aufnr ).
+
+      IF o_orden-&gt;aufk-autyp = &apos;40&apos;.
+        mensaje = o_orden-&gt;anular_notificacion_op( rueck = rueck
+                                                   rmzhl = rmzhl
+                                                   postg_date = postg_date
+                                                   commit = commit ).
+      ELSE.
+        mensaje = o_orden-&gt;anular_notificacion( rueck = rueck
+                                                rmzhl = rmzhl
+                                                postg_date = postg_date
+                                                commit = commit ).
+      ENDIF.
+
+      afru = o_orden-&gt;afru.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" VERSION="1" LANGU="S" DESCRIPT="Cambia estatus de la orden" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD cambia_status.
+    DATA: i_status TYPE TABLE OF jstat,
+          l_error  TYPE abap_bool.
+
+    CLEAR mensaje.
+
+    SELECT SINGLE autyp, objnr FROM aufk
+      INTO (@DATA(l_autyp), @DATA(l_objnr))
+     WHERE aufnr = @aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      mensaje = &apos;No existe la orden&apos;(neo).
+      RETURN.
+    ENDIF.
+
+    SELECT istat FROM tj02t &quot;#EC CI_GENBUFF
+      INTO @DATA(istat)
+      UP TO 1 ROWS
+     WHERE spras = @spras
+       AND txt04 = @status
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      mensaje = |Status { status } no válido|.
+      RETURN.
+    ENDIF.
+
+    i_status = VALUE #( (  stat = istat ) ).
+
+    CALL FUNCTION &apos;STATUS_CHANGE_INTERN&apos;
+      EXPORTING
+*       CHECK_ONLY          = &apos; &apos;
+*       CLIENT              = &apos;100&apos;
+        objnr               = l_objnr
+*       ZEILE               = &apos; &apos;
+*       SET_CHGKZ           =
+      IMPORTING
+        error_occurred      = l_error
+*       OBJECT_NOT_FOUND    =
+*       STATUS_INCONSISTENT =
+*       STATUS_NOT_ALLOWED  =
+      TABLES
+        status              = i_status
+      EXCEPTIONS
+        object_not_found    = 1
+        status_inconsistent = 2
+        status_not_allowed  = 3
+        OTHERS              = 4.
+    IF sy-subrc &lt;&gt; 0 OR l_error = &apos;X&apos;.
+      CASE sy-subrc.
+        WHEN 1. mensaje = &apos;Orden errónea&apos;.
+        WHEN 2. mensaje = &apos;Status inconsistente&apos;.
+        WHEN 3. mensaje = &apos;Status no permitido&apos;.
+        WHEN OTHERS. MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO mensaje.
+      ENDCASE.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        zcl_ap_dev=&gt;commit( ).
+      ENDIF.
+      SELECT SINGLE objnr FROM jest
+        INTO l_objnr
+       WHERE objnr = l_objnr
+         AND stat  = istat
+         AND inact = &apos;&apos;.
+      IF sy-subrc &lt;&gt; 0.
+        mensaje = &apos;No se ha modificado el estado de la orden&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Cambia estatus de usuario" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="NO_PERMITIR_ANTERIOR" VERSION="1" LANGU="S" DESCRIPT="No permitir estados anteriores" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CAMBIA_STATUS_USUARIO" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD cambia_status_usuario.
+    DATA: l_autyp         TYPE aufk-autyp,
+          l_jsto          TYPE jsto,
+          i_tj30t         TYPE TABLE OF tj30t,
+*        o_bi TYPE REF TO zcl_ap_batch_input,
+          &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+          l_nstatus       TYPE i,
+          l_tj30t         TYPE tj30t,
+          &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+          l_tabix         TYPE n LENGTH 2,
+          l_jest          TYPE jest,
+          l_tj30_ant      TYPE tj30,
+          l_tj30          TYPE tj30,
+          i_orders        TYPE TABLE OF bapi_order_key,
+          l_status        TYPE bapi_order_func_cntrl-status,
+          l_return        TYPE bapiret2,
+          i_detail_return TYPE TABLE OF bapi_order_return,
+          l_detail_return TYPE bapi_order_return.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      mensaje = &apos;No existe la orden&apos;(neo).
+      RETURN.
+    ENDIF.
+
+    CONCATENATE &apos;OR&apos; aufnr INTO l_jsto-objnr.
+
+    SELECT SINGLE * FROM jsto
+      INTO l_jsto
+     WHERE objnr = l_jsto-objnr.
+    IF sy-subrc &lt;&gt; 0.
+      mensaje = &apos;Orden no tiene asociado esquema de estatus&apos;(one).
+    ELSE.
+      SELECT * FROM tj30t
+        INTO TABLE i_tj30t
+       WHERE stsma = l_jsto-stsma
+         AND spras = spras.
+      IF sy-subrc &lt;&gt; 0.
+        CONCATENATE &apos;Esquema&apos;(esq) l_jsto-stsma &apos;no contiene ningún status&apos;(ncn) INTO mensaje SEPARATED BY space.
+      ELSE.
+        l_nstatus = lines( i_tj30t ).
+        READ TABLE i_tj30t INTO l_tj30t WITH KEY txt04 = status.
+        IF sy-subrc &lt;&gt; 0.
+          CONCATENATE &apos;Esquema&apos;(esq) l_jsto-stsma &apos;no contiene status&apos;(ncs) status INTO mensaje SEPARATED BY space.
+        ELSE.
+          l_tabix = sy-tabix.
+          SELECT SINGLE * FROM jest
+            INTO l_jest
+           WHERE objnr = l_jsto-objnr
+             AND stat  = l_tj30t-estat
+             AND inact = &apos;&apos;.
+          IF sy-subrc = 0.
+* Si el status ya esta activo no hacemos nada
+            CONCATENATE &apos;&gt;Orden ya está en estado&apos;(oye) status &apos;No hacemos nada&apos;(nhn) INTO mensaje SEPARATED BY space.
+          ELSE.
+            IF no_permitir_anterior = &apos;X&apos;.
+              SELECT * FROM jest
+                INTO l_jest
+                UP TO 1 ROWS
+               WHERE objnr    = l_jsto-objnr
+                 AND stat  LIKE &apos;E%&apos; &quot; Sólo estatus de usuario
+                 AND inact    = &apos;&apos;
+                ORDER BY PRIMARY KEY.
+              ENDSELECT.
+              IF sy-subrc = 0.
+                SELECT SINGLE * FROM tj30
+                  INTO l_tj30_ant
+                 WHERE stsma = l_jsto-stsma
+                   AND estat = l_jest-stat.
+                IF sy-subrc = 0.
+                  SELECT SINGLE * FROM tj30
+                    INTO l_tj30
+                   WHERE stsma = l_jsto-stsma
+                     AND estat = l_tj30t-estat.
+                  IF l_tj30_ant-stonr &gt; l_tj30-stonr.
+                    READ TABLE i_tj30t INTO l_tj30t WITH KEY estat = l_jest-stat.
+                    CONCATENATE &apos;&gt;Estatus&apos;(esx) l_tj30t-txt04 &apos;mayor que el propuesto&apos;(mqp) status INTO mensaje SEPARATED BY space.
+                    RETURN.
+                  ENDIF.
+                ENDIF.
+              ENDIF.
+            ENDIF.
+*          CREATE OBJECT o_bi.
+*
+*          o_bi-&gt;inicio( ).
+*
+** Pantalla de acceso modificar/visualizar orden
+*          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5110&apos;).
+*          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos;).
+*          o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+*
+*          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos;).
+*          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=STAT&apos;).
+*
+*          IF l_nstatus &gt; 5.
+*            o_bi-&gt;dynpro( program = &apos;SAPLBSVA&apos; dynpro = &apos;0300&apos;).
+*            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;==A-&apos;).
+*
+*            o_bi-&gt;dynpro( program = &apos;SAPLBSVA&apos; dynpro = &apos;0300&apos;).
+*            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;==A+&apos;).
+*            l_tabix = 5 - ( l_nstatus - L_TABIX ).
+*          ENDIF.
+** Master screen STATUS_MAINTAIN
+*          o_bi-&gt;dynpro( program = &apos;SAPLBSVA&apos; dynpro = &apos;0300&apos;).
+*          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BACK&apos;).
+*          o_bi-&gt;campos( campo = &apos;J_STMAINT-ANWS&apos; ind = l_tabix valor = &apos;X&apos;). &quot; Indicador &quot;Status activo de momento&quot;
+*
+*          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos;).
+*          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos;).
+*
+*          mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;COR2&apos; modo = &apos;E&apos;).
+
+* Vuelvo a verificar si el estatus se ha grabado con éxito, y si es así, blanqueamos mensaje
+
+            IF l_autyp = &apos;40&apos;.
+              APPEND aufnr TO i_orders.
+              l_status = status.
+              CALL FUNCTION &apos;BAPI_PROCORD_SETUSERSTATUS&apos;
+                EXPORTING
+                  status_profile     = l_jsto-stsma
+                  status             = l_status
+                  work_process_group = &apos;COWORK_BAPI&apos;
+                  work_process_max   = 99
+                IMPORTING
+                  return             = l_return
+                TABLES
+                  orders             = i_orders
+                  detail_return      = i_detail_return.
+
+              IF l_return-type &lt;&gt; &apos;E&apos; AND commit = &apos;X&apos;.
+                zcl_ap_dev=&gt;commit( ).
+              ENDIF.
+            ELSEIF l_autyp = &apos;10&apos;.
+              APPEND aufnr TO i_orders.
+              l_status = status.
+              CALL FUNCTION &apos;BAPI_PRODORD_SETUSERSTATUS&apos;
+                EXPORTING
+                  status_profile     = l_jsto-stsma
+                  status             = l_status
+                  work_process_group = &apos;COWORK_BAPI&apos;
+                  work_process_max   = 99
+                IMPORTING
+                  return             = l_return
+                TABLES
+                  orders             = i_orders
+                  detail_return      = i_detail_return.
+
+              IF l_return-type &lt;&gt; &apos;E&apos; AND commit = &apos;X&apos;.
+                zcl_ap_dev=&gt;commit( ).
+              ENDIF.
+            ELSEIF l_autyp = &apos;30&apos;.
+              CALL FUNCTION &apos;STATUS_CHANGE_EXTERN&apos;
+                EXPORTING
+                  objnr               = l_jsto-objnr
+                  user_status         = l_tj30t-estat
+*                 SET_INACT           = &apos; &apos;
+*                 SET_CHGKZ           =
+                  no_check            = &apos;X&apos;
+*             IMPORTING
+*                 STONR               =
+                EXCEPTIONS
+                  object_not_found    = 1
+                  status_inconsistent = 2
+                  status_not_allowed  = 3
+                  OTHERS              = 4.
+              CASE sy-subrc.
+                WHEN 0. IF commit = &apos;X&apos;. COMMIT WORK AND WAIT. ENDIF.
+                WHEN 1. l_return-message = &apos;Orden no encontrada&apos;.
+                WHEN 2. l_return-message = &apos;Status inconsistente&apos;.
+                WHEN 3. l_return-message = &apos;Status no permitido&apos;.
+                WHEN 4. l_return-message = &apos;Error modificando status de usuario&apos;.
+              ENDCASE.
+            ELSE.
+              l_return-message = &apos;No implementado el cambio de status&apos;(nic).
+            ENDIF.
+
+            SELECT SINGLE objnr FROM jest
+              INTO l_jest-objnr
+             WHERE objnr = l_jsto-objnr
+               AND stat  = l_tj30t-estat
+               AND inact = &apos;&apos;.
+            IF sy-subrc = 0 OR ( l_return-message IS INITIAL AND commit = &apos;&apos; ).
+              CONCATENATE &apos;&gt;Se cambia el estatus de la orden a&apos;(cso) status INTO mensaje SEPARATED BY space.
+            ELSE.
+              IF NOT l_return-message IS INITIAL.
+                mensaje = l_return-message.
+              ELSE.
+                READ TABLE i_detail_return INTO l_detail_return WITH KEY type = &apos;E&apos;.
+                IF sy-subrc = 0.
+                  mensaje = l_detail_return-message.
+                ENDIF.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" VERSION="1" LANGU="S" DESCRIPT="Cierre orden" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden previsional" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" SCONAME="ANULAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_ORDEN" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRET2-MESSAGE"/>
+  <source>METHOD cerrar_orden.
+    DATA: l_autyp         TYPE aufk-autyp,
+          orders          TYPE TABLE OF bapi_order_key,
+          detail_return   TYPE TABLE OF bapi_order_return,
+          application_log TYPE TABLE OF bapi_order_application_log,
+          l_return        TYPE bapiret2,
+          o_bi            TYPE REF TO zcl_ap_batch_input.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = aufnr.
+
+    IF anular IS INITIAL.
+      APPEND aufnr TO orders.
+
+      IF l_autyp = &apos;40&apos;.
+        CALL FUNCTION &apos;BAPI_PROCORD_COMPLETE_TECH&apos;
+* EXPORTING
+*   SCOPE_COMPL_TECH         = &apos;1&apos;
+*   WORK_PROCESS_GROUP       = &apos;COWORK_BAPI&apos;
+*   WORK_PROCESS_MAX         = 99
+* IMPORTING
+*   RETURN                   =
+          TABLES
+            orders          = orders
+            detail_return   = detail_return
+            application_log = application_log.
+      ELSE. &quot; IF l_autyp = &apos;10&apos;.
+        CALL FUNCTION &apos;BAPI_PRODORD_COMPLETE_TECH&apos;
+* EXPORTING
+*   SCOPE_COMPL_TECH         = &apos;1&apos;
+*   WORK_PROCESS_GROUP       = &apos;COWORK_BAPI&apos;
+*   WORK_PROCESS_MAX         = 99
+          IMPORTING
+            return          = l_return
+          TABLES
+            orders          = orders
+            detail_return   = detail_return
+            application_log = application_log.
+      ENDIF.
+*  IF l_return-type NE &apos;E&apos;.
+*    IF NOT detail_return IS INITIAL.
+*      select single * from afko
+*        into l_afko
+*       where aufnr = aufnr.
+*    ENDIF.
+*  ENDIF.
+
+      IF l_return-type = &apos;E&apos;.
+        message = l_return-message.
+        CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+      ELSE.
+        IF commit = &apos;X&apos;.
+          zcl_ap_dev=&gt;commit( ).
+        ENDIF.
+
+        IF contiene_status( aufnr = aufnr status = &apos;CERR&apos; ) = &apos;&apos;.
+          o_bi = NEW #( ).
+
+          o_bi-&gt;inicio( ).
+
+          IF l_autyp = &apos;40&apos;.
+* Pantalla de acceso modificar/visualizar orden
+            o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5110&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+            o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+            o_bi-&gt;campos( campo = &apos;R62CLORD-FLG_COMPL&apos; valor = &apos;X&apos; ). &quot; Indicador: tratar toda el grafo la orden
+
+            o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ABSK&apos; ).
+
+            o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+            message = o_bi-&gt;llamar_transaccion( tcode = &apos;COR2&apos; modo = modo ).
+            IF contiene_status( aufnr = aufnr status = &apos;CERR&apos; ) = &apos;X&apos;.
+              CLEAR message.
+            ELSEIF message IS INITIAL.
+              message = &apos;Error cerrando orden&apos;(eco).
+            ENDIF.
+          ELSEIF message IS INITIAL.
+            message = &apos;Error cerrando orden&apos;(eco).
+          ENDIF.
+        ELSEIF message IS INITIAL.
+          CLEAR message.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      IF contiene_status( aufnr = aufnr status = &apos;CERR&apos; ) = &apos;X&apos;.
+
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+        IF l_autyp = &apos;40&apos;.
+* Pantalla de acceso modificar/visualizar orden
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5110&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+          o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+          o_bi-&gt;campos( campo = &apos;R62CLORD-FLG_COMPL&apos; valor = &apos;X&apos; ). &quot; Indicador: tratar toda el grafo la orden
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=RABK&apos; ).
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+          message = o_bi-&gt;llamar_transaccion( tcode = &apos;COR2&apos; modo = modo ).
+        ELSEIF l_autyp = &apos;20&apos;.
+          message = &apos;No implementado para tipo de órdenes 20&apos;.
+        ENDIF.
+        IF contiene_status( aufnr = aufnr status = &apos;CERR&apos; ) = &apos;&apos;.
+          CLEAR message.
+        ELSEIF message IS INITIAL.
+          message = &apos;Error anulando cierre&apos;(eac).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_TECNICAMENTE" VERSION="1" LANGU="S" DESCRIPT="Cerrar técnicamente" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_TECNICAMENTE" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_TECNICAMENTE" SCONAME="ANULAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_TECNICAMENTE" SCONAME="MODO_CT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCMODE" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CERRAR_TECNICAMENTE" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD cerrar_tecnicamente.
+    DATA l_autyp TYPE aufk-autyp.
+    DATA o_bi    TYPE REF TO zcl_ap_batch_input.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No existe la orden&apos;(neo) aufnr INTO mensaje SEPARATED BY space.
+    ELSE.
+      IF anular IS INITIAL AND contiene_status( aufnr = aufnr status = &apos;CTEC&apos; ) = &apos;X&apos;.
+        mensaje = &apos;&gt;Orden ya estaba cerrada técnicamente&apos;(oyc).
+      ELSEIF anular = &apos;X&apos; AND contiene_status( aufnr = aufnr status = &apos;CTEC&apos; ) = &apos;&apos;.
+        mensaje = &apos;&gt;Orden no estaba cerrada técnicamente&apos;(oct).
+      ELSE.
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+        IF l_autyp = &apos;40&apos;.
+* Pantalla de acceso modificar/visualizar orden
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5110&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+          o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+          IF anular IS INITIAL.
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TABS&apos; ).
+          ELSE.
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TABR&apos; ).
+          ENDIF.
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO&apos; dynpro = &apos;5115&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+          mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;COR2&apos; modo = modo_ct  ).
+        ELSEIF l_autyp = &apos;10&apos;.
+* Pantalla de acceso modificar/visualizar orden
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0110&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+          o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0115&apos; ).
+          IF anular IS INITIAL.
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TABS&apos; ).
+          ELSE.
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TABR&apos; ).
+          ENDIF.
+
+          o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0115&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+          mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;CO02&apos; modo = modo_ct ).
+        ENDIF.
+
+        IF contiene_status( aufnr = aufnr status = &apos;CTEC&apos; ) = &apos;X&apos; AND anular IS INITIAL.
+          mensaje = &apos;&gt;Se ha cerrado técnicamente la orden&apos;(sct).
+        ELSEIF contiene_status( aufnr = aufnr status = &apos;CTEC&apos; ) = &apos;&apos; AND anular = &apos;X&apos;.
+          mensaje = &apos;&gt;Se ha anulado cierre técnicamente la orden&apos;(sac).
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONSTRUCTOR" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    IF NOT aufnr IS INITIAL.
+      set_orden( aufnr ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" VERSION="1" LANGU="S" DESCRIPT="Verifica si la orden contiene los status pasados" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS_EXCLUIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS_INT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="OBJNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status.
+    DATA: r_status  TYPE RANGE OF j_status,
+          i_status  TYPE TABLE OF string,
+          l_txt04   TYPE string,
+          l_istat   TYPE j_status,
+          lr_status LIKE LINE OF r_status,
+          l_objnr   TYPE jest-objnr,
+          l_aufpl   TYPE afvc-aufpl,
+          l_aplzl   TYPE afvc-aplzl.
+
+    SPLIT status AT &apos;,&apos; INTO TABLE i_status.
+
+    LOOP AT i_status INTO l_txt04.
+      SELECT istat FROM tj02t                           &quot;#EC CI_GENBUFF
+        INTO l_istat
+       WHERE spras = spras
+         AND txt04 = l_txt04.
+*    IF sy-subrc = 0.
+        CLEAR lr_status.
+        lr_status-option = &apos;EQ&apos;.
+        lr_status-sign   = &apos;I&apos;.
+        lr_status-low    = l_istat.
+        APPEND lr_status TO r_status.
+*    ENDIF.
+      ENDSELECT.
+    ENDLOOP.
+
+    CLEAR i_status.
+    SPLIT status_int AT &apos;,&apos; INTO TABLE i_status.
+    LOOP AT i_status INTO l_txt04.
+      CLEAR lr_status.
+      lr_status-option = &apos;EQ&apos;.
+      lr_status-sign   = &apos;I&apos;.
+      lr_status-low    = l_txt04.
+      APPEND lr_status TO r_status.
+    ENDLOOP.
+
+    IF NOT status_excluir IS INITIAL.
+      REFRESH i_status.
+      SPLIT status_excluir AT &apos;,&apos; INTO TABLE i_status.
+      LOOP AT i_status INTO l_txt04.
+        SELECT istat FROM tj02t                         &quot;#EC CI_GENBUFF
+          INTO l_istat
+          UP TO 1 ROWS
+         WHERE spras = spras
+           AND txt04 = l_txt04.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          CLEAR lr_status.
+          lr_status-option = &apos;EQ&apos;.
+          lr_status-sign   = &apos;E&apos;.
+          lr_status-low    = l_istat.
+          APPEND lr_status TO r_status.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF r_status IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF NOT objnr IS INITIAL.
+      l_objnr = objnr.
+    ELSE.
+      IF vornr IS INITIAL.
+        CONCATENATE &apos;OR&apos; aufnr INTO l_objnr.
+      ELSE.
+        SELECT afvc~aufpl aplzl
+          INTO (l_aufpl, l_aplzl)
+          UP TO 1 ROWS
+          FROM afko JOIN afvc ON afko~aufpl = afvc~aufpl
+         WHERE aufnr = aufnr
+           AND vornr = vornr.
+        ENDSELECT.
+        CONCATENATE &apos;OV&apos; l_aufpl l_aplzl INTO l_objnr.
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE stat FROM  jest
+      INTO l_istat
+     WHERE objnr  = l_objnr
+       AND stat  IN r_status
+       AND inact  = &apos;&apos;.
+    IF sy-subrc = 0.
+      si_contiene = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" VERSION="1" LANGU="S" DESCRIPT="Verifica si la orden contiene los status pasados (INSTANCE)" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="USUARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status_orden.
+    DATA: l_objnr        TYPE jest-objnr,
+          l_aufpl        TYPE afvc-aufpl,
+          l_aplzl        TYPE afvc-aplzl,
+          l_jsto         TYPE jsto,
+          l_status_orden TYPE t_status_orden.
+
+    FIELD-SYMBOLS &lt;status&gt; TYPE t_status_orden.
+
+    READ TABLE i_status_orden TRANSPORTING NO FIELDS  WITH KEY aufnr = aufnr  &quot;#EC PREF_LINE_EX
+                                                               vornr = vornr
+         BINARY SEARCH.
+    IF sy-subrc &lt;&gt; 0.
+      IF vornr IS INITIAL.
+        CONCATENATE &apos;OR&apos; aufnr INTO l_objnr.
+      ELSE.
+        SELECT afvc~aufpl aplzl
+          INTO (l_aufpl, l_aplzl)
+          UP TO 1 ROWS
+          FROM afko JOIN afvc ON afko~aufpl = afvc~aufpl
+         WHERE aufnr = aufnr
+           AND vornr = vornr.
+        ENDSELECT.
+        CONCATENATE &apos;OV&apos; l_aufpl l_aplzl INTO l_objnr.
+      ENDIF.
+
+      IF usuario IS INITIAL.
+        SELECT  * FROM  jest JOIN tj02t ON jest~stat = tj02t~istat &quot;#EC CI_BUFFJOIN
+          APPENDING CORRESPONDING FIELDS OF TABLE i_status_orden
+         WHERE objnr = l_objnr
+           AND spras = spras
+           AND inact = &apos;&apos;.
+      ELSE.
+
+        CONCATENATE &apos;OR&apos; aufnr INTO l_jsto-objnr.
+        SELECT SINGLE stsma FROM  jsto
+          INTO l_jsto-stsma
+         WHERE objnr = l_jsto-objnr.
+
+        SELECT  txt04 estat FROM  jest JOIN tj30t ON jest~stat = tj30t~estat &quot;#EC CI_BUFFJOIN
+          INTO (l_status_orden-txt04, l_status_orden-istat)
+         WHERE objnr = l_objnr
+           AND spras = spras
+           AND inact = &apos;&apos;
+           AND stsma = l_jsto-stsma.
+          APPEND l_status_orden TO i_status_orden.
+        ENDSELECT.
+      ENDIF.
+
+      LOOP AT i_status_orden ASSIGNING &lt;status&gt; WHERE aufnr IS INITIAL.
+        &lt;status&gt;-aufnr = aufnr.
+        &lt;status&gt;-vornr = vornr.
+      ENDLOOP.
+
+      SORT i_status_orden.
+    ENDIF.
+
+    READ TABLE i_status_orden TRANSPORTING NO FIELDS WITH KEY aufnr = aufnr &quot;#EC PREF_LINE_EX
+                                                              vornr = vornr
+                                                              txt04 = status
+         BINARY SEARCH.
+    IF sy-subrc = 0.
+      si_contiene = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" VERSION="1" LANGU="S" DESCRIPT="Verifica si la orden contiene todos los status en rango" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="R_STATUS" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para RANGE_C4" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="/SPE/RET_RANGE_C4_T"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="OR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_ORDEN_RANGO" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status_orden_rango.
+    DATA: i_status  TYPE TABLE OF tj02t,
+          l_status  TYPE tj02t,
+          lr_status TYPE range_c4,
+          l_exc     TYPE c LENGTH 1.
+
+    IF r_status IS INITIAL.
+      si_contiene = &apos;X&apos;.
+    ELSE.
+      SELECT * FROM tj02t                               &quot;#EC CI_GENBUFF
+        INTO TABLE i_status
+       WHERE txt04 IN r_status
+         AND spras  = spras
+       ORDER BY PRIMARY KEY.
+      IF sy-subrc &lt;&gt; 0.
+        si_contiene = &apos;X&apos;.
+      ELSE.
+        LOOP AT i_status INTO l_status.
+          si_contiene = contiene_status_orden( aufnr  = aufnr
+                                               status = l_status-txt04
+                                               spras  = spras
+                                               vornr  = vornr  ).
+          IF or IS INITIAL.
+            IF si_contiene IS INITIAL.
+              EXIT.
+            ENDIF.
+          ELSE.
+            IF si_contiene = &apos;X&apos;.
+              EXIT.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+
+        LOOP AT r_status INTO lr_status WHERE    sign = &apos;E&apos;
+                                              OR ( sign = &apos;I&apos; AND option = &apos;NE&apos; ).
+          LOOP AT i_status_orden TRANSPORTING NO FIELDS WHERE     aufnr = aufnr &quot;#EC PREF_LINE_EX
+                                                              AND vornr = vornr
+                                                              AND txt04 = lr_status-low.
+            EXIT.
+          ENDLOOP.
+          IF sy-subrc = 0.
+            l_exc = &apos;X&apos;.
+            CLEAR si_contiene.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+
+        IF l_exc IS INITIAL.
+          LOOP AT r_status TRANSPORTING NO FIELDS WHERE sign = &apos;I&apos; AND option &lt;&gt; &apos;NE&apos;.
+            EXIT.
+          ENDLOOP.
+          IF sy-subrc &lt;&gt; 0.
+            si_contiene = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" VERSION="1" LANGU="S" DESCRIPT="Verifica si la orden contiene todos los status usu. en rango" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="R_STATUS" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para RANGE_C4" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="/SPE/RET_RANGE_C4_T"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="STSMA" VERSION="1" LANGU="S" DESCRIPT="Esquema de status" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TJ30T-STSMA" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="CONTIENE_STATUS_US_ORDEN_RANGO" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status_us_orden_rango.
+    DATA: l_jsto    TYPE jsto,
+          i_status  TYPE TABLE OF tj30t,
+          l_status  TYPE tj30t,
+          lr_status TYPE range_c4,
+          l_exc     TYPE c LENGTH 1.
+
+    IF r_status IS INITIAL.
+      si_contiene = &apos;X&apos;.
+    ELSE.
+      IF stsma IS INITIAL.
+        CONCATENATE &apos;OR&apos; aufnr INTO l_jsto-objnr.
+        SELECT SINGLE stsma FROM  jsto
+          INTO l_jsto-stsma
+         WHERE objnr = l_jsto-objnr.
+      ELSE.
+        l_jsto-stsma = stsma.
+      ENDIF.
+
+      IF l_jsto-stsma IS INITIAL.
+        SELECT txt04 FROM tj30t                         &quot;#EC CI_GENBUFF
+          INTO CORRESPONDING FIELDS OF TABLE i_status
+         WHERE txt04 IN r_status
+           AND spras  = spras
+          ORDER BY PRIMARY KEY.
+      ELSE.
+        SELECT txt04 FROM tj30t                         &quot;#EC CI_GENBUFF
+          INTO CORRESPONDING FIELDS OF TABLE i_status
+         WHERE txt04 IN r_status
+           AND spras  = spras
+           AND stsma  = l_jsto-stsma
+          ORDER BY PRIMARY KEY.
+      ENDIF.
+
+      IF sy-subrc &lt;&gt; 0.
+        si_contiene = &apos;X&apos;.
+      ELSE.
+        LOOP AT i_status INTO l_status.
+          si_contiene = contiene_status_orden( aufnr  = aufnr
+                                               status = l_status-txt04
+                                               spras  = spras
+                                               vornr  = vornr
+                                               usuario = &apos;X&apos;  ).
+          IF si_contiene IS INITIAL.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+
+        LOOP AT r_status INTO lr_status WHERE    sign = &apos;E&apos;
+                                              OR ( sign = &apos;I&apos; AND option = &apos;NE&apos; ).
+          LOOP AT i_status_orden TRANSPORTING NO FIELDS WHERE     aufnr = aufnr &quot;#EC PREF_LINE_EX
+                                                              AND vornr = vornr
+                                                              AND txt04 = lr_status-low.
+            EXIT.
+          ENDLOOP.
+          IF sy-subrc = 0.
+            l_exc = &apos;X&apos;.
+            CLEAR si_contiene.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+
+        IF l_exc IS INITIAL.
+          LOOP AT r_status TRANSPORTING NO FIELDS WHERE sign = &apos;I&apos; AND option &lt;&gt; &apos;NE&apos;. &quot;#EC PREF_LINE_EX
+            EXIT.
+          ENDLOOP.
+          IF sy-subrc &lt;&gt; 0.
+            si_contiene = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESPERA_SI_BLOQUEADA" VERSION="1" LANGU="S" DESCRIPT="Espera unos segundos a ver si desbloquea la orden" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="SEGUNDOS_ESPERA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="10"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD espera_si_bloqueada.
+    DATA bloqueado TYPE c LENGTH 1.
+
+    DO segundos_espera TIMES.
+      bloqueado = esta_bloqueada( aufnr ).
+      IF bloqueado = &apos;X&apos;.
+        message = |Orden { aufnr ALPHA = OUT } bloqueada por { sy-msgv1 }|.
+        WAIT UP TO 1 SECONDS.
+      ELSE.
+        CLEAR message.
+        EXIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESTA_BLOQUEADA" VERSION="1" LANGU="S" DESCRIPT="¿Está la orden bloqueada? (SM12)" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESTA_BLOQUEADA" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="ESTA_BLOQUEADA" SCONAME="BLOQUEADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_bloqueada.
+    bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;AUFK&apos;
+                                                 clave = sy-mandt
+                                                 clave2 = aufnr ).
+
+    IF bloqueado IS INITIAL.
+      SELECT SINGLE rsnum FROM afko
+        INTO @DATA(l_rsnum)
+       WHERE aufnr = @aufnr.
+      IF sy-subrc = 0.
+        bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;RKPF&apos;
+                                                     clave = sy-mandt
+                                                     clave2 = l_rsnum ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Borra datos temporales" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD free.
+    CLEAR: aufk, afko, caufvd, i_header, header, i_position, position, i_phase,
+           phase, i_component, component.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_ALMACEN" VERSION="1" LANGU="S" DESCRIPT="Recupera almacén" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_ALMACEN" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_ALMACEN" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Clase de documento de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LGORT_D"/>
+  <source>METHOD get_almacen.
+    SELECT lgort FROM afpo
+      INTO lgort
+      UP TO 1 ROWS
+     WHERE aufnr  = aufnr
+       AND lgort &lt;&gt; &apos;&apos;
+       AND xloek  = &apos;&apos;.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" VERSION="1" LANGU="S" DESCRIPT="Devuelve capacidades de la orden" EXPOSURE="2" STATE="1" EDITORDER="39 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="AUFPL" VERSION="1" LANGU="S" DESCRIPT="Nº hoja ruta de operaciones en orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CAUFV-AUFPL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="I_KAKO" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para KAKO" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PDSMAINT_KAKO_T"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="I_KBED" VERSION="1" LANGU="S" DESCRIPT="Registros de necesidades de capacidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BADI_KBED"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="I_KAPM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_KAPM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_capacidades.
+    DATA: l_aufpl TYPE afko-aufpl,
+          l_kbed  TYPE kbed.
+    DATA i_kbed2 TYPE TABLE OF kbed.
+
+    CLEAR: i_kapm, message.
+    IF aufpl IS INITIAL.
+      SELECT SINGLE aufpl FROM afko
+        INTO l_aufpl
+       WHERE aufnr = aufnr.
+    ELSE.
+      l_aufpl = aufpl.
+    ENDIF.
+
+    IF l_aufpl IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT * FROM kbed                                  &quot;#EC CI_NOFIELD
+      INTO TABLE i_kbed
+    WHERE aufpl = l_aufpl.
+
+    IF i_kbed IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT * FROM kako                             &quot;#EC CI_NO_TRANSFORM
+      INTO TABLE i_kako
+     FOR ALL ENTRIES IN i_kbed
+   WHERE kapid = i_kbed-kapid.
+
+    READ TABLE i_kbed INTO l_kbed WITH KEY split  = &apos;0&apos;.
+
+    CALL FUNCTION &apos;CR_SINGLE_CAPACITIES&apos;
+      EXPORTING
+        up_kapid             = l_kbed-kapid
+      TABLES
+        tab_single           = i_kapm
+      EXCEPTIONS
+        not_found            = 01
+        no_single_capacities = 02.
+    IF sy-subrc &lt;&gt; 0.
+      message = |Error { sy-subrc } leyendo capacidades |.
+      RETURN.
+    ENDIF.
+
+*Capacidades de ordenes cerradas
+    SELECT split kapid FROM afru
+      INTO CORRESPONDING FIELDS OF TABLE i_kbed2
+     WHERE aufnr = l_aufpl
+       AND split &gt; 0
+       AND satza = &apos;B10&apos;
+     GROUP BY split kapid.
+
+    LOOP AT i_kbed2 ASSIGNING FIELD-SYMBOL(&lt;kbed&gt;).
+      IF NOT line_exists( i_kbed[ kapid = &lt;kbed&gt;-kapid split = &lt;kbed&gt;-split ] ).
+        APPEND &lt;kbed&gt; TO i_kbed.
+      ENDIF.
+    ENDLOOP.
+
+* Borramos de I_KAPM las no asignadas a split
+    LOOP AT i_kapm ASSIGNING FIELD-SYMBOL(&lt;kapm&gt;).
+      LOOP AT i_kbed TRANSPORTING NO FIELDS WHERE kapid = &lt;kapm&gt;-kapie. &quot;#EC PREF_LINE_EX
+        EXIT.
+      ENDLOOP.
+      IF sy-subrc &lt;&gt; 0.
+        DELETE i_kapm.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve capacidades asociadas a equipo" EXPOSURE="2" STATE="1" EDITORDER="42 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" SCONAME="ARBID" VERSION="1" LANGU="S" DESCRIPT="ID de objeto del recurso" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AFVC-ARBID"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" SCONAME="KAPAR" VERSION="1" LANGU="S" DESCRIPT="Clase de capacidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KAKO-KAPAR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" SCONAME="I_KAKO" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para KAKO" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PDSMAINT_KAKO_T"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" SCONAME="I_KAPM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_KAPM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDADES_EQUIPO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_capacidades_equipo.
+    DATA: t_kako TYPE TABLE OF rcrkk,
+          t_kapm TYPE TABLE OF kapm.
+
+    CLEAR: i_kako, i_kapm.
+    CALL FUNCTION &apos;CR_CAPACITIES_OF_WORKCENTER&apos;
+      EXPORTING
+        arbid               = arbid
+*       ARBPL               = &apos; &apos;
+*       WERKS               = &apos; &apos;
+      TABLES
+        t_kako              = t_kako
+*       E_KAKO              =
+      EXCEPTIONS
+        missing_parameters  = 1
+        not_found           = 2
+        no_capacities_found = 3
+        OTHERS              = 4.
+    IF sy-subrc &lt;&gt; 0.
+      message = |Error { sy-subrc } leyendo capacidades del recurso|.
+      RETURN.
+    ENDIF.
+
+    IF NOT kapar IS INITIAL.
+      DELETE t_kako WHERE kapar &lt;&gt; kapar.
+    ENDIF.
+
+    MOVE-CORRESPONDING t_kako TO i_kako.
+
+    LOOP AT t_kako ASSIGNING FIELD-SYMBOL(&lt;kako&gt;).
+      CLEAR t_kapm.
+      CALL FUNCTION &apos;CR_SINGLE_CAPACITIES&apos;
+        EXPORTING
+          up_kapid             = &lt;kako&gt;-kapid
+        TABLES
+          tab_single           = t_kapm
+        EXCEPTIONS
+          not_found            = 1
+          no_single_capacities = 2
+          OTHERS               = 3.
+      IF sy-subrc &lt;&gt; 0.
+        message = |Error { sy-subrc } leyendo capacidades de la capacidad { &lt;kako&gt;-kapid }|.
+        RETURN.
+      ELSE.
+        MOVE-CORRESPONDING t_kapm TO i_kapm.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" VERSION="1" LANGU="S" DESCRIPT="Devuelve capacidad puesto trabajo" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAPACIDAD_PUESTO_TRABAJO" SCONAME="I_CAPACIDAD" VERSION="1" LANGU="S" DESCRIPT="Interfase CR_CAPACITY_AVAILABLE_TIMES" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_CRCAPACITY_EXACT"/>
+  <source>METHOD get_capacidad_puesto_trabajo.
+    DATA l_kapid TYPE crca-kapid.
+
+    SELECT kapid FROM crhd
+      INTO l_kapid
+      UP TO 1 ROWS
+    WHERE objty = &apos;A&apos;
+      AND arbpl = arbpl
+      AND werks = werks.
+    ENDSELECT.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;CR_CAPACITY_AVAILABLE_TIMES&apos;
+      EXPORTING
+        kapid                     = l_kapid
+        datuv                     = begda
+        datub                     = endda
+      TABLES
+        et_capacity_exact         = i_capacidad
+      EXCEPTIONS
+        startdate_greater_enddate = 1
+        not_found                 = 2
+        OTHERS                    = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando capacidad de puesto de trabajo&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAUFVD" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos de estructura CAUFVD" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAUFVD" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CAUFVD" SCONAME="CAUFVD" VERSION="1" LANGU="S" DESCRIPT="Estructura diálogo p.cabeceras y posición de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CAUFVD"/>
+  <source>METHOD get_caufvd.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_aufnr TYPE aufnr.
+
+    SELECT SINGLE aufnr FROM afko
+      INTO l_aufnr
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;ALM_ME_ORDER_HEADER_GETDETAIL&apos;
+      EXPORTING
+        i_aufnr          = aufnr
+*       I_ENQUEUE_ORDER  =
+*       NO_DETAILS       =
+      IMPORTING
+*       E_AUFPL          =
+        e_caufvd         = caufvd
+*       E_AFFLD          =
+*       E_PMSDO          =
+*       E_ORDER_HEADER   =
+      EXCEPTIONS
+        order_locked     = 1
+        order_read_error = 2
+        OTHERS           = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CLASE" VERSION="1" LANGU="S" DESCRIPT="Recupera clase orden" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CLASE" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CLASE" SCONAME="AUART" VERSION="1" LANGU="S" DESCRIPT="Clase de documento de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="AUART"/>
+  <source>METHOD get_clase.
+    SELECT SINGLE auart FROM aufk
+      INTO auart
+     WHERE aufnr = aufnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" VERSION="1" LANGU="S" DESCRIPT="Devuelve cantidad realizada en movimientos MM" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="CHARG" VERSION="1" LANGU="S" DESCRIPT="Número de lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="BWART" VERSION="1" LANGU="S" DESCRIPT="Clase de movimiento (gestión stocks)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BWART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="BWART2" VERSION="1" LANGU="S" DESCRIPT="Clase de movimiento (gestión stocks)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BWART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="R_BWART" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla RANGEBWART" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_RANGEBWART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="R_BUDAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FAGL_RANGE_T_BUDAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="L_BWART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="INI_MAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="RSPOS" VERSION="1" LANGU="S" DESCRIPT="Número de posición de reserva/necesidades secundarias" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MSEG-RSPOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="SGTXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_MOVS_MM" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Cantidad con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGEV"/>
+  <source>METHOD get_ctd_movs_mm.
+    TYPES: BEGIN OF t_movs,
+             matnr TYPE mseg-matnr,
+             shkzg TYPE mseg-shkzg,
+             menge TYPE mseg-menge,
+             meins TYPE mseg-meins,
+           END OF t_movs.
+
+    FIELD-SYMBOLS &lt;mov&gt; TYPE t_movs.
+
+    DATA: ri_matnr        TYPE rstt_t_range_string,
+          ri_charg        TYPE RANGE OF charg_d,
+          ri_aufnr        TYPE RANGE OF aufnr,
+          ri_werks        LIKE RANGE OF werks,
+          ri_lgort        LIKE RANGE OF lgort,
+          ri_sgtxt        TYPE RANGE OF mseg-sgtxt,
+          ri_rspos        TYPE RANGE OF mseg-rspos,
+          ri_bwart        TYPE RANGE OF bwart,
+          r_bwart_string  TYPE RANGE OF string,
+          lr_matnr        LIKE LINE OF ri_matnr,
+          lr_charg        LIKE LINE OF ri_charg,
+          lr_aufnr        LIKE LINE OF ri_aufnr,
+          lr_werks        LIKE LINE OF ri_werks,
+          lr_lgort        LIKE LINE OF ri_lgort,
+          lr_sgtxt        LIKE LINE OF ri_sgtxt,
+          lr_rspos        LIKE LINE OF ri_rspos,
+          lr_bwart        LIKE LINE OF ri_bwart,
+          lr_bwart_string LIKE LINE OF r_bwart_string,
+          i_movs          TYPE TABLE OF t_movs.
+
+    CLEAR: cantidad, message.
+
+    IF NOT matnr IS INITIAL.
+      CLEAR lr_matnr.
+      lr_matnr-option = &apos;EQ&apos;.
+      lr_matnr-sign   = &apos;I&apos;.
+      lr_matnr-low    = matnr.
+      APPEND lr_matnr TO ri_matnr.
+    ENDIF.
+
+    IF NOT ini_mat IS INITIAL.
+      ri_matnr = zcl_ap_string=&gt;lista2rango( lista = ini_mat option = &apos;LK&apos; ).
+    ENDIF.
+
+    IF NOT charg IS INITIAL.
+      CLEAR lr_charg.
+      lr_charg-option = &apos;EQ&apos;.
+      lr_charg-sign   = &apos;I&apos;.
+      lr_charg-low    = charg.
+      APPEND lr_charg TO ri_charg.
+    ENDIF.
+
+    IF NOT aufnr IS INITIAL.
+      CLEAR lr_aufnr.
+      lr_aufnr-option = &apos;EQ&apos;.
+      lr_aufnr-sign   = &apos;I&apos;.
+      lr_aufnr-low    = aufnr.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = lr_aufnr-low ).
+      APPEND lr_aufnr TO ri_aufnr.
+    ENDIF.
+
+    IF NOT werks IS INITIAL.
+      CLEAR lr_werks.
+      lr_werks-option = &apos;EQ&apos;.
+      lr_werks-sign   = &apos;I&apos;.
+      lr_werks-low    = werks.
+      APPEND lr_werks TO ri_werks.
+    ENDIF.
+
+    IF NOT lgort IS INITIAL.
+      CLEAR lr_lgort.
+      lr_lgort-option = &apos;EQ&apos;.
+      lr_lgort-sign   = &apos;I&apos;.
+      lr_lgort-low    = lgort.
+      APPEND lr_lgort TO ri_lgort.
+    ENDIF.
+
+    IF NOT sgtxt IS INITIAL.
+      CLEAR lr_lgort.
+      lr_sgtxt-option = &apos;EQ&apos;.
+      lr_sgtxt-sign   = &apos;I&apos;.
+      lr_sgtxt-low    = lgort.
+      APPEND lr_sgtxt TO ri_sgtxt.
+    ENDIF.
+
+    IF NOT rspos IS INITIAL.
+      CLEAR lr_rspos.
+      lr_rspos-option = &apos;EQ&apos;.
+      lr_rspos-sign   = &apos;I&apos;.
+      lr_rspos-low    = rspos.
+      APPEND lr_rspos TO ri_rspos.
+    ENDIF.
+
+    IF bwart IS INITIAL.
+      ri_bwart = r_bwart.
+    ELSE.
+      CLEAR lr_bwart.
+      lr_bwart-option = &apos;EQ&apos;.
+      lr_bwart-sign   = &apos;I&apos;.
+      lr_bwart-low    = bwart.
+      APPEND lr_bwart TO ri_bwart.
+
+      IF NOT bwart2 IS INITIAL.
+        CLEAR lr_bwart.
+        lr_bwart-option = &apos;EQ&apos;.
+        lr_bwart-sign   = &apos;I&apos;.
+        lr_bwart-low    = bwart2.
+        APPEND lr_bwart TO ri_bwart.
+      ENDIF.
+    ENDIF.
+
+    IF NOT l_bwart IS INITIAL.
+      r_bwart_string = zcl_ap_string=&gt;lista2rango( l_bwart ).
+
+      LOOP AT r_bwart_string INTO lr_bwart_string.
+        MOVE-CORRESPONDING lr_bwart_string TO lr_bwart.
+        APPEND lr_bwart TO ri_bwart.
+      ENDLOOP.
+    ENDIF.
+
+    CLEAR cantidad.
+
+* Busco en los pendientes de procesar
+    IF sgtxt IS INITIAL.
+      SELECT matnr shkzg SUM( menge ) meins
+        INTO TABLE i_movs
+        FROM aufm
+       WHERE matnr IN ri_matnr
+         AND charg IN ri_charg
+         AND bwart IN ri_bwart
+         AND aufnr IN ri_aufnr
+         AND budat IN r_budat
+         AND werks IN ri_werks
+         AND lgort IN ri_lgort
+         AND rspos IN ri_rspos
+       GROUP BY matnr shkzg meins.
+    ELSE.
+      SELECT aufm~matnr aufm~shkzg SUM( aufm~menge ) aufm~meins
+        INTO TABLE i_movs
+        FROM aufm JOIN mseg ON  aufm~mblnr = mseg~mblnr
+                            AND aufm~mjahr = mseg~mjahr
+                            AND aufm~zeile = mseg~zeile
+       WHERE aufm~matnr IN ri_matnr
+         AND aufm~charg IN ri_charg
+         AND aufm~bwart IN ri_bwart
+         AND aufm~aufnr IN ri_aufnr
+         AND aufm~budat IN r_budat
+         AND aufm~werks IN ri_werks
+         AND aufm~lgort IN ri_lgort
+         AND aufm~rspos IN ri_rspos
+         AND sgtxt      IN ri_sgtxt
+       GROUP BY aufm~matnr aufm~shkzg aufm~meins.
+    ENDIF.
+
+    LOOP AT i_movs ASSIGNING &lt;mov&gt;.
+      IF meins &lt;&gt; &apos;&apos; AND meins &lt;&gt; &lt;mov&gt;-meins AND &lt;mov&gt;-menge &lt;&gt; 0.
+        &lt;mov&gt;-menge = zcl_ap_material=&gt;convertir_unidad( matnr = &lt;mov&gt;-matnr unidad_origen = &lt;mov&gt;-meins unidad_destino = meins cantidad = &lt;mov&gt;-menge ).
+        IF &lt;mov&gt;-menge = 0.
+          message = |Material { &lt;mov&gt;-matnr ALPHA = OUT } no tiene conversión de { &lt;mov&gt;-meins } a { meins }|.
+        ENDIF.
+      ENDIF.
+      IF &lt;mov&gt;-shkzg = &apos;S&apos;.
+        cantidad = cantidad + &lt;mov&gt;-menge.
+      ELSE.
+        cantidad = cantidad - &lt;mov&gt;-menge.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_NOTIF" VERSION="1" LANGU="S" DESCRIPT="Devuelve cantidad de notificación" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_NOTIF" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_NOTIF" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_NOTIF" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="(N)otif/(R)echazo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_CTD_NOTIF" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Campo de cantidad, longitud 13, con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGV13"/>
+  <source>METHOD get_ctd_notif.
+    DATA: ri_vornr     TYPE RANGE OF vornr,
+          lr_vornr     LIKE LINE OF ri_vornr,
+          l_notif      TYPE afru-gmnga,
+          l_recha      TYPE afru-xmnga,
+          l_notif_anul TYPE afru-gmnga,
+          l_recha_anul TYPE afru-xmnga.
+
+    IF NOT vornr IS INITIAL.
+      CLEAR lr_vornr.
+      lr_vornr-option = &apos;EQ&apos;.
+      lr_vornr-sign   = &apos;I&apos;.
+      lr_vornr-low    = vornr.
+      APPEND lr_vornr TO ri_vornr.
+    ENDIF.
+
+    SELECT SUM( xmnga ) SUM( xmnga ) FROM afru
+      INTO (l_notif, l_recha)
+     WHERE aufnr  = aufnr
+       AND vornr IN ri_vornr
+       AND stokz  = &apos;&apos;.
+
+    SELECT SUM( xmnga ) SUM( xmnga ) FROM afru
+      INTO (l_notif_anul, l_recha_anul)
+     WHERE aufnr  = aufnr
+       AND vornr IN ri_vornr
+       AND stokz  = &apos;X&apos;.
+
+    IF tipo = &apos;N&apos;.
+      cantidad = l_notif - l_notif_anul.
+    ELSE.
+      cantidad = l_recha - l_recha_anul.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DATOS_CABECERA" VERSION="1" LANGU="S" DESCRIPT="Recupera datos de cabecera" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD get_datos_cabecera.
+    CALL FUNCTION &apos;ALM_ME_ORDER_HEADER_GETDETAIL&apos;
+      EXPORTING
+        i_aufnr          = aufk-aufnr
+*       I_ENQUEUE_ORDER  =
+*       NO_DETAILS       =
+      IMPORTING
+*       E_AUFPL          =
+        e_caufvd         = caufvd
+*       E_AFFLD          =
+*       E_PMSDO          =
+*       E_ORDER_HEADER   =
+      EXCEPTIONS
+        order_locked     = 1
+        order_read_error = 2
+        OTHERS           = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DATOS_COSTES" VERSION="1" LANGU="S" DESCRIPT="Recupera datos de costes" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD get_datos_costes.
+    DATA l_kkbcs_out TYPE kkbcs_out.
+
+    SET PARAMETER ID &apos;ZIC&apos; FIELD &apos;X&apos;.                       &quot;#EC *
+
+    CALL FUNCTION &apos;CO_COST_SHOW_ORDER_COSTS&apos;
+      EXPORTING
+        caufvd_imp = caufvd.
+    SET PARAMETER ID &apos;ZIC&apos; FIELD &apos;&apos;.                        &quot;#EC *
+
+    CLEAR: g_t_kkbcs_out, g_t_kkbcs.
+    IMPORT g_t_kkbcs_out TO g_t_kkbcs_out
+           g_t_kkbcs     TO g_t_kkbcs FROM MEMORY ID &apos;DATOS_COSTES&apos;.
+    FREE MEMORY ID &apos;DATOS_COSTES&apos;.
+
+    DELETE g_t_kkbcs WHERE wrttp &lt;&gt; &apos;01&apos;.
+    LOOP AT g_t_kkbcs_out INTO kkbcs_out.
+      CLEAR: kkbcs_out-plankost_g, kkbcs_out-planmeng_g.
+      LOOP AT g_t_kkbcs INTO kkbcs WHERE     wrttp = &apos;01&apos;
+                                         AND kstar = kkbcs_out-kstar
+                                         AND herku = kkbcs_out-herku
+                                         AND hkgrp = kkbcs_out-hkgrp
+                                         AND beweg = kkbcs_out-beweg.
+        kkbcs_out-plankost_g = kkbcs_out-plankost_g + kkbcs-wkg000.
+        kkbcs_out-planmeng_g = kkbcs_out-planmeng_g + kkbcs-meg000.
+        DELETE g_t_kkbcs.
+      ENDLOOP.
+      MODIFY g_t_kkbcs_out FROM kkbcs_out.
+    ENDLOOP.
+
+    LOOP AT g_t_kkbcs INTO kkbcs.
+      CLEAR kkbcs_out.
+      MOVE-CORRESPONDING kkbcs TO kkbcs_out.
+      kkbcs_out-plankost_g = kkbcs-wkg000.
+      kkbcs_out-planmeng_g = kkbcs-meg000.
+
+      READ TABLE g_t_kkbcs_out INTO l_kkbcs_out WITH KEY herku = kkbcs-herku
+                                                        pmawr = kkbcs-pmawr
+                                                        belar = kkbcs-belar
+                                                        kstar = kkbcs-kstar
+                                                        herkz = kkbcs-herkz
+                                                        beweg = kkbcs-beweg.
+      IF sy-subrc = 0.
+        IF kkbcs_out-meinh IS INITIAL.
+          kkbcs_out-meinh = l_kkbcs_out-meinh.
+        ENDIF.
+        IF kkbcs_out-hkgrp IS INITIAL.
+          kkbcs_out-hkgrp = l_kkbcs_out-hkgrp.
+        ENDIF.
+        IF kkbcs_out-waers IS INITIAL.
+          kkbcs_out-waers = l_kkbcs_out-waers.
+        ENDIF.
+      ENDIF.
+      COLLECT kkbcs_out INTO g_t_kkbcs_out.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DETALLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos de la orden" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DETALLE" SCONAME="HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DETALLE" SCONAME="POSITIONS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DETALLE" SCONAME="OPERATIONS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_DETALLE" SCONAME="COMPONENTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD get_detalle.
+    DATA: l_obj_pi TYPE bapi_pi_order_objects,
+          l_return TYPE bapiret2,
+          l_obj_pp TYPE bapi_pp_order_objects.
+
+    CLEAR: i_header, i_position, i_component, i_operation.
+
+    IF aufk-autyp = &apos;40&apos;. &quot; Orden de proceso
+      l_obj_pi-header     = header.
+      l_obj_pi-positions  = positions.
+      l_obj_pi-sequences  = &apos;&apos;.
+      l_obj_pi-phases     = operations.
+      l_obj_pi-components = components.
+
+      CALL FUNCTION &apos;BAPI_PROCORD_GET_DETAIL&apos;
+        EXPORTING
+          number        = afko-aufnr
+*         COLLECTIVE_ORDER       =
+          order_objects = l_obj_pi
+        IMPORTING
+          return        = l_return
+        TABLES
+          header        = i_header
+          position      = i_position
+*         SEQUENCE      =
+          phase         = i_phase
+*         TRIGGER_POINT =
+          component     = i_component.
+*       PROD_REL_TOOL =
+    ELSEIF aufk-autyp = &apos;10&apos;. &quot; Orden de fabricación
+      l_obj_pp-header     = header.
+      l_obj_pp-positions  = positions.
+      l_obj_pp-sequences  = &apos;&apos;.
+      l_obj_pp-operations = operations.
+      l_obj_pp-components = components.
+
+      CALL FUNCTION &apos;BAPI_PRODORD_GET_DETAIL&apos;
+        EXPORTING
+          number        = afko-aufnr
+*         COLLECTIVE_ORDER       =
+          order_objects = l_obj_pp
+        IMPORTING
+          return        = l_return
+        TABLES
+          header        = i_header
+          position      = i_position
+          component     = i_component
+          operation     = i_operation.
+    ENDIF.
+
+    IF l_return-type = &apos;E&apos;.
+      MESSAGE ID l_return-id TYPE l_return-type NUMBER l_return-number
+              WITH l_return-message_v1 l_return-message_v2.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_MATERIAL" VERSION="1" LANGU="S" DESCRIPT="Devuelve el material producido" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_MATERIAL" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_MATERIAL" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MATNR"/>
+  <source>METHOD get_material.
+    SELECT SINGLE plnbez FROM caufv
+      INTO matnr
+     WHERE aufnr = aufnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_PUESTO_TRABAJO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el puesto de trabajo" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_PUESTO_TRABAJO" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_PUESTO_TRABAJO" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;0010&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_PUESTO_TRABAJO" SCONAME="KTSCH" VERSION="1" LANGU="S" DESCRIPT="Clave de modelo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_PUESTO_TRABAJO" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ARBPL"/>
+  <source>METHOD get_puesto_trabajo.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_vornr TYPE vornr.
+
+    CLEAR arbpl.
+    IF vornr IS INITIAL.
+      IF ktsch IS INITIAL.
+        SELECT crhd~arbpl vornr FROM afko
+          INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+          INNER JOIN crhd ON crhd~objid = afvc~arbid
+          INTO (arbpl, l_vornr)
+          UP TO 1 ROWS
+          WHERE afko~aufnr = aufnr
+            AND crhd~objty = &apos;A&apos;
+          ORDER BY vornr arbpl.
+        ENDSELECT.
+      ELSE.
+        SELECT crhd~arbpl vornr FROM afko
+          INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+          INNER JOIN crhd ON crhd~objid = afvc~arbid
+          INTO (arbpl, l_vornr)
+              UP TO 1 ROWS
+          WHERE afko~aufnr = aufnr
+            AND afvc~ktsch = ktsch
+            AND crhd~objty = &apos;A&apos;
+          ORDER BY vornr arbpl.
+        ENDSELECT.
+      ENDIF.
+    ELSE.
+      SELECT crhd~arbpl vornr FROM afko
+        INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+        INNER JOIN crhd ON crhd~objid = afvc~arbid
+        INTO (arbpl, l_vornr)
+        UP TO 1 ROWS
+        WHERE afko~aufnr = aufnr
+          AND afvc~vornr = vornr
+          AND crhd~objty = &apos;A&apos;
+          ORDER BY vornr arbpl.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_RECURSO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del recurso" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_RECURSO" SCONAME="ARBID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_RECURSO" SCONAME="OBJTY" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CRHD-OBJTY" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_RECURSO" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ARBPL"/>
+  <source>METHOD get_recurso.
+    SELECT SINGLE arbpl FROM  crhd
+      INTO arbpl
+      WHERE objty = objty
+        AND objid = arbid.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" VERSION="1" LANGU="S" DESCRIPT="Devuelve el saldo liquidación de la orden" EXPOSURE="2" STATE="1" EDITORDER="45 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" SCONAME="I_SALDOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_SALDOS_LIQ"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_SALDO_LIQUIDACION" SCONAME="SALDO" VERSION="1" LANGU="S" DESCRIPT="Valor total en moneda de sociedad CO" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="WKGXXX"/>
+  <source>METHOD get_saldo_liquidacion.
+    DATA: l_caufv      TYPE caufv,
+          i_auak       TYPE auak,
+          i_control    TYPE kabr_control,
+          it_setyptab  TYPE kabrt_setyp_table,
+          it_objtab    TYPE TABLE OF jsto_pre,
+          it_rem_obj   TYPE kabrt_objtab_table,
+          it_trace_obj TYPE kabrt_objtab_table,
+          ct_set       TYPE kabrt_aufsel_table,
+          ct_late_obj  TYPE kabrt_objtab_table,
+          ct_add_sdr   TYPE kabrt_objtab_table,
+          ct_bel_all   TYPE kabrt_bel_all_table,
+          ct_matnr     TYPE kabrt_cose_sel_table,
+          ct_wsum      TYPE kabrt_wsum_table.
+
+    CLEAR: saldo, i_saldos, message.
+
+    SELECT SINGLE gltrp gltri werks objnr FROM caufv
+      INTO CORRESPONDING FIELDS OF l_caufv
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No existe la orden&apos;.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;MESSAGES_INITIALIZE&apos;
+      EXPORTING
+        i_identification = sy-uzeit
+        check_on_commit  = &apos; &apos;.
+
+    SELECT kokrs FROM t001w JOIN t001k ON t001k~bwkey = t001w~bwkey  &quot;#EC CI_BUFFJOIN
+                            JOIN csks  ON t001k~bukrs = csks~bukrs
+      INTO i_auak-kokrs
+     UP TO 1 ROWS
+      WHERE t001w~werks = l_caufv-werks
+     ORDER BY csks~kokrs.
+    ENDSELECT.
+
+    i_auak-budat    = fecha.
+    i_auak-cpudt    = sy-datum.
+    i_auak-wsdat    = fecha.
+    i_auak-kurst    = &apos;M&apos;.
+    i_auak-gjahr    = fecha(4).
+    i_auak-perio    = |0{ fecha+4(2) }|.
+    i_auak-co_vaart = &apos;1&apos;.
+    i_auak-buperio  = i_auak-perio.
+    i_auak-bugjahr  = i_auak-gjahr.
+    i_auak-wrttp    = &apos;04&apos;.
+
+    i_control-wrttp         = &apos;04&apos;.
+    i_control-testrun       = &apos;X&apos;.
+    i_control-detaillist    = &apos;X&apos;.
+    i_control-selart        = &apos;OR1&apos;.
+    i_control-ok            = &apos;AUSF&apos;.
+    i_control-afpo_pre_read = &apos;X&apos;.
+    i_control-coslv_read    = &apos;X&apos;.
+    i_control-count_com     = &apos;1&apos;.
+    i_control-mess_identif  = sy-uzeit.
+
+    APPEND &apos;OR&apos; TO it_setyptab.
+
+    APPEND l_caufv-objnr TO it_objtab.
+
+    CALL FUNCTION &apos;K_SETTLEMENT_GROUP_PROCESS&apos;
+      EXPORTING
+        i_auak        = i_auak
+        i_control     = i_control
+        it_rem_obj    = it_rem_obj
+        it_trace_obj  = it_trace_obj
+        it_setyptab   = it_setyptab
+        i_no_commit   = &apos;&apos;
+*  IMPORTING
+*       E_LST         =
+      TABLES
+        it_objtab     = it_objtab
+      CHANGING
+        ct_set        = ct_set
+        ct_late_obj   = ct_late_obj
+        ct_add_sdr    = ct_add_sdr
+        ct_bel_all    = ct_bel_all
+        ct_matnr      = ct_matnr
+        ct_wsum       = ct_wsum
+        ct_gsum       = i_saldos
+      EXCEPTIONS
+        error_message = 999.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH
+              sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+
+    LOOP AT i_saldos ASSIGNING FIELD-SYMBOL(&lt;saldo&gt;).
+      saldo = saldo + &lt;saldo&gt;-wkg_0.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" VERSION="1" LANGU="S" DESCRIPT="Devuelve el historial del status" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="REGISTRO" VERSION="1" LANGU="S" DESCRIPT="&apos;U&apos;ltimo registro / &apos;P&apos;rimer registro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;U&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="STSMA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_HIST" SCONAME="JCDS" VERSION="1" LANGU="S" DESCRIPT="Documentos modificación p.status sistema/usuario (tab.JEST)" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="JCDS"/>
+  <source>METHOD get_status_hist.
+    DATA: r_stsma  TYPE RANGE OF tj30t-stsma,
+          lr_stsma LIKE LINE OF r_stsma,
+          l_auart  TYPE aufk-auart,
+          l_objnr  TYPE jcds-objnr.
+
+    CLEAR lr_stsma.
+    lr_stsma-option = &apos;EQ&apos;.
+    lr_stsma-sign   = &apos;I&apos;.
+    IF NOT stsma IS INITIAL.
+      lr_stsma-low = stsma.
+      APPEND lr_stsma TO r_stsma.
+    ELSEIF NOT aufnr IS INITIAL.
+      SELECT SINGLE auart FROM aufk
+        INTO l_auart
+       WHERE aufnr = aufnr.
+      IF sy-subrc = 0.
+        SELECT SINGLE stsma FROM t003o
+          INTO lr_stsma-low
+         WHERE auart = l_auart.
+        IF NOT lr_stsma-low IS INITIAL.
+          APPEND lr_stsma TO r_stsma.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF r_stsma IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CLEAR jcds.
+    CONCATENATE &apos;OR&apos; aufnr INTO l_objnr.
+    IF registro = &apos;U&apos;.
+      SELECT * FROM jcds JOIN tj30t ON jcds~stat = tj30t~estat &quot;#EC CI_BUFFJOIN &quot;#EC CI_EXIT_SELECT
+        INTO CORRESPONDING FIELDS OF jcds
+        UP TO 1 ROWS
+       WHERE objnr  = l_objnr
+         AND stsma IN r_stsma
+         AND txt04  = status
+         AND inact  = &apos;&apos;
+         AND spras  = spras
+        ORDER BY udate DESCENDING utime DESCENDING.
+      ENDSELECT.
+    ELSEIF registro = &apos;P&apos;.
+      SELECT * FROM jcds JOIN tj30t ON jcds~stat = tj30t~estat &quot;#EC CI_BUFFJOIN &quot;#EC CI_EXIT_SELECT
+        INTO CORRESPONDING FIELDS OF jcds
+        UP TO 1 ROWS
+       WHERE objnr  = l_objnr
+         AND stsma IN r_stsma
+         AND txt04  = status
+         AND inact  = &apos;&apos;
+         AND spras  = spras
+        ORDER BY udate ASCENDING utime ASCENDING.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve la descripción del status" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="OBJNR" VERSION="1" LANGU="S" DESCRIPT="Número de objeto para gestión de status" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMOBJNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="USUARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="BYPASS_BUFFER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_STATUS_ST" SCONAME="STATUS" VERSION="1" LANGU="S" DESCRIPT="Línea status del sistema" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSVX-STTXT"/>
+  <source>METHOD get_status_st.
+    DATA: l_objnr     TYPE jest-objnr,
+          l_user_line TYPE bsvx-sttxt.
+
+* Tablas estatus JEST y de cambios de estatus JCDS
+
+    IF NOT objnr IS INITIAL.
+      l_objnr = objnr.
+    ELSE.
+      CONCATENATE &apos;OR&apos; aufnr INTO l_objnr.
+    ENDIF.
+    CALL FUNCTION &apos;STATUS_TEXT_EDIT&apos;
+      EXPORTING
+*       CLIENT           = SY-MANDT
+        flg_user_stat    = usuario
+        objnr            = l_objnr
+*       ONLY_ACTIVE      = &apos;X&apos;
+        spras            = spras
+        bypass_buffer    = bypass_buffer
+      IMPORTING
+*       ANW_STAT_EXISTING       =
+*       E_STSMA          =
+        line             = status
+        user_line        = l_user_line
+*       STONR            =
+      EXCEPTIONS
+        object_not_found = 1
+        OTHERS           = 2.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR status.
+    ENDIF.
+
+    IF usuario = &apos;X&apos;.
+      status = l_user_line.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Devuelve texto largo de orden" EXPOSURE="2" STATE="1" EDITORDER="41 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_TEXTO" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_TEXTO" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_TEXTO" SCONAME="LARGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="GET_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_texto.
+    DATA: l_ktext TYPE aufk-ktext,
+          l_ltext TYPE aufk-ltext,
+          l_name  TYPE stxh-tdname,
+          l_aufpl TYPE afko-aufpl,
+          l_aplzl TYPE afvc-aplzl.
+
+    IF vornr IS INITIAL.
+      SELECT SINGLE ktext ltext FROM aufk
+        INTO (l_ktext, l_ltext)
+       WHERE aufnr = aufnr.
+      IF l_ltext &lt;&gt; &apos;&apos; AND largo = &apos;X&apos;.
+        CONCATENATE sy-mandt aufnr INTO l_name.
+        texto = zcl_ap_textos=&gt;get_texto_string( object = &apos;AUFK&apos; name = l_name id = &apos;KOPF&apos; ).
+        IF texto IS INITIAL.
+          texto = l_ktext.
+        ENDIF.
+      ELSE.
+        texto = l_ktext.
+      ENDIF.
+    ELSE.
+      SELECT SINGLE aufpl FROM afko
+        INTO l_aufpl
+       WHERE aufnr = aufnr.
+      IF NOT l_aufpl IS INITIAL.
+        SELECT aplzl, ltxa1, txtsp
+          FROM afvc
+          WHERE aufpl = @l_aufpl
+            AND vornr = @vornr
+          ORDER BY PRIMARY KEY
+          INTO (@l_aplzl, @l_ktext, @l_ltext)
+          UP TO 1 ROWS.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          IF l_ltext &lt;&gt; &apos;&apos; AND largo = &apos;X&apos;.
+            CONCATENATE sy-mandt l_aufpl l_aplzl INTO l_name.
+            texto = zcl_ap_textos=&gt;get_texto_string( object = &apos;AUFK&apos; name = l_name id = &apos;AVOT&apos; ).
+            IF texto IS INITIAL.
+              texto = l_ktext.
+            ENDIF.
+          ELSE.
+            texto = l_ktext.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LEER_DATOS_MAESTROS_PP" VERSION="1" LANGU="S" DESCRIPT="Lee datos maestros de orden PP" EXPOSURE="2" STATE="1" EDITORDER="43 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LEER_DATOS_MAESTROS_PP" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LEER_DATOS_MAESTROS_PP" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD leer_datos_maestros_pp.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0110&apos; okcode = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;CAUFVD-AUFNR&apos; valor = aufnr ). &quot; Número de orden
+
+    o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0115&apos; okcode = &apos;=STAK&apos; ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0131&apos; okcode = &apos;=ENT1&apos; ).
+    o_bi-&gt;campos( campo = &apos;RC62F-REV_SEL&apos; valor = &apos;&apos; ). &quot; Casilla de selección
+    o_bi-&gt;campos( campo = &apos;RC62F-NO_SEL&apos; valor = &apos;X&apos; ). &quot; Casilla de selección
+    o_bi-&gt;campos( campo = &apos;RC62F-NEW_ROUT&apos; valor = &apos;X&apos; ). &quot; Indicador: seleccionar nuevamente hoja de ruta
+    o_bi-&gt;campos( campo = &apos;RC62F-PLAUF&apos; valor = &apos;31.12.2999&apos; ). &quot; Fecha de explosión de hoja de ruta
+    o_bi-&gt;campos( campo = &apos;RC62F-NEW_BOM&apos; valor = &apos;X&apos; ). &quot; Indicador: seleccionar nuevamente lista de materiales
+    o_bi-&gt;campos( campo = &apos;RC62F-AUFLD&apos; valor = &apos;31.12.2999&apos; ). &quot; Fecha de explosión p. lista materiales y hoja de ruta
+
+    o_bi-&gt;dynpro( program = &apos;SAPLCOKO1&apos; dynpro = &apos;0115&apos; okcode = &apos;=BU&apos; ).
+
+    message = o_bi-&gt;llamar_transaccion( tcode = &apos;CO02&apos; modo = &apos;E&apos; ).
+    IF o_bi-&gt;msgty = &apos;S&apos; AND o_bi-&gt;msgid = &apos;CO&apos; AND o_bi-&gt;msgno = &apos;100&apos;. &quot; Se ha grabado la orden.
+      CLEAR message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LIBERAR" VERSION="1" LANGU="S" DESCRIPT="Liberar" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LIBERAR" SCONAME="AUFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LIBERAR" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD liberar.
+    DATA: l_autyp           TYPE aufk-autyp,
+          ls_orders         TYPE bapi_order_key,
+          lti_orders        TYPE TABLE OF bapi_order_key,
+          lti_detail_return TYPE TABLE OF bapi_order_return,
+          ls_detail_return  TYPE bapi_order_return.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No existe la orden&apos;(neo) aufnr INTO mensaje SEPARATED BY space.
+    ELSE.
+      IF contiene_status( aufnr = aufnr status = &apos;LIB.&apos; spras = &apos;S&apos; ) = &apos;X&apos;.
+        mensaje = &apos;&gt;Orden ya estaba liberada&apos;(oyl).
+      ELSE.
+        ls_orders-order_number = aufnr.
+        APPEND ls_orders TO lti_orders.
+
+        IF l_autyp = &apos;40&apos;.    &quot; Orden de proceso
+          CALL FUNCTION &apos;BAPI_PROCORD_RELEASE&apos;
+            EXPORTING
+              release_control = &apos;1&apos;
+            TABLES
+              orders          = lti_orders
+              detail_return   = lti_detail_return.
+        ELSEIF l_autyp = &apos;10&apos;. &quot; Orden de fabricación
+          CALL FUNCTION &apos;BAPI_PRODORD_RELEASE&apos;
+            EXPORTING
+              release_control = &apos;1&apos;
+            TABLES
+              orders          = lti_orders
+              detail_return   = lti_detail_return.
+        ENDIF.
+        READ TABLE lti_detail_return INTO ls_detail_return WITH KEY type = &apos;E&apos;.
+        IF sy-subrc = 0.
+          mensaje = ls_detail_return-message.
+        ELSE.
+          zcl_ap_dev=&gt;commit( ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" VERSION="1" LANGU="S" DESCRIPT="Transforma una lista en rango de ordenes" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" SCONAME="SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;,&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" SCONAME="PERMITIR_VACIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="LISTA2RANGO" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RANGE_T_AUFNR"/>
+  <source>METHOD lista2rango.
+    DATA: r_rango_string TYPE rstt_t_range_string,
+          l_rango        TYPE range_s_aufnr.
+
+    FIELD-SYMBOLS &lt;rango&gt; TYPE rstt_s_range_string.
+
+    r_rango_string = zcl_ap_lista=&gt;lista2rango( lista = lista separador = separador option = option permitir_vacias = permitir_vacias ).
+
+    LOOP AT r_rango_string ASSIGNING &lt;rango&gt;.
+      CLEAR l_rango.
+      MOVE-CORRESPONDING &lt;rango&gt; TO l_rango.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_rango-low ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_rango-high ).
+      APPEND l_rango TO rango.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="MODIFICAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar orden CO" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="MODIFICAR" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFK-AUFNR"/>
+  <source>METHOD modificar.
+    DATA l_autyp TYPE aufk-autyp.
+
+    SET PARAMETER ID &apos;ANR&apos; FIELD aufnr.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = aufnr.
+    IF sy-subrc = 0.
+      CASE l_autyp.
+        WHEN &apos;20&apos;.
+          CALL TRANSACTION &apos;CN22&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+        WHEN &apos;40&apos;.
+          CALL TRANSACTION &apos;COR2&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+        WHEN OTHERS.
+          CALL TRANSACTION &apos;CO02&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" VERSION="1" LANGU="S" DESCRIPT="Notificar operación" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Cantidad buena notificada en total" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="RECHAZO" VERSION="1" LANGU="S" DESCRIPT="Rechazo total notificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="FECHA_INI" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="HORA_INI" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="FECHA_FIN" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="HORA_FIN" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="CREAR_MOV" VERSION="1" LANGU="S" DESCRIPT="Crear movimientos" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="PARCIAL_FINAL" VERSION="1" LANGU="S" DESCRIPT="Notificación parcial" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUERU_VS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ARBPL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT1_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT1_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT2_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT2_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT3_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT3_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT4_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT4_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT5_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT5_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT6_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="ACT6_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD notificar.
+    &quot; TODO: parameter COMMIT is never used (ABAP cleaner)
+
+    DATA: l_timetickets TYPE bapi_pp_timeticket,
+          i_timetickets TYPE TABLE OF bapi_pp_timeticket,
+          l_propose     TYPE bapi_pp_conf_prop,
+          i_goodmov     TYPE TABLE OF bapi2017_gm_item_create,
+          i_link        TYPE TABLE OF bapi_link_conf_goodsmov.
+
+    FIELD-SYMBOLS &lt;return&gt; TYPE bapi_coru_return.
+
+    DATA: BEGIN OF ls_afvc,
+            vornr TYPE afvc-vornr,
+            objnr TYPE afvc-objnr,
+            rueck TYPE afvc-rueck,
+            steus TYPE afvc-steus,
+            matnr TYPE afpo-matnr,
+            arbid TYPE afvc-arbid,
+            pwerk TYPE afpo-pwerk,
+          END OF ls_afvc.
+
+    CLEAR ls_afvc.
+
+* Buscamos la operación a notificar
+    SELECT afvc~vornr afvc~objnr afvc~rueck afvc~steus afpo~matnr afvc~arbid afpo~pwerk
+    INTO CORRESPONDING FIELDS OF ls_afvc
+      UP TO 1 ROWS
+    FROM afko INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+              INNER JOIN afpo ON afpo~aufnr = afko~aufnr
+    WHERE afko~aufnr = aufk-aufnr
+      AND afvc~vornr = vornr
+     ORDER BY vornr.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;La orden&apos;(lor) me-&gt;aufk-aufnr &apos;no tiene operación&apos;(nto) vornr INTO mensaje SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+* Comprobamos si el material está bloqueado
+    CALL FUNCTION &apos;ENQUEUE_EMMARCS&apos;
+      EXPORTING
+        mode_marc      = &apos;S&apos;
+        matnr          = ls_afvc-matnr
+        werks          = ls_afvc-pwerk
+      EXCEPTIONS
+        foreign_lock   = 1
+        system_failure = 2
+        OTHERS         = 3.
+    IF sy-subrc &lt;&gt; 0.
+      IF     ( NOT sy-msgid IS INITIAL )
+         AND ( NOT sy-msgty IS INITIAL )
+         AND ( NOT sy-msgno IS INITIAL ).
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                INTO mensaje.
+      ELSE.
+        mensaje = &apos;Material Bloqueado&apos;(mbl).
+      ENDIF.
+      RETURN.
+    ELSE.
+      CALL FUNCTION &apos;DEQUEUE_EMMARCS&apos;
+        EXPORTING
+          mode_marc = &apos;S&apos;
+          mandt     = sy-mandt
+          matnr     = ls_afvc-matnr
+          werks     = ls_afvc-pwerk.
+    ENDIF.
+
+* Comprobamos que no esté notificada
+    SELECT SINGLE objnr INTO ls_afvc-objnr FROM jest
+      WHERE objnr = ls_afvc-objnr
+        AND stat  = &apos;I0009&apos;
+        AND inact = &apos;&apos;.
+    IF sy-subrc = 0.
+      CONCATENATE &apos;La operación&apos;(lop) ls_afvc-vornr &apos;de la orden&apos;(dlo) me-&gt;aufk-aufnr &apos;ya está notificada fin&apos;(yen)
+                  INTO mensaje SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+    l_timetickets-orderid         = aufk-aufnr.
+    l_timetickets-operation       = vornr.
+    l_timetickets-plant           = ls_afvc-pwerk.
+    l_timetickets-postg_date      = budat.
+    l_timetickets-fin_conf        = parcial_final.
+    l_timetickets-clear_res       = space.
+    l_timetickets-yield           = cantidad.
+    l_timetickets-scrap           = rechazo.
+    l_timetickets-conf_quan_unit  = meins.
+    l_timetickets-exec_start_date = fecha_ini.
+    l_timetickets-exec_fin_date   = fecha_fin.
+    l_timetickets-exec_start_time = hora_ini.
+    l_timetickets-exec_fin_time   = hora_fin.
+    l_timetickets-conf_text       = texto.
+    IF arbpl IS INITIAL.
+      SELECT SINGLE arbpl INTO l_timetickets-work_cntr FROM crhd
+        WHERE objty = &apos;A&apos;
+          AND objid = ls_afvc-arbid.
+    ELSE.
+      l_timetickets-work_cntr = arbpl.
+    ENDIF.
+
+    IF NOT act1_uni IS INITIAL.
+      l_timetickets-conf_acti_unit1 = act1_uni.
+      l_timetickets-conf_activity1  = act1_ctd.
+    ENDIF.
+    IF NOT act2_uni IS INITIAL.
+      l_timetickets-conf_acti_unit2 = act2_uni.
+      l_timetickets-conf_activity2  = act2_ctd.
+    ENDIF.
+    IF NOT act3_uni IS INITIAL.
+      l_timetickets-conf_acti_unit3 = act3_uni.
+      l_timetickets-conf_activity3  = act3_ctd.
+    ENDIF.
+    IF NOT act4_uni IS INITIAL.
+      l_timetickets-conf_acti_unit4 = act4_uni.
+      l_timetickets-conf_activity4  = act4_ctd.
+    ENDIF.
+    IF NOT act5_uni IS INITIAL.
+      l_timetickets-conf_acti_unit5 = act5_uni.
+      l_timetickets-conf_activity5  = act5_ctd.
+    ENDIF.
+    IF NOT act6_uni IS INITIAL.
+      l_timetickets-conf_acti_unit6 = act6_uni.
+      l_timetickets-conf_activity6  = act6_ctd.
+    ENDIF.
+
+    APPEND l_timetickets TO i_timetickets.
+
+    IF crear_mov = &apos;X&apos;.
+      CLEAR l_propose.
+      l_propose-GoodsMovement = &apos;X&apos;.
+*       Recuperamos los datos de la BAPI que notifica
+      CALL FUNCTION &apos;BAPI_PRODORDCONF_GET_TT_PROP&apos;
+        EXPORTING
+          propose            = l_propose
+        TABLES
+          timetickets        = i_timetickets
+          goodsmovements     = i_goodmov
+          link_conf_goodsmov = i_link.
+    ENDIF.
+
+* Llamamos a la función que crea la notificación
+    CALL FUNCTION &apos;BAPI_PRODORDCONF_CREATE_TT&apos;
+      EXPORTING
+        post_wrong_entries = &apos;2&apos;
+        testrun            = &apos; &apos;
+      IMPORTING
+        return             = return
+      TABLES
+        timetickets        = i_timetickets
+        goodsmovements     = i_goodmov
+        link_conf_goodsmov = i_link
+        detail_return      = i_detail_return.
+
+* Comprobamos si tenemos errores
+    LOOP AT i_detail_return ASSIGNING &lt;return&gt; WHERE type = &apos;E&apos;.
+      MESSAGE ID &lt;return&gt;-id
+              TYPE &apos;S&apos;
+              NUMBER &lt;return&gt;-number
+              WITH &lt;return&gt;-message_v1
+                   &lt;return&gt;-message_v2
+                   &lt;return&gt;-message_v3
+                   &lt;return&gt;-message_v4
+              INTO mensaje.
+    ENDLOOP.
+
+    IF mensaje IS INITIAL.
+* Hacemos el Commit y esperamos a que se actualice todo
+      zcl_ap_dev=&gt;commit( ).
+
+      LOOP AT i_detail_return ASSIGNING &lt;return&gt; WHERE         type     = &apos;I&apos;
+                                                       AND NOT conf_no IS INITIAL.
+        EXIT.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        SELECT SINGLE * FROM afru
+          INTO me-&gt;afru
+         WHERE rueck = &lt;return&gt;-conf_no
+           AND rmzhl = &lt;return&gt;-conf_cnt.
+*    ELSE.
+*      SELECT * FROM afru
+*        INTO me-&gt;afru
+*       WHERE aufnr = me-&gt;aufk-aufnr
+*         AND vornr = vornr.
+*      ENDSELECT.
+      ELSE.
+        mensaje = &apos;Ha habido un error durante la notificación&apos;(hen).
+      ENDIF.
+    ELSE.
+      CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" VERSION="1" LANGU="S" DESCRIPT="Notificar operación orden de proceso" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Cantidad buena notificada en total" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="RECHAZO" VERSION="1" LANGU="S" DESCRIPT="Rechazo total notificado" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="FECHA_INI" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="HORA_INI" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="FECHA_FIN" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="HORA_FIN" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="CREAR_MOV" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos; cons.por defecto/ X propuesta/M modificados / N No crear" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="PARCIAL_FINAL" VERSION="1" LANGU="S" DESCRIPT="Not.Final Automática" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUERU_VS" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT1_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT1_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT2_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT2_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT3_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT3_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="I_CONSUMOS" VERSION="1" LANGU="S" DESCRIPT="TABLA BAPI2017_GM_ITEM_CREATE" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TAB_BAPI_GOODSMVT_ITEM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ARBPL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT4_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT4_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT5_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT5_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT6_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="ACT6_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_OP" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD notificar_op.
+    DATA: l_timetickets TYPE bapi_pi_timeticket1,
+          i_timetickets TYPE TABLE OF bapi_pi_timeticket1,
+          l_propose     TYPE bapi_pp_conf_prop,
+          i_goodmov     TYPE TABLE OF bapi2017_gm_item_create,
+          i_link        TYPE TABLE OF bapi_link_conf_goodsmov,
+          i_cons        TYPE TABLE OF bapi2017_gm_item_create,
+          l_cons        TYPE bapi2017_gm_item_create,
+          l_return      TYPE bapi_coru_return.
+
+    FIELD-SYMBOLS: &lt;mov&gt;    TYPE bapi2017_gm_item_create,
+                   &lt;return&gt; TYPE bapi_coru_return.
+
+    DATA: BEGIN OF ls_afvc,
+            vornr TYPE afvc-vornr,
+            objnr TYPE afvc-objnr,
+            rueck TYPE afvc-rueck,
+            steus TYPE afvc-steus,
+            matnr TYPE afpo-matnr,
+            arbid TYPE afvc-arbid,
+            pwerk TYPE afpo-pwerk,
+          END OF ls_afvc.
+
+    CLEAR ls_afvc.
+
+* Buscamos la operación a notificar
+    SELECT afvc~vornr afvc~objnr afvc~rueck afvc~steus afpo~matnr afvc~arbid afpo~pwerk
+    INTO CORRESPONDING FIELDS OF ls_afvc
+      UP TO 1 ROWS
+    FROM afko INNER JOIN afvc ON afvc~aufpl = afko~aufpl
+              INNER JOIN afpo ON afpo~aufnr = afko~aufnr
+    WHERE afko~aufnr = aufk-aufnr
+      AND afvc~vornr = vornr
+     ORDER BY afvc~vornr.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;La orden&apos;(lor) me-&gt;aufk-aufnr &apos;no tiene operación&apos;(nto) vornr INTO mensaje SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+* Comprobamos si el material está bloqueado
+    CALL FUNCTION &apos;ENQUEUE_EMMARCS&apos;
+      EXPORTING
+        mode_marc      = &apos;S&apos;
+        matnr          = ls_afvc-matnr
+        werks          = ls_afvc-pwerk
+      EXCEPTIONS
+        foreign_lock   = 1
+        system_failure = 2
+        OTHERS         = 3.
+    IF sy-subrc &lt;&gt; 0.
+      IF     ( NOT sy-msgid IS INITIAL )
+         AND ( NOT sy-msgty IS INITIAL )
+         AND ( NOT sy-msgno IS INITIAL ).
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                INTO mensaje.
+      ELSE.
+        mensaje = &apos;Material Bloqueado&apos;(mbl).
+      ENDIF.
+      RETURN.
+    ELSE.
+      CALL FUNCTION &apos;DEQUEUE_EMMARCS&apos;
+        EXPORTING
+          mode_marc = &apos;S&apos;
+          mandt     = sy-mandt
+          matnr     = ls_afvc-matnr
+          werks     = ls_afvc-pwerk.
+    ENDIF.
+
+* Comprobamos que no esté notificada
+    SELECT SINGLE objnr INTO ls_afvc-objnr FROM jest
+      WHERE objnr = ls_afvc-objnr
+        AND stat  = &apos;I0009&apos;
+        AND inact = &apos;&apos;.
+    IF sy-subrc = 0.
+      CONCATENATE &apos;La operación&apos;(lop) ls_afvc-vornr &apos;de la orden&apos;(dlo) me-&gt;aufk-aufnr &apos;ya está notificada fin&apos;(ynf)
+                  INTO mensaje SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+    l_timetickets-orderid         = aufk-aufnr.
+    l_timetickets-phase           = vornr.
+    l_timetickets-plant           = ls_afvc-pwerk.
+    l_timetickets-postg_date      = budat.
+*           Notificación parcial
+*           X Notificación final
+*           1 Notificación final automática
+    l_timetickets-fin_conf        = parcial_final.
+    l_timetickets-clear_res       = space.
+    l_timetickets-yield           = cantidad.
+    l_timetickets-scrap           = rechazo.
+    l_timetickets-conf_quan_unit  = meins.
+    l_timetickets-exec_start_date = fecha_ini.
+    l_timetickets-exec_fin_date   = fecha_fin.
+    l_timetickets-exec_start_time = hora_ini.
+    l_timetickets-exec_fin_time   = hora_fin.
+    l_timetickets-clear_res       = &apos;X&apos;. &quot; Compensar reservas abiertas
+    l_timetickets-conf_text       = texto.
+    IF arbpl IS INITIAL.
+      SELECT SINGLE arbpl INTO l_timetickets-resource FROM crhd
+        WHERE objty = &apos;A&apos;
+          AND objid = ls_afvc-arbid.
+    ELSE.
+      l_timetickets-resource = arbpl.
+    ENDIF.
+
+    IF NOT act1_uni IS INITIAL.
+      l_timetickets-conf_acti_unit1 = act1_uni.
+      l_timetickets-conf_activity1  = act1_ctd.
+    ENDIF.
+    IF NOT act2_uni IS INITIAL.
+      l_timetickets-conf_acti_unit2 = act2_uni.
+      l_timetickets-conf_activity2  = act2_ctd.
+    ENDIF.
+    IF NOT act3_uni IS INITIAL.
+      l_timetickets-conf_acti_unit3 = act3_uni.
+      l_timetickets-conf_activity3  = act3_ctd.
+    ENDIF.
+    IF NOT act4_uni IS INITIAL.
+      l_timetickets-conf_acti_unit4 = act4_uni.
+      l_timetickets-conf_activity4  = act4_ctd.
+    ENDIF.
+    IF NOT act5_uni IS INITIAL.
+      l_timetickets-conf_acti_unit5 = act5_uni.
+      l_timetickets-conf_activity5  = act5_ctd.
+    ENDIF.
+    IF NOT act6_uni IS INITIAL.
+      l_timetickets-conf_acti_unit6 = act6_uni.
+      l_timetickets-conf_activity6  = act6_ctd.
+    ENDIF.
+    APPEND l_timetickets TO i_timetickets.
+
+    IF NOT crear_mov IS INITIAL.
+      CLEAR l_propose.
+      l_propose-GoodsMovement = &apos;X&apos;.
+*       Recuperamos los datos de la BAPI que notifica
+      CALL FUNCTION &apos;BAPI_PROCORDCONF_GET_TT_PROP&apos;
+        EXPORTING
+          propose            = l_propose
+        TABLES
+          timetickets        = i_timetickets
+          goodsmovements     = i_goodmov
+          link_conf_goodsmov = i_link.
+
+      IF crear_mov = &apos;N&apos;.
+        CLEAR i_goodmov.
+      ELSE.
+        i_cons = i_consumos.
+        LOOP AT i_goodmov ASSIGNING &lt;mov&gt;.
+          CLEAR l_cons.
+          IF NOT &lt;mov&gt;-batch IS INITIAL.
+            READ TABLE i_cons INTO l_cons WITH KEY material = &lt;mov&gt;-material
+                                                   batch    = &lt;mov&gt;-batch.
+          ELSE.
+            READ TABLE i_cons INTO l_cons WITH KEY material = &lt;mov&gt;-material.
+          ENDIF.
+          IF sy-subrc = 0.
+            DELETE i_cons INDEX sy-tabix.
+            &lt;mov&gt;-entry_qnt = l_cons-entry_qnt.
+            &lt;mov&gt;-entry_uom = l_cons-entry_uom.
+          ELSE.
+            DELETE i_goodmov.
+          ENDIF.
+        ENDLOOP.
+
+        IF NOT i_cons IS INITIAL.
+          mensaje = &apos;No se ha podido consumir los componentes indicados&apos;(ncc).
+          LOOP AT i_cons INTO l_cons.
+            CLEAR l_return.
+            l_return-id         = &apos;398&apos;.
+            l_return-type       = &apos;E&apos;.
+            l_return-number     = &apos;000&apos;.
+            l_return-message_v1 = l_cons-material.
+            l_return-message_v2 = l_cons-batch.
+            MESSAGE ID l_return-id
+                    TYPE &apos;S&apos;
+                    NUMBER l_return-number
+                    WITH l_return-message_v1
+                         l_return-message_v2
+                         l_return-message_v3
+                         l_return-message_v4
+                    INTO l_return-message.
+            APPEND l_return TO i_detail_return.
+          ENDLOOP.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+* Llamamos a la función que crea la notificación
+    CALL FUNCTION &apos;BAPI_PROCORDCONF_CREATE_TT&apos;
+      EXPORTING
+        post_wrong_entries = &apos;2&apos;
+        testrun            = &apos; &apos;
+      IMPORTING
+        return             = return
+      TABLES
+        timetickets        = i_timetickets
+        goodsmovements     = i_goodmov
+        link_conf_goodsmov = i_link
+        detail_return      = i_detail_return.
+
+* Comprobamos si tenemos errores
+    LOOP AT i_detail_return ASSIGNING &lt;return&gt; WHERE type = &apos;E&apos;.
+      MESSAGE ID &lt;return&gt;-id
+              TYPE &apos;S&apos;
+              NUMBER &lt;return&gt;-number
+              WITH &lt;return&gt;-message_v1
+                   &lt;return&gt;-message_v2
+                   &lt;return&gt;-message_v3
+                   &lt;return&gt;-message_v4
+              INTO mensaje.
+    ENDLOOP.
+
+    IF mensaje IS INITIAL.
+      IF commit = &apos;X&apos;.
+        zcl_ap_dev=&gt;commit( ).
+      ENDIF.
+
+      LOOP AT i_detail_return ASSIGNING &lt;return&gt; WHERE         type     = &apos;I&apos;
+                                                       AND NOT conf_no IS INITIAL.
+        EXIT.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        SELECT SINGLE * FROM afru
+          INTO me-&gt;afru
+         WHERE rueck = &lt;return&gt;-conf_no
+           AND rmzhl = &lt;return&gt;-conf_cnt.
+
+        IF sy-subrc &lt;&gt; 0 AND commit IS INITIAL.
+          afru-rueck = &lt;return&gt;-conf_no.
+          afru-rmzhl = &lt;return&gt;-conf_cnt.
+        ENDIF.
+*    ELSE.
+*      SELECT * FROM afru
+*        INTO me-&gt;afru
+*       WHERE aufnr = me-&gt;aufk-aufnr
+*         AND vornr = vornr.
+*      ENDSELECT.
+      ELSE.
+        mensaje = &apos;Ha habido un error durante la notificación&apos;(hen).
+      ENDIF.
+    ELSE.
+      CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" VERSION="1" LANGU="S" DESCRIPT="Notificar operación (STATIC)" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Cantidad buena notificada en total" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="RECHAZO" VERSION="1" LANGU="S" DESCRIPT="Rechazo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="FECHA_INI" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="HORA_INI" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="FECHA_FIN" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="HORA_FIN" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="CREAR_MOV" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos; cons.por defecto/ X propuesta/M modificados / N No crear" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="PARCIAL_FINAL" VERSION="1" LANGU="S" DESCRIPT="Notificación parcial" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUERU_VS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT1_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT1_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT2_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT2_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT3_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT3_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="I_CONSUMOS" VERSION="1" LANGU="S" DESCRIPT="TABLA BAPI2017_GM_ITEM_CREATE" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TAB_BAPI_GOODSMVT_ITEM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ARBPL" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ARBPL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT5_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT5_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT4_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT4_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT6_UNI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="ACT6_CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="29 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="I_DETAIL_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla para estructura BAPIRET1" CMPTYPE="1" MTDTYPE="0" EDITORDER="30 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="COCF_T_BAPI_RETURN"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="31 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET1"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="NOTIFICAR_ST" SCONAME="AFRU" VERSION="1" LANGU="S" DESCRIPT="Notificaciones de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="32 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="AFRU"/>
+  <source>METHOD notificar_st.
+    DATA o_orden TYPE REF TO zcl_ap_orden_pp.
+
+    o_orden = NEW #(
+        aufnr = aufnr ).
+
+    IF o_orden-&gt;aufk-autyp = &apos;40&apos;.
+      mensaje = o_orden-&gt;notificar_op( vornr    = vornr
+                                    cantidad = cantidad
+                                    rechazo  = rechazo
+                                    meins    = meins
+                                    budat     = budat
+                                    fecha_ini = fecha_ini
+                                    hora_ini  = hora_ini
+                                    fecha_fin = fecha_fin
+                                    hora_fin  = hora_fin
+                                    crear_mov = crear_mov
+                                    parcial_final = parcial_final
+                                    act1_uni  = act1_uni
+                                    act1_ctd  = act1_ctd
+                                    act2_uni  = act2_uni
+                                    act2_ctd  = act2_ctd
+                                    act3_uni  = act3_uni
+                                    act3_ctd  = act3_ctd
+                                    act4_uni  = act4_uni
+                                    act4_ctd  = act4_ctd
+                                    act5_uni  = act5_uni
+                                    act5_ctd  = act5_ctd
+                                    act6_uni  = act6_uni
+                                    act6_ctd  = act6_ctd
+                                    texto     = texto
+                                    arbpl     = arbpl
+                                    commit    = commit
+                                    i_consumos = i_consumos ).
+    ELSE.
+      mensaje = o_orden-&gt;notificar( vornr    = vornr
+                                    cantidad = cantidad
+                                    rechazo  = rechazo
+                                    meins    = meins
+                                    budat     = budat
+                                    fecha_ini = fecha_ini
+                                    hora_ini  = hora_ini
+                                    fecha_fin = fecha_fin
+                                    hora_fin  = hora_fin
+                                    crear_mov = crear_mov
+                                    parcial_final = parcial_final
+                                    act1_uni  = act1_uni
+                                    act1_ctd  = act1_ctd
+                                    act2_uni  = act2_uni
+                                    act2_ctd  = act2_ctd
+                                    act3_uni  = act3_uni
+                                    act3_ctd  = act3_ctd
+                                    act4_uni  = act4_uni
+                                    act4_ctd  = act4_ctd
+                                    act5_uni  = act5_uni
+                                    act5_ctd  = act5_ctd
+                                    act6_uni  = act6_uni
+                                    act6_ctd  = act6_ctd
+                                    arbpl     = arbpl
+                                    commit    = commit
+                                    texto     = texto ).
+
+    ENDIF.
+
+    afru = o_orden-&gt;afru.
+    i_detail_return = o_orden-&gt;i_detail_return.
+    return = o_orden-&gt;return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="SET_ORDEN" VERSION="1" LANGU="S" DESCRIPT="Lee datos de la roden" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="SET_ORDEN" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR"/>
+  <source>METHOD set_orden.
+    free( ).
+    CLEAR: aufk, afko.
+    SELECT SINGLE * FROM aufk
+      INTO me-&gt;aufk
+     WHERE aufnr = aufnr.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;No existe esa orden&apos;(neo) TYPE &apos;E&apos;.
+    ELSE.
+      SELECT SINGLE * FROM afko
+        INTO me-&gt;afko
+       WHERE aufnr = aufnr.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_MD04" VERSION="1" LANGU="S" DESCRIPT="Llama a MD04 con material/centro" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_MD04" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_MD04" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <source>METHOD ver_md04.
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Lista planif. nec. visual. individual: acceso
+    o_bi-&gt;dynpro( program = &apos;SAPMM61R&apos; dynpro = &apos;0300&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ENTR&apos; ).
+    o_bi-&gt;campos( campo = &apos;RM61R-MATNR&apos; valor = matnr ). &quot; Número de material
+    o_bi-&gt;campos( campo = &apos;RM61R-WERKS&apos; valor = werks ). &quot; Centro
+    o_bi-&gt;campos( campo = &apos;RM61R-DFILT&apos; valor = &apos;&apos; ). &quot; Activar filtro visualización y regla selección
+*   o_bi-&gt;campos( campo = &apos;RM61R-ERGBZ&apos; valor = &apos;ZAP00002&apos;). &quot; Regla selección
+
+    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;MD04&apos; modo = &apos;E&apos; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_NOTIFICACION" VERSION="1" LANGU="S" DESCRIPT="Visualiza notificación" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_NOTIFICACION" SCONAME="RUECK" VERSION="1" LANGU="S" DESCRIPT="Número de notificación de la operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RUECK"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VER_NOTIFICACION" SCONAME="RMZHL" VERSION="1" LANGU="S" DESCRIPT="Contador de notificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CO_RMZHL" PAROPTIONL="X"/>
+  <source>METHOD ver_notificacion.
+    DATA: l_aufnr TYPE aufnr,
+          l_autyp TYPE aufk-autyp.
+
+    SET PARAMETER ID &apos;RCK&apos; FIELD rueck.
+    SET PARAMETER ID &apos;RZL&apos; FIELD rmzhl.
+
+    SELECT SINGLE aufnr FROM afru
+      INTO l_aufnr
+     WHERE rueck = rueck
+       AND rmzhl = rmzhl.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE autyp FROM aufk
+      INTO l_autyp
+     WHERE aufnr = l_aufnr.
+    IF sy-subrc = 0.
+      CASE l_autyp.
+        WHEN &apos;20&apos;.
+          CALL TRANSACTION &apos;CN23&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+        WHEN &apos;40&apos;.
+          CALL TRANSACTION &apos;CORT&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+        WHEN OTHERS.
+          CALL TRANSACTION &apos;CO14&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar orden CO" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR" SCONAME="SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;,&apos;"/>
+  <source>METHOD visualizar.
+    TYPES: BEGIN OF t_ord,
+             aufnr  TYPE caufv-aufnr,
+             auart  TYPE caufv-auart,
+             gstri  TYPE caufv-gstri,
+             plnbez TYPE caufv-plnbez,
+           END OF t_ord,
+           BEGIN OF t_aufnr,
+             aufnr TYPE caufv-aufnr,
+           END OF t_aufnr.
+
+    DATA: l_aufnr TYPE aufnr,
+          l_autyp TYPE aufk-autyp.
+
+    DATA: i_aufnr TYPE TABLE OF t_aufnr,
+          i_ord   TYPE TABLE OF t_ord,
+          l_ord   TYPE t_ord,
+          l_ok    TYPE c LENGTH 1,
+          l_fila  TYPE i.
+
+    IF NOT aufnr IS INITIAL.
+      l_aufnr = aufnr.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_aufnr ).
+
+      SET PARAMETER ID &apos;ANR&apos; FIELD l_aufnr.
+      GET PARAMETER ID &apos;ANR&apos; FIELD l_aufnr.
+
+      SET PARAMETER ID &apos;BR1&apos; FIELD l_aufnr.
+      GET PARAMETER ID &apos;BR1&apos; FIELD l_aufnr.
+
+      SELECT SINGLE autyp FROM aufk
+        INTO l_autyp
+       WHERE aufnr = l_aufnr.
+      IF sy-subrc = 0.
+        CASE l_autyp.
+          WHEN &apos;20&apos;.
+            CALL TRANSACTION &apos;CN23&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+          WHEN &apos;30&apos;.
+            IF editar IS INITIAL.
+              CALL TRANSACTION &apos;IW33&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ELSE.
+              CALL TRANSACTION &apos;IW32&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ENDIF.
+          WHEN &apos;40&apos;.
+            IF editar IS INITIAL.
+              CALL TRANSACTION &apos;COR3&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ELSE.
+              CALL TRANSACTION &apos;COR2&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ENDIF.
+          WHEN OTHERS.
+            IF editar IS INITIAL.
+              CALL TRANSACTION &apos;CO03&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ELSE.
+              CALL TRANSACTION &apos;CO02&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+            ENDIF.
+        ENDCASE.
+      ENDIF.
+    ELSE.
+      i_aufnr = zcl_ap_lista=&gt;lista2tabla_n12( lista = lista separador = separador ).
+      DESCRIBE TABLE i_aufnr LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_aufnr INTO l_aufnr INDEX 1.
+        visualizar( aufnr = l_aufnr editar = editar ).
+      ELSEIF sy-tfill &gt; 1.
+        SELECT * FROM caufv
+          INTO CORRESPONDING FIELDS OF TABLE i_ord
+          FOR ALL ENTRIES IN i_aufnr
+         WHERE aufnr = i_aufnr-aufnr
+          ORDER BY PRIMARY KEY.
+        DESCRIBE TABLE i_ord LINES sy-tfill.
+        IF sy-tfill = 1.
+          READ TABLE i_ord INTO l_ord INDEX 1.
+          visualizar( aufnr = l_ord-aufnr editar = editar ).
+        ELSEIF sy-tfill &gt; 1.
+          SORT i_ord.
+          CALL FUNCTION &apos;Z_POPUP_ALV&apos;
+            EXPORTING
+              titulo           = &apos;Seleccione orden a visualizar&apos;(SOV)
+              ancho            = 40
+              solo_aceptar     = &apos;&apos;
+              seleccionar_fila = &apos;X&apos;
+            IMPORTING
+              ok               = l_ok
+              fila             = l_fila
+            TABLES
+              t_datos          = i_ord.
+
+          IF l_ok = &apos;X&apos;.
+            READ TABLE i_ord INTO l_ord INDEX l_fila.
+            IF sy-subrc = 0.
+              visualizar( aufnr = l_ord-aufnr editar = editar ).
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR_PLAN" VERSION="1" LANGU="S" DESCRIPT="Visualizar plan de mantenimiento" EXPOSURE="2" STATE="1" EDITORDER="40 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR_PLAN" SCONAME="WARPL" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ORDEN_PP" CMPNAME="VISUALIZAR_PLAN" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD visualizar_plan.
+    SET PARAMETER ID &apos;MPL&apos; FIELD warpl.
+    IF editar IS INITIAL.
+      CALL TRANSACTION &apos;IP03&apos; AND SKIP FIRST SCREEN.     &quot;#EC CI_CALLTA
+    ELSE.
+      CALL TRANSACTION &apos;IP02&apos; AND SKIP FIRST SCREEN.     &quot;#EC CI_CALLTA
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

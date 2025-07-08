@@ -1,0 +1,104 @@
+FUNCTION Z_POPUP_NAST_AP.
+*"--------------------------------------------------------------------
+*"*"Interfase local
+*"  IMPORTING
+*"     REFERENCE(KAPPL) OPTIONAL
+*"     REFERENCE(OBJKY) OPTIONAL
+*"     REFERENCE(KSCHL) OPTIONAL
+*"     REFERENCE(NACHA) TYPE  NAST-NACHA DEFAULT '1'
+*"     REFERENCE(ERROR_SI_MSG_NO_EXISTE) DEFAULT 'X'
+*"  TABLES
+*"      I_NAST STRUCTURE  NAST OPTIONAL
+*"--------------------------------------------------------------------
+DATA: l_nast TYPE nast,
+        l_comando TYPE text40,
+        l_ucomm TYPE sy-ucomm.
+
+  CLEAR i_msg_nast.
+
+  IF NOT objky IS INITIAL.
+    SELECT * FROM nast
+      INTO CORRESPONDING FIELDS OF TABLE i_msg_nast
+      UP TO 1 ROWS
+     WHERE kappl = kappl
+       AND objky = objky
+       AND kschl = kschl
+       AND nacha = nacha
+     ORDER BY erdat DESCENDING eruhr DESCENDING.
+    IF sy-subrc NE 0.
+      IF error_si_msg_no_existe = 'X'.
+        CLEAR l_msg_nast.
+        l_msg_nast-kappl = kappl.
+        l_msg_nast-objky = objky.
+        l_msg_nast-kschl = kschl.
+        l_msg_nast-message = 'No se ha determinado mensaje'.
+        APPEND l_msg_nast TO i_msg_nast.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  LOOP AT i_nast.
+    IF i_nast-mandt IS INITIAL.
+      SELECT * FROM nast
+        APPENDING CORRESPONDING FIELDS OF TABLE i_msg_nast
+        UP TO 1 ROWS
+       WHERE kappl = i_nast-kappl
+         AND objky = i_nast-objky
+         AND kschl = i_nast-kschl
+         AND nacha = nacha
+       ORDER BY erdat DESCENDING eruhr DESCENDING.
+      IF sy-subrc NE 0.
+        IF error_si_msg_no_existe = 'X'.
+          CLEAR l_msg_nast.
+          l_msg_nast-kappl = i_nast-kappl.
+          l_msg_nast-objky = i_nast-objky.
+          l_msg_nast-kschl = i_nast-kschl.
+          l_msg_nast-message = 'No se ha determinado mensaje'.
+          l_msg_nast-estado = zcl_ap_alv=>set_icono( icono = zcl_ap_alv=>c_ico_rojo mensaje = l_msg_nast-message  ).
+          APPEND l_msg_nast TO i_msg_nast.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CLEAR l_msg_nast.
+      MOVE-CORRESPONDING l_msg_nast TO l_msg_nast.
+      APPEND l_msg_nast TO i_msg_nast.
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT i_msg_nast ASSIGNING <msg_nast> WHERE message IS INITIAL.
+    <msg_nast>-check = 'X'.
+    <msg_nast>-estado = zcl_ap_alv=>set_icono( icono = zcl_ap_alv=>c_ico_ambar mensaje = ''  ).
+  ENDLOOP.
+
+
+
+  CALL FUNCTION 'Z_POPUP_ALV_AP'
+    EXPORTING
+      titulo       = 'Seleccione mensajes a imprimir'
+      texto        = ''
+      texto2       = ''
+      ancho        = 80
+      check        = 'X'
+      campos_noout = 'KAPPL'
+      botones      = 'PRINT_CANCEL'
+    IMPORTING
+      comando      = l_comando
+      ucomm        = l_ucomm
+    TABLES
+      t_datos      = i_msg_nast.
+
+  IF l_comando = 'Imprimir'.
+    LOOP AT i_msg_nast ASSIGNING <msg_nast> WHERE check = 'X'.
+      IF NOT <msg_nast>-message IS INITIAL.
+        MESSAGE 'No puede imprimir mensajes no existentes' TYPE 'I'.
+      ELSE.
+        zcl_ap_smartforms=>previsualizar_mensaje( kappl = <msg_nast>-kappl objky = <msg_nast>-objky kschl = <msg_nast>-kschl ).
+      ENDIF.
+    ENDLOOP.
+  ENDIF.
+
+
+
+
+
+ENDFUNCTION.

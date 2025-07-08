@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_JOBS" VERSION="1" LANGU="S" DESCRIPT="Clase manejo jobs" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EBJ" ENTRY="Error borrando job" LENGTH="28 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_JOBS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="ESTADO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="FIN_KO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="FIN_OK" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="JOBCOUNT" VERSION="1" LANGU="S" DESCRIPT="ID de un job" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TBTCJOB-JOBCOUNT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="JOBNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de job de fondo" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TBTCO-JOBNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MSG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="PRINT_PARAMETERS" VERSION="1" LANGU="S" DESCRIPT="Estructura para transferir parámetros impr." EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PRI_PARAMS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_JOBS" CMPNAME="TBTCO" VERSION="1" LANGU="S" DESCRIPT="Tabla de resumen del estado de jobs" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TBTCO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="ABRIR" VERSION="1" LANGU="S" DESCRIPT="Abrir job" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="ABRIR" SCONAME="JOBCOUNT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TBTCJOB-JOBCOUNT"/>
+  <source>METHOD abrir.
+    CALL FUNCTION &apos;JOB_OPEN&apos;
+      EXPORTING
+        jobname          = jobname
+      IMPORTING
+        jobcount         = me-&gt;jobcount
+      EXCEPTIONS
+        cant_create_job  = 1
+        invalid_job_data = 2
+        jobname_missing  = 3
+        OTHERS           = 4.
+
+    IF NOT sy-subrc IS INITIAL.
+      CASE sy-subrc.
+        WHEN 1. message = &apos;No es posible crear el job&apos;.
+        WHEN 2. message = &apos;Datos creación de job inválidos&apos;.
+        WHEN 3. message = &apos;Falta definir nombre del job&apos;.
+        WHEN OTHERS.
+          MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDCASE.
+    ENDIF.
+
+    jobcount = me-&gt;jobcount.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" VERSION="1" LANGU="S" DESCRIPT="Borrar datos de jobs procesados" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBTCO-JOBNAME"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="SOLO_SIN_SPOOL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="SOLO_FINALIZADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="SOLO_PLANIFICADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="SOLO_LIBERADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="JOBS_BORRADOS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="BORRAR_JOBS" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar_jobs.
+    DATA: l_fecha        TYPE d,
+          r_status       TYPE RANGE OF tbtco-status,
+          i_tbtco        TYPE TABLE OF tbtco,
+          l_tbtco        TYPE tbtco,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_tbtc_spoolid TYPE tbtc_spoolid.
+
+    CLEAR: message, jobs_borrados.
+
+    IF NOT fecha IS INITIAL.
+      l_fecha = fecha.
+    ELSE.
+      l_fecha = &apos;99991231&apos;.
+    ENDIF.
+
+    IF solo_finalizados = &apos;X&apos;.
+      APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = &apos;F&apos; ) TO r_status.
+    ENDIF.
+
+    IF solo_planificados = &apos;X&apos; OR solo_liberados = &apos;X&apos;.
+      IF solo_planificados = &apos;X&apos;.
+        APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = &apos;P&apos; ) TO r_status.
+      ENDIF.
+      IF solo_liberados = &apos;X&apos;.
+        APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = &apos;S&apos; ) TO r_status.
+      ENDIF.
+
+      SELECT jobname jobcount FROM tbtco
+        INTO CORRESPONDING FIELDS OF TABLE i_tbtco
+        WHERE jobname  = jobname
+          AND enddate  = &apos;00000000&apos;
+          AND status  IN r_status.
+    ELSE.
+      SELECT jobname jobcount FROM tbtco
+        INTO CORRESPONDING FIELDS OF TABLE i_tbtco
+        WHERE jobname  = jobname
+          AND enddate &lt;&gt; &apos;00000000&apos;
+          AND enddate  &lt;= l_fecha
+          AND status  IN r_status.
+    ENDIF.
+
+    LOOP AT i_tbtco INTO l_tbtco.
+      IF solo_sin_spool = &apos;X&apos;.
+*        SELECT SINGLE jobname FROM tbtc_spoolid
+*           INTO l_tbtc_spoolid-jobname
+*          WHERE jobname  = l_tbtco-jobname
+*            AND jobcount = l_tbtco-jobcount.
+        data t_spoollist type table of BAPIXMSPOOLID.
+        refresh t_spoollist.
+        CALL FUNCTION &apos;BP_JOB_READ&apos;
+          EXPORTING
+            job_read_jobname  = l_tbtco-jobname
+            job_read_jobcount = l_tbtco-jobcount
+            job_read_opcode   = 36 &quot;btc_xbp_all_jobdata
+*          IMPORTING
+*            job_read_jobhead  = spo_jobhead
+          TABLES
+*            job_read_steplist = t_steplist
+            spool_attributes  = t_spoollist
+          EXCEPTIONS
+            job_doesnt_exist  = 1
+            OTHERS            = 99.
+        IF sy-subrc &lt;&gt; 0 or not t_spoollist is initial. &quot;Si hay spool, no borramos
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      CALL FUNCTION &apos;BP_JOB_DELETE&apos;
+        EXPORTING
+          jobcount                 = l_tbtco-jobcount
+          jobname                  = l_tbtco-jobname
+*         FORCEDMODE               = &apos; &apos;
+*         COMMITMODE               = &apos;X&apos;
+        EXCEPTIONS
+          cant_delete_event_entry  = 1
+          cant_delete_job          = 2
+          cant_delete_joblog       = 3
+          cant_delete_steps        = 4
+          cant_delete_time_entry   = 5
+          cant_derelease_successor = 6
+          cant_enq_predecessor     = 7
+          cant_enq_successor       = 8
+          cant_enq_tbtco_entry     = 9
+          cant_update_predecessor  = 10
+          cant_update_successor    = 11
+          commit_failed            = 12
+          jobcount_missing         = 13
+          jobname_missing          = 14
+          job_does_not_exist       = 15
+          job_is_already_running   = 16
+          no_delete_authority      = 17
+          OTHERS                   = 18.
+      IF sy-subrc &lt;&gt; 0.
+        message = |Error { sy-subrc } borrando job|.
+      ELSE.
+        jobs_borrados = jobs_borrados + 1.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" VERSION="1" LANGU="S" DESCRIPT="Cerrar job" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="INMEDIATO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="RETRASO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="REPETIR_MINUTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="REPETIR_DIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CERRAR" SCONAME="REPETIR_HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>METHOD cerrar.
+    DATA: l_fecha   TYPE tbtcjob-laststrtdt, &quot; Fecha de ejecución más tardía
+          l_hora    TYPE tbtcjob-laststrttm, &quot; Ultima hora de ejecución para
+          l_rep_min TYPE tbtcjob-prdmins,
+          l_rep_dia TYPE tbtcjob-prddays,
+          l_rep_hor TYPE tbtcjob-prdhours.
+
+    IF inmediato = &apos;X&apos; AND retraso = 0.
+      l_fecha = &apos;        &apos;.
+      l_hora  = &apos;      &apos;.
+    ELSE.
+      IF NOT retraso IS INITIAL.
+        l_fecha = sy-datum.
+        l_hora = sy-uzeit + retraso.
+      ELSEIF NOT fecha IS INITIAL AND NOT hora IS INITIAL.
+        l_fecha = fecha.
+        l_hora = hora.
+      ENDIF.
+    ENDIF.
+
+    l_rep_min = repetir_minutos.
+    l_rep_dia = repetir_dias.
+    l_rep_hor = repetir_horas.
+    IF repetir_minutos &lt; 99.
+      l_rep_min = repetir_minutos.
+    ELSE.
+      DATA(m) = repetir_minutos.
+      DATA(d) = m DIV 1440.
+      m = m MOD 1440.
+      DATA(h) = m DIV 60.
+      m = m MOD 60.
+      l_rep_min = m.
+      l_rep_hor = l_rep_hor + h.
+      l_rep_dia = l_rep_dia + d.
+    ENDIF.
+
+    CALL FUNCTION &apos;JOB_CLOSE&apos;
+      EXPORTING
+        jobcount             = jobcount
+        jobname              = jobname
+        sdlstrtdt            = l_fecha
+        sdlstrttm            = l_hora
+        strtimmed            = inmediato  &quot; Inicio inmediato
+        prdmins              = l_rep_min
+        prdhours             = l_rep_hor
+        prddays              = l_rep_dia
+      EXCEPTIONS
+        cant_start_immediate = 1
+        invalid_startdate    = 2
+        jobname_missing      = 3
+        job_close_failed     = 4
+        job_nosteps          = 5
+        job_notex            = 6
+        lock_failed          = 7
+        OTHERS               = 8.
+
+    IF NOT sy-subrc IS INITIAL.
+      CASE sy-subrc.
+        WHEN 1. message = &apos;No es posible empezar inmediatanmente&apos;.
+        WHEN 2. message = &apos;Fecha inicio inválida&apos;.
+        WHEN 3. message = &apos;Falta nombre de job&apos;.
+        WHEN 4. message = &apos;Error al cerrar job&apos;.
+        WHEN 5. message = &apos;Job sin pasos&apos;.
+        WHEN 6. message = &apos;Job NOTEX&apos;.
+        WHEN 7. message = &apos;Fallo al bloquear job&apos;.
+        WHEN OTHERS.
+          MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CONSTRUCTOR" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="CONSTRUCTOR" SCONAME="UNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <source>METHOD constructor.
+    me-&gt;jobname = jobname.
+
+    print_parameters = zcl_ap_usuario=&gt;get_print_parameters( uname ).
+
+    CLEAR message.
+
+*  CREATE OBJECT o_job
+*    EXPORTING
+*      jobname = &apos;DESPACHO_FACT_AUTO&apos;.
+*
+*  o_job-&gt;abrir( ).
+*
+*  IF NOT o_job-&gt;jobcount IS INITIAL.
+*    SUBMIT zgsdd418_facturar_entrega
+*       AND RETURN
+*      WITH s_vbeln = vbeln
+*      WITH p_fkart = &apos;ZGCO&apos;
+*      WITH p_auto  = &apos;X&apos;
+*      WITH p_mailok = l_mail_ok
+*      WITH p_mailko = l_mail_ko
+*       VIA JOB o_job-&gt;jobname NUMBER o_job-&gt;jobcount
+*       TO SAP-SPOOL SPOOL PARAMETERS o_job-&gt;print_parameters WITHOUT SPOOL DYNPRO
+*        USER &apos;BACHTMGR&apos;.
+*
+*    o_job-&gt;cerrar( inmediato = &apos;X&apos; ).
+*    IF NOT o_job-&gt;message IS INITIAL.
+*      message = o_job-&gt;message.
+*    ENDIF.
+*  ELSE.
+*    message = o_job-&gt;message.
+*  ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="ESPERA_FIN_JOB" VERSION="1" LANGU="S" DESCRIPT="Espera al fin del job" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD espera_fin_job.
+    DO.
+      estado_job( ).
+
+      IF fin_ok = &apos;X&apos; OR fin_ko = &apos;X&apos;.
+        EXIT.
+      ELSE.
+        WAIT UP TO 1 SECONDS.
+        zcl_ap_sgpi=&gt;text( estado ).
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="ESTADO_JOB" VERSION="1" LANGU="S" DESCRIPT="Recupera el estado del job" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD estado_job.
+    CLEAR: estado, fin_ok, fin_ko.
+
+    SELECT SINGLE * FROM tbtco
+      INTO me-&gt;tbtco
+       WHERE jobname  = jobname
+         AND jobcount = jobcount.
+    IF sy-subrc &lt;&gt; 0.
+      estado = &apos;Job no existe&apos;.
+      fin_ko = &apos;X&apos;.
+    ELSE.
+      CASE tbtco-status.
+        WHEN &apos;X&apos;.
+          estado = &apos;Status desconocido.&apos;.
+        WHEN &apos;Y&apos;.
+          estado = &apos;Job preparado.&apos;.
+        WHEN &apos;S&apos;.
+          estado = &apos;Job liberado.&apos;.
+        WHEN &apos;P&apos;.
+          estado = &apos;Job planificado.&apos;.
+        WHEN &apos;Z&apos;.
+          estado = &apos;Job suspendido.&apos;.
+          fin_ko = &apos;X&apos;.
+        WHEN &apos;R&apos;.
+          estado = &apos;Job en ejecución&apos;.
+        WHEN &apos;A&apos;.
+          estado = &apos;Job cancelado&apos;.
+          fin_ko = &apos;X&apos;.
+        WHEN &apos;F&apos;.
+          estado = &apos;Job finalizado.&apos;.
+          fin_ok = &apos;X&apos;.
+        WHEN OTHERS.
+          CONCATENATE &apos;Status:&apos; tbtco-status INTO estado.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="ESTA_JOB_PENDIENTE" VERSION="1" LANGU="S" DESCRIPT="¿Existe algún job activo o pendiente?" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="ESTA_JOB_PENDIENTE" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="ESTA_JOB_PENDIENTE" SCONAME="ACTIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_job_pendiente.
+    DATA: i_joblist   TYPE TABLE OF tbtco,
+          l_joblist   TYPE tbtco,
+          preliminary TYPE c LENGTH 1,
+          ready       TYPE c LENGTH 1,
+          running     TYPE c LENGTH 1,
+          scheduled   TYPE c LENGTH 1.
+
+    CLEAR activo.
+    SELECT jobname jobcount FROM tbtco
+      INTO CORRESPONDING FIELDS OF TABLE i_joblist
+     WHERE jobname   = jobname
+       AND authckman = sy-mandt
+       AND (    sdlstrtdt &lt;&gt; &apos;00000000&apos;
+             OR reldate   &lt;&gt; &apos;00000000&apos; )
+       AND status &lt;&gt; &apos;F&apos;
+     ORDER BY PRIMARY KEY.
+
+    LOOP AT i_joblist INTO l_joblist.
+      CALL FUNCTION &apos;SHOW_JOBSTATE&apos;
+        EXPORTING
+          jobcount         = l_joblist-jobcount  &quot; num job
+          jobname          = l_joblist-jobname  &quot; nombre del job
+        IMPORTING
+*         aborted          = aborted
+*         finished         = finished
+          preliminary      = preliminary
+          ready            = ready
+          running          = running
+          scheduled        = scheduled
+        EXCEPTIONS
+          jobcount_missing = 1
+          jobname_missing  = 2
+          job_notex        = 3
+          OTHERS           = 4.
+
+      IF sy-subrc = 0.
+        IF preliminary = &apos;X&apos; OR ready = &apos;X&apos; OR running = &apos;X&apos; OR scheduled = &apos;X&apos;.
+          activo = &apos;X&apos;.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_LOG" VERSION="1" LANGU="S" DESCRIPT="Recupera información del log" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_LOG" SCONAME="I_LOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSPC_T_JOBLOG"/>
+  <source>METHOD get_log.
+    CALL FUNCTION &apos;BP_JOBLOG_READ&apos;
+      EXPORTING
+        jobcount              = tbtco-jobcount
+        joblog                = tbtco-joblog
+        jobname               = tbtco-jobname
+      TABLES
+        joblogtbl             = i_log
+      EXCEPTIONS
+        cant_read_joblog      = 1
+        jobcount_missing      = 2
+        joblog_does_not_exist = 3
+        joblog_is_empty       = 4
+        joblog_name_missing   = 5
+        jobname_missing       = 6
+        job_does_not_exist    = 7.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error leyendo log&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_SPOOL" VERSION="1" LANGU="S" DESCRIPT="Orden de spool" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_SPOOL" SCONAME="JOBCOUNT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBTCJOB-JOBCOUNT"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_SPOOL" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBTCO-JOBNAME"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="GET_SPOOL" SCONAME="SPOOLID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TBTC_SPOOLID-SPOOLID"/>
+  <source>METHOD get_spool.
+    SELECT spoolid FROM tbtc_spoolid
+      INTO spoolid
+      UP TO 1 ROWS
+     WHERE jobname  = jobname
+       AND jobcount = jobcount
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="LANZAR_EVENTO" VERSION="1" LANGU="S" DESCRIPT="Lanza evento" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="LANZAR_EVENTO" SCONAME="EVENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="LANZAR_EVENTO" SCONAME="PARAMETRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD lanzar_evento.
+* El evento tiene que estar en tabla btcuev, transacción SM62
+
+    CALL FUNCTION &apos;BP_EVENT_RAISE&apos;
+      EXPORTING
+        eventid                = evento
+        eventparm              = parametro
+*       TARGET_INSTANCE        = &apos; &apos;
+*       TARGET_MODE            = &apos; &apos;
+      EXCEPTIONS
+        bad_eventid            = 1
+        eventid_does_not_exist = 2
+        eventid_missing        = 3
+        raise_failed           = 4.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error lanzando evento&apos; TYPE &apos;I&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="NUM_JOB_ACTIVOS" VERSION="1" LANGU="S" DESCRIPT="Nº de jobs activos" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="NUM_JOB_ACTIVOS" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="NUM_JOB_ACTIVOS" SCONAME="NUM_JOBS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>METHOD num_job_activos.
+    DATA r_jobname TYPE RANGE OF tbtco-jobname.
+
+    CLEAR num_jobs.
+
+    IF jobname &lt;&gt; &apos;*&apos;.
+      r_jobname = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = jobname ) ).
+    ENDIF.
+
+    SELECT COUNT( * ) FROM tbtco
+      INTO num_jobs
+     WHERE jobname   IN r_jobname
+       AND authckman  = sy-mandt
+       AND (    sdlstrtdt &lt;&gt; &apos;00000000&apos;
+             OR reldate   &lt;&gt; &apos;00000000&apos; )
+       AND status = &apos;R&apos;. &quot; En ejecución
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="VER_LOG" VERSION="1" LANGU="S" DESCRIPT="Visualiza log" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD ver_log.
+    ver_log_st( jobcount = jobcount jobname = jobname ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_JOBS" CMPNAME="VER_LOG_ST" VERSION="1" LANGU="S" DESCRIPT="Visualiza log (static)" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="VER_LOG_ST" SCONAME="JOBCOUNT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBTCJOB-JOBCOUNT"/>
+  <parameter CLSNAME="ZCL_AP_JOBS" CMPNAME="VER_LOG_ST" SCONAME="JOBNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBTCO-JOBNAME"/>
+  <source>METHOD ver_log_st.
+    CALL FUNCTION &apos;BP_JOBLOG_SHOW_SM37B&apos;
+      EXPORTING
+        client                    = sy-mandt
+        jobcount                  = jobcount
+*       JOBLOGID                  = &apos; &apos;
+        jobname                   = jobname
+*       LINES                     = &apos; &apos;
+*       DIRECTION                 = &apos; &apos;
+      EXCEPTIONS
+        error_reading_jobdata     = 1
+        error_reading_joblog_data = 2
+        jobcount_missing          = 3
+        joblog_does_not_exist     = 4
+        joblog_is_empty           = 5
+        joblog_show_canceled      = 6
+        jobname_missing           = 7
+        job_does_not_exist        = 8
+        no_joblog_there_yet       = 9
+        no_show_privilege_given   = 10.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error mostrando log&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

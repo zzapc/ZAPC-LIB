@@ -1,0 +1,361 @@
+==================================================
+ZCL_AP_FORMULA================CCDEF
+==================================================
+*"* use this source file for any type declarations (class
+*"* definitions, interfaces or data types) you need for method
+*"* implementation or private method's signature
+==================================================
+ZCL_AP_FORMULA================CCIMP
+==================================================
+*"* local class implementation for public class
+*"* use this source file for the implementation part of
+*"* local helper classes
+==================================================
+ZCL_AP_FORMULA================CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+==================================================
+ZCL_AP_FORMULA================CI
+==================================================
+*"* private components of class ZCL_FORMULA
+*"* do not include other source files here!!!
+private section.
+
+  data OPERACIONES type ZTAB_FORMULA .
+==================================================
+ZCL_AP_FORMULA================CO
+==================================================
+*"* protected components of class ZCL_FORMULA
+*"* do not include other source files here!!!
+protected section.
+==================================================
+ZCL_AP_FORMULA================CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_AP_FORMULA
+
+*"* local type definitions
+include ZCL_AP_FORMULA================ccdef.
+
+*"* class ZCL_AP_FORMULA definition
+*"* public declarations
+  include ZCL_AP_FORMULA================cu.
+*"* protected declarations
+  include ZCL_AP_FORMULA================co.
+*"* private declarations
+  include ZCL_AP_FORMULA================ci.
+endclass. "ZCL_AP_FORMULA definition
+
+*"* macro definitions
+include ZCL_AP_FORMULA================ccmac.
+*"* local class implementation
+include ZCL_AP_FORMULA================ccimp.
+
+class ZCL_AP_FORMULA implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_AP_FORMULA implementation
+
+==================================================
+ZCL_AP_FORMULA================CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_AP_FORMULA and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_AP_FORMULA================CU
+==================================================
+class ZCL_AP_FORMULA definition
+  public
+  create public .
+
+*"* public components of class ZCL_AP_FORMULA
+*"* do not include other source files here!!!
+public section.
+
+  methods DESCOMPONER_OPERANDOS
+    importing
+      !FORMULA type STRING
+      !ORDEN type ZEST_FORMULA-ORDEN default 0
+    exporting
+      !OPERACIONES type ZTAB_FORMULA
+      !ERROR type BAPIRETURN1-MESSAGE .
+  methods DESCOMPONER
+    importing
+      !FORMULA type STRING
+      !ORDEN type ZEST_FORMULA-ORDEN default 0
+    exporting
+      !OPERACIONES type ZTAB_FORMULA
+      !ERROR type BAPIRETURN1-MESSAGE .
+  type-pools ABAP .
+  methods EVALUAR
+    importing
+      !FORMULA type STRING
+      !INICIAL type ABAP_BOOL default ''
+    exporting
+      !VALOR type ZEST_FORMULA-VALOR
+      !ERROR type BAPIRETURN1-MESSAGE .
+  methods EVALUAR_OPERACIONES
+    importing
+      !OPERACIONES type ZTAB_FORMULA
+    exporting
+      !VALOR type ZEST_FORMULA-VALOR
+      !ERROR type BAPIRETURN1-MESSAGE .
+  methods EVALUAR_OPERACIONES_SIMPLES
+    importing
+      !OPERACIONES type ZTAB_FORMULA
+    exporting
+      !VALOR type ZEST_FORMULA-VALOR
+      !ERROR type BAPIRETURN1-MESSAGE .
+  methods EVALUAR_OPERACION
+    importing
+      !FORMULA type ZEST_FORMULA-FORMULA
+    exporting
+      !VALOR type ZEST_FORMULA-VALOR
+      !ERROR type BAPIRETURN1-MESSAGE .
+==================================================
+ZCL_AP_FORMULA=DESCOMPONER
+==================================================
+method DESCOMPONER.
+  DATA: l_long TYPE i,
+        l_fila TYPE string,
+        l_col TYPE i,
+        l_valor(20),
+        l_for TYPE zest_formula,
+        l_formula(1000),
+        l_inicio,
+        l_fin TYPE sy-tabix,
+        l_orden TYPE zest_formula-orden,
+        i_op TYPE ztab_formula,
+        l_string TYPE string.
+
+  l_formula = formula.
+  l_long = STRLEN( formula ).
+
+  IF formula CS '('.
+    DO l_long TIMES.
+      l_col = l_long - sy-index + 1.
+      IF l_col <= 0.
+        EXIT.
+      ENDIF.
+      IF l_formula+l_col(1) = ')'.
+        l_fin = l_col.
+        EXIT.
+      ENDIF.
+    ENDDO.
+    IF l_col IS INITIAL.
+      error = 'Parentesis abierto'.
+      EXIT.
+    ENDIF.
+
+    DO l_long TIMES.
+      l_col = sy-index  - 1.
+      IF l_inicio IS INITIAL.
+        IF l_formula+l_col(1) = '('.
+          l_inicio = 'X'.
+          CONTINUE.
+        ENDIF.
+      ELSE.
+        IF l_col = l_fin.
+          EXIT.
+        ENDIF.
+      ENDIF.
+      IF l_inicio = 'X'.
+        CONCATENATE l_fila l_formula+l_col(1) INTO l_fila.
+      ENDIF.
+    ENDDO.
+
+    CHECK error IS INITIAL.
+
+    CLEAR operaciones.
+    l_orden = orden + 1.
+    descomponer( EXPORTING formula = l_fila
+                           orden   = l_orden
+                 IMPORTING operaciones = i_op
+                           error   = error ).
+    LOOP AT i_op INTO l_for.
+      APPEND l_for TO operaciones.
+    ENDLOOP.
+    CONCATENATE '?' l_orden INTO l_valor.
+    CONCATENATE '(' l_fila ')' INTO l_fila.
+    REPLACE l_fila WITH l_valor INTO l_formula.
+    l_string = l_formula.
+    descomponer( EXPORTING formula = l_string
+                           orden   = orden
+                 IMPORTING operaciones = operaciones
+                           error   = error ).
+
+  ELSE.
+    descomponer_operandos( EXPORTING formula = formula
+                                       orden = orden
+                             IMPORTING operaciones = operaciones
+                                       error   = error ).
+  ENDIF.
+
+
+endmethod.
+==================================================
+ZCL_AP_FORMULA=DESCOMPONER_OPERANDOS
+==================================================
+method DESCOMPONER_OPERANDOS.
+  DATA: l_long TYPE i,
+        l_fila(40),
+        l_col TYPE i,
+        l_valor(20),
+        l_for TYPE zest_formula,
+        l_formula(1000).
+
+  l_formula = formula.
+  l_long = STRLEN( formula ).
+
+  DO l_long TIMES.
+    l_col = sy-index  - 1.
+    IF L_formula+l_col(1) CO '+-/%*'.
+      IF NOT l_fila IS INITIAL.
+        l_for-formula = l_fila.
+        l_for-orden   = orden.
+        APPEND l_for TO operaciones.
+      ENDIF.
+      CLEAR l_for.
+      l_for-operacion = l_formula+l_col(1).
+      CLEAR l_fila.
+    ELSE.
+      CONCATENATE l_fila l_formula+l_col(1) INTO l_fila.
+    ENDIF.
+  ENDDO.
+  IF NOT l_fila IS INITIAL.
+    l_for-formula = l_fila.
+        l_for-orden   = orden.
+    APPEND l_for TO operaciones.
+  ENDIF.
+
+
+endmethod.
+==================================================
+ZCL_AP_FORMULA=EVALUAR
+==================================================
+method EVALUAR.
+  DATA: i_op TYPE ztab_formula,
+        l_op TYPE zest_formula,
+        l_formula TYPE string.
+
+  IF inicial = 'X'.
+    CLEAR me->operaciones. "APC09092010
+  ENDIF.
+
+  l_formula = formula.
+  CONDENSE l_formula NO-GAPS.
+  descomponer( EXPORTING formula = l_formula
+               IMPORTING operaciones = me->operaciones
+                         error   = error ).
+
+  CHECK error IS INITIAL.
+
+  evaluar_operaciones( EXPORTING operaciones = me->operaciones
+                       IMPORTING valor = valor
+                                 error   = error ).
+
+
+endmethod.
+==================================================
+ZCL_AP_FORMULA=EVALUAR_OPERACION
+==================================================
+method EVALUAR_OPERACION.
+
+  concatenate 'Operacion' formula 'no definida'
+         into error SEPARATED BY space.
+
+endmethod.
+==================================================
+ZCL_AP_FORMULA=EVALUAR_OPERACIONES
+==================================================
+method EVALUAR_OPERACIONES.
+  DATA: i_operaciones TYPE ztab_formula,
+        i_op TYPE ztab_formula,
+        l_op TYPE zest_formula,
+        l_valor TYPE zest_formula-valor,
+        l_aux TYPE zest_formula-formula.
+
+  i_operaciones = operaciones.
+  SORT i_operaciones BY orden DESCENDING.
+  LOOP AT i_operaciones INTO l_op.
+    AT NEW orden.
+      CLEAR i_op.
+    ENDAT.
+    APPEND l_op TO i_op.
+    l_op-procesada = 'X'.
+    MODIFY i_operaciones FROM l_op.
+    AT END OF orden.
+      CONCATENATE '?' l_op-orden INTO l_aux.
+      evaluar_operaciones_simples( EXPORTING operaciones = i_op
+                                   IMPORTING valor = valor
+                                             error = error ).
+
+      exit.
+    ENDAT.
+  ENDLOOP.
+  CHECK error IS INITIAL.
+  DELETE i_operaciones WHERE procesada = 'X'.
+  IF NOT i_operaciones IS INITIAL.
+    LOOP AT i_operaciones INTO l_op WHERE formula = l_aux.
+      l_op-formula = valor.
+      l_op-valor   = valor.
+      l_op-calculo = 'X'.
+      MODIFY i_operaciones FROM l_op.
+    ENDLOOP.
+
+    evaluar_operaciones( EXPORTING operaciones = i_operaciones
+                         IMPORTING valor = valor
+                                   error = error ).
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_FORMULA=EVALUAR_OPERACIONES_SIMPL
+==================================================
+method EVALUAR_OPERACIONES_SIMPLES.
+  DATA: l_op TYPE zest_formula,
+        i_operaciones TYPE ztab_formula,
+        l_valor_op TYPE zest_formula-valor.
+
+  i_operaciones = operaciones.
+  CLEAR valor.
+  LOOP AT i_operaciones INTO l_op.
+    IF l_op-formula CO '0123456789.E+ '.
+      l_op-valor = l_op-formula.
+    ELSE.
+      evaluar_operacion( EXPORTING formula = l_op-formula
+                         IMPORTING valor   = l_op-valor
+                                   error   = error ).
+      CHECK error IS INITIAL.
+    ENDIF.
+    MODIFY i_operaciones FROM l_op.
+
+    CASE l_op-operacion.
+      WHEN '+' OR ''.
+        valor = valor + l_op-valor.
+      WHEN '-'.
+        valor = valor - l_op-valor.
+      WHEN '*'.
+        valor = valor * l_op-valor.
+      WHEN '/'.
+        IF l_op-valor = 0.
+          valor = 0.
+        ELSE.
+          valor = valor / l_op-valor.
+        ENDIF.
+      WHEN '%'.
+        IF l_op-valor = 0.
+          valor = 0.
+        ELSE.
+          valor = 100 * valor / l_op-valor.
+        ENDIF.
+      WHEN ''.
+        valor = l_op-valor.
+    ENDCASE.
+
+  ENDLOOP.
+
+
+endmethod.

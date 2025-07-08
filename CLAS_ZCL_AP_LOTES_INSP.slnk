@@ -1,0 +1,1813 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_LOTES_INSP" VERSION="1" LANGU="S" DESCRIPT="Clase lotes de inspección" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TT_BAPI2045L2" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="6 " SRCCOLUMN1="10 " SRCROW2="6 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi2045l2 TYPE TABLE OF bapi2045l2
+"/>
+ <types CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TT_BAPI2045L4" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="10 " SRCROW2="7 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi2045l4 TYPE TABLE OF bapi2045l4
+"/>
+ <types CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TT_BAPI2045D1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="10 " SRCROW2="8 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi2045d1 TYPE TABLE OF bapi2045d1
+"/>
+ <types CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TT_BAPI2045D2" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="10 " SRCROW2="9 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi2045d2 TYPE TABLE OF bapi2045d2
+"/>
+ <types CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TT_BAPI2045D3" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="10 " SRCCOLUMN1="10 " SRCROW2="10 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi2045d3 TYPE TABLE OF bapi2045d3
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="CAR" ENTRY="Caract." LENGTH="17 "/>
+   <textElement ID="I" KEY="CDI" ENTRY="Característica de inspección" LENGTH="56 "/>
+   <textElement ID="I" KEY="CEN" ENTRY="Centro" LENGTH="16 "/>
+   <textElement ID="I" KEY="CLI" ENTRY="al crear lote inspección" LENGTH="48 "/>
+   <textElement ID="I" KEY="DET" ENTRY="Decisión de empleo tomada" LENGTH="50 "/>
+   <textElement ID="I" KEY="EBC" ENTRY="Error buscando características lote de inspección" LENGTH="98 "/>
+   <textElement ID="I" KEY="ECE" ENTRY="en el centro" LENGTH="22 "/>
+   <textElement ID="I" KEY="EEF" ENTRY="Error al evaluar fórmula." LENGTH="50 "/>
+   <textElement ID="I" KEY="EMA" ENTRY="El material" LENGTH="21 "/>
+   <textElement ID="I" KEY="ERR" ENTRY="Error" LENGTH="15 "/>
+   <textElement ID="I" KEY="INA" ENTRY="inactiva" LENGTH="18 "/>
+   <textElement ID="I" KEY="INC" ENTRY="incorrecta" LENGTH="20 "/>
+   <textElement ID="I" KEY="MAT" ENTRY="Material" LENGTH="18 "/>
+   <textElement ID="I" KEY="NAC" ENTRY="no actualizado para clase insp" LENGTH="60 "/>
+   <textElement ID="I" KEY="NAD" ENTRY="No se ha anulado el lote de inspección" LENGTH="76 "/>
+   <textElement ID="I" KEY="NCI" ENTRY="no tiene la clase insp" LENGTH="44 "/>
+   <textElement ID="I" KEY="NDE" ENTRY="No se ha tomado DE" LENGTH="28 "/>
+   <textElement ID="I" KEY="NDT" ENTRY="No es posible determinar tipo de movimiento a stock" LENGTH="102 "/>
+   <textElement ID="I" KEY="NEL" ENTRY=" no existe en lote insp" LENGTH="46 "/>
+   <textElement ID="I" KEY="NIN" ENTRY="Nº incorrecto" LENGTH="23 "/>
+   <textElement ID="I" KEY="NLI" ENTRY="No existe el lote de inspección" LENGTH="62 "/>
+   <textElement ID="I" KEY="NPD" ENTRY="Lote de inspección anulado. No se puede dar DE" LENGTH="92 "/>
+   <textElement ID="I" KEY="SGD" ENTRY="Se ha grabado la decisión de empleo" LENGTH="70 "/>
+   <textElement ID="I" KEY="TCI" ENTRY="tiene la clase insp" LENGTH="29 "/>
+   <textElement ID="I" KEY="VIN" ENTRY="Valor incorrecto" LENGTH="26 "/>
+   <textElement ID="I" KEY="VNV" ENTRY="Valor no válido" LENGTH="25 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_LOTES_INSP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_OPERACIONES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla bapi2045l2" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI2045L2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_PUNTOS" VERSION="1" LANGU="S" DESCRIPT="Lista de puntos inspección" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI2045L4" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_PUNTOS_INSP" VERSION="1" LANGU="S" DESCRIPT="TIpo tabla bapi2045d3" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI2045D3" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_REQUERIMIENTOS" VERSION="1" LANGU="S" DESCRIPT="Especificaciones inspección de caract.de lote inspección" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI2045D1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_RESULTADOS" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla bapi2045d2" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI2045D2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="I_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla retorno" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET2_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="QALS-PRUEFLOS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" EXPOSURE="2" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MSG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="OPERACION" VERSION="1" LANGU="S" DESCRIPT="Lista de operaciones lotes inspección" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI2045L2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="REQUERIMIENTOS" VERSION="1" LANGU="S" DESCRIPT="Especificaciones puntos inspección" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI2045D5" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="RETURN1" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRETURN1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="RETURN2" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="ANULAR" VERSION="1" LANGU="S" DESCRIPT="Anular lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="ANULAR" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="ANULAR" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD anular.
+    DATA: l_status TYPE bsvx-sttxt,
+          o_bi     TYPE REF TO zcl_ap_batch_input.
+
+    l_status = zcl_ap_lotes_insp=&gt;get_status_st( lote_insp ).
+    IF l_status CS &apos;LOTA&apos;.
+      EXIT.
+    ENDIF.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Pantalla acceso: tratamiento lote insp.
+    o_bi-&gt;dynpro( program = &apos;SAPLQPL1&apos; dynpro = &apos;0100&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;QALS-PRUEFLOS&apos; valor = lote_insp ). &quot; Nº lote inspección
+
+    o_bi-&gt;dynpro( program = &apos;SAPLQPL1&apos; dynpro = &apos;0200&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=LSTO&apos; ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPLQPL1&apos; dynpro = &apos;0200&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+    mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QA02&apos; modo = &apos;E&apos; ).
+    l_status = zcl_ap_lotes_insp=&gt;get_status_st( lote_insp ).
+    IF l_status CS &apos;LOTA&apos;.
+      CLEAR mensaje.
+    ELSEIF mensaje IS INITIAL.
+      CONCATENATE &apos;No se ha anulado el lote de inspección&apos;(NAD) lote_insp INTO mensaje SEPARATED BY space.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CAMBIAR_STATUS" VERSION="1" LANGU="S" DESCRIPT="Modificar status" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CAMBIAR_STATUS" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CAMBIAR_STATUS" SCONAME="STAT" VERSION="1" LANGU="S" DESCRIPT="Status individual de un objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CAMBIAR_STATUS" SCONAME="INACT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Status inactivo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD cambiar_status.
+    DATA: l_objnr TYPE j_objnr,
+          jest    TYPE jest.
+
+    SELECT SINGLE objnr FROM qals
+      INTO l_objnr
+     WHERE prueflos = lote_insp.
+
+    IF l_objnr IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE * FROM  jest
+      INTO jest
+     WHERE objnr = l_objnr
+       AND stat  = stat.
+    IF sy-subrc = 0.
+      IF jest-inact &lt;&gt; inact.
+        UPDATE jest
+          SET inact = inact
+         WHERE objnr = l_objnr
+           AND stat  = stat.
+      ENDIF.
+    ELSE.
+      CLEAR jest.
+      jest-objnr = l_objnr.
+      jest-stat  = stat.
+      jest-inact = inact.
+      MODIFY jest FROM jest.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONSTRUCTOR" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    IF NOT lote_insp IS INITIAL.
+      set_lote_insp( lote_insp ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" VERSION="1" LANGU="S" DESCRIPT="Contiene status" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS_EXCLUIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="S_STATUS" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla: Ámbito para campo caracteres (6 posiciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCL_AP_RANGO=&gt;TAB_RANGE_C4" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CONTIENE_STATUS" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status.
+    DATA: r_status  TYPE RANGE OF j_status,
+          i_status  TYPE TABLE OF j_txt04,
+          l_txt04   TYPE j_txt04,
+          l_istat   TYPE j_status,
+          lr_status LIKE LINE OF r_status,
+          lr_stat   TYPE lxhme_range_c4,
+          l_objnr   TYPE jest-objnr.
+
+    IF NOT status IS INITIAL.
+      SPLIT status AT &apos;,&apos; INTO TABLE i_status.
+
+      LOOP AT i_status INTO l_txt04.
+        SELECT istat FROM tj02t                               &quot;#EC *
+          INTO l_istat
+          UP TO 1 ROWS
+         WHERE spras = spras
+           AND txt04 = l_txt04
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          CLEAR lr_status.
+          lr_status-option = &apos;EQ&apos;.
+          lr_status-sign   = &apos;I&apos;.
+          lr_status-low    = l_istat.
+          APPEND lr_status TO r_status.
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT status_excluir IS INITIAL.
+        REFRESH i_status.
+        SPLIT status_excluir AT &apos;,&apos; INTO TABLE i_status.
+        LOOP AT i_status INTO l_txt04.
+          SELECT istat FROM tj02t                             &quot;#EC *
+            INTO l_istat
+            UP TO 1 ROWS
+           WHERE spras = spras
+             AND txt04 = l_txt04
+            ORDER BY PRIMARY KEY.
+          ENDSELECT.
+          IF sy-subrc = 0.
+            CLEAR lr_status.
+            lr_status-option = &apos;EQ&apos;.
+            lr_status-sign   = &apos;E&apos;.
+            lr_status-low    = l_istat.
+            APPEND lr_status TO r_status.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ELSEIF NOT s_status IS INITIAL.
+      LOOP AT s_status INTO lr_stat.
+        SELECT istat FROM tj02t                               &quot;#EC *
+          INTO l_istat
+          UP TO 1 ROWS
+         WHERE spras = spras
+           AND txt04 = lr_stat-low
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          CLEAR lr_status.
+          lr_status-option = lr_stat-option.
+          lr_status-sign   = lr_stat-sign.
+          lr_status-low    = l_istat.
+          APPEND lr_status TO r_status.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF r_status IS INITIAL.
+      EXIT.
+    ENDIF.
+
+    CONCATENATE &apos;QL&apos; lote_insp INTO l_objnr.
+
+    SELECT SINGLE stat FROM  jest                             &quot;#EC *
+      INTO l_istat
+     WHERE objnr  = l_objnr
+       AND stat  IN r_status
+       AND inact  = &apos;&apos;.
+    IF sy-subrc = 0.
+      si_contiene = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="COPIAR_LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Copiar lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="COPIAR_LOTE_INSP" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QPLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="COPIAR_LOTE_INSP" SCONAME="KTEXTLOS" VERSION="1" LANGU="S" DESCRIPT="Texto breve" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-KTEXTLOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="COPIAR_LOTE_INSP" SCONAME="COPIAR_USERN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="COPIAR_LOTE_INSP" SCONAME="NEW_PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QPLOS"/>
+  <source>METHOD copiar_lote_insp.
+    DATA: l_qals      TYPE qals,
+          l_vornr     TYPE vornr,
+          i_lista     TYPE TABLE OF qapp,
+          l_lista     TYPE qapp,
+          l_datos     TYPE bapi2045l4,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_insppoint TYPE qprobenrpp.
+
+    SELECT SINGLE * FROM qals                   &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_qals
+     WHERE prueflos = prueflos.
+
+    new_prueflos = crear_lote_insp( qals = l_qals ktextlos  = ktextlos ).
+
+    IF new_prueflos IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT vornr
+      INTO l_vornr
+      UP TO 1 ROWS
+     FROM qals JOIN v_qapo ON qals~aufpl = v_qapo~aufpl
+     WHERE prueflos = prueflos
+     ORDER BY prueflos vornr.
+    ENDSELECT.
+
+    i_lista = get_list_pto_insp( prueflos = prueflos vornr = l_vornr ).
+    LOOP AT i_lista INTO l_lista.
+      CLEAR l_datos.
+      MOVE-CORRESPONDING l_lista TO l_datos.
+      l_datos-insplot  = new_prueflos.
+      l_datos-inspoper = l_vornr.
+      IF copiar_usern1 IS INITIAL.
+        CLEAR l_datos-usern1.
+      ENDIF.
+      l_insppoint = crear_punto_inspeccion( datos = l_datos ).
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Crear lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP" SCONAME="QALS" VERSION="1" LANGU="S" DESCRIPT="Registro de lote de inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP" SCONAME="KTEXTLOS" VERSION="1" LANGU="S" DESCRIPT="Texto breve" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-KTEXTLOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QPLOS"/>
+  <source>METHOD crear_lote_insp.
+    crear_lote_insp2( EXPORTING qals     = qals
+                                ktextlos = ktextlos
+                      IMPORTING prueflos = prueflos ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP2" VERSION="1" LANGU="S" DESCRIPT="Crear lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP2" SCONAME="QALS" VERSION="1" LANGU="S" DESCRIPT="Registro de lote de inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP2" SCONAME="KTEXTLOS" VERSION="1" LANGU="S" DESCRIPT="Texto breve" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-KTEXTLOS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP2" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="QPLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_LOTE_INSP2" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD crear_lote_insp2.
+    DATA: l_qals  TYPE qals,
+          l_aktiv TYPE qmat-aktiv,
+          l_aux   TYPE c LENGTH 3.
+    DATA ls_rmqed_imp     TYPE rmqed.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_kzskiplot     TYPE qvinsmk.
+    DATA ls_qals          TYPE qals.
+    DATA lv_subrc         TYPE sysubrc.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_skip_to_stock TYPE qkzskiplot.
+
+    CLEAR message.
+
+    IF NOT l_qals-matnr IS INITIAL.
+      SELECT SINGLE aktiv FROM qmat
+        INTO l_aktiv
+       WHERE art   = l_qals-art
+         AND matnr = l_qals-matnr
+         AND werks = l_qals-werk.
+      IF sy-subrc &lt;&gt; 0.
+        message = zcl_ap_utils=&gt;concat( p1 = &apos;El material&apos;(EMA) p2 = l_qals-matnr p3 = &apos;no tiene la clase insp&apos;(NCI) p4 = l_qals-art
+                                        p5 = &apos;en el centro&apos;(ECE) p6 = l_qals-werk ).
+      ELSEIF l_aktiv IS INITIAL.
+        message = zcl_ap_utils=&gt;concat( p1 = &apos;El material&apos;(EMA) p2 = l_qals-matnr p3 = &apos;tiene la clase insp&apos;(TCI) p4 = l_qals-art
+                                        p5 = &apos;inactiva&apos;(INA) ).
+      ENDIF.
+    ENDIF.
+
+    IF message IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    ls_rmqed_imp-dbs_steuer = &apos;01&apos;.
+    ls_rmqed_imp-dbs_flag   = &apos;X&apos;.
+    ls_rmqed_imp-dbs_edunk  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_fdunk  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_noerr  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_nowrn  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_nochg  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_noauf  = &apos;X&apos;.
+    ls_rmqed_imp-dbs_subrc  = &apos;X&apos;.
+
+    CALL FUNCTION &apos;QPL1_INITIALIZE&apos;
+      EXPORTING
+        i_lot_data_only = &apos;X&apos;.
+
+    l_qals = qals.
+
+    CLEAR l_qals.
+    l_qals-werk       = qals-werk.
+    l_qals-lagortchrg = qals-lagortchrg.
+    l_qals-art        = qals-art.
+    l_qals-herkunft   = qals-herkunft.
+    l_qals-matnr      = qals-matnr.
+    l_qals-losmenge   = qals-losmenge.
+    l_qals-pastrterm  = sy-datum.
+    l_qals-aufnr      = qals-aufnr.
+    l_qals-charg      = qals-charg.
+    l_qals-ebeln      = qals-ebeln.
+    l_qals-ebelp      = qals-ebelp.
+    IF ktextlos IS INITIAL.
+      l_qals-ktextlos = qals-ktextlos.
+    ELSE.
+      l_qals-ktextlos = ktextlos.
+    ENDIF.
+
+    CALL FUNCTION &apos;QPL1_INSPECTION_LOT_CREATE&apos;
+      EXPORTING
+        qals_imp        = l_qals
+        rmqed_imp       = ls_rmqed_imp
+      IMPORTING
+        e_kzskiplot     = lv_kzskiplot
+        e_prueflos      = prueflos
+        e_qals          = ls_qals
+        subrc           = lv_subrc
+        e_skip_to_stock = lv_skip_to_stock.
+    IF NOT prueflos IS INITIAL.
+      CALL FUNCTION &apos;QPL1_UPDATE_MEMORY&apos;
+        EXPORTING
+          i_qals  = ls_qals
+          i_updkz = &apos;I&apos;.
+
+      CALL FUNCTION &apos;QPL1_INSPECTION_LOTS_POSTING&apos;.
+
+      zcl_ap_dev=&gt;commit( ).
+    ELSE.
+      IF sy-msgty IS INITIAL.
+        CASE lv_subrc.
+          WHEN 8.
+            message = zcl_ap_utils=&gt;concat( p1 = &apos;Material&apos;(MAT) p2 = l_qals-matnr p3 = &apos;Centro&apos;(CEN) p4 = l_qals-werk p5 = &apos;no actualizado para clase insp&apos;(NAC) p6 = qals-art ).
+          WHEN OTHERS.
+            l_aux = lv_subrc.
+            CONCATENATE &apos;Error&apos;(ERR) l_aux &apos;al crear lote inspección&apos;(CLI) INTO message SEPARATED BY space.
+        ENDCASE.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSPECCION" VERSION="1" LANGU="S" DESCRIPT="Crear punto de inspección" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSPECCION" SCONAME="DATOS" VERSION="1" LANGU="S" DESCRIPT="Lista de puntos inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L4"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSPECCION" SCONAME="INSPPOINT" VERSION="1" LANGU="S" DESCRIPT="Número de muestra (relacionado con un punto de inspección)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QPROBENRPP"/>
+  <source>METHOD crear_punto_inspeccion.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_insplot  TYPE qplos.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_inspoper TYPE vornr.
+
+    CALL FUNCTION &apos;QIBP_INSPPOINT_CREATEFROMDATA&apos; ##FM_SUBRC_OK
+      EXPORTING
+        data                 = datos
+        external_commit      = &apos;&apos;
+      IMPORTING
+        insplot              = lv_insplot
+        inspoper             = lv_inspoper
+        insppoint            = insppoint
+        return2              = return2
+      TABLES
+*     qmidi_errors         = lt_qmidi_errors
+        returntable          = i_return
+      EXCEPTIONS
+        wrong_inspection_lot = 1
+        wrong_operation      = 2
+        qm_idi_error         = 3
+        OTHERS               = 4.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSP_CT" VERSION="1" LANGU="S" DESCRIPT="Lanza QE01 en visible para introducir datos" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSP_CT" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="CREAR_PUNTO_INSP_CT" SCONAME="NOPER" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <source>METHOD crear_punto_insp_ct.
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Entrada lote insp. entrada resultados
+    o_bi-&gt;dynpro( program = &apos;SAPMQEEA&apos; dynpro = &apos;0100&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ENT0&apos; ).
+    o_bi-&gt;campos( campo = &apos;QALS-PRUEFLOS&apos; valor = lote_insp ). &quot; Nº lote inspección
+    o_bi-&gt;campos( campo = &apos;QAQEE-VORNR&apos; valor = noper ). &quot; Número de operación
+    o_bi-&gt;campos( campo = &apos;QAQEE-MODUS&apos; valor = &apos;1&apos; ). &quot; Filtro caract.(modo lectura) p.caract.insp.
+    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QE01&apos; modo = &apos;E&apos; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="FORZAR_RECALCULO_CARACT" VERSION="1" LANGU="S" DESCRIPT="Fuerza recálculo característica" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="FORZAR_RECALCULO_CARACT" SCONAME="N_OPER" VERSION="1" LANGU="S" DESCRIPT="Nº operación lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L2-INSPOPER" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="FORZAR_RECALCULO_CARACT" SCONAME="CARACT" VERSION="1" LANGU="S" DESCRIPT="Número característica lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QIBPMERKNR"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="FORZAR_RECALCULO_CARACT" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="FORZAR_RECALCULO_CARACT" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD forzar_recalculo_caract.
+    DATA: l_pos_char TYPE i,
+          o_bi       TYPE REF TO zcl_ap_batch_input,
+          l_req      TYPE bapi2045d1.
+
+    get_detalle_operacion( n_oper = n_oper ).
+
+    IF i_requerimientos IS INITIAL.
+      mensaje = &apos;Error buscando características lote de inspección&apos;(EBC).
+    ELSE.
+      LOOP AT i_requerimientos TRANSPORTING NO FIELDS WHERE inspchar &lt;= caract.
+        l_pos_char = l_pos_char + 1.
+      ENDLOOP.
+      IF l_pos_char = 0.
+        CONCATENATE &apos;Caract.&apos;(CAR) caract &apos; no existe en lote insp&apos;(NEL) INTO mensaje SEPARATED BY space.
+      ELSE.
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+* Entrada lote insp. entrada resultados
+        o_bi-&gt;dynpro( program = &apos;SAPMQEEA&apos; dynpro = &apos;0100&apos; ).
+        o_bi-&gt;campos( campo = &apos;QALS-PRUEFLOS&apos; valor = lote_insp ). &quot; Nº lote inspección
+        o_bi-&gt;campos( campo = &apos;QAQEE-VORNR&apos; valor = n_oper ). &quot; Número de operación
+        o_bi-&gt;campos( campo = &apos;QAQEE-PRPLATZWRK&apos; valor = werks ). &quot; Centro
+        o_bi-&gt;campos( campo = &apos;QAQEE-MODUS&apos; valor = &apos;1&apos; ). &quot; Filtro caract.(modo lectura) p.caract.insp.
+
+        o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;1110&apos; ).
+
+        IF l_pos_char &gt; 0.
+
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=MKPR_PUSH&apos; ).
+
+          LOOP AT i_requerimientos INTO l_req WHERE inspchar &lt; caract.
+* Pantalla indiv. caract. cualitativa códigos de partic.
+            IF l_req-char_type = &apos;02&apos;.
+              o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;0118&apos; ).
+            ELSE.
+              o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;0116&apos; ).
+            ENDIF.
+
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=NMKP&apos; ).
+          ENDLOOP.
+          IF l_req-char_type = &apos;02&apos;.
+            o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;0118&apos; ).
+          ELSE.
+            o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;0116&apos; ).
+          ENDIF.
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=FOCA&apos; ).
+
+* Pantalla individual caract.cuantitativa
+          o_bi-&gt;dynpro( program = &apos;SAPLQEEM&apos; dynpro = &apos;0116&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+        ENDIF.
+
+        mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QE01&apos; modo = &apos;N&apos; ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_DETALLE_OPERACION" VERSION="1" LANGU="S" DESCRIPT="Devuelve el detalle de la operacion" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_DETALLE_OPERACION" SCONAME="N_OPER" VERSION="1" LANGU="S" DESCRIPT="Nº operación lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L2-INSPOPER"/>
+  <source>METHOD get_detalle_operacion.
+    CLEAR: operacion, requerimientos, return2.
+
+    IF n_oper IS INITIAL.
+      READ TABLE i_operaciones INTO operacion INDEX 1.
+    ELSE.
+      operacion-inspoper = n_oper.
+    ENDIF.
+
+    CALL FUNCTION &apos;BAPI_INSPOPER_GETDETAIL&apos;                       &quot;#EC *
+      EXPORTING
+        insplot                            = lote_insp
+        inspoper                           = operacion-inspoper
+        read_insppoints                    = &apos;X&apos;
+        read_char_requirements             = &apos;X&apos;
+        read_char_results                  = &apos;X&apos;
+        read_sample_results                = &apos;X&apos;
+        read_single_results                = &apos;X&apos;
+        read_chars_with_classes            = &apos;X&apos;
+        read_chars_without_recording       = &apos;X&apos;
+*        RES_ORG                            = &apos; &apos;
+*        CHAR_FILTER_NO                     = &apos;1   &apos;
+*        CHAR_FILTER_TCODE                  = &apos;QE11&apos;
+*        MAX_INSPPOINTS                     = 100
+*        INSPPOINT_FROM                     = 0
+*        HANDHELD_APPLICATION               = &apos; &apos;
+      IMPORTING
+        operation                          = operacion
+        insppoint_requirements             = requerimientos
+        return                             = return2
+      TABLES
+        insppoints                         = i_puntos
+        char_requirements                  = i_requerimientos
+        char_results                       = i_resultados
+        sample_results                     = i_puntos_insp
+*        single_results                     =
+      EXCEPTIONS
+        OTHERS                             = 1.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_EVALUACION" VERSION="1" LANGU="S" DESCRIPT="Determina EVALUATION" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_EVALUACION" SCONAME="RES" VERSION="1" LANGU="S" DESCRIPT="Resultado de inspección nivel de característica" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045D2"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_EVALUACION" SCONAME="KATALGART" VERSION="1" LANGU="S" DESCRIPT="Cl.catálogo de gr.códigos o conj.selec.asignado" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QKATAUSW" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_EVALUACION" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_EVALUACION" SCONAME="EVALUATION" VERSION="1" LANGU="S" DESCRIPT="Valoración del resultado de inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI2045D2-EVALUATION"/>
+  <source>METHOD get_evaluacion.
+    &quot; TODO: parameter KATALGART is never used (ABAP cleaner)
+
+    DATA: l_qabwr TYPE qabwr,
+          i_qaspr TYPE TABLE OF qaspr.
+
+    l_qabwr-katalgart = &apos;1&apos;.
+    l_qabwr-auswmenge = res-code_grp1. &quot;??? Tabla QPAC
+    l_qabwr-auswmgwrk = werks.
+    l_qabwr-gruppe    = res-code_grp1.
+    l_qabwr-code      = res-code1.
+
+    CALL FUNCTION &apos;QEBR_CODE_VALUATION&apos;
+      EXPORTING
+        dynprocall         = space
+        qabwr              = l_qabwr
+      IMPORTING
+*        DBEWERTG           =
+*        FEHLKLAS           =
+        mbewertg           = evaluation
+*        FECODSELE          =
+*        FEGRPSELE          =
+*        E_QABWR_EX         =
+      TABLES
+        qasptab            = i_qaspr
+      EXCEPTIONS
+        other_error        = 1
+        system_error       = 2
+        user_error         = 3
+        OTHERS             = 4.
+    IF sy-subrc &lt;&gt; 0.
+      evaluation = &apos;F&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_LIST_PTO_INSP" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista puntos de inspección" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_LIST_PTO_INSP" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QPLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_LIST_PTO_INSP" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_LIST_PTO_INSP" SCONAME="I_LISTA" VERSION="1" LANGU="S" DESCRIPT="Tabla para puntos de inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QAPPTAB"/>
+  <source>METHOD get_list_pto_insp.
+    DATA: l_vornr TYPE qapo-vornr,
+          i_qalt  TYPE TABLE OF qalt.
+
+    IF vornr IS INITIAL.
+      SELECT SINGLE vornr
+        INTO l_vornr
+       FROM qals JOIN v_qapo ON qals~aufpl = v_qapo~aufpl
+       WHERE prueflos = prueflos.
+    ELSE.
+      l_vornr = vornr.
+    ENDIF.
+
+    IF l_vornr IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;QIBP_INSPPOINT_GETLIST&apos;   ##FM_SUBRC_OK
+      EXPORTING
+        i_insp_lot               = prueflos
+        i_insp_lot_operation     = l_vornr
+        i_insp_point_from        = &apos;000001&apos;
+        i_insp_point_to          = &apos;999999&apos;
+      TABLES
+        t_qapp_tab               = i_lista
+        t_qalt_tab               = i_qalt
+      EXCEPTIONS
+        wrong_insp_lot           = 1
+        wrong_insp_lot_operation = 2
+        no_insp_point            = 3
+        OTHERS                   = 4.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_OPERACIONES" VERSION="1" LANGU="S" DESCRIPT="Devuelve operaciones" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD get_operaciones.
+    CALL FUNCTION &apos;BAPI_INSPLOT_GETOPERATIONS&apos;
+      EXPORTING
+        number        = lote_insp
+      IMPORTING
+        return        = return1
+      TABLES
+        inspoper_list = i_operaciones.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Devuelve resultados del lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" SCONAME="R_NOPER" VERSION="1" LANGU="S" DESCRIPT="Rango: char4" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LMBP_RANGE_C4_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" SCONAME="NO_CAR" VERSION="1" LANGU="S" DESCRIPT="No mostrar características" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" SCONAME="R_USERC1" VERSION="1" LANGU="S" DESCRIPT="Tabla range para elemento de datos MATNR" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" SCONAME="R_USERN2" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla: Tabla ámbito valores p.campo numérico (3 pos.)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LXHME_RANGE_N3_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP" SCONAME="I_RES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZRES_LOTE_INSP" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRES_LOTE_INSP_T"/>
+  <source>METHOD get_resultados_lote_insp.
+    &quot; TODO: parameter NO_CAR is never used (ABAP cleaner)
+
+    DATA: l_aufpl    TYPE qals-aufpl,
+          l_vorglfnr TYPE qapp-vorglfnr,
+          l_userc1   TYPE qapp-userc1,
+          l_usern2   TYPE qapp-usern2,
+          l_res      TYPE zres_lote_insp.
+
+    FIELD-SYMBOLS: &lt;oper&gt; TYPE bapi2045l2,
+                   &lt;pto&gt;  TYPE bapi2045d3,
+                   &lt;req&gt;  TYPE bapi2045d1,
+                   &lt;p&gt;    TYPE bapi2045l4,
+                   &lt;res&gt;  TYPE bapi2045d2.
+
+    CLEAR i_res.
+    get_operaciones( ).
+
+    LOOP AT i_operaciones ASSIGNING &lt;oper&gt; WHERE inspoper IN r_noper.
+      get_detalle_operacion( &lt;oper&gt;-inspoper ).
+
+      SELECT SINGLE aufpl FROM qals
+        INTO l_aufpl
+       WHERE prueflos = &lt;oper&gt;-insplot.
+
+      SELECT vorglfnr FROM v_qapo
+        INTO l_vorglfnr
+        UP TO 1 ROWS
+       WHERE aufpl = l_aufpl
+         AND vornr = &lt;oper&gt;-inspoper
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      LOOP AT i_puntos_insp ASSIGNING &lt;pto&gt;.
+        IF NOT r_userc1 IS INITIAL OR NOT r_usern2 IS INITIAL.
+          SELECT SINGLE userc1 usern2 FROM qapp
+            INTO (l_userc1, l_usern2)
+           WHERE prueflos = &lt;pto&gt;-insplot
+             AND vorglfnr = l_vorglfnr
+             AND probenr  = &lt;pto&gt;-inspsample.
+          IF NOT ( l_userc1 IN r_userc1 AND l_usern2 IN r_usern2 ).
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+
+        CLEAR l_res.
+        ASSIGN i_requerimientos[ inspoper = &lt;pto&gt;-inspoper
+                                 inspchar = &lt;pto&gt;-inspchar ] TO &lt;req&gt;.
+        IF sy-subrc = 0.
+          MOVE-CORRESPONDING &lt;req&gt; TO l_res.                  &quot;#EC *
+          ASSIGN i_puntos[ inspoper  = &lt;pto&gt;-inspoper
+                           insppoint = &lt;pto&gt;-inspsample ] TO &lt;p&gt;.
+          IF sy-subrc = 0.
+            MOVE-CORRESPONDING &lt;p&gt; TO l_res.                  &quot;#EC *
+          ENDIF.
+
+          MOVE-CORRESPONDING &lt;pto&gt; TO l_res.                  &quot;#EC *
+          l_res-txt_oper = &lt;oper&gt;-txt_oper.
+          APPEND l_res TO i_res.
+        ENDIF.
+      ENDLOOP.
+      IF sy-subrc &lt;&gt; 0. &quot; Si tiene puntos de inspección, no queremos resultados
+        LOOP AT i_requerimientos ASSIGNING &lt;req&gt;.
+          CLEAR l_res.
+          MOVE-CORRESPONDING &lt;req&gt; TO l_res.                  &quot;#EC *
+          l_res-txt_oper = &lt;oper&gt;-txt_oper.
+          ASSIGN i_resultados[ insplot  = &lt;req&gt;-insplot
+                               inspoper = &lt;req&gt;-inspoper
+                               inspchar = &lt;req&gt;-inspchar ] TO &lt;res&gt;.
+          IF sy-subrc = 0.
+            MOVE-CORRESPONDING &lt;res&gt; TO l_res.                &quot;#EC *
+          ENDIF.
+          APPEND l_res TO i_res.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve resultados del lote de inspección (STATIC)" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="R_NOPER" VERSION="1" LANGU="S" DESCRIPT="Rango: char4" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LMBP_RANGE_C4_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="NOPER" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="CARACTERISTICA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="SOLO_ULTIMO_PTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="SOLO_EVALUADAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_LOTE_INSP_ST" SCONAME="I_RES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZRES_LOTE_INSP" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRES_LOTE_INSP_T"/>
+  <source>METHOD get_resultados_lote_insp_st.
+    DATA: o_li      TYPE REF TO zcl_ap_lotes_insp,
+          rr_noper  TYPE lmbp_range_c4_t,
+          lr_noper  TYPE lmbp_range_c4,
+          l_res     TYPE zres_lote_insp,
+          l_max_pto TYPE qibpprobe.
+
+    o_li = NEW #(
+        lote_insp = lote_insp ).
+
+    IF NOT r_noper IS INITIAL.
+      rr_noper = r_noper.
+    ELSEIF NOT noper IS INITIAL.
+      CLEAR lr_noper.
+      lr_noper-option = &apos;EQ&apos;.
+      lr_noper-sign   = &apos;I&apos;.
+      lr_noper-low    = noper.
+      APPEND lr_noper TO rr_noper.
+    ENDIF.
+
+    i_res = o_li-&gt;get_resultados_lote_insp( r_noper = rr_noper ).
+
+    IF NOT caracteristica IS INITIAL.
+      DELETE i_res WHERE mstr_char &lt;&gt; caracteristica.
+    ENDIF.
+
+    IF solo_ultimo_pto = &apos;X&apos;.
+      LOOP AT i_res INTO l_res.
+        IF l_res-inspsample &gt; l_max_pto.
+          l_max_pto = l_res-inspsample.
+        ENDIF.
+      ENDLOOP.
+      DELETE i_res WHERE inspsample &lt;&gt; l_max_pto.
+    ENDIF.
+
+    IF solo_evaluadas = &apos;X&apos;.
+      DELETE i_res WHERE closed = &apos;&apos; AND evaluated = &apos;&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_RESULTADOS_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve resultados simples" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD get_resultados_simple.
+* Puede ser también con qasr en lugar de QAMR
+    SELECT qals~prueflos, v_qapo~vornr, plmk~verwmerkm, plmk~kurztext, qamr~mittelwert,
+           qamr~katalgart1, qamr~gruppe1, qamr~code1, qamr~version1
+      FROM qals JOIN v_qapo ON qals~aufpl = v_qapo~aufpl
+                JOIN qamr   ON qamr~prueflos = qals~prueflos
+                           AND qamr~vorglfnr = v_qapo~vorglfnr
+                JOIN plmk   ON  plmk~plnty  = v_qapo~plnty
+                            AND plmk~plnnr  = v_qapo~plnnr
+                            AND plmk~plnkn  = v_qapo~pplnkn
+                            AND plmk~merknr = qamr~merknr
+                            AND plmk~loekz  = &apos;&apos;
+      INTO TABLE @DATA(i_res)
+     WHERE qals~prueflos = &apos;010000010313&apos;.
+
+    cl_demo_output=&gt;display( i_res ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve status" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Clave de idioma de entorno de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="BYPASS_BUFFER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="OBJNR" VERSION="1" LANGU="S" DESCRIPT="Número de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="JEST-OBJNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="USUARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_STATUS_ST" SCONAME="STATUS" VERSION="1" LANGU="S" DESCRIPT="Línea status del sistema" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSVX-STTXT"/>
+  <source>METHOD get_status_st.
+    DATA: l_objnr     TYPE jest-objnr,
+          l_user_line TYPE bsvx-sttxt.
+
+    IF objnr IS INITIAL.
+      CONCATENATE &apos;QL&apos; lote_insp INTO l_objnr.
+    ELSE.
+      l_objnr = objnr.
+    ENDIF.
+    CALL FUNCTION &apos;STATUS_TEXT_EDIT&apos;
+      EXPORTING
+*     CLIENT           = SY-MANDT
+        flg_user_stat    = usuario
+        objnr            = l_objnr
+*     ONLY_ACTIVE      = &apos;X&apos;
+        spras            = spras
+        bypass_buffer    = bypass_buffer
+      IMPORTING
+*     ANW_STAT_EXISTING       =
+*     E_STSMA          =
+        line             = status
+        user_line        = l_user_line
+*     STONR            =
+      EXCEPTIONS
+        object_not_found = 1
+        OTHERS           = 2.
+    IF sy-subrc &lt;&gt; 0.                                         &quot;#EC *
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+    ENDIF.
+
+    IF usuario = &apos;X&apos;.
+      status = l_user_line.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve resultado único del lote de inspección (STATIC)" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="R_NOPER" VERSION="1" LANGU="S" DESCRIPT="Rango: char4" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LMBP_RANGE_C4_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="NOPER" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="CARACTERISTICA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="(U)ltimo/(P)rimero/(M)edia" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;U&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="GET_VALUE_LOTE_INSP_ST" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QMEAN_VAL"/>
+  <source>METHOD get_value_lote_insp_st.
+    DATA: i_res   TYPE zres_lote_insp_t,
+          l_valor TYPE mengv13,
+          l_cont  TYPE i.
+
+    FIELD-SYMBOLS &lt;res&gt; TYPE zres_lote_insp.
+
+    i_res = get_resultados_lote_insp_st( lote_insp = lote_insp r_noper = r_noper noper = noper caracteristica = caracteristica ).
+
+    IF i_res IS INITIAL.
+      valor = &apos;????&apos;.
+    ELSE.
+      CASE tipo.
+        WHEN &apos;U&apos;.
+          LOOP AT i_res ASSIGNING &lt;res&gt;.
+            valor = &lt;res&gt;-mean_value.
+          ENDLOOP.
+        WHEN &apos;P&apos;.
+          LOOP AT i_res ASSIGNING &lt;res&gt;.
+            valor = &lt;res&gt;-mean_value.
+            EXIT.
+          ENDLOOP.
+        WHEN &apos;M&apos;.
+          LOOP AT i_res ASSIGNING &lt;res&gt;.
+            l_valor = &lt;res&gt;-mean_value.
+            valor = valor + l_valor.
+            l_cont = l_cont + 1.
+          ENDLOOP.
+          valor = valor / l_cont.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" VERSION="1" LANGU="S" DESCRIPT="Lanza QE71" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" SCONAME="R_VORNR" VERSION="1" LANGU="S" DESCRIPT="Rango: char4" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LMBP_RANGE_C4_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" SCONAME="VORNR" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VORNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="LANZAR_QE71" SCONAME="PRPLATZ_EXCLUIR" VERSION="1" LANGU="S" DESCRIPT="Puesto de trabajo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <source>METHOD lanzar_qe71.
+    DATA: i_qals     TYPE TABLE OF qals,
+          l_qals     TYPE qals,
+          i_qapo     TYPE TABLE OF qapo,
+          l_qapo     TYPE qapo,
+          i_qapo_sel TYPE TABLE OF qapo,
+          r_prplatz  TYPE RANGE OF string,
+          r_prplz    TYPE RANGE OF qapo-prplatz.
+
+    IF NOT prueflos IS INITIAL.
+      SELECT prueflos FROM qals
+        INTO CORRESPONDING FIELDS OF TABLE i_qals
+       WHERE prueflos = prueflos.
+    ELSEIF NOT aufnr IS INITIAL.
+      SELECT prueflos FROM qals                           &quot;#EC CI_NOFIRST
+        INTO CORRESPONDING FIELDS OF TABLE i_qals
+       WHERE aufnr = aufnr.
+    ENDIF.
+
+    LOOP AT i_qals INTO l_qals.
+      CALL FUNCTION &apos;QIBP_INSPOPER_GETLIST&apos; ##FM_SUBRC_OK
+        EXPORTING
+          i_insp_lot        = l_qals-prueflos
+          i_insp_oper       = vornr
+*       I_HANDHELD_APPLICATION       =
+        TABLES
+          t_qapo_tab        = i_qapo
+*       T_QEWL_TAB        =
+        EXCEPTIONS
+          no_inspection_lot = 1
+          no_operations     = 2
+          OTHERS            = 3.
+
+      LOOP AT i_qapo INTO l_qapo WHERE vornr IN r_vornr.
+        APPEND l_qapo TO i_qapo_sel.
+      ENDLOOP.
+    ENDLOOP.
+
+    IF NOT prplatz_excluir IS INITIAL.
+      r_prplatz = zcl_ap_lista=&gt;lista2rango( lista = prplatz_excluir ).
+      DELETE i_qapo_sel WHERE prplatz IN r_prplatz.
+    ENDIF.
+
+    IF i_qapo_sel IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    EXPORT i_qapo_sel FROM i_qapo_sel TO MEMORY ID &apos;ZQE71_SEL&apos;.
+
+    SUBMIT rqetbm10                                        &quot;#EC CI_SUBMIT
+       AND RETURN
+           WITH ql_matnr = &apos;&apos;
+           WITH ql_charg = &apos;?&apos;
+           WITH ql_prplz IN r_prplz.
+
+****** Para que funcione, en RQETBI10 incluir este enhancement
+*form fill_fieldgroups_l.
+*&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;$&quot;$\SE:(1) Forma FILL_FIELDGROUPS_L, Inicio                                                                                                                  A
+**$*$-Start: (1)---------------------------------------------------------------------------------$*$*
+*enhancement 1  zqe71_sel.    &quot;active version
+*  data: i_qapo_sel type table of qapo,
+*        l_qapo_sel type qapo,
+*        l_qals type qals.
+*
+*  import i_qapo_sel to i_qapo_sel from memory id &apos;ZQE71_SEL&apos;.
+*  if sy-subrc = 0.
+*    if not i_qapo_sel is initial.
+*      sort i_qapo_sel.
+*      loop at i_qapo_sel into l_qapo_sel.
+*        at new prueflos.
+*          select single * from qals
+*            into l_qals
+*           where prueflos = l_qapo_sel-prueflos.
+*        endat.
+*
+*        read table object_tab with key prueflos = l_qapo_sel-prueflos
+*                                       vornr    = l_qapo_sel-vornr.
+*        if sy-subrc ne 0.
+*          clear object_tab.
+*          move-corresponding l_qals to object_tab.
+*          move-corresponding l_qapo_sel to object_tab.
+*          if object_tab-objnr  is initial.
+*          object_tab-objnr = l_qals-objnr.
+*          endif.
+*
+*          call function &apos;STATUS_TEXT_EDIT&apos;
+*            exporting
+*              objnr                   = object_tab-objnr
+*              spras                   = sy-langu
+*            importing
+*              line                    = object_tab-sttxt
+*            exceptions
+*              object_not_found        = 1
+*              others                  = 2.
+*          append object_tab.
+*        endif.
+*      endloop.
+*    endif.
+*    free memory id &apos;ZQE71_SEL&apos;.
+*  endif.
+*
+*
+*endenhancement.
+**$*$-End:   (1)---------------------------------------------------------------------------------$*$*
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" VERSION="1" LANGU="S" DESCRIPT="Mueve stock del lote" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="MENGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="BLDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de documento en documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BLDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="BKTXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Código transacción" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TCODE" PARVALUE="&apos;QA11&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="BESTQ" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BESTQ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="BWART" VERSION="1" LANGU="S" DESCRIPT="Clase de movimiento (gestión stocks)" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BWART" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="GRUND" VERSION="1" LANGU="S" DESCRIPT="Motivo del movimiento" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MSEG-GRUND" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="SGTXT" VERSION="1" LANGU="S" DESCRIPT="Texto posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SGTXT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="XBLNR" VERSION="1" LANGU="S" DESCRIPT="Número de documento de referencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XBLNR" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="EMKPF" VERSION="1" LANGU="S" DESCRIPT="MMIM: Estructura output p.MF general p.movimiento mcía." CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="EMKPF"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="MOV_STOCK" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD mov_stock.
+    DATA: l_qals       TYPE qals,
+          g_imkpf      TYPE imkpf,
+          g_imsegtab   TYPE TABLE OF imseg,
+          g_emsegtab   TYPE TABLE OF emseg,
+          l_imseg      TYPE imseg,
+          l_bestq      TYPE c LENGTH 1,
+          l_bestq_orig TYPE c LENGTH 1,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          zes_mkpf     TYPE mkpf,
+          l_updkz      TYPE c LENGTH 1.
+
+    SELECT SINGLE * FROM qals
+      INTO l_qals
+     WHERE prueflos = lote_insp.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No existe el lote de inspección&apos;(NLI).
+      EXIT.
+    ENDIF.
+
+    IF tiene_decision_empleo( lote_insp ) = &apos;X&apos;.
+      message = &apos;Decisión de empleo tomada&apos;(DET).
+      EXIT.
+    ENDIF.
+
+    CLEAR g_imkpf.
+    CLEAR g_imsegtab.
+    REFRESH g_imsegtab.
+    CLEAR g_emsegtab.
+    REFRESH g_emsegtab.
+
+    g_imkpf-bldat = bldat.
+    g_imkpf-budat = budat.
+    g_imkpf-bktxt = bktxt.
+    g_imkpf-xblnr = xblnr.
+
+    MOVE-CORRESPONDING l_qals TO l_imseg.
+    CLEAR l_imseg-kzvbr.
+    l_imseg-erfme = l_qals-mengeneinh.
+    IF NOT meins IS INITIAL AND meins &lt;&gt; l_qals-mengeneinh.
+      l_imseg-erfmg = zcl_ap_material=&gt;convertir_unidad( matnr = l_qals-matnr unidad_origen = meins unidad_destino = l_qals-mengeneinh cantidad = menge ).
+    ELSE.
+      l_imseg-erfmg = menge.
+    ENDIF.
+
+    IF werks IS INITIAL.
+      l_imseg-werks = l_qals-werkvorg.
+    ELSE.
+      l_imseg-werks = werks.
+    ENDIF.
+    IF lgort IS INITIAL.
+      l_imseg-lgort = l_qals-lagortvorg.
+    ELSE.
+      l_imseg-lgort = lgort.
+    ENDIF.
+    l_imseg-qplos = l_qals-prueflos.
+
+    l_imseg-grund = grund.
+    l_imseg-sgtxt = sgtxt.
+
+    IF NOT bwart IS INITIAL.
+      l_imseg-bwart = bwart.
+      IF l_imseg-bwart = &apos;350&apos;.
+        l_bestq = &apos;S&apos;.
+      ELSEIF l_imseg-bwart = &apos;349&apos;.
+        l_bestq = &apos;Q&apos;.
+        l_bestq_orig = &apos;S&apos;.
+      ENDIF.
+    ELSEIF bestq = &apos;&apos;.
+      l_bestq = bestq.
+      l_imseg-bwart = &apos;321&apos;. &quot; Calidad a libre
+    ELSEIF bestq = &apos;S&apos;.
+      l_bestq = bestq.
+      l_imseg-bwart = &apos;350&apos;. &quot; Calidad a bloqueado
+    ELSE.
+      CONCATENATE &apos;No es posible determinar tipo de movimiento a stock&apos;(NDT) bestq INTO message SEPARATED BY space.
+      EXIT.
+    ENDIF.
+
+    APPEND l_imseg TO g_imsegtab.
+
+    CALL FUNCTION &apos;QPL1_UPDATE_MEMORY&apos;
+      EXPORTING
+        i_qals = l_qals.
+
+    CALL FUNCTION &apos;QAAT_QM_ACTIVE_INACTIVE&apos;
+      EXPORTING
+        aktiv = space.
+
+    CALL FUNCTION &apos;MB_CREATE_GOODS_MOVEMENT&apos;
+      EXPORTING
+        imkpf     = g_imkpf
+        xallp     = &apos;X&apos; &quot; c_kreuz
+*     XALLB     = &apos; &apos;
+        xallr     = &apos;&apos;
+        ctcod     = tcode
+*     XQMCL     = &apos; &apos;
+        old_subrc = 0
+*     IPKCOM    =
+*     X_AUTHORITY           = &apos; &apos;
+*     XLISU     = &apos;X&apos;
+*     XQMSR     = &apos; &apos;
+*     MSR_MB_DATA           =
+      IMPORTING
+        emkpf     = emkpf
+*     E_LVS_TAFKZ           =
+        es_mkpf   = zes_mkpf
+      TABLES
+        imseg     = g_imsegtab
+        emseg     = g_emsegtab
+*     IMSEG_CSL_TOKEN       =
+*     ET_MSEG   =
+*     IACCOUNTING           =
+*     IACCOUNTING_CR        =
+      .
+
+    IF emkpf-mblnr IS INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      EXIT.
+    ENDIF.
+
+    CALL FUNCTION &apos;QAMB_COLLECT_RECORD&apos;
+      EXPORTING
+        lotnumber   = l_qals-prueflos &quot; ti_datos-prueflos
+        docyear     = emkpf-mjahr
+        docnumber   = emkpf-mblnr
+        docposition = l_qals-zeile &quot; ti_datos-zeile
+        type        = &apos;3&apos;. &quot; 3  Documentos de material p.traspasar una decisión de empleo
+
+    IF l_bestq = &apos;Q&apos;.
+      l_qals-lmengezub = l_qals-lmengezub + l_imseg-erfmg.
+      IF l_bestq_orig = &apos;S&apos;.
+        l_qals-lmenge04 = l_qals-lmenge04 - l_imseg-erfmg.
+      ELSE.
+        l_qals-lmenge01 = l_qals-lmenge01 - l_imseg-erfmg.
+      ENDIF.
+    ELSE.
+      l_qals-lmengezub = l_qals-lmengezub - l_imseg-erfmg.
+      IF l_bestq IS INITIAL.
+        l_qals-lmenge01 = l_qals-lmenge01 + l_imseg-erfmg.
+      ELSEIF l_bestq = &apos;S&apos;.
+        l_qals-lmenge04 = l_qals-lmenge04 + l_imseg-erfmg.
+      ENDIF.
+    ENDIF.
+
+*           Doc.de material de contabilización DE o corrección de ctd.
+*1  Documentos de material p.crear lotes
+*2  Documentos de material p.corregir una cantidad real
+*3  Documentos de material p.traspasar una decisión de empleo
+*4  Doc.material p.trasladar stock cal.de un lote insp.
+*5  Doc.material p.entregas siguientes tras descargo de stock
+*6  Doc.material p.creación lotes o entregas sig.anulados
+*7  Doc.material anulados p.traspasar una decisión de empleo
+*X  Documentos de material para el inventario QM
+* DEL MOVIMIENTO
+    CALL FUNCTION &apos;MB_POST_GOODS_MOVEMENT&apos;
+      IMPORTING
+        emkpf = emkpf.
+
+    CALL FUNCTION &apos;QAAT_QM_ACTIVE_INACTIVE&apos;
+      EXPORTING
+        aktiv = &apos;X&apos;.
+
+    l_qals-mblnr = emkpf-mblnr.
+    l_qals-mjahr = emkpf-mjahr.
+    l_updkz = &apos;U&apos;.
+    CALL FUNCTION &apos;QPL1_UPDATE_MEMORY&apos;
+      EXPORTING
+        i_qals  = l_qals
+        i_updkz = l_updkz.
+
+    WAIT UP TO 1 SECONDS.
+
+* Post lot to DataBase...
+    CALL FUNCTION &apos;QPL1_INSPECTION_LOTS_POSTING&apos;
+      EXPORTING
+        i_mode = &apos;1&apos;.
+
+    CALL FUNCTION &apos;STATUS_UPDATE_ON_COMMIT&apos;.
+
+    CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+      EXPORTING
+        wait = &apos;X&apos;.
+
+*/QAMB initialisieren
+    CALL FUNCTION &apos;QAMB_REFRESH_DATA&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" VERSION="1" LANGU="S" DESCRIPT="Crea decisión de empleo" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="CODE_GROUP" VERSION="1" LANGU="S" DESCRIPT="Grupo de códigos de decisión de empleo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QVGRUPPE"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="CODE" VERSION="1" LANGU="S" DESCRIPT="Código de decisión de empleo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QVCODE"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="FORCE_COMPLETION" VERSION="1" LANGU="S" DESCRIPT="Cancelación de inspección permitida" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QINSP_CAN" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="STOCK_POSTING" VERSION="1" LANGU="S" DESCRIPT="Contabilización stocks independiente de proceso no visible" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QSTOCK_PST" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="VEMENGE" VERSION="1" LANGU="S" DESCRIPT="Conjunto de selección para la decisión de empleo" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QVEMENGE"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="USAR_CALL_TRANSACTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="BDC_MODE" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="STATUS_FIJOS" VERSION="1" LANGU="S" DESCRIPT="Status fijos que tiene que tener el lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_DECISION_EMPLEO" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD set_decision_empleo.
+    DATA: l_status  TYPE bsvx-sttxt,
+          l_data    TYPE bapi2045ud,
+          l_return  TYPE bapireturn1,
+          o_bi      TYPE REF TO zcl_ap_batch_input,
+          i_jstatus TYPE TABLE OF j_status,
+          l_jstatus TYPE j_status.
+
+    CLEAR mensaje.
+    l_status = zcl_ap_lotes_insp=&gt;get_status_st( lote_insp ).
+    IF l_status CS &apos;LOTA&apos;.
+      mensaje = &apos;Lote de inspección anulado. No se puede dar DE&apos;(NPD).
+    ENDIF.
+
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF usar_call_transaction IS INITIAL.
+      l_data-insplot         = lote_insp.
+      l_data-ud_plant        = werks.
+      l_data-ud_code_group   = code_group.
+      l_data-ud_selected_set = vemenge.
+      IF l_data-ud_selected_set IS INITIAL.
+        l_data-ud_selected_set = code_group.
+      ENDIF.
+      l_data-ud_code             = code.
+      l_data-ud_force_completion = force_completion.
+      l_data-ud_stock_posting    = stock_posting.
+
+      CALL FUNCTION &apos;BAPI_INSPLOT_SETUSAGEDECISION&apos;
+        EXPORTING
+          number  = lote_insp
+          ud_data = l_data
+*       LANGUAGE             =
+        IMPORTING
+*       UD_RETURN_DATA       =
+*       STOCK_DATA           =
+          return  = l_return
+* TABLES
+*       SYSTEM_STATUS        =
+*       USER_STATUS          =
+        .
+
+      IF l_return-type = &apos;E&apos;.
+        mensaje = l_return-message.
+        ROLLBACK WORK.                                   &quot;#EC CI_ROLLBACK
+      ELSE.
+        zcl_ap_dev=&gt;commit( ).
+      ENDIF.
+    ELSE.
+      IF NOT l_status CS `DE  `.
+        o_bi = NEW #( ).
+        o_bi-&gt;inicio( ).
+
+* Pantalla inicial decisión de empleo
+        o_bi-&gt;dynpro( program = &apos;SAPMQEVA&apos; dynpro = &apos;0100&apos; ).
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+        o_bi-&gt;campos( campo = &apos;QALS-PRUEFLOS&apos; valor = lote_insp ). &quot; Nº lote inspección
+
+        o_bi-&gt;dynpro( program = &apos;SAPMQEVA&apos; dynpro = &apos;0200&apos; ).
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+        o_bi-&gt;campos( campo = &apos;RQEVA-VCODE&apos; valor = code ). &quot; Código de decisión de empleo
+        o_bi-&gt;campos( campo = &apos;RQEVA-VCODEGRP&apos; valor = code_group ). &quot; Grupo de códigos de decisión de empleo
+
+        mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QA11&apos; modo = bdc_mode ).
+
+        IF mensaje CS &apos;Se ha grabado la decisión de empleo&apos;(SGD).
+          CLEAR mensaje.
+        ELSEIF tiene_decision_empleo( lote_insp ) = &apos;X&apos;.
+          CLEAR mensaje.
+        ELSEIF mensaje IS INITIAL.
+          mensaje = &apos;No se ha tomado DE&apos;(NDE).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF mensaje IS INITIAL AND NOT status_fijos IS INITIAL.
+      DO 4 TIMES.
+        SELECT SINGLE prueflos FROM qave
+           INTO l_data-insplot
+          WHERE prueflos = lote_insp.
+        IF sy-subrc = 0.
+          EXIT.
+        ELSE.
+          WAIT UP TO 1 SECONDS.
+        ENDIF.
+      ENDDO.
+
+* Nos aseguramos que el lote de inspección tiene estos status
+      SPLIT status_fijos AT &apos;,&apos; INTO TABLE i_jstatus.
+      LOOP AT i_jstatus INTO l_jstatus.
+        cambiar_status( lote_insp = lote_insp stat = l_jstatus ).
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Fija nº lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_LOTE_INSP" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <source>METHOD set_lote_insp.
+    me-&gt;lote_insp = lote_insp.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" VERSION="1" LANGU="S" DESCRIPT="Graba resultados" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="N_OPER" VERSION="1" LANGU="S" DESCRIPT="Nº operación lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L2-INSPOPER"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="I_RES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZRES_LOTE_INSP" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZRES_LOTE_INSP_T"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="PUNTO_INSP" VERSION="1" LANGU="S" DESCRIPT="Muestreo de lote de inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QIBPPROBE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="DATOS_PUNTO_INSP" VERSION="1" LANGU="S" DESCRIPT="Lista de puntos inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L4" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="AUX1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="NO_MUESTRA_FISICA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="SET_RESULTADOS" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD set_resultados.
+    &quot; TODO: parameter AUX1 is never used (ABAP cleaner)
+
+    DATA: l_res                         TYPE bapi2045d2,
+          l_punto                       TYPE bapi2045l4,
+          l_pto                         TYPE bapi2045d3,
+          l_pto_insp                    TYPE qibpprobe,
+          l_return2                     TYPE bapiret2,
+          l_err_evaluar_formula_ignorar TYPE c LENGTH 1,
+          l_mensaje_formula             TYPE string,
+          l_error_formula               TYPE c LENGTH 1,
+          l_error_formula_op            TYPE c LENGTH 1.
+
+    FIELD-SYMBOLS: &lt;req&gt;     TYPE bapi2045d1,
+                   &lt;res_new&gt; TYPE zres_lote_insp,
+                   &lt;res&gt;     TYPE bapi2045d2,
+                   &lt;pto&gt;     TYPE bapi2045d3.
+
+    get_detalle_operacion( n_oper ).
+
+    DELETE i_puntos_insp WHERE inspsample &lt;&gt; punto_insp.
+
+    IF i_resultados IS INITIAL.
+      LOOP AT i_requerimientos ASSIGNING &lt;req&gt;.
+        CLEAR l_res.
+        MOVE-CORRESPONDING &lt;req&gt; TO l_res.                    &quot;#EC *
+
+        ASSIGN i_res[ insplot  = l_res-insplot
+                      inspoper = l_res-inspoper
+                      inspchar = l_res-inspchar ] TO &lt;res_new&gt;.
+        IF sy-subrc = 0.
+          l_res-code_grp1 = &lt;res_new&gt;-sel_set1.
+        ENDIF.
+        APPEND l_res TO i_resultados.
+      ENDLOOP.
+    ENDIF.
+
+    LOOP AT i_resultados ASSIGNING &lt;res&gt;.
+      ASSIGN i_res[ insplot  = &lt;res&gt;-insplot
+                    inspoper = &lt;res&gt;-inspoper
+                    inspchar = &lt;res&gt;-inspchar ] TO &lt;res_new&gt;.
+      IF sy-subrc = 0.
+        IF    &lt;res&gt;-code1       &lt;&gt; &lt;res_new&gt;-code1
+           OR &lt;res&gt;-mean_value  &lt;&gt; &lt;res_new&gt;-mean_value
+           OR &lt;res_new&gt;-formula &lt;&gt; &apos;&apos;.
+          IF &lt;res_new&gt;-char_type = &apos;02&apos;.
+            &lt;res&gt;-code1      = &lt;res_new&gt;-code1.
+            &lt;res&gt;-code_grp1  = &lt;res_new&gt;-sel_set1.
+            &lt;res&gt;-evaluation = get_evaluacion( res       = &lt;res&gt;
+                                               katalgart = &lt;res_new&gt;-cat_type1
+                                               werks     = &lt;res_new&gt;-psel_set1 ).
+          ELSE.
+            &lt;res&gt;-mean_value = &lt;res_new&gt;-mean_value.
+            &lt;res&gt;-evaluation = &apos;A&apos;.
+          ENDIF.
+          &lt;res&gt;-remark    = &lt;res_new&gt;-remark.
+          &lt;res&gt;-evaluated = &apos;X&apos;.
+          &lt;res&gt;-closed    = &apos;X&apos;.
+          CLEAR &lt;res&gt;-evaluation. &quot;???
+        ENDIF.
+      ENDIF.
+      CLEAR &lt;res&gt;-err_class. &quot;??
+    ENDLOOP.
+
+    IF NOT punto_insp IS INITIAL OR NOT datos_punto_insp IS INITIAL.
+
+      READ TABLE i_puntos INTO l_punto WITH KEY insppoint = punto_insp.
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR l_punto.
+        l_punto = datos_punto_insp.
+        ASSIGN i_requerimientos[ 1 ] TO &lt;req&gt;.
+        IF sy-subrc = 0.
+          MOVE-CORRESPONDING &lt;req&gt; TO l_punto.                &quot;#EC *
+        ENDIF.
+        l_punto-insppoint = punto_insp.
+      ENDIF.
+      IF NOT datos_punto_insp IS INITIAL.
+        l_punto-userc1    = datos_punto_insp-userc1.
+        l_punto-userc2    = datos_punto_insp-userc2.
+        l_punto-usern1    = datos_punto_insp-usern1.
+        l_punto-usern2    = datos_punto_insp-usern2.
+        l_punto-userd1    = datos_punto_insp-userd1.
+        l_punto-usert1    = datos_punto_insp-usert1.
+        l_punto-inspector = datos_punto_insp-inspector.
+      ENDIF.
+
+      CLEAR i_resultados.
+
+      IF i_puntos_insp IS INITIAL.
+        LOOP AT i_requerimientos ASSIGNING &lt;req&gt;.
+          CLEAR l_pto.
+          MOVE-CORRESPONDING &lt;req&gt; TO l_pto.                  &quot;#EC *
+
+          ASSIGN i_res[ insplot  = l_pto-insplot
+                        inspoper = l_pto-inspoper
+                        inspchar = l_pto-inspchar ] TO &lt;res_new&gt;.
+          IF sy-subrc = 0.
+            l_pto-code_grp1  = &lt;res_new&gt;-sel_set1.
+            l_pto-inspsample = punto_insp.
+            APPEND l_pto TO i_puntos_insp.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+
+      IF punto_insp &gt; &apos;000001&apos;.
+        l_pto_insp = &apos;000001&apos;.
+      ELSE.
+        l_pto_insp = &apos;000000&apos;.
+      ENDIF.
+
+      LOOP AT i_puntos_insp ASSIGNING &lt;pto&gt; WHERE inspsample = punto_insp.
+        ASSIGN i_res[ insplot    = &lt;pto&gt;-insplot
+                      inspoper   = &lt;pto&gt;-inspoper
+                      inspchar   = &lt;pto&gt;-inspchar
+                      inspsample = &lt;pto&gt;-inspsample ] TO &lt;res_new&gt;.
+        IF sy-subrc = 0.
+          IF    &lt;pto&gt;-code1       &lt;&gt; &lt;res_new&gt;-code1
+             OR &lt;pto&gt;-mean_value  &lt;&gt; &lt;res_new&gt;-mean_value
+             OR &lt;res_new&gt;-formula &lt;&gt; &apos;&apos;.
+            IF &lt;res_new&gt;-char_type = &apos;02&apos;.
+              &lt;pto&gt;-code1     = &lt;res_new&gt;-code1.
+              &lt;pto&gt;-code_grp1 = &lt;res_new&gt;-sel_set1.
+              MOVE-CORRESPONDING &lt;pto&gt; TO l_res.              &quot;#EC *
+              &lt;pto&gt;-evaluation = get_evaluacion( res       = l_res
+                                                 katalgart = &lt;res_new&gt;-cat_type1
+                                                 werks     = &lt;res_new&gt;-psel_set1 ).
+            ELSE.
+              &lt;pto&gt;-mean_value = &lt;res_new&gt;-mean_value.
+              &lt;pto&gt;-evaluation = &apos;A&apos;.
+            ENDIF.
+            &lt;pto&gt;-remark    = &lt;res_new&gt;-remark.
+            &lt;pto&gt;-evaluated = &apos;X&apos;.
+            &lt;pto&gt;-closed    = &apos;X&apos;.
+            CLEAR &lt;pto&gt;-evaluation. &quot;???
+          ENDIF.
+        ELSE.
+          ASSIGN i_res[ insplot    = &lt;pto&gt;-insplot
+                        inspoper   = &lt;pto&gt;-inspoper
+                        inspchar   = &lt;pto&gt;-inspchar
+                        inspsample = l_pto_insp ] TO &lt;res_new&gt;.
+          IF sy-subrc = 0.
+            IF    &lt;pto&gt;-code1       &lt;&gt; &lt;res_new&gt;-code1
+               OR &lt;pto&gt;-mean_value  &lt;&gt; &lt;res_new&gt;-mean_value
+               OR &lt;res_new&gt;-formula &lt;&gt; &apos;&apos;.
+              IF &lt;res_new&gt;-char_type = &apos;02&apos;.
+                &lt;pto&gt;-code1     = &lt;res_new&gt;-code1.
+                &lt;pto&gt;-code_grp1 = &lt;res_new&gt;-sel_set1.
+                MOVE-CORRESPONDING &lt;pto&gt; TO l_res.            &quot;#EC *
+                &lt;pto&gt;-evaluation = get_evaluacion( res       = l_res
+                                                   katalgart = &lt;res_new&gt;-cat_type1
+                                                   werks     = &lt;res_new&gt;-psel_set1 ).
+              ELSE.
+                &lt;pto&gt;-mean_value = &lt;res_new&gt;-mean_value.
+                &lt;pto&gt;-evaluation = &apos;A&apos;.
+              ENDIF.
+              &lt;pto&gt;-evaluated = &apos;X&apos;.
+              &lt;pto&gt;-closed    = &apos;X&apos;.
+              CLEAR &lt;pto&gt;-evaluation. &quot;???
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF &lt;pto&gt;-code1 IS INITIAL.
+          CLEAR &lt;pto&gt;-code_grp1.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    CLEAR: return2, i_return.
+
+* APC11022013 Algunas fórmulas presentan errores de evalución y no sabemos por qué!!!
+    LOOP AT i_requerimientos ASSIGNING &lt;req&gt; WHERE formula &lt;&gt; &apos;&apos;.
+      LOOP AT i_puntos_insp ASSIGNING &lt;pto&gt; WHERE     inspoper   = &lt;req&gt;-inspoper
+                                                  AND inspchar   = &lt;req&gt;-inspchar
+                                                  AND smpl_inval = &apos;X&apos;.
+        CLEAR: &lt;pto&gt;-smpl_attr, &lt;pto&gt;-smpl_inval, &lt;pto&gt;-evaluated, &lt;pto&gt;-evaluation.
+      ENDLOOP.
+    ENDLOOP.
+
+    IF no_muestra_fisica = &apos;X&apos;.
+      CLEAR l_punto-phys_smpl.
+    ENDIF.
+
+    CALL FUNCTION &apos;BAPI_INSPOPER_RECORDRESULTS&apos;
+      EXPORTING
+        insplot                    = lote_insp
+        inspoper                   = n_oper
+        insppointdata              = l_punto
+*     HANDHELD_APPLICATION       = &apos; &apos;
+      IMPORTING
+        return                     = return2
+      TABLES
+        char_results               = i_resultados
+        sample_results             = i_puntos_insp
+*     SINGLE_RESULTS             =
+        returntable                = i_return.
+
+************************************************************************
+
+    IF return2-type = &apos;E&apos;.
+      READ TABLE i_return INTO l_return2 WITH KEY type = &apos;E&apos;.
+      IF sy-subrc = 0.
+* Por si es un error al evaluar fórmulas, volvemos a intentar grabar sin evaluar esos valores
+        IF    ( l_return2-id = &apos;QE&apos; AND (    l_return2-number = &apos;388&apos;    &quot; Al evaluar la fórmula han surgido errores
+                                          OR l_return2-number = &apos;362&apos;    &quot; La media no está definida. Imposible la valoración
+                                          OR l_return2-number = &apos;456&apos; ) ) &quot; El tamaño de muestreo inspeccionado no concuerda con el planificado
+           OR ( l_return2-id = &apos;QI&apos; AND ( l_return2-number = &apos;127&apos; ) ). &quot; No es válida la muestra
+
+          IF l_return2-id = &apos;QE&apos; AND l_return2-number = &apos;388&apos;.
+            l_err_evaluar_formula_ignorar = &apos;X&apos;.
+          ENDIF.
+
+          READ TABLE i_return INTO l_return2 WITH KEY type = &apos;E&apos;.
+          IF sy-subrc = 0.
+            l_mensaje_formula = l_return2-message.
+          ELSE.
+            l_mensaje_formula = return2-message.
+          ENDIF.
+
+          LOOP AT i_requerimientos ASSIGNING &lt;req&gt; WHERE formula &lt;&gt; &apos;&apos;.
+            LOOP AT i_resultados ASSIGNING &lt;res&gt; WHERE     inspoper = &lt;req&gt;-inspoper
+                                                       AND inspchar = &lt;req&gt;-inspchar.
+              CLEAR: &lt;res&gt;-closed, &lt;res&gt;-evaluated.
+            ENDLOOP.
+            l_error_formula = &apos;X&apos;.
+          ENDLOOP.
+
+          LOOP AT i_requerimientos ASSIGNING &lt;req&gt; WHERE formula &lt;&gt; &apos;&apos;.
+            LOOP AT i_puntos_insp ASSIGNING &lt;pto&gt; WHERE     inspoper = &lt;req&gt;-inspoper
+                                                        AND inspchar = &lt;req&gt;-inspchar.
+              CLEAR: &lt;pto&gt;-closed, &lt;pto&gt;-evaluated.
+            ENDLOOP.
+            l_error_formula_op = &apos;X&apos;.
+          ENDLOOP.
+
+          CLEAR: return2, i_return.
+
+          CALL FUNCTION &apos;BAPI_INSPOPER_RECORDRESULTS&apos;
+            EXPORTING
+              insplot                    = lote_insp
+              inspoper                   = n_oper
+              insppointdata              = l_punto
+*     HANDHELD_APPLICATION       = &apos; &apos;
+            IMPORTING
+              return                     = return2
+            TABLES
+              char_results               = i_resultados
+              sample_results             = i_puntos_insp
+*     SINGLE_RESULTS             =
+              returntable                = i_return.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF return2-type = &apos;E&apos;.
+      READ TABLE i_return INTO l_return2 WITH KEY type = &apos;E&apos;.
+      IF sy-subrc = 0.
+        mensaje = l_return2-message.
+      ELSE.
+        mensaje = return2-message.
+      ENDIF.
+    ELSE.
+      CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+        EXPORTING
+          wait = &apos;X&apos;.
+
+      IF dequeue_all = &apos;X&apos;.
+        CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+      ENDIF.
+
+      IF l_err_evaluar_formula_ignorar IS INITIAL.
+        IF l_error_formula_op = &apos;X&apos; OR l_error_formula = &apos;X&apos;.
+          CONCATENATE &apos;Error al evaluar fórmula.&apos;(EEF) l_mensaje_formula INTO mensaje SEPARATED BY space.
+
+* Si hay formulas, mostramos al operario el punto de inspección para que pulse en calcular
+          COMMIT WORK AND WAIT.
+          WAIT UP TO 1 SECONDS.
+          zcl_ap_lotes_insp=&gt;ver_resultados( lote_insp = lote_insp
+                                             n_oper = n_oper
+                                             datos_punto_insp = datos_punto_insp
+                                             editar = &apos;X&apos; ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TIENE_DECISION_EMPLEO" VERSION="1" LANGU="S" DESCRIPT="Tiene decisión de empleo" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TIENE_DECISION_EMPLEO" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="TIENE_DECISION_EMPLEO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD tiene_decision_empleo.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_qave                 TYPE qave,
+          i_objnr                TYPE jsto-objnr,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_warning_occurred     TYPE c LENGTH 1,
+          l_activity_not_allowed TYPE c LENGTH 1,
+          l_status_not_allowed   TYPE c LENGTH 1.
+
+    SELECT SINGLE prueflos FROM qave
+      INTO l_qave-prueflos
+     WHERE prueflos = lote_insp.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CONCATENATE &apos;QL&apos; lote_insp INTO i_objnr.
+    CALL FUNCTION &apos;STATUS_CHANGE_FOR_ACTIVITY&apos;
+      EXPORTING
+        check_only           = &apos;X&apos;
+        objnr                = i_objnr
+        vrgng                = &apos;QM20&apos;
+      IMPORTING
+        warning_occurred     = l_warning_occurred
+        activity_not_allowed = l_activity_not_allowed
+        status_not_allowed   = l_status_not_allowed
+      EXCEPTIONS
+        activity_not_allowed = 01
+        warning_occured      = 02
+        status_not_allowed   = 01.
+*
+    IF    sy-subrc                = 1
+       OR l_activity_not_allowed &lt;&gt; space
+       OR l_status_not_allowed   &lt;&gt; space.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" VERSION="1" LANGU="S" DESCRIPT="Verifica resultado" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" SCONAME="RES" VERSION="1" LANGU="S" DESCRIPT="Resultado de inspección nivel de característica" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045D2"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" SCONAME="KATALGART" VERSION="1" LANGU="S" DESCRIPT="Cl.catálogo de gr.códigos o conj.selec.asignado" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QKATAUSW" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" SCONAME="MSTR_CHAR" VERSION="1" LANGU="S" DESCRIPT="Característica maestra" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMSTR_CHAR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VALIDAR_RESULTADO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD validar_resultado.
+    DATA: l_tabla       TYPE tabname VALUE &apos;QAMV&apos;,
+          l_qabwr       TYPE qabwr,
+          l_valor_float TYPE qabwr-mittelwert,
+          i_qaspr       TYPE TABLE OF qaspr,
+          l_evaluation  TYPE bapi2045d2-evaluation.
+
+    IF mstr_char IS INITIAL.
+      SELECT SINGLE * FROM (l_tabla)
+      INTO CORRESPONDING FIELDS OF l_qabwr
+      WHERE prueflos = res-insplot
+        AND vorglfnr = &apos;00000001&apos;
+        AND merknr   = res-inspchar.
+    ELSE.
+      SELECT * FROM (l_tabla)
+        UP TO 1 ROWS
+      INTO CORRESPONDING FIELDS OF l_qabwr
+      WHERE prueflos  = res-insplot
+        AND merknr    = res-inspchar
+        AND verwmerkm = mstr_char
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;Característica de inspección&apos;(CDI) res-inspchar &apos;incorrecta&apos;(INC) INTO mensaje SEPARATED BY space.
+    ENDIF.
+
+    IF katalgart IS INITIAL.
+      l_valor_float = zcl_ap_string=&gt;string2float( res-mean_value ).
+      IF l_valor_float = zcl_ap_string=&gt;c_error_float.
+        mensaje = &apos;Nº incorrecto&apos;(NIN).
+      ELSE.
+        CLEAR i_qaspr.
+        l_qabwr-mittelwert = l_valor_float.
+        l_qabwr-mittelwni  = &apos;X&apos;.
+        CALL FUNCTION &apos;QEBR_MEAN_VALUE_TOLERANCE_INSP&apos;
+          EXPORTING
+            dynprocall   = space
+            qabwr        = l_qabwr
+*        IMPORTING
+*         DBEWERTG     =
+*         FEHLKLAS     =
+*         mbewertg     = l_mbewertg
+*         FECODSELE    =
+*         FEGRPSELE    =
+*         E_QABWR_EX   =
+          TABLES
+            qasptab      = i_qaspr
+          EXCEPTIONS
+            other_error  = 1
+            system_error = 2
+            user_error   = 3
+            OTHERS       = 4.
+        IF sy-subrc &lt;&gt; 0.
+          mensaje = &apos;Valor incorrecto&apos;(VIN).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      l_evaluation = get_evaluacion( res       = res
+                                     katalgart = katalgart
+                                     werks     = werks ).
+      IF l_evaluation = &apos;F&apos;.
+        mensaje = &apos;Valor no válido&apos;(VNV).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_LOTE_INSP_ST" VERSION="1" LANGU="S" DESCRIPT="Visualiza lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_LOTE_INSP_ST" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_LOTE_INSP_ST" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD ver_lote_insp_st.
+    SET PARAMETER ID &apos;QLS&apos; FIELD lote_insp.
+
+    IF editar IS INITIAL.
+      CALL TRANSACTION &apos;QA03&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+    ELSE.
+      CALL TRANSACTION &apos;QA02&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" VERSION="1" LANGU="S" DESCRIPT="Visualiza resultados del lote de inspección" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" SCONAME="LOTE_INSP" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" SCONAME="N_OPER" VERSION="1" LANGU="S" DESCRIPT="Número de operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QAQEE-VORNR" PARVALUE="&apos;0010&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" SCONAME="DATOS_PUNTO_INSP" VERSION="1" LANGU="S" DESCRIPT="Lista de puntos inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI2045L4" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VER_RESULTADOS" SCONAME="MODUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD ver_resultados.
+    DATA: l_qals TYPE qals, &quot;&lt;listado&gt;-slwbez
+          l_hora TYPE c LENGTH 8.
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message. &quot;#EC *
+
+    SELECT SINGLE slwbez werk FROM qals
+      INTO CORRESPONDING FIELDS OF l_qals
+     WHERE prueflos = lote_insp.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    SET PARAMETER ID &apos;QLS&apos; FIELD lote_insp.
+    SET PARAMETER ID &apos;QVO&apos; FIELD n_oper.
+    SET PARAMETER ID &apos;QMO&apos; FIELD &apos;1&apos;.
+    SET PARAMETER ID &apos;QBK&apos; FIELD l_qals-slwbez.
+
+    IF l_qals-slwbez IS INITIAL.
+      IF editar = &apos;X&apos;.
+        CALL TRANSACTION &apos;QE01&apos; AND SKIP FIRST SCREEN.     &quot;#EC CI_CALLTA
+      ELSE.
+        CALL TRANSACTION &apos;QE03&apos; AND SKIP FIRST SCREEN.     &quot;#EC CI_CALLTA
+      ENDIF.
+    ELSE.
+      IF datos_punto_insp IS INITIAL.
+        IF editar = &apos;X&apos;.
+          CALL TRANSACTION &apos;QE12&apos; AND SKIP FIRST SCREEN.   &quot;#EC CI_CALLTA
+        ELSE.
+          CALL TRANSACTION &apos;QE13&apos; AND SKIP FIRST SCREEN.   &quot;#EC CI_CALLTA
+        ENDIF.
+      ELSE.
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+* Entrada lote insp. entrada resultados
+        o_bi-&gt;dynpro( program = &apos;SAPMQEEA&apos; dynpro = &apos;0100&apos; ).
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+        o_bi-&gt;campos( campo = &apos;QALS-PRUEFLOS&apos; valor = lote_insp ).
+        o_bi-&gt;campos( campo = &apos;QAQEE-VORNR&apos; valor = n_oper  ).
+        o_bi-&gt;campos( campo = &apos;QAQEE-PRPLATZWRK&apos; valor = l_qals-werk ). &quot; Centro
+
+        IF NOT modus IS INITIAL.
+          o_bi-&gt;campos( campo = &apos;QAQEE-MODUS&apos; valor = modus  ).
+        ENDIF.
+
+        IF NOT datos_punto_insp-userc1 IS INITIAL.
+          o_bi-&gt;campos( campo = &apos;QAPPD-USERC1&apos; valor = datos_punto_insp-userc1 ). &quot; Campo de usuario para diez caracteres
+        ENDIF.
+        IF NOT datos_punto_insp-userc2 IS INITIAL.
+          o_bi-&gt;campos( campo = &apos;QAPPD-USERC2&apos; valor = datos_punto_insp-userc2 ). &quot; Campo de usuario para diez caracteres
+        ENDIF.
+        IF NOT datos_punto_insp-usern1 IS INITIAL.
+          o_bi-&gt;campos( campo = &apos;QAPPD-USERN1&apos; valor = datos_punto_insp-usern1 ). &quot; Campo usuario para diez caracteres numéricos
+        ENDIF.
+        o_bi-&gt;campos( campo = &apos;QAPPD-USERD1&apos; valor = datos_punto_insp-userd1 ). &quot; Campo de usuario para fecha
+        WRITE datos_punto_insp-usert1 TO l_hora.
+        o_bi-&gt;campos( campo = &apos;QAPPD-USERT1&apos; valor = l_hora ). &quot; Campo de usuario para hora
+
+        IF editar = &apos;X&apos;.
+          l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QE12&apos; modo = &apos;E&apos; ). &quot;#EC *
+        ELSE.
+          l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;QE13&apos; modo = &apos;E&apos; ). &quot;#EC *
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="visualizar" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_LOTES_INSP" CMPNAME="VISUALIZAR" SCONAME="PRUEFLOS" VERSION="1" LANGU="S" DESCRIPT="Nº lote inspección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QALS-PRUEFLOS"/>
+  <source>METHOD visualizar.
+    SET PARAMETER ID &apos;QLS&apos; FIELD prueflos.
+    CALL TRANSACTION &apos;QA03&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

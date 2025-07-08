@@ -1,0 +1,1057 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_WS" VERSION="1" LANGU="S" DESCRIPT="Llamadas Web Services" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_WS" CMPNAME="TY_NAME_PAIR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="10 " SRCCOLUMN2="24 " TYPESRC_LENG="107 " TYPESRC="BEGIN OF ty_name_pair,
+        name  TYPE string,
+        value TYPE string,
+      END OF ty_name_pair
+"/>
+ <types CLSNAME="ZCL_AP_WS" CMPNAME="TT_NAME_PAIR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="11 " SRCCOLUMN1="10 " SRCROW2="11 " SRCCOLUMN2="57 " TYPESRC_LENG="50 " TYPESRC="tt_name_pair TYPE STANDARD TABLE OF ty_name_pair
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="ERC" ENTRY="Error recuperando contenido" LENGTH="54 "/>
+   <textElement ID="I" KEY="ETR" ENTRY="Error en la transformación" LENGTH="52 "/>
+   <textElement ID="I" KEY="EXM" ENTRY="Edición XML" LENGTH="21 "/>
+   <textElement ID="I" KEY="MVA" ENTRY="Mensaje vacío" LENGTH="23 "/>
+   <textElement ID="I" KEY="NGL" ENTRY="No es posible generar línea" LENGTH="54 "/>
+   <textElement ID="I" KEY="UNE" ENTRY="URL no existe" LENGTH="23 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_WS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Message Text" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="HOST" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="O_HTTP" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_HTTP_CLIENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="O_XML" VERSION="1" LANGU="S" DESCRIPT="XML Document for WF- WEB Activity" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_XML_DOCUMENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="PASSWORD" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="STRING" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WS" CMPNAME="USUARIO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="CLOSE" VERSION="1" LANGU="S" DESCRIPT="Cierre conexión" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD close.
+    o_http-&gt;close(
+      EXCEPTIONS
+        http_invalid_state = 1
+        OTHERS             = 2 ).
+    IF sy-subrc NE 0.
+      MESSAGE &apos;Error cerrando conexión&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" SCONAME="SERVICE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;80&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" SCONAME="SCHEME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="CL_HTTP_CLIENT=&gt;SCHEMETYPE_HTTP"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" SCONAME="USERNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="CONSTRUCTOR" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    IF host IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    cl_http_client=&gt;create(
+      EXPORTING
+        host    = host
+        service = service
+        scheme  = scheme
+      IMPORTING
+        client  = o_http ).
+
+    o_http-&gt;propertytype_logon_popup = o_http-&gt;co_disabled.
+
+    IF NOT username IS INITIAL.
+      o_http-&gt;authenticate(
+          username = username
+          password = password ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="EDIT_XML_STRING" VERSION="1" LANGU="S" DESCRIPT="Edita XML string" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="EDIT_XML_STRING" SCONAME="FORMATEAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="EDIT_XML_STRING" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="EDIT_XML_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD edit_xml_string.
+    DATA: i_string TYPE TABLE OF string,
+          l_string TYPE string,
+          l_mod    TYPE abap_bool.
+
+    IF formatear = &apos;X&apos;.
+      i_string = xml_str2table( string ).
+      l_string = zcl_ap_string=&gt;tabla2string( tabla = i_string ).
+    ELSE.
+      l_string = string.
+    ENDIF.
+
+*  l_string = zcl_ap_string=&gt;editor_popup_string( string = l_string titulo = &apos;Edición XML&apos; ). &quot;#EC *
+*  IF l_string NE &apos;#!#&apos;.
+*    string = l_string.
+*  ENDIF.
+
+    zcl_ap_string=&gt;popup_texto( EXPORTING titulo = &apos;Edición XML&apos;
+                                          editar = editar
+                                IMPORTING modificado = l_mod
+                                CHANGING  texto = l_string ).
+    IF l_mod = &apos;X&apos;.
+      string = l_string.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de un fichero" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="GET_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_fichero.
+    DATA l_url          TYPE string.
+    DATA lo_http_client TYPE REF TO if_http_client.
+
+    l_url = url.
+    cl_http_client=&gt;create_by_url(
+      EXPORTING
+        url                = l_url
+      IMPORTING
+        client             = lo_http_client
+      EXCEPTIONS
+        argument_not_found = 1
+        plugin_not_active  = 2
+        internal_error     = 3 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    lo_http_client-&gt;propertytype_logon_popup = lo_http_client-&gt;co_disabled.
+
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;~request_method&apos;
+                                               value = &apos;GET&apos; ).
+
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;~server_protocol&apos;
+                                               value = &apos;HTTP/1.1&apos; ).
+
+    IF content_type &lt;&gt; &apos;&apos;.
+      lo_http_client-&gt;request-&gt;set_header_field(
+          name  = &apos;Content-Type&apos;                            &quot;#EC *
+          value = content_type ).
+    ENDIF.
+
+    lo_http_client-&gt;send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      lo_http_client-&gt;get_last_error(
+        IMPORTING
+          code    = DATA(lv_return_code)
+          message = DATA(lv_message) ).
+      message = lv_message.
+      error = lv_return_code.
+    ELSE.
+      lo_http_client-&gt;receive(
+        EXCEPTIONS
+          http_communication_failure = 1
+          http_invalid_state         = 2
+          http_processing_failed     = 3 ).
+
+      IF sy-subrc &lt;&gt; 0.
+        lo_http_client-&gt;get_last_error(
+          IMPORTING
+            code    = lv_return_code
+            message = lv_message ).
+        message = lv_message.
+        error = lv_return_code.
+      ENDIF.
+
+      lo_http_client-&gt;response-&gt;get_status( IMPORTING code = error ).
+
+      IF error &lt;&gt; 200.
+        RETURN.
+      ENDIF.
+
+      xstring = lo_http_client-&gt;response-&gt;get_data( ).
+
+      IF NOT xstring IS INITIAL AND get_string = &apos;X&apos;.
+        string = zcl_ap_string=&gt;xstring2string( xstring ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de un fichero by destination" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="GET_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" DESCRIPT="application/json||" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="RFCDEST" VERSION="1" LANGU="S" DESCRIPT="Destino lógico (será indicado al llamar la función)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RFCDES-RFCDEST"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_DEST" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_fichero_dest.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_url          TYPE string.
+    DATA lo_http_client TYPE REF TO if_http_client.
+
+    IF rfcdest IS INITIAL.
+      zcl_ap_ws=&gt;get_file(
+        EXPORTING
+          url        = url
+          get_string = get_string
+        IMPORTING
+          xstring    = xstring
+          message    = message
+          string     = string ).
+      RETURN.
+    ENDIF.
+
+    l_url = url.
+
+    cl_http_client=&gt;create_by_destination(
+      EXPORTING
+        destination              = rfcdest
+      IMPORTING
+        client                   = lo_http_client
+      EXCEPTIONS
+        argument_not_found       = 1
+        destination_not_found    = 2
+        destination_no_authority = 3
+        plugin_not_active        = 4
+        internal_error           = 5 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      message = |Error { sy-subrc } creando conexión|.
+    ENDIF.
+
+    IF lo_http_client IS INITIAL.
+      message = |Error creando conexión. No se ha instanciado el objeto|.
+    ENDIF.
+
+    IF NOT url IS INITIAL.
+      cl_http_utility=&gt;set_request_uri(
+          request = lo_http_client-&gt;request
+          uri     = url ).
+    ENDIF.
+
+    lo_http_client-&gt;propertytype_logon_popup = lo_http_client-&gt;co_disabled.
+
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;~request_method&apos;
+                                               value = &apos;GET&apos; ).
+
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;~server_protocol&apos;
+                                               value = &apos;HTTP/1.1&apos; ).
+
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;cache-control&apos;
+                                               value = &apos;no-cache&apos; ).
+
+    IF content_type &lt;&gt; &apos;&apos;.
+      lo_http_client-&gt;request-&gt;set_header_field(
+          name  = &apos;Content-Type&apos;                            &quot;#EC *
+          value = content_type ).
+    ENDIF.
+
+    lo_http_client-&gt;send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      lo_http_client-&gt;get_last_error(
+        IMPORTING
+          code    = DATA(lv_return_code)
+          message = DATA(lv_message) ).
+      message = lv_message.
+      error = lv_return_code.
+    ELSE.
+      lo_http_client-&gt;receive(
+        EXCEPTIONS
+          http_communication_failure = 1
+          http_invalid_state         = 2
+          http_processing_failed     = 3 ).
+
+      IF sy-subrc &lt;&gt; 0.
+        lo_http_client-&gt;get_last_error(
+          IMPORTING
+            code    = lv_return_code
+            message = lv_message ).
+        message = lv_message.
+        error = lv_return_code.
+      ENDIF.
+
+      lo_http_client-&gt;response-&gt;get_status( IMPORTING code = error ).
+
+      IF error &lt;&gt; 200.
+        RETURN.
+      ENDIF.
+
+      xstring = lo_http_client-&gt;response-&gt;get_data( ).
+
+      IF NOT xstring IS INITIAL AND get_string = &apos;X&apos;.
+        string = zcl_ap_string=&gt;xstring2string( xstring ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de un fichero usando conexión en fondo" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" SCONAME="RFCDEST" VERSION="1" LANGU="S" DESCRIPT="Destino lógico (será indicado al llamar la función)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RFCDES-RFCDEST" PARVALUE="&apos;SAPHTTP&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" SCONAME="BLANKSTOCRLF" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_FONDO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_fichero_fondo.
+    TYPES: BEGIN OF text,
+             line TYPE c LENGTH 256,
+           END OF text.
+
+    DATA l_url TYPE text4096.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: status     TYPE c LENGTH 3,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          statustext TYPE c LENGTH 128,
+          rlength    TYPE i.
+    DATA: response         TYPE TABLE OF text,
+          response_headers TYPE TABLE OF text.
+
+    l_url = url.
+
+    CALL FUNCTION &apos;HTTP_GET&apos;
+      EXPORTING
+        absolute_uri                = l_url
+        rfc_destination             = rfcdest
+        blankstocrlf                = blankstocrlf
+*       USER                        = &apos;xxx&apos; - Specify your user here
+*       Password                    = &apos;yyy&apos; - Specify your password here
+      IMPORTING
+        status_code                 = status
+        status_text                 = statustext
+        response_entity_body_length = rlength
+      TABLES
+        response_entity_body        = response
+        response_headers            = response_headers
+      EXCEPTIONS
+        connect_failed              = 1
+        timeout                     = 2
+        internal_error              = 3
+        tcpip_error                 = 4
+        data_error                  = 5
+        system_failure              = 6
+        communication_failure       = 7
+        error_message               = 999 &quot; Cualquier otra excepción!
+        OTHERS                      = 8.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH
+              sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+
+    CALL FUNCTION &apos;RFC_CONNECTION_CLOSE&apos;
+      EXPORTING
+        destination = rfcdest
+      EXCEPTIONS
+        OTHERS      = 0.
+
+    CALL FUNCTION &apos;SCMS_BINARY_TO_XSTRING&apos;
+      EXPORTING
+        input_length = rlength &quot; 999999999
+*       FIRST_LINE   = 0
+*       LAST_LINE    = 0
+      IMPORTING
+        buffer       = xstring
+      TABLES
+        binary_tab   = response
+      EXCEPTIONS
+        failed       = 1
+        OTHERS       = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH
+              sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de un fichero usando librerias del PC loc" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_LOCAL" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_LOCAL" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FICHERO_LOCAL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_fichero_local.
+    TYPES ole2_parameter TYPE swcbcont-value.
+    TYPES: BEGIN OF cndp_user_info,
+             user          TYPE ole2_parameter, &quot; Username am Server
+             password      TYPE ole2_parameter, &quot; Password am Server
+             proxy         TYPE ole2_parameter, &quot; Proxy (incl. Port)
+             proxyuser     TYPE ole2_parameter, &quot; User am Proxy
+             proxypassword TYPE ole2_parameter, &quot; Password am Proxy
+             scrambled     TYPE c LENGTH 1,     &quot; Flag ob verschlüsselt
+           END OF cndp_user_info.
+
+    DATA: l_url           TYPE saeuri,
+          user_info       TYPE cndp_user_info,
+          l_size          TYPE i,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_errorstate    TYPE i,
+          content_bin_255 TYPE solix_tab.
+
+    CLEAR: xstring, message.
+
+    l_url = url.
+
+    CALL FUNCTION &apos;DP_GET_STREAM_FROM_URL&apos;
+      EXPORTING
+        url            = l_url
+        userinfo       = user_info
+      IMPORTING
+        size           = l_size
+        errorstate     = l_errorstate
+      TABLES
+        data           = content_bin_255
+      EXCEPTIONS
+        dp_fail        = 1
+        dp_failed_init = 2
+        OTHERS         = 3.
+
+    IF sy-subrc &lt;&gt; 0.
+      CALL FUNCTION &apos;AC_FLUSH_CALL&apos;
+        EXPORTING
+          system_flush = &apos;X&apos;.
+
+      message = &apos;URL no existe&apos;(une).
+    ENDIF.
+
+    IF content_bin_255 IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;SCMS_BINARY_TO_XSTRING&apos;
+      EXPORTING
+        input_length = l_size
+*       FIRST_LINE   = 0
+*       LAST_LINE    = 0
+      IMPORTING
+        buffer       = xstring
+      TABLES
+        binary_tab   = content_bin_255
+      EXCEPTIONS
+        failed       = 1
+        OTHERS       = 2.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Error recuperando contenido&apos;(erc).
+    ENDIF.
+
+* Pruebas
+*  CALL FUNCTION &apos;GUI_DOWNLOAD&apos;
+*    EXPORTING
+*      bin_filesize            = l_size
+*      filename                = &apos;c:\temp\p2.xlsx&apos;
+*      filetype                = &apos;BIN&apos;
+*    TABLES
+*      data_tab                = content_bin_255
+*    EXCEPTIONS
+*      file_write_error        = 1
+*      no_batch                = 2
+*      gui_refuse_filetransfer = 3
+*      invalid_type            = 4
+*      no_authority            = 5
+*      unknown_error           = 6
+*      header_not_allowed      = 7
+*      separator_not_allowed   = 8
+*      filesize_not_allowed    = 9
+*      header_too_long         = 10
+*      dp_error_create         = 11
+*      dp_error_send           = 12
+*      dp_error_write          = 13
+*      unknown_dp_error        = 14
+*      access_denied           = 15
+*      dp_out_of_memory        = 16
+*      disk_full               = 17
+*      dp_timeout              = 18
+*      file_not_found          = 19
+*      dataprovider_exception  = 20
+*      control_flush_error     = 21
+*      OTHERS                  = 22.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de un fichero" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="GET_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="RFCDEST" VERSION="1" LANGU="S" DESCRIPT="Destino lógico (será indicado al llamar la función)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RFCDES-RFCDEST" PARVALUE="&apos;SAPHTTP&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_FILE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_file.
+    IF sy-batch IS INITIAL.
+      get_fichero_local( EXPORTING url = url IMPORTING xstring = xstring message = message ).
+    ELSE.
+      get_fichero_fondo( EXPORTING url = url rfcdest = rfcdest IMPORTING xstring = xstring message = message ).
+    ENDIF.
+
+    IF get_string = &apos;X&apos;.
+      string = zcl_ap_string=&gt;xstring2string( xstring ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Devuelve mensaje error XML" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_MESSAGE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_MESSAGE" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_message.
+    CLEAR mensaje.
+    IF set_xml( string ) = 0.
+      mensaje = get_xml_value( &apos;faultstring&apos; ).             &quot;#EC *
+      IF mensaje IS INITIAL.
+        mensaje = get_xml_value( &apos;title&apos; ).                 &quot;#EC *
+        IF mensaje IS INITIAL.
+          mensaje = get_xml_value( &apos;Detail&apos; ).              &quot;#EC *
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor XML" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE" SCONAME="NODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_xml_value.
+    DATA node TYPE REF TO if_ixml_node.
+
+    CHECK NOT o_xml IS INITIAL.
+
+    node = o_xml-&gt;find_node( name = nodo ).
+
+    IF node IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    valor = node-&gt;get_value( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE_DIRECT" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor XML (sin usar clases)" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE_DIRECT" SCONAME="NODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GET_XML_VALUE_DIRECT" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_xml_value_direct.
+    DATA: l_aux  TYPE string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_eti1 TYPE string.
+
+    CLEAR valor.
+    IF string NS nodo.
+      RETURN.
+    ENDIF.
+
+    CONCATENATE nodo &apos;&gt;&apos; INTO l_aux.
+    IF string CS l_aux.
+      SPLIT string AT l_aux INTO l_eti1 valor.
+      IF sy-subrc = 0 OR NOT string CS l_aux.
+        CONCATENATE &apos;&lt;/&apos; nodo INTO l_aux.
+        IF valor CS l_aux.
+          SPLIT valor AT l_aux INTO valor l_eti1.
+        ENDIF.
+      ELSE.
+        CONCATENATE &apos;&lt;/&apos; nodo INTO l_aux.
+        IF string CS l_aux.
+          SPLIT string AT l_aux INTO valor l_eti1.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      SPLIT string AT nodo INTO l_eti1 valor.
+      IF valor CS &apos;&quot;/&apos;.
+        SPLIT valor AT &apos;&quot;/&apos; INTO valor l_eti1.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" VERSION="1" LANGU="S" DESCRIPT="Grabar XML" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="CODEPAGE" VERSION="1" LANGU="S" DESCRIPT="utf-16=4102,utf-8=4110,iso-8859-1=1100" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;4102&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="FORMATEAR_XML_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="GRABAR_XML" SCONAME="FICHERO_DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD grabar_xml.
+    &quot; TODO: parameter MOSTRAR_ERROR is never used (ABAP cleaner)
+    &quot; TODO: parameter NUM_EXCEPCION is never cleared or assigned (ABAP cleaner)
+
+    DATA i_string TYPE TABLE OF string.
+
+    IF formatear_xml_salida IS INITIAL.
+      zcl_ap_ficheros=&gt;grabar_xml( EXPORTING fichero  = fichero
+                                             string   = string
+                                             xstring  = xstring
+                                             dialogo  = dialogo
+                                             codepage = codepage
+                                   IMPORTING fichero_dialogo = fichero_dialogo ).
+    ELSE.
+      i_string = xml_str2table( string ).
+
+      zcl_ap_ficheros=&gt;grabar( EXPORTING fichero  = fichero
+                                         dialogo  = dialogo
+                                         codepage = codepage
+                               CHANGING  tabla    = i_string
+                                         fichero_dialogo = fichero_dialogo ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" VERSION="1" LANGU="S" DESCRIPT="Petición" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="METHOD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;POST&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="URI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="PETICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="FORMAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="ACTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="CONVERT_TO_UTF8" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="ENCODING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;utf-8&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="PETICIONX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="REQUEST" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD request.
+    DATA: l_aux     TYPE string,
+          l_lon     TYPE i,
+          l_string  TYPE string,
+          l_lon_txt TYPE string,
+          l_xstring TYPE xstring,
+          subrc     TYPE i,
+          errortext TYPE string.
+    DATA cvto_utf8 TYPE REF TO cl_abap_conv_out_ce.
+
+    o_http-&gt;request-&gt;set_header_field(
+        name  = &apos;~request_method&apos;                           &quot;#EC *
+        value = method ).
+
+    o_http-&gt;request-&gt;set_header_field(
+        name  = &apos;~server_protocol&apos;                          &quot;#EC *
+        value = &apos;HTTP/1.1&apos; ).                               &quot;#EC *
+
+    o_http-&gt;request-&gt;set_header_field(
+        name  = &apos;~request_uri&apos;                              &quot;#EC *
+        value = uri ).
+
+    IF NOT action IS INITIAL.
+      o_http-&gt;request-&gt;set_header_field(
+          name  = &apos;SOAPAction&apos;                              &quot;#EC *
+          value = action ).
+    ENDIF.
+
+    IF content_type IS INITIAL.
+      CONCATENATE &apos;text/xml; charset=&apos; encoding INTO l_aux. &quot;#EC *
+    ELSE.
+      l_aux = content_type.
+    ENDIF.
+    o_http-&gt;request-&gt;set_header_field(
+        name  = &apos;Content-Type&apos;                              &quot;#EC *
+        value = l_aux ).
+
+    IF convert_to_utf8 IS INITIAL AND peticionx IS INITIAL.
+      IF NOT peticion IS INITIAL.
+        l_lon = strlen( peticion ).
+
+        l_string = peticion.
+        l_lon_txt = l_lon.
+
+        o_http-&gt;request-&gt;set_header_field(
+            name  = &apos;Content-Length&apos;                        &quot;#EC *
+            value = l_lon_txt ).
+
+        o_http-&gt;request-&gt;set_cdata(
+            data   = l_string
+            offset = 0
+            length = l_lon ).
+      ENDIF.
+    ELSE.
+      IF convert_to_utf8 IS INITIAL.
+        l_xstring = peticionx.
+      ELSE.
+        cvto_utf8 = cl_abap_conv_out_ce=&gt;create( encoding = &apos;UTF-8&apos; ).
+        cvto_utf8-&gt;write( data = peticion ).
+        l_xstring = cvto_utf8-&gt;get_buffer( ).
+      ENDIF.
+
+      l_lon = xstrlen( l_xstring ).
+      l_lon_txt = l_lon.
+
+      o_http-&gt;request-&gt;set_header_field(
+          name  = &apos;Content-Length&apos;                          &quot;#EC *
+          value = l_lon_txt ).
+
+      o_http-&gt;request-&gt;set_data(
+          data   = l_xstring
+          offset = 0
+          length = l_lon ).
+    ENDIF.
+
+    o_http-&gt;send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2 ).
+    IF sy-subrc &lt;&gt; 0.
+      o_http-&gt;get_last_error(
+        IMPORTING
+          code    = subrc
+          message = errortext ).
+    ENDIF.
+
+    o_http-&gt;receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        http_processing_failed     = 3 ).
+    IF sy-subrc &lt;&gt; 0.
+      o_http-&gt;get_last_error(
+        IMPORTING
+          code    = subrc
+          message = errortext ).
+    ENDIF.
+
+    CLEAR respuesta.
+    respuesta = o_http-&gt;response-&gt;get_cdata( ).
+    string = respuesta.
+
+    IF respuesta IS INITIAL.
+      respuesta = subrc.
+      CONCATENATE respuesta errortext INTO respuesta SEPARATED BY space.
+    ENDIF.
+
+    IF format = &apos;X&apos;.
+      REPLACE ALL OCCURRENCES OF &apos;&amp;lt;&apos; IN respuesta WITH &apos;&lt;&apos;.
+      REPLACE ALL OCCURRENCES OF &apos;&amp;gt;&apos; IN respuesta WITH &apos;&gt;&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" VERSION="1" LANGU="S" DESCRIPT="Envia petición" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" SCONAME="IV_REQ_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" SCONAME="IV_URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" SCONAME="IT_HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_NAME_PAIR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" SCONAME="IT_FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_NAME_PAIR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SEND_REQUEST" SCONAME="EV_RESPONSE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD send_request.
+    DATA lo_http_client TYPE REF TO if_http_client.
+
+    FIELD-SYMBOLS: &lt;header&gt; TYPE ty_name_pair,
+                   &lt;form&gt;   TYPE ty_name_pair.
+
+    cl_http_client=&gt;create_by_url(
+      EXPORTING
+        url                = iv_url
+      IMPORTING
+        client             = lo_http_client
+      EXCEPTIONS
+        argument_not_found = 1
+        plugin_not_active  = 2
+        internal_error     = 3
+        OTHERS             = 4 ).
+    ASSERT sy-subrc = 0.
+
+    lo_http_client-&gt;request-&gt;set_method( iv_req_type ).
+
+    LOOP AT it_header ASSIGNING &lt;header&gt;.
+      lo_http_client-&gt;request-&gt;set_header_field( name = &lt;header&gt;-name value = &lt;header&gt;-value ).
+    ENDLOOP.
+
+    LOOP AT it_form ASSIGNING &lt;form&gt;.
+      lo_http_client-&gt;request-&gt;set_form_field( name = &lt;form&gt;-name value = &lt;form&gt;-value ).
+    ENDLOOP.
+
+    lo_http_client-&gt;send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        http_processing_failed     = 3 ).
+
+    ASSERT sy-subrc = 0.
+
+    lo_http_client-&gt;receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        http_processing_failed     = 3 ).
+
+    ASSERT sy-subrc = 0.
+
+    ev_response = lo_http_client-&gt;response-&gt;get_data( ).
+
+* DOC in http://scn.sap.com/community/abap/blog/2014/02/24/generate-qrcode-via-abap-with-help-of-online-service
+*DATA:
+*     ls_form   type zcl_http_tool=&gt;ty_name_pair,
+*     lt_form   type zcl_http_tool=&gt;tt_name_pair,
+*     lv_code   type xstring.
+*ls_form = value #( name = &apos;type&apos; value = &apos;TEXT&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;foreground_color&apos; value = &apos;000000&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;ecc_level&apos; value = &apos;L&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;width_pixels&apos; value = &apos;200&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;dpi&apos; value = &apos;72&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;file_type&apos; value = &apos;png&apos; ).
+*APPEND ls_form TO lt_form.
+*ls_form = value #( name = &apos;text&apos; value = &apos;testforQRCode&apos; ).
+*APPEND ls_form TO lt_form.
+*zcl_http_tool=&gt;send_request( EXPORTING iv_url      = &apos;http://www.qrstuff.com/generate.generate&apos;
+*                                       iv_req_type = if_http_request=&gt;co_request_method_get
+*                                       it_form     = lt_form
+*IMPORTING ev_response = lv_code ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="SET_HEADER_FIELD" VERSION="1" LANGU="S" DESCRIPT="Fija campo cabecera" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SET_HEADER_FIELD" SCONAME="NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SET_HEADER_FIELD" SCONAME="VALUE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_header_field.
+    o_http-&gt;request-&gt;set_header_field(
+        name  = name
+        value = value ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="SET_XML" VERSION="1" LANGU="S" DESCRIPT="Set string XML" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SET_XML" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="SET_XML" SCONAME="SUBRC" VERSION="1" LANGU="S" DESCRIPT="Return Value of ABAP Statements" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SY-SUBRC"/>
+  <source>METHOD set_xml.
+    o_xml = NEW #( ).
+    subrc = o_xml-&gt;parse_string( string ).
+    me-&gt;string = string.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="TRANSFORMAR_STRING" VERSION="1" LANGU="S" DESCRIPT="Llama a transformación XML" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="TRANSFORMAR_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="TRANSFORMAR_STRING" SCONAME="TRANSFORMACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="TRANSFORMAR_STRING" SCONAME="XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="TRANSFORMAR_STRING" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD transformar_string.
+    DATA: l_err_conv    TYPE REF TO cx_sy_conversion_data_loss,
+          l_err_trans   TYPE REF TO cx_invalid_transformation,
+          l_err_match   TYPE REF TO cx_st_match_element,
+          l_err_call_st TYPE REF TO cx_call_st_error.
+
+    IF transformacion IS INITIAL.
+      mensaje = &apos;No es posible generar línea&apos;(ngl).
+    ELSEIF string IS INITIAL.
+      mensaje = &apos;Mensaje vacío&apos;(mva).
+    ELSE.
+      TRY.
+          CALL TRANSFORMATION (transformacion)
+               SOURCE XML string
+               RESULT cab = xml.
+
+        CATCH cx_sy_conversion_data_loss INTO l_err_conv.
+          mensaje = l_err_conv-&gt;get_text( ).
+          CONCATENATE &apos;T:&apos; transformacion mensaje INTO mensaje SEPARATED BY space.
+          EXIT.
+        CATCH cx_invalid_transformation INTO l_err_trans.
+          mensaje = l_err_trans-&gt;get_text( ).
+          CONCATENATE &apos;T:&apos; transformacion mensaje INTO mensaje SEPARATED BY space.
+          EXIT.
+        CATCH cx_st_match_element INTO l_err_match.
+          mensaje = l_err_match-&gt;get_text( ).
+          CONCATENATE &apos;T:&apos; transformacion mensaje INTO mensaje SEPARATED BY space.
+          EXIT.
+        CATCH cx_call_st_error INTO l_err_call_st.
+          mensaje = l_err_call_st-&gt;get_text( ).
+          CONCATENATE &apos;T:&apos; transformacion mensaje INTO mensaje SEPARATED BY space.
+          EXIT.
+      ENDTRY.
+
+      IF xml IS INITIAL.
+        CONCATENATE &apos;Error en la transformación&apos;(etr) transformacion INTO mensaje SEPARATED BY space.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="VER_XML" VERSION="1" LANGU="S" DESCRIPT="Previsualiza XML" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="VER_XML" SCONAME="XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="VER_XML" SCONAME="X_XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <source>METHOD ver_xml.
+*  IF NOT xml IS INITIAL.
+*    l_xml = xml.
+*  ELSE.
+*    l_xml = zcl_ap_string=&gt;xstring2string( x_xml ).
+*  ENDIF.
+*    call function &apos;SCOL_TRACE_SHOW_XML&apos;
+*      exporting
+*        doc = xml.
+    DATA gcl_xml TYPE REF TO cl_xml_document.
+
+    gcl_xml = NEW #( ).
+
+*Parses XML String to DOM
+    IF NOT xml IS INITIAL.
+      gcl_xml-&gt;parse_string(
+          stream = xml ).
+    ELSE.
+      gcl_xml-&gt;parse_xstring(
+          stream = x_xml ).
+    ENDIF.
+
+*Display XML
+    gcl_xml-&gt;display( ).
+*  ELSE.
+*    CALL FUNCTION &apos;SCOL_TRACE_SHOW_XML&apos;
+*      EXPORTING
+*        xdoc = x_xml.
+*  ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="XML_STR2TABLE" VERSION="1" LANGU="S" DESCRIPT="Convierte string a tabla formatead" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XML_STR2TABLE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XML_STR2TABLE" SCONAME="LIMPIAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XML_STR2TABLE" SCONAME="MAX_LONG_LINEA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XML_STR2TABLE" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD xml_str2table.
+    DATA: i_xmlstring  TYPE string,
+          l_cnt_length TYPE i,
+          l_cnt_index  TYPE i,
+          l_char       TYPE c LENGTH 1,
+          l_nextchar   TYPE c LENGTH 1,
+          l_indent     TYPE i,
+          l_oldchar    TYPE c LENGTH 1,
+          l_xmlline    TYPE string.
+
+    i_xmlstring = string.
+    l_cnt_length = strlen( i_xmlstring ).
+
+    DO l_cnt_length TIMES.
+      l_cnt_index = sy-index - 1.
+      l_char = i_xmlstring+l_cnt_index(1).
+      IF sy-index &lt; l_cnt_length.
+        l_nextchar = i_xmlstring+sy-index(1).
+      ENDIF.
+      IF l_char &lt;&gt; cl_abap_char_utilities=&gt;newline.
+
+        IF    ( l_char = &apos;&lt;&apos; AND l_nextchar = &apos;/&apos; )
+           OR ( l_char = &apos;/&apos; AND l_nextchar = &apos;&gt;&apos; ).
+          l_indent = l_indent - 1.
+          IF l_indent &lt; 0.
+            l_indent = 0.
+          ENDIF.
+        ENDIF.
+
+        IF l_char = &apos;&lt;&apos; AND l_oldchar = &apos;&gt;&apos;.
+          APPEND l_xmlline TO i_tabla.
+*      write: / l_xmlline.
+          CLEAR l_xmlline.
+          DO l_indent TIMES.
+            CONCATENATE space space l_xmlline INTO l_xmlline SEPARATED BY space.
+          ENDDO.
+        ENDIF.
+        IF l_char &lt;&gt; space.
+          CONCATENATE l_xmlline l_char INTO l_xmlline.
+        ELSE.
+          CONCATENATE l_xmlline l_char INTO l_xmlline SEPARATED BY space.
+        ENDIF.
+
+        IF l_char = &apos;&lt;&apos; AND l_nextchar &lt;&gt; &apos;/&apos;.
+          l_indent = l_indent + 1.
+        ENDIF.
+
+      ELSE.
+        l_indent = 0.
+        APPEND l_xmlline TO i_tabla.
+        CLEAR l_xmlline.
+      ENDIF.
+      l_oldchar = l_char.
+    ENDDO.
+    APPEND l_xmlline TO i_tabla.
+
+    IF limpiar = &apos;X&apos;.
+      LOOP AT i_tabla ASSIGNING FIELD-SYMBOL(&lt;tabla&gt;).
+        DATA(l_long) = strlen( &lt;tabla&gt; ).
+        IF l_long &gt; 1.
+          l_long = l_long - 1.
+          l_char = &lt;tabla&gt;+l_long(1).
+          IF l_char = cl_abap_char_utilities=&gt;cr_lf(1).
+            &lt;tabla&gt; = &lt;tabla&gt;(l_long).
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT max_long_linea IS INITIAL.
+      DATA(i_t2) = i_tabla.
+      CLEAR i_tabla.
+      LOOP AT i_t2 ASSIGNING &lt;tabla&gt;.
+        DO.
+          l_long = strlen( &lt;tabla&gt; ).
+          IF l_long &gt; max_long_linea.
+            l_xmlline = &lt;tabla&gt;(max_long_linea).
+            APPEND l_xmlline TO i_tabla.
+            &lt;tabla&gt; = &lt;tabla&gt;+max_long_linea.
+            IF &lt;tabla&gt; IS INITIAL.
+              EXIT.
+            ENDIF.
+          ELSE.
+            l_xmlline = &lt;tabla&gt;.
+            APPEND l_xmlline TO i_tabla.
+            EXIT.
+          ENDIF.
+        ENDDO.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2BASE64" VERSION="1" LANGU="S" DESCRIPT="Xstring a String en base 64" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2BASE64" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2BASE64" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2BASE64" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD xstring2base64.
+    DATA l_xstring TYPE xstring.
+
+    IF NOT xstring IS INITIAL.
+      l_xstring = xstring.
+    ELSEIF NOT fichero IS INITIAL.
+      zcl_ap_ficheros=&gt;leer_xstring( EXPORTING fichero = fichero  IMPORTING xstring = l_xstring ).
+    ENDIF.
+
+    IF l_xstring IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;SSFC_BASE64_ENCODE&apos;
+      EXPORTING
+        bindata                  = l_xstring
+*       BINLENG                  =
+      IMPORTING
+        b64data                  = string
+      EXCEPTIONS
+        ssf_krn_error            = 1
+        ssf_krn_noop             = 2
+        ssf_krn_nomemory         = 3
+        ssf_krn_opinv            = 4
+        ssf_krn_input_data_error = 5
+        ssf_krn_invalid_par      = 6
+        ssf_krn_invalid_parlen   = 7
+        OTHERS                   = 8.
+    IF sy-subrc NE 0.
+      MESSAGE &apos;Error convirtiendo a base 64&apos; TYPE &apos;E&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2SOLIX" VERSION="1" LANGU="S" DESCRIPT="Convierte XSTRING a tabla SOLIX" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2SOLIX" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2SOLIX" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Version Management Enhancement Objects" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SOLIX_TAB"/>
+  <parameter CLSNAME="ZCL_AP_WS" CMPNAME="XSTRING2SOLIX" SCONAME="LONGITUD" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD xstring2solix.
+    DATA: i_tabla TYPE enh_version_management_hex_tb,
+          l_solix TYPE solix.
+
+    FIELD-SYMBOLS &lt;tab&gt; TYPE enh_version_management_hex.
+
+    CALL FUNCTION &apos;ENH_XSTRING_TO_TAB&apos;
+      EXPORTING
+        im_xstring = xstring
+      IMPORTING
+        ex_data    = i_tabla
+        ex_leng    = longitud.
+
+    LOOP AT i_tabla ASSIGNING &lt;tab&gt;.
+      l_solix-line = &lt;tab&gt;.
+      APPEND l_solix TO tabla.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

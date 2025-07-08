@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_BATCH_INPUT" VERSION="1" LANGU="S" DESCRIPT="Manejo batch inputs" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EBI" ENTRY="Error en BDC_INSERT" LENGTH="29 "/>
+   <textElement ID="I" KEY="NOV" ENTRY="Se cambia modo ejecución call transactión a NO VISIBLE" LENGTH="108 "/>
+   <textElement ID="I" KEY="SPE" ENTRY="¡Se ha producido un error inesperado!" LENGTH="74 "/>
+   <textElement ID="I" KEY="VIS" ENTRY="Se cambia modo ejecución call transactión a VISIBLE" LENGTH="102 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_BATCH_INPUT" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="BDCDATA" VERSION="1" LANGU="S" DESCRIPT="Batch input Estructura del nuevo campo de tabla" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BDCDATA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="EST_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Acumular mensajes en sistema SAP" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BDCMSGCOLL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="I_BDCDATA" VERSION="1" LANGU="S" DESCRIPT="Tabla de datos BDC" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TAB_BDCDATA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="I_BDCDATA_BACKUP" VERSION="1" LANGU="S" DESCRIPT="Tabla de datos BDC" EXPOSURE="2" STATE="1" EDITORDER="15 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TAB_BDCDATA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="I_MENSAJES" VERSION="1" LANGU="S" DESCRIPT="Tabla de mensajes en transacciones" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TAB_BDCMSGCOLL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LIGHTS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="4" SRCROW1="19 " SRCCOLUMN1="9 " SRCROW2="19 " SRCCOLUMN2="40 " TYPESRC_LENG="34 " TYPESRC="lights           TYPE c LENGTH 1
+"/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGID" VERSION="1" LANGU="S" DESCRIPT="Clase de mensajes" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGID" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGNO" VERSION="1" LANGU="S" DESCRIPT="Número de mensaje" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGNO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGTY" VERSION="1" LANGU="S" DESCRIPT="Tipo de mensaje" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGTY" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGV1" VERSION="1" LANGU="S" DESCRIPT="Variable de mensaje" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGV1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGV2" VERSION="1" LANGU="S" DESCRIPT="Variable de mensaje" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGV2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGV3" VERSION="1" LANGU="S" DESCRIPT="Variable de mensaje" EXPOSURE="2" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGV3" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="MSGV4" VERSION="1" LANGU="S" DESCRIPT="Variable de mensaje" EXPOSURE="2" STATE="1" EDITORDER="12 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-MSGV4" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="SUBRC" VERSION="1" LANGU="S" DESCRIPT="Código retorno de sentencias ABAP" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-SUBRC" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="Texto del mensaje" EXPOSURE="2" STATE="1" EDITORDER="13 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="V_BDC_INICIADO" VERSION="1" LANGU="S" DESCRIPT="Indicador BDC iniciado" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="V_BDC_NUMLINEAS_BDCDATA" VERSION="1" LANGU="S" DESCRIPT="Nº líneas BDC" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="APPEND_BDCDATA" VERSION="1" LANGU="S" DESCRIPT="Añade registros directamente a la tabla BDCDATA" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="APPEND_BDCDATA" SCONAME="T_BDCDATA" VERSION="1" LANGU="S" DESCRIPT="Tabla de datos BDC" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TAB_BDCDATA"/>
+  <source>METHOD append_bdcdata.
+    LOOP AT t_bdcdata INTO bdcdata.
+      APPEND bdcdata TO i_bdcdata.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMBIAR_MODO" VERSION="1" LANGU="S" DESCRIPT="Cambiar modo ejecución" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMBIAR_MODO" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PAROPTIONL="X"/>
+  <source>METHOD cambiar_modo.
+    IF modo IS INITIAL OR modo = &apos;A&apos;.
+      modo = &apos;N&apos;.
+      MESSAGE &apos;Se cambia modo ejecución call transactión a NO VISIBLE&apos;(nov) TYPE &apos;S&apos;.
+    ELSEIF modo = &apos;N&apos; OR modo = &apos;E&apos;.
+      modo = &apos;A&apos;.
+      MESSAGE &apos;Se cambia modo ejecución call transactión a VISIBLE&apos;(vis) TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Informa campos" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCDATA-FNAM"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="BDC Valor del campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" SCONAME="IND" VERSION="1" LANGU="S" DESCRIPT="Indice" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NUMC2" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" SCONAME="NO_CERO" VERSION="1" LANGU="S" DESCRIPT="No graba los valores iniciales" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CAMPOS" SCONAME="HORA_LARGA" VERSION="1" LANGU="S" DESCRIPT="Formatea la hora con segundo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD campos.
+    DATA: l_tipo  TYPE c LENGTH 1,
+          l_dd03l TYPE dd03l.
+    DATA l_meins TYPE meins.
+
+    IF no_cero = &apos;X&apos;.
+      IF valor IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    DESCRIBE FIELD valor TYPE l_tipo.
+    l_dd03l = get_atributos_campo( campo ).
+
+    CLEAR bdcdata.
+    IF ind IS SUPPLIED.
+      CONCATENATE campo &apos;(&apos; ind &apos;)&apos; INTO bdcdata-fnam.
+    ELSE.
+      bdcdata-fnam = campo.
+    ENDIF.
+
+    CASE l_tipo.
+      WHEN &apos;P&apos;.
+        IF l_dd03l-leng IS INITIAL.
+          WRITE valor TO bdcdata-fval(10).
+        ELSE.
+          WRITE valor TO bdcdata-fval(l_dd03l-leng).
+        ENDIF.
+      WHEN &apos;T&apos;.
+        WRITE valor TO bdcdata-fval(8).
+        IF hora_larga IS INITIAL.
+          CLEAR bdcdata-fval+5.
+        ENDIF.
+      WHEN &apos;I&apos;.
+        bdcdata-fval = valor.
+        CONDENSE bdcdata-fval NO-GAPS.
+      WHEN &apos;D&apos;.
+        IF valor IS INITIAL.
+          CLEAR bdcdata-fval.
+        ELSE.
+          WRITE valor TO bdcdata-fval(10).
+        ENDIF.
+      WHEN OTHERS.
+        IF l_dd03l-datatype = &apos;UNIT&apos;.
+          l_meins = valor.
+          WRITE l_meins TO bdcdata-fval(3).
+        ELSE.
+          bdcdata-fval = valor.
+        ENDIF.
+    ENDCASE.
+    APPEND bdcdata TO i_bdcdata.
+    v_bdc_numlineas_bdcdata = v_bdc_numlineas_bdcdata + 1.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CIERRA_JUEGO_DATOS" VERSION="1" LANGU="S" DESCRIPT="Cierra juego de datos" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CIERRA_JUEGO_DATOS" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Código de transacción actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE"/>
+  <source>METHOD cierra_juego_datos.
+    IF v_bdc_iniciado &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    IF NOT tcode IS INITIAL.
+      CALL FUNCTION &apos;BDC_INSERT&apos;
+        EXPORTING
+          tcode            = tcode
+        TABLES
+          dynprotab        = i_bdcdata
+        EXCEPTIONS
+          internal_error   = 1
+          not_open         = 2
+          queue_error      = 3
+          tcode_invalid    = 4
+          printing_invalid = 5
+          posting_invalid  = 6
+          OTHERS           = 7.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Error en BDC_INSERT&apos;(ebi) TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+
+    CALL FUNCTION &apos;BDC_CLOSE_GROUP&apos;.
+    CLEAR v_bdc_iniciado.
+    CLEAR v_bdc_numlineas_bdcdata.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD constructor.
+    inicio( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONVERTIR_CODIGO_BDC" VERSION="1" LANGU="S" DESCRIPT="Convierte código BDC" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONVERTIR_CODIGO_BDC" SCONAME="GEN_CURSOR" VERSION="1" LANGU="S" DESCRIPT="Generar datos cursos" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONVERTIR_CODIGO_BDC" SCONAME="GEN_SUBSCR" VERSION="1" LANGU="S" DESCRIPT="Generar datos subscreen" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONVERTIR_CODIGO_BDC" SCONAME="LIN_LARGAS" VERSION="1" LANGU="S" DESCRIPT="Generar líneas largas" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CONVERTIR_CODIGO_BDC" SCONAME="OKCODE_CON_DYNPRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD convertir_codigo_bdc.
+    TYPES t_linea TYPE c LENGTH 1000.
+
+    DATA: i_tabla  TYPE TABLE OF t_linea,
+          l_linea  TYPE t_linea,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          i_codigo TYPE TABLE OF t_linea,
+          l_linea2 TYPE t_linea,
+          l_rc     TYPE i.
+    DATA: bdc     TYPE bdcdata,
+          i_bdc   TYPE tab_bdcdata,
+          l_fin   TYPE abap_bool,
+          l_tcode TYPE sy-tcode.
+    DATA i_tabix TYPE TABLE OF sy-tabix.
+
+    cl_gui_frontend_services=&gt;clipboard_import(
+      IMPORTING
+        data                 = i_tabla
+*       length               =
+      EXCEPTIONS
+        cntl_error           = 1
+        error_no_gui         = 2
+        not_supported_by_gui = 3
+        OTHERS               = 4 ).
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando datos del portapapeles&apos; TYPE &apos;I&apos;.
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_tabla INTO l_linea.
+
+      CALL FUNCTION &apos;SCP_REPLACE_STRANGE_CHARS&apos;
+        EXPORTING
+          intext            = l_linea
+          replacement       = 64
+        IMPORTING
+          outtext           = l_linea
+        EXCEPTIONS
+          invalid_codepage  = 1
+          codepage_mismatch = 2
+          internal_error    = 3
+          cannot_convert    = 4
+          fields_not_type_c = 5
+          OTHERS            = 6.
+      IF sy-subrc &lt;&gt; 0.
+* message.
+      ENDIF.
+
+      SPLIT l_linea AT &apos;@&apos; INTO bdc-program bdc-dynpro bdc-dynbegin
+                                bdc-fnam bdc-fval.
+      APPEND bdc TO i_bdc.
+    ENDLOOP.
+
+    IF okcode_con_dynpro = &apos;X&apos;.
+      DATA(i_bdc_aux) = i_bdc.
+      LOOP AT i_bdc ASSIGNING FIELD-SYMBOL(&lt;bdc&gt;) WHERE program &lt;&gt; &apos;&apos;. &quot;#EC CI_STDSEQ
+        DATA(l_tabix) = sy-tabix + 1.
+        LOOP AT i_bdc_aux ASSIGNING FIELD-SYMBOL(&lt;bdc_aux&gt;) FROM l_tabix.
+          IF &lt;bdc_aux&gt;-program IS INITIAL.
+            IF &lt;bdc_aux&gt;-fnam = &apos;BDC_OKCODE&apos;.
+              DATA(l_ok_code) = &lt;bdc_aux&gt;-fval.
+              APPEND sy-tabix TO i_tabix.
+              EXIT.
+            ENDIF.
+          ELSE.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+        IF NOT l_ok_code IS INITIAL.
+          &lt;bdc&gt;-fnam = &apos;BDC_OKCODE&apos;.
+          &lt;bdc&gt;-fval = l_ok_code.
+        ENDIF.
+      ENDLOOP.
+      l_tabix = 0.
+      LOOP AT i_bdc ASSIGNING &lt;bdc&gt;.
+        l_tabix = l_tabix + 1.
+        IF line_exists( i_tabix[ table_line = l_tabix ] ). &quot;#EC CI_STDSEQ
+          DELETE i_bdc.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    LOOP AT i_bdc INTO bdc.
+      AT FIRST.
+        APPEND &apos;   data: o_bi type ref to zcl_ap_batch_input,&apos; TO i_codigo.
+        APPEND &apos;         l_mensaje type bapireturn1-message.&apos; TO i_codigo.
+        APPEND &apos;   create object o_bi.&apos; TO i_codigo.
+        APPEND &apos;&apos; TO i_codigo.
+        APPEND &apos;   o_bi-&gt;inicio( ).&apos; TO i_codigo.
+      ENDAT.
+      AT LAST.
+        l_fin = &apos;X&apos;.
+      ENDAT.
+
+      IF bdc-dynbegin = &apos;T&apos;.
+        l_tcode = bdc-fnam.
+        CONTINUE.
+      ENDIF.
+
+      IF gen_cursor IS INITIAL AND bdc-fnam = &apos;BDC_CURSOR&apos;.
+        IF l_fin IS INITIAL.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF gen_subscr IS INITIAL AND bdc-fnam = &apos;BDC_SUBSCR&apos;.
+        IF l_fin IS INITIAL.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      CLEAR l_linea.
+      IF bdc-program IS INITIAL.
+        IF lin_largas = &apos;X&apos;.
+          CONCATENATE &apos;   o_bi-&gt;campos( campo = &apos;&apos;&apos; bdc-fnam
+                      &apos;&apos;&apos; valor = &apos;&apos;&apos; bdc-fval &apos;&apos;&apos;).&apos; INTO l_linea.
+          IF bdc-fnam CS &apos;-&apos;.
+            l_linea2 = get_descripcion_campo( bdc-fnam ).
+            IF NOT l_linea2 IS INITIAL.
+              CONCATENATE l_linea &apos;&quot;&apos; l_linea2 INTO l_linea
+                          SEPARATED BY space.
+            ENDIF.
+          ENDIF.
+        ELSE.
+          CONCATENATE &apos;   o_bi-&gt;campos( campo = &apos;&apos;&apos; bdc-fnam &apos;&apos;&apos;&apos;
+                      INTO l_linea.
+          APPEND l_linea TO i_codigo.
+          CLEAR l_linea.
+          CONCATENATE &apos;                 valor = &apos;&apos;&apos;
+              bdc-fval &apos;&apos;&apos;).&apos; INTO l_linea.
+          IF bdc-fnam CS &apos;-&apos;.
+            l_linea2 = get_descripcion_campo( bdc-fnam ).
+            IF NOT l_linea2 IS INITIAL.
+              CONCATENATE l_linea &apos;&quot;&apos; l_linea2 INTO l_linea
+                          SEPARATED BY space.
+              l_linea = l_linea(72).
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ELSE.
+        APPEND &apos;&apos; TO i_codigo.
+        SELECT SINGLE dtxt FROM d020t
+          INTO l_linea
+         WHERE prog = bdc-program
+           AND dynr = bdc-dynpro
+           AND lang = sy-langu.
+        IF sy-subrc = 0.
+          CONCATENATE &apos;* &apos; l_linea INTO l_linea SEPARATED BY space.
+          APPEND l_linea TO i_codigo.
+        ENDIF.
+
+        IF bdc-fnam = &apos;BDC_OKCODE&apos;.
+          CONCATENATE &apos;   o_bi-&gt;dynpro( program = &apos;&apos;&apos; bdc-program &apos;&apos;&apos; dynpro = &apos;&apos;&apos; bdc-dynpro &apos;&apos;&apos; okcode = &apos;&apos;&apos; bdc-fval &apos;&apos;&apos;).&apos; INTO l_linea.
+        ELSE.
+          CONCATENATE &apos;   o_bi-&gt;dynpro( program = &apos;&apos;&apos; bdc-program &apos;&apos;&apos; dynpro = &apos;&apos;&apos; bdc-dynpro &apos;&apos;&apos;).&apos; INTO l_linea.
+        ENDIF.
+      ENDIF.
+      APPEND l_linea TO i_codigo.
+
+      IF l_fin = &apos;X&apos;.
+        APPEND &apos;&apos; TO i_codigo.
+
+        CONCATENATE &apos;    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;&apos;&apos; ##NO_TEXT
+               l_tcode &apos;&apos;&apos; modo = &apos;&apos;E&apos;&apos;).&apos; INTO l_linea.
+        APPEND l_linea TO i_codigo.
+      ENDIF.
+    ENDLOOP.
+
+    cl_gui_frontend_services=&gt;clipboard_export(
+      IMPORTING
+        data                 = i_codigo
+      CHANGING
+        rc                   = l_rc
+      EXCEPTIONS
+        cntl_error           = 1
+        error_no_gui         = 2
+        not_supported_by_gui = 3
+        OTHERS               = 4 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error exportando datos al portapapeles&apos; TYPE &apos;I&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CREAR_JUEGO_DATOS" VERSION="1" LANGU="S" DESCRIPT="Crea juego de datos" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CREAR_JUEGO_DATOS" SCONAME="GROUPID" VERSION="1" LANGU="S" DESCRIPT="Nombre del grupo: Nombre de un juego de datos batch input" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APQI-GROUPID"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CREAR_JUEGO_DATOS" SCONAME="USER" VERSION="1" LANGU="S" DESCRIPT="Queue ID usuario / Razón histórica" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APQI-USERID" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CREAR_JUEGO_DATOS" SCONAME="KEEP" VERSION="1" LANGU="S" DESCRIPT="Ind.borrado cola para juegos datos procesados" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APQI-QERASE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="CREAR_JUEGO_DATOS" SCONAME="HOLDDATA" VERSION="1" LANGU="S" DESCRIPT="Cola Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APQI-STARTDATE" PARVALUE="SY-DATUM"/>
+  <source>METHOD crear_juego_datos.
+    CALL FUNCTION &apos;BDC_OPEN_GROUP&apos;
+      EXPORTING
+        client              = sy-mandt
+        group               = groupid
+        user                = user
+        keep                = keep
+        holddate            = holddata
+      EXCEPTIONS
+        client_invalid      = 1
+        destination_invalid = 2
+        group_invalid       = 3
+        group_is_locked     = 4
+        holddate_invalid    = 5
+        internal_error      = 6
+        queue_error         = 7
+        running             = 8
+        system_lock_error   = 9
+        user_invalid        = 10  ##NUMBER_OK
+        OTHERS              = 11 ##NUMBER_OK.
+
+    IF sy-subrc = 0.
+      v_bdc_iniciado = &apos;X&apos;.
+    ELSE.
+      CLEAR v_bdc_iniciado.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="DYNPRO" VERSION="1" LANGU="S" DESCRIPT="Inicia dynpro" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="DYNPRO" SCONAME="PROGRAM" VERSION="1" LANGU="S" DESCRIPT="BDC Modulpool" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCDATA-PROGRAM"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="DYNPRO" SCONAME="DYNPRO" VERSION="1" LANGU="S" DESCRIPT="BDC Número de dynpro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCDATA-DYNPRO"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="DYNPRO" SCONAME="OKCODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD dynpro.
+    CLEAR bdcdata.
+    bdcdata-program  = program.
+    bdcdata-dynpro   = dynpro.
+    bdcdata-dynbegin = &apos;X&apos;.
+    APPEND bdcdata TO i_bdcdata.
+    v_bdc_numlineas_bdcdata = v_bdc_numlineas_bdcdata + 1.
+
+    IF NOT okcode IS INITIAL.
+      campos( campo = &apos;BDC_OKCODE&apos; valor = okcode ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="FORMATEAR_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Formatear mensaje" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD formatear_mensaje.
+** Comprobamos si hubo errores.
+*  DESCRIBE TABLE i_mensajes LINES sy-tfill.
+*  IF SUBRC = 0 and sy-tfill &gt; 1.
+*    READ TABLE i_mensajes into est_mensaje INDEX sy-tfill.
+*    IF SY-SUBRC = 0.
+*
+*      MSGID = est_mensaje-MSGID.
+*      msgno = est_mensaje-MSGNR.
+*      MSGTY = est_mensaje-MSGTYP.
+*      MSGV1 = est_mensaje-MSGV1.
+*      MSGV2 = est_mensaje-MSGV2.
+*      MSGV3 = est_mensaje-MSGV3.
+*      MSGV4 = est_mensaje-MSGV4.
+*    ENDIF.
+*  ENDIF.
+* Obtenemos el texto con el mensaje de error
+    IF NOT msgty IS INITIAL.
+      MESSAGE ID msgid TYPE msgty NUMBER msgno WITH
+              msgv1 msgv2 msgv3 msgv4 INTO texto.
+    ELSE.
+      msgty = &apos;E&apos;.
+      texto = &apos;¡Se ha producido un error inesperado!&apos;(spe).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_ATRIBUTOS_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve atributos del campo" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_ATRIBUTOS_CAMPO" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCDATA-FNAM"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_ATRIBUTOS_CAMPO" SCONAME="DD03L" VERSION="1" LANGU="S" DESCRIPT="Campos de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DD03L"/>
+  <source>METHOD get_atributos_campo.
+    DATA: l_tabla TYPE string,
+          l_campo TYPE string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_aux   TYPE string.
+
+    CLEAR dd03l.
+    IF campo NS &apos;-&apos;.
+      RETURN.
+    ENDIF.
+
+    SPLIT campo AT &apos;-&apos; INTO l_tabla l_campo.
+    IF l_campo CS &apos;(&apos;.
+      SPLIT l_campo AT &apos;(&apos; INTO l_campo l_aux.
+    ENDIF.
+    SELECT * FROM dd03l
+      INTO dd03l
+      UP TO 1 ROWS
+     WHERE tabname   = l_tabla
+       AND fieldname = l_campo
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_DESCRIPCION_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve descripcion del campo" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_DESCRIPCION_CAMPO" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCDATA-FNAM"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="GET_DESCRIPCION_CAMPO" SCONAME="DDTEXT" VERSION="1" LANGU="S" DESCRIPT="Campos de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DD04T-DDTEXT"/>
+  <source>METHOD get_descripcion_campo.
+    DATA l_dd03l TYPE dd03l.
+
+    l_dd03l = get_atributos_campo( campo ).
+    IF NOT l_dd03l IS INITIAL.
+      SELECT ddtext FROM dd04t
+        INTO ddtext
+        UP TO 1 ROWS
+       WHERE ddlanguage = sy-langu
+         AND rollname   = l_dd03l-rollname
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="INICIO" VERSION="1" LANGU="S" DESCRIPT="Inicia juego de datos" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD inicio.
+    CLEAR: i_bdcdata, bdcdata.
+    REFRESH i_bdcdata.
+
+    CLEAR: v_bdc_iniciado, v_bdc_numlineas_bdcdata, est_mensaje,
+           i_mensajes, subrc, msgid, msgno, msgty, msgv1, msgv2,
+           msgv3, msgv4, texto, lights.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" VERSION="1" LANGU="S" DESCRIPT="Ejecuta transaccion" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Código transacción actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="CAPTURAR_MSG" VERSION="1" LANGU="S" DESCRIPT="Capturar mensajes" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="DEFSIZE" VERSION="1" LANGU="S" DESCRIPT="Tamaño estándar de dynpro para CALL TRANSACTION USING..." CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CTU_DEFSZE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="NOBINPT" VERSION="1" LANGU="S" DESCRIPT="SY-BINPT=SPACE en CALL TRANSACTION USING..." CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CTU_NOBIM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="RACOMMIT" VERSION="1" LANGU="S" DESCRIPT="Casilla de selección" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CTU_RAFC" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="UPDMODE" VERSION="1" LANGU="S" DESCRIPT="Casilla de selección" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CTU_UPDATE" PARVALUE="&apos;S&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD llamar_transaccion.
+    &quot; TODO: parameter UPDMODE is never used (ABAP cleaner)
+
+    DATA l_opt TYPE ctu_params.
+
+    CLEAR i_mensajes.
+    CLEAR: subrc, msgid, msgno, msgty, msgv1, msgv2, msgv3, msgv4,
+           mensaje.
+
+    l_opt-defsize  = defsize.
+    l_opt-nobinpt  = nobinpt.
+    l_opt-racommit = racommit.
+
+    IF l_opt IS INITIAL.
+      CALL TRANSACTION tcode                             &quot;#EC CI_CALLTA
+           USING i_bdcdata
+           MODE  modo
+           UPDATE &apos;S&apos;
+           MESSAGES INTO i_mensajes. &quot;#EC *
+
+    ELSE.
+      l_opt-dismode = modo.
+      l_opt-updmode = &apos;S&apos;.
+      CALL TRANSACTION tcode                             &quot;#EC CI_CALLTA
+           USING i_bdcdata
+           OPTIONS FROM l_opt
+           MESSAGES INTO i_mensajes. &quot;#EC *
+    ENDIF.
+
+    IF capturar_msg = &apos;X&apos;.
+      IF sy-msgid = &apos;00&apos; AND sy-msgno = &apos;344&apos; AND sy-msgty = &apos;S&apos;.
+        sy-msgty = &apos;E&apos;.
+      ENDIF.
+
+      msgid = sy-msgid.
+      msgno = sy-msgno.
+      msgty = sy-msgty.
+      msgv1 = sy-msgv1.
+      msgv2 = sy-msgv2.
+      msgv3 = sy-msgv3.
+      msgv4 = sy-msgv4.
+
+      formatear_mensaje( ).
+
+      mensaje = texto.
+
+      IF msgty = &apos;S&apos;.
+        IF sy-msgno = &apos;347&apos; AND sy-msgid = &apos;00&apos;.
+          msgty = &apos;E&apos;.
+          lights = &apos;1&apos;.
+        ELSE.
+          lights = &apos;3&apos;.
+        ENDIF.
+      ELSE.
+        lights = &apos;1&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION2" VERSION="1" LANGU="S" DESCRIPT="Ejecuta transaccion y devuelve la tabla de mensajes" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION2" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Código transacción actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION2" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_BATCH_INPUT" CMPNAME="LLAMAR_TRANSACCION2" SCONAME="T_MENSAJES" VERSION="1" LANGU="S" DESCRIPT="Tabla de mensajes en transacciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TAB_BDCMSGCOLL"/>
+  <source>METHOD llamar_transaccion2.
+
+    CLEAR i_mensajes.
+    CLEAR: subrc, msgid, msgno, msgty, msgv1, msgv2, msgv3, msgv4, t_mensajes.
+
+    CALL TRANSACTION tcode                               &quot;#EC CI_CALLTA
+         USING i_bdcdata
+         MODE  modo
+         UPDATE &apos;S&apos;
+         MESSAGES INTO i_mensajes.
+    t_mensajes = i_mensajes.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

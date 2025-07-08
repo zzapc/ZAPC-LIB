@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_REL_PD" VERSION="1" LANGU="S" DESCRIPT="Relaciones PD" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+types: begin of t_objid,
+         sign(1),
+         option(2),
+         low   type hrp1001-objid,
+         high  type hrp1001-objid,
+      end of T_objid.
+
+types: r_objid type table of t_objid.
+
+
+types: begin of t_sobid,
+         sign(1),
+         option(2),
+         low   type hrp1001-sobid,
+         high  type hrp1001-sobid,
+      end of T_sobid.
+
+types: r_sobid type table of t_sobid.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="ESG" ENTRY="Error en RH_STRUC_GET" LENGTH="42 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_REL_PD" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_REL_PD" CMPNAME="C_PLVAR" VERSION="1" LANGU="S" DESCRIPT="Variante de plan" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="2" ATTVALUE="&apos;01&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="HRP1000-PLVAR" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REL_PD" CMPNAME="C_UNIDAD_ORG" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="2" ATTVALUE="&apos;O&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="OTYPE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REL_PD" CMPNAME="REL" VERSION="1" LANGU="S" DESCRIPT="Relaciones PD" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEST_REL_PD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REL_PD" CMPNAME="R_RANGO" VERSION="1" LANGU="S" DESCRIPT="Tabla ranges del tipo HROBJID" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="LSO_RANGE_OBJID_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REL_PD" CMPNAME="T_REL" VERSION="1" LANGU="S" DESCRIPT="Relaciones" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTAB_REL_PD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_OBJID" VERSION="1" LANGU="S" DESCRIPT="Busca objetos por debajo" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_OBJID" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="Unidad organizativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OBJID"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_OBJID" SCONAME="OTYPE" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_OBJID" SCONAME="RELAT" VERSION="1" LANGU="S" DESCRIPT="Vinculación entre objetos" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RELAT"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_OBJID" SCONAME="I_ORG" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para HRP1001" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PIQ_HRP1001_TAB"/>
+  <source>method BUSCAR_OBJID.
+  DATA: i_rel TYPE ztab_rel_pd,
+        l_rel TYPE zest_rel_pd,
+        l_org TYPE hrp1001,
+        i_org2 TYPE TABLE OF hrp1001,
+        l_org2 TYPE hrp1001,
+        l_objid TYPE hrp1001-objid.
+
+  CLEAR i_org.
+  CALL METHOD get_rel_pd
+    EXPORTING
+      tipo_origen  = otype
+      objid        = objid
+      tipo_destino = otype
+      rsign        = &apos;B&apos;
+      relat        = relat
+      istat        = &apos;N&apos;
+    RECEIVING
+      t_rel        = i_rel.
+
+  LOOP AT i_rel INTO l_rel.
+    CLEAR l_org.
+    MOVE-CORRESPONDING l_rel TO l_org.
+    APPEND l_org TO i_org.
+    l_objid = l_rel-sobid.
+    i_org2 = buscar_objid( objid = l_objid
+                           otype = otype
+                           relat = relat ).
+    LOOP AT i_org2 INTO l_org2.
+      l_org-objid = objid.
+      l_org-sobid = l_org2-sobid.
+      APPEND l_org TO i_org.
+    ENDLOOP.
+  ENDLOOP.
+
+  SORT i_org.
+  DELETE ADJACENT DUPLICATES FROM i_org.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_ORG" VERSION="1" LANGU="S" DESCRIPT="Busca Unidades Organizativas por debajo" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_ORG" SCONAME="ORGEH" VERSION="1" LANGU="S" DESCRIPT="Unidad organizativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ORGEH"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="BUSCAR_ORG" SCONAME="I_ORG" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para HRP1001" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PIQ_HRP1001_TAB"/>
+  <source>method BUSCAR_ORG.
+  DATA: i_rel TYPE ztab_rel_pd,
+        l_rel TYPE zest_rel_pd,
+        l_org TYPE hrp1001,
+        i_org2 TYPE TABLE OF hrp1001,
+        l_org2 TYPE hrp1001,
+        l_orgeh TYPE orgeh.
+
+  CLEAR i_org.
+  CALL METHOD zcl_ap_rel_pd=&gt;get_rel_pd
+    EXPORTING
+      tipo_origen  = c_unidad_org
+      objid        = orgeh
+      tipo_destino = c_unidad_org
+      rsign        = &apos;B&apos;
+      relat        = &apos;002&apos;
+      istat        = &apos;N&apos;
+    RECEIVING
+      t_rel        = i_rel.
+
+  LOOP AT i_rel INTO l_rel.
+    CLEAR l_org.
+    MOVE-CORRESPONDING l_rel TO l_org.
+    APPEND l_org TO i_org.
+    l_orgeh = l_rel-sobid.
+    i_org2 = buscar_org( l_orgeh ).
+    LOOP AT i_org2 INTO l_org2.
+      l_org-objid = orgeh.
+      l_org-sobid = l_org2-sobid.
+      APPEND l_org TO i_org.
+    ENDLOOP.
+  ENDLOOP.
+
+  SORT i_org.
+  DELETE ADJACENT DUPLICATES FROM i_org.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" VERSION="1" LANGU="S" DESCRIPT="Devuelve arbol unidades organizativas" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" SCONAME="ORGEH" VERSION="1" LANGU="S" DESCRIPT="Unidad organizativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ORGEH"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" SCONAME="CODIGOS" VERSION="1" LANGU="S" DESCRIPT="Tabla con objetos org." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TSWHACTOR"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" SCONAME="OBJETOS" VERSION="1" LANGU="S" DESCRIPT="HR: Tabla de objetos seleccionados" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PIQ_OBJEC_T"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_ARBOL_ORGEH" SCONAME="RELACIONES" VERSION="1" LANGU="S" DESCRIPT="Gestión organización: Tabla de STRUC, entradas" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRUC_T"/>
+  <source>METHOD get_arbol_orgeh.
+
+  CLEAR: codigos, objetos, relaciones.
+
+  CALL FUNCTION &apos;RH_STRUC_GET&apos;
+    EXPORTING
+      act_otype      = &apos;O&apos;
+      act_objid      = orgeh
+      act_wegid      = &apos;ORGEH&apos;
+*     ACT_INT_FLAG   = ACT_INT_FLAG
+*     ACT_PLVAR      = &apos; &apos;
+      act_begda      = fecha
+      act_endda      = fecha
+*     ACT_TDEPTH     = 0
+*     ACT_TFLAG      = &apos;X&apos;
+*     ACT_VFLAG      = &apos;X&apos;
+*     AUTHORITY_CHECK        = &apos;X&apos;
+*     TEXT_BUFFER_FILL       = TEXT_BUFFER_FILL
+*     BUFFER_MODE    = BUFFER_MODE
+* IMPORTING
+*     ACT_PLVAR      = ACT_PLVAR
+    TABLES
+      result_tab     = codigos
+      result_objec   = objetos
+      result_struc   = relaciones
+    EXCEPTIONS
+      no_plvar_found = 1
+      no_entry_found = 2.
+  IF sy-subrc NE 0.
+    MESSAGE &apos;Error en RH_STRUC_GET&apos;(esg) TYPE &apos;E&apos;.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_ORGEH" VERSION="1" LANGU="S" DESCRIPT="Devuelve empleados pertenecientes a la unidad organizativa" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_ORGEH" SCONAME="ORGEH" VERSION="1" LANGU="S" DESCRIPT="Unidad organizativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ORGEH"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_ORGEH" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_ORGEH" SCONAME="RECURSIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_ORGEH" SCONAME="EMPLEADOS" VERSION="1" LANGU="S" DESCRIPT="Asignación organizativa empleado - Tabla interna" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PA0001_ITAB"/>
+  <source>METHOD get_empleados_orgeh.
+  DATA: codigos TYPE tswhactor,
+        codigo  TYPE swhactor.
+
+  CLEAR empleados.
+
+
+  IF NOT recursivo IS INITIAL.
+    get_arbol_orgeh( EXPORTING orgeh   = orgeh
+                               fecha   = fecha
+                     IMPORTING codigos = codigos ).
+  ENDIF.
+
+  codigo-otype = &apos;O&apos;.
+  codigo-objid = orgeh.
+  APPEND codigo TO codigos.
+
+  LOOP AT codigos INTO codigo.
+    SELECT * FROM pa0001
+      APPENDING CORRESPONDING FIELDS OF TABLE empleados
+     WHERE begda &lt;= fecha
+       AND endda &gt;= fecha
+       AND orgeh = codigo-objid.
+  ENDLOOP.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_POSICION" VERSION="1" LANGU="S" DESCRIPT="Devuelve empleados pertenecientes a la posición" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_POSICION" SCONAME="PLANS" VERSION="1" LANGU="S" DESCRIPT="Unidad organizativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PLANS"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_POSICION" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_EMPLEADOS_POSICION" SCONAME="EMPLEADOS" VERSION="1" LANGU="S" DESCRIPT="Asignación organizativa empleado - Tabla interna" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PA0001_ITAB"/>
+  <source>METHOD get_empleados_posicion.
+
+  CLEAR empleados.
+
+  SELECT * FROM pa0001                                  &quot;#EC CI_NOFIRST
+    APPENDING CORRESPONDING FIELDS OF TABLE empleados
+   WHERE begda &lt;= fecha
+     AND endda &gt;= fecha
+     AND plans = plans.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" VERSION="1" LANGU="S" DESCRIPT="Devuelve objeto relacionado" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="TIPO_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto ORIGEN" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="R_OBJID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos origen" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OBJID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="TIPO_DESTINO" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto DESTINO" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="R_SOBID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="RSIGN" VERSION="1" LANGU="S" DESCRIPT="Particularidad del enlace" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RSIGN" PARVALUE="&apos;A&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="RELAT" VERSION="1" LANGU="S" DESCRIPT="Vinculación entre objetos" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RELAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="ISTAT" VERSION="1" LANGU="S" DESCRIPT="Status de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ISTAT" PARVALUE="&apos;1&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-BEGDA" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fecha final" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ENDDA" PARVALUE="&apos;99991231&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_OBJ_REL" SCONAME="SOBID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HRP1001-SOBID"/>
+  <source>METHOD get_obj_rel.
+  DATA: i_rel TYPE ztab_rel_pd,
+        l_rel TYPE zest_rel_pd.
+
+  CLEAR sobid.
+  CALL METHOD get_rel_pd
+    EXPORTING
+      tipo_origen  = tipo_origen
+      r_objid      = r_objid
+      objid        = objid
+      tipo_destino = tipo_destino
+      r_sobid      = r_sobid
+      rsign        = rsign
+      relat        = relat
+      istat        = istat
+      begda        = begda
+      endda        = endda
+    RECEIVING
+      t_rel        = i_rel.
+
+  READ TABLE i_rel INTO l_rel INDEX 1.                  &quot;#EC CI_NOORDER
+  IF sy-subrc = 0.
+    sobid = l_rel-sobid.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve rango" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO" SCONAME="R_OBJID" VERSION="1" LANGU="S" DESCRIPT="Tabla ranges del tipo HROBJID" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LSO_RANGE_OBJID_TAB"/>
+  <source>method GET_RANGO.
+  DATA l_rango TYPE lso_range_objid.
+
+  CLEAR r_objid.
+
+  LOOP AT t_rel INTO rel.
+    CLEAR l_rango.
+    l_rango-option = &apos;EQ&apos;.
+    l_rango-sign   = &apos;I&apos;.
+    l_rango-low    = rel-sobid.
+    COLLECT l_rango INTO r_objid.
+  ENDLOOP.
+
+  r_rango = r_objid.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" VERSION="1" LANGU="S" DESCRIPT="Devuelve rango arbol de objetos" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" SCONAME="S_OBJID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LSO_RANGE_OBJID_TAB"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" SCONAME="OTYPE" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" SCONAME="RELAT" VERSION="1" LANGU="S" DESCRIPT="Vinculación entre objetos" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RELAT"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" SCONAME="PLVAR" VERSION="1" LANGU="S" DESCRIPT="Variante de plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PLVAR" PARVALUE="C_PLVAR"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_OBJID" SCONAME="R_OBJID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LSO_RANGE_OBJID_TAB"/>
+  <source>METHOD get_rango_objid.
+  DATA: i_hrp1000 TYPE TABLE OF hrp1000,
+        hrp1000   TYPE hrp1000,
+        i_org     TYPE TABLE OF hrp1001,
+        l_org     TYPE hrp1001,
+        l_objid   TYPE lso_range_objid.
+
+  r_objid = s_objid.
+
+  IF NOT s_objid IS INITIAL.
+    SELECT objid FROM hrp1000
+     INTO CORRESPONDING FIELDS OF TABLE i_hrp1000
+    WHERE plvar = plvar
+      AND otype = otype
+      AND objid IN s_objid.
+    LOOP AT i_hrp1000 INTO hrp1000.
+      i_org = buscar_objid( objid = hrp1000-objid
+                            otype = otype
+                            relat = relat ).
+      LOOP AT i_org INTO l_org.
+        CLEAR l_objid.
+        l_objid-option = &apos;EQ&apos;.
+        l_objid-sign   = &apos;I&apos;.
+        l_objid-low    = l_org-sobid.
+        COLLECT l_objid INTO r_objid.
+      ENDLOOP.
+    ENDLOOP.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_ORGEH" VERSION="1" LANGU="S" DESCRIPT="Devuelve rango arbol de unidades organizativas" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_ORGEH" SCONAME="S_ORGEH" VERSION="1" LANGU="S" DESCRIPT="EHS-INT: Tipo tabla ranges p.unidad organizativa (ORGEH)" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CCHRY_ORGEH_RANGE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_ORGEH" SCONAME="PLVAR" VERSION="1" LANGU="S" DESCRIPT="Variante de plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PLVAR" PARVALUE="C_PLVAR"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_RANGO_ORGEH" SCONAME="R_ORGEH" VERSION="1" LANGU="S" DESCRIPT="EHS-INT: Tipo tabla ranges p.unidad organizativa (ORGEH)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CCHRY_ORGEH_RANGE"/>
+  <source>METHOD get_rango_orgeh.
+  DATA: i_hrp1000 TYPE TABLE OF hrp1000,
+        hrp1000   TYPE hrp1000,
+        i_org     TYPE TABLE OF hrp1001,
+        l_org     TYPE hrp1001,
+        l_orgeh   TYPE cchrs_orgeh_range.
+
+  r_orgeh = s_orgeh.
+
+  IF NOT s_orgeh IS INITIAL.
+    SELECT objid FROM hrp1000
+     INTO CORRESPONDING FIELDS OF TABLE i_hrp1000
+    WHERE plvar = plvar
+      AND otype = &apos;O&apos;
+      AND objid IN s_orgeh.
+    LOOP AT i_hrp1000 INTO hrp1000.
+      i_org = buscar_org( hrp1000-objid ).
+      LOOP AT i_org INTO l_org.
+        CLEAR l_orgeh.
+        l_orgeh-option = &apos;EQ&apos;.
+        l_orgeh-sign   = &apos;I&apos;.
+        l_orgeh-low    = l_org-sobid.
+        COLLECT l_orgeh INTO r_orgeh.
+      ENDLOOP.
+    ENDLOOP.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con relaciones entre objetos" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="TIPO_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto ORIGEN" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="R_OBJID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos origen" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OBJID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="TIPO_DESTINO" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto DESTINO" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="R_SOBID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="RSIGN" VERSION="1" LANGU="S" DESCRIPT="Particularidad del enlace" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RSIGN" PARVALUE="&apos;A&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="RELAT" VERSION="1" LANGU="S" DESCRIPT="Vinculación entre objetos" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RELAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="ISTAT" VERSION="1" LANGU="S" DESCRIPT="Status de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ISTAT" PARVALUE="&apos;1&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-BEGDA" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fecha final" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ENDDA" PARVALUE="&apos;99991231&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="GET_REL_PD" SCONAME="T_REL" VERSION="1" LANGU="S" DESCRIPT="Relaciones objetos PD" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_REL_PD"/>
+  <source>method GET_REL_PD.
+  data: r_rsign type range of hrp1001-rsign,
+        l_rsign like line of r_rsign,
+        r_relat type range of hrp1001-relat,
+        l_relat like line of r_relat,
+        rr_objid type range of hrp1001-objid,
+        l_objid like line of rr_objid,
+        r_istat type range of hrp1001-istat,
+        l_istat like line of r_istat.
+
+  if not rsign is initial.
+    l_rsign-option = &apos;EQ&apos;.
+    l_rsign-sign = &apos;I&apos;.
+    l_rsign-low = rsign.
+    append l_rsign to r_rsign.
+  endif.
+
+  if not relat is initial.
+    l_relat-option = &apos;EQ&apos;.
+    l_relat-sign = &apos;I&apos;.
+    l_relat-low = relat.
+    append l_relat to r_relat.
+  endif.
+
+  rr_objid = r_objid.
+  if not objid is initial.
+    l_objid-option = &apos;EQ&apos;.
+    l_objid-sign = &apos;I&apos;.
+    l_objid-low = objid.
+    append l_objid to rr_objid.
+  endif.
+
+  if istat ne &apos;N&apos; and istat ne &apos;&apos;.
+    l_istat-option = &apos;EQ&apos;.
+    l_istat-sign = &apos;I&apos;.
+    l_istat-low = istat.
+    append l_istat to r_istat.
+  endif.
+
+
+  select * from hrp1001
+    into CORRESPONDING FIELDS OF TABLE t_rel
+   where otype = tipo_origen
+     and objid in rr_objid
+     and plvar = c_plvar
+     and rsign in r_rsign
+     and relat in r_relat
+     and istat in r_istat
+     and begda &lt;= endda
+     and endda &gt;= begda
+     and sclas = tipo_destino
+     and sobid in r_sobid.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="MATCHCODE" VERSION="1" LANGU="S" DESCRIPT="Matchcode" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="MATCHCODE" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HRP1000-OBJID"/>
+  <source>method MATCHCODE.
+  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z,
+        l_stext TYPE hrp1000-stext.
+
+
+  CREATE OBJECT o_popup
+    EXPORTING
+      tabname = &apos;HRP1000&apos;.
+
+  o_popup-&gt;add_field( field = &apos;OBJID&apos; selectflag = &apos;X&apos; ).
+  o_popup-&gt;add_field( field = &apos;STEXT&apos; ).
+
+  LOOP AT t_rel INTO rel.
+    o_popup-&gt;add_valor( rel-sobid ).
+    l_stext = zcl_ap_objeto_pd=&gt;get_descripcion( otype = rel-sclas objid = rel-sobid ).
+    o_popup-&gt;add_valor( l_stext ).
+  ENDLOOP.
+
+  o_popup-&gt;matchcode( EXPORTING field   = &apos;OBJID&apos;
+                      CHANGING  valor   = objid ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con relaciones entre objetos" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="TIPO_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto ORIGEN" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OBJID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="R_OBJID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos origen" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="TIPO_DESTINO" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto DESTINO" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="R_SOBID" VERSION="1" LANGU="S" DESCRIPT="Rango objetos destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="RSIGN" VERSION="1" LANGU="S" DESCRIPT="Particularidad del enlace" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RSIGN" PARVALUE="&apos;A&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="RELAT" VERSION="1" LANGU="S" DESCRIPT="Vinculación entre objetos" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-RELAT"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="ISTAT" VERSION="1" LANGU="S" DESCRIPT="Status de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ISTAT" PARVALUE="&apos;1&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-BEGDA" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REL_PD" CMPNAME="SELECT_REL_PD" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fecha final" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1001-ENDDA" PARVALUE="&apos;99991231&apos;"/>
+  <source>METHOD select_rel_pd.
+
+  t_rel = get_rel_pd( tipo_origen  = tipo_origen
+                                  r_objid      = r_objid
+                                  objid        = objid
+                                  tipo_destino = tipo_destino
+                                  r_sobid      = r_sobid
+                                  rsign        = rsign
+                                  relat        = relat
+                                  istat        = istat
+                                  begda        = begda
+                                  endda        = endda
+                                ).
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

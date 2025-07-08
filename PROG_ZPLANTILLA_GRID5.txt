@@ -1,0 +1,237 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 15/06/2015
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+*
+* MODIFICACIONES
+* 15/06/2015 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_grid5.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, vbrp, t001, sscrfields.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: t_listado TYPE t001,
+       tt_listado type table of t_listado.
+data: i_listado type tt_listado,
+      l_listado type t_listado.
+field-symbols <listado> type t_listado.
+
+DATA: i_listado_aux TYPE tt_listado,
+      i_listado_ini TYPE tt_listado.
+
+*------VARIABLES-------------------------------------------------------*
+DATA: v_inicio.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+             data_changed REDEFINITION,
+             toolbar      REDEFINITION,
+             user_command REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS:  buscar_datos REDEFINITION.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
+      o_event TYPE REF TO lcl_event_grid,
+      o_prog  TYPE REF TO zcl_report.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_vari LIKE disvariant-variant.                ".
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2.
+SELECTION-SCREEN: FUNCTION KEY 3.
+SELECTION-SCREEN: FUNCTION KEY 4.
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+  METHOD double_click.
+    READ TABLE i_listado INTO l_listado INDEX e_row-index.
+    IF sy-subrc = 0.
+      CASE e_column.
+        WHEN OTHERS.
+      ENDCASE.
+    ENDIF.
+
+  ENDMETHOD.                                               "double_click
+
+
+  METHOD toolbar.
+
+    super->toolbar( EXPORTING e_object = e_object e_interactive = e_interactive ).
+
+  ENDMETHOD.                                               "toolbar
+
+  METHOD user_command.
+
+    CASE e_ucomm .
+      WHEN 'X'.
+      WHEN OTHERS.
+        super->user_command( EXPORTING e_ucomm = e_ucomm ).
+    ENDCASE .
+
+  ENDMETHOD.                                               "USER_COMMAND
+
+  METHOD data_changed.
+  ENDMETHOD.                                               "data_changed
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+  METHOD buscar_datos.
+
+    sgpi_texto( 'Seleccionando datos' ).
+
+  ENDMETHOD.                                               "seleccionar_datos
+
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+*+*+*+*+ PLANTILLA *+*+*+*+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status = 'INICIO'.
+
+  o_prog->initialization( CHANGING sscrfields = sscrfields ).
+
+  CREATE OBJECT o_event
+    EXPORTING
+      boton_refrescar = 'X'
+      boton_excel     = 'X'
+      o_prog          = o_prog.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      estructura = 'T001'
+      o_event    = o_event.
+
+  p_vari = o_alv->get_default_layout( ).
+*+*+*+*+ PLANTILLA *+*+*+*+
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog->at_selection(  ).
+
+AT SELECTION-SCREEN OUTPUT.
+*  zcl_ap_dynpro=>screen_visible( group1 = 'PED' variable = p_pedid ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->buscar_datos( ).
+
+  CALL SCREEN 0100.
+
+************************************************************************
+*
+* FORMS ADICIONALES
+*
+************************************************************************
+
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog->set_status( status = 'ST_0100' excluir = '' ).
+  SET TITLEBAR '100' WITH o_prog->titulo.
+
+  IF v_inicio IS INITIAL.
+    v_inicio = 'X'.
+
+    o_alv->variant-variant = p_vari.
+    o_alv->set_layout( no_rowmove = 'X'
+                       no_rowins = 'X'
+*    lights = 'LIGHTS'
+                      ).
+    o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
+*    o_alv->set_field_noout( 'CHECK' ).
+
+    o_prog->sgpi_texto( 'Generando informe' ).
+    o_alv->show( CHANGING tabla = i_listado ).
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+  ENDIF.
+
+ENDMODULE.                 " STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  CASE sy-ucomm.
+    WHEN 'BACK'.
+      o_alv->comprobar_cambios( ).
+      i_listado_aux = i_listado.
+      SORT: i_listado_ini, i_listado_aux.
+      IF i_listado_ini NE i_listado_aux.
+        IF zcl_ap_popup=>confirmar_grabacion( ) = 'X'.
+          LEAVE TO SCREEN 0.
+        ENDIF.
+      ELSE.
+        LEAVE TO SCREEN 0.
+      ENDIF.
+*    WHEN 'UBICAR'.
+*      o_alv->comprobar_cambios( ).
+*      o_alv->set_marca_filas_sel( CHANGING t_tabla = i_listado ).
+*      LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+*        o_prog->ubicar( CHANGING listado = <listado> ).
+*      ENDLOOP.
+*      o_alv->refrescar_grid( ).
+*      o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+    WHEN 'GRABAR'.
+      o_alv->comprobar_cambios( ).
+      o_alv->refrescar_grid( ).
+  ENDCASE.
+
+ENDMODULE.                 " USER_COMMAND_0100  INPUT

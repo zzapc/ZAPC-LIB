@@ -1,0 +1,349 @@
+*/--------------------------------------------------------------------------------------\
+*|  """""""""""       """""      """"    """"  """""""""""  """"""""     """""   """""  |
+*|  "         "     "       "    "  "    "  "  "         "  "        "    "   " "   "   |
+*|  """""     "    "   """   "   "  "    "  "  "    """"""  "   " "   "    "   "   "    |
+*|     "     "    "   "   "   "  "  "    "  "  "    """     "   " "   "     "     "     |
+*|    "     "     "   "   "   "  "  "    "  "  "      "     "        "       "   "      |
+*|   "     "      "    """    "  "  "    "  "  "    """     "   ""    "      "   "      |
+*|  "     """""    "         "   "    ""    "  "    """"""  "   " "    "     "   "      |
+*|  "         "     "     "   "    "       "   "         "  "   "  "    "    "   "      |
+*|  """""""""""       """"" "        """""     """""""""""  """""   """"""   """""      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*|   Welcome to the ZQUERY Open SQL Editor.                                             |
+*|                                                                                      |
+*|   This is an open source project that aims the SAP ABAP developers                   |
+*|   create your own queries without a need to create a test program.                   |
+*|   It provides the possibility to execute many queries at the same                    |
+*|   time and also generate a SELECT command, FROM command and even a                   |
+*|   WHERE command.                                                                     |
+*|                                                                                      |
+*|   Feel free to use and share!                                                        |
+*|                                                                                      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*|                                                                                      |
+*| This project is shared via Saplink: http://www.saplink.org                           |
+*|                                                                                      |
+*| You can find tutorials here:                                                         |
+*| http://zquery.wordpress.com/how-to-tutorials/                                        |
+*|                                                                                      |
+*| Let me know your opinion, suggestion, doubt, anything by here:                       |
+*| http://zquery.wordpress.com/contact/                                                 |
+*|                                                                                      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*| Developed by: Vinícius Rodrigues de Alcântara                                        |
+*\--------------------------------------------------------------------------------------/
+
+REPORT zquery.
+
+"$. Region DATA
+TABLES: sscrfields.
+
+INTERFACE lif_screen    DEFERRED.
+CLASS lcl_query_element DEFINITION DEFERRED.
+CLASS lcl_query_agent   DEFINITION DEFERRED.
+CLASS lcl_field         DEFINITION DEFERRED.
+CLASS lcl_table         DEFINITION DEFERRED.
+CLASS lcl_screen        DEFINITION DEFERRED.
+CLASS lcl_screen_600    DEFINITION DEFERRED.
+CLASS lcl_join_fields   DEFINITION DEFERRED.
+
+TYPE-POOLS: gfw, vrm.
+
+TYPES: yt_query_elements TYPE TABLE OF REF TO lcl_query_element,
+       yt_t_fields       TYPE TABLE OF REF TO lcl_field,
+       yt_t_table        TYPE TABLE OF REF TO lcl_table,
+       yt_lines          TYPE TABLE OF tline,
+       yt_screen         TYPE TABLE OF REF TO lcl_screen,
+       yt_rsdstabs       TYPE TABLE OF rsdstabs,
+       yt_rsdsfields     TYPE TABLE OF rsdsfields,
+       yt_t_query_agent  TYPE TABLE OF REF TO lcl_query_agent,
+       yt_t_query        TYPE TABLE OF salv_wd_t_string,
+
+       BEGIN OF yt_analyzer,
+         analyzer_id   TYPE i,
+         start_runtime TYPE i,
+         end_runtime   TYPE i,
+       END OF yt_analyzer,
+       tyt_analyzer TYPE TABLE OF yt_analyzer,
+
+       BEGIN OF yt_analyzer_ids,
+         analyzer_id TYPE i,
+         description TYPE string,
+       END OF yt_analyzer_ids,
+
+       BEGIN OF yt_user_range,
+         sign   TYPE sign,
+         option TYPE option,
+         low    TYPE sy-uname,
+         high   TYPE sy-uname,
+       END OF yt_user_range,
+       tyt_user_range TYPE TABLE OF yt_user_range,
+
+       BEGIN OF yt_query,
+         check       TYPE c,
+         query       TYPE rsod_query,
+         user        TYPE xubname,
+         date        TYPE cdat,
+         t_cell_type TYPE salv_t_int4_column,
+       END OF yt_query,
+       tyt_query TYPE TABLE OF yt_query,
+
+       BEGIN OF ty_where_fields,
+         mark        TYPE c,
+         tabname     TYPE char30,
+         fieldname   TYPE char30,
+         description TYPE char40,
+         type        TYPE rsscr_type,
+         where_leng  TYPE rsdswhleng,
+         sign	       TYPE signflag,
+         decimals    TYPE rsdecimals,
+       END OF ty_where_fields,
+       tyt_where_fields TYPE TABLE OF ty_where_fields,
+
+       BEGIN OF ty_table_fields,
+         mark          TYPE boolean,
+         tabname       TYPE lvc_tname,
+         fieldname     TYPE lvc_fname,
+         descr         TYPE scrtext_l,
+         tab_alias     TYPE string,
+         field_alias   TYPE string,
+         sql_function  TYPE char128,
+         internal_type TYPE inttype,
+         style         TYPE lvc_t_styl,
+       END OF ty_table_fields,
+       tyt_table_fields TYPE TABLE OF ty_table_fields,
+
+       BEGIN OF ty_join_fields,
+         fortable             TYPE fortable,
+         forkey               TYPE forkey,
+         signal               TYPE char2,
+         checktable           TYPE checktable,
+         checkfield           TYPE fieldname,
+         dd_handle_forkey     TYPE int4,
+         dd_handle_checktable TYPE int4,
+         dd_handle_checkfield TYPE int4,
+         style                TYPE lvc_t_styl,
+       END OF ty_join_fields,
+       tyt_join_fields TYPE TABLE OF ty_join_fields,
+
+       BEGIN OF ty_join_table,
+         tabname     TYPE tabname,
+         alias       TYPE char10,
+         join_kind   TYPE char20,
+         icon        TYPE iconname,
+         join_fields TYPE REF TO lcl_join_fields,
+         style       TYPE lvc_t_styl,
+       END OF ty_join_table,
+       tyt_join_table TYPE TABLE OF ty_join_table,
+
+       BEGIN OF ty_handle,
+         tabname       TYPE string,
+         tab_handle    TYPE i,
+         fields_handle TYPE i,
+       END OF ty_handle.
+
+DATA: o_screen_100       TYPE REF TO lif_screen,
+      o_screen_200       TYPE REF TO lif_screen,
+      o_screen_300       TYPE REF TO lif_screen,
+      o_selection_screen TYPE REF TO lif_screen,
+      o_screen_500       TYPE REF TO lif_screen,
+      o_screen_600       TYPE REF TO lcl_screen_600,
+      o_screen_700       TYPE REF TO lif_screen,
+      v_select_type      TYPE char80,
+      v_tabname          TYPE dd02l-tabname,
+      v_tabalias         TYPE char30,
+      v_tabdescr         TYPE dd02t-ddtext,
+      v_create_where     TYPE xfeld,
+      v_create_select    TYPE xfeld,
+      l_screen           TYPE i.
+
+SELECTION-SCREEN: BEGIN OF SCREEN 0400.
+SELECT-OPTIONS s_user FOR sy-uname NO INTERVALS DEFAULT sy-uname.
+PARAMETERS p_qname TYPE thead-tdname.
+SELECTION-SCREEN: END OF SCREEN 0400.
+"$. Endregion DATA
+
+INCLUDE zquery_class_definition.
+INCLUDE zquery_class_implementation.
+
+AT SELECTION-SCREEN.
+  l_screen = sy-dynnr.
+  TRY.
+      o_selection_screen ?= lcl_screen=>get_instance( l_screen ).
+      o_selection_screen->user_command( sscrfields-ucomm ).
+    CATCH cx_root.                                       "#EC NO_HANDLE
+  ENDTRY.
+
+START-OF-SELECTION.
+  o_screen_100 ?= lcl_screen=>get_instance( 100 ).
+  o_screen_100->show( ).
+
+  "$. Region PBO Modules
+*&---------------------------------------------------------------------*
+*& Module zm_status_0100 OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0100 OUTPUT.
+  o_screen_100->screen_status( ).
+ENDMODULE. " zm_status_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*& Module zm_initialize_0100 OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0100 OUTPUT.
+  o_screen_100->initialize_screen( ).
+ENDMODULE. " zm_initialize_0100 OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  zm_status_0200  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0200 OUTPUT.
+  o_screen_200 ?= lcl_screen=>get_instance( 200 ).
+  o_screen_200->screen_status( ).
+ENDMODULE.                 " zm_status_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  zm_initialize_0200  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0200 OUTPUT.
+  o_screen_200->initialize_screen( ).
+ENDMODULE.                 " zm_initialize_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_STATUS_0300  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0300 OUTPUT.
+  o_screen_300 ?= lcl_screen=>get_instance( 300 ).
+  o_screen_300->screen_status( ).
+ENDMODULE.                 " ZM_STATUS_0300  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_INITIALIZE_0300  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0300 OUTPUT.
+  o_screen_300->initialize_screen( ).
+ENDMODULE.                 " ZM_INITIALIZE_0300  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_STATUS_0500  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0500 OUTPUT.
+  o_screen_500 ?= lcl_screen=>get_instance( 500 ).
+  o_screen_500->screen_status( ).
+ENDMODULE.                 " ZM_STATUS_0500  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_INITIALIZE_0500  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0500 OUTPUT.
+  o_screen_500->initialize_screen( ).
+ENDMODULE.                 " ZM_INITIALIZE_0500  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_STATUS_0600  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0600 OUTPUT.
+  o_screen_600 ?= lcl_screen=>get_instance( 600 ).
+  o_screen_600->screen_status( ).
+ENDMODULE.                 " ZM_STATUS_0600  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_INITIALIZE_0600  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0600 OUTPUT.
+  o_screen_600->initialize_screen( ).
+ENDMODULE.                 " ZM_INITIALIZE_0600  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_STATUS_0700  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_status_0700 OUTPUT.
+  o_screen_700 = lcl_screen=>get_instance( 700 ).
+  o_screen_700->screen_status( ).
+ENDMODULE.                 " ZM_STATUS_0700  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_INITIALIZE_0700  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE zm_initialize_0700 OUTPUT.
+  o_screen_700->initialize_screen( ).
+ENDMODULE.                 " ZM_INITIALIZE_0700  OUTPUT
+"$. Endregion PBO Modules
+
+"$. Region Modules PAI
+*&---------------------------------------------------------------------*
+*& Module zm_exit_command_0100 INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0100 INPUT.
+  o_screen_100->exit_command( sy-ucomm ).
+ENDMODULE. " zm_exit_command_0100 INPUT
+*&---------------------------------------------------------------------*
+*& Module zm_user_command_0100 INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0100 INPUT.
+  o_screen_100->user_command( sy-ucomm ).
+ENDMODULE. " zm_user_command_0100 INPUT
+*&---------------------------------------------------------------------*
+*&      Module  zm_exit_command_0200  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0200 INPUT.
+  o_screen_200->exit_command( sy-ucomm ).
+ENDMODULE.                 " zm_exit_command_0200  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  zm_user_command_0200  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0200 INPUT.
+  o_screen_200->user_command( sy-ucomm ).
+ENDMODULE.                 " zm_user_command_0200  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_USER_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0300 INPUT.
+  o_screen_300->user_command( sy-ucomm ).
+ENDMODULE.                 " ZM_USER_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_EXIT_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0300 INPUT.
+  o_screen_300->exit_command( sy-ucomm ).
+ENDMODULE.                 " ZM_EXIT_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_USER_COMMAND_0500  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0500 INPUT.
+  o_screen_500->user_command( sy-ucomm ).
+ENDMODULE.                 " ZM_USER_COMMAND_0500  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_EXIT_COMMAND_0500  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0500 INPUT.
+  o_screen_500->exit_command( sy-ucomm ).
+ENDMODULE.                 " ZM_EXIT_COMMAND_0500  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_USER_COMMAND_0600  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0600 INPUT.
+  o_screen_600->user_command( sy-ucomm ).
+ENDMODULE.                 " ZM_USER_COMMAND_0600  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_EXIT_COMMAND_0600  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0600 INPUT.
+  o_screen_600->exit_command( sy-ucomm ).
+ENDMODULE.                 " ZM_EXIT_COMMAND_0600  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_TABLENAME  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_tablename INPUT.
+  o_screen_600->user_command( lcl_screen_600=>c_tabname ).
+ENDMODULE.                 " ZM_TABLENAME  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_TABLEALIAS  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_tablealias INPUT.
+  o_screen_600->user_command( lcl_screen_600=>c_tabalias ).
+ENDMODULE.                 " ZM_TABLEALIAS  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_USER_COMMAND_0700  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_user_command_0700 INPUT.
+  o_screen_700->user_command( sy-ucomm ).
+ENDMODULE.                 " ZM_USER_COMMAND_0700  INPUT
+*&---------------------------------------------------------------------*
+*&      Module  ZM_EXIT_COMMAND_0700  INPUT
+*&---------------------------------------------------------------------*
+MODULE zm_exit_command_0700 INPUT.
+  o_screen_700->exit_command( sy-ucomm ).
+ENDMODULE.                 " ZM_EXIT_COMMAND_0700  INPUT
+"$. Endregion Modules PAI

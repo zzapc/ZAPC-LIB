@@ -1,0 +1,454 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 04/03/2019
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+**->MANUAL:,http://sap4.com
+**->PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_grid_dyn.
+
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: t001.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+
+
+*------VARIABLES-------------------------------------------------------*
+
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: visualizar_objeto REDEFINITION,
+      data_changed REDEFINITION,
+      data_changed_finished REDEFINITION,
+      toolbar      REDEFINITION,
+      user_command REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_base,
+             check  TYPE xfeld,
+             lights TYPE zico_estado_mensaje,
+             bukrs  TYPE t001-bukrs,
+           END OF t_base.
+    DATA: i_base TYPE TABLE OF t_base.
+
+    TYPES: BEGIN OF t_base_post,
+             message TYPE bapi_msg,
+             color   TYPE lvc_t_scol,
+           END OF t_base_post.
+    DATA: i_base_post TYPE TABLE OF t_base_post.
+
+    DATA: o_alv        TYPE REF TO zcl_ap_alv_grid,
+          o_event      TYPE REF TO lcl_event_grid,
+          i_campos_alv TYPE lvc_t_fcat,
+          v_col_pos    TYPE i.
+
+    METHODS:  buscar_datos REDEFINITION,
+      crear_tabla,
+      add_campo IMPORTING tabla TYPE tabname DEFAULT '' campo TYPE any campo_ref TYPE fieldname DEFAULT '',
+      validaciones IMPORTING mod TYPE abap_bool DEFAULT '' CHANGING listado TYPE any,
+      status_dynpro_0100,
+      command_dynpro_0100,
+      set_campo_list IMPORTING campo TYPE any
+                               valor TYPE any OPTIONAL
+                               clear TYPE any DEFAULT '',
+      get_campo_list IMPORTING campo TYPE any EXPORTING valor TYPE any RETURNING VALUE(val) TYPE string,
+      get_listado IMPORTING var TYPE apb_lpd_t_key_value.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+DATA: o_prog  TYPE REF TO zcl_report.                       "#EC NEEDED
+
+FIELD-SYMBOLS: <i_listado> TYPE table,
+               <listado>   TYPE any.
+DATA i_listado    TYPE REF TO data.
+
+FIELD-SYMBOLS <i_listado_ini> TYPE table.
+DATA i_listado_ini    TYPE REF TO data.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME.
+SELECT-OPTIONS: s_bukrs FOR t001-bukrs.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_vari LIKE disvariant-variant.                ".
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+
+  METHOD visualizar_objeto.
+
+    ASSIGN list TO <listado>.
+    DATA(l_valor_string) = o_prog->get_campo_list( column ).
+    CASE column.
+      WHEN 'BUKRS'.
+*        MESSAGE l_list-bukrs TYPE 'I'.
+      WHEN OTHERS. message = 'No implementado'.
+    ENDCASE.
+  ENDMETHOD. "handle_double_click
+
+  METHOD toolbar.
+
+    super->toolbar( e_object = e_object e_interactive = e_interactive ).
+
+  ENDMETHOD.                                               "toolbar
+
+  METHOD user_command.
+
+    CASE e_ucomm.
+      WHEN OTHERS.
+        super->user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+
+  ENDMETHOD.                                               "USER_COMMAND
+
+
+  METHOD data_changed.
+
+    ini_data_changed( cambios = er_data_changed->mt_good_cells  ).
+
+    LOOP AT i_cambios_celda INTO cambio_celda.
+      AT NEW row_id.
+        READ TABLE <i_listado> ASSIGNING FIELD-SYMBOL(<listado>) INDEX cambio_celda-row_id. "#EC CI_SUBRC
+      ENDAT.
+
+      set_valor_mod( CHANGING datos = <listado> ).
+
+      AT END OF row_id.
+        o_prog->validaciones( EXPORTING mod = 'X' CHANGING listado = <listado> ).
+      ENDAT.
+    ENDLOOP.
+  ENDMETHOD.                                               "data_changed
+
+  METHOD data_changed_finished.
+
+    IF NOT tabla_data_changed IS INITIAL.
+      o_alv->refrescar_grid( ).
+      CLEAR tabla_data_changed.
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+  METHOD add_campo.
+    DATA: l_campos_alv TYPE lvc_s_fcat.
+
+    IF tabla IS INITIAL.
+      ADD 1 TO v_col_pos.
+      l_campos_alv-col_pos = v_col_pos.
+      l_campos_alv-fieldname = campo.
+      APPEND l_campos_alv TO i_campos_alv.
+    ELSE.
+      DATA(l_campo_tab) = COND string( WHEN campo_ref IS INITIAL THEN campo
+                                       ELSE campo_ref ).
+
+      DATA(i_campos_tab)  = zcl_ap_dev=>get_fieldcatalog_tabla( tabla ).
+      READ TABLE i_campos_tab ASSIGNING FIELD-SYMBOL(<campo_tab>) WITH KEY fieldname = l_campo_tab.
+      IF sy-subrc = 0.
+        CLEAR l_campos_alv.
+        MOVE-CORRESPONDING <campo_tab> TO l_campos_alv.
+        l_campos_alv-fieldname = campo.
+        ADD 1 TO v_col_pos.
+        l_campos_alv-col_pos = v_col_pos.
+        l_campos_alv-ref_field = <campo_tab>-fieldname.
+        l_campos_alv-ref_table = <campo_tab>-tabname.
+        APPEND l_campos_alv TO i_campos_alv.
+      ELSE.
+        MESSAGE |Error accediendo a campo { l_campo_tab } de tabla { tabla }| TYPE 'E'.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD get_campo_list.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    ASSIGN COMPONENT campo OF STRUCTURE <listado> TO <fs>.
+    IF sy-subrc = 0.
+      val = <fs>.
+      IF valor IS SUPPLIED.
+        valor = <fs>.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD get_listado.
+    DATA: linea   TYPE REF TO data,
+          l_error.
+
+    l_error = 'X'.
+    LOOP AT <i_listado> ASSIGNING <listado>.
+      CLEAR l_error.
+      LOOP AT var ASSIGNING FIELD-SYMBOL(<var>).
+        IF get_campo_list( <var>-key ) NE <var>-value.
+          l_error = 'X'.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+      IF l_error IS INITIAL.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+    IF l_error = 'X'.
+      CREATE DATA linea LIKE LINE OF <i_listado>.
+      ASSIGN linea->* TO <listado>.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD crear_tabla.
+
+
+    i_campos_alv  = zcl_ap_dev=>get_fieldcatalog_tabla_alv( tabla = i_base fix_ref = 'X' ).
+
+    LOOP AT i_campos_alv ASSIGNING FIELD-SYMBOL(<campos>).
+      v_col_pos = <campos>-col_pos.
+    ENDLOOP.
+
+    add_campo( campo = 'MATNR' tabla = 'MARA'  ).
+    add_campo( campo = 'MATNR2' tabla = 'MARA' campo_ref = 'MATNR'  ).
+    add_campo( campo = 'COLOR' tabla = 'CALENDAR_TYPE' campo_ref = 'COLTAB'  ).
+
+    DATA(i_campos_alv_post)  = zcl_ap_dev=>get_fieldcatalog_tabla_alv( tabla = i_base_post fix_ref = 'X' ).
+    LOOP AT i_campos_alv_post INTO DATA(l_campos_alv).
+      ADD 1 TO v_col_pos.
+      l_campos_alv-col_pos = v_col_pos.
+
+      APPEND l_campos_alv TO i_campos_alv.
+    ENDLOOP.
+
+    CALL METHOD cl_alv_table_create=>create_dynamic_table
+      EXPORTING
+        it_fieldcatalog           = i_campos_alv
+      IMPORTING
+        ep_table                  = i_listado
+      EXCEPTIONS
+        generate_subpool_dir_full = 1.
+    IF sy-subrc = 0.
+      ASSIGN i_listado->* TO <i_listado>.
+    ENDIF.
+
+
+    CALL METHOD cl_alv_table_create=>create_dynamic_table
+      EXPORTING
+        it_fieldcatalog           = i_campos_alv
+      IMPORTING
+        ep_table                  = i_listado_ini
+      EXCEPTIONS
+        generate_subpool_dir_full = 1.
+    IF sy-subrc = 0.
+      ASSIGN i_listado_ini->* TO <i_listado_ini>.
+    ENDIF.
+
+
+
+  ENDMETHOD.
+
+  METHOD buscar_datos.
+
+    CLEAR <i_listado>.
+    sgpi_texto( 'Seleccionando datos'(sda) ).
+    CLEAR i_listado.
+    SELECT * FROM t001                                      "#EC WARNOK
+      INTO CORRESPONDING FIELDS OF TABLE <i_listado>
+     WHERE bukrs IN s_bukrs.
+
+    o_prog->o_sgpi->get_filas_tabla( <i_listado> ).
+    LOOP AT <i_listado> ASSIGNING <listado>.
+      sgpi_texto( texto1 = 'Procesando datos'(pda) cant_porc = 100 ).
+
+      get_descripciones( EXPORTING campos = 'MATNR' CHANGING list = <listado> ).
+      validaciones( CHANGING listado = <listado> ).
+    ENDLOOP.
+
+    <i_listado_ini> = <i_listado>.
+
+  ENDMETHOD.                                               "seleccionar_datos
+
+  METHOD status_dynpro_0100.
+
+*    status_dynpro( EXPORTING o_alv = o_alv variant = p_vari style = 'STYLE' color = 'COLOR' cprog = 'ZAP_STATUS' status = 'ST_DYN' CHANGING i_listado = i_listado ).
+
+    status_dynpro( EXPORTING cprog = 'ZAP_STATUS' status = 'ST_DYN' CHANGING i_listado = <i_listado> ).
+    IF inicio IS INITIAL.
+      inicio = 'X'.
+      o_alv->add_button( button = 'F01' text = 'Ejecutar'(eje)  icon = icon_execute_object ucomm = 'EJEC' ).
+      o_alv->variant-variant = p_vari.
+      o_alv->registrar_mod( ).
+      o_alv->set_layout( no_rowmove = 'X' no_rowins = 'X' style = 'STYLE' colort = 'COLOR' ).
+      o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
+      o_alv->set_campos_tabint( <i_listado> ).
+      o_alv->set_field_quitar( 'CHECK' ).
+      o_alv->set_field_hotspot( campo = 'BUKRS' auto = 'X' ).
+
+      sgpi_texto( 'Generando informe' ).
+      o_alv->show( CHANGING tabla = <i_listado> ).
+
+      o_alv->set_seleccion( CHANGING t_tabla = <i_listado> ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD command_dynpro_0100.
+    DATA: l_hay_sel,
+          l_comm_sel TYPE string VALUE 'EJEC'.
+
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
+                            CHANGING i_listado = <i_listado> i_listado_ini = <i_listado_ini> hay_sel = l_hay_sel ).
+
+    CASE ucomm.
+      WHEN 'EJEC'.
+        LOOP AT <i_listado> ASSIGNING <listado>.
+          IF get_campo_list( 'CHECK' ) = 'X'.
+
+          ENDIF.
+        ENDLOOP.
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD set_campo_list.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    SPLIT campo AT ',' INTO TABLE DATA(i_campos).
+    LOOP AT i_campos ASSIGNING FIELD-SYMBOL(<campo>).
+      ASSIGN COMPONENT <campo> OF STRUCTURE <listado> TO <fs>.
+      IF sy-subrc = 0.
+        IF clear = 'X'.
+          CLEAR <fs>.
+        ELSE.
+          <fs> = valor.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD validaciones.
+
+    set_campo_list( campo = 'MESSAGE,STYLE,COLOR,LIGHTS' clear = 'X' ).
+
+    set_status_list( EXPORTING criterio = 'V' CHANGING list = listado ).
+
+  ENDMETHOD.
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = 'INICIO'
+                  guardar_logz = 'X'
+                  status_prog  = 'ZAP_STATUS' ).
+
+  o_prog->initialization_i( CHANGING sscrfields = sscrfields ).
+
+  IF sy-batch IS INITIAL.
+    o_prog->o_event = NEW #( boton_refrescar = 'X'
+                             boton_excel     = 'Y'
+                             o_prog          = o_prog ).
+
+    o_prog->o_alv = NEW #( estructura = ''
+                           o_event    = o_prog->o_event ).
+
+    p_vari = o_prog->o_alv->get_default_layout( ).
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  IF NOT o_prog->o_alv IS INITIAL.
+    p_vari = o_prog->o_alv->get_f4_layout( ).
+  ENDIF.
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  CASE sy-ucomm.
+    WHEN 'ONLI'.
+      o_prog->validar_seleccion_obligatoria( campos_or = '*' msgty = 'W' ).
+    WHEN OTHERS.
+      o_prog->at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection( ).
+
+AT SELECTION-SCREEN OUTPUT.
+*  zcl_ap_dynpro=>screen_visible( group1 = 'PED' variable = p_pedid ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->crear_tabla( ).
+
+  o_prog->buscar_datos( ).
+
+  IF sy-batch IS INITIAL.
+    CALL SCREEN 0100.
+  ELSE.
+    MESSAGE 'Este programa no se puede ejecutar en fondo'(pnf) TYPE 'E'.
+  ENDIF.
+
+
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog->status_dynpro_0100( ).
+
+ENDMODULE.                 " STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  o_prog->command_dynpro_0100( ).
+
+
+ENDMODULE.                 " USER_COMMAND_0100  INPUT

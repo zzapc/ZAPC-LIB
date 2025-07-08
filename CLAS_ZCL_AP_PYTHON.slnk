@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_PYTHON" VERSION="1" LANGU="S" DESCRIPT="Python" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" WITH_UNIT_TESTS="X" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <localTestClasses>*&quot;* use this source file for your ABAP unit test classes</localTestClasses>
+ <typeUsage CLSNAME="ZCL_AP_PYTHON" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="BORRAR" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos;" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="DIRECTORIO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="FICHERO_BAT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="FICHERO_LOG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="FICHERO_PY" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="INFO" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos;" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="MESSAGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PYTHON" CMPNAME="PYTHON_PATH" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_PYTHON" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="CONSTRUCTOR" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;c:\python\&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="CONSTRUCTOR" SCONAME="INFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="CONSTRUCTOR" SCONAME="BORRAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD constructor.
+
+    me-&gt;directorio = directorio.
+    me-&gt;info = info.
+    me-&gt;borrar = &apos;borrar&apos;.
+
+    CALL METHOD cl_gui_frontend_services=&gt;registry_get_value
+      EXPORTING
+        root                = cl_gui_frontend_services=&gt;hkey_local_machine
+        key                 = &apos;SOFTWARE\WOW6432Node\Python\PyLauncher&apos;
+        value               = &apos;&apos;
+      IMPORTING
+        reg_value           = me-&gt;python_path
+      EXCEPTIONS
+        get_regvalue_failed = 1
+        cntl_error          = 2
+        error_no_gui        = 3
+        OTHERS              = 4.
+
+    IF me-&gt;python_path IS INITIAL.
+      get_file_text( EXPORTING fichero = |{ me-&gt;directorio }python_path.txt|
+                     IMPORTING string  = me-&gt;python_path
+                               message = message ).
+      IF me-&gt;python_path IS INITIAL.
+        DATA l_file TYPE string.
+        l_file = |where python &gt; { me-&gt;directorio }python_path.txt|.
+        IF me-&gt;info = &apos;X&apos;.
+          CONCATENATE l_file &apos;pause&apos; INTO l_file SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
+        ENDIF.
+        zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING string        = |where python &gt; { me-&gt;directorio }python_path.txt|
+                                                   fichero       = |{ directorio }where_python.bat|
+                                                   mostrar_error = &apos;&apos;
+                                         IMPORTING mensaje       = DATA(l_msg) ).
+        message = l_msg.
+        IF message IS INITIAL.
+          ejecutar_frontend( EXPORTING app     = |{ directorio }where_python.bat|
+                             IMPORTING message = message ).
+          IF message IS INITIAL.
+            get_file_text( EXPORTING fichero = |{ me-&gt;directorio }python_path.txt|
+                           IMPORTING string  = me-&gt;python_path
+                                     message = message ).
+            IF me-&gt;python_path IS INITIAL AND message IS INITIAL.
+              message = &apos;No se ha podido encontrar ruta a python. Instalelo desde la tienda de Windows o desde https://www.python.org/downloads/windows/&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_FRONTEND" VERSION="1" LANGU="S" DESCRIPT="Ejecutar script" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_FRONTEND" SCONAME="APP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_FRONTEND" SCONAME="PAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_FRONTEND" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD ejecutar_frontend.
+
+    CALL METHOD cl_gui_frontend_services=&gt;execute
+      EXPORTING
+*       document               =
+        application            = app
+        parameter              = par
+        default_directory      = me-&gt;directorio
+        maximized              = &apos;X&apos;
+*       minimized              =
+        synchronous            = &apos;X&apos;
+*       operation              = &apos;OPEN&apos;
+      EXCEPTIONS
+        cntl_error             = 1
+        error_no_gui           = 2
+        bad_parameter          = 3
+        file_not_found         = 4
+        path_not_found         = 5
+        file_extension_unknown = 6
+        error_execute_failed   = 7
+        synchronous_failed     = 8
+        not_supported_by_gui   = 9
+        OTHERS                 = 10.
+    IF sy-subrc &lt;&gt; 0.
+      CASE sy-subrc.
+        WHEN &apos;4&apos;.
+          message = |Aplicación { app } no existe|.
+        WHEN OTHERS.
+          message = |Error { sy-subrc }|.
+      ENDCASE.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_SCRIPT" VERSION="1" LANGU="S" DESCRIPT="Ejecutar script" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_SCRIPT" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_SCRIPT" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_SCRIPT" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="EJECUTAR_SCRIPT" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD ejecutar_script.
+    DATA: l_par           TYPE string,
+          l_contenido_bat TYPE string.
+
+    CLEAR: message, salida.
+    fichero_py = fichero.
+    fichero_log = fichero_bat = to_lower( fichero ).
+    REPLACE &apos;.py&apos; IN fichero_log WITH &apos;_log.txt&apos;.
+    REPLACE &apos;.py&apos; IN fichero_bat WITH &apos;.bat&apos;.
+
+    zcl_ap_ficheros=&gt;borrar_fichero( fichero_log ).
+    zcl_ap_ficheros=&gt;borrar_fichero( fichero_bat ).
+
+    l_contenido_bat = |{ me-&gt;python_path } { fichero_py } { parametros } &gt; { fichero_log }|.
+    IF me-&gt;info = &apos;X&apos;.
+      CONCATENATE l_contenido_bat &apos;pause&apos; INTO l_contenido_bat SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
+    ENDIF.
+    zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING string        = l_contenido_bat
+                                               fichero       = fichero_bat
+                                               mostrar_error = &apos;&apos;
+                                     IMPORTING mensaje       = DATA(l_msg) ).
+    message = l_msg.
+    IF message IS INITIAL.
+      ejecutar_frontend( EXPORTING app     = fichero_bat
+                         IMPORTING message = message ).
+
+      IF message IS INITIAL.
+        get_file_text( EXPORTING fichero = fichero_log
+                       IMPORTING string  = salida
+                                 message = message ).
+
+        IF salida CS &apos;No module named&apos;.
+          SPLIT salida AT &apos;No module named &apos;&apos;&apos; INTO DATA(l_aux) DATA(l_modulo).
+          SPLIT l_modulo AT &apos;&apos;&apos;&apos; INTO l_modulo l_aux.
+          IF zcl_ap_popup=&gt;confirmar( |¿Quiere instalar modulo python { l_modulo }?| ).
+            l_contenido_bat = |pip install { l_modulo }|.
+            CONCATENATE l_contenido_bat &apos;pause&apos; INTO l_contenido_bat SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
+            zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING string        = l_contenido_bat
+                                                       fichero       = fichero_bat
+                                                       mostrar_error = &apos;&apos;
+                                             IMPORTING mensaje       = l_msg ).
+            ejecutar_frontend( EXPORTING app     = fichero_bat
+                               IMPORTING message = message ).
+            IF message IS INITIAL.
+              message = |Se ha instalado el módulo { l_modulo }. Reintente lanzar el script|.
+            ENDIF.
+          ENDIF.
+        elseif me-&gt;borrar = &apos;X&apos; and message is initial.
+          zcl_ap_ficheros=&gt;borrar_fichero( fichero ).
+          zcl_ap_ficheros=&gt;borrar_fichero( fichero_log ).
+          zcl_ap_ficheros=&gt;borrar_fichero( fichero_bat ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PYTHON" CMPNAME="GET_FILE_TEXT" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de texot" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GET_FILE_TEXT" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GET_FILE_TEXT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GET_FILE_TEXT" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_file_text.
+
+    CLEAR: message, string.
+    zcl_ap_ficheros=&gt;leer_xstring( EXPORTING fichero       = fichero
+                                             mostrar_error = &apos;&apos;
+                                             get_string    = &apos;X&apos;
+                                   IMPORTING string        = string
+                                             message       = DATA(l_msg) ).
+    message = l_msg.
+    IF NOT string IS INITIAL.
+      DATA(l_long) = strlen( string ).
+      IF l_long &gt; 2.
+        SUBTRACT 2 FROM l_long.
+        IF string+l_long = cl_abap_char_utilities=&gt;cr_lf.
+          string = string(l_long).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" VERSION="1" LANGU="S" DESCRIPT="Grabar script" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="GRUPO" VERSION="1" LANGU="S" DESCRIPT="Grupo de características" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZAP_TEXTOS_MAIL-GRUPO" PARVALUE="&apos;PYTHON&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="CODIGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZAP_TEXTOS_MAIL-CODIGO" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="SCRIPT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PYTHON" CMPNAME="GRABAR_SCRIPT" SCONAME="NOMBRE_SCRIPT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <source>METHOD grabar_script.
+
+    IF script IS INITIAL AND NOT codigo IS INITIAL.
+      SELECT SINGLE texto FROM zap_textos_mail
+        INTO script
+       WHERE grupo = grupo
+         AND codigo = codigo.
+      IF sy-subrc = 0.
+        IF nombre_script IS INITIAL.
+          nombre_script = codigo &amp;&amp; &apos;.py&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF script IS INITIAL.
+      message = &apos;No se ha definido script&apos;.
+      RETURN.
+    ENDIF.
+
+    fichero = zcl_ap_ficheros=&gt;concat_ruta( directorio = me-&gt;directorio fichero = nombre_script ).
+
+
+    zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING string        = script
+                                               fichero       = fichero
+                                               mostrar_error = &apos;&apos;
+                                     IMPORTING mensaje       = DATA(l_msg) ).
+    message = l_msg.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

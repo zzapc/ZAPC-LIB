@@ -1,0 +1,244 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZBCIPOPUP                                        *
+*&---------------------------------------------------------------------*
+
+************************************************************************
+* TITULO      : Include para utilización función HELP_VALUES...
+* DESCRIPCION :                                                        *
+* AUTOR       : Andrés Picazo                   FECHA: 14/02/03        *
+*
+* FORM HV_INICIO - Inicializa las tablas
+* FORM HV_ADD_FIELD - Añade campos a la seleccion
+* FORM HV_ADD_VALUE - Añade un nuevo valor a la tabla
+* FORM HV_HELP_VALUE - Muestra la pantalla de selección
+*
+* EJEMPLO:
+*  parameters p_zlsch like bseg-zlsch.
+*
+*  at selection-screen on value-request for p_zlsch.
+*
+*    perform hv_inicio.
+*    perform hv_add_field using: 'T042Z' 'LAND1' '',
+*                                'T042Z' 'ZLSCH' 'X',
+*                                'T042Z' 'TEXT1' ''.
+*
+*    select * from t042z
+*      where land1 = 'ES'.
+*      perform hv_add_value using: t042z-land1,
+*                                  t042z-zlsch,
+*                                  t042z-text1.
+*    endselect.
+*
+*    perform hv_help_value using 'T042Z' 'ZLSCH'
+*                       changing p_zlsch.
+*
+*---------------------------------------------------------------------*
+* Funcion POPUP_GET_VALUES
+* Ejemplo:
+* Preguntamos los valores
+*      pgv_add_campo: 'SKOP'   'BUPER'    pe_perio.
+*      popup_get_values 'Introducir datos'.
+*      IF v_pgv_resp NE 'A'.
+*         pgv_lee_campo: 'BUPER'    l_perio.
+*      ENDIF.
+*---------------------------------------------------------------------*
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA            NOMBRE            RUTA           ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy       username          XXXXX-X        sidK9nnnnn         *
+************************************************************************
+  DATA i_hv_fields LIKE help_value OCCURS 10 WITH HEADER LINE.
+  DATA i_hv_values(70) OCCURS 10 WITH HEADER LINE.
+
+*---------------------------------------------------------------------*
+*       FORM HV_INICIO                                                *
+*---------------------------------------------------------------------*
+*       Inicializa las tablas que contienen los campos                *
+*---------------------------------------------------------------------*
+  FORM hv_inicio.                                           "#EC CALLED
+    FREE: i_hv_fields, i_hv_values.
+  ENDFORM.                    "hv_inicio
+
+*---------------------------------------------------------------------*
+*       FORM HV_ADD_FIELD                                             *
+*---------------------------------------------------------------------*
+*       Añade un nuevo campo de seleccion                             *
+*---------------------------------------------------------------------*
+*  -->  PE_TABNAME       Tabla en la que está definido el campo       *
+*  -->  PE_FIELDNAME     Nombre del campo                             *
+*  -->  PE_SELECTFLAG    Es seleccionable?                            *
+*---------------------------------------------------------------------*
+  FORM hv_add_field USING pe_tabname    TYPE any            "#EC CALLED
+                          pe_fieldname  TYPE any
+                          pe_selectflag TYPE any.
+    CLEAR i_hv_fields.
+    i_hv_fields-tabname    = pe_tabname.
+    i_hv_fields-fieldname  = pe_fieldname.
+    i_hv_fields-selectflag = pe_selectflag.
+    APPEND i_hv_fields.
+  ENDFORM.                    "hv_add_field
+
+*---------------------------------------------------------------------*
+*       FORM HV_ADD_VALUE                                             *
+*---------------------------------------------------------------------*
+*       Añade un nuevo valor a la tabla                               *
+*---------------------------------------------------------------------*
+*  -->  PE_VALUE                                                      *
+*---------------------------------------------------------------------*
+  FORM hv_add_value USING pe_value  TYPE any.               "#EC CALLED
+
+    i_hv_values = pe_value.
+    APPEND i_hv_values.
+
+  ENDFORM.                    "hv_add_value
+
+*---------------------------------------------------------------------*
+*       FORM HV_HELP_VALUE                                            *
+*---------------------------------------------------------------------*
+*       Muestra una pantalla de selección
+*---------------------------------------------------------------------*
+*  -->  PE_TABNAME                                                    *
+*  -->  PE_FIELDNAME                                                  *
+*  -->  PS_SELECTVALUE                                                *
+*---------------------------------------------------------------------*
+  FORM hv_help_value    USING pe_tabname    TYPE any        "#EC CALLED
+                              pe_fieldname  TYPE any
+                     CHANGING ps_selectvalue TYPE any.
+
+    CALL FUNCTION 'HELP_VALUES_GET_WITH_TABLE'              "#EC *
+        EXPORTING
+*         CUCOL                         = 0
+*         CUROW                         = 0
+*         DISPLAY                       = ' '
+              fieldname                     = pe_fieldname
+              tabname                       = pe_tabname
+*         NO_MARKING_OF_CHECKVALUE      = ' '
+*         TITLE_IN_VALUES_LIST          = ' '
+*         TITEL                         = ' '
+          show_all_values_at_first_time = 'X'
+*         NO_CONVERSION                 = ' '
+         IMPORTING
+              select_value                  = ps_selectvalue
+         TABLES
+              fields                        = i_hv_fields
+              valuetab                      = i_hv_values
+         EXCEPTIONS
+              field_not_in_ddic             = 1
+              more_then_one_selectfield     = 2
+              no_selectfield                = 3
+              OTHERS                        = 4.
+    IF sy-subrc = 1.
+      MESSAGE 'El campo no existe' TYPE 'E'.
+    ENDIF.
+
+  ENDFORM.                    "hv_help_value
+
+*---------------------------------------------------------------------*
+*       FORM HV_NUM_VALORES                                           *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+*  -->  PS_CONT                                                       *
+*---------------------------------------------------------------------*
+  FORM hv_num_valores CHANGING ps_cont TYPE any.            "#EC CALLED
+
+    DESCRIBE TABLE i_hv_values LINES ps_cont.
+
+  ENDFORM.                    "hv_num_valores
+
+*---------------------------------------------------------------------*
+* Funcion POPUP_GET_VALUES
+* Ejemplo:
+* Preguntamos los valores
+*      pgv_inicio.
+*      pgv_add_campo: 'SKOP'   'BUPER'    pe_perio.
+*      popup_get_values 'Introducir datos'.
+*      IF v_pgv_resp NE 'A'.
+*         pgv_lee_campo: 'BUPER'    l_perio.
+*      ENDIF.
+*---------------------------------------------------------------------*
+  DATA: i_fields_pgv LIKE sval OCCURS 4 WITH HEADER LINE.   "#EC NEEDED
+  DATA: v_pgv_resp,
+        v_pgv_texto1(80) type c,                            "#EC NEEDED
+        v_pgv_texto2(80) type c.                            "#EC NEEDED
+
+  DEFINE pgv_inicio.
+    refresh i_fields_pgv.
+    clear v_pgv_resp.
+  END-OF-DEFINITION.
+
+  DEFINE pgv_add_campo.
+    clear i_fields_pgv.
+    i_fields_pgv-tabname = &1.
+    i_fields_pgv-fieldname = &2.
+    i_fields_pgv-value = &3.
+    append i_fields_pgv.
+  END-OF-DEFINITION.
+
+  DEFINE pgv_lee_campo.
+    read table i_fields_pgv with key fieldname = &1.
+    if sy-subrc = 0.
+      &2 = i_fields_pgv-value.
+    else.
+      clear &2.
+    endif.
+  END-OF-DEFINITION.
+
+  DEFINE popup_get_values.
+    call function 'POPUP_GET_VALUES'
+      exporting
+        popup_title = &1
+      importing
+        returncode  = v_pgv_resp  "A - Error
+      tables
+        fields      = i_fields_pgv.
+  END-OF-DEFINITION.
+
+  DEFINE popup_confirmar_lost_data.
+    call function 'POPUP_TO_CONFIRM_LOSS_OF_DATA'           "#EC *
+         exporting
+              textline1     = &1
+              textline2     = &2
+              titel         = &3
+              defaultoption = &4
+         importing
+              answer        = v_pgv_resp.
+  END-OF-DEFINITION.
+
+  DEFINE popup_confirm_perdida_cambios.
+    popup_confirmar_lost_data 'Si continue perderá los últimos cambios'
+                              '¿Desea continuar?'
+                              &1
+                              'N'.
+  END-OF-DEFINITION.
+
+*---------------------------------------------------------------------*
+* Funcion POPUP_CONFIRM_STEP
+* Ejemplo:
+* Preguntamos los valores
+*    popup_confirm_step 'J'   "J es Sí
+*                       'No existen niveles actualizados'
+*                       '¿Desea actualizar niveles?'
+*                       'Actualización de niveles'.
+*    IF v_pgv_resp = 'J'.
+*    ENDIF
+*---------------------------------------------------------------------*
+  DEFINE popup_confirm_step.
+    call function 'POPUP_TO_CONFIRM_STEP'
+      exporting
+        defaultoption = &1
+        textline1     = &2
+        textline2     = &3
+        titel         = &4
+      importing
+        answer        = v_pgv_resp.
+  END-OF-DEFINITION.
+
+  DEFINE popup_inform.
+    call function 'POPUP_TO_INFORM'
+      exporting
+        titel = &1
+        txt1  = &2
+        txt2  = &3.
+  END-OF-DEFINITION.

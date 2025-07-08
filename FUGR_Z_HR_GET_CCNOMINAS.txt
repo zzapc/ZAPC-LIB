@@ -1,0 +1,107 @@
+FUNCTION Z_HR_GET_CCNOMINAS.
+*"----------------------------------------------------------------------
+*"*"Interfase local
+*"  IMPORTING
+*"     REFERENCE(PERNR) TYPE  PERSNO
+*"     REFERENCE(BEGDA) TYPE  BEGDA
+*"     REFERENCE(ENDDA) TYPE  ENDDA
+*"     REFERENCE(CACHE) TYPE  CHAR1 DEFAULT ''
+*"  TABLES
+*"      CCNOM STRUCTURE  PC207 OPTIONAL
+*"      CCNOM_PER STRUCTURE  ZEST_CCNOM OPTIONAL
+*"      RANGO_LGART STRUCTURE  PJPSK_RANGE_LGART OPTIONAL
+*"----------------------------------------------------------------------
+  DATA: i_cache_cab TYPE TABLE OF zccnom_cache_cab,
+        l_tabix     TYPE int4,
+        i_cache     TYPE TABLE OF zccnom_cache.
+
+  REFRESH: rgdir, ccnom, ccnom_per.
+
+  CALL FUNCTION 'CU_READ_RGDIR'
+    EXPORTING
+      persnr             = pernr
+      no_authority_check = 'X'
+    TABLES
+      in_rgdir           = rgdir
+    EXCEPTIONS
+      no_record_found    = 1
+      OTHERS             = 2.
+
+  IF sy-subrc = 0.
+    LOOP AT rgdir WHERE     fpbeg <= endda
+                        AND fpend >= begda
+                        AND srtza  = 'A'.
+
+      rx-key-pernr = pernr.
+      UNPACK rgdir-seqnr TO rx-key-seqno.
+      rp-init-buffer.
+      rp-imp-c2-re.
+      IF rp-imp-re-subrc = 0.
+        LOOP AT rt INTO ccnom WHERE lgart IN rango_lgart.
+          APPEND ccnom.
+          CLEAR ccnom_per.
+          MOVE-CORRESPONDING ccnom TO ccnom_per.
+          ccnom_per-fpper = rgdir-fpper.
+          ccnom_per-fpbeg = rgdir-fpbeg.
+          ccnom_per-fpend = rgdir-fpend.
+          APPEND ccnom_per.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+
+    IF cache = 'X'.
+* Guardamos el ejecicio completo para asegurarnos coherencia
+      DATA: l_begda TYPE begda,
+            l_endda TYPE endda.
+      l_begda = begda(4) && '0101'.
+      l_endda = zcl_ap_fechas=>get_ultimo_dia_mes( endda ).
+
+    LOOP AT rgdir WHERE     fpbeg <= endda
+                        AND fpend >= begda
+                        AND srtza  = 'A'.
+        rx-key-pernr = pernr.
+        UNPACK rgdir-seqnr TO rx-key-seqno.
+        rp-init-buffer.
+        rp-imp-c2-re.
+        IF rp-imp-re-subrc = 0.
+          LOOP AT rt INTO ccnom.
+            APPEND ccnom.
+            CLEAR ccnom_per.
+            MOVE-CORRESPONDING ccnom TO ccnom_per.
+            ccnom_per-fpper = rgdir-fpper.
+            ccnom_per-fpbeg = rgdir-fpbeg.
+            ccnom_per-fpend = rgdir-fpend.
+            APPEND ccnom_per.
+
+            IF NOT line_exists( i_cache_cab[ pernr = pernr perio = rgdir-fpper ] ).
+              APPEND VALUE #( pernr = pernr
+                              perio = rgdir-fpper
+                              erdat = sy-datum ) TO i_cache_cab.
+              CLEAR l_tabix.
+            ENDIF.
+            l_tabix = l_tabix + 1.
+            APPEND INITIAL LINE TO i_cache ASSIGNING FIELD-SYMBOL(<ccnom>).
+            MOVE-CORRESPONDING ccnom_per TO <ccnom>.
+            <ccnom>-pernr = pernr.
+            <ccnom>-perio = rgdir-fpper.
+            <ccnom>-linea = l_tabix.
+          ENDLOOP.
+        ENDIF.
+      ENDLOOP.
+
+      DELETE FROM zccnom_cache_cab
+       WHERE pernr = pernr
+         and perio <= l_endda(6)
+         and perio >= l_begda(6).
+      DELETE FROM zccnom_cache
+       WHERE pernr = pernr
+         and perio <= l_endda(6)
+         and perio >= l_begda(6).
+      COMMIT WORK AND WAIT.
+
+      MODIFY zccnom_cache_cab FROM TABLE i_cache_cab.
+      MODIFY zccnom_cache FROM TABLE i_cache.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDIF.
+ENDFUNCTION.

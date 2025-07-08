@@ -1,0 +1,2254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_MATERIAL" VERSION="1" LANGU="S" DESCRIPT="Material" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="MAT_MEINS_S" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="5 " SRCCOLUMN1="6 " SRCROW2="8 " SRCCOLUMN2="23 " TYPESRC_LENG="103 " TYPESRC="BEGIN OF mat_meins_s,
+        matnr TYPE matnr,
+        meins TYPE meins,
+      END OF mat_meins_s
+"/>
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="MAT_MEINS_TT" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="10 " SRCROW2="9 " SRCCOLUMN2="56 " TYPESRC_LENG="49 " TYPESRC="mat_meins_tt TYPE STANDARD TABLE OF mat_meins_s
+"/>
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="T_MB5B" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="22 " SRCCOLUMN2="18 " TYPESRC_LENG="687 " TYPESRC="BEGIN OF t_mb5b,
+        bwkey         TYPE mbew-bwkey,
+        werks         TYPE mseg-werks,
+        matnr         TYPE mseg-matnr,
+        charg         TYPE mseg-charg,
+        endmenge(09)  TYPE p          DECIMALS 3,
+        anfmenge(09)  TYPE p          DECIMALS 3,
+        meins         TYPE mara-meins,
+        endwert(09)   TYPE p          DECIMALS 2,
+        anfwert(09)   TYPE p          DECIMALS 2,
+        soll(09)      TYPE p          DECIMALS 3,
+        haben(09)     TYPE p          DECIMALS 3,
+        sollwert(09)  TYPE p          DECIMALS 2,
+        habenwert(09) TYPE p          DECIMALS 2,
+        waers         TYPE t001-waers,
+      END OF t_mb5b
+"/>
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="TT_MB5B" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="23 " SRCCOLUMN1="10 " SRCROW2="23 " SRCCOLUMN2="57 " TYPESRC_LENG="50 " TYPESRC="tt_mb5b            TYPE STANDARD TABLE OF t_mb5b
+"/>
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="TT_BAPI_MATRETURN2" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="24 " SRCCOLUMN1="10 " SRCROW2="24 " SRCCOLUMN2="66 " TYPESRC_LENG="59 " TYPESRC="tt_bapi_matreturn2 TYPE STANDARD TABLE OF bapi_matreturn2
+"/>
+ <types CLSNAME="ZCL_AP_MATERIAL" CMPNAME="TT_MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material (18 caracteres)" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="1" TYPE="MATNR18" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+* Tabla caché con algunos datos importantes de material
+TYPES: BEGIN OF t_mat,
+         matnr TYPE matnr,
+         meins TYPE meins,
+       END OF t_mat,
+       tt_mat TYPE SORTED TABLE OF t_mat WITH UNIQUE KEY matnr.
+
+TYPES: BEGIN OF t_mat_conv_ctd,
+         matnr  TYPE matnr,
+         unori  TYPE meins, &quot;Unidad origen
+         undes  TYPE meins, &quot;Unidad destino
+         ctori  TYPE mengev, &quot;Cantidad origen
+         ctdes  TYPE mengev, &quot;Cantidad destino
+       END OF t_mat_conv_ctd,
+       tt_mat_conv_ctd TYPE SORTED TABLE OF t_mat_conv_ctd WITH UNIQUE KEY matnr unori undes ctori ctdes.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EBM" ENTRY="Esperando por bloqueos en material" LENGTH="68 "/>
+   <textElement ID="I" KEY="NEC" ENTRY="No existe la clase de inspección" LENGTH="64 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_MATERIAL" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <typeUsage CLSNAME="ZCL_AP_MATERIAL" TYPEGROUP="MGINT" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <forwardDeclaration>MGINT</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CLIENTDATA" VERSION="1" LANGU="S" DESCRIPT="Datos material a nivel de mandante" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CLIENTDATAX" VERSION="1" LANGU="S" DESCRIPT="Barra selección para BAPI_MARA" EXPOSURE="1" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARAX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="C_TIPO_GOS" VERSION="1" LANGU="S" DESCRIPT="Tipo de objetos en referencias de objeto persistentes" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="1" ATTVALUE="&apos;BUS1001006&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SIBFTYPEID" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="HEADDATA" VERSION="1" LANGU="S" DESCRIPT="Segmento de cabecera con info de control" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIMATHEAD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="I_MAKT" VERSION="1" LANGU="S" DESCRIPT="Tabla MAKT" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="MAKT_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="I_MAT" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="16 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_MAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="I_MAT_CONV_CTD" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="17 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_MAT_CONV_CTD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="I_MAT_MEINS" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="18 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="MAT_MEINS_TT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="MATERIAL" VERSION="1" LANGU="S" DESCRIPT="Número de material" EXPOSURE="1" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="MATNR" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="MATERIALDESCRIPTION" VERSION="1" LANGU="S" DESCRIPT="Textos breves de material" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_MAKT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="MESSAGES" VERSION="1" LANGU="S" DESCRIPT="Tabla con estructuras de retorno" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_BAPI_MATRETURN2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="NEW_MARA" VERSION="1" LANGU="S" DESCRIPT="Datos generales material" EXPOSURE="1" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="MARA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="PLANTDATA" VERSION="1" LANGU="S" DESCRIPT="Datos material a nivel de centro" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARC" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="PLANTDATAX" VERSION="1" LANGU="S" DESCRIPT="Datos material a nivel de centro" EXPOSURE="0" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARCX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SALESDATA" VERSION="1" LANGU="S" DESCRIPT="Datos de venta" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MVKE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SALESDATAX" VERSION="1" LANGU="S" DESCRIPT="Barra selección para BAPI_MVKE" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MVKEX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="STORAGELOCATIONDATA" VERSION="1" LANGU="S" DESCRIPT="Datos material a nivel de almacén" EXPOSURE="0" STATE="1" EDITORDER="14 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="STORAGELOCATIONDATAX" VERSION="1" LANGU="S" DESCRIPT="Barra de selección para BAPI_MARD" EXPOSURE="0" STATE="1" EDITORDER="15 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MARDX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="STORAGETYPEDATA" VERSION="1" LANGU="S" DESCRIPT="Datos tipo almacén" EXPOSURE="0" STATE="1" EDITORDER="19 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MLGT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="STORAGETYPEDATAX" VERSION="1" LANGU="S" DESCRIPT="Datos tipo almacén" EXPOSURE="0" STATE="1" EDITORDER="20 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MLGTX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="TAXCLASSIFICATIONS" VERSION="1" LANGU="S" DESCRIPT="Datos de control" EXPOSURE="0" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_MLAN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UNITSOFMEASURE" VERSION="1" LANGU="S" DESCRIPT="Unidades de medida" EXPOSURE="0" STATE="1" EDITORDER="12 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_MARM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UNITSOFMEASUREX" VERSION="1" LANGU="S" DESCRIPT="Barra de selección para BAPI_MARM" EXPOSURE="0" STATE="1" EDITORDER="13 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_BAPI_MARMX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VALUATIONDATA" VERSION="1" LANGU="S" DESCRIPT="Datos valoración" EXPOSURE="0" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MBEW" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VALUATIONDATAX" VERSION="1" LANGU="S" DESCRIPT="Barra de selección para BAPI_MBEW" EXPOSURE="0" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MBEWX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="WAREHOUSENUMBERDATA" VERSION="1" LANGU="S" DESCRIPT="Datos número almacén" EXPOSURE="0" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MLGN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MATERIAL" CMPNAME="WAREHOUSENUMBERDATAX" VERSION="1" LANGU="S" DESCRIPT="Barra de selección para BAPI_MLGN" EXPOSURE="0" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MLGNX" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_ALMACEN" VERSION="1" LANGU="S" DESCRIPT="Añade datos almacén" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_ALMACEN" SCONAME="MARD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARD"/>
+  <source>METHOD add_datos_almacen.
+    DATA: l_tabla               TYPE tabname,
+          l_mard                TYPE mard,
+          l_bapi_mard_ga        TYPE bapi_mard_ga,
+          l_storagelocationdata TYPE bapi_mard.
+
+* Recupero datos en BD para comporar
+    l_tabla = &apos;MARD&apos;.
+    SELECT SINGLE * FROM (l_tabla)              &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_mard
+     WHERE matnr = material
+       AND werks = mard-werks
+       AND lgort = mard-lgort.
+
+    CALL FUNCTION &apos;MAP2E_MARD_TO_BAPI_MARD_GA&apos;
+      EXPORTING
+        mard         = l_mard
+      CHANGING
+        bapi_mard_ga = l_bapi_mard_ga.
+
+    MOVE-CORRESPONDING l_bapi_mard_ga TO l_storagelocationdata.
+
+* Convierto a estructura de la BAPI
+    CALL FUNCTION &apos;MAP2E_MARD_TO_BAPI_MARD_GA&apos;
+      EXPORTING
+        mard         = mard
+      CHANGING
+        bapi_mard_ga = l_bapi_mard_ga.
+
+    MOVE-CORRESPONDING l_bapi_mard_ga TO storagelocationdata.
+
+    determina_cambios_campos( EXPORTING original     = l_storagelocationdata
+                                        modificacion = storagelocationdata
+                              CHANGING  cambios      = storagelocationdatax ).
+
+    storagelocationdatax-plant    = storagelocationdata-plant.
+    storagelocationdatax-stge_loc = storagelocationdata-stge_loc.
+    headdata-storage_view = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_ALMACEN_WM" VERSION="1" LANGU="S" DESCRIPT="Añade datos almacén WM" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_ALMACEN_WM" SCONAME="MLGN" VERSION="1" LANGU="S" DESCRIPT="Datos de material por número de almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MLGN" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_ALMACEN_WM" SCONAME="MLGT" VERSION="1" LANGU="S" DESCRIPT="Datos de material por tipo de almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MLGT" PAROPTIONL="X"/>
+  <source>METHOD add_datos_almacen_wm.
+    DATA: l_tabla               TYPE tabname,
+          l_mlgn                TYPE mlgn,
+          l_bapi_mlgn_ga        TYPE bapi_mlgn_ga,
+          l_warehousenumberdata TYPE bapi_mlgn,
+          l_mlgt                TYPE mlgt,
+          l_bapi_mlgt_ga        TYPE bapi_mlgt_ga,
+          l_storagetypedata     TYPE bapi_mlgt.
+
+* Recupero datos en BD para comparar
+    IF NOT mlgn IS INITIAL.
+      l_tabla = &apos;MLGN&apos;.
+      SELECT SINGLE * FROM (l_tabla)            &quot;#EC CI_ALL_FIELDS_NEEDED
+        INTO l_mlgn
+       WHERE matnr = material
+         AND lgnum = mlgn-lgnum.
+
+      CALL FUNCTION &apos;MAP2E_MLGN_TO_BAPI_MLGN_GA&apos;
+        EXPORTING
+          mlgn         = l_mlgn
+        CHANGING
+          bapi_mlgn_ga = l_bapi_mlgn_ga.
+
+      MOVE-CORRESPONDING l_bapi_mlgn_ga TO l_warehousenumberdata.
+
+* Convierto a estructura de la BAPI
+      CALL FUNCTION &apos;MAP2E_MLGN_TO_BAPI_MLGN_GA&apos;
+        EXPORTING
+          mlgn         = mlgn
+        CHANGING
+          bapi_mlgn_ga = l_bapi_mlgn_ga.
+
+      MOVE-CORRESPONDING l_bapi_mlgn_ga TO warehousenumberdata.
+
+      determina_cambios_campos( EXPORTING original     = l_warehousenumberdata
+                                          modificacion = warehousenumberdata
+                                CHANGING  cambios      = warehousenumberdatax ).
+
+      warehousenumberdatax-whse_no = warehousenumberdata-whse_no.
+      headdata-warehouse_view = &apos;X&apos;.
+    ENDIF.
+
+    IF NOT mlgt IS INITIAL.
+      l_tabla = &apos;MLGT&apos;.
+      SELECT SINGLE * FROM (l_tabla)            &quot;#EC CI_ALL_FIELDS_NEEDED
+        INTO l_mlgt
+       WHERE matnr = material
+         AND lgnum = mlgt-lgnum
+         AND lgtyp = mlgt-lgtyp.
+
+      CALL FUNCTION &apos;MAP2E_MLGT_TO_BAPI_MLGT_GA&apos;
+        EXPORTING
+          mlgt         = l_mlgt
+        CHANGING
+          bapi_mlgt_ga = l_bapi_mlgt_ga.
+
+      MOVE-CORRESPONDING l_bapi_mlgt_ga TO l_storagetypedata.
+
+* Convierto a estructura de la BAPI
+      CALL FUNCTION &apos;MAP2E_MLGT_TO_BAPI_MLGT_GA&apos;
+        EXPORTING
+          mlgt         = mlgt
+        CHANGING
+          bapi_mlgt_ga = l_bapi_mlgt_ga.
+
+      MOVE-CORRESPONDING l_bapi_mlgt_ga TO storagetypedata.
+
+      determina_cambios_campos( EXPORTING original     = l_storagetypedata
+                                          modificacion = storagetypedata
+                                CHANGING  cambios      = storagetypedatax ).
+
+      storagetypedatax-whse_no   = storagetypedata-whse_no.
+      storagetypedatax-stge_type = storagetypedata-stge_type.
+      headdata-warehouse_view = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_BASICOS" VERSION="1" LANGU="S" DESCRIPT="Añade datos basicos" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_BASICOS" SCONAME="MARA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARA"/>
+  <source>METHOD add_datos_basicos.
+    DATA: l_tabla      TYPE tabname,
+          l_mara       TYPE mara,
+          l_clientdata TYPE bapi_mara.
+
+* Recupero datos en BD para comporar
+    l_tabla = &apos;MARA&apos;.
+    SELECT SINGLE * FROM (l_tabla)              &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_mara
+     WHERE matnr = material.
+
+    CALL FUNCTION &apos;CFX_MAP2E_MARA_TO_BAPI_MARA&apos;
+      EXPORTING
+        mara      = l_mara
+      CHANGING
+        bapi_mara = l_clientdata.
+
+* Convierto a estructura de la BAPI
+    CALL FUNCTION &apos;CFX_MAP2E_MARA_TO_BAPI_MARA&apos;
+      EXPORTING
+        mara      = mara
+      CHANGING
+        bapi_mara = clientdata.
+
+    determina_cambios_campos( EXPORTING original     = l_clientdata
+                                        modificacion = clientdata
+                              CHANGING  cambios      = clientdatax ).
+
+    IF NOT mara IS INITIAL.
+      headdata-ind_sector = mara-mbrsh.
+      headdata-matl_type  = mara-mtart.
+    ENDIF.
+
+    headdata-basic_view = &apos;X&apos;.
+
+    IF clientdatax-stor_conds = &apos;X&apos; OR clientdatax-temp_conds = &apos;X&apos;.
+      headdata-storage_view = &apos;X&apos;.
+    ENDIF.
+
+    new_mara = mara.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" VERSION="1" LANGU="S" DESCRIPT="Añade datos de centro" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="MARC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARC"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="COMPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_E" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="MRP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="PREP_TRABAJO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_A" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="COMERCIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_V" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="COSTES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_B" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="CALIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_Q" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="ALMACEN" VERSION="1" LANGU="S" DESCRIPT="Vista de almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SICHT_L" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CENTRO" SCONAME="VISTAS_EXISTENTES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_datos_centro.
+    DATA: l_tabla     TYPE tabname,
+          l_marc      TYPE marc,
+          l_plantdata TYPE bapi_marc.
+
+* Recupero datos en BD para comparar
+    l_tabla = &apos;MARC&apos;.
+    SELECT SINGLE * FROM (l_tabla)              &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_marc
+     WHERE matnr = material
+       AND werks = marc-werks.
+
+*  CALL FUNCTION &apos;CFX_MAP2E_MARC_TO_BAPI_MARC&apos;     &quot;APC20180806
+    CALL FUNCTION &apos;MAP2E_MARC_TO_BAPI_MARC&apos;
+      EXPORTING
+        marc                         = l_marc
+        currency_amount_bapi_to_sap  = &apos;EUR&apos;         &quot; APC20180806
+      CHANGING
+        bapi_marc                    = l_plantdata
+      EXCEPTIONS
+        error_converting_curr_amount = 1
+        OTHERS                       = 2.
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+
+* Convierto a estructura de la BAPI
+*  CALL FUNCTION &apos;CFX_MAP2E_MARC_TO_BAPI_MARC&apos;     &quot;APC20180806
+    CALL FUNCTION &apos;MAP2E_MARC_TO_BAPI_MARC&apos;
+      EXPORTING
+        marc                         = marc
+        currency_amount_bapi_to_sap  = &apos;EUR&apos;         &quot; APC20180806
+      CHANGING
+        bapi_marc                    = plantdata
+      EXCEPTIONS
+        error_converting_curr_amount = 1
+        OTHERS                       = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+
+    determina_cambios_campos( EXPORTING original     = l_plantdata
+                                        modificacion = plantdata
+                              CHANGING  cambios      = plantdatax ).
+
+    plantdatax-plant = plantdata-plant.
+    headdata-purchase_view   = compras.
+    headdata-mrp_view        = mrp.
+    headdata-work_sched_view = prep_trabajo.
+    headdata-sales_view      = comercial.
+    headdata-cost_view       = costes.
+    headdata-quality_view    = calidad.
+    headdata-storage_view    = almacen.
+
+    IF vistas_existentes = &apos;X&apos; AND NOT l_marc IS INITIAL.
+      IF l_marc-pstat CS &apos;E&apos;.
+        headdata-purchase_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;D&apos;.
+        headdata-mrp_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;A&apos;.
+        headdata-work_sched_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;V&apos;.
+        headdata-sales_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;B&apos;.
+        headdata-cost_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;Q&apos;.
+        headdata-quality_view = &apos;X&apos;.
+      ENDIF.
+      IF l_marc-pstat CS &apos;L&apos;.
+        headdata-storage_view = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CONTABILIDAD" VERSION="1" LANGU="S" DESCRIPT="Añade datos de contabilidad" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CONTABILIDAD" SCONAME="MBEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MBEW"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CONTABILIDAD" SCONAME="CONTABILIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_CONTABILIDAD" SCONAME="COSTES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_datos_contabilidad.
+    DATA: l_tabla         TYPE tabname,
+          l_mbew          TYPE mbew,
+          l_bapi_mbew_ga  TYPE bapi_mbew_ga,
+          l_valuationdata TYPE bapi_mbew.
+
+* Recupero datos en BD para comporar
+    l_tabla = &apos;MBEW&apos;.
+    SELECT  * FROM (l_tabla)                  &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_mbew
+      UP TO 1 ROWS
+     WHERE matnr = material
+       AND bwkey = mbew-bwkey.
+    ENDSELECT.
+
+    CALL FUNCTION &apos;MAP2E_MBEW_TO_BAPI_MBEW_GA&apos;
+      EXPORTING
+        mbew                         = l_mbew
+        h_waers                      = &apos;EUR&apos;
+      CHANGING
+        bapi_mbew_ga                 = l_bapi_mbew_ga
+      EXCEPTIONS
+        error_converting_curr_amount = 1
+        OTHERS                       = 2.
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+
+    MOVE-CORRESPONDING l_bapi_mbew_ga TO l_valuationdata.
+
+* Convierto a estructura de la BAPI
+    CALL FUNCTION &apos;MAP2E_MBEW_TO_BAPI_MBEW_GA&apos;
+      EXPORTING
+        mbew                         = mbew
+        h_waers                      = &apos;EUR&apos;
+      CHANGING
+        bapi_mbew_ga                 = l_bapi_mbew_ga
+      EXCEPTIONS
+        error_converting_curr_amount = 1
+        OTHERS                       = 2.
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+    MOVE-CORRESPONDING l_bapi_mbew_ga TO valuationdata.
+
+    determina_cambios_campos( EXPORTING original     = l_valuationdata
+                                        modificacion = valuationdata
+                              CHANGING  cambios      = valuationdatax ).
+
+    valuationdatax-val_area = valuationdata-val_area.
+    headdata-account_view = contabilidad.
+    headdata-cost_view    = costes.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_IMPUESTOS" VERSION="1" LANGU="S" DESCRIPT="Añade impuestos" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_IMPUESTOS" SCONAME="I_MLAN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MLAN_TAB" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_IMPUESTOS" SCONAME="TAXCLASSIFICATIONS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T_BAPI_MLAN" PAROPTIONL="X"/>
+  <source>METHOD add_datos_impuestos.
+    DATA: l_mlan      TYPE mlan,
+          l_bapi_mlan TYPE bapi_mlan,
+          i_tstl      TYPE TABLE OF tstl,
+          l_tstl      TYPE tstl.
+
+    IF taxclassifications IS INITIAL.
+      LOOP AT i_mlan INTO l_mlan.
+        CLEAR l_bapi_mlan.
+        l_bapi_mlan-depcountry = l_mlan-aland.
+
+        SELECT * FROM tstl
+          INTO TABLE i_tstl
+         WHERE talnd = l_mlan-aland
+          ORDER BY PRIMARY KEY.
+        l_bapi_mlan-taxclass_1 = l_mlan-taxm1.
+        READ TABLE i_tstl INTO l_tstl WITH KEY lfdnr = &apos;1&apos;. &quot;#EC CI_STDSEQ
+        IF sy-subrc = 0.
+          l_bapi_mlan-tax_type_1 = l_tstl-tatyp.
+        ENDIF.
+        l_bapi_mlan-taxclass_2 = l_mlan-taxm2.
+        READ TABLE i_tstl INTO l_tstl WITH KEY lfdnr = &apos;2&apos;. &quot;#EC CI_STDSEQ
+        IF sy-subrc = 0.
+          l_bapi_mlan-tax_type_2 = l_tstl-tatyp.
+        ENDIF.
+        APPEND l_bapi_mlan TO me-&gt;taxclassifications.
+      ENDLOOP.
+    ELSE.
+      me-&gt;taxclassifications = taxclassifications.
+    ENDIF.
+
+    headdata-basic_view = &apos;V&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_VENTAS" VERSION="1" LANGU="S" DESCRIPT="Añade datos ventas" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_DATOS_VENTAS" SCONAME="MVKE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MVKE"/>
+  <source>METHOD add_datos_ventas.
+    DATA: l_tabla        TYPE tabname,
+          l_mvke         TYPE mvke,
+          l_bapi_mvke_ga TYPE bapi_mvke_ga,
+          l_salesdata    TYPE bapi_mvke.
+
+* Recupero datos en BD para comporar
+    l_tabla = &apos;MVKE&apos;.
+    SELECT SINGLE * FROM (l_tabla)            &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_mvke
+     WHERE matnr = material
+       AND vkorg = mvke-vkorg
+       AND vtweg = mvke-vtweg.
+
+    CALL FUNCTION &apos;MAP2E_MVKE_TO_BAPI_MVKE_GA&apos;
+      EXPORTING
+        mvke         = l_mvke
+      CHANGING
+        bapi_mvke_ga = l_bapi_mvke_ga.
+
+    MOVE-CORRESPONDING l_bapi_mvke_ga TO l_salesdata.
+
+* Convierto a estructura de la BAPI
+    CALL FUNCTION &apos;MAP2E_MVKE_TO_BAPI_MVKE_GA&apos;
+      EXPORTING
+        mvke         = mvke
+      CHANGING
+        bapi_mvke_ga = l_bapi_mvke_ga.
+
+    MOVE-CORRESPONDING l_bapi_mvke_ga TO salesdata.
+
+    determina_cambios_campos( EXPORTING original     = l_salesdata
+                                        modificacion = salesdata
+                              CHANGING  cambios      = salesdatax ).
+
+    salesdatax-sales_org  = salesdata-sales_org.
+    salesdatax-distr_chan = salesdata-distr_chan.
+    headdata-sales_view = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_TEXTOS_BREVES" VERSION="1" LANGU="S" DESCRIPT="Añade textos breves" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_TEXTOS_BREVES" SCONAME="I_MAKT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MAKT_TAB"/>
+  <source>METHOD add_textos_breves.
+    DATA: l_makt      TYPE makt,
+          l_bapi_makt TYPE bapi_makt,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_makt_bd   TYPE makt.
+
+    LOOP AT i_makt INTO l_makt.
+      CLEAR l_bapi_makt.
+      l_bapi_makt-langu     = l_makt-spras.
+      l_bapi_makt-matl_desc = l_makt-maktx.
+
+      IF l_makt-maktx = &apos;&apos;.
+        SELECT SINGLE matnr FROM makt
+          INTO l_makt_bd-matnr
+         WHERE matnr = material
+           AND spras = l_makt-spras.
+        IF sy-subrc = 0.
+          l_bapi_makt-del_flag = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+      APPEND l_bapi_makt TO materialdescription.
+    ENDLOOP.
+
+    headdata-basic_view = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_UNIDADES_MEDIDA" VERSION="1" LANGU="S" DESCRIPT="Añade unidades de medida" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_UNIDADES_MEDIDA" SCONAME="I_MARM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARM_TAB"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_UNIDADES_MEDIDA" SCONAME="MEINS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ADD_UNIDADES_MEDIDA" SCONAME="BORRAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_unidades_medida.
+    DATA: i_marm_bd    TYPE TABLE OF marm,
+          l_marm       TYPE marm,
+          l_bapi_marm  TYPE bapi_marm,
+          l_bapi_marmx TYPE bapi_marmx,
+          l_marm_bd    TYPE marm.
+
+    SELECT meinh umren umrez FROM marm                      ##TOO_MANY_ITAB_FIELDS
+      INTO CORRESPONDING FIELDS OF TABLE i_marm_bd
+     WHERE matnr  = material
+       AND meinh &lt;&gt; meins
+     ORDER BY matnr meinh.
+
+    LOOP AT i_marm INTO l_marm WHERE ty2tq &lt;&gt; &apos;D&apos;.         &quot;#EC CI_STDSEQ
+      CLEAR l_bapi_marm.
+      l_bapi_marm-alt_unit   = l_marm-meinh.
+      l_bapi_marm-numerator  = l_marm-umrez.
+      l_bapi_marm-denominatr = l_marm-umren.
+
+      l_bapi_marm-gross_wt   = l_marm-brgew.
+      l_bapi_marm-unit_of_wt = l_marm-gewei.
+      l_bapi_marm-length     = l_marm-laeng.
+      l_bapi_marm-width      = l_marm-breit.
+      l_bapi_marm-height     = l_marm-hoehe.
+      l_bapi_marm-unit_dim   = l_marm-meabm.
+      APPEND l_bapi_marm TO unitsofmeasure.
+
+      CLEAR l_bapi_marmx.
+      l_bapi_marmx-alt_unit = l_marm-meinh.
+      CLEAR l_marm_bd.
+      READ TABLE i_marm_bd INTO l_marm_bd WITH KEY meinh = l_marm-meinh BINARY SEARCH.
+
+      IF l_marm_bd-umrez &lt;&gt; l_marm-umrez.
+        l_bapi_marmx-numerator = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-umren &lt;&gt; l_marm-umren.
+        l_bapi_marmx-denominatr = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-brgew &lt;&gt; l_marm-brgew.
+        l_bapi_marmx-gross_wt = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-gewei &lt;&gt; l_marm-gewei.
+        l_bapi_marmx-unit_of_wt = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-laeng &lt;&gt; l_marm-laeng.
+        l_bapi_marmx-length = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-breit &lt;&gt; l_marm-breit.
+        l_bapi_marmx-width = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-hoehe &lt;&gt; l_marm-hoehe.
+        l_bapi_marmx-height = &apos;X&apos;.
+      ENDIF.
+      IF l_marm_bd-meabm &lt;&gt; l_marm-meabm.
+        l_bapi_marmx-unit_dim = &apos;X&apos;.
+      ENDIF.
+      APPEND l_bapi_marmx TO unitsofmeasurex.
+
+    ENDLOOP.
+
+    IF borrar = &apos;X&apos;.
+      LOOP AT i_marm INTO l_marm_bd WHERE ty2tq = &apos;D&apos;.     &quot;#EC CI_STDSEQ
+* Como la BAPI no permite borrado, lo hacemos a pelo
+        DELETE FROM marm
+         WHERE matnr = material
+           AND meinh = l_marm_bd-meinh.
+      ENDLOOP.
+    ENDIF.
+
+    headdata-basic_view = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_PESO" VERSION="1" LANGU="S" DESCRIPT="Convierte peso" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_PESO" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_PESO" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_PESO" SCONAME="UNIDAD_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_PESO" SCONAME="RESULTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGE_D"/>
+  <source>METHOD convertir_peso.
+    IF unidad_origen = unidad_destino.
+      resultado = cantidad.
+    ELSE.
+      CALL FUNCTION &apos;UNIT_CONVERSION_SIMPLE&apos;
+        EXPORTING
+          input                = cantidad
+          no_type_check        = &apos;X&apos;
+          round_sign           = &apos; &apos;
+          unit_in              = unidad_origen
+          unit_out             = unidad_destino
+        IMPORTING
+*         ADD_CONST            = ADD_CONST
+*         DECIMALS             = DECIMALS
+*         DENOMINATOR          = DENOMINATOR
+*         NUMERATOR            = NUMERATOR
+          output               = resultado
+        EXCEPTIONS
+          conversion_not_found = 1
+          division_by_zero     = 2
+          input_invalid        = 3
+          output_invalid       = 4
+          overflow             = 5
+          type_invalid         = 6
+          units_missing        = 7
+          unit_in_not_found    = 8
+          unit_out_not_found   = 9.
+      IF sy-subrc &lt;&gt; 0.
+*
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" VERSION="1" LANGU="S" DESCRIPT="Convierte unidades" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" SCONAME="UNIDAD_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONVERTIR_UNIDAD" SCONAME="RESULTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGE_D"/>
+  <source>METHOD convertir_unidad.
+    DATA: l_matnr TYPE matnr,
+          l_menge TYPE menge_d.
+
+    l_matnr = matnr.
+    l_menge = cantidad.
+    CLEAR resultado.
+    CALL FUNCTION &apos;MD_CONVERT_MATERIAL_UNIT&apos;
+      EXPORTING
+        i_matnr              = l_matnr
+        i_in_me              = unidad_origen
+        i_out_me             = unidad_destino
+        i_menge              = l_menge
+      IMPORTING
+        e_menge              = resultado
+      EXCEPTIONS
+        error_in_application = 1
+        error                = 2
+        OTHERS               = 3.
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" VERSION="1" LANGU="S" DESCRIPT="Convierte a unidad (cacheada)" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" SCONAME="UNIDAD_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD" SCONAME="RESULTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGE_D"/>
+  <source>METHOD conv_unidad.
+    DATA l_conv TYPE t_mat_conv_ctd.
+
+    FIELD-SYMBOLS &lt;conv&gt; TYPE t_mat_conv_ctd.
+
+    IF unidad_origen = unidad_destino.
+      resultado = cantidad.
+    ELSE.
+      ASSIGN i_mat_conv_ctd[ matnr = matnr
+                             unori = unidad_origen
+                             undes = unidad_destino
+                             ctori = cantidad ] TO &lt;conv&gt;.
+      IF sy-subrc = 0.
+        resultado = &lt;conv&gt;-ctdes.
+      ELSE.
+        CLEAR l_conv.
+        l_conv-matnr = matnr.
+        l_conv-unori = unidad_origen.
+        l_conv-undes = unidad_destino.
+        l_conv-ctori = cantidad.
+        l_conv-ctdes = convertir_unidad( matnr          = matnr
+                                         unidad_origen  = unidad_origen
+                                         unidad_destino = unidad_destino
+                                         cantidad       = cantidad ).
+        INSERT l_conv INTO TABLE i_mat_conv_ctd.
+
+        resultado = l_conv-ctdes.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD_BASE" VERSION="1" LANGU="S" DESCRIPT="Convierte a unidad base (cacheada)" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD_BASE" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD_BASE" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD_BASE" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="CONV_UNIDAD_BASE" SCONAME="RESULTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGE_D"/>
+  <source>METHOD conv_unidad_base.
+    DATA l_mat TYPE t_mat.
+
+    l_mat = get_datos_mat( matnr ).
+
+    IF unidad_origen = l_mat-meins.
+      resultado = cantidad.
+    ELSE.
+      resultado = conv_unidad( matnr          = matnr
+                               unidad_origen  = unidad_origen
+                               unidad_destino = l_mat-meins
+                               cantidad       = cantidad ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="DETERMINA_CAMBIOS_CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Determina cambios en campos" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="DETERMINA_CAMBIOS_CAMPOS" SCONAME="ORIGINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="DETERMINA_CAMBIOS_CAMPOS" SCONAME="MODIFICACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="DETERMINA_CAMBIOS_CAMPOS" SCONAME="POS_INI_CAMBIOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="DETERMINA_CAMBIOS_CAMPOS" SCONAME="CAMBIOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD determina_cambios_campos.
+    DATA l_index TYPE i.
+
+    FIELD-SYMBOLS: &lt;original&gt;          TYPE any,
+                   &lt;modificacion&gt;      TYPE any,
+                   &lt;campo_x&gt;           TYPE any,
+                   &lt;original_comp&gt;     TYPE any,
+                   &lt;campo_x_comp&gt;      TYPE any,
+                   &lt;modificacion_comp&gt; TYPE any.
+
+    CLEAR sy-subrc.
+
+    ASSIGN: original TO &lt;original&gt;,
+            modificacion TO &lt;modificacion&gt;,
+            cambios TO &lt;campo_x&gt;.
+
+    WHILE sy-subrc = 0.
+      ASSIGN COMPONENT sy-index OF STRUCTURE &lt;original&gt; TO &lt;original_comp&gt;.
+      IF sy-subrc &lt;&gt; 0.
+        EXIT.
+      ENDIF.
+
+      l_index = sy-index + pos_ini_cambios.
+
+      IF modificacion IS INITIAL.
+        IF NOT &lt;original_comp&gt; IS INITIAL.
+          ASSIGN COMPONENT l_index OF STRUCTURE &lt;campo_x&gt; TO &lt;campo_x_comp&gt;.
+          &lt;campo_x_comp&gt; = &apos;X&apos;.
+        ENDIF.
+      ELSE.
+        ASSIGN COMPONENT sy-index OF STRUCTURE &lt;modificacion&gt; TO &lt;modificacion_comp&gt;.
+        ASSIGN COMPONENT l_index OF STRUCTURE &lt;campo_x&gt; TO &lt;campo_x_comp&gt;.
+        IF &lt;original_comp&gt; &lt;&gt; &lt;modificacion_comp&gt;.
+          &lt;campo_x_comp&gt; = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+    ENDWHILE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="EDIT_CLASIFICACION" VERSION="1" LANGU="S" DESCRIPT="Edita clasificación del material" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="EDIT_CLASIFICACION" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="EDIT_CLASIFICACION" SCONAME="VISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD edit_clasificacion.
+    DATA: l_object   TYPE rmclf-objek,
+          l_maktx    TYPE rmclf-obtxt,
+          l_klart    TYPE inob-klart,
+          l_status   TYPE c LENGTH 1,
+          classtype  TYPE rmclf-klart,
+          updateflag TYPE rmclk-updat,
+          typetext   TYPE rmclf-artxt.
+
+    l_object = matnr.
+    l_maktx = get_descripcion( matnr ).
+
+    SELECT klart FROM inob
+      INTO l_klart
+      UP TO 1 ROWS
+     WHERE obtab = &apos;MARA&apos;
+       AND objek = matnr.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT klart FROM kssk
+        INTO l_klart
+        UP TO 1 ROWS
+       WHERE objek = matnr.
+      ENDSELECT.
+    ENDIF.
+
+    IF visualizar IS INITIAL.
+      l_status = &apos;2&apos;.
+    ELSE.
+      l_status = &apos;3&apos;.
+    ENDIF.
+
+    DO.
+      CALL FUNCTION &apos;CLFM_OBJECT_CLASSIFICATION&apos;
+        EXPORTING
+          table                    = &apos;MARA&apos;
+          ptable                   = &apos;MARA&apos;
+          object                   = l_object
+          objtxt                   = l_maktx
+          classtype                = l_klart
+*         typetext                 = &apos;XX&apos;
+          status                   = l_status
+          initflag                 = &apos;X&apos;
+          ref_datuv                = sy-datum                &quot; wk/4.0a
+        IMPORTING
+          updateflag               = updateflag
+          classtype                = classtype
+          typetext                 = typetext
+*         CLASS                    = KLASSE               &quot;mk/26.04.93
+*         CLASS_TEXT               = KLASSENTEXT
+          ok_code                  = sy-ucomm
+        EXCEPTIONS
+          classification_not_found = 1
+          class_not_valid          = 2.           &quot; ch zu 3.0D
+
+      IF sy-subrc &lt;&gt; 0.
+*
+      ENDIF.
+
+      IF sy-ucomm &lt;&gt; &apos;WECH&apos;.
+        EXIT.
+      ENDIF.
+    ENDDO.
+    IF sy-ucomm = &apos;SAVE&apos;.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_BLOQUEADO" VERSION="1" LANGU="S" DESCRIPT="Material está bloqueado" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_BLOQUEADO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_BLOQUEADO" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_BLOQUEADO" SCONAME="SOLO_EN_CENTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_BLOQUEADO" SCONAME="BLOQUEADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_bloqueado.
+    IF NOT werks IS INITIAL.
+      bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;MARC&apos;
+                                                   clave = sy-mandt
+                                                   clave2 = matnr
+                                                   clave3 = werks ).
+    ENDIF.
+
+    IF bloqueado IS INITIAL AND solo_en_centro = &apos;&apos;.
+      bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;MARA&apos;
+                                                   clave = sy-mandt
+                                                   clave2 = matnr ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_CLASIFICADO" VERSION="1" LANGU="S" DESCRIPT="Devuelve si el material tiene datos de clasficación" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_CLASIFICADO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_CLASIFICADO" SCONAME="CLASS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_CLASIFICADO" SCONAME="KLART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;001&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="ESTA_CLASIFICADO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_clasificado.
+    DATA: l_klah TYPE klah,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_kssk TYPE kssk.
+
+    SELECT clint FROM  klah
+      INTO l_klah-clint
+     UP TO 1 ROWS
+     WHERE klart = klart
+       AND class = class
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      SELECT objek FROM kssk
+        INTO l_kssk-objek
+        UP TO 1 ROWS
+       WHERE objek = matnr
+         AND clint = l_klah-clint.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        si = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_EXTERNO" VERSION="1" LANGU="S" DESCRIPT="Conversión código material a formato externo (sin ceros)" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_EXTERNO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_EXTERNO" SCONAME="EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MATNR"/>
+  <source>METHOD formato_externo.
+    CALL FUNCTION &apos;CONVERSION_EXIT_MATN1_OUTPUT&apos;
+      EXPORTING
+        input  = matnr
+      IMPORTING
+        output = externo.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_INTERNO" VERSION="1" LANGU="S" DESCRIPT="Conversión código material a formato interno (con ceros)" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_INTERNO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="FORMATO_INTERNO" SCONAME="INTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MATNR"/>
+  <source>METHOD formato_interno.
+    DATA l_mat TYPE text255.
+
+    l_mat = matnr.
+    CONDENSE l_mat.
+    CALL FUNCTION &apos;CONVERSION_EXIT_MATN1_INPUT&apos;
+      EXPORTING
+        input  = l_mat
+      IMPORTING
+        output = interno.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_CAMBIOS_CARACT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="45 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_CAMBIOS_CARACT" SCONAME="CARACT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_CAMBIOS_CARACT" SCONAME="KLART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUSP-KLART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_CAMBIOS_CARACT" SCONAME="R_UDATE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSTT_T_RANGE_DATE"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_CAMBIOS_CARACT" SCONAME="I_CDPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ISCDPOS_TAB"/>
+  <source>METHOD get_cambios_caract.
+    i_cdpos = zcl_ap_clasificacion=&gt;get_cambios_caract( caract = caract
+                                                        r_udate = r_udate ).
+    LOOP AT i_cdpos ASSIGNING FIELD-SYMBOL(&lt;cdpos&gt;).
+      SELECT SINGLE klart, objek FROM inob
+        INTO (@DATA(l_klart), @DATA(l_objek))
+       WHERE cuobj = @&lt;cdpos&gt;-objectid(18)
+         AND obtab = &apos;MARA&apos;.  &quot; Sólo cambios en mara
+      IF sy-subrc &lt;&gt; 0.
+        DELETE i_cdpos.
+      ELSE.
+        IF NOT klart IS INITIAL AND l_klart &lt;&gt; klart.
+          DELETE i_cdpos.
+        ELSE.
+          &lt;cdpos&gt;-objectid = l_objek.
+          &lt;cdpos&gt;-tabname  = l_klart.
+          &lt;cdpos&gt;-tabkey   = zcl_ap_clasificacion=&gt;get_caract_externo( CONV #( &lt;cdpos&gt;-tabkey+18(10) ) ).
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos GOS del material" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" SCONAME="ATTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" SCONAME="NOTAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_GOS" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_URL_GOS"/>
+  <source>METHOD get_datos_gos.
+    tabla = zcl_ap_gos=&gt;urls_gos_st( tipo  = c_tipo_gos
+                                     clave = matnr
+                                     atta  = atta
+                                     url   = url
+                                     notas = notas ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_MAT" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos cacheados" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_MAT" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DATOS_MAT" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T_MAT"/>
+  <source>METHOD get_datos_mat.
+    READ TABLE i_mat INTO datos WITH KEY matnr = matnr.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR datos.
+      datos-matnr = matnr.
+      datos-meins = get_unidad_base( matnr ).
+      INSERT datos INTO TABLE i_mat.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCR" VERSION="1" LANGU="S" DESCRIPT="Recupera descripción del material" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCR" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MAKT-MATNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCR" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MAKT-SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCR" SCONAME="MAKTX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MAKT-MAKTX"/>
+  <source>METHOD get_descr.
+    DATA makt TYPE makt.
+
+    READ TABLE i_makt INTO makt WITH KEY matnr = matnr
+                                         spras = spras
+         BINARY SEARCH.
+    IF sy-subrc &lt;&gt; 0.
+      READ TABLE i_makt INTO makt WITH KEY matnr = matnr. &quot;#EC CI_STDSEQ
+      IF sy-subrc &lt;&gt; 0.
+        makt-maktx = get_descripcion( matnr = matnr
+                                      spras = spras ).
+        IF sy-subrc = 0.
+          makt-matnr = matnr.
+          makt-spras = spras.
+          APPEND makt TO i_makt.
+          SORT i_makt.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+    maktx = makt-maktx.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCRIPCION" VERSION="1" LANGU="S" DESCRIPT="Recupera descripción del material" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCRIPCION" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCRIPCION" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MAKT-SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DESCRIPCION" SCONAME="MAKTX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MAKT-MAKTX"/>
+  <source>METHOD get_descripcion.
+    CLEAR maktx.
+    SELECT SINGLE maktx FROM  makt                   &quot;#EC CI_SEL_NESTED
+      INTO maktx
+     WHERE matnr = matnr
+       AND spras = spras.
+    IF sy-subrc = 0.
+      RETURN.
+    ENDIF.
+
+* Si no encuentra el texto en el idioma dado, lo devuelve en inglés, si lo hay
+    IF maktx IS INITIAL.
+      SELECT SINGLE maktx FROM  makt               &quot;#EC CI_SEL_NESTED
+        INTO maktx
+       WHERE matnr = matnr
+         AND spras = &apos;E&apos;.
+    ENDIF.
+* Sino en español, si lo hay
+    IF spras &lt;&gt; &apos;S&apos;.
+      SELECT SINGLE maktx FROM  makt               &quot;#EC CI_SEL_NESTED
+        INTO maktx
+       WHERE matnr = matnr
+         AND spras = &apos;S&apos;.
+    ENDIF.
+* Si no, en lo que encuentre
+    IF maktx IS INITIAL.
+      SELECT maktx FROM  makt                      &quot;#EC CI_SEL_NESTED
+        INTO maktx
+        UP TO 1 ROWS
+       WHERE matnr = matnr.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DETALLE_COSTES" VERSION="1" LANGU="S" DESCRIPT="Recupera detalle de costes" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DETALLE_COSTES" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_DETALLE_COSTES" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <source>METHOD get_detalle_costes.
+    DATA: l_tabla     TYPE tabname,
+          e_head      TYPE kkb04_head,
+          t_sa_tabin  TYPE ck_strukturtab,
+          t_kis1      TYPE TABLE OF kis1,
+          t_xheader   TYPE kkblo_t_listheader,
+          t_kisk_obj  TYPE kkb03_citem,
+          t_out_items TYPE kkb04_t_items.
+    DATA keko TYPE keko.
+
+    TYPE-POOLS: kkb03, kkbg0, kkb04, ck, kkblo.
+
+    l_tabla = &apos;KEKO&apos;.
+    SELECT * FROM (l_tabla)
+      INTO keko
+      UP TO 1 ROWS
+     WHERE werks = werks
+       AND matnr = matnr
+     ORDER BY kadky DESCENDING.
+    ENDSELECT.
+
+    CALL FUNCTION &apos;K_KKB_ITEMIZATION&apos;
+      EXPORTING
+        i_kdauf              = &apos;&apos;
+        i_kadky              = keko-kadky
+        i_tvers              = &apos;01&apos;
+        i_klvar              = keko-klvar
+        i_kokrs              = keko-kokrs
+        i_matnr              = keko-matnr
+        i_werks              = keko-werks
+        i_explosion          = &apos;&apos;
+        i_auflo              = 0
+        i_sicht              = &apos;01&apos;
+        i_maton              = &apos;&apos;
+        i_bz_losgr           = 1
+        i_keko               = keko            &quot;#EC *
+        i_kalnr              = keko-kalnr
+        i_erzka_given        = &apos;&apos;
+        i_erzka              = &apos;&apos;
+        i_no_output          = &apos;X&apos;
+      IMPORTING
+        e_head               = e_head
+      TABLES
+        t_sa_tabin           = t_sa_tabin
+        t_kis1               = t_kis1
+        t_xheader            = t_xheader
+        t_kisk_obj           = t_kisk_obj
+        t_out_items          = t_out_items
+      EXCEPTIONS
+        input_incomplete     = 1
+        input_not_unique     = 2
+        no_calculation_found = 3
+        no_items_found       = 4
+        wrong_input          = 5
+        user_abend           = 6
+        OTHERS               = 7.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_GRUPO_ARTICULOS" VERSION="1" LANGU="S" DESCRIPT="Recupera el grupo de artículos" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_GRUPO_ARTICULOS" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_GRUPO_ARTICULOS" SCONAME="MATKL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MATKL"/>
+  <source>METHOD get_grupo_articulos.
+    CLEAR matkl.
+    SELECT SINGLE matkl FROM mara
+      INTO matkl
+     WHERE matnr = matnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_KG" VERSION="1" LANGU="S" DESCRIPT="Convierte a KG" EXPOSURE="2" STATE="1" EDITORDER="40 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_KG" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_KG" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_KG" SCONAME="UNIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_KG" SCONAME="KILOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGE_D"/>
+  <source>METHOD get_kg.
+    DATA: l_meins TYPE mara-meins,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_brgew TYPE mara-brgew,
+          l_ntgew TYPE mara-ntgew,
+          l_gewei TYPE mara-gewei.
+
+    IF cantidad = 0.
+      RETURN.
+    ENDIF.
+
+    kilos = convertir_unidad( matnr = matnr cantidad = cantidad unidad_origen = unidad unidad_destino = &apos;KG&apos; ).
+    IF kilos &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE meins brgew ntgew gewei FROM mara
+      INTO (l_meins, l_brgew, l_ntgew, l_gewei)
+     WHERE matnr = matnr.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    kilos = convertir_unidad( matnr = matnr cantidad = cantidad unidad_origen = unidad unidad_destino = l_meins ).
+    IF kilos = 0.
+      RETURN.
+    ENDIF.
+
+    TRY.
+        kilos = kilos * l_ntgew.
+        IF l_gewei &lt;&gt; &apos;KG&apos;.
+          CALL FUNCTION &apos;UNIT_CONVERSION_SIMPLE&apos;
+            EXPORTING
+              input    = kilos
+              unit_in  = l_gewei
+              unit_out = &apos;KG&apos;
+            IMPORTING
+              output   = kilos.
+        ENDIF.
+      CATCH cx_root. &quot;#EC *
+        IF l_gewei &lt;&gt; &apos;KG&apos;.
+          CALL FUNCTION &apos;UNIT_CONVERSION_SIMPLE&apos;
+            EXPORTING
+              input    = kilos
+              unit_in  = l_gewei
+              unit_out = &apos;KG&apos;
+            IMPORTING
+              output   = kilos.
+        ENDIF.
+        TRY.
+            kilos = kilos * l_ntgew.
+          CATCH cx_root. &quot;#EC *
+            kilos = 999999999.
+        ENDTRY.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_MRP" VERSION="1" LANGU="S" DESCRIPT="Devuelve detalle de MRP" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_MRP" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_MRP" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_MRP" SCONAME="PLSCN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PLSCN" PARVALUE="&apos;000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_MRP" SCONAME="I_MRP_LINES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_BAPI_MRP_IND_LINES"/>
+  <source>METHOD get_mrp.
+    DATA l_matnr_bapi TYPE bapi_mrp_mat_param-material.
+
+    l_matnr_bapi = matnr.
+    CLEAR i_mrp_lines.
+    CALL FUNCTION &apos;BAPI_MATERIAL_STOCK_REQ_LIST&apos;
+      EXPORTING
+        material      = l_matnr_bapi
+        plant         = werks
+*       MRP_AREA      =
+        plan_scenario = plscn
+*       SELECTION_RULE          =
+*       DISPLAY_FILTER          =
+*       PERIOD_INDICATOR        =
+*       GET_ITEM_DETAILS        =
+*       GET_IND_LINES = &apos;X&apos;
+*       GET_TOTAL_LINES         =
+*       IGNORE_BUFFER =
+*       MATERIAL_EVG  =
+*   IMPORTING
+*       MRP_LIST      =
+*       MRP_CONTROL_PARAM       =
+*       MRP_STOCK_DETAIL        =
+*       RETURN        =
+      TABLES
+*       MRP_ITEMS     =
+        mrp_ind_lines = i_mrp_lines.
+*       MRP_TOTAL_LINES         =
+*       EXTENSIONOUT  =
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el peso del material" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="UNIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="TIPO_PESO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="CANTIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MENGV13" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="CUALQUIERA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_PESO" SCONAME="PESO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MARA-NTGEW"/>
+  <source>METHOD get_peso.
+    DATA l_mara TYPE mara.
+
+    SELECT SINGLE brgew ntgew gewei meins FROM mara
+      INTO CORRESPONDING FIELDS OF l_mara
+     WHERE matnr = matnr.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF tipo_peso = &apos;B&apos;.
+      peso = l_mara-brgew.
+      IF peso IS INITIAL AND cualquiera = &apos;X&apos;.
+        peso = l_mara-ntgew.
+      ENDIF.
+    ELSE.
+      peso = l_mara-ntgew.
+      IF peso IS INITIAL AND cualquiera = &apos;X&apos;.
+        peso = l_mara-brgew.
+      ENDIF.
+    ENDIF.
+
+    IF NOT cantidad_origen IS INITIAL AND NOT unidad_origen IS INITIAL.
+      DATA(l_ctd) = convertir_unidad( matnr          = matnr
+                                      cantidad       = cantidad_origen
+                                      unidad_origen  = unidad_origen
+                                      unidad_destino = l_mara-meins ).
+      peso = l_ctd * peso.
+    ENDIF.
+
+    IF NOT peso IS INITIAL.
+      IF unidad &lt;&gt; l_mara-gewei.
+        CALL FUNCTION &apos;UNIT_CONVERSION_SIMPLE&apos;
+          EXPORTING
+            input    = peso
+            unit_in  = l_mara-gewei
+            unit_out = unidad
+          IMPORTING
+            output   = peso.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" VERSION="1" LANGU="S" DESCRIPT="Recupera stock del material" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="CHARG" VERSION="1" LANGU="S" DESCRIPT="Número de lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="LIBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="BLOQUEADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="CALIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="BESTQ" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VEPO-BESTQ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="OTROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="TRASLADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VA" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="SOBKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOBKZ"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Stock valorado de libre utilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MCHB-CLABS"/>
+  <source>METHOD get_stock.
+    IF NOT charg IS INITIAL.
+      cantidad = zcl_ap_lote=&gt;get_ctd_total(
+          matnr     = matnr
+          charg     = charg
+          libre     = libre
+          bloqueado = bloqueado
+          calidad   = calidad
+          bestq     = bestq
+          otros     = otros
+          traslado  = traslado
+          werks     = werks
+          lgort     = lgort
+          meins     = meins ).
+    ELSE.
+      DATA: r_werks     TYPE RANGE OF werks_d,
+            r_lgort     TYPE RANGE OF lgort_d,
+            l_libre     TYPE c LENGTH 1,
+            l_bloqueado TYPE c LENGTH 1,
+            l_calidad   TYPE c LENGTH 1,
+            l_traslado  TYPE c LENGTH 1,
+            l_otros     TYPE c LENGTH 1,
+            lr_werks    LIKE LINE OF r_werks,
+            lr_lgort    LIKE LINE OF r_lgort,
+            l_mard      TYPE mard.
+
+      IF bestq = &apos;*&apos;.
+        l_libre = libre.
+        l_bloqueado = bloqueado.
+        l_calidad = calidad.
+        l_traslado = traslado.
+        l_otros = otros.
+      ELSEIF bestq = &apos;&apos;.
+        l_libre = &apos;X&apos;.
+      ELSEIF bestq = &apos;S&apos;.
+        l_bloqueado = &apos;X&apos;.
+      ELSEIF bestq = &apos;Q&apos;.
+        l_calidad = &apos;X&apos;.
+      ENDIF.
+
+      IF NOT werks IS INITIAL.
+        CLEAR lr_werks.
+        lr_werks-option = &apos;EQ&apos;.
+        lr_werks-sign   = &apos;I&apos;.
+        lr_werks-low    = werks.
+        APPEND lr_werks TO r_werks.
+      ENDIF.
+
+      IF NOT lgort IS INITIAL.
+        CLEAR lr_lgort.
+        lr_lgort-option = &apos;EQ&apos;.
+        lr_lgort-sign   = &apos;I&apos;.
+        lr_lgort-low    = lgort.
+        APPEND lr_lgort TO r_lgort.
+      ENDIF.
+
+      IF NOT vbeln IS INITIAL AND NOT sobkz IS INITIAL.
+        SELECT SUM( kalab ) SUM( kains ) SUM( kaspe ) FROM mska
+          INTO (l_mard-labst, l_mard-insme, l_mard-speme)
+         WHERE matnr  = matnr
+           AND vbeln  = vbeln
+           AND sobkz  = sobkz
+           AND werks IN r_werks
+           AND lgort IN r_lgort.
+      ELSE.
+        SELECT SUM( labst ) SUM( umlme ) SUM( insme ) SUM( einme ) SUM( speme ) SUM( retme ) FROM mard
+          INTO (l_mard-labst, l_mard-umlme, l_mard-insme, l_mard-einme, l_mard-speme, l_mard-retme)
+         WHERE matnr  = matnr
+           AND werks IN r_werks
+           AND lgort IN r_lgort.
+      ENDIF.
+
+      IF l_libre = &apos;X&apos;.
+        cantidad = cantidad + l_mard-labst.
+      ENDIF.
+      IF l_calidad = &apos;X&apos;.
+        cantidad = cantidad + l_mard-insme.
+      ENDIF.
+      IF l_bloqueado = &apos;X&apos;.
+        cantidad = cantidad + l_mard-speme.
+      ENDIF.
+      IF l_traslado = &apos;X&apos;.
+        cantidad = cantidad + l_mard-umlme.
+      ENDIF.
+      IF l_otros = &apos;X&apos;.
+        cantidad = cantidad + l_mard-einme + l_mard-retme.
+      ENDIF.
+
+      IF NOT meins IS INITIAL AND cantidad &lt;&gt; 0.
+        DATA(l_umb) = zcl_ap_material=&gt;get_unidad_base( matnr ).
+        IF l_umb &lt;&gt; meins.
+          cantidad = zcl_ap_material=&gt;convertir_unidad( matnr = matnr cantidad = cantidad unidad_origen = l_umb unidad_destino = meins ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" VERSION="1" LANGU="S" DESCRIPT="Stock a fecha" EXPOSURE="2" STATE="1" EDITORDER="42 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="LGORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="R_MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="SOLO_MAT_SUJ_LOTES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AM07M-XCHRG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="R_WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="R_LGORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_STOCK_A_FECHA" SCONAME="I_STOCKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MCHB_TTY"/>
+  <source>METHOD get_stock_a_fecha.
+** PARA QUE ESTO FUNCIONE, CREAR ENHANCEMENT EN PROGRAMA RM07MLBD
+*FORM feldgruppen_aufbauen.
+*&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;$&quot;$\SE:(1) Forma FELDGRUPPEN_AUFBAUEN, Inicio                                                                                                                A
+**$*$-Start: (1)---------------------------------------------------------------------------------$*$*
+*ENHANCEMENT 1  ZTOCK_A_FECHA.    &quot;active version
+*data l_origen(40).
+*
+* GET PARAMETER ID &apos;ZPG&apos; FIELD l_origen.
+* if l_origen = &apos;ZTOCK_A_FECHA&apos;.
+*   SET PARAMETER ID &apos;ZPG&apos; FIELD &apos;&apos;.
+*   EXPORT bestand to MEMORY id &apos;ZTOCK_A_FECHA&apos;.
+*   leave PROGRAM.
+* ENDIF.
+*
+*ENDENHANCEMENT.
+
+    TYPES: BEGIN OF t_bestand,
+             bwkey         TYPE mbew-bwkey,
+             werks         TYPE mseg-werks,
+             matnr         TYPE mseg-matnr,
+             charg         TYPE mseg-charg,
+             endmenge(09)  TYPE p          DECIMALS 3, &quot; Bestand zu &apos;datum-high&apos; XJD
+             anfmenge(09)  TYPE p          DECIMALS 3, &quot; Bestand zu &apos;datum-low&apos;   XJD
+             meins         TYPE mara-meins,            &quot; Mengeneinheit
+             endwert(09)   TYPE p          DECIMALS 2, &quot; n497992
+             anfwert(09)   TYPE p          DECIMALS 2, &quot; n497992
+             soll(09)      TYPE p          DECIMALS 3, &quot; XJD
+             haben(09)     TYPE p          DECIMALS 3, &quot; XJD
+             sollwert(09)  TYPE p          DECIMALS 2, &quot; n497992
+             habenwert(09) TYPE p          DECIMALS 2, &quot; n497992
+             waers         TYPE t001-waers,            &quot; Währungsschlüssel
+           END OF t_bestand.
+
+    DATA: rr_matnr TYPE range_t_matnr,
+          lr_matnr TYPE range_s_matnr,
+          bestand  TYPE TABLE OF t_bestand,
+          l_stocks TYPE mchb.
+    DATA i_stock_inv TYPE tt_mb5b.
+
+    FIELD-SYMBOLS &lt;bestand&gt; TYPE t_bestand.
+
+    __def_rangoc budat.
+
+    CLEAR i_stocks.
+
+    CLEAR lr_budat.
+    lr_budat-option = &apos;BT&apos;.
+    lr_budat-sign   = &apos;I&apos;.
+    lr_budat-low    = fecha.
+    lr_budat-high   = fecha.
+    APPEND lr_budat TO r_budat.
+
+    rr_matnr = r_matnr.
+    IF NOT matnr IS INITIAL.
+      CLEAR lr_matnr.
+      lr_matnr-option = &apos;EQ&apos;.
+      lr_matnr-sign   = &apos;I&apos;.
+      lr_matnr-low    = matnr.
+      APPEND lr_matnr TO rr_matnr.
+    ENDIF.
+
+    IF NOT r_werks IS INITIAL.
+      DATA(rr_werks) = r_werks.
+    ELSEIF NOT werks IS INITIAL.
+      rr_werks = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = werks ) ).
+    ENDIF.
+
+    IF NOT r_lgort IS INITIAL.
+      DATA(rr_lgort) = r_lgort.
+    ELSEIF NOT lgort IS INITIAL.
+      rr_lgort = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = lgort ) ).
+    ENDIF.
+
+    FREE MEMORY ID &apos;ZTOCK_A_FECHA&apos;.
+    SET PARAMETER ID &apos;ZPG&apos; FIELD &apos;ZTOCK_A_FECHA&apos; ##EXISTS.
+
+    SUBMIT rm07mlbd                                        &quot;#EC CI_SUBMIT
+       AND RETURN
+           VIA SELECTION-SCREEN
+           WITH werks IN rr_werks
+           WITH matnr IN rr_matnr
+           WITH lgort IN rr_lgort
+           WITH datum IN r_budat
+           WITH lgbst = &apos;X&apos;
+           WITH bwbst = &apos;&apos;
+           WITH sbbst = &apos;&apos;
+           WITH xsum  = &apos;&apos;
+           WITH pa_sumfl = &apos;X&apos;
+           WITH xchar = solo_mat_suj_lotes &quot; Sólo materiales sujetos a lote
+           WITH pa_wdzer = &apos;X&apos;
+           WITH pa_wdzew = &apos;X&apos;
+           WITH pa_wdwiz = &apos;X&apos;
+           WITH pa_wdwuw = &apos;X&apos;
+           WITH pa_wdwew = &apos;X&apos;
+           WITH pa_ndzer = &apos;X&apos;
+           WITH pa_ndsto = &apos;X&apos;.
+
+    CLEAR bestand.
+    IMPORT bestand TO bestand FROM MEMORY ID &apos;ZTOCK_A_FECHA&apos;.
+    IF sy-subrc &lt;&gt; 0.
+      IMPORT i_stock_inv TO i_stock_inv FROM MEMORY ID &apos;ZTOCK_A_FECHA&apos;.
+      MOVE-CORRESPONDING i_stock_inv TO bestand.
+    ENDIF.
+    FREE MEMORY ID &apos;ZTOCK_A_FECHA&apos;.
+
+    LOOP AT bestand ASSIGNING &lt;bestand&gt;.
+      CLEAR l_stocks.
+      MOVE-CORRESPONDING &lt;bestand&gt; TO l_stocks.
+      l_stocks-werks = werks.
+      l_stocks-lgort = lgort.
+      l_stocks-laeda = fecha.
+      l_stocks-clabs = &lt;bestand&gt;-endmenge.
+      APPEND l_stocks TO i_stocks.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Devuelve texto" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO" SCONAME="LINEAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TLINETAB"/>
+  <source>METHOD get_texto.
+    lineas = zcl_ap_textos=&gt;get_texto( id = id object = &apos;MATERIAL&apos; name = matnr spras = spras ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Devuelve texto" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="VKORG" VERSION="1" LANGU="S" DESCRIPT="Organización de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKORG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="VTWEG" VERSION="1" LANGU="S" DESCRIPT="Canal de distribución" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VTWEG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_TEXTO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_texto_string.
+    DATA: l_name   TYPE stxh-tdname,
+          l_object TYPE stxh-tdobject.
+
+    IF vtweg IS INITIAL.
+      l_name = matnr.
+      l_object = &apos;MATERIAL&apos;.
+    ELSE.
+      l_name(18) = matnr.
+      l_name+18(4) = vkorg.
+      l_name+22(2) = vtweg.
+      l_object = &apos;MVKE&apos;.
+    ENDIF.
+
+    string = zcl_ap_textos=&gt;get_texto_string( id = id object = l_object name = l_name spras = spras ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD" VERSION="1" LANGU="S" DESCRIPT="Recupera unidad base" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD" SCONAME="MEINS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MEINS"/>
+  <source>METHOD get_unidad.
+    DATA l_mat_meins TYPE mat_meins_s.
+
+    READ TABLE i_mat_meins INTO l_mat_meins WITH KEY matnr = matnr
+         BINARY SEARCH.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT SINGLE matnr meins FROM mara
+        INTO (l_mat_meins-matnr, l_mat_meins-meins)
+       WHERE matnr = matnr.
+      IF sy-subrc = 0.
+        APPEND l_mat_meins TO i_mat_meins.
+        SORT i_mat_meins.
+      ENDIF.
+    ENDIF.
+    meins = l_mat_meins-meins.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD_BASE" VERSION="1" LANGU="S" DESCRIPT="Recupera unidad base del material" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD_BASE" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_UNIDAD_BASE" SCONAME="MEINS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MARA-MEINS"/>
+  <source>METHOD get_unidad_base.
+    CLEAR meins.
+    SELECT SINGLE meins FROM  mara
+      INTO meins
+     WHERE matnr = matnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Recupera valoración material" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MENGE_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="MEINS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DMBTR"/>
+  <source>METHOD get_valor.
+    DATA: l_mbew  TYPE mbew,
+          l_valor TYPE p LENGTH 8 DECIMALS 5,
+          l_campo TYPE char40,
+          l_meins TYPE meins,
+          l_conv  TYPE p LENGTH 8 DECIMALS 5.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    SELECT peinh stprs verpr vprsv FROM mbew
+      INTO CORRESPONDING FIELDS OF l_mbew
+      UP TO 1 ROWS
+     WHERE matnr = matnr
+       AND bwkey = werks
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      IF l_mbew-peinh &lt;&gt; 0.
+        IF campo IS INITIAL.
+          IF l_mbew-vprsv = &apos;V&apos;.
+            l_valor = l_mbew-verpr / l_mbew-peinh.
+          ELSE.
+            l_valor = l_mbew-stprs / l_mbew-peinh.
+          ENDIF.
+        ELSE.
+          CONCATENATE &apos;L_MBEW-&apos; campo INTO l_campo.
+          ASSIGN (l_campo) TO &lt;fs&gt;.
+          IF sy-subrc = 0.
+            l_valor = &lt;fs&gt; / l_mbew-peinh.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF cantidad &lt;&gt; 0.
+      l_valor = l_valor * cantidad.
+
+      IF NOT meins IS INITIAL.
+        SELECT SINGLE meins FROM mara
+          INTO l_meins
+         WHERE matnr = matnr.
+        IF l_meins &lt;&gt; meins.
+          l_conv = convertir_unidad( matnr = matnr cantidad = 1000 unidad_origen = meins unidad_destino = l_meins ).
+          IF l_conv &lt;&gt; 0.
+            l_valor = l_valor * l_conv / 1000.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    valor = l_valor.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor de clasificación" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" SCONAME="KLART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUSP-KLART" PARVALUE="&apos;001&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" SCONAME="CARACT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" SCONAME="ATINN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ATINN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS" SCONAME="AUSP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="AUSP"/>
+  <source>METHOD get_valor_clas.
+    DATA: l_cuobj TYPE inob-cuobj,
+          l_objek TYPE ausp-objek,
+          l_atinn TYPE atinn.
+
+    SELECT cuobj FROM inob
+      INTO l_cuobj
+      UP TO 1 ROWS
+     WHERE klart = klart
+       AND obtab = &apos;MARA&apos;
+       AND objek = matnr.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      l_objek = l_cuobj.
+    ELSE.
+      SELECT objek FROM ausp
+        INTO l_objek
+        UP TO 1 ROWS
+     WHERE objek = matnr
+       AND mafid = &apos;O&apos;
+       AND klart = klart.
+      ENDSELECT.
+    ENDIF.
+
+    IF NOT l_objek IS INITIAL.
+      IF NOT atinn IS INITIAL.
+        l_atinn = atinn.
+      ELSE.
+        l_atinn = zcl_ap_clasificacion=&gt;get_caract_interno( caract ).
+      ENDIF.
+
+      SELECT * FROM ausp
+        INTO ausp
+        UP TO 1 ROWS
+       WHERE objek = l_objek
+         AND atinn = l_atinn
+         AND mafid = &apos;O&apos;
+         AND klart = klart.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor de clasificación (CARACTER)" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="KLART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUSP-KLART" PARVALUE="&apos;001&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="CARACT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="ATINN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ATINN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="DESCRIPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_C" SCONAME="ATWRT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ATWRT"/>
+  <source>METHOD get_valor_clas_c.
+    DATA l_ausp TYPE ausp.
+
+    l_ausp = get_valor_clas( matnr = matnr klart = klart caract = caract atinn = atinn ).
+
+    IF descripcion IS INITIAL.
+      atwrt = l_ausp-atwrt.
+    ELSE.
+      atwrt = zcl_ap_clasificacion=&gt;get_valor_caract_text( caract = caract caract_int = atinn  valor = l_ausp-atwrt spras = spras ).
+      IF atwrt IS INITIAL.
+        atwrt = l_ausp-atwrt.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor de clasificación (NUMERO)" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" SCONAME="KLART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUSP-KLART" PARVALUE="&apos;001&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" SCONAME="CARACT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" SCONAME="ATINN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ATINN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="GET_VALOR_CLAS_P" SCONAME="ATFLV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ATFLV"/>
+  <source>METHOD get_valor_clas_p.
+    DATA l_ausp TYPE ausp.
+
+    l_ausp = get_valor_clas( matnr = matnr klart = klart caract = caract atinn = atinn ).
+
+    atflv = l_ausp-atflv.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INI_UPDATE" VERSION="1" LANGU="S" DESCRIPT="Inicio variables update" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INI_UPDATE" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <source>METHOD ini_update.
+    CLEAR: return, headdata, clientdata, materialdescription, new_mara, salesdata, salesdatax, taxclassifications,
+           warehousenumberdata, warehousenumberdatax,
+           storagetypedata, storagetypedatax.
+
+    material = matnr.
+    headdata-material = material.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" VERSION="1" LANGU="S" DESCRIPT="Control modificaciones" EXPOSURE="2" STATE="1" EDITORDER="39 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="TCODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE" PARVALUE="SY-TCODE"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="MARC_NEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARC" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="MARC_OLD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARC" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="MARA_NEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="INSERTAR_LOG_MODIFICACIONES" SCONAME="MARA_OLD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARA" PAROPTIONL="X"/>
+  <source>METHOD insertar_log_modificaciones.
+    DATA upd_mara        TYPE cdpos-chngind.
+    DATA upd_marc        TYPE cdpos-chngind.
+    DATA objectid        TYPE cdhdr-objectid.
+    DATA utime           TYPE cdhdr-utime.
+    DATA udate           TYPE cdhdr-udate.
+    DATA username        TYPE cdhdr-username.
+    DATA n_mare          TYPE mare.
+    DATA o_mare          TYPE mare.
+    DATA n_mard          TYPE mard.
+    DATA o_mard          TYPE mard.
+    DATA n_mbew          TYPE mbew.
+    DATA o_mbew          TYPE mbew.
+    DATA n_mfhm          TYPE mfhm.
+    DATA o_mfhm          TYPE mfhm.
+    DATA n_mlgn          TYPE mlgn.
+    DATA o_mlgn          TYPE mlgn.
+    DATA n_mlgt          TYPE mlgt.
+    DATA o_mlgt          TYPE mlgt.
+    DATA n_mpgd          TYPE mpgd.
+    DATA o_mpgd          TYPE mpgd.
+    DATA n_mpop          TYPE mpop.
+    DATA o_mpop          TYPE mpop.
+    DATA n_mvke          TYPE mvke.
+    DATA o_mvke          TYPE mvke.
+    DATA icdtxt_material TYPE STANDARD TABLE OF cdtxt.
+    DATA xdgesv          TYPE STANDARD TABLE OF xdgesv.
+    DATA ydgesv          TYPE STANDARD TABLE OF xdgesv.
+    DATA xdmaex          TYPE STANDARD TABLE OF xdmaex.
+    DATA ydmaex          TYPE STANDARD TABLE OF xdmaex.
+    DATA xdmakt          TYPE STANDARD TABLE OF xdmakt.
+    DATA ydmakt          TYPE STANDARD TABLE OF xdmakt.
+    DATA xdmape          TYPE STANDARD TABLE OF xdmape.
+    DATA ydmape          TYPE STANDARD TABLE OF xdmape.
+    DATA xdmarm          TYPE STANDARD TABLE OF xdmarm.
+    DATA ydmarm          TYPE STANDARD TABLE OF xdmarm.
+    DATA xdmean          TYPE STANDARD TABLE OF xdmean.
+    DATA ydmean          TYPE STANDARD TABLE OF xdmean.
+    DATA xdmkal          TYPE STANDARD TABLE OF xdmkal.
+    DATA ydmkal          TYPE STANDARD TABLE OF xdmkal.
+    DATA xdmlan          TYPE STANDARD TABLE OF xdmlan.
+    DATA ydmlan          TYPE STANDARD TABLE OF xdmlan.
+    DATA xdprow          TYPE STANDARD TABLE OF xdprow.
+    DATA ydprow          TYPE STANDARD TABLE OF xdprow.
+    DATA xdqmat          TYPE STANDARD TABLE OF xdqmat.
+    DATA ydqmat          TYPE STANDARD TABLE OF xdqmat.
+    DATA xdungv          TYPE STANDARD TABLE OF xdungv.
+    DATA ydungv          TYPE STANDARD TABLE OF xdungv.
+
+    IF NOT mara_new IS INITIAL.
+      IF mara_old IS INITIAL.
+        upd_mara = &apos;I&apos;.
+      ELSE.
+        upd_mara = &apos;U&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF NOT marc_new IS INITIAL.
+      IF marc_old IS INITIAL.
+        upd_marc = &apos;I&apos;.
+      ELSE.
+        upd_marc = &apos;U&apos;.
+      ENDIF.
+    ENDIF.
+
+    objectid = matnr.
+    CALL FUNCTION &apos;MATERIAL_WRITE_DOCUMENT&apos;
+      EXPORTING
+        objectid        = objectid
+        tcode           = tcode
+        utime           = sy-uzeit
+        udate           = sy-datum
+        username        = sy-uname
+*       PLANNED_CHANGE_NUMBER         = &apos; &apos;
+*       OBJECT_CHANGE_INDICATOR       = &apos;U&apos;
+*       PLANNED_OR_REAL_CHANGES       = &apos; &apos;
+*       NO_CHANGE_POINTERS            = &apos; &apos;
+*       UPD_ICDTXT_MATERIAL           = &apos; &apos;
+*       UPD_DGESV       = &apos; &apos;
+*       UPD_DMAEX       = &apos; &apos;
+*       UPD_DMAKT       = &apos; &apos;
+*       UPD_DMAPE       = &apos; &apos;
+*       UPD_DMARM       = &apos; &apos;
+*       UPD_DMEAN       = &apos; &apos;
+*       UPD_DMKAL       = &apos; &apos;
+*       UPD_DMLAN       = &apos; &apos;
+*       UPD_DPROW       = &apos; &apos;
+*       UPD_DQMAT       = &apos; &apos;
+*       UPD_DUNGV       = &apos; &apos;
+        n_mara          = mara_new
+        o_mara          = mara_old
+        upd_mara        = upd_mara
+        n_marc          = marc_new
+        o_marc          = marc_old
+        n_mare          = n_mare
+        o_mare          = o_mare
+        upd_marc        = upd_marc
+        n_mard          = n_mard
+        o_mard          = o_mard
+*       UPD_MARD        = &apos; &apos;
+        n_mbew          = n_mbew
+        o_mbew          = o_mbew
+*       UPD_MBEW        = &apos; &apos;
+        n_mfhm          = n_mfhm
+        o_mfhm          = o_mfhm
+*       UPD_MFHM        = &apos; &apos;
+        n_mlgn          = n_mlgn
+        o_mlgn          = o_mlgn
+*       UPD_MLGN        = &apos; &apos;
+        n_mlgt          = n_mlgt
+        o_mlgt          = o_mlgt
+*       UPD_MLGT        = &apos; &apos;
+        n_mpgd          = n_mpgd
+        o_mpgd          = o_mpgd
+*       UPD_MPGD        = &apos; &apos;
+        n_mpop          = n_mpop
+        o_mpop          = o_mpop
+*       UPD_MPOP        = &apos; &apos;
+        n_mvke          = n_mvke
+        o_mvke          = o_mvke
+*       UPD_MVKE        = &apos; &apos;
+      TABLES
+        icdtxt_material = icdtxt_material
+        xdgesv          = xdgesv
+        ydgesv          = ydgesv
+        xdmaex          = xdmaex
+        ydmaex          = ydmaex
+        xdmakt          = xdmakt
+        ydmakt          = ydmakt
+        xdmape          = xdmape
+        ydmape          = ydmape
+        xdmarm          = xdmarm
+        ydmarm          = ydmarm
+        xdmean          = xdmean
+        ydmean          = ydmean
+        xdmkal          = xdmkal
+        ydmkal          = ydmkal
+        xdmlan          = xdmlan
+        ydmlan          = ydmlan
+        xdprow          = xdprow
+        ydprow          = ydprow
+        xdqmat          = xdqmat
+        ydqmat          = ydqmat
+        xdungv          = xdungv
+        ydungv          = ydungv.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Graba texto como string" EXPOSURE="2" STATE="1" EDITORDER="43 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="VKORG" VERSION="1" LANGU="S" DESCRIPT="Organización de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKORG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="VTWEG" VERSION="1" LANGU="S" DESCRIPT="Canal de distribución" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VTWEG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="72"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="WORD_WRAP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="DELIMITER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="SAVEMODE_DIRECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="SET_TEXTO_STRING" SCONAME="INSERT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD set_texto_string.
+    DATA: l_name   TYPE stxh-tdname,
+          l_object TYPE stxh-tdobject.
+
+    IF vtweg IS INITIAL.
+      l_name = matnr.
+      l_object = &apos;MATERIAL&apos;.
+    ELSE.
+      l_name(18) = matnr.
+      l_name+18(4) = vkorg.
+      l_name+22(2) = vtweg.
+      l_object = &apos;MVKE&apos;.
+    ENDIF.
+
+    IF string IS INITIAL.
+      zcl_ap_textos=&gt;borrar_texto( id = id
+                                   object = l_object
+                                   name = l_name
+                                   spras = spras ).
+    ELSE.
+      zcl_ap_textos=&gt;save_texto_string( id = id
+                                        object = l_object
+                                        name = l_name
+                                        spras = spras
+                                        string = string
+                                        longitud   = longitud
+                                        word_wrap  = word_wrap
+                                        delimiter  = delimiter
+                                        savemode_direct = savemode_direct
+                                        insert = insert ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPDATE" VERSION="1" LANGU="S" DESCRIPT="Actualizar material" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD update.
+    CALL FUNCTION &apos;BAPI_MATERIAL_SAVEDATA&apos;
+      EXPORTING
+        headdata             = headdata
+        clientdata           = clientdata
+        clientdatax          = clientdatax
+        plantdata            = plantdata
+        plantdatax           = plantdatax
+*     FORECASTPARAMETERS   =
+*     FORECASTPARAMETERSX  =
+*     PLANNINGDATA         =
+*     PLANNINGDATAX        =
+        storagelocationdata  = storagelocationdata
+        storagelocationdatax = storagelocationdatax
+        valuationdata        = valuationdata
+        valuationdatax       = valuationdatax
+        warehousenumberdata  = warehousenumberdata
+        warehousenumberdatax = warehousenumberdatax
+        salesdata            = salesdata
+        salesdatax           = salesdatax
+        storagetypedata      = storagetypedata
+        storagetypedatax     = storagetypedatax
+*     FLAG_ONLINE          = &apos; &apos;
+*     FLAG_CAD_CALL        = &apos; &apos;
+*     NO_DEQUEUE           = &apos; &apos;
+*     NO_ROLLBACK_WORK     = &apos; &apos;
+      IMPORTING
+        return               = return
+      TABLES
+        materialdescription  = materialdescription
+        unitsofmeasure       = unitsofmeasure
+        unitsofmeasurex      = unitsofmeasurex
+*     INTERNATIONALARTNOS  =
+*     MATERIALLONGTEXT     =
+        taxclassifications   = taxclassifications
+        returnmessages       = messages.
+*     PRTDATA              =
+*     PRTDATAX             =
+*     EXTENSIONIN          =
+*     EXTENSIONINX         =
+
+    CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+      EXPORTING
+        wait = &apos;X&apos;.
+
+    CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" VERSION="1" LANGU="S" DESCRIPT="Actualiza clase de inspección" EXPOSURE="2" STATE="1" EDITORDER="41 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="ART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMAT-ART"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="STICHPRVER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMAT-STICHPRVER" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="ACTIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XFELD" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="SEGUNDOS_ESPERA_SI_BLOQUEOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="5"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="ART2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMAT-ART" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="ACTIVO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XFELD" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="STICHPRVER2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="QMAT-STICHPRVER" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPD_CLASE_INSPECCION" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD upd_clase_inspeccion.
+    DATA: qmat             TYPE qmat,
+          tq34             TYPE tq34,
+          i_return         TYPE STANDARD TABLE OF bapiret2,
+          i_inspectionctrl TYPE STANDARD TABLE OF bapi1001004_qmat,
+          return           TYPE bapiret2,
+          inspectionctrl   TYPE bapi1001004_qmat.
+
+    SELECT SINGLE * FROM qmat
+      INTO qmat
+     WHERE matnr = matnr
+       AND werks = werks
+       AND art   = art.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT SINGLE * FROM tq34
+        INTO tq34
+       WHERE art = art.
+      IF sy-subrc &lt;&gt; 0.
+        __concat2 message &apos;No existe la clase de inspección&apos;(nec) art.
+        RETURN.
+      ELSE.
+        MOVE-CORRESPONDING tq34 TO qmat.
+      ENDIF.
+    ENDIF.
+
+    CLEAR: i_return, i_inspectionctrl, return, inspectionctrl.
+
+    IF    ( activo     &lt;&gt; &apos;?&apos; AND qmat-aktiv      &lt;&gt; activo )
+       OR ( stichprver &lt;&gt; &apos;?&apos; AND qmat-stichprver &lt;&gt; stichprver ).
+      CLEAR inspectionctrl.
+      inspectionctrl-insptype             = art.
+      inspectionctrl-material             = matnr.
+      inspectionctrl-plant                = werks.
+      inspectionctrl-qual_score_procedure = qmat-qkzverf.
+      inspectionctrl-sampling_procedure   = qmat-stichprver.
+      IF stichprver &lt;&gt; &apos;?&apos;.
+        inspectionctrl-sampling_procedure = stichprver.
+      ENDIF.
+      inspectionctrl-ind_skips_allowed      = qmat-dyn.
+      inspectionctrl-ind_manual_sample      = qmat-mpb.
+      inspectionctrl-ind_manual_sample_calc = qmat-mst.
+      inspectionctrl-ind_insp_with_tsk_list = qmat-ppl.
+      inspectionctrl-ind_auto_assign        = qmat-app.
+      inspectionctrl-ind_insp_by_charac     = qmat-mer.
+      inspectionctrl-ind_post_to_insp_stock = qmat-insmk.
+      inspectionctrl-ind_automatic_ud       = qmat-ave.
+      IF activo &lt;&gt; &apos;?&apos;.
+        inspectionctrl-ind_insptype_mat_active = activo.
+      ENDIF.
+      APPEND inspectionctrl TO i_inspectionctrl.
+    ENDIF.
+
+    IF NOT art2 IS INITIAL.
+      SELECT SINGLE * FROM qmat
+        INTO qmat
+       WHERE matnr = matnr
+         AND werks = werks
+         AND art   = art2.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT SINGLE * FROM tq34
+          INTO tq34
+         WHERE art = art2.
+        IF sy-subrc &lt;&gt; 0.
+          __concat2 message &apos;No existe la clase de inspección&apos;(nec) art2.
+          RETURN.
+        ELSE.
+          MOVE-CORRESPONDING tq34 TO qmat.
+        ENDIF.
+      ENDIF.
+
+      IF    ( activo2     &lt;&gt; &apos;?&apos; AND qmat-aktiv      &lt;&gt; activo2 )
+         OR ( stichprver2 &lt;&gt; &apos;?&apos; AND qmat-stichprver &lt;&gt; stichprver2 ).
+        CLEAR inspectionctrl.
+        inspectionctrl-insptype             = art2.
+        inspectionctrl-material             = matnr.
+        inspectionctrl-plant                = werks.
+        inspectionctrl-qual_score_procedure = qmat-qkzverf.
+        inspectionctrl-sampling_procedure   = qmat-stichprver.
+        IF stichprver2 &lt;&gt; &apos;?&apos;.
+          inspectionctrl-sampling_procedure = stichprver2.
+        ENDIF.
+        inspectionctrl-ind_skips_allowed      = qmat-dyn.
+        inspectionctrl-ind_manual_sample      = qmat-mpb.
+        inspectionctrl-ind_manual_sample_calc = qmat-mst.
+        inspectionctrl-ind_insp_with_tsk_list = qmat-ppl.
+        inspectionctrl-ind_auto_assign        = qmat-app.
+        inspectionctrl-ind_insp_by_charac     = qmat-mer.
+        inspectionctrl-ind_post_to_insp_stock = qmat-insmk.
+        inspectionctrl-ind_automatic_ud       = qmat-ave.
+        IF activo2 &lt;&gt; &apos;?&apos;.
+          inspectionctrl-ind_insptype_mat_active = activo2.
+        ENDIF.
+        APPEND inspectionctrl TO i_inspectionctrl.
+      ENDIF.
+    ENDIF.
+
+    IF i_inspectionctrl IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    DO segundos_espera_si_bloqueos TIMES.
+      IF esta_bloqueado( matnr = matnr werks = werks ) = &apos;X&apos;.
+        MESSAGE s398(00) WITH &apos;Esperando por bloqueos en material&apos;(ebm) matnr werks &apos;&apos;.
+        WAIT UP TO 1 SECONDS.
+      ELSE.
+        CALL FUNCTION &apos;BAPI_MATINSPCTRL_SAVEREPLICA&apos;
+          TABLES
+            return         = i_return
+            inspectionctrl = i_inspectionctrl.
+
+        LOOP AT i_return INTO return WHERE type = &apos;E&apos;.   &quot;#EC CI_STDSEQ
+          __add_lista message return-message.
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          IF commit = &apos;X&apos;.
+            CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+              EXPORTING
+                wait = &apos;X&apos;.
+
+            CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+
+          ENDIF.
+        ENDIF.
+
+        EXIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" VERSION="1" LANGU="S" DESCRIPT="Visualiza stocks" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="LGORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="CHARG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="LOTES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="KZLSO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="KZLON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="S_LGORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VER_STOCKS" SCONAME="S_WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RANGE_T_WERKS_D" PAROPTIONL="X"/>
+  <source>METHOD ver_stocks.
+    DATA: r_werks TYPE RANGE OF werks_d,
+          r_lgort TYPE RANGE OF lgort_d,
+          r_charg TYPE RANGE OF charg_d,
+          r_lotes TYPE RANGE OF string,
+          l_werks LIKE LINE OF r_werks,
+          l_lgort LIKE LINE OF r_lgort,
+          l_charg LIKE LINE OF r_charg,
+          l_lotes LIKE LINE OF r_lotes.
+
+    r_werks = s_werks.
+    IF NOT werks IS INITIAL.
+      l_werks-option = &apos;EQ&apos;.
+      l_werks-sign   = &apos;I&apos;.
+      l_werks-low    = werks.
+      APPEND l_werks TO r_werks.
+    ENDIF.
+
+    r_lgort = s_lgort.
+    IF NOT lgort IS INITIAL.
+      l_lgort-option = &apos;EQ&apos;.
+      l_lgort-sign   = &apos;I&apos;.
+      l_lgort-low    = lgort.
+      APPEND l_lgort TO r_lgort.
+    ENDIF.
+
+    IF NOT charg IS INITIAL.
+      l_charg-option = &apos;EQ&apos;.
+      l_charg-sign   = &apos;I&apos;.
+      l_charg-low    = charg.
+      APPEND l_charg TO r_charg.
+    ENDIF.
+
+    IF NOT lotes IS INITIAL.
+      r_lotes = zcl_ap_string=&gt;lista2rango( lotes ).
+
+      LOOP AT r_lotes INTO l_lotes.
+        MOVE-CORRESPONDING l_lotes TO l_charg.
+        APPEND l_charg TO r_charg.
+      ENDLOOP.
+    ENDIF.
+
+    SUBMIT rmmmbestn                                     &quot;#EC CI_SUBMIT
+       AND RETURN
+           WITH ms_matnr = matnr
+           WITH ms_werks IN r_werks
+           WITH ms_lgort IN r_lgort
+           WITH ms_charg IN r_charg
+           WITH kzlon = kzlon &quot;&apos;  &quot;Leer stocks abiertos
+           WITH kzlso = kzlso. &quot;&apos;&apos;. &quot;Leer stocks especiales
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualiza material" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MARA-MATNR"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="VISTAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T130M-PSTAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="NVISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="WERKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RMMG1-WERKS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="LGORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RMMG1-LGORT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RMMG1-LGNUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="LGTYP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RMMG1-LGTYP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="VKORG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MVKE-VKORG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="VTWEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MVKE-VTWEG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MATERIAL" CMPNAME="VISUALIZAR" SCONAME="MODIFICAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD visualizar.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+    DATA: i_bdcmm     TYPE TABLE OF bdcdata,
+          l_contvista TYPE i,
+          l_bdcdata   TYPE bdcdata.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message.
+
+    o_bi = NEW #( ).
+
+* Acceso: Nº de material, clase de material, ramo etc.
+    o_bi-&gt;dynpro( program = &apos;SAPLMGMM&apos; dynpro = &apos;0060&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=AUSW&apos; ).
+    o_bi-&gt;campos( campo = &apos;RMMG1-MATNR&apos; valor = matnr ). &quot; Número de material
+
+    FREE i_bdcmm.
+    CALL FUNCTION &apos;MATERIAL_BTCI_SELECTION_NEW&apos;
+      EXPORTING
+        material                  = matnr
+        selection                 = vistas
+        tcode                     = &apos;MM03&apos;
+      TABLES
+        btci_d0070                = i_bdcmm
+      EXCEPTIONS
+        material_not_found        = 1
+        material_number_missing   = 2
+        material_type_missing     = 3
+        material_type_not_found   = 4
+        no_active_dynpro_selected = 5
+        no_authority              = 6
+        OTHERS                    = 7.
+    IF sy-subrc &lt;&gt; 0.
+*
+    ENDIF.
+
+    CLEAR l_contvista.
+    LOOP AT i_bdcmm INTO l_bdcdata.
+      IF sy-tabix &gt; 17.
+        DELETE i_bdcmm.
+      ELSE.
+        IF NOT nvista IS INITIAL.
+          IF l_bdcdata-fval = &apos;X&apos;.
+            l_contvista = l_contvista + 1.
+          ENDIF.
+          IF l_contvista &lt;&gt; nvista.
+            CLEAR l_bdcdata-fval.
+            MODIFY i_bdcmm FROM l_bdcdata.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    o_bi-&gt;append_bdcdata( i_bdcmm ).
+
+    IF    NOT werks IS INITIAL
+       OR NOT lgort IS INITIAL
+       OR NOT lgnum IS INITIAL
+       OR NOT lgtyp IS INITIAL.
+      o_bi-&gt;dynpro( program = &apos;SAPLMGMM&apos; dynpro = &apos;0080&apos; ).
+      IF NOT werks IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-WERKS&apos; valor = werks ). &quot; Centro
+      ENDIF.
+      IF NOT lgort IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-LGORT&apos; valor = lgort ). &quot; Almacén
+      ENDIF.
+      IF NOT lgnum IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-LGNUM&apos; valor = lgnum ). &quot; NºAlmacén
+      ENDIF.
+      IF NOT lgtyp IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-LGTYP&apos; valor = lgtyp ). &quot; Tipo Almacén
+      ENDIF.
+      IF NOT vkorg IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-VKORG&apos; valor = vkorg ).
+      ENDIF.
+      IF NOT vtweg IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;RMMG1-VTWEG&apos; valor = vtweg ).
+      ENDIF.
+    ENDIF.
+
+    IF modificar IS INITIAL.
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;MM03&apos;
+                          modo = &apos;E&apos; ).
+    ELSE.
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;MM02&apos;
+                          modo = &apos;E&apos; ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_MAIL_LOG" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Log mail enviados" LENGTH="17 "/>
+   <textElement ID="S" KEY="P_AMPLI" ENTRY="        Log detallado" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_CLAVE" ENTRY="D       ." LENGTH="23 "/>
+   <textElement ID="S" KEY="S_CODIGO" ENTRY="        Código mail" LENGTH="19 "/>
+   <textElement ID="S" KEY="S_CPROG" ENTRY="        Programa emisor del mail" LENGTH="32 "/>
+   <textElement ID="S" KEY="S_FECHA" ENTRY="D       ." LENGTH="19 "/>
+   <textElement ID="S" KEY="S_GRUPO" ENTRY="        Grupo" LENGTH="29 "/>
+   <textElement ID="S" KEY="S_HORA" ENTRY="D       ." LENGTH="19 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Log mail enviados
+* DESCRIPCION : Log mail enviados
+*
+* AUTOR: Andrés Picazo                                FECHA: 20/01/2020
+*
+***********************************************************************
+REPORT zap_mail_log.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: zap_mail_log.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: visualizar_objeto REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             fecha   TYPE oia_ship , &quot; Fecha envío
+             hora    TYPE so_tim_ou , &quot; Hora salida
+             clave   TYPE objkey , &quot; Clave de objeto
+             destino TYPE text128,
+             grupo   TYPE group , &quot; Grupo características
+             codigo  TYPE zap_mail_log-codigo,
+             version TYPE finb_tr_version , &quot; Versión
+             spras   TYPE spras , &quot; Clave de idioma
+             html    TYPE mgwpicturehtml , &quot; Viewer HTML
+             asunto  TYPE text255 , &quot; Texto
+             emisor  TYPE text128,
+             copia   TYPE text128,
+             message TYPE bapi_msg , &quot; Texto de mensaje
+             status  TYPE zap_mail_log-status,
+             tcode   TYPE zap_mail_log-tcode,
+             cprog   TYPE zap_mail_log-cprog,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv.                    &quot;#EC NEEDED
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos,
+      get_info IMPORTING list        TYPE t_listado
+                         display     TYPE abap_bool DEFAULT &apos;&apos;
+               RETURNING VALUE(info) TYPE soxsp2.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_grupo  FOR zap_mail_log-grupo,
+                s_codigo FOR zap_mail_log-codigo,
+                s_clave  FOR zap_mail_log-clave,
+                s_fecha  FOR zap_mail_log-fecha DEFAULT sy-datum,
+                s_hora   FOR zap_mail_log-hora,
+                s_cprog  FOR zap_mail_log-cprog.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS p_ampli AS CHECKBOX.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+
+  METHOD visualizar_objeto.
+    DATA l_list TYPE o_prog-&gt;t_listado.
+    l_list = list.
+
+
+    CASE column.
+      WHEN OTHERS.
+        o_prog-&gt;get_info( list = l_list display = &apos;X&apos; ).
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+
+
+  METHOD handle_user_command.
+    check_ucomm_sel = &apos;F01&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;F01&apos;.
+        LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;. &quot;#EC NEEDED
+* TO DO!
+        ENDLOOP.
+        IF sy-subrc = 0.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+    SELECT * FROM zap_mail_log
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE grupo IN s_grupo
+       AND codigo IN s_codigo
+       AND clave IN s_clave
+       AND fecha IN s_fecha
+       AND hora IN s_hora
+       AND cprog IN s_cprog.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+      IF &lt;listado&gt;-destino CS &apos;@&apos; AND &lt;listado&gt;-status NE &apos;S&apos;.
+        DATA(info) = get_info( list = &lt;listado&gt; ).
+        IF NOT info-msgid IS INITIAL AND info-status CO &apos; 0123456789&apos;.
+          MESSAGE ID info-msgid TYPE &apos;S&apos; NUMBER info-status WITH info-msgv1 info-msgv2 info-msgv3 info-msgv4 INTO &lt;listado&gt;-message.
+        ENDIF.
+        UPDATE zap_mail_log
+          SET message  = &lt;listado&gt;-message
+              status   = info-status
+        WHERE fecha    = &lt;listado&gt;-fecha
+          AND hora     = &lt;listado&gt;-hora
+          AND clave    = &lt;listado&gt;-clave
+          AND destino  = &lt;listado&gt;-destino.
+      ENDIF.
+
+      IF &lt;listado&gt;-status = &apos;W&apos;.
+        &lt;listado&gt;-message = &apos;Mail en cola de salida&apos;.
+        set_status_list( EXPORTING icono = icon_yellow_light CHANGING list = &lt;listado&gt; ).
+      ELSE.
+        REPLACE ALL OCCURRENCES OF &apos;@&apos; IN &lt;listado&gt;-message WITH &apos;#&apos;.
+        set_status_list( EXPORTING message = &lt;listado&gt;-message icono = icon_green_light CHANGING list = &lt;listado&gt; ).
+      ENDIF.
+    ENDLOOP.
+
+    SORT i_listado BY fecha hora grupo codigo.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+*    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Ejecutar&apos;(eje)  icon = icon_execute_object ).
+*    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Excel&apos;  icon = icon_xls ).
+
+    o_alv-&gt;set_layout( p_vari ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_top_of_page( ).
+
+    IF p_ampli IS INITIAL.
+      o_alv-&gt;set_field_noout( &apos;GRUPO,CODIGO,VERSION,SPRAS,HTML,STATUS,TCODE,CPROG&apos; ).
+    ENDIF.
+
+    o_alv-&gt;set_field_text( &apos;DESTINO,CODIGO,ASUNTO,EMISOR,COPIA&apos; ).
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;MESSAGE&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+  METHOD get_info.
+    DATA: r_hora    TYPE RANGE OF sy-uzeit,
+          r_fecha   TYPE RANGE OF sy-datum,
+          lr_hora   LIKE LINE OF r_hora,
+          i_sndrecs TYPE soxsp2tab.
+
+    APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = list-fecha ) TO r_fecha.
+    lr_hora-option = &apos;BT&apos;.
+    lr_hora-sign = &apos;I&apos;.
+    lr_hora-low = list-hora.
+    lr_hora-high = list-hora + 10.
+    APPEND lr_hora TO r_hora.
+
+    DATA:  l_status  TYPE  soststatus.
+    l_status = &apos;XXXXXXXX &apos;.
+    CLEAR: i_sndrecs.
+    CALL FUNCTION &apos;SX_SNDREC_SELECT&apos;
+      EXPORTING
+*       SND_ART       =
+        snd_date      = r_fecha
+        snd_time      = r_hora[]
+*       DEL_DATE      =
+*       DEL_TIME      =
+        status        = l_status
+        notifications = &apos;X&apos;
+*       MAXSEL        =
+        all_waiting   = &apos;X&apos;
+      IMPORTING
+        sndrecs       = i_sndrecs.
+    DELETE i_sndrecs WHERE titel NE list-asunto.
+    IF NOT i_sndrecs IS INITIAL.
+      READ TABLE i_sndrecs INTO info INDEX 1.
+      IF display = &apos;X&apos;.
+        TRY.
+            cl_sndrec_bcs=&gt;display( i_sndrecs ).
+          CATCH cx_bcs INTO DATA(lx_bcs).
+            MESSAGE ID lx_bcs-&gt;msgid TYPE &apos;S&apos; NUMBER lx_bcs-&gt;msgno
+              WITH TEXT-018 space space space.
+        ENDTRY.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;&apos; ).
+
+*  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv =  NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                          status_prog        = &apos;ZAP_STATUS&apos;
+                          top_of_page_auto   = &apos;X&apos;
+                          top_of_page_titulo = &apos;X&apos;
+                          o_dev              = o_prog ).
+
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

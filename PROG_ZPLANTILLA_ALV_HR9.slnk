@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_ALV_HR9" VARCL="X" DBAPL="P" DBNA="PN" SUBC="1" APPL="P" RMAND="100" RLOAD="S" FIXPT="X" LDBNAME="PNPCE" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="23 "/>
+   <textElement ID="R" ENTRY="Plantilla ALV HR" LENGTH="16 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 18/04/2018
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:http://sap4.com,http://sap4.com/edicion
+**-&gt;PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&amp;ntask=TTT
+*
+***********************************************************************
+report zplantilla_alv_hr9.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+tables: pernr, zest_empleado.
+
+nodes: person, group, peras.
+
+
+infotypes: 0000 name all_0000 as person table mode p.
+infotypes: 0001 name all_0001 as person table mode p.
+infotypes: 0001 name p0001 as person table.
+infotypes: 0006 name p0006.
+
+ranges: r_pnppernr for pa0001-pernr.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+class lcl_alv definition inheriting from zcl_ap_alv_check.
+  public section.
+    methods: handle_double_click redefinition.
+    methods: handle_user_command redefinition.
+endclass.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+class zcl_report definition inheriting from zcl_ap_dev.
+  public section.
+    types: begin of t_listado,
+             check   type xfeld,
+             lights  type zico_estado_mensaje,
+             pernr   type persno,
+             ename   type pernr-ename,
+             begda   type p0001-begda,
+             endda   type p0001-endda,
+             message type bapi_msg,
+           end of t_listado,
+           tt_listado type table of t_listado.
+    data: i_listado type tt_listado,
+          l_listado type t_listado.
+
+    methods: main.
+
+    methods:  listado,
+      seleccionar_datos.
+
+endclass.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+data: o_prog type ref to zcl_report,
+      o_alv  type ref to lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+selection-screen begin of block 001 with frame title text-sel.
+select-options: s_kostl for p0001-kostl.
+selection-screen: skip 1.
+parameters: p_vari like disvariant-variant.
+selection-screen end of block 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+class lcl_alv implementation.
+  method handle_double_click.
+    field-symbols &lt;listado&gt; type o_prog-&gt;t_listado.
+
+    read table o_prog-&gt;i_listado assigning &lt;listado&gt; index row.
+    if sy-subrc = 0.
+      zcl_ap_empleado=&gt;visualizar_st( pernr = &lt;listado&gt;-pernr
+                                      begda = &lt;listado&gt;-begda
+                                      endda = &lt;listado&gt;-endda
+                                      infty = &apos;0001&apos; ).
+    endif.
+  endmethod. &quot;handle_double_click
+  method handle_user_command.
+    data: l_row type i.
+    field-symbols &lt;listado&gt; type o_prog-&gt;t_listado.
+
+    case e_salv_function.
+      when &apos;EXCEL&apos;.
+        exportar_excel( ).
+      when &apos;F01&apos;.
+        get_seleccion( changing t_tabla = o_prog-&gt;i_listado ).
+        loop at o_prog-&gt;i_listado assigning &lt;listado&gt; where check = &apos;X&apos;.
+        endloop.
+        if sy-subrc ne 0.
+          message &apos;Seleccione algún registro&apos; type &apos;I&apos;.
+        else.
+          refresh( ).
+        endif.
+      when others.
+    endcase.
+  endmethod. &quot;handle_USER_COMMAND
+endclass. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+class zcl_report implementation.
+  method main.
+    seleccionar_datos( ).
+    listado( ).
+  endmethod.                    &quot;REPORT
+
+  method seleccionar_datos.
+    field-symbols &lt;listado&gt; type t_listado.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    loop at i_listado assigning &lt;listado&gt;.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+
+      set_status_list( exporting message = &lt;listado&gt;-message criterio = &apos;V&apos; changing list = &lt;listado&gt; ).
+    endloop.
+
+  endmethod.                    &quot;seleccionar_datos
+
+
+  method listado.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+*    o_alv-&gt;set_layout( p_vari ).
+    o_alv-&gt;get_datos_layout( exporting reordenar_tabla = &apos;X&apos; changing t_tabla = i_listado ).
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+
+    o_alv-&gt;set_orden( &apos;PERNR,ENAME,BEGDA,ENDDA&apos; ).
+    o_alv-&gt;set_seleccion( changing t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+
+
+  endmethod.                    &quot;
+
+endclass.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+initialization.
+
+  create object o_prog
+    exporting
+      get_nombre_pc = &apos;X&apos;.
+
+  create object o_alv
+    exporting
+      status             = &apos;STANDARD_ALV_DYN&apos;
+      top_of_page_auto   = &apos;X&apos;
+      top_of_page_titulo = &apos;X&apos;
+      status_prog        = &apos;ZAP_STATUS&apos;.
+
+  o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Ejecutar&apos;  icon = &apos;@15@&apos; qinfo = &apos;Ejecutar&apos; ).
+  o_alv-&gt;add_button( button = &apos;M01&apos; text = &apos;LOG&apos;  icon = &apos;@15@&apos; qinfo = &apos;Log&apos; ).
+
+  p_vari = o_alv-&gt;get_default_layout( ).
+
+
+  pnpstat2-option = &apos;EQ&apos;.
+  pnpstat2-sign   = &apos;I&apos;.
+  pnpstat2-low    = &apos;3&apos;.
+  append pnpstat2.
+
+  concatenate sy-datum(4) &apos;0101&apos; into pnpbegda.
+  concatenate sy-datum(4) &apos;1231&apos; into pnpendda.
+
+  o_prog-&gt;initialization_i( changing sscrfields = sscrfields ).
+
+at selection-screen on value-request for p_vari.
+
+  p_vari = o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+at selection-screen.
+  o_prog-&gt;at_selection( ).
+
+at selection-screen on exit-command.
+  o_prog-&gt;at_selection( ).
+
+at selection-screen output.
+* Ocultar selección de personas
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PNPBEGPS,PNPENDPS,%FDPS117,%FBIS120,%PBLP125&apos; variable = &apos;&apos; option = &apos;CP&apos; ).
+* Otros campos no usados
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PNPXBWBK,PNPABKRS,PNPXPGPK&apos; variable = &apos;&apos; option = &apos;CP&apos; ).
+*  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;PNPTIMED,EPERTEXT,CHNG_PER,PNPBEGDA,EPTUNTIL,PNPENDDA&apos; variable = &apos;&apos; option = &apos;CP&apos; ).
+
+*----------------------------------------------------------------------
+*  start-of-selection.
+*----------------------------------------------------------------------*
+start-of-selection.
+
+
+  pn-begps = pn-begda.
+  pn-endps = pn-endda.
+
+  r_pnppernr[] = pnppernr[].
+  refresh pnppernr.
+
+  clear pnppernr.
+  pnppernr-option = &apos;EQ&apos;.
+  pnppernr-sign   = &apos;I&apos;.
+
+* Filtro previo de empleados para optimizar la BDL
+
+  select pernr from pa0001
+    into pnppernr-low
+   where pernr in r_pnppernr
+     and begda &lt;= pn-endda
+     and endda &gt;= pn-begda.
+    collect pnppernr.
+  endselect.
+  if sy-subrc ne 0.
+    pnppernr[] = r_pnppernr[].
+  endif.
+
+
+  get person.
+
+* table ALL_0001 is filled with infotype 0001 data of all PERNRs
+* stored in PERSON-ALL_PERNRS without authority check !!!
+  data: l_listado     type o_prog-&gt;t_listado,
+        l_listado_ini type o_prog-&gt;t_listado.
+
+
+  o_prog-&gt;sgpi_texto( texto1 = &apos;Leyendo empleado&apos; texto2 = pernr-pernr ).
+
+  rp_provide_from_frst all_0000 space pn-begda pn-endda.
+  check all_0000-stat2 in pnpstat2.
+
+  loop at all_0001 where begda &lt;= pn-endda and endda &gt;= pn-begda.
+    zest_empleado = zcl_ap_empleado=&gt;get_datos_basicos( pernr = all_0001-pernr
+                                                        begda = all_0001-begda
+                                                        endda = all_0001-endda ).
+
+    clear l_listado.
+    move-corresponding all_0001 to l_listado.
+    move-corresponding zest_empleado to l_listado_ini.
+
+    l_listado = l_listado_ini.
+    append l_listado to o_prog-&gt;i_listado.
+  endloop.
+
+
+  get group.
+* table P0001 is filled with infotype 0001 data of all PERNRs
+* stored in GROUP-ALL_PERNRS
+
+  get peras.
+
+
+* table P0006 is filled with infotype 0006 data of PERNR
+* stored in PERAS-PERNR
+
+end-of-selection.
+
+  pnppernr[] = r_pnppernr[].
+
+  o_prog-&gt;main( ).</source>
+</PROG>

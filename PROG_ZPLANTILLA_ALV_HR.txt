@@ -1,0 +1,260 @@
+***********************************************************************
+* APLICACION : HR
+* TIPO : LISTADO
+* TITULO : ??
+*
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 12/02/2014
+* ANALISTA: ??
+*
+* MODIFICACIONES
+*
+***********************************************************************
+REPORT zplantilla_alv_hr.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: pernr, zest_empleado, sscrfields.
+
+INFOTYPES: 0000,
+           0001.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+         check,
+         lights,
+         pernr TYPE persno,
+         ename TYPE pernr-ename,
+         begda TYPE p0001-begda,
+         endda TYPE p0001-endda,
+END OF t_listado.
+DATA: i_listado TYPE TABLE OF t_listado,
+      l_listado TYPE t_listado,
+      l_listado_ini TYPE t_listado.
+
+FIELD-SYMBOLS <listado> TYPE t_listado.
+
+*------VARIABLES-------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+              seleccionar_datos.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+
+RANGES: r_pnppernr FOR pa0001-pernr.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: top_of_page REDEFINITION.
+ENDCLASS. "lcl_alv DEFINITION
+
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv TYPE REF TO lcl_alv.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_orgeh FOR pernr-orgeh.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2.
+SELECTION-SCREEN: FUNCTION KEY 3.
+SELECTION-SCREEN: FUNCTION KEY 4.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    READ TABLE i_listado INDEX row INTO l_listado.
+    IF sy-subrc = 0.
+      zcl_ap_empleado=>visualizar_st( pernr = l_listado-pernr
+                                      begda = l_listado-begda
+                                      endda = l_listado-endda
+                                      infty = '0001' ).
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_excel( ).
+      WHEN 'BLOQUEAR'.
+        get_seleccion( ).
+        LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+          <listado>-lights = zcl_ap_alv=>c_sem_rojo.
+        ENDLOOP.
+        refresh( ).
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+  METHOD top_of_page.
+    CLEAR o_content.
+
+    o_top_page->set_titulo( sy-title ).
+
+    o_top_page->add_rango_auto( ).
+*    o_top_page->add_rango( texto = 'Fechas selección' valor = pn-begda valor_hasta = pn-endda ).
+*    o_top_page->add_rango( texto = 'Empleados' rango = r_pnppernr[] tabla = 'PA0001' nombre_campo = 'ENAME' ).
+    o_top_page->crea_info_seleccion( ).
+
+    o_content = o_top_page->get_grid( ).
+
+  ENDMETHOD.                    "top_of_page
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe' ).
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_orden( 'PERNR,ENAME,BEGDA,ENDDA' ).
+
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status = ''.
+
+  pnpstat2-option = 'EQ'.
+  pnpstat2-sign   = 'I'.
+  pnpstat2-low    = '3'.
+  APPEND pnpstat2.
+
+  CONCATENATE sy-datum(4) '0101' INTO pnpbegda.
+  CONCATENATE sy-datum(4) '1231' INTO pnpendda.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status = 'STANDARD'
+      lights = 'LIGHTS'.
+  p_vari = o_alv->get_default_layout( ).
+
+  o_prog->initialization( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+AT SELECTION-SCREEN OUTPUT.
+* Ocultar selección de personas
+  zcl_ap_dynpro=>screen_visible( campo = 'PNPBEGPS,PNPENDPS,%FDPS117,%FBIS120,%PBLP125' variable = '' option = 'CP' ).
+* Otros campos no usados
+  zcl_ap_dynpro=>screen_visible( campo = 'PNPXBWBK,PNPABKRS,PNPXPGPK' variable = '' option = 'CP' ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog->at_selection(  ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+* Como ocultamos las fechas de selección de personas, las igualamos las fechas de selección de datos
+  pn-begps = pn-begda.
+  pn-endps = pn-endda.
+
+* Optimización para busquedas más rápidas en la BDL
+  r_pnppernr[] = pnppernr[].
+  REFRESH pnppernr.
+
+  CLEAR pnppernr.
+  pnppernr-option = 'EQ'.
+  pnppernr-sign   = 'I'.
+
+* Filtro previo de empleados para optimizar la BDL
+  SELECT pernr FROM pa0001
+    INTO pnppernr-low
+   WHERE pernr IN r_pnppernr
+     AND begda <= pn-endda
+     AND endda >= pn-begda.
+    COLLECT pnppernr.
+  ENDSELECT.
+
+
+
+GET pernr.
+
+  o_prog->sgpi_texto( texto1 = 'Leyendo empleado' texto2 = pernr-pernr ).
+  rp-provide-from-last p0000 space pn-begda pn-endda.
+  CHECK p0000-stat2 IN pnpstat2.
+
+  rp-provide-from-last p0001 space pn-begda pn-endda.
+
+  zest_empleado = zcl_ap_empleado=>get_datos_basicos( pernr = pernr-pernr
+                                                      begda = p0001-begda
+                                                      endda = p0001-endda ).
+
+  CLEAR l_listado.
+  MOVE-CORRESPONDING pernr TO l_listado.
+  MOVE-CORRESPONDING zest_empleado TO l_listado_ini.
+
+  l_listado = l_listado_ini.
+  APPEND l_listado TO i_listado.
+
+
+END-OF-SELECTION.
+
+  pnppernr[] = r_pnppernr[].
+
+  o_prog->main( ).

@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_STRUST" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Listado certificados" LENGTH="20 "/>
+   <textElement ID="S" KEY="P_DIAS" ENTRY="        Días de aviso" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_EMAIL" ENTRY="        Emails" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_SOLO" ENTRY="        Mostrar sólo caducados y próx." LENGTH="38 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_APPLIC" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_CONTEX" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_DOMINI" ENTRY="        Dominio" LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado certificados
+* DESCRIPCION : Basado en SSF_ALERT_CERTEXPIRE
+*
+* AUTOR: Andrés Picazo                                FECHA: 31/08/2023
+*
+***********************************************************************
+REPORT zap_strust.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+INCLUDE ssf_alert_certexpire_top.
+INCLUDE ssf_alert_certexpire_func.
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: visualizar_objeto REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check        TYPE xfeld,
+             lights       TYPE zico_estado_mensaje,
+             context      TYPE psetype-context,
+             applic       TYPE strustssl-applic,
+             subject(512) TYPE c,
+             issuer(512)  TYPE c,
+             date         TYPE dats,
+             diff         TYPE i,
+             dominio      TYPE si_lfa1-lfurl,
+             message      TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv.                    &quot;#EC NEEDED
+
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report.
+
+DATA: strustssl TYPE strustssl,
+      psetype   TYPE psetype,
+      dominio   TYPE text255.
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_contex FOR psetype-context,
+                s_applic FOR strustssl-applic,
+                s_domini FOR dominio.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_dias  TYPE i DEFAULT 30,
+            p_solo  AS CHECKBOX,
+            p_email TYPE text255.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+
+  METHOD visualizar_objeto.
+    DATA l_list TYPE o_prog-&gt;t_listado.
+    l_list = list.
+    CASE column.
+*      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+
+
+  METHOD handle_user_command.
+    DATA: l_ok  TYPE abap_bool.
+
+    check_ucomm_sel = &apos;F02&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;F01&apos;.
+        CALL TRANSACTION &apos;STRUST&apos;.
+      WHEN &apos;F02&apos;.
+        DATA(o_python) = NEW zcl_ap_python( info = &apos;&apos; ).
+        IF NOT o_python-&gt;message IS INITIAL.
+          MESSAGE o_python-&gt;message TYPE &apos;I&apos;.
+        ELSE.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;.
+            zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;SI_LFA1-LFURL&apos;
+                                                   titulo = &apos;Confirme que desea descargar certificado&apos;
+                                         IMPORTING return = l_ok
+                                         CHANGING  valor1 = &lt;listado&gt;-dominio ).
+            IF l_ok NE &apos;A&apos; AND NOT &lt;listado&gt;-dominio IS INITIAL.
+              o_python-&gt;grabar_script( EXPORTING codigo  = &apos;GET_CERT&apos;
+                                       IMPORTING message = DATA(l_msg)
+                                                 fichero = DATA(l_fichero) ).
+              IF NOT l_msg IS INITIAL.
+                message l_msg type &apos;I&apos;.
+              ELSE.
+                DATA l_cer TYPE string.
+                l_cer = &lt;listado&gt;-dominio.
+                REPLACE ALL OCCURRENCES OF &apos;.&apos; IN l_cer WITH &apos;_&apos;.
+                o_python-&gt;ejecutar_script( EXPORTING fichero    = l_fichero
+                                                     parametros = |{ &lt;listado&gt;-dominio } --output { l_cer }.cer|
+                                           IMPORTING message    = l_msg
+                                                     salida     = DATA(l_salida) ).
+                IF NOT l_msg IS INITIAL.
+                  MESSAGE o_python-&gt;message TYPE &apos;I&apos;.
+                ELSEIF NOT l_salida IS INITIAL.
+                  MESSAGE l_salida TYPE &apos;I&apos;.
+                ELSE.
+                  MESSAGE &apos;Error descargando certificado&apos; TYPE &apos;I&apos;.
+                ENDIF.
+
+              ENDIF.
+            ENDIF.
+          ENDLOOP.
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+
+    IF NOT p_email IS INITIAL.
+      LOOP AT i_listado TRANSPORTING NO FIELDS WHERE lights(3) NE icon_green_light(3).
+        EXIT.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        DATA(l_xstring) = zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alv-&gt;o_alv tabla = i_listado quitar_campos = &apos;LIGHTS,LOGS&apos; ).
+
+        zcl_ap_envio_mail=&gt;mail( EXPORTING subject        = |Certificados a actualizar { sy-sysid } { sy-datum DATE = USER }|
+                                           direccion      = p_email
+                                           xstring        = l_xstring
+                                           nombre_fichero = &apos;Certificados.xlsx&apos;
+                                           conversion_sap = &apos;Y&apos;
+                                 IMPORTING message        = DATA(message)
+                                          ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+    DATA:  g_cert      TYPE xstring.
+    DATA:  gt_pklist   TYPE ssfbintab.
+    DATA:  l_utctime(15)  TYPE c. &quot;ssfutc.
+    DATA l_listado TYPE t_listado.
+
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+
+    PERFORM create_pse_list CHANGING gt_pse.
+
+    LOOP AT gt_pse ASSIGNING FIELD-SYMBOL(&lt;pse&gt;) WHERE context IN s_contex
+                                                   AND applic  IN s_applic.
+      CLEAR l_listado.
+      MOVE-CORRESPONDING &lt;pse&gt; TO l_listado.
+      CALL FUNCTION &apos;SSFP_GET_PSEINFO&apos;
+        EXPORTING
+          context           = &lt;pse&gt;-context
+          applic            = &lt;pse&gt;-applic
+          accept_no_cert    = &apos;X&apos;
+        IMPORTING
+          certificate       = g_cert
+          certificatelist   = gt_pklist
+        EXCEPTIONS
+          ssf_no_ssflib     = 1
+          ssf_krn_error     = 2
+          ssf_invalid_par   = 3 &quot;PSE does not exist
+          ssf_unknown_error = 4
+          OTHERS            = 5.
+      IF sy-subrc = 0.
+        CALL FUNCTION &apos;SSFC_PARSE_CERTIFICATE&apos;
+          EXPORTING
+            certificate         = g_cert
+          IMPORTING
+            subject             = l_listado-subject
+            issuer              = l_listado-issuer
+*           SERIALNO            =
+*           VALIDFROM           =
+            validto             = l_utctime
+*           ALGID               =
+*           FINGERPRINT         =
+*           SUMMARY             =
+*           ALL                 =
+          EXCEPTIONS
+            ssf_krn_error       = 1
+            ssf_krn_nomemory    = 2
+            ssf_krn_nossflib    = 3
+            ssf_krn_invalid_par = 4
+            OTHERS              = 5.
+
+        IF sy-subrc = 0.
+          l_listado-date = l_utctime(8).
+          APPEND l_listado TO i_listado.
+
+          LOOP AT gt_pklist INTO DATA(l_cacert).
+            CALL FUNCTION &apos;SSFC_PARSE_CERTIFICATE&apos;
+              EXPORTING
+                certificate         = l_cacert
+              IMPORTING
+                subject             = l_listado-subject
+                issuer              = l_listado-issuer
+*               SERIALNO            =
+*               VALIDFROM           =
+                validto             = l_utctime
+*               ALGID               =
+*               FINGERPRINT         =
+*               SUMMARY             =
+*               ALL                 =
+              EXCEPTIONS
+                ssf_krn_error       = 1
+                ssf_krn_nomemory    = 2
+                ssf_krn_nossflib    = 3
+                ssf_krn_invalid_par = 4
+                OTHERS              = 5.
+
+            IF sy-subrc = 0.
+              l_listado-date = l_utctime(8).
+
+              APPEND l_listado TO i_listado.
+            ENDIF.
+          ENDLOOP.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      IF &lt;listado&gt;-subject CS &apos;OU=&apos;.
+        DATA(l_sep) = &apos;OU=&apos;.
+      ELSEIF &lt;listado&gt;-subject CS &apos;CN=&apos;.
+        l_sep = &apos;CN=&apos;.
+      ENDIF.
+      SPLIT &lt;listado&gt;-subject AT l_sep INTO DATA(l_aux) &lt;listado&gt;-dominio.
+      SPLIT &lt;listado&gt;-dominio AT &apos;,&apos; INTO &lt;listado&gt;-dominio l_aux.
+      IF NOT &lt;listado&gt;-dominio CS &apos;.&apos; AND &lt;listado&gt;-issuer CS &apos;OU=&apos;.
+        SPLIT &lt;listado&gt;-issuer AT l_sep INTO l_aux &lt;listado&gt;-dominio.
+        SPLIT &lt;listado&gt;-dominio AT &apos;,&apos; INTO &lt;listado&gt;-dominio l_aux.
+      ENDIF.
+
+      IF NOT &lt;listado&gt;-dominio IN s_domini.
+        DELETE i_listado.
+      ELSE.
+        &lt;listado&gt;-diff = &lt;listado&gt;-date - sy-datum.
+        IF &lt;listado&gt;-diff &gt; p_dias.
+          IF p_solo = &apos;X&apos;.
+            DELETE i_listado.
+            CONTINUE.
+          ELSE.
+            &lt;listado&gt;-lights = zcl_ap_alv=&gt;set_icono( icono = icon_green_light mensaje = |Quedan { &lt;listado&gt;-diff } hasta que caduque el certificado| ).
+          ENDIF.
+        ELSEIF &lt;listado&gt;-diff &gt; 0.
+          &lt;listado&gt;-lights = zcl_ap_alv=&gt;set_icono( icono = icon_yellow_light mensaje = |Sólo faltan { &lt;listado&gt;-diff } hasta que caduque el certificado| ).
+        ELSE.
+          &lt;listado&gt;-message = &apos;Certificado caducado&apos;.
+          &lt;listado&gt;-lights = zcl_ap_alv=&gt;set_icono( icono = icon_red_light mensaje = &lt;listado&gt;-message ).
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
+
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;STRUST&apos; icon = icon_execute_object ).
+    o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Descargar certificado&apos; icon = icon_url ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+*    o_alv-&gt;set_field_hotspot( campo = &apos;EBELN&apos; auto = &apos;X&apos; ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_alv-&gt;set_field_text( campo = &apos;DIFF&apos; valor = &apos;Dias validez&apos; ).
+
+*    o_alv-&gt;set_orden( &apos;&apos; ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; tabla_ref = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Analisis&apos; &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                         status_prog        = &apos;ZAP_STATUS&apos;
+                         top_of_page_auto   = &apos;X&apos;
+                         top_of_page_titulo = &apos;X&apos;
+                         o_dev              = o_prog ).
+
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;M01&apos;.
+      SUBMIT ssf_alert_certexpire AND RETURN.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

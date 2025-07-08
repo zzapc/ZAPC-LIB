@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SMARTFORMS" VERSION="1" LANGU="S" DESCRIPT="Smartforms" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="AAS" ENTRY="AL ABRIR SMARTFORM" LENGTH="28 "/>
+   <textElement ID="I" KEY="COP" ENTRY="al convertir OTFDATA en PDF" LENGTH="54 "/>
+   <textElement ID="I" KEY="ERR" ENTRY="ERROR" LENGTH="15 "/>
+   <textElement ID="I" KEY="GPD" ENTRY="Guardar PDF" LENGTH="21 "/>
+   <textElement ID="I" KEY="SPE" ENTRY="Se ha producido error" LENGTH="42 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_SMARTFORMS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="I_PDF" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SOLIX_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_NOMBRE_FUNCION" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre de la función" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_NOMBRE_FUNCION" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Smart Forms: Nombre formulario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_NOMBRE_FUNCION" SCONAME="FORMULARIO" VERSION="1" LANGU="S" DESCRIPT="Nombre del módulo de funciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RS38L_FNAM"/>
+  <source>METHOD get_nombre_funcion.
+    DATA l_formname TYPE tdsfname.
+
+    l_formname = nombre.
+* Inicializar smartform
+    CALL FUNCTION &apos;SSF_FUNCTION_MODULE_NAME&apos;
+      EXPORTING
+        formname           = l_formname
+*     VARIANT            = &apos; &apos;
+*     DIRECT_CALL        = &apos; &apos;
+      IMPORTING
+        fm_name            = formulario
+      EXCEPTIONS
+        no_form            = 1
+        no_function_module = 2
+        OTHERS             = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE e398(00) WITH &apos;ERROR&apos;(ERR) sy-subrc &apos;AL ABRIR SMARTFORM&apos;(AAS) &apos;&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="Convierte la tabla OTFDATA a formato PDF" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="OTF table" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ITCOO"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" SCONAME="GET_XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" SCONAME="LONGITUD_PDF" VERSION="1" LANGU="S" DESCRIPT="Tamaño de contenido de doc." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" SCONAME="I_PDF" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SOLIX_TAB"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_FROM_OTFDATA" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD get_pdf_from_otfdata.
+    DATA: content_txt    TYPE soli_tab,
+          l_otfdata      TYPE itcoo,
+          l_otfdata2     TYPE solisti1,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          t_otfdata2     TYPE TABLE OF solisti1,
+          ac             LIKE LINE OF content_txt,
+          l_transfer_bin TYPE sx_boolean,
+          l_longitud_pdf TYPE so_obj_len,
+          objhead        TYPE soli_tab.
+
+    LOOP AT i_otfdata INTO l_otfdata.
+      CONCATENATE l_otfdata-tdprintcom l_otfdata-tdprintpar INTO
+      l_otfdata2.
+      APPEND l_otfdata2 TO t_otfdata2.
+      ac = l_otfdata2.
+      APPEND ac TO content_txt.
+    ENDLOOP.
+
+    l_transfer_bin = &apos;&apos;.
+    CALL FUNCTION &apos;SX_OBJECT_CONVERT_OTF_PDF&apos;
+      EXPORTING
+        format_src      = &apos;OTF&apos;
+        format_dst      = &apos;PDF&apos;
+        devtype         = &apos;ASCIIPRI&apos;
+      CHANGING
+        transfer_bin    = l_transfer_bin
+        len             = l_longitud_pdf
+        content_txt     = content_txt
+        content_bin     = i_pdf
+        objhead         = objhead
+      EXCEPTIONS
+        err_conv_failed = 1
+        OTHERS          = 2.
+
+    longitud_pdf = l_longitud_pdf.
+
+    IF get_xstring = &apos;X&apos;.
+      xstring = cl_bcs_convert=&gt;solix_to_xstring( it_solix = i_pdf ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_XSTRING_FROM_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="Convierte la tabla OTFDATA a formato PDF XSTRING" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_XSTRING_FROM_OTFDATA" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="OTF table" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ITCOO"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_XSTRING_FROM_OTFDATA" SCONAME="LONGITUD_PDF" VERSION="1" LANGU="S" DESCRIPT="Tamaño de contenido de doc." CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_XSTRING_FROM_OTFDATA" SCONAME="PDF" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GET_PDF_XSTRING_FROM_OTFDATA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_pdf_xstring_from_otfdata.
+    DATA lines TYPE TABLE OF tline.
+
+    CLEAR: message, pdf, longitud_pdf.
+
+    CALL FUNCTION &apos;CONVERT_OTF&apos;
+      EXPORTING
+        format                = &apos;PDF&apos;
+*     MAX_LINEWIDTH         = 132
+*     ARCHIVE_INDEX         = &apos; &apos;
+*     COPYNUMBER            = 0
+*     ASCII_BIDI_VIS2LOG    = &apos; &apos;
+*     PDF_DELETE_OTFTAB     = &apos; &apos;
+*     PDF_USERNAME          = &apos; &apos;
+*     PDF_PREVIEW           = &apos; &apos;
+*     USE_CASCADING         = &apos; &apos;
+*     MODIFIED_PARAM_TABLE  =
+      IMPORTING
+        bin_filesize          = longitud_pdf
+        bin_file              = pdf
+      TABLES
+        otf                   = i_otfdata
+        lines                 = lines
+      EXCEPTIONS
+        err_max_linewidth     = 1
+        err_format            = 2
+        err_conv_not_possible = 3
+        err_bad_otf           = 4
+        OTHERS                = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      IF sy-msgty = &apos;E&apos;.
+        MESSAGE ID sy-msgid TYPE &apos;I&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ELSE.
+        __concat3 message &apos;Se ha producido error&apos;(SPE) sy-subrc &apos;al convertir OTFDATA en PDF&apos;(COP).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF" VERSION="1" LANGU="S" DESCRIPT="Guardar pdf" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF" SCONAME="I_PDF" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOLIX_TAB"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF" SCONAME="LONGITUD_PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF" SCONAME="PREGUNTAR_RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD grabar_pdf.
+    DATA : l_ruta        TYPE string,
+           l_user_action TYPE i.
+
+    l_ruta = ruta.
+    IF NOT preguntar_ruta IS INITIAL.
+      CALL FUNCTION &apos;GUI_FILE_SAVE_DIALOG&apos;
+        EXPORTING
+          window_title      = &apos;Guardar PDF&apos;(GPD)
+          default_extension = &apos;PDF&apos;
+          default_file_name = l_ruta
+        IMPORTING
+          fullpath          = l_ruta
+          user_action       = l_user_action.
+
+      IF l_user_action = 9.
+        return.
+      ENDIF.
+    ENDIF.
+
+    CALL FUNCTION &apos;GUI_DOWNLOAD&apos;
+      EXPORTING
+        bin_filesize            = longitud_pdf
+        filename                = l_ruta
+        filetype                = &apos;BIN&apos;
+      TABLES
+        data_tab                = i_pdf
+      EXCEPTIONS
+        file_write_error        = 1
+        no_batch                = 2
+        gui_refuse_filetransfer = 3
+        invalid_type            = 4
+        no_authority            = 5
+        unknown_error           = 6
+        header_not_allowed      = 7
+        separator_not_allowed   = 8
+        filesize_not_allowed    = 9
+        header_too_long         = 10
+        dp_error_create         = 11
+        dp_error_send           = 12
+        dp_error_write          = 13
+        unknown_dp_error        = 14
+        access_denied           = 15
+        dp_out_of_memory        = 16
+        disk_full               = 17
+        dp_timeout              = 18
+        file_not_found          = 19
+        dataprovider_exception  = 20
+        control_flush_error     = 21
+        OTHERS                  = 22.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF_FROM_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="Guardar pdf desde datos OTF" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF_FROM_OTFDATA" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF_FROM_OTFDATA" SCONAME="PREGUNTAR_RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="GRABAR_PDF_FROM_OTFDATA" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="OTF table" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ITCOO"/>
+  <source>METHOD grabar_pdf_from_otfdata.
+    DATA i_pdf          TYPE solix_tab.
+    DATA l_longitud_pdf TYPE i.
+
+    get_pdf_from_otfdata( EXPORTING i_otfdata = i_otfdata
+                                          IMPORTING i_pdf = i_pdf
+                                                    longitud_pdf = l_longitud_pdf ).
+
+    grabar_pdf( ruta = ruta
+                                i_pdf = i_pdf
+                                longitud_pdf = l_longitud_pdf
+                                preguntar_ruta = &apos;X&apos; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PDF_PREVIEW" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PDF_PREVIEW" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="OTF table" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ITCOO"/>
+  <source>METHOD pdf_preview.
+    CALL FUNCTION &apos;SSFCOMP_PDF_PREVIEW&apos;
+      EXPORTING
+        i_otf                    = i_otfdata
+      EXCEPTIONS
+        convert_otf_to_pdf_error = 1
+        cntl_error               = 2
+        OTHERS                   = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Prevializar mensaje" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="NAST" VERSION="1" LANGU="S" DESCRIPT="Status de mensajes" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="KAPPL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="OBJKY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="KSCHL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="PREV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="INMEDIATO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="LDEST" VERSION="1" LANGU="S" DESCRIPT="SPOOL: Dispositivo de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST-LDEST" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="ANZAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="PREVISUALIZAR_MENSAJE" SCONAME="AS_PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD previsualizar_mensaje.
+    DATA: l_tabla  TYPE tabname VALUE &apos;NAST&apos;,
+          l_nast   TYPE nast,
+          l_return TYPE char1,
+          l_ldest  TYPE nast-ldest.
+    DATA rseumod TYPE rseumod.
+
+    IF nast IS INITIAL.
+      SELECT * FROM (l_tabla)
+        INTO l_nast
+        UP TO 1 ROWS
+        WHERE kappl = kappl
+          AND objky = objky
+          AND kschl = kschl.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT * FROM (l_tabla)
+          INTO l_nast
+          UP TO 1 ROWS
+          WHERE kappl = kappl
+            AND kschl = kschl
+            AND usnam = sy-uname
+         ORDER BY erdat DESCENDING.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          l_nast-objky = objky.
+        ELSE.
+          SELECT * FROM (l_tabla)
+            INTO l_nast
+            UP TO 1 ROWS
+            WHERE kappl = kappl
+              AND kschl = kschl
+           ORDER BY erdat DESCENDING.
+          ENDSELECT.
+          IF sy-subrc = 0.
+            l_nast-objky = objky.
+            l_nast-usnam = sy-uname.
+            l_nast-ldest = zcl_ap_usuario=&gt;get_impresora( ).
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      l_nast = nast.
+    ENDIF.
+
+    IF NOT ldest IS INITIAL.
+      IF ldest = &apos;?&apos;.
+        zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;NAST-LDEST&apos;
+                                               titulo = &apos;Seleccion dispositivo destino&apos;
+                                     IMPORTING return = l_return
+                                     CHANGING  valor1 = l_ldest ).
+        IF l_return &lt;&gt; &apos;A&apos; AND l_ldest &lt;&gt; &apos;&apos;.
+          l_nast-ldest = l_ldest.
+        ENDIF.
+      ELSE.
+        l_nast-ldest = ldest.
+      ENDIF.
+    ENDIF.
+
+    IF NOT anzal IS INITIAL.
+      l_nast-anzal = anzal.
+    ENDIF.
+
+    IF prev = &apos;X&apos;.
+      IF as_pdf = &apos;X&apos;.
+        IMPORT rseumod TO rseumod FROM MEMORY ID &apos;RSEUMOD&apos;.
+        IF rseumod IS INITIAL.
+          SELECT SINGLE * FROM rseumod &quot;#EC *
+            INTO rseumod
+           WHERE uname = sy-uname.
+        ENDIF.
+        IF rseumod-pdf_prev IS INITIAL.
+          rseumod-pdf_prev = &apos;X&apos;.
+          EXPORT rseumod FROM rseumod TO MEMORY ID &apos;RSEUMOD&apos;.
+        ENDIF.
+      ENDIF.
+      CLEAR l_nast-sort1.
+      CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_SCREEN&apos;
+        EXPORTING
+          pi_nast = l_nast.
+    ELSE.
+      IF inmediato = &apos;X&apos;.
+        l_nast-dimme = &apos;X&apos;.
+      ELSE.
+        l_nast-dimme = &apos;&apos;.
+      ENDIF.
+      CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE&apos;
+        EXPORTING
+          pi_nast = l_nast.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Recupera OTFDATA desde un mensaje" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="NAST" VERSION="1" LANGU="S" DESCRIPT="Status de mensajes" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="KAPPL" VERSION="1" LANGU="S" DESCRIPT="Aplicación p. condiciones de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="OBJKY" VERSION="1" LANGU="S" DESCRIPT="Clave de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="KSCHL" VERSION="1" LANGU="S" DESCRIPT="Clase de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="SORT1" VERSION="1" LANGU="S" DESCRIPT="Criterios de clasificación p. registro status mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST-SORT1" PARVALUE="&apos;ZPDF&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="PREVISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="MEMORY_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ZMENSAJE_OTFDATA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="RECUPERA_OTFDATA_FROM_MENSAJE" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="Smart Forms: Tabla OTF" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TSFOTF"/>
+  <source>METHOD recupera_otfdata_from_mensaje.
+    DATA: l_nast  TYPE nast,
+          l_pos   TYPE i,
+          l_objky TYPE nast-objky,
+          l_erdat TYPE dats,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_code  TYPE sy-subrc.
+
+    CLEAR message.
+    IF nast IS INITIAL.
+      SELECT * FROM nast
+        INTO l_nast
+        UP TO 1 ROWS
+        WHERE kappl = kappl
+          AND objky = objky
+          AND kschl = kschl.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        l_pos = strlen( objky ).
+        IF l_pos &gt; 1.
+          l_objky = objky.
+          l_pos = l_pos - 2.
+          l_objky+l_pos(2) = &apos;% &apos;.
+          SELECT * FROM nast
+            INTO l_nast
+            UP TO 1 ROWS
+           WHERE kappl    = kappl
+             AND objky LIKE l_objky
+             AND kschl    = kschl.
+          ENDSELECT.
+        ENDIF.
+
+        IF l_nast IS INITIAL.
+          l_erdat = sy-datum - 15.
+          SELECT * FROM nast
+            INTO l_nast
+            UP TO 1 ROWS
+           WHERE kappl  = kappl
+             AND kschl  = kschl
+             AND erdat &gt;= l_erdat.
+          ENDSELECT.
+          IF sy-subrc &lt;&gt; 0.
+            SELECT * FROM nast
+              INTO l_nast
+              UP TO 1 ROWS
+              WHERE kappl = kappl
+                AND kschl = kschl
+            ORDER BY erdat DESCENDING.
+            ENDSELECT.
+          ENDIF.
+        ENDIF.
+        IF NOT l_nast IS INITIAL.
+          l_nast-objky = objky.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      l_nast = nast.
+    ENDIF.
+
+    l_nast-sort1 = sort1.
+    l_nast-nacha = &apos;1&apos;. &quot; Envio por impresora
+* Verificamos si existe el dispositivo, y si no cojo una que si lo haga
+    SELECT SINGLE padest FROM tsp03
+      INTO l_nast-ldest
+     WHERE padest = l_nast-ldest.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT padest FROM tsp03                            &quot;#EC CI_GENBUFF
+        INTO l_nast-ldest
+       UP TO 1 ROWS
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+
+    TRY.
+        IF previsualizar = &apos;X&apos;.
+          CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_SCREEN&apos;
+            EXPORTING
+              pi_nast       = l_nast
+            IMPORTING
+              pe_rcode      = l_code
+            EXCEPTIONS
+              error_message = 999.
+        ELSE.
+          CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_SCREEN&apos;
+            EXPORTING
+              pi_nast       = l_nast
+            EXCEPTIONS
+              error_message = 999.
+        ENDIF.
+        IF sy-subrc = 999.
+          MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+          RETURN.
+        ENDIF.
+      CATCH cx_root INTO DATA(o_root).
+        message = o_root-&gt;get_text( ).
+        RETURN.
+    ENDTRY.
+
+    IMPORT l_output_info-otfdata TO i_otfdata FROM MEMORY ID memory_id.
+    IF i_otfdata IS INITIAL.
+      IMPORT i_otfdata TO i_otfdata FROM MEMORY ID memory_id.
+    ENDIF.
+    IF i_otfdata IS INITIAL.
+      IMPORT otf TO i_otfdata FROM MEMORY ID memory_id.
+    ENDIF.
+
+    FREE MEMORY ID memory_id.
+
+*Ejemplo de recuperar XSTRING si se usa el formulario estándar de pedido de compra
+*DATA(i_otfdata) = zcl_ap_smartforms=&gt;recupera_otfdata_from_mensaje( kappl = &apos;EF&apos; objky = &apos;4501558391&apos; kschl = &apos;NEU&apos; SORT1 = &apos;SWP&apos; MEMORY_ID = &apos;4501558391&apos; ).
+*IF NOT i_otfdata IS INITIAL.
+*  zcl_ap_smartforms=&gt;get_pdf_xstring_from_otfdata( EXPORTING i_otfdata = i_otfdata IMPORTING pdf = DATA(l_xstring_fact) longitud_pdf = DATA(l_long_pdf) ).
+*ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="SET_TEXTOS" VERSION="1" LANGU="S" DESCRIPT="Informa estructura desde contenido tabla ZTEXTOS_SFO" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="SET_TEXTOS" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="SET_TEXTOS" SCONAME="FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="SET_TEXTOS" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SMARTFORMS" CMPNAME="SET_TEXTOS" SCONAME="ESTRUCTURA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD set_textos.
+    DATA: lr_data     TYPE REF TO data,
+          lo_tabdescr TYPE REF TO cl_abap_structdescr,
+          i_campos    TYPE abap_component_tab,
+          l_dfies     TYPE abap_componentdescr,
+          l_texto     TYPE ztextos_sfo-texto,
+          l_campo     TYPE c LENGTH 40.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CREATE DATA lr_data LIKE estructura.
+
+    lo_tabdescr ?= cl_abap_structdescr=&gt;describe_by_data_ref( lr_data ).
+
+    i_campos = lo_tabdescr-&gt;get_components( ).
+
+    DEFINE get_texto.
+      IF l_texto IS INITIAL.
+        SELECT SINGLE texto FROM ztextos_sfo
+          INTO l_texto
+         WHERE form     = &amp;1
+           AND subclave = subclave
+           AND spras    = &amp;2
+           AND clave    = &amp;3.
+        IF sy-subrc &lt;&gt; 0 AND subclave &lt;&gt; &apos;&apos;.
+          SELECT SINGLE texto FROM ztextos_sfo
+            INTO l_texto
+           WHERE form     = &amp;1
+             AND subclave = &apos;&apos;
+             AND spras    = &amp;2
+             AND clave    = &amp;3.
+        ENDIF.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    LOOP AT i_campos INTO l_dfies.
+      CLEAR l_texto.
+
+* Primero buscamos el literal exacto
+      get_texto form spras l_dfies-name.
+* Sino, el genérico para ese idioma
+      get_texto &apos;&apos; spras l_dfies-name.
+      IF spras &lt;&gt; &apos;E&apos;.
+* Primero buscamos el literal exacto para el idioma inglés
+        get_texto form &apos;E&apos; l_dfies-name.
+* Sino, el genérico para el inglés
+        get_texto &apos;&apos; &apos;E&apos; l_dfies-name.
+      ENDIF.
+      IF spras &lt;&gt; &apos;S&apos;.
+* Primero buscamos el literal exacto para el idioma español
+        get_texto form &apos;S&apos; l_dfies-name.
+* Sino, el genérico para el español
+        get_texto &apos;&apos; &apos;S&apos; l_dfies-name.
+      ENDIF.
+* Si no, por la definición existente independientemente dle idioma
+      IF l_texto IS INITIAL.
+        SELECT texto FROM ztextos_sfo
+          INTO l_texto
+          UP TO 1 ROWS
+         WHERE form  = form
+           AND clave = l_dfies-name.
+        ENDSELECT.
+      ENDIF.
+
+* En caso contrario, hacemos que se llame como el campo
+      IF l_texto IS INITIAL.
+        l_texto = l_dfies-name.
+      ENDIF.
+
+      CONCATENATE &apos;ESTRUCTURA-&apos; l_dfies-name INTO l_campo.
+      ASSIGN (l_campo) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        &lt;fs&gt; = l_texto.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

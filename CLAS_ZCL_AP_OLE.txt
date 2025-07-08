@@ -1,0 +1,415 @@
+TYPE-POOLS OLE2 .
+class ZCL_AP_OLE definition
+  public
+  create public .
+
+public section.
+
+  type-pools OLE2 .
+  data APP type OLE2_OBJECT .
+  data DOCUMENTO type OLE2_OBJECT .
+  data HAY_ERROR type CHAR1 .
+  data SELECTION type OLE2_OBJECT .
+  constants TRUE type I value 1. "#EC NOTEXT
+  constants FALSE type I value 0. "#EC NOTEXT
+
+  methods CONSTRUCTOR
+    importing
+      !OBJETO type STRING
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MOSTRAR_ERRORES type CHAR1 default '' .
+  methods SET_PROP
+    importing
+      !OBJ type OLE2_OBJECT
+      !PROP type STRING
+      !VALOR type ANY .
+  methods SET_PROP_APP
+    importing
+      !OBJ type OLE2_OBJECT optional
+      !PROP type STRING
+      !VALOR type ANY .
+  methods GET_OBJ
+    importing
+      !ORIGEN type OLE2_OBJECT
+      !METODO type STRING
+      !P1 type ANY optional
+      !P2 type ANY optional
+    returning
+      value(OBJ) type OLE2_OBJECT .
+  type-pools ABAP .
+  methods EXEC_METODO
+    importing
+      !OBJ type OLE2_OBJECT
+      !P1 type ANY optional
+      !P2 type ANY optional
+      !P3 type ANY optional
+      !P4 type ANY optional
+      !P5 type ANY optional
+      !METODO type STRING
+      !NO_WRITE type ANY default ''
+      !MOSTRAR_ERRORES type ABAP_BOOL default 'X'
+    returning
+      value(ERROR) type ABAP_BOOL .
+  methods GET_OBJ_APP
+    importing
+      !METODO type STRING
+      !P1 type ANY optional
+      !P2 type ANY optional
+    returning
+      value(OBJ) type OLE2_OBJECT .
+  methods GET_SELECCION .
+  methods EXEC_METODO_SELECCION
+    importing
+      !P1 type ANY optional
+      !P2 type ANY optional
+      !P3 type ANY optional
+      !P4 type ANY optional
+      !P5 type ANY optional
+      !METODO type STRING .
+  methods FREE .
+  methods GET_PROP
+    importing
+      !OBJ type OLE2_OBJECT
+      !PROP type STRING
+    returning
+      value(VALOR) type STRING .
+  methods GET_PROP_OBJ
+    importing
+      !OBJ type OLE2_OBJECT
+      !PROP type STRING
+    returning
+      value(VALOR) type OLE2_OBJECT .
+  methods GET_OBJ_SEL
+    importing
+      !METODO type STRING
+      !P1 type ANY optional
+      !P2 type ANY optional
+    returning
+      value(OBJ) type OLE2_OBJECT .
+  methods SET_PROP_SEL
+    importing
+      !OBJ type OLE2_OBJECT optional
+      !PROP type STRING
+      !VALOR type ANY .
+protected section.
+
+  data MOSTRAR_ERRORES type CHAR1 .
+  data O_LOG type ref to ZCL_AP_LOG .
+
+  type-pools ABAP .
+  methods CONTROL_ERROR
+    importing
+      !TEXTO type ANY
+      !TEXTO2 type ANY optional
+      !TEXTO3 type ANY optional
+      !MOSTRAR_ERRORES type ABAP_BOOL default 'X'
+    returning
+      value(ERROR) type ABAP_BOOL .
+  methods OPEN_FILE
+    importing
+      !OBJ type ANY
+      !FICHERO type STRING .
+  methods SAVE_FILE
+    importing
+      !OBJ type ANY
+      !FICHERO type STRING .
+private section.
+endclass. "ZCL_AP_OLE definition
+class ZCL_AP_OLE implementation.
+method CONSTRUCTOR.
+  data l_obj(100).
+
+  me->mostrar_errores = mostrar_errores.
+  me->o_log = o_log.
+
+  l_obj = objeto.
+  create object app l_obj.
+  control_error( texto  = 'Error al crear objeto'
+                 texto2 = objeto ).
+
+endmethod.
+method CONTROL_ERROR.
+  data l_subrc type sy-subrc.
+
+  l_subrc = sy-subrc.
+
+  if l_subrc ne 0.
+    error = 'X'.
+    if mostrar_errores = 'X'.
+      if not o_log is initial.
+        o_log->l_msg2 = texto2.
+        o_log->l_msg3 = texto3.
+        o_log->msg_error( msgv1 = texto
+                          msgv2 = o_log->l_msg2
+                          msgv3 = o_log->l_msg3 ).
+        if me->mostrar_errores = 'X'.
+          o_log->grabar( ).
+        endif.
+      endif.
+    endif.
+
+    hay_error = 'X'.
+    set property of app 'Visible' = 1.
+
+    if mostrar_errores = 'X'.
+      if me->mostrar_errores = 'X'.
+        message e398(00) with texto texto2 texto3.
+      elseif me->mostrar_errores = 'I'.
+        message s398(00) with texto texto2 texto3.
+      endif.
+    endif.
+  endif.
+
+endmethod.
+method EXEC_METODO.
+  DATA: l_metodo TYPE ole_verb,
+        l_comando(80), l_p1(20), l_p2(20), l_p3(20), l_p4(20), l_p5(20).
+
+  IF NOT obj IS INITIAL.
+    l_metodo = metodo.
+    IF NOT p1 IS SUPPLIED.
+      IF NOT p2 IS SUPPLIED.
+        CALL METHOD OF obj l_metodo.
+      ELSE.
+        IF no_write IS INITIAL.
+          WRITE p2 TO l_comando.
+        ENDIF.
+
+        CALL METHOD OF obj l_metodo
+          EXPORTING
+          #2 = p2.
+      ENDIF.
+    ELSEIF NOT p2 IS SUPPLIED.
+      IF no_write IS INITIAL.
+        WRITE p1 TO l_comando.
+      ENDIF.
+
+      CALL METHOD OF obj l_metodo
+        EXPORTING
+        #1 = p1.
+    ELSEIF NOT p3 IS SUPPLIED.
+      IF no_write IS INITIAL.
+        WRITE: p1 TO l_p1, p2 TO l_p2.
+        CONDENSE: l_p1, l_p2.
+        CONCATENATE l_p1 l_p2 INTO l_comando SEPARATED BY space.
+      ENDIF.
+      CALL METHOD OF obj l_metodo
+        EXPORTING
+        #1 = p1
+        #2 = p2.
+    ELSEIF NOT p4 IS SUPPLIED.
+      IF no_write IS INITIAL.
+        WRITE: p1 TO l_p1, p2 TO l_p2, p3 TO l_p3.
+        CONDENSE: l_p1, l_p2, l_p3.
+        CONCATENATE l_p1 l_p2 l_p3 INTO l_comando SEPARATED BY space.
+      ENDIF.
+
+      CALL METHOD OF obj l_metodo
+        EXPORTING
+        #1 = p1
+        #2 = p2
+        #3 = p3.
+    ELSEIF NOT p5 IS SUPPLIED.
+      IF no_write IS INITIAL.
+        WRITE: p1 TO l_p1, p2 TO l_p2, p3 TO l_p3, p4 TO l_p4.
+        CONDENSE: l_p1, l_p2, l_p3, l_p4.
+        CONCATENATE l_p1 l_p2 l_p3 l_p4 INTO l_comando SEPARATED BY space.
+      ENDIF.
+
+      CALL METHOD OF obj l_metodo
+        EXPORTING
+        #1 = p1
+        #2 = p2
+        #3 = p3
+        #4 = p4.
+    ELSE.
+      IF no_write IS INITIAL.
+        WRITE: p1 TO l_p1, p2 TO l_p2, p3 TO l_p3, p4 TO l_p4, p5 TO l_p5.
+        CONDENSE: l_p1, l_p2, l_p3, l_p4, l_p5.
+        CONCATENATE l_p1 l_p2 l_p3 l_p4 l_p5 INTO l_comando SEPARATED BY space.
+      ENDIF.
+
+      CALL METHOD OF obj l_metodo
+        EXPORTING
+        #1 = p1
+        #2 = p2
+        #3 = p3
+        #4 = p4
+        #5 = p5.
+    ENDIF.
+
+
+    error = control_error( texto = 'Exec Obj:' texto2 = metodo texto3 = l_comando mostrar_errores = mostrar_errores ).
+  ELSE.
+    error = control_error( texto = 'Exec Obj:' texto2 = metodo
+                   texto3 = 'Obj. no existe' mostrar_errores = mostrar_errores ).
+  ENDIF.
+
+endmethod.
+method EXEC_METODO_SELECCION.
+
+  IF p1 IS SUPPLIED AND p2 IS SUPPLIED AND p3 IS SUPPLIED AND p4 IS SUPPLIED AND p5 IS SUPPLIED.
+    exec_metodo( obj = selection
+                 metodo = metodo
+                 p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 ).
+  ELSEIF p1 IS SUPPLIED AND p2 IS SUPPLIED AND p3 IS SUPPLIED AND p4 IS SUPPLIED.
+    exec_metodo( obj = selection
+                 metodo = metodo
+                 p1 = p1 p2 = p2 p3 = p3 p4 = p4 ).
+  ELSEIF p1 IS SUPPLIED AND p2 IS SUPPLIED AND p3 IS SUPPLIED.
+    exec_metodo( obj = selection
+                 metodo = metodo
+                 p1 = p1 p2 = p2 p3 = p3 ).
+  ELSEIF p1 IS SUPPLIED AND p2 IS SUPPLIED.
+    exec_metodo( obj = selection
+                 metodo = metodo
+                 p1 = p1 p2 = p2 ).
+  ELSEIF p1 IS SUPPLIED.
+    exec_metodo( obj = selection
+                 metodo = metodo
+                 p1 = p1 ).
+  ELSE.
+    exec_metodo( obj = selection
+                 metodo = metodo ).
+  ENDIF.
+
+endmethod.
+method FREE.
+
+  free object: app, documento, selection.
+
+endmethod.
+method GET_OBJ.
+  data: l_metodo type ole_verb.
+
+  if not origen is initial.
+    l_metodo = metodo.
+    if not p1 is supplied.
+      call method of origen l_metodo = obj.
+    elseif not p2 is supplied.
+    call method of origen l_metodo = obj
+      exporting
+        #1 = p1.
+    else.
+      call method of origen l_metodo = obj
+        exporting
+          #1 = p1
+          #1 = p2.
+    endif.
+    control_error( texto = 'Get Obj:' texto2 = metodo ).
+  else.
+    control_error( texto = 'Get Obj:' texto2 = metodo
+                   texto3 = 'Obj.Origen no existe' ).
+  endif.
+
+endmethod.
+method GET_OBJ_APP.
+
+  if not p1 is supplied.
+    obj = get_obj( origen = app metodo = metodo ).
+  elseif not p2 is supplied.
+    obj = get_obj( origen = app metodo = metodo p1 = p1 ).
+  else.
+    obj = get_obj( origen = app metodo = metodo p1 = p1 p2 = p2 ).
+  endif.
+
+endmethod.
+method GET_OBJ_SEL.
+
+  if not p1 is supplied.
+    obj = get_obj( origen = selection metodo = metodo ).
+  elseif not p2 is supplied.
+    obj = get_obj( origen = selection metodo = metodo p1 = p1 ).
+  else.
+    obj = get_obj( origen = selection metodo = metodo p1 = p1 p2 = p2 ).
+  endif.
+
+endmethod.
+method GET_PROP.
+  data: l_valor type string,
+        l_prop type ole_verb.
+
+  if not obj is initial.
+    l_prop = prop.
+    get property of obj l_prop = valor.
+    l_valor = valor.
+   control_error( texto = 'Propiedad:' texto2 = prop texto3 = l_valor ).
+  else.
+    control_error( texto = 'Objecto no asignado. Propiedad:'
+                   texto2 = prop texto3 = l_valor ).
+  endif.
+
+endmethod.
+method GET_PROP_OBJ.
+  data: l_valor type OLE2_OBJECT,
+        l_prop type ole_verb.
+
+  if not obj is initial.
+    l_prop = prop.
+    get property of obj l_prop = valor.
+    l_valor = valor.
+   control_error( texto = 'Propiedad:' texto2 = prop texto3 = l_valor ).
+  else.
+    control_error( texto = 'Objecto no asignado. Propiedad:'
+                   texto2 = prop texto3 = l_valor ).
+  endif.
+
+endmethod.
+method GET_SELECCION.
+
+  IF NOT selection IS INITIAL.
+    FREE OBJECT selection.
+  ENDIF.
+
+  selection = get_obj_app( metodo = 'Selection' ).
+
+endmethod.
+method OPEN_FILE.
+  data l_existe type char1.
+
+  l_existe = cl_gui_frontend_services=>file_exist( fichero ).
+  if l_existe is initial.
+    control_error( texto = 'No existe' texto2 = fichero ).
+    if mostrar_errores is initial.
+      if not o_log is initial.
+        o_log->grabar( ).
+      endif.
+      message e398(00) with 'Error al leer fichero:' fichero.
+    endif.
+  else.
+    control_error( texto = 'Se lee fichero' texto2 = fichero ).
+  endif.
+  exec_metodo( obj = obj metodo = 'Open' p1 = fichero ).
+
+endmethod.
+method SAVE_FILE.
+
+  EXEC_METODO( obj = obj metodo = 'SaveAs'
+               p1 = fichero ).
+
+endmethod.
+method SET_PROP.
+  data: l_valor type string,
+        l_prop type ole_verb.
+
+  if not obj is initial.
+    l_prop = prop.
+    set property of obj l_prop = valor.
+    l_valor = valor.
+   control_error( texto = 'Propiedad:' texto2 = prop texto3 = l_valor ).
+  else.
+    control_error( texto = 'Objecto no asignado. Propiedad:'
+                   texto2 = prop texto3 = l_valor ).
+  endif.
+
+endmethod.
+method SET_PROP_APP.
+
+  set_prop( obj = me->app prop = prop valor = valor ).
+
+endmethod.
+method SET_PROP_SEL.
+
+  set_prop( obj = me->selection prop = prop valor = valor ).
+
+endmethod.

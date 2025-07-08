@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZCTP" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Copia tablas de Producción a APICAZO" LENGTH="39 "/>
+   <textElement ID="S" KEY="P_ANTI" ENTRY="        Copia anticipos" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_AUFNR" ENTRY="D       ." LENGTH="13 "/>
+   <textElement ID="S" KEY="P_BELNR" ENTRY="D       ." LENGTH="20 "/>
+   <textElement ID="S" KEY="P_BUKRS" ENTRY="D       ." LENGTH="16 "/>
+   <textElement ID="S" KEY="P_DOCNU" ENTRY="D       ." LENGTH="19 "/>
+   <textElement ID="S" KEY="P_EBELN" ENTRY="D       ." LENGTH="25 "/>
+   <textElement ID="S" KEY="P_ENTRE" ENTRY="        Entrega" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_EXIDV" ENTRY="D       ." LENGTH="27 "/>
+   <textElement ID="S" KEY="P_FACTSD" ENTRY="        Factura" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_FIXA" ENTRY="        Corregir direcciones" LENGTH="28 "/>
+   <textElement ID="S" KEY="P_FLUJO" ENTRY="        Copiar flujo de documentos" LENGTH="34 "/>
+   <textElement ID="S" KEY="P_GJAHR" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="P_KUNNR" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="P_LAUFD" ENTRY="D       ." LENGTH="24 "/>
+   <textElement ID="S" KEY="P_LAUFI" ENTRY="D       ." LENGTH="21 "/>
+   <textElement ID="S" KEY="P_LIFNR" ENTRY="D       ." LENGTH="16 "/>
+   <textElement ID="S" KEY="P_MATNR" ENTRY="D       ." LENGTH="16 "/>
+   <textElement ID="S" KEY="P_MBLNR" ENTRY="D       ." LENGTH="26 "/>
+   <textElement ID="S" KEY="P_MJAHR" ENTRY="D       ." LENGTH="28 "/>
+   <textElement ID="S" KEY="P_NOTIF" ENTRY="        Notificaciones (ZNOT)" LENGTH="29 "/>
+   <textElement ID="S" KEY="P_PEDSD" ENTRY="        Pedido SD" LENGTH="17 "/>
+   <textElement ID="S" KEY="P_PRD" ENTRY="        Producción" LENGTH="18 "/>
+   <textElement ID="S" KEY="P_QAS" ENTRY="        Calidad" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_RECUR" ENTRY="        Recurso" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_REINI" ENTRY="        Reiniciar pedido" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_SOBRE" ENTRY="        Sobrescribir" LENGTH="37 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  ZMMB0015
+*&amp;
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT  zctp.
+
+TABLES: vbrk, vbrp, kna1, vbak, ce41000_acct, mara, likp, adrc, lfa1, ekko, eban, eina, caufv, afko, bkpf, vekp, resb,
+        mkpf, mseg, edidc, crhd.
+
+DATA: v_sistema TYPE char40 VALUE zcl_c=&gt;rfc_produccion,
+      l_string TYPE string,
+      l_string2 TYPE string.
+
+DEFINE get_tabla.
+  zcl_ap_sgpi=&gt;text( texto = &amp;1 texto2 = l_string ).
+  call function &apos;Z_RFC_GET_TABLA&apos;
+    exporting
+      tabla      = &amp;1
+      clave      = l_string
+      actualizar = &apos;X&apos;
+      sistema    = v_sistema.
+END-OF-DEFINITION.
+
+DEFINE get_tabla_clave.
+  zcl_ap_sgpi=&gt;text( texto = &amp;1 texto2 = l_string ).
+  call function &apos;Z_RFC_GET_TABLA&apos;
+    exporting
+      tabla       = &amp;1
+      clave       = l_string
+      campo_clave = &amp;2
+      actualizar  = &apos;X&apos;
+      sistema     = v_sistema.
+END-OF-DEFINITION.
+
+DEFINE get_tabla_clave_string2.
+  zcl_ap_sgpi=&gt;text( texto = &amp;1 texto2 = l_string ).
+  call function &apos;Z_RFC_GET_TABLA&apos;
+    exporting
+      tabla       = &amp;1
+      clave       = l_string2
+      campo_clave = &amp;2
+      actualizar  = &apos;X&apos;
+      sistema     = v_sistema.
+END-OF-DEFINITION.
+
+DEFINE get_tabla2.
+  zcl_ap_sgpi=&gt;text( texto = &amp;1 texto2 = l_string  texto3 = l_string2 ).
+  call function &apos;Z_RFC_GET_TABLA&apos;
+    exporting
+      tabla      = &amp;1
+      clave      = l_string
+      clave2     = l_string2
+      actualizar = &apos;X&apos;
+      sistema    = v_sistema.
+END-OF-DEFINITION.
+
+DEFINE get_tabla_inicio_clave.
+  zcl_ap_sgpi=&gt;text( texto = &amp;1 texto2 = l_string ).
+  call function &apos;Z_RFC_GET_TABLA&apos;
+    exporting
+      tabla        = &amp;1
+      clave        = l_string
+      inicio_clave = &apos;%&apos;
+      campo_clave  = &amp;2
+      actualizar   = &apos;X&apos;
+      sistema      = v_sistema.
+END-OF-DEFINITION.
+
+
+PARAMETERS: p_pedsd LIKE vbak-vbeln.
+PARAMETERS: p_flujo AS CHECKBOX,
+            p_reini AS CHECKBOX,
+            p_anti AS CHECKBOX.
+
+PARAMETERS: p_entre LIKE likp-vbeln.
+
+PARAMETERS: p_factsd LIKE vbrk-vbeln.
+
+PARAMETERS: p_bukrs LIKE bkpf-bukrs,
+            p_belnr LIKE bkpf-belnr,
+            p_gjahr like bkpf-gjahr.
+
+PARAMETERS: p_ebeln LIKE ekko-ebeln,
+            p_aufnr LIKE caufv-aufnr.
+
+PARAMETERS: p_kunnr LIKE kna1-kunnr,
+            p_lifnr LIKE lfa1-lifnr,
+            p_matnr LIKE mara-matnr.
+
+PARAMETERS: p_exidv LIKE vekp-exidv.
+
+PARAMETERS: p_laufd LIKE reguh-laufd,
+            p_laufi LIKE reguh-laufi.
+
+PARAMETERS: p_mblnr LIKE mkpf-mblnr,
+            p_mjahr LIKE mkpf-mjahr.
+
+PARAMETERS: p_docnu LIKE edidc-docnum.
+
+PARAMETERS: p_recur LIKE crhd-arbpl.
+
+PARAMETERS: p_notif AS CHECKBOX.
+
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_fixa AS CHECKBOX.
+
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_sobre AS CHECKBOX.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_prd RADIOBUTTON GROUP sis,
+            p_qas RADIOBUTTON GROUP sis.
+
+INITIALIZATION.
+
+AT SELECTION-SCREEN.
+  IF p_prd = &apos;X&apos;.
+    v_sistema = zcl_c=&gt;rfc_produccion.
+  ELSEIF p_qas = &apos;X&apos;.
+    v_sistema = zcl_c=&gt;rfc_calidad.
+  ENDIF.
+
+  IF sy-sysid = zcl_c=&gt;entorno_produccion.
+    MESSAGE &apos;Este programa no se puede utilizar en producción&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+
+
+
+START-OF-SELECTION.
+
+  IF NOT p_pedsd IS INITIAL.
+    PERFORM copia_pedido USING p_pedsd p_flujo p_sobre p_anti p_reini.
+  ENDIF.
+
+  IF NOT p_entre IS INITIAL.
+    PERFORM copia_entrega USING p_entre.
+  ENDIF.
+
+  IF NOT p_factsd IS INITIAL.
+    PERFORM copia_factura USING p_factsd.
+  ENDIF.
+
+  IF NOT p_belnr IS INITIAL.
+    PERFORM copia_doc_fi USING p_bukrs p_belnr p_Gjahr.
+  ENDIF.
+
+  IF NOT p_kunnr IS INITIAL.
+    PERFORM copia_cliente USING p_kunnr.
+  ENDIF.
+
+  IF NOT p_lifnr IS INITIAL.
+    PERFORM copia_proveedor USING p_lifnr.
+  ENDIF.
+
+  IF NOT p_matnr IS INITIAL.
+    PERFORM copia_material USING p_matnr.
+  ENDIF.
+
+  IF NOT p_ebeln IS INITIAL.
+    PERFORM copia_pedido_mm USING p_ebeln.
+  ENDIF.
+
+  IF NOT p_aufnr IS INITIAL.
+    PERFORM copia_orden USING p_aufnr.
+  ENDIF.
+
+  IF NOT p_exidv IS INITIAL.
+    PERFORM copiar_caja USING p_exidv.
+  ENDIF.
+
+  IF NOT p_laufd IS INITIAL AND NOT p_laufi IS INITIAL.
+    PERFORM copiar_pago USING p_laufd p_laufi.
+  ENDIF.
+
+  IF NOT p_mblnr IS INITIAL AND NOT p_mjahr IS INITIAL.
+    PERFORM copiar_docmat USING p_mblnr p_mjahr.
+  ENDIF.
+
+  IF NOT p_docnu IS INITIAL.
+    PERFORM copiar_idoc USING p_docnu.
+  ENDIF.
+
+  IF NOT p_fixa IS INITIAL.
+    PERFORM corregir_direcciones.
+  ENDIF.
+
+  IF NOT p_recur IS INITIAL.
+    PERFORM copiar_recurso USING p_recur.
+  ENDIF.
+
+  IF p_notif = &apos;X&apos;.
+    PERFORM notificaciones.
+  ENDIF.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_pedido
+*&amp;---------------------------------------------------------------------*
+*       Copia pedido sd
+FORM copia_pedido USING p_vbeln p_flujo p_sobre p_anti p_reini.
+  DATA: i_likp TYPE TABLE OF likp WITH HEADER LINE,
+        i_vbpa TYPE TABLE OF vbpa WITH HEADER LINE.
+
+  l_string = p_vbeln.
+
+  get_tabla: &apos;VBAK&apos;, &apos;VBAP&apos;, &apos;VBKD&apos;, &apos;VBUK&apos;, &apos;VBUP&apos;, &apos;VBPA&apos;, &apos;VBEP&apos;.
+
+  SELECT SINGLE * FROM vbak
+   WHERE vbeln = p_vbeln.
+  IF sy-subrc NE 0.
+    MESSAGE &apos;Error al copiar la pedido&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;.
+
+  get_tabla_inicio_clave: &apos;STXH&apos; &apos;TDNAME&apos;,
+                          &apos;STXL&apos; &apos;TDNAME&apos;.
+
+
+  IF p_flujo = &apos;X&apos;.
+    get_tabla_clave: &apos;VBFA&apos; &apos;VBELN&apos;.
+  ENDIF.
+
+  IF p_reini = &apos;X&apos;.
+    UPDATE vbuk
+      SET bestk = &apos;C&apos;
+          lfstk = &apos;A&apos;
+          lfgsk = &apos;A&apos;
+          abstk = &apos;A&apos;
+          gbstk = &apos;A&apos;
+     WHERE vbeln = p_vbeln.
+
+    UPDATE vbup
+      SET besta = &apos;C&apos;
+          lfsta = &apos;A&apos;
+          lfgsa = &apos;A&apos;
+          absta = &apos;A&apos;
+          gbsta = &apos;A&apos;
+     WHERE vbeln = p_vbeln.
+  ENDIF.
+
+  IF NOT vbak-knumv IS INITIAL.
+    l_string = vbak-knumv.
+    get_tabla: &apos;KONV&apos;.
+  ENDIF.
+
+  CONCATENATE &apos;VB&apos; p_vbeln INTO l_string.
+  get_tabla_inicio_clave: &apos;JEST&apos; &apos;OBJNR&apos;,
+                          &apos;JSTO&apos; &apos;OBJNR&apos;.
+
+  DATA i_vbap TYPE TABLE OF vbap WITH HEADER LINE.
+  SELECT * FROM vbap
+   INTO TABLE i_vbap
+  WHERE vbeln = p_vbeln.
+
+  LOOP AT i_vbap.
+    PERFORM copia_material USING i_vbap-matnr.
+  ENDLOOP.
+
+  DEFINE get_tabla_pa.
+    get_tabla_clave &amp;1 &apos;PAOBJNR&apos;.
+  END-OF-DEFINITION.
+
+  LOOP AT i_vbap WHERE NOT paobjnr IS INITIAL.
+    l_string = i_vbap-paobjnr.
+    get_tabla_pa: &apos;CE41000_ACCT&apos;, &apos;CE11000&apos;, &apos;CE21000&apos;, &apos;CE31000&apos;.
+
+    SELECT SINGLE * FROM ce41000_acct
+     WHERE aktbo = &apos;X&apos;
+       AND paobjnr = l_string.
+    IF sy-subrc = 0.
+      l_string = ce41000_acct-ce4key.
+      get_tabla_pa: &apos;CE41000&apos;, &apos;CE11000&apos;, &apos;CE21000&apos;, &apos;CE31000&apos;.
+    ENDIF.
+  ENDLOOP.
+
+
+  PERFORM copia_intercolutores USING p_vbeln.
+
+  IF p_flujo = &apos;X&apos;.
+    DATA i_vbfa TYPE TABLE OF vbfa WITH HEADER LINE.
+    SELECT * FROM vbfa
+      INTO TABLE i_vbfa
+     WHERE vbeln = p_vbeln.
+
+    LOOP AT i_vbfa.
+      IF i_vbfa-vbtyp_v = &apos;C&apos;.
+      ELSEIF i_vbfa-vbtyp_v = &apos;J&apos;.
+        i_likp-vbeln = i_vbfa-vbelv.
+        COLLECT i_likp.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT i_likp.
+      SELECT SINGLE * FROM likp
+       WHERE vbeln = i_likp-vbeln.
+      IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+        PERFORM copia_entrega USING i_likp-vbeln.
+      ENDIF.
+    ENDLOOP.
+
+  ENDIF.
+
+  DEFINE get_tabla_clave_fi.
+    get_tabla_clave_string2: &amp;1 &apos;BELNR&apos;.
+  END-OF-DEFINITION.
+
+  DATA: i_vbrp TYPE TABLE OF vbrp WITH HEADER LINE.
+
+  IF p_anti = &apos;X&apos;.
+    l_string = p_vbeln.
+
+    get_tabla_clave: &apos;BSID&apos; &apos;VBEL2&apos;,
+                     &apos;BSAD&apos; &apos;VBEL2&apos;.
+
+    DATA i_bsid TYPE TABLE OF bsid WITH HEADER LINE.
+    SELECT * FROM bsid
+      INTO TABLE i_bsid
+     WHERE vbel2 = l_string.
+
+    SELECT * FROM bsad
+      APPENDING CORRESPONDING FIELDS OF TABLE i_bsid
+     WHERE vbel2 = l_string.
+
+    LOOP AT i_bsid.
+      IF ( i_bsid-blart = &apos;DR&apos; OR i_bsid-blart = &apos;NL&apos; ) AND p_reini = &apos;X&apos;.
+        IF i_bsid-augbl IS INITIAL.
+          DELETE FROM bsid
+           WHERE bukrs = i_bsid-bukrs
+             AND kunnr = i_bsid-kunnr
+             AND belnr = i_bsid-belnr
+             AND gjahr = i_bsid-gjahr.
+        ELSE.
+          DELETE FROM bsad
+           WHERE bukrs = i_bsid-bukrs
+             AND kunnr = i_bsid-kunnr
+             AND belnr = i_bsid-belnr
+             AND gjahr = i_bsid-gjahr.
+        ENDIF.
+      ELSE.
+        PERFORM copia_doc_fi USING i_bsid-bukrs i_bsid-belnr i_bsid-gjahr.
+      ENDIF.
+    ENDLOOP.
+
+
+  ENDIF.
+ENDFORM.                    &quot;copia_pedido
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_factura
+*&amp;---------------------------------------------------------------------*
+FORM copia_factura USING p_vbeln.
+  DATA: i_vbak TYPE TABLE OF vbak WITH HEADER LINE,
+        i_likp TYPE TABLE OF likp WITH HEADER LINE.
+  l_string = p_vbeln.
+
+  get_tabla: &apos;VBRK&apos;, &apos;VBRP&apos;, &apos;VBPA&apos;, &apos;VBFA&apos;, &apos;VBUK&apos;, &apos;VBUP&apos;.
+
+  SELECT SINGLE * FROM vbrk
+   WHERE vbeln = p_vbeln.
+  IF sy-subrc NE 0.
+    MESSAGE &apos;Error al copiar la factura&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;,
+                   &apos;VBFA&apos; &apos;VBELN&apos;.
+
+  get_tabla_inicio_clave: &apos;STXH&apos; &apos;TDNAME&apos;,
+                          &apos;STXL&apos; &apos;TDNAME&apos;.
+
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;.
+
+  get_tabla_clave: &apos;BKPF&apos; &apos;AWKEY&apos;.
+
+  SELECT SINGLE * FROM bkpf
+   WHERE awtyp = &apos;VBRK&apos;
+     AND awkey = p_vbeln.
+  IF sy-subrc = 0.
+    PERFORM copia_doc_fi USING bkpf-bukrs bkpf-belnr bkpf-gjahr.
+  ENDIF.
+
+  IF NOT vbrk-knumv IS INITIAL.
+    l_string = vbrk-knumv.
+    get_tabla: &apos;KONV&apos;.
+  ENDIF.
+
+  PERFORM copia_intercolutores USING p_vbeln.
+
+  DATA i_vbfa TYPE TABLE OF vbfa WITH HEADER LINE.
+  SELECT * FROM vbfa
+    INTO TABLE i_vbfa
+   WHERE vbeln = p_vbeln.
+
+  LOOP AT i_vbfa.
+    l_string = i_vbfa-vbelv.
+    IF i_vbfa-vbtyp_v = &apos;C&apos;.
+      i_vbak-vbeln = i_vbfa-vbelv.
+      COLLECT i_vbak.
+    ELSEIF i_vbfa-vbtyp_v = &apos;J&apos;.
+      i_likp-vbeln = i_vbfa-vbelv.
+      COLLECT i_likp..
+    ENDIF.
+  ENDLOOP.
+  LOOP AT i_vbak.
+    SELECT SINGLE * FROM vbak
+     WHERE vbeln = i_vbak-vbeln.
+    IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+      PERFORM copia_pedido USING i_vbak-vbeln &apos;X&apos; p_sobre &apos;X&apos; &apos;&apos;.
+    ENDIF.
+  ENDLOOP.
+  LOOP AT i_likp.
+    SELECT SINGLE * FROM likp
+     WHERE vbeln = i_likp-vbeln.
+    IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+      PERFORM copia_entrega USING i_likp-vbeln.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.                    &quot;copia_factura
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_entrega
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_VBELN    text
+*----------------------------------------------------------------------*
+FORM copia_entrega USING p_vbeln.
+  l_string = p_vbeln.
+
+  get_tabla: &apos;LIKP&apos;, &apos;LIPS&apos;, &apos;VBUK&apos;, &apos;VBUP&apos;, &apos;VBPA&apos;.
+
+  SELECT SINGLE * FROM likp
+   WHERE vbeln = p_vbeln.
+  IF sy-subrc NE 0.
+    MESSAGE &apos;Error al copiar entrega&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;,
+                   &apos;VBFA&apos; &apos;VBELN&apos;,
+                   &apos;VEPO&apos; &apos;VBELN&apos;,
+                   &apos;VEKP&apos; &apos;VPOBJKEY&apos;.
+
+
+
+  PERFORM copia_intercolutores USING p_vbeln.
+
+  DATA i_lips TYPE TABLE OF lips WITH HEADER LINE.
+  SELECT * FROM lips
+    INTO TABLE i_lips
+   WHERE vbeln = p_vbeln.
+
+
+  DEFINE get_tabla_lote.
+    get_tabla_clave &amp;1 &apos;CHARG&apos;.
+  END-OF-DEFINITION.
+
+  LOOP AT i_lips WHERE NOT charg IS INITIAL.
+    get_tabla_lote: &apos;MCHA&apos;, &apos;MCHB&apos;, &apos;MCH1&apos;.
+  ENDLOOP.
+
+  CONCATENATE &apos;VB&apos; p_vbeln INTO l_string.
+  get_tabla_inicio_clave &apos;JSTO&apos; &apos;OBJNR&apos;.
+
+ENDFORM.                    &quot;copia_entrega
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_doc_fi
+*&amp;---------------------------------------------------------------------*
+
+FORM copia_doc_fi USING p_bukrs p_belnr p_Gjahr.
+
+  l_string = p_bukrs.
+  l_string2 = p_belnr.
+  get_tabla2:  &apos;BKPF&apos;, &apos;BSEG&apos;, &apos;BSET&apos;.
+  get_tabla_clave_fi: &apos;BSIS&apos;, &apos;BSIK&apos;, &apos;BSAS&apos;, &apos;BSAK&apos;, &apos;BSID&apos;.
+
+  CONCATENATE p_bukrs p_belnr INTO l_string.
+  get_tabla_inicio_clave: &apos;STXH&apos; &apos;TDNAME&apos;,
+                          &apos;STXL&apos; &apos;TDNAME&apos;.
+
+
+ENDFORM.                    &quot;copia_doc_fi
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_intercolutores
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_VBELN    text
+*----------------------------------------------------------------------*
+FORM copia_intercolutores USING p_vbeln.
+  DATA i_vbpa TYPE TABLE OF vbpa WITH HEADER LINE.
+
+  SELECT * FROM vbpa
+    INTO TABLE i_vbpa
+   WHERE vbeln = p_vbeln.
+  LOOP AT i_vbpa WHERE kunnr NE &apos;&apos;.
+    PERFORM copia_cliente USING i_vbpa-kunnr.
+  ENDLOOP.
+
+  LOOP AT i_vbpa WHERE adrnr NE &apos;&apos;.
+    l_string = i_vbpa-adrnr.
+    get_tabla_clave: &apos;ADRC&apos; &apos;ADDRNUMBER&apos;.
+  ENDLOOP.
+
+
+ENDFORM.                    &quot;copia_intercolutores
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_cliente
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_KUNNR    text
+*----------------------------------------------------------------------*
+FORM copia_cliente USING p_kunnr.
+
+  l_string = p_kunnr.
+
+  SELECT SINGLE * FROM kna1
+   WHERE kunnr = p_kunnr.
+  IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+    get_tabla: &apos;KNA1&apos;, &apos;KNB1&apos;, &apos;KNAS&apos;, &apos;KNVV&apos;, &apos;KNKK&apos;, &apos;KNVP&apos;.
+
+    SELECT SINGLE * FROM adrc
+     WHERE addrnumber = kna1-adrnr.
+    IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+      IF NOT kna1-adrnr IS INITIAL.
+        l_string = kna1-adrnr.
+        get_tabla_clave: &apos;ADRC&apos; &apos;ADDRNUMBER&apos;.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot;copia_cliente
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_proveedor
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_LIFNR    text
+*----------------------------------------------------------------------*
+FORM copia_proveedor USING p_lifnr.
+
+  l_string = p_lifnr.
+
+  SELECT SINGLE * FROM lfa1
+   WHERE lifnr = p_lifnr.
+  IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+    get_tabla: &apos;LFA1&apos;, &apos;LFB1&apos;, &apos;LFM1&apos;, &apos;LFBK&apos;.
+
+    SELECT SINGLE * FROM adrc
+     WHERE addrnumber = lfa1-adrnr.
+    IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+      IF NOT lfa1-adrnr IS INITIAL.
+        l_string = lfa1-adrnr.
+        get_tabla_clave: &apos;ADRC&apos; &apos;ADDRNUMBER&apos;,
+                         &apos;ADR2&apos; &apos;ADDRNUMBER&apos;,
+                         &apos;ADR4&apos; &apos;ADDRNUMBER&apos;,
+                         &apos;ADR6&apos; &apos;ADDRNUMBER&apos;.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot;copia_proveedor
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_material
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_MATNR    text
+*----------------------------------------------------------------------*
+FORM copia_material USING p_matnr.
+
+  SELECT SINGLE * FROM mara
+   WHERE matnr = p_matnr.
+  IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+    l_string = p_matnr.
+    get_tabla: &apos;MARA&apos;, &apos;MAKT&apos;, &apos;MARC&apos;, &apos;MARD&apos;, &apos;MBEW&apos;, &apos;MLGN&apos;, &apos;MVKE&apos;, &apos;MLAN&apos;, &apos;MEAN&apos;.
+  ENDIF.
+
+ENDFORM.                    &quot;copia_material
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copia_pedido_mm
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_EBELN    text
+*----------------------------------------------------------------------*
+FORM copia_pedido_mm USING p_ebeln.
+  DATA: i_banfn TYPE TABLE OF string WITH HEADER LINE,
+        i_infnr TYPE TABLE OF string WITH HEADER LINE,
+        i_matnr TYPE TABLE OF string WITH HEADER LINE.
+
+  l_string = p_ebeln.
+  get_tabla: &apos;EKKO&apos;, &apos;EKPO&apos;, &apos;EKKN&apos;, &apos;EKET&apos;.
+
+  SELECT SINGLE * FROM ekko
+   WHERE ebeln = p_ebeln.
+  IF sy-subrc NE 0.
+    MESSAGE &apos;Error al copiar la pedido&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;.
+  get_tabla_inicio_clave: &apos;STXH&apos; &apos;TDNAME&apos;,
+                          &apos;STXL&apos; &apos;TDNAME&apos;.
+
+  PERFORM copia_proveedor USING ekko-lifnr.
+
+  IF NOT ekko-knumv IS INITIAL.
+    l_string = ekko-knumv.
+    get_tabla: &apos;KONV&apos;.
+  ENDIF.
+
+  SELECT banfn FROM ekpo
+    INTO i_banfn
+   WHERE ebeln = p_ebeln
+     AND banfn NE &apos;&apos;.
+    COLLECT i_banfn.
+  ENDSELECT.
+
+  LOOP AT i_banfn.
+    SELECT SINGLE * FROM eban
+     WHERE banfn = i_banfn.
+    IF sy-subrc NE 0.
+      l_string = i_banfn.
+      get_tabla &apos;EBAN&apos;.
+    ENDIF.
+  ENDLOOP.
+
+  SELECT infnr FROM ekpo
+    INTO i_infnr
+   WHERE ebeln = p_ebeln
+     AND infnr NE &apos;&apos;.
+    COLLECT i_infnr.
+  ENDSELECT.
+
+  LOOP AT i_infnr.
+    SELECT SINGLE * FROM eina
+     WHERE infnr = i_infnr.
+    IF sy-subrc NE 0.
+      l_string = i_infnr.
+      get_tabla: &apos;EINA&apos;, &apos;EINE&apos;.
+    ENDIF.
+  ENDLOOP.
+
+  SELECT matnr FROM ekpo
+    INTO i_matnr
+   WHERE ebeln = p_ebeln
+     AND matnr NE &apos;&apos;.
+    COLLECT i_matnr.
+  ENDSELECT.
+
+
+  LOOP AT i_matnr.
+    PERFORM copia_material USING i_matnr.
+  ENDLOOP.
+ENDFORM.                    &quot;copia_pedido_mm
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  orden_prov
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_AUFNR    text
+*----------------------------------------------------------------------*
+FORM copia_orden USING p_aufnr.
+  DATA: i_matnr TYPE TABLE OF string WITH HEADER LINE,
+        i_jest TYPE TABLE OF jest WITH HEADER LINE.
+
+  l_string = p_aufnr.
+
+  SELECT SINGLE * FROM afko
+   WHERE aufnr = p_aufnr.
+  IF sy-subrc NE 0.
+
+    get_tabla: &apos;AFKO&apos;, &apos;AFPO&apos;, &apos;AUFK&apos;.
+    get_tabla_clave &apos;RESB&apos; &apos;AUFNR&apos;.
+
+    CONCATENATE &apos;OR&apos; p_aufnr INTO l_string.
+    get_tabla: &apos;JSTO&apos;, &apos;JEST&apos;.
+
+    SELECT SINGLE * FROM afko
+     WHERE aufnr = p_aufnr.
+    IF sy-subrc = 0.
+      l_string = afko-aufpl.
+      get_tabla: &apos;AFVC&apos;, &apos;AFVV&apos;, &apos;AFVU&apos;, &apos;AFFL&apos;.
+    ENDIF.
+
+    SELECT matnr FROM afpo
+      INTO i_matnr
+     WHERE aufnr = p_aufnr
+       AND matnr NE &apos;&apos;.
+      COLLECT i_matnr.
+    ENDSELECT.
+
+    SELECT rsnum rspos matnr FROM resb
+      INTO (resb-rsnum, resb-rspos, i_matnr)
+     WHERE aufnr = p_aufnr
+       AND matnr NE &apos;&apos;.
+      COLLECT i_matnr.
+      CONCATENATE &apos;OK&apos; resb-rsnum resb-rspos INTO i_jest-objnr.
+      COLLECT i_jest.
+    ENDSELECT.
+
+    LOOP AT i_matnr.
+      PERFORM copia_material USING i_matnr.
+    ENDLOOP.
+
+    LOOP AT i_jest.
+      l_string = i_jest-objnr.
+      get_tabla: &apos;JEST&apos;, &apos;JSTO&apos;.
+    ENDLOOP.
+  ENDIF.
+
+ENDFORM.                    &quot;copia_proveedor
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copiar_caja
+*&amp;---------------------------------------------------------------------*
+FORM copiar_caja USING p_exidv.
+
+  l_string = p_exidv.
+  get_tabla_clave &apos;VEKP&apos; &apos;EXIDV&apos;.
+
+  SELECT SINGLE * FROM vekp
+   WHERE exidv = p_exidv.
+
+  CHECK sy-subrc = 0.
+
+  l_string = vekp-venum.
+  get_tabla: &apos;VEPO&apos;, &apos;LEIN&apos;.
+
+  CONCATENATE &apos;HU&apos; vekp-venum INTO l_string.
+  get_tabla: &apos;JSTO&apos;, &apos;JEST&apos;.
+
+ENDFORM.                    &quot;copiar_caja
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copiar_pago
+*&amp;---------------------------------------------------------------------*
+FORM copiar_pago USING p_laufd p_laufi.
+
+  l_string = p_laufd.
+  l_string2 = p_laufi.
+  get_tabla2:  &apos;REGUH&apos;, &apos;REGUP&apos;, &apos;REGUV&apos;.
+
+ENDFORM.                    &quot;copia_doc_fi
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copiar_docmat
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_MBLNR    text
+*      --&gt;P_MJAHR    text
+*----------------------------------------------------------------------*
+FORM copiar_docmat USING p_mblnr p_mjahr.
+
+  l_string = p_mblnr.
+  l_string2 = p_mjahr.
+  get_tabla2:  &apos;MKPF&apos;, &apos;MSEG&apos;.
+
+  CONCATENATE p_mblnr p_mjahr &apos;0001&apos; INTO l_string.
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;.
+
+  CONCATENATE p_mblnr p_mjahr &apos;0002&apos; INTO l_string.
+  get_tabla_clave: &apos;NAST&apos; &apos;OBJKY&apos;.
+
+ENDFORM.                    &quot;copiar_docmat
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  copiar_idoc
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_DOCNUM   text
+*----------------------------------------------------------------------*
+FORM copiar_idoc USING p_docnum.
+
+  l_string = p_docnum.
+  get_tabla2:  &apos;EDIDC&apos;, &apos;EDID4&apos;.
+
+ENDFORM.                    &quot;copiar_idoc
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  corregir_direcciones
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM corregir_direcciones.
+  DATA: i_adrnr TYPE TABLE OF adrnr WITH HEADER LINE,
+        l_cambios.
+
+  SELECT DISTINCT adrnr FROM lfa1
+    INTO TABLE i_adrnr
+   WHERE adrnr NE &apos;&apos;.
+
+  SELECT DISTINCT adrnr FROM kna1
+    APPENDING TABLE i_adrnr
+   WHERE adrnr NE &apos;&apos;.
+
+
+  LOOP AT i_adrnr.
+    SELECT SINGLE * FROM adrc
+     WHERE addrnumber = i_adrnr.
+    IF sy-subrc NE 0.
+      l_string = i_adrnr.
+      get_tabla_clave: &apos;ADRC&apos; &apos;ADDRNUMBER&apos;.
+      l_cambios = &apos;X&apos;.
+    ENDIF.
+  ENDLOOP.
+
+  IF l_cambios = &apos;X&apos;.
+    SUBMIT z_fix_address WITH testrun = &apos;&apos;.
+  ENDIF.
+
+ENDFORM.                    &quot;corregir_direcciones
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  NOTIFICACIONES
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  --&gt;  p1        text
+*  &lt;--  p2        text
+*----------------------------------------------------------------------*
+FORM notificaciones .
+  DATA: l_semana TYPE kweek,
+        i_not_notif TYPE TABLE OF znot_notif WITH HEADER LINE,
+        i_claves TYPE TABLE OF agr_txt WITH HEADER LINE,
+        i_aufnr TYPE TABLE OF aufnr WITH HEADER LINE,
+        i_recursos TYPE TABLE OF zrecurso WITH HEADER LINE.
+
+  l_semana = zcl_ap_fechas=&gt;get_semana( sy-datum ).
+  l_string = l_semana.
+  CALL FUNCTION &apos;Z_RFC_GET_TABLA&apos;
+    EXPORTING
+      tabla              = &apos;ZNOT_NOTIF&apos;
+      clave              = l_string
+*   CLAVE2             =
+*   ACTUALIZAR         = &apos;X&apos;
+      sistema            = v_sistema
+      campo_clave        = &apos;SEMANA&apos;
+*   INICIO_CLAVE       = &apos;&apos;
+*   BEGDA              =
+*   ENDDA              =
+* TABLES
+*   I_CLAVES           =
+            .
+
+  SELECT * FROM znot_notif
+    INTO TABLE i_not_notif
+   WHERE semana = l_semana.
+
+  IF sy-subrc = 0.
+    LOOP AT i_not_notif.
+      CLEAR i_claves.
+      i_claves-agr_name = i_not_notif-notif.
+      APPEND i_claves.
+
+      IF i_not_notif-aufnr NE &apos;&apos;.
+        COLLECT i_not_notif-aufnr INTO i_aufnr.
+      ENDIF.
+      COLLECT i_not_notif-recurso INTO i_recursos.
+    ENDLOOP.
+
+    CALL FUNCTION &apos;Z_RFC_GET_TABLA&apos;
+      EXPORTING
+        tabla    = &apos;ZNOT_NOTIF_CTD&apos;
+      TABLES
+        i_claves = i_claves.
+
+    LOOP AT i_aufnr.
+      PERFORM copia_orden USING i_aufnr.
+
+      l_string = i_aufnr.
+      get_tabla:  &apos;ZNOT_OF_CAUDAL&apos;.
+    ENDLOOP.
+
+    LOOP AT i_recursos.
+      PERFORM copiar_recurso USING i_recursos.
+    ENDLOOP.
+  ENDIF.
+
+
+ENDFORM.                    &quot; NOTIFICACIONES
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  COPIAR_RECURSO
+*&amp;---------------------------------------------------------------------*
+FORM copiar_recurso  USING    p_recur.
+
+  SELECT SINGLE * FROM crhd
+   WHERE arbpl NE p_recur.
+  IF sy-subrc NE 0 OR p_sobre = &apos;X&apos;.
+    l_string = p_recur.
+    CALL FUNCTION &apos;Z_RFC_GET_TABLA&apos;
+      EXPORTING
+        tabla       = &apos;CRHD&apos;
+        clave       = l_string
+        sistema     = v_sistema
+        campo_clave = &apos;ARBPL&apos;.
+
+    SELECT SINGLE * FROM crhd
+     WHERE arbpl = p_recur.
+    IF sy-subrc = 0.
+      l_string = crhd-objty.
+      l_string2 = crhd-objid.
+      get_tabla2:  &apos;CRID&apos;, &apos;CRTX&apos;.
+    ENDIF.
+
+    l_string = p_recur.
+    get_tabla:  &apos;ZNOT_OPER_REC&apos;.
+
+    CALL FUNCTION &apos;Z_RFC_GET_TABLA&apos;
+      EXPORTING
+        tabla       = &apos;ZNOT_DEF_CAUDAL&apos;
+        clave       = l_string
+        sistema     = v_sistema
+        campo_clave = &apos;ENVASADOR&apos;.
+  ENDIF.
+
+ENDFORM.                    &quot; COPIAR_RECURSO</source>
+</PROG>

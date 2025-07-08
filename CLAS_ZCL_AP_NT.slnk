@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_NT" VERSION="1" LANGU="S" DESCRIPT="Necesidad de transporte" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_NT" CMPNAME="TT_LTBA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="4 " SRCROW2="8 " SRCCOLUMN2="29 " TYPESRC_LENG="28 " TYPESRC="tt_ltba TYPE TABLE OF ltba
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <attribute CLSNAME="ZCL_AP_NT" CMPNAME="C_LGNUM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;002&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="LGNUM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" VERSION="1" LANGU="S" DESCRIPT="Borrar NT" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-LGNUM" PARVALUE="C_LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" SCONAME="TBNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" SCONAME="TBPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBP-TBPOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" SCONAME="MODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ALLGAZMD" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="BORRAR" SCONAME="BAPIRET2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRET2"/>
+  <source>METHOD borrar.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Visualizar/modificar NT: pantalla inicial
+    o_bi-&gt;dynpro( program = &apos;SAPML02B&apos; dynpro = &apos;0100&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos;
+                  valor = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;LTBK-LGNUM&apos;
+                  valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+    o_bi-&gt;campos( campo = &apos;LTBK-TBNUM&apos;
+                  valor = tbnum ). &quot; Número de necesidad de transpo
+    o_bi-&gt;campos( campo = &apos;LTBP-TBPOS&apos;
+                  valor = tbpos ). &quot; Posición de necesidad transporte
+
+* TR Processing: Item Overview
+    o_bi-&gt;dynpro( program = &apos;SAPML02B&apos; dynpro = &apos;1103&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos;
+                  valor = &apos;=DLK&apos; ).
+
+* Popup_to_confirm_with_value
+    o_bi-&gt;dynpro( program = &apos;SAPLSPO1&apos; dynpro = &apos;0400&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos;
+                  valor = &apos;=YES&apos; ).
+
+    CLEAR bapiret2.
+    bapiret2-message    = o_bi-&gt;llamar_transaccion( tcode = &apos;LB02&apos; modo = modo ).
+    bapiret2-type       = o_bi-&gt;msgty.
+    bapiret2-id         = o_bi-&gt;msgid.
+    bapiret2-number     = o_bi-&gt;msgno.
+    bapiret2-message_v1 = o_bi-&gt;msgv1.
+    bapiret2-message_v2 = o_bi-&gt;msgv2.
+    bapiret2-message_v3 = o_bi-&gt;msgv3.
+    bapiret2-message_v4 = o_bi-&gt;msgv4.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NT" CMPNAME="CREAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="CREAR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="CREAR" SCONAME="TBNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="CREAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="CREAR" SCONAME="I_LTBA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_LTBA"/>
+  <source>METHOD crear.
+    DATA: l_subrc TYPE sy-subrc,
+          l_text  TYPE t100-text.
+
+    FIELD-SYMBOLS &lt;ltba&gt; TYPE ltba.
+
+    IF i_ltba IS INITIAL.
+      message = &apos;No ha informado posiciones&apos;.
+      EXIT.
+    ENDIF.
+
+    CALL FUNCTION &apos;L_TR_CREATE&apos;
+      EXPORTING
+        i_single_item         = &apos; &apos;
+        i_save_only_all       = &apos; &apos;
+        i_update_task         = &apos; &apos;
+        i_commit_work         = commit
+      TABLES
+        t_ltba                = i_ltba
+      EXCEPTIONS
+        item_error            = 1
+        no_entry_in_int_table = 2
+        item_without_number   = 3
+        no_update_item_error  = 4.
+    l_subrc = sy-subrc.
+
+    LOOP AT i_ltba ASSIGNING &lt;ltba&gt;.
+      IF NOT &lt;ltba&gt;-tbnum IS INITIAL.
+        tbnum = &lt;ltba&gt;-tbnum.
+      ELSEIF NOT &lt;ltba&gt;-msgid IS INITIAL.
+        SELECT SINGLE text FROM t100
+          INTO l_text
+         WHERE sprsl = sy-langu
+           AND arbgb = &lt;ltba&gt;-msgid
+           AND msgnr = &lt;ltba&gt;-msgno.
+        IF sy-subrc = 0.
+          __add_lista message l_text.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    IF tbnum IS INITIAL AND message IS INITIAL.
+      CASE l_subrc.
+        WHEN 1. message = &apos;Error en posición&apos;.
+        WHEN 2. message = &apos;No entradas en tabla&apos;.
+        WHEN 3. message = &apos;Posición sin nº&apos;.
+        WHEN 4. message = &apos;Error actualización&apos;.
+      ENDCASE.
+    ENDIF.
+
+*  t_ltba-matnr = &apos;LUCIACADENA&apos;.
+*  t_ltba-lgort = &apos;0002&apos;.
+*  t_ltba-werks = &apos;0002&apos;.
+*  t_ltba-menga = 1.
+*  t_ltba-lgnum = &apos;002&apos;.
+*  t_ltba-altme = &apos;UN&apos;.
+*  t_ltba-betyp = &apos;P&apos;.
+*  t_ltba-benum = &apos;PRUEBA&apos;.
+*  t_ltba-bwlvs = &apos;900&apos;.
+*  t_ltba-vltyp = &apos;911&apos;.
+*  t_ltba-vlpla = &apos;PINTURA&apos;.
+*  t_ltba-nltyp = &apos;911&apos;.
+**      t_ltba-nlpla = gt_lqua-lgpla.
+*  t_ltba-nkdyn = &apos;X&apos;.
+**      t_ltba-rsnum = gt_resb_2-rsnum.
+**      t_ltba-rspos = gt_resb-rspos.
+*  t_ltba-lznum = &apos;PRUEBA LZNUM&apos;.
+*  t_ltba-sobkz = &apos;E&apos;.
+*  t_ltba-sonum = &apos;0000002097000010&apos;.
+*  APPEND t_ltba.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" VERSION="1" LANGU="S" DESCRIPT="Marcar posición de NT para entrega final" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-LGNUM" PARVALUE="C_LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" SCONAME="TBNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" SCONAME="TBPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBP-TBPOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" SCONAME="MODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ALLGAZMD" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MARCAR_ENTREGA_FINAL" SCONAME="BAPIRET2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRET2"/>
+  <source>METHOD marcar_entrega_final.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Visualizar/modificar NT: pantalla inicial
+    o_bi-&gt;dynpro( program = &apos;SAPML02B&apos; dynpro = &apos;0100&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos;
+                  valor = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;LTBK-LGNUM&apos;
+                  valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+    o_bi-&gt;campos( campo = &apos;LTBK-TBNUM&apos;
+                  valor = tbnum ). &quot; Número de necesidad de transpo
+    o_bi-&gt;campos( campo = &apos;LTBP-TBPOS&apos;
+                  valor = tbpos ). &quot; Posición de necesidad transporte
+
+    o_bi-&gt;dynpro( program = &apos;SAPML02B&apos; dynpro = &apos;0102&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+    o_bi-&gt;campos( campo = &apos;LTBP-ELIKZ&apos; valor = &apos;X&apos; ).
+
+    CLEAR bapiret2.
+    bapiret2-message    = o_bi-&gt;llamar_transaccion( tcode = &apos;LB02&apos; modo = modo ).
+    bapiret2-type       = o_bi-&gt;msgty.
+    bapiret2-id         = o_bi-&gt;msgid.
+    bapiret2-number     = o_bi-&gt;msgno.
+    bapiret2-message_v1 = o_bi-&gt;msgv1.
+    bapiret2-message_v2 = o_bi-&gt;msgv2.
+    bapiret2-message_v3 = o_bi-&gt;msgv3.
+    bapiret2-message_v4 = o_bi-&gt;msgv4.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" VERSION="1" LANGU="S" DESCRIPT="Modifica posición de NT" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="TBNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="TBPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TBPOS"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="ELIKZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBP_ELIKZ" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="MENGA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBP_MENGA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="MODIFICAR_POS_NT" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD modificar_pos_nt.
+    DATA i_ltbc TYPE TABLE OF ltbc.
+
+    FIELD-SYMBOLS &lt;ltbc&gt; TYPE ltbc.
+
+    SELECT ELIKZ MENGA FROM ltbp
+      INTO CORRESPONDING FIELDS OF TABLE i_ltbc
+     WHERE lgnum = lgnum
+       AND tbnum = tbnum
+       AND tbpos = tbpos.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No existe la OT&apos; lgnum tbnum tbpos INTO mensaje SEPARATED BY space.
+    ELSE.
+      ASSIGN i_ltbc[ 1 ] TO &lt;ltbc&gt;.
+      IF NOT (  elikz = &lt;ltbc&gt;-elikz
+         AND menga = &lt;ltbc&gt;-menga ).
+* Si lo que queremos es quitar el indicador de entrega final, la función no funciona,
+* bien, por lo que primero actualizamos este indicador a pelo.
+        IF &lt;ltbc&gt;-elikz = &apos;X&apos; AND elikz = &apos;&apos;.
+          UPDATE ltbp
+            SET elikz = &apos;&apos;
+           WHERE lgnum = lgnum
+             AND tbnum = tbnum
+             AND tbpos = tbpos.
+        ENDIF.
+
+        &lt;ltbc&gt;-elikz = elikz.
+        &lt;ltbc&gt;-menga = menga.
+        CALL FUNCTION &apos;L_TR_CHANGE&apos;
+          EXPORTING
+*     I_SAVE_ONLY_ALL                = &apos;X&apos;
+*     I_UPDATE_TASK                  = I_UPDATE_TASK
+            i_commit_work                  = commit_work
+          TABLES
+            t_ltbc                         = i_ltbc
+         EXCEPTIONS
+           item_error                     = 1
+           no_update_item_error           = 2
+           no_update_no_entry             = 3
+           no_update_without_commit       = 4
+           tr_locked                      = 5.
+
+        IF sy-subrc &lt;&gt; 0.
+          ASSIGN i_ltbc[ 1 ] TO &lt;ltbc&gt;.
+          IF &lt;ltbc&gt;-msgid IS INITIAL.
+            CASE sy-subrc.
+              WHEN 1. mensaje = &apos;Error de posición&apos;.
+              WHEN 2. mensaje = &apos;Error al actualizar posición&apos;.
+              WHEN 3. mensaje = &apos;Error: no existen datos&apos;.
+              WHEN 4. mensaje = &apos;Error: actualización sin commit&apos;.
+              WHEN 5. mensaje = &apos;Error de bloqueo&apos;.
+            ENDCASE.
+          ELSE.
+            MESSAGE ID &lt;ltbc&gt;-msgid TYPE &apos;S&apos; NUMBER &lt;ltbc&gt;-msgno WITH
+                    &lt;ltbc&gt;-msgv1 &lt;ltbc&gt;-msgv2 &lt;ltbc&gt;-msgv3 &lt;ltbc&gt;-msgv4 INTO mensaje.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NT" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar NT" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="VISUALIZAR" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-LGNUM" PARVALUE="C_LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="VISUALIZAR" SCONAME="TBNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBK-TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="VISUALIZAR" SCONAME="TBPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTBP-TBPOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NT" CMPNAME="VISUALIZAR" SCONAME="MODIFICAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD visualizar.
+    SET PARAMETER ID &apos;LGN&apos; FIELD lgnum.
+    SET PARAMETER ID &apos;TBN&apos; FIELD tbnum.
+    SET PARAMETER ID &apos;TBP&apos; FIELD tbpos.
+
+    IF modificar IS INITIAL.
+      CALL TRANSACTION &apos;LB03&apos; AND SKIP FIRST SCREEN.
+    ELSE.
+      CALL TRANSACTION &apos;LB02&apos; AND SKIP FIRST SCREEN.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

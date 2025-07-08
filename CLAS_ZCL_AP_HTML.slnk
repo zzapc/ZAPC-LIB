@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_HTML" VERSION="1" LANGU="S" DESCRIPT="Control HTML" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_HTML" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_HTML" CMPNAME="C_INI_HTML_BTF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="2" ATTVALUE="&apos;&lt;!DOCTYPE HTML PUBLIC&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HTML" CMPNAME="HTML" VERSION="1" LANGU="S" DESCRIPT="Contains HTML for WWW client" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="W3HTML" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HTML" CMPNAME="I_HTML" VERSION="1" LANGU="S" DESCRIPT="ITS: Table Type for HTML Source" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="W3HTMLTABTYPE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HTML" CMPNAME="O_CONTAINER" VERSION="1" LANGU="S" DESCRIPT="Container for Custom Controls in the Screen Area" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_GUI_CUSTOM_CONTAINER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HTML" CMPNAME="O_HTML" VERSION="1" LANGU="S" DESCRIPT="HTML Control Proxy Class" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_GUI_HTML_VIEWER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_PARRAFO" VERSION="1" LANGU="S" DESCRIPT="Añade párrafo" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_PARRAFO" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_PARRAFO" SCONAME="PARTIR_SIEMPRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_PARRAFO" SCONAME="OPTIMIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_PARRAFO" SCONAME="PARRAFO_UNICO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_parrafo.
+  DATA: l_long      TYPE i, l_long2 TYPE i, l_long_ant TYPE i,
+        i_lineas    TYPE TABLE OF text255,
+        i_lineas2   TYPE TABLE OF text255,
+        l_linea     TYPE text255,
+        l_linea_ant TYPE text255,
+        l_string    TYPE string.
+  DATA: l_c(65535),
+        l_c2(65535),
+        l_cont      TYPE i,
+        l_cont2     TYPE i,
+        l_cont3     TYPE i,
+        l_cont4     TYPE i,
+        l_dif       TYPE i,
+        c1,
+        c2,
+        c3,
+        c4,
+        l_borrar.
+
+  l_long = STRLEN( texto ).
+
+  IF l_long &lt; 248 AND partir_siempre = &apos;&apos;.
+    set_text( texto = &apos;&lt;P&gt;&apos; texto2 = texto texto3 = &apos;&lt;/P&gt;&apos; ).
+  ELSE.
+    l_string = texto.
+
+    IF optimizar = &apos;X&apos; AND l_long &lt; 65000 AND NOT texto CS &apos;&lt;!DOCTYPE HTML PUBLIC&apos;.
+      CLEAR l_long2.
+      l_c    = l_string.
+      l_long = STRLEN( l_c ).
+      DO l_long TIMES.
+        l_cont  = sy-index - 1 + l_dif.
+        IF l_cont &gt; l_long.
+          EXIT.
+        ENDIF.
+        c1      = l_c+l_cont(1).
+        l_cont2 = l_cont + 1.
+        c2      = l_c+l_cont2(1).
+        l_cont3 = l_cont + 2.
+        c3      = l_c+l_cont3(1).
+        l_cont4 = l_cont + 3.
+        c4      = l_c+l_cont4(1).
+        IF c3 = cl_abap_char_utilities=&gt;cr_lf(1) AND c1 NE &apos;.&apos;.
+          l_c2+l_long2(1) = c1.
+          ADD 1 TO l_long2.
+          ADD 2 TO l_dif.
+        ELSE.
+          l_c2+l_long2(1) = c1.
+          ADD 1 TO l_long2.
+        ENDIF.
+      ENDDO.
+      l_string = l_c2.
+    ENDIF.
+
+
+    zcl_ap_string=&gt;string2tabla( EXPORTING string = l_string
+                                           longitud = 248
+                                 CHANGING  tabla = i_lineas ).
+
+*    IF optimizar = &apos;X&apos;.
+*      CLEAR: l_long, l_long2, l_long_ant.
+*      i_lineas2 = i_lineas.
+*      clear i_lineas.
+*      LOOP AT i_lineas2 INTO l_linea.
+*        l_long2 = l_long2 + STRLEN( l_linea ).
+*        IF l_long2 &gt;= 200 AND l_long2 &lt;= 248 AND NOT l_linea_ant IS INITIAL.
+*          CONCATENATE l_linea_ant l_linea INTO l_linea SEPARATED BY space.
+*          clear l_linea_ant.
+*        ENDIF.
+*
+*        IF zcl_ap_string=&gt;ultimo_caracter( l_linea ) = &apos;X&apos;.
+*          l_long2 = 999.
+*        ENDIF.
+*
+*        IF l_long2 &lt; 200.
+*          IF l_linea_ant IS INITIAL.
+*            l_linea_ant = l_linea.
+*          ELSE.
+*            CONCATENATE l_linea_ant l_linea INTO l_linea_ant SEPARATED BY space.
+*          ENDIF.
+*        ELSE.
+*          IF NOT l_linea_ant IS INITIAL.
+*            APPEND l_linea_ant TO i_lineas.
+*            CLEAR: l_linea_ant.
+*          ENDIF.
+*          APPEND l_linea TO i_lineas.
+*          CLEAR l_long2.
+*        ENDIF.
+*      ENDLOOP.
+*    ENDIF.
+
+    IF texto CS &apos;&lt;!DOCTYPE HTML PUBLIC&apos;.
+      CLEAR l_borrar.
+      LOOP AT i_lineas INTO l_linea.
+        IF l_linea CS &apos;&lt;!DOCTYPE HTML &apos;.
+          l_borrar = &apos;X&apos;.
+        ELSEIF l_borrar = &apos;X&apos;.
+          IF l_linea CS &apos;&lt;BODY&gt;&apos;.
+            CLEAR l_borrar.
+            REPLACE &apos;&lt;BODY&gt;&apos; WITH &apos;&apos; INTO l_linea.
+            set_text( texto = l_linea ).
+          ENDIF.
+        ELSE.
+          REPLACE &apos;&lt;/BODY&gt;&lt;/HTML&gt;&apos; WITH &apos;&apos; INTO l_linea.
+          set_text( texto = l_linea ).
+        ENDIF.
+      ENDLOOP.
+    ELSE.
+      IF parrafo_unico IS INITIAL.
+        LOOP AT i_lineas INTO l_linea.
+          set_text( texto = &apos;&lt;P&gt;&apos; texto2 = l_linea texto3 = &apos;&lt;/P&gt;&apos; ).
+        ENDLOOP.
+      ELSE.
+        set_text( &apos;&lt;p&gt;&apos; ).
+        LOOP AT i_lineas INTO l_linea.
+          set_text( texto = l_linea  texto2 = &apos;&lt;br/&gt;&apos; ).
+        ENDLOOP.
+        set_text( &apos;&lt;/p&gt;&apos; ).
+      ENDIF.
+    ENDIF.
+
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL" VERSION="1" LANGU="S" DESCRIPT="Añade URL" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL" SCONAME="PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL" SCONAME="CODIGO_PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;P&apos;"/>
+  <source>method ADD_URL.
+  data: l_texto          type string,
+        l_linea          type string,
+        l_inicio_parrafo type string,
+        l_fin_parrafo    type string.
+
+  if texto is initial.
+    l_texto = url.
+  else.
+    l_texto = texto.
+  endif.
+
+  concatenate &apos;&lt;a href=&quot;&apos; url &apos;&quot;&gt;&apos; l_texto &apos;&lt;/a&gt;&apos; into l_linea.
+  if parrafo = &apos;X&apos;.
+    concatenate &apos;&lt;&apos; codigo_parrafo &apos;&gt;&apos; into l_inicio_parrafo.
+    concatenate &apos;&lt;/&apos; codigo_parrafo &apos;&gt;&apos; into l_fin_parrafo.
+    concatenate l_inicio_parrafo l_linea l_fin_parrafo into l_linea.
+  endif.
+
+  set_text( l_linea ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL_ACCION" VERSION="1" LANGU="S" DESCRIPT="Añade URL" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL_ACCION" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL_ACCION" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL_ACCION" SCONAME="PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="ADD_URL_ACCION" SCONAME="CODIGO_PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;P&apos;"/>
+  <source>method ADD_URL_ACCION.
+  data: l_texto          type string,
+        l_linea          type string,
+        l_inicio_parrafo type string,
+        l_fin_parrafo    type string.
+
+  if texto is initial.
+    l_texto = url.
+  else.
+    l_texto = texto.
+  endif.
+
+  concatenate &apos;&lt;FORM method=post action=SAPEVENT:PRESS_ME?MYPARAMERS&gt;&lt;a href=&quot;&apos; &apos;SAPEVENT:CLICK_ON_ME?MYPARAMERS&apos; &apos;&quot;&gt;&apos; l_texto &apos;&lt;/a&gt;&lt;/FORM&gt;&apos; into l_linea.
+  if parrafo = &apos;X&apos;.
+    concatenate &apos;&lt;&apos; codigo_parrafo &apos;&gt;&apos; into l_inicio_parrafo.
+    concatenate &apos;&lt;/&apos; codigo_parrafo &apos;&gt;&apos; into l_fin_parrafo.
+    concatenate l_inicio_parrafo l_linea l_fin_parrafo into l_linea.
+  endif.
+
+  set_text( l_linea ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="CONSTRUCTOR" SCONAME="CONTAINER" VERSION="1" LANGU="S" DESCRIPT="Container for Custom Controls in the Screen Area" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="CL_GUI_CUSTOM_CONTAINER" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="CONSTRUCTOR" SCONAME="NOMBRE_CONTAINER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>method CONSTRUCTOR.
+
+  CLEAR: i_html, html.
+
+  IF NOT container IS INITIAL OR NOT nombre_container IS INITIAL.
+    set_container( container        = container
+                   nombre_container = nombre_container ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Libera memoria" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method FREE.
+
+  CLEAR: i_html.
+  IF NOT o_container IS INITIAL.
+    o_container-&gt;free( ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" VERSION="1" LANGU="S" DESCRIPT="Graba fichero en caché del servidor" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="CONTENIDO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="TIMEOUT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="120"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;/sap/public/&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="GRABAR_FICHERO_CACHE_SERVER" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD grabar_fichero_cache_server.
+  DATA: lo_cached_response TYPE REF TO if_http_response,
+        lv_app_type        TYPE string,
+        lv_guid            TYPE guid_32,
+        l_uuid_16          TYPE sysuuid_x16.
+
+  CREATE OBJECT lo_cached_response
+    TYPE
+    cl_http_response
+    EXPORTING
+      add_c_msg = 1.
+
+****set the data and the headers
+  lo_cached_response-&gt;set_data( contenido ).
+  CONCATENATE &apos;.&apos; extension INTO lv_app_type.
+  TRANSLATE lv_app_type TO UPPER CASE.
+
+  lo_cached_response-&gt;set_header_field( name  = if_http_header_fields=&gt;content_type
+                                        value = lv_app_type ).
+****Set the Response Status
+  lo_cached_response-&gt;set_status( code = 200 reason = &apos;OK&apos; ).
+
+****Set the Cache Timeout - 60 seconds - we only need this in the cache
+****long enough to build the page
+  lo_cached_response-&gt;server_cache_expire_rel( expires_rel = timeout ).
+
+****Create a unique URL for the object and export URL
+  IF nombre IS INITIAL.
+*    CALL FUNCTION &apos;GUID_CREATE&apos;
+*      IMPORTING
+*        ev_guid_32 = lv_guid.
+    TRY.
+        l_uuid_16 = cl_system_uuid=&gt;create_uuid_x16_static( ).
+        cl_system_uuid=&gt;convert_uuid_x16_static( EXPORTING uuid = l_uuid_16
+                                                 IMPORTING uuid_c32 = lv_guid ).
+      CATCH cx_root.
+    ENDTRY.
+  ELSE.
+    lv_guid = nombre.
+  ENDIF.
+
+  CONCATENATE  host ruta lv_guid &apos;.&apos; extension INTO url.
+
+****Cache the URL
+  lv_app_type = url.
+  cl_http_server=&gt;server_cache_upload( url      = lv_app_type
+                                       response = lo_cached_response
+                                       scope    =  ihttp_inv_global ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_LEFT_CLICK" VERSION="1" LANGU="S" DESCRIPT="Manejador click" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_GUI_HTML_VIEWER" REFCMPNAME="LEFT_CLICK_RUN" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method HANDLE_LEFT_CLICK.
+*  BREAK-POINT.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" VERSION="1" LANGU="S" DESCRIPT="Manejador evento SAP" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_GUI_HTML_VIEWER" REFCMPNAME="SAPEVENT" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" SCONAME="ACTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" SCONAME="FRAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" SCONAME="GETDATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" SCONAME="POSTDATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HANDLE_SAPEVENT" SCONAME="QUERY_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <source>method HANDLE_SAPEVENT.
+*ACTION
+*FRAME
+*GETDATA
+*POSTDATA
+*QUERY_TABLE
+
+*  BREAK-POINT.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="HEADER" VERSION="1" LANGU="S" DESCRIPT="Inicia página" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="HEADER" SCONAME="CHARSET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;Windows-1252&apos;"/>
+  <source>method HEADER.
+
+  data l_meta type string.
+  set_text( &apos;&lt;head&gt;&apos; ).
+  set_text( &apos;&lt;title&gt;Documento sin t&amp;iacute;tulo&lt;/title&gt;&apos; ).
+  concatenate &apos;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;&apos;
+              &apos;charset=&apos; charset &apos;&quot;&gt;&apos; into l_meta separated by space.
+  set_text( l_meta ).
+  set_text( &apos;&lt;style type=&quot;text/css&quot;&gt;&apos; ).
+  set_text( &apos;&lt;!--&apos; ).
+  set_text( &apos;Estilo1 {font-family: Arial, Helvetica, sans-serif}&apos; ).  &quot;#EC *
+  set_text( &apos;--&gt;&apos; ).
+  set_text( &apos;&lt;/style&gt;&apos; ).
+  set_text( &apos;&lt;/head&gt;&apos; ).
+
+  set_text( &apos;&lt;body class=&quot;Estilo1&quot;&gt;&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="PRINT" VERSION="1" LANGU="S" DESCRIPT="Imprimir" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method PRINT.
+
+  CALL METHOD o_html-&gt;execwb
+    EXPORTING
+      cmd_id     = o_html-&gt;wb_cmdid_print
+    EXCEPTIONS
+      cntl_error = 1.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE e003(cnht).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="REMOVE_TAGS" VERSION="1" LANGU="S" DESCRIPT="Quita tabs de un HTML" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="REMOVE_TAGS" SCONAME="STRING_HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="REMOVE_TAGS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method REMOVE_TAGS.
+
+  string = string_html.
+  CALL FUNCTION &apos;SOTR_TAGS_REMOVE_FROM_STRING&apos;
+    CHANGING
+      text = string.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="SET_CONTAINER" VERSION="1" LANGU="S" DESCRIPT="Set container" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_CONTAINER" SCONAME="CONTAINER" VERSION="1" LANGU="S" DESCRIPT="Container for Custom Controls in the Screen Area" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="CL_GUI_CUSTOM_CONTAINER" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_CONTAINER" SCONAME="NOMBRE_CONTAINER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>method SET_CONTAINER.
+  TYPES: BEGIN OF cntl_simple_event,
+           eventid       TYPE i,
+           appl_event(1) TYPE c,
+         END OF cntl_simple_event.
+
+  TYPES: cntl_simple_events TYPE TABLE OF cntl_simple_event.
+
+  DATA: myevent_tab TYPE cntl_simple_events,
+        myevent     TYPE cntl_simple_event.
+
+  IF NOT container IS INITIAL.
+    o_container = container.
+  ELSEIF NOT nombre_container IS INITIAL.
+    CREATE OBJECT o_container
+      EXPORTING
+        container_name = nombre_container.
+  ENDIF.
+
+  IF NOT o_container IS INITIAL.
+    CREATE OBJECT o_html
+      EXPORTING
+        parent = o_container.
+  ENDIF.
+
+  o_html-&gt;set_ui_flag( o_html-&gt;uiflag_no3dborder ).
+
+*    myevent-eventid = o_html-&gt;left_click_run.
+*    myevent-appl_event = &apos;X&apos;.
+  myevent-eventid    = o_html-&gt;m_id_sapevent.
+  myevent-appl_event = &apos;X&apos;.
+  APPEND myevent TO myevent_tab.
+  CALL METHOD o_html-&gt;set_registered_events
+    EXPORTING
+      events = myevent_tab.
+
+
+  SET HANDLER handle_left_click FOR o_html.
+  SET HANDLER handle_sapevent FOR o_html.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="SET_PAGE" VERSION="1" LANGU="S" DESCRIPT="Carga página" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_PAGE" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;index.htm&apos;"/>
+  <source>method SET_PAGE.
+  DATA l_url(2048).
+
+  l_url = url.
+  CALL METHOD o_html-&gt;load_data
+    EXPORTING
+      url        = l_url
+    CHANGING
+      data_table = i_html.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" VERSION="1" LANGU="S" DESCRIPT="Añade línea" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" SCONAME="TEXTO4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SET_TEXT" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla de solisti1" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="W3HTMLTABTYPE" PAROPTIONL="X"/>
+  <source>METHOD set_text.
+  DATA: l_texto  TYPE w3html,
+        l_texto2 TYPE w3html,
+        l_tipo   TYPE c.
+
+  IF tabla IS INITIAL.
+    IF strlen( texto ) &gt; 255 AND texto2 IS INITIAL AND texto3 IS INITIAL.
+      DATA i_tabla TYPE TABLE OF w3html.
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = texto
+                                             longitud = 255
+                                   CHANGING  tabla = i_tabla ).
+      LOOP AT i_tabla INTO l_texto.
+        APPEND l_texto TO i_html.
+      ENDLOOP.
+    ELSE.
+      WRITE texto TO l_texto.
+
+      IF texto2 IS SUPPLIED.
+        DESCRIBE FIELD texto2 TYPE l_tipo.
+        IF l_tipo = &apos;P&apos;.
+          WRITE texto2 TO l_texto2(15).
+        ELSE.
+          WRITE texto2 TO l_texto2.
+        ENDIF.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+      IF texto3 IS SUPPLIED.
+        WRITE texto3 TO l_texto2.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+      IF texto4 IS SUPPLIED.
+        WRITE texto4 TO l_texto2.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+
+      APPEND l_texto TO i_html.
+    ENDIF.
+  ELSE.
+    i_html = tabla.
+  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HTML" CMPNAME="SHOW" VERSION="1" LANGU="S" DESCRIPT="Muestra página" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HTML" CMPNAME="SHOW" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;index.htm&apos;"/>
+  <source>method SHOW.
+  DATA l_url(2048).
+
+  l_url = url.
+  CALL METHOD o_html-&gt;show_url
+    EXPORTING
+      url = l_url.
+
+endmethod.</source>
+ </method>
+</CLAS>

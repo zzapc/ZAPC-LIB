@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_GRID8" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Plantilla ALV con documentación" LENGTH="31 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <programDocumentation OBJECT="ZPLANTILLA_GRID8">
+  <language SPRAS="S">
+   <textLine TDFORMAT="U1" TDLINE="&amp;PURPOSE&amp;"/>
+   <textLine TDFORMAT="AS" TDLINE="Plantilla para generar ALV GRIDs"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;INTEGRATION&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;PREREQUISITES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;FEATURES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;SELECTION&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;STANDARD_VARIANTS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;OUTPUT&amp;"/>
+   <textLine TDFORMAT="U2"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;ACTIVITIES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;EXAMPLE&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="AS"/>
+  </language>
+ </programDocumentation>
+ <dynpros>
+  <dynpro PROG="ZPLANTILLA_GRID8" DNUM="0100" FNUM="0100" BZMX="57 " BZBR="255 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="57 " NOCO="255 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Grid">
+   <dynprofield FNAM="GRID" DIDX="0039" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="FF" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="14" ADEZ="63"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0100.
+*
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_0100 AT EXIT-COMMAND.
+
+ MODULE USER_COMMAND_0100.</dynproflowsource>
+  </dynpro>
+ </dynpros>
+ <pfstatus>
+  <pfstatus_sta CODE="INICIO" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="ST_0100" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="Status 0100"/>
+  <pfstatus_fun CODE="ALLS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Selecciones (todas)" PATH="L"/>
+  <pfstatus_fun CODE="BACK" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Atrás"/>
+  <pfstatus_fun CODE="DELA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Borrar selecciones por completo" PATH="E"/>
+  <pfstatus_fun CODE="DELS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE_ROW" ICON_ID="@18@" FUN_TEXT="Borrar línea de selección" PATH="S"/>
+  <pfstatus_fun CODE="DOCU" TEXTNO="001" TYPE="H" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Documentación de programa"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Delimit.opcionales" PATH="D"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="002" TEXT_TYPE="D" TEXT_NAME="SSCRTEXTS-DYNSEL"/>
+  <pfstatus_fun CODE="E" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Atrás" PATH="A"/>
+  <pfstatus_fun CODE="ECAN" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Cancelar" PATH="C"/>
+  <pfstatus_fun CODE="ENDE" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="FC01" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_01"/>
+  <pfstatus_fun CODE="FC02" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_02"/>
+  <pfstatus_fun CODE="FC03" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_03"/>
+  <pfstatus_fun CODE="FC04" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_04"/>
+  <pfstatus_fun CODE="FC05" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_05"/>
+  <pfstatus_fun CODE="FEWS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Selecciones efectuadas" PATH="U"/>
+  <pfstatus_fun CODE="GET" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Traer..." PATH="T"/>
+  <pfstatus_fun CODE="GET" TEXTNO="002" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Traer variante..." PATH="V"/>
+  <pfstatus_fun CODE="GRABAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar"/>
+  <pfstatus_fun CODE="LOG" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log"/>
+  <pfstatus_fun CODE="LVUV" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Variables usuario..." PATH="B"/>
+  <pfstatus_fun CODE="ONLI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Ejecutar" PATH="A"/>
+  <pfstatus_fun CODE="OPTI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECTION" ICON_ID="@7X@" FUN_TEXT="Opciones de selección" PATH="O"/>
+  <pfstatus_fun CODE="PARAM" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Parametrización"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="SCRH" TEXTNO="001" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Ayuda imagen de selección" PATH="Y"/>
+  <pfstatus_fun CODE="SJOB" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ejecutar en proceso fondo" PATH="E"/>
+  <pfstatus_fun CODE="SPOS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar como variante..." INFO_TEXT="Grabar como variante" PATH="G"/>
+  <pfstatus_fun CODE="VDEL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Borrar..." PATH="B"/>
+  <pfstatus_fun CODE="VSHO" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Visualizar..." PATH="A"/>
+  <pfstatus_men CODE="000001" NO="01" REF_TYPE="F" REF_CODE="ONLI" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="02" REF_TYPE="F" REF_CODE="PRIN" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="03" REF_TYPE="F" REF_CODE="SJOB" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000001" NO="05" REF_TYPE="F" REF_CODE="ENDE" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="01" REF_TYPE="F" REF_CODE="ALLS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="02" REF_TYPE="F" REF_CODE="FEWS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="04" REF_TYPE="F" REF_CODE="OPTI" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="06" REF_TYPE="F" REF_CODE="DELS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="07" REF_TYPE="F" REF_CODE="DELA" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="09" REF_TYPE="F" REF_CODE="DYNS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="10" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="11" REF_TYPE="F" REF_CODE="ECAN" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="01" REF_TYPE="M" REF_CODE="000004"/>
+  <pfstatus_men CODE="000003" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="03" REF_TYPE="F" REF_CODE="LVUV" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="05" REF_TYPE="F" REF_CODE="SCRH" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="07" REF_TYPE="F" REF_CODE="E" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="01" REF_TYPE="F" REF_CODE="GET" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="02" REF_TYPE="F" REF_CODE="VSHO" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="03" REF_TYPE="F" REF_CODE="VDEL" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="04" REF_TYPE="F" REF_CODE="SPOS" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="01" REF_TYPE="F" REF_CODE="PARAM" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="02" REF_TYPE="F" REF_CODE="LOG" REF_NO="001"/>
+  <pfstatus_mtx CODE="000001" TEXT_TYPE="S" TEXT="Programa" PATH="R" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000002" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000003" TEXT_TYPE="S" TEXT="Pasar a" PATH="P" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000004" TEXT_TYPE="S" TEXT="Variantes" PATH="V" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000005" TEXT_TYPE="S" TEXT="Mantenimiento"/>
+  <pfstatus_act CODE="000001" NO="01" MENUCODE="000005"/>
+  <pfstatus_act CODE="000001" NO="02" MENUCODE="000001"/>
+  <pfstatus_act CODE="000001" NO="03" MENUCODE="000002"/>
+  <pfstatus_act CODE="000001" NO="04" MENUCODE="000003"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="03" PFNO="16"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="04" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="05" PFNO="20"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="06" PFNO="13"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="07" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="08" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="09" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="10" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="11" PFNO="29"/>
+  <pfstatus_pfk CODE="000001" PFNO="02" FUNCODE="OPTI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="E" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="ONLI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="09" FUNCODE="SJOB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="11" FUNCODE="SPOS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="ECAN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="13" FUNCODE="DOCU" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="14" FUNCODE="DELS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="ENDE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="16" FUNCODE="DYNS" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="17" FUNCODE="GET" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="18" FUNCODE="SCRH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="19" FUNCODE="ALLS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="20" FUNCODE="FEWS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="25" FUNCODE="FC01" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="26" FUNCODE="FC02" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="27" FUNCODE="FC03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="28" FUNCODE="FC04" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="29" FUNCODE="FC05" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="30" FUNCODE="LVUV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="86" FUNCODE="PRIN" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="03" FUNCODE="BACK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="11" FUNCODE="GRABAR" FUNNO="001"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LOG"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PARAM"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="ST_0100" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="ST_0100" FUNCTION="GRABAR"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="A"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000002" MODAL="D" INT_NOTE="Status 0100"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000002" MODAL="D" INT_NOTE="Status 0100"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000002" SUB_CODE="0001" MODAL="D" INT_NOTE="Status 0100"/>
+  <pfstatus_tit CODE="0100" TEXT="&amp;"/>
+  <pfstatus_tit CODE="100" TEXT="&amp; &amp; &amp; &amp;"/>
+ </pfstatus>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 18/04/2017
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:,http://sap4.com
+**-&gt;PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&amp;ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_grid8.
+
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+
+
+*------VARIABLES-------------------------------------------------------*
+
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+      data_changed REDEFINITION,
+      data_changed_finished REDEFINITION,
+      toolbar      REDEFINITION,
+      user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF  t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             bukrs   TYPE t001-bukrs,
+             message TYPE bapi_msg,
+             style   TYPE lvc_t_styl,
+             color   TYPE lvc_t_scol,
+             tabix   TYPE sy-tabix,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado.
+    DATA: i_listado_ini TYPE tt_listado.
+
+    DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
+          o_event TYPE REF TO lcl_event_grid.
+
+    METHODS:  buscar_datos REDEFINITION,
+      validaciones IMPORTING mod TYPE abap_bool DEFAULT &apos;&apos; CHANGING listado TYPE t_listado,
+      status_dynpro_0100,
+      command_dynpro_0100.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+DATA: o_prog  TYPE REF TO zcl_report.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_vari LIKE disvariant-variant.                &quot;.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+
+  METHOD double_click.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    READ TABLE o_prog-&gt;i_listado ASSIGNING &lt;listado&gt;  INDEX e_row-index.
+    IF sy-subrc = 0.
+      CASE e_column.
+        WHEN OTHERS.
+      ENDCASE.
+    ENDIF.
+
+  ENDMETHOD.                                               &quot;double_click
+
+
+  METHOD toolbar.
+
+    super-&gt;toolbar( EXPORTING e_object = e_object e_interactive = e_interactive ).
+
+  ENDMETHOD.                                               &quot;toolbar
+
+  METHOD user_command.
+
+    CASE e_ucomm .
+      WHEN OTHERS.
+        super-&gt;user_command( EXPORTING e_ucomm = e_ucomm ).
+    ENDCASE .
+
+  ENDMETHOD.                                               &quot;USER_COMMAND
+
+
+  METHOD data_changed.
+    DATA: l_listado TYPE o_prog-&gt;t_listado.
+
+    ini_data_changed( cambios = er_data_changed-&gt;mt_good_cells  ).
+
+    LOOP AT i_cambios_celda INTO cambio_celda.
+      AT NEW row_id.
+        CLEAR l_listado.
+        READ TABLE o_prog-&gt;i_listado INTO l_listado INDEX cambio_celda-row_id.
+      ENDAT.
+
+      set_valor_mod( CHANGING datos = l_listado ).
+
+      AT END OF row_id.
+        o_prog-&gt;validaciones( EXPORTING mod = &apos;X&apos; CHANGING listado = l_listado ).
+        MODIFY o_prog-&gt;i_listado FROM l_listado INDEX cambio_celda-row_id.
+      ENDAT.
+    ENDLOOP.
+  ENDMETHOD.                                               &quot;data_changed
+
+  METHOD data_changed_finished.
+    o_alv-&gt;refrescar_grid( ).
+  ENDMETHOD.
+
+ENDCLASS.                    &quot;lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+  METHOD buscar_datos.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE t_listado.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+    CLEAR i_listado.
+    SELECT * FROM t001
+      INTO CORRESPONDING FIELDS OF TABLE i_listado.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+      &lt;listado&gt;-tabix = sy-tabix.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+
+      validaciones( CHANGING listado = &lt;listado&gt; ).
+    ENDLOOP.
+
+    i_listado_ini = i_listado.
+
+  ENDMETHOD.                                               &quot;seleccionar_datos
+
+  METHOD command_dynpro_0100.
+    DATA l_hay_sel.
+
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = &apos;BORRAR&apos;
+                            CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
+  ENDMETHOD.
+
+  METHOD status_dynpro_0100.
+
+    o_alv-&gt;registrar_mod( ).
+    status_dynpro( EXPORTING o_alv = o_alv variant = p_vari style = &apos;STYLE&apos; color = &apos;COLOR&apos; CHANGING i_listado = i_listado ).
+
+  ENDMETHOD.
+
+  METHOD validaciones.
+
+    CLEAR: listado-message, listado-style, listado-color.
+
+    set_status_list( EXPORTING message = listado-message criterio = &apos;V&apos; CHANGING list = listado ).
+
+  ENDMETHOD.
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status       = &apos;INICIO&apos;
+      guardar_logz = &apos;X&apos;.
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+  IF sy-batch IS INITIAL.
+    CREATE OBJECT o_prog-&gt;o_event
+      EXPORTING
+        boton_refrescar = &apos;X&apos;
+        boton_excel     = &apos;X&apos;
+        o_prog          = o_prog.
+
+    CREATE OBJECT o_prog-&gt;o_alv
+      EXPORTING
+        estructura = &apos;&apos;
+        o_event    = o_prog-&gt;o_event.
+
+    p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  IF NOT o_prog-&gt;o_alv IS INITIAL.
+    p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+  ENDIF.
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog-&gt;at_selection(  ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection(  ).
+
+AT SELECTION-SCREEN OUTPUT.
+*  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;PED&apos; variable = p_pedid ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;buscar_datos( ).
+
+  IF sy-batch IS INITIAL.
+    CALL SCREEN 0100.
+  ENDIF.
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog-&gt;status_dynpro_0100( ).
+
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  o_prog-&gt;command_dynpro_0100( ).
+
+
+ENDMODULE.                 &quot; USER_COMMAND_0100  INPUT</source>
+</PROG>

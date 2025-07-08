@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_ALV_DYN" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Plantilla ALV con documentación" LENGTH="31 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_BUKRS" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 01/03/2020
+* ANALISTA: ??
+*
+**-&gt;MANUAL:http://sap4.com,http://sap4.com/edicion
+**-&gt;PLANTILLA:,http://sap4.com
+*
+***********************************************************************
+REPORT zplantilla_alv_dyn.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: t001.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: visualizar_objeto REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_base,
+             check  TYPE xfeld,
+             lights TYPE zico_estado_mensaje,
+             bukrs  TYPE t001-bukrs,
+           END OF t_base.
+    DATA: i_base TYPE TABLE OF t_base.
+
+    TYPES: BEGIN OF t_base_post,
+             message TYPE bapi_msg,
+             color   TYPE lvc_t_scol,
+           END OF t_base_post.
+    DATA: i_base_post TYPE TABLE OF t_base_post.
+
+    DATA: o_alv        TYPE REF TO lcl_alv,
+          i_campos_alv TYPE lvc_t_fcat,
+          v_col_pos    TYPE i.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+    METHODS: crear_tabla,
+      add_campo IMPORTING tabla TYPE tabname campo TYPE any campo_ref TYPE fieldname DEFAULT &apos;&apos;,
+      set_campo_list IMPORTING campo TYPE any
+                               valor TYPE any OPTIONAL
+                               clear TYPE any DEFAULT &apos;&apos;,
+      get_campo_list IMPORTING campo TYPE any EXPORTING valor TYPE any RETURNING VALUE(val) TYPE string,
+      get_listado IMPORTING var TYPE apb_lpd_t_key_value.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report.
+
+FIELD-SYMBOLS: &lt;i_listado&gt; TYPE table,
+               &lt;listado&gt;   TYPE any.
+DATA i_listado    TYPE REF TO data.
+
+FIELD-SYMBOLS &lt;i_listado_ini&gt; TYPE table.
+DATA i_listado_ini    TYPE REF TO data.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE text-sel.
+SELECT-OPTIONS: s_bukrs FOR t001-bukrs.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+
+  METHOD visualizar_objeto.
+    DATA(l_valor_string) = o_prog-&gt;get_campo_list( column ).
+    CASE column.
+      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+
+
+  METHOD handle_user_command.
+    check_ucomm_sel = &apos;F01&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;F01&apos;.
+        LOOP AT &lt;i_listado&gt; ASSIGNING &lt;listado&gt;.
+          IF o_prog-&gt;get_campo_list( &apos;CHECK&apos; ) = &apos;X&apos;.
+
+          ENDIF.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+
+  METHOD add_campo.
+    DATA: l_campos_alv TYPE lvc_s_fcat.
+
+    IF tabla IS INITIAL.
+      ADD 1 TO v_col_pos.
+      l_campos_alv-col_pos = v_col_pos.
+      l_campos_alv-fieldname = campo.
+      APPEND l_campos_alv TO i_campos_alv.
+    ELSE.
+      DATA(l_campo_tab) = COND string( WHEN campo_ref IS INITIAL THEN campo
+                                       ELSE campo_ref ).
+
+      DATA(i_campos_tab)  = zcl_ap_dev=&gt;get_fieldcatalog_tabla( tabla ).
+      READ TABLE i_campos_tab ASSIGNING FIELD-SYMBOL(&lt;campo_tab&gt;) WITH KEY fieldname = l_campo_tab.
+      IF sy-subrc = 0.
+        CLEAR l_campos_alv.
+        MOVE-CORRESPONDING &lt;campo_tab&gt; TO l_campos_alv.
+        l_campos_alv-fieldname = campo.
+        ADD 1 TO v_col_pos.
+        l_campos_alv-col_pos = v_col_pos.
+        l_campos_alv-ref_field = &lt;campo_tab&gt;-fieldname.
+        l_campos_alv-ref_table = &lt;campo_tab&gt;-tabname.
+        APPEND l_campos_alv TO i_campos_alv.
+      ELSE.
+        MESSAGE |Error accediendo a campo { l_campo_tab } de tabla { tabla }| TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD get_campo_list.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    ASSIGN COMPONENT campo OF STRUCTURE &lt;listado&gt; TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      val = &lt;fs&gt;.
+      IF valor IS SUPPLIED.
+        valor = &lt;fs&gt;.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD get_listado.
+    DATA: linea   TYPE REF TO data,
+          l_error.
+
+    l_error = &apos;X&apos;.
+    LOOP AT &lt;i_listado&gt; ASSIGNING &lt;listado&gt;.
+      CLEAR l_error.
+      LOOP AT var ASSIGNING FIELD-SYMBOL(&lt;var&gt;).
+        IF get_campo_list( &lt;var&gt;-key ) NE &lt;var&gt;-value.
+          l_error = &apos;X&apos;.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+      IF l_error IS INITIAL.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+    IF l_error = &apos;X&apos;.
+      CREATE DATA linea LIKE LINE OF &lt;i_listado&gt;.
+      ASSIGN linea-&gt;* TO &lt;listado&gt;.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD crear_tabla.
+
+    i_campos_alv  = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( tabla = i_base fix_ref = &apos;X&apos; ).
+
+    LOOP AT i_campos_alv ASSIGNING FIELD-SYMBOL(&lt;campos&gt;).
+      v_col_pos = &lt;campos&gt;-col_pos.
+    ENDLOOP.
+
+    add_campo( campo = &apos;MATNR&apos; tabla = &apos;MARA&apos;  ).
+    add_campo( campo = &apos;MATNR2&apos; tabla = &apos;MARA&apos; campo_ref = &apos;MATNR&apos;  ).
+    add_campo( campo = &apos;COLOR&apos; tabla = &apos;CALENDAR_TYPE&apos; campo_ref = &apos;COLTAB&apos;  ).
+
+    DATA(i_campos_alv_post)  = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( tabla = i_base_post fix_ref = &apos;X&apos; ).
+    LOOP AT i_campos_alv_post INTO DATA(l_campos_alv).
+      ADD 1 TO v_col_pos.
+      l_campos_alv-col_pos = v_col_pos.
+
+      APPEND l_campos_alv TO i_campos_alv.
+    ENDLOOP.
+
+    CALL METHOD cl_alv_table_create=&gt;create_dynamic_table
+      EXPORTING
+        it_fieldcatalog           = i_campos_alv
+      IMPORTING
+        ep_table                  = i_listado
+      EXCEPTIONS
+        generate_subpool_dir_full = 1.
+    IF sy-subrc = 0.
+      ASSIGN i_listado-&gt;* TO &lt;i_listado&gt;.
+    ENDIF.
+
+
+    CALL METHOD cl_alv_table_create=&gt;create_dynamic_table
+      EXPORTING
+        it_fieldcatalog           = i_campos_alv
+      IMPORTING
+        ep_table                  = i_listado_ini
+      EXCEPTIONS
+        generate_subpool_dir_full = 1.
+    IF sy-subrc = 0.
+      ASSIGN i_listado_ini-&gt;* TO &lt;i_listado_ini&gt;.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD set_campo_list.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    SPLIT campo AT &apos;,&apos; INTO TABLE DATA(i_campos).
+    LOOP AT i_campos ASSIGNING FIELD-SYMBOL(&lt;campo&gt;).
+      ASSIGN COMPONENT &lt;campo&gt; OF STRUCTURE &lt;listado&gt; TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        IF clear = &apos;X&apos;.
+          CLEAR &lt;fs&gt;.
+        ELSE.
+          &lt;fs&gt; = valor.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+
+  METHOD main.
+
+    seleccionar_datos( ).
+    listado( ).
+
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+    SELECT * FROM t001
+      INTO CORRESPONDING FIELDS OF TABLE &lt;i_listado&gt;
+     WHERE bukrs IN s_bukrs.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( &lt;i_listado&gt; ).
+    LOOP AT &lt;i_listado&gt; ASSIGNING &lt;listado&gt;.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+      get_descripciones( EXPORTING campos = &apos;MAKTX&apos; CHANGING list = &lt;listado&gt; ).
+      set_status_list( EXPORTING criterio = &apos;V&apos; CHANGING list = &lt;listado&gt; ).
+    ENDLOOP.
+
+    SORT &lt;i_listado&gt;.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Ejecutar&apos;(eje)  icon = icon_execute_object ).
+*    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Excel&apos;  icon = icon_xls ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+*    o_alv-&gt;set_field_hotspot( campo = &apos;EBELN&apos; auto = &apos;X&apos; ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+
+*    o_alv-&gt;set_orden( &apos;&apos; ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; tabla_ref = &apos;X&apos; CHANGING t_tabla = &lt;i_listado&gt; ).
+
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = &lt;i_listado&gt; ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;crear_tabla( ).
+  o_prog-&gt;o_alv =  NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                          status_prog        = &apos;ZAP_STATUS&apos;
+                          top_of_page_auto   = &apos;X&apos;
+                          top_of_page_titulo = &apos;X&apos;
+                          o_dev              = o_prog
+                          tabla              = &apos;&lt;I_LISTADO&gt;&apos;).
+
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

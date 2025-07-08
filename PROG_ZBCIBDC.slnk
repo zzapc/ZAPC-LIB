@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZBCIBDC" VARCL="X" SUBC="I" APPL="M" RMAND="012" RLOAD="S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include ZBCIBDC" LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>************************************************************************
+* APLICACION  : BC                                                     *
+* TIPO        : Include
+* TITULO      : Rutinas comunes para manejo de Batch Input             *
+* DESCRIPCION :                                                        *
+*   -INIT_BDCDATA: Inicializa la sesión, borrando la tabla con los     *
+*                  datos a guardar en el Batch Input.                  *
+*   -OPEN_GROUP:   Abre la sesión de Batch Input.                      *
+*   -CLOSE_GROUP:  Cierra la sesión de Batch Input.                    *
+*   -BDC_DYNPRO:   Rellena datos relativos al dynpro                   *
+*   -BDC_FIELD:    Rellena datos relativos al campo del dynpro         *
+*   -DYNPRO:       Rellena simultaneamente valores de dynpro y de campo*
+*   -BDC_TRANSACTION: Crea el juego de datos.                          *
+*   -LLAMAR_TRANSACCION: Ejecuta un CALL TRANSACTION con los valores   *
+*                  introducidos en i_BDCDATA, devolviendo los posibles *
+*                  errores en I_MESSTAB.                               *
+* ...                                                                  *
+* AUTOR: Andrés Picazo Cuartero                 FECHA: 17/03/1999      *
+* RUTA : VXXXXX-X                 ORDEN DE TRANSPORTE: P01K90XXXXX     *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE            RUTA               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username          VXXXXX-X           P01K90XXXXX        *
+************************************************************************
+
+*  Batchinputdata of single transaction
+DATA: i_bdcdata LIKE bdcdata OCCURS 100 WITH HEADER LINE.
+
+* Tabla en la que se volcarán los mensajes resultantes del
+* call transaction.
+DATA i_messtab LIKE bdcmsgcoll OCCURS 1 WITH HEADER LINE.
+*Datos con los resultados de un CALL TRANSACTION
+DATA: v_bdc_msgid LIKE sy-msgid,       &quot;ID de mensaje
+      v_bdc_err LIKE sy-msgno,       &quot;Nº de error
+      v_bdc_msgty LIKE sy-msgty,       &quot;#EC NEEDED Tipo E/W/I...
+      v_bdc_msgv1 LIKE sy-msgv1,       &quot;#EC NEEDED
+      v_bdc_msgv2 LIKE sy-msgv2,       &quot;#EC NEEDED
+      v_bdc_msgv3 LIKE sy-msgv3,       &quot;#EC NEEDED
+      v_bdc_msgv4 LIKE sy-msgv4,       &quot;#EC NEEDED
+      v_bdc_text(100) type c,          &quot;Texto con el mensaje de error
+      v_bdc_subrc LIKE sy-subrc.  &quot;Error devuelto por el Call Trans.
+
+* Indicador de si se abrió un juego de datos
+DATA: v_bdc_iniciado.
+* Nº de líneas del juego de datos
+DATA: v_bdc_numlineas_bdcdata TYPE i.
+* Efectuar commit
+DATA: v_bdc_commit VALUE &apos;X&apos;,
+      v_bdc_defsize VALUE &apos;&apos;.
+
+*----------------------------------------------------------------------*
+*   Inicializa la tabla I_BDCDATA                                      *
+*----------------------------------------------------------------------*
+FORM init_bdcdata.   &quot;#EC CALLED
+
+  FREE i_bdcdata.
+  CLEAR: v_bdc_msgid,
+          v_bdc_err,
+          v_bdc_text.
+  CLEAR v_bdc_numlineas_bdcdata.
+
+ENDFORM.                    &quot;INIT_BDCDATA
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  no_bdc_commit
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM no_bdc_commit.  &quot;#EC CALLED
+
+  CLEAR: v_bdc_commit.
+
+ENDFORM.                    &quot;no_bdc_commit
+
+*----------------------------------------------------------------------*
+*   create batchinput session                                          *
+*----------------------------------------------------------------------*
+FORM open_group USING p_group LIKE apqi-groupid   &quot;#EC CALLED
+                       p_user LIKE apqi-userid
+                       p_keep LIKE apqi-qerase
+                       p_holddata LIKE apqi-startdate.
+
+* open batchinput group
+  CALL FUNCTION &apos;BDC_OPEN_GROUP&apos;
+    EXPORTING
+      client              = sy-mandt
+      group               = p_group
+      user                = p_user
+      keep                = p_keep
+      holddate            = p_holddata
+    EXCEPTIONS
+      client_invalid
+      destination_invalid
+      group_invalid
+      group_is_locked
+      holddate_invalid
+      internal_error
+      queue_error
+      running
+      system_lock_error
+      user_invalid.
+
+  IF sy-subrc = 0.
+    v_bdc_iniciado = &apos;X&apos;.
+  ELSE.
+    CLEAR v_bdc_iniciado.
+  ENDIF.
+
+ENDFORM.                    &quot;OPEN_GROUP
+
+*----------------------------------------------------------------------*
+*   end batchinput session                                             *
+*----------------------------------------------------------------------*
+FORM close_group. &quot;#EC CALLED
+
+  IF v_bdc_iniciado = &apos;X&apos;.
+    CALL FUNCTION &apos;BDC_CLOSE_GROUP&apos;.
+    CLEAR v_bdc_iniciado.
+    CLEAR v_bdc_numlineas_bdcdata.
+  ENDIF.
+
+ENDFORM.                    &quot;CLOSE_GROUP
+
+*----------------------------------------------------------------------*
+*        Start new transaction                                         *
+*----------------------------------------------------------------------*
+FORM bdc_transaction USING tcode LIKE tstc-tcode. &quot;#EC CALLED
+
+  CALL FUNCTION &apos;BDC_INSERT&apos;
+    EXPORTING
+      tcode     = tcode
+    TABLES
+      dynprotab = i_bdcdata.
+
+ENDFORM.                    &quot;BDC_TRANSACTION
+
+*----------------------------------------------------------------------*
+*        Start new screen                                              *
+*----------------------------------------------------------------------*
+FORM bdc_dynpro USING pe_program type c                 &quot;#EC CALLED
+                       pe_dynpro type c.
+
+  CLEAR i_bdcdata.
+  i_bdcdata-program = pe_program.
+  i_bdcdata-dynpro = pe_dynpro.
+  i_bdcdata-dynbegin = &apos;X&apos;.
+  APPEND i_bdcdata.
+  ADD 1 TO v_bdc_numlineas_bdcdata.
+
+ENDFORM.                    &quot;BDC_DYNPRO
+
+*----------------------------------------------------------------------*
+*        Insert field                                                  *
+*----------------------------------------------------------------------*
+FORM bdc_field USING pe_fnam type c                    &quot;#EC CALLED
+                     pe_fval type c.
+
+  CLEAR i_bdcdata.
+  i_bdcdata-fnam = pe_fnam.
+  i_bdcdata-fval = pe_fval.
+  APPEND i_bdcdata.
+  ADD 1 TO v_bdc_numlineas_bdcdata.
+
+ENDFORM.                    &quot;BDC_FIELD
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  DYNPRO                                                   *
+*&amp;---------------------------------------------------------------------*
+*    Rutina común para la intruducción de datos y entrada en nuevas    *
+*    pantallas                                                         *
+************************************************************************
+FORM dynpro USING    value(pe_dynbegin) TYPE any        &quot;#EC CALLED
+                      value(pe_prog) type any
+                      value(pe_dynpro) type any.
+
+  CLEAR i_bdcdata.
+
+  IF pe_dynbegin = &apos;X&apos;.
+    i_bdcdata-program = pe_prog.
+    i_bdcdata-dynpro = pe_dynpro.
+    i_bdcdata-dynbegin = &apos;X&apos;.
+  ELSE.
+    i_bdcdata-fnam = pe_prog.
+    i_bdcdata-fval = pe_dynpro.
+  ENDIF.
+
+  APPEND i_bdcdata.
+
+ENDFORM.                               &quot;Fin de la rutina DYNPRO.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  DYNPRO_IND                                               *
+*&amp;---------------------------------------------------------------------*
+*    Rutina para rellenar campos con índice                            *
+************************************************************************
+FORM dynpro_ind USING    value(pe_campo) type any           &quot;#EC CALLED
+                      value(pe_indice) type any
+                      value(pe_valor) type any.
+  DATA l_campo(40).
+
+  CONCATENATE pe_campo &apos;(&apos; pe_indice &apos;)&apos;  INTO l_campo.
+
+  PERFORM dynpro USING &apos; &apos; l_campo pe_valor.
+
+
+ENDFORM.                               &quot;Fin de la rutina DYNPRO.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  LLAMAR_TRANSACCION
+*&amp;---------------------------------------------------------------------*
+*       Ejecuta un CALL TRANSACTION con los valores contenidos
+*       en I_BDC_DATA. Si se produjeran errores se devolverían en la
+*       tabla I_MESSTAB.
+*----------------------------------------------------------------------*
+*      --&gt;PE_TRANS  Transacción
+*      --&gt;PE_MODO   Modo visualización (A/E/N)                         *
+*----------------------------------------------------------------------*
+FORM llamar_transaccion USING    pe_trans type any          &quot;#EC CALLED
+                                 pe_modo  type any.
+  DATA l_cont LIKE sy-tfill.
+  DATA i_params LIKE ctu_params.
+  FREE i_messtab.
+  CLEAR: v_bdc_subrc,  v_bdc_msgid,  v_bdc_err,  v_bdc_msgty,
+v_bdc_text.
+
+  i_params-dismode  = pe_modo.
+  i_params-racommit = v_bdc_commit.
+  i_params-updmode  = &apos;S&apos;.
+  i_params-defsize  = v_bdc_defsize.
+  CALL TRANSACTION pe_trans
+             USING i_bdcdata
+            OPTIONS FROM i_params
+        MESSAGES INTO i_messtab.
+
+  v_bdc_subrc = sy-subrc.
+* Comprobamos si hubo errores.
+  DESCRIBE TABLE i_messtab LINES l_cont.
+  IF v_bdc_subrc NE 0 OR
+     sy-tfill = 0.
+    v_bdc_msgid = sy-msgid.
+    v_bdc_err = sy-msgno.
+    v_bdc_msgty = sy-msgty.
+    v_bdc_msgv1 = sy-msgv1.
+    v_bdc_msgv2 = sy-msgv2.
+    v_bdc_msgv3 = sy-msgv3.
+    v_bdc_msgv4 = sy-msgv4.
+  ELSE.
+    READ TABLE i_messtab INDEX l_cont.
+    IF sy-subrc = 0.
+      v_bdc_msgid = i_messtab-msgid.
+      v_bdc_err = i_messtab-msgnr.
+      v_bdc_msgty = i_messtab-msgtyp.
+      v_bdc_msgv1 = i_messtab-msgv1.
+      v_bdc_msgv2 = i_messtab-msgv2.
+      v_bdc_msgv3 = i_messtab-msgv3.
+      v_bdc_msgv4 = i_messtab-msgv4.
+    ENDIF.
+  ENDIF.
+* Obtenemos el texto con el mensaje de error
+  IF NOT v_bdc_err IS INITIAL.
+    CALL FUNCTION &apos;MESSAGE_TEXT_BUILD&apos;
+      EXPORTING
+        msgid               = v_bdc_msgid
+        msgnr               = v_bdc_err
+        msgv1               = v_bdc_msgv1
+        msgv2               = v_bdc_msgv2
+        msgv3               = v_bdc_msgv3
+        msgv4               = v_bdc_msgv4
+      IMPORTING
+        message_text_output = v_bdc_text.
+
+    IF v_bdc_text CA &apos;$&apos;  AND
+       NOT v_bdc_msgv1 IS INITIAL.
+      PERFORM bdc_formatear_error.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                               &quot; LLAMAR_TRANSACCION
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  BDC_OBT_NUMLINEAS
+*&amp;---------------------------------------------------------------------*
+*       Devuelve el nº de líneas de I_BDCDATA
+*----------------------------------------------------------------------*
+*      &lt;--PS_NUMLINEAS Nº de líneas de i_BDCDATA
+*----------------------------------------------------------------------*
+FORM bdc_obt_numlineas CHANGING ps_numlineas type i.       &quot;#EC CALLED
+
+  DESCRIBE TABLE i_bdcdata LINES ps_numlineas.
+
+ENDFORM.                    &quot; BDC_OBT_NUMLINEAS
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  FORMATEAR_ERROR
+*&amp;---------------------------------------------------------------------*
+*       Si el mensaje de error tenía como símbolo de variable $
+*       la sustituimos
+*----------------------------------------------------------------------*
+FORM bdc_formatear_error.                              &quot;#EC CALLED
+  FIELD-SYMBOLS:  &lt;f&gt; type any.
+
+* 1
+  sy-fdpos = STRLEN( v_bdc_msgv1 ).
+  IF sy-fdpos NE 0.
+    ASSIGN v_bdc_msgv1(sy-fdpos) TO &lt;f&gt;.
+    REPLACE &apos;$&apos;  WITH &lt;f&gt; INTO v_bdc_text.
+  ELSE.
+    REPLACE &apos;$1&apos;  WITH space INTO v_bdc_text.
+  ENDIF.
+* 2
+  sy-fdpos = STRLEN( v_bdc_msgv2 ).
+  IF sy-fdpos NE 0.
+    ASSIGN v_bdc_msgv2(sy-fdpos) TO &lt;f&gt;.
+    REPLACE &apos;$&apos;  WITH &lt;f&gt; INTO v_bdc_text.
+  ELSE.
+    REPLACE &apos;$&apos;  WITH space INTO v_bdc_text.
+  ENDIF.
+* 3
+  sy-fdpos = STRLEN( v_bdc_msgv3 ).
+  IF sy-fdpos NE 0.
+    ASSIGN v_bdc_msgv3(sy-fdpos) TO &lt;f&gt;.
+    REPLACE &apos;$&apos;  WITH &lt;f&gt; INTO v_bdc_text.
+  ELSE.
+    REPLACE &apos;$&apos;  WITH space INTO v_bdc_text.
+  ENDIF.
+* 4
+  sy-fdpos = STRLEN( v_bdc_msgv4 ).
+  IF sy-fdpos NE 0.
+    ASSIGN v_bdc_msgv4(sy-fdpos) TO &lt;f&gt;.
+    REPLACE &apos;$&apos;  WITH &lt;f&gt; INTO v_bdc_text.
+  ELSE.
+    REPLACE &apos;$&apos;  WITH space INTO v_bdc_text.
+  ENDIF.
+
+ENDFORM.                    &quot; FORMATEAR_ERROR</source>
+</PROG>

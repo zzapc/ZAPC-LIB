@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_TEMP" VERSION="1" LANGU="S" DESCRIPT="Grabación de datos temporales" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_TEMP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_TEMP" CMPNAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTEMP-CLAVE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_TEMP" CMPNAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTEMP-INDICE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_TEMP" CMPNAME="NO_GRABAR" VERSION="1" LANGU="S" DESCRIPT="No grabar" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_TEMP" CMPNAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTEMP-SUBCLAVE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR" VERSION="1" LANGU="S" DESCRIPT="Borrar valores de la tabla temporal" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-SUBCLAVE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR" SCONAME="ERNAM" VERSION="1" LANGU="S" DESCRIPT="Nombre del responsable que ha añadido el objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-ERNAM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR" SCONAME="ERDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de creación del registro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-ERDAT" PAROPTIONL="X"/>
+  <source>METHOD borrar.
+    DATA l_subclave TYPE ztemp-subclave.
+
+    IF subclave IS INITIAL.
+      l_subclave = me-&gt;subclave.
+    ELSE.
+      l_subclave = subclave.
+    ENDIF.
+
+    borrar_st( clave = clave
+               subclave = l_subclave
+               ernam = ernam
+               erdat = erdat ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ANTIGUOS" VERSION="1" LANGU="S" DESCRIPT="Borrar valores de la tabla temporal" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ANTIGUOS" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-CLAVE"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ANTIGUOS" SCONAME="DIAS" VERSION="1" LANGU="S" DESCRIPT="Día a mantener el log" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="30"/>
+  <source>METHOD borrar_antiguos.
+    DATA l_fecha TYPE d.
+
+    l_fecha = sy-datum - dias.
+
+    DELETE FROM ztemp
+     WHERE clave  = clave
+       AND erdat &lt;= l_fecha.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ST" VERSION="1" LANGU="S" DESCRIPT="Borrar valores de la tabla temporal" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ST" SCONAME="ERNAM" VERSION="1" LANGU="S" DESCRIPT="Nombre del responsable que ha añadido el objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-ERNAM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="BORRAR_ST" SCONAME="ERDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de creación del registro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-ERDAT" PAROPTIONL="X"/>
+  <source>METHOD borrar_st.
+    &quot; TODO: parameter ERNAM is never used (ABAP cleaner)
+
+    DATA: r_subclave  TYPE RANGE OF ztemp-subclave,
+          r_erdat     TYPE RANGE OF ztemp-erdat,
+          lr_subclave LIKE LINE OF r_subclave,
+          lr_erdat    LIKE LINE OF r_erdat.
+
+    IF NOT subclave IS INITIAL.
+      lr_subclave-option = &apos;EQ&apos;.
+      lr_subclave-sign   = &apos;I&apos;.
+      lr_subclave-low    = subclave.
+      APPEND lr_subclave TO r_subclave.
+    ENDIF.
+
+    IF NOT erdat IS SUPPLIED.
+      lr_erdat-option = &apos;EQ&apos;.
+      lr_erdat-sign   = &apos;I&apos;.
+      lr_erdat-low    = erdat.
+      APPEND lr_erdat TO r_erdat.
+    ENDIF.
+
+    DELETE FROM ztemp
+     WHERE clave     = clave
+       AND subclave IN r_subclave
+       AND erdat    IN r_erdat.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="CONSTRUCTOR" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-CLAVE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="CONSTRUCTOR" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="CONSTRUCTOR" SCONAME="SUB_AUTO" VERSION="1" LANGU="S" DESCRIPT="Subclave = USUARIO+FECHA+HORA" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="CONSTRUCTOR" SCONAME="NO_GRABAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    me-&gt;clave     = clave.
+    me-&gt;subclave  = subclave.
+    me-&gt;no_grabar = no_grabar.
+    IF sub_auto = &apos;X&apos;.
+      CONCATENATE sy-uname &apos;_&apos; sy-datum &apos;_&apos; sy-uzeit INTO me-&gt;subclave.
+    ENDIF.
+    CLEAR indice.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE" VERSION="1" LANGU="S" DESCRIPT="Borra entrada en tabla" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD delete.
+    DATA(l_reintentos) = 0.
+    TRY.
+        IF indice IS INITIAL.
+          DELETE FROM ztemp
+           WHERE clave    = clave
+             AND subclave = subclave.
+        ELSE.
+          DELETE FROM ztemp
+           WHERE clave    = clave
+             AND subclave = subclave
+             AND indice   = indice.
+        ENDIF.
+      CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        l_reintentos = l_reintentos + 1.
+        IF l_reintentos &lt; 3.
+          WAIT UP TO 1 SECONDS.
+          RETRY.
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_ST" VERSION="1" LANGU="S" DESCRIPT="Borra entrada en tabla" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD delete_st.
+    DATA(l_reintentos) = 0.
+    TRY.
+        IF indice IS SUPPLIED.
+          DELETE FROM ztemp
+           WHERE clave    = clave
+             AND subclave = subclave
+             AND indice   = indice.
+        ELSE.
+          DELETE FROM ztemp
+           WHERE clave    = clave
+             AND subclave = subclave.
+        ENDIF.
+      CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        l_reintentos = l_reintentos + 1.
+        IF l_reintentos &lt; 3.
+          WAIT UP TO 1 SECONDS.
+          RETRY.
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING" VERSION="1" LANGU="S" DESCRIPT="Borra entrada en tabla STRING" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD delete_string.
+    DATA(l_reintentos) = 0.
+    TRY.
+        DELETE FROM ztemps
+         WHERE clave    = clave
+           AND subclave = subclave
+           AND indice   = indice.
+      CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        l_reintentos = l_reintentos + 1.
+        IF l_reintentos &lt; 3.
+          WAIT UP TO 1 SECONDS.
+          RETRY.
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING_ST" VERSION="1" LANGU="S" DESCRIPT="Borra entrada en tabla STRING" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="DELETE_STRING_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD delete_string_st.
+    DATA(l_reintentos) = 0.
+    TRY.
+        DELETE FROM ztemps
+         WHERE clave    = clave
+           AND subclave = subclave
+           AND indice   = indice.
+      CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        l_reintentos = l_reintentos + 1.
+        IF l_reintentos &lt; 3.
+          WAIT UP TO 1 SECONDS.
+          RETRY.
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE" VERSION="1" LANGU="S" DESCRIPT="Existe" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP-INDICE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_valor1 TYPE ztemp-valor1.
+
+    CLEAR existe.
+    IF indice IS INITIAL.
+      SELECT SINGLE valor1 FROM ztemp
+        INTO l_valor1
+        WHERE clave    = clave
+          AND subclave = subclave.
+    ELSE.
+      SELECT SINGLE valor1 FROM ztemp
+        INTO l_valor1
+        WHERE clave    = clave
+          AND subclave = subclave
+          AND indice   = indice.
+    ENDIF.
+    IF sy-subrc = 0.
+      existe = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE_ST" VERSION="1" LANGU="S" DESCRIPT="Existe (estatico)" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="EXISTE_ST" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_st.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_valor1 TYPE ztemp-valor1.
+
+    CLEAR existe.
+    SELECT SINGLE valor1 FROM ztemp
+      INTO l_valor1
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice.
+    IF sy-subrc = 0.
+      existe = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" VERSION="1" LANGU="S" DESCRIPT="Recupera segundos desde entrada en tabla (semáforos)" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" SCONAME="ZTEMP" VERSION="1" LANGU="S" DESCRIPT="Datos temporales" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMP"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_SEGUNDOS_ST" SCONAME="SEGUNDOS" VERSION="1" LANGU="S" DESCRIPT="Datos temporales" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD get_segundos_st.
+    CLEAR: ztemp,
+           segundos.
+    SELECT SINGLE * FROM ztemp
+      INTO ztemp
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice.
+    IF sy-subrc &lt;&gt; 0.
+      segundos = 99999.
+    ELSE.
+      segundos = zcl_ap_fechas=&gt;get_duracion_intervalo_sec( fini = ztemp-erdat  hini = ztemp-erzet
+                                                            ffin = sy-datum hfin = sy-uzeit ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" VERSION="1" LANGU="S" DESCRIPT="Recupera valores" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" SCONAME="MAX_DIAS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST" SCONAME="ZTEMP" VERSION="1" LANGU="S" DESCRIPT="Datos temporales" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTEMP"/>
+  <source>METHOD get_st.
+    DATA l_dias TYPE i.
+
+    CLEAR ztemp.
+    SELECT SINGLE * FROM ztemp
+      INTO ztemp
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice.
+    IF sy-subrc = 0.
+      IF NOT max_dias IS INITIAL.
+        l_dias = sy-datum - ztemp-erdat.
+        IF l_dias &gt; max_dias.
+          CLEAR ztemp.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING" VERSION="1" LANGU="S" DESCRIPT="Recupera valores" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Texto de 40 caracteres" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMPS-VALOR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_string.
+    CLEAR string.
+    SELECT string FROM ztemps
+      INTO string
+      UP TO 1 ROWS
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND valor    = valor
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" VERSION="1" LANGU="S" DESCRIPT="Recupera valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" SCONAME="INDICE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_ST" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_string_st.
+    CLEAR string.
+    SELECT SINGLE string FROM ztemps
+      INTO string
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice
+        AND valor    = valor.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_TABLA" VERSION="1" LANGU="S" DESCRIPT="Recuperar valores TABLA" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_TABLA" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Texto de 40 caracteres" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMPS-VALOR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_STRING_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_string_tabla.
+    DATA: l_string  TYPE string,
+          l_stringx TYPE xstring.
+
+    CLEAR tabla.
+    SELECT string FROM ztemps
+      INTO l_string
+      UP TO 1 ROWS
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND valor    = valor
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      l_stringx = zcl_ap_string=&gt;string2xstring( l_string ).
+
+      CALL TRANSFORMATION id
+           SOURCE XML l_stringx
+           RESULT tabla = tabla.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Fijar valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_TEXTO" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_TEXTO" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_TEXTO" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTEMP-TEXTO"/>
+  <source>METHOD get_st_texto.
+    CLEAR texto.
+    SELECT SINGLE texto FROM ztemp
+      INTO texto
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VAL1" VERSION="1" LANGU="S" DESCRIPT="Fijar valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VAL1" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VAL1" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VAL1" SCONAME="ERDAT" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VAL1" SCONAME="VALOR1" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTEMP-VALOR1"/>
+  <source>METHOD get_st_val1.
+    DATA: r_indice   TYPE RANGE OF ztemp-indice,
+          r_erdat    TYPE RANGE OF ztemp-erdat,
+          l_subclave TYPE ztemp-subclave,
+          lr_indice  LIKE LINE OF r_indice,
+          lr_erdat   LIKE LINE OF r_erdat.
+
+    IF subclave IS INITIAL.
+      l_subclave = me-&gt;subclave.
+    ELSE.
+      l_subclave = subclave.
+    ENDIF.
+
+    IF indice IS SUPPLIED.
+      lr_indice-option = &apos;EQ&apos;.
+      lr_indice-sign   = &apos;I&apos;.
+      lr_indice-low    = indice.
+      APPEND lr_indice TO r_indice.
+    ENDIF.
+
+    IF erdat IS SUPPLIED.
+      lr_erdat-option = &apos;EQ&apos;.
+      lr_erdat-sign   = &apos;I&apos;.
+      lr_erdat-low    = erdat.
+      APPEND lr_erdat TO r_erdat.
+    ENDIF.
+
+    SELECT valor1 FROM ztemp
+      INTO valor1
+      UP TO 1 ROWS
+      WHERE clave     = clave
+        AND subclave  = l_subclave
+        AND indice   IN r_indice
+        AND erdat    IN r_erdat
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VALOR1" VERSION="1" LANGU="S" DESCRIPT="Fijar valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VALOR1" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VALOR1" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VALOR1" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_ST_VALOR1" SCONAME="VALOR1" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTEMP-VALOR1"/>
+  <source>METHOD get_st_valor1.
+    CLEAR valor1.
+    SELECT SINGLE valor1 FROM ztemp
+      INTO valor1
+      WHERE clave    = clave
+        AND subclave = subclave
+        AND indice   = indice.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_TABLA" VERSION="1" LANGU="S" DESCRIPT="Devuelve los valores grabados en ZTEMP durante la sesion" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="GET_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZTEMP" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_TEMP"/>
+  <source>METHOD get_tabla.
+    SELECT * FROM ztemp
+      INTO TABLE tabla
+      WHERE clave    = clave
+        AND subclave = subclave.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" VERSION="1" LANGU="S" DESCRIPT="Fijar valores" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" SCONAME="VALOR1" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" SCONAME="VALOR2" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" SCONAME="VALOR3" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="Texto en longitud 132" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET" SCONAME="PERMANENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set.
+    DATA l_ztemp TYPE ztemp.
+
+    indice = indice + 1.
+
+    IF me-&gt;no_grabar IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    CLEAR l_ztemp.
+    l_ztemp-clave      = clave.
+    l_ztemp-subclave   = subclave.
+    l_ztemp-indice     = indice.
+    l_ztemp-valor1     = valor1.
+    l_ztemp-valor2     = valor2.
+    l_ztemp-valor3     = valor3.
+    l_ztemp-texto      = texto.
+    l_ztemp-ernam      = sy-uname.
+    l_ztemp-erdat      = sy-datum.
+    l_ztemp-erzet      = sy-uzeit.
+    l_ztemp-permanente = permanente.
+    MODIFY ztemp FROM l_Ztemp.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" VERSION="1" LANGU="S" DESCRIPT="Fijar valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="VALOR1" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="VALOR2" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="VALOR3" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 20" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="Texto en longitud 132" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="PERMANENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="SUBCLAVE_AUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="TEXTO2" VERSION="1" LANGU="S" DESCRIPT="Texto en longitud 132" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_ST" SCONAME="INDICE_AUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_st.
+    DATA l_ztemp TYPE ztemp.
+
+    CLEAR l_ztemp.
+    l_ztemp-clave    = clave.
+    l_ztemp-subclave = subclave.
+    l_ztemp-indice   = indice.
+    IF subclave IS INITIAL AND subclave_auto = &apos;X&apos;.
+      CONCATENATE sy-datum &apos;_&apos; sy-uzeit &apos;_&apos; sy-uname INTO l_ztemp-subclave.
+      IF l_ztemp-indice IS INITIAL.
+        SELECT MAX( indice ) FROM ztemp
+          INTO l_ztemp-indice
+          WHERE clave    = clave
+            AND subclave = l_ztemp-subclave.
+        l_ztemp-indice = l_ztemp-indice + 1.
+      ENDIF.
+    ENDIF.
+
+    IF indice_auto = &apos;X&apos; AND l_ztemp-indice IS INITIAL.
+      SELECT MAX( indice ) FROM ztemp
+        INTO l_ztemp-indice
+        WHERE clave    = clave
+          AND subclave = l_ztemp-subclave.
+      l_ztemp-indice = l_ztemp-indice + 1.
+    ENDIF.
+
+    l_ztemp-valor1     = valor1.
+    l_ztemp-valor2     = valor2.
+    l_ztemp-valor3     = valor3.
+    l_ztemp-texto      = texto.
+    l_ztemp-texto2     = texto2.
+    l_ztemp-ernam      = sy-uname.
+    l_ztemp-erdat      = sy-datum.
+    l_ztemp-erzet      = sy-uzeit.
+    l_ztemp-permanente = permanente.
+
+    DATA(l_reintentos) = 0.
+    TRY.
+        MODIFY ztemp FROM l_ztemp.
+      CATCH cx_root.
+        l_reintentos = l_reintentos + 1.
+        IF l_reintentos &lt; 3.
+          WAIT UP TO 1 SECONDS.
+          RETRY.
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING" VERSION="1" LANGU="S" DESCRIPT="Fijar valores" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Texto de 40 caracteres" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING" SCONAME="PERMANENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_string.
+    DATA l_ztemps TYPE ztemps.
+
+    indice = indice + 1.
+    IF me-&gt;no_grabar IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    CLEAR l_ztemps.
+    l_ztemps-clave      = clave.
+    l_ztemps-subclave   = subclave.
+    l_ztemps-indice     = indice.
+    l_ztemps-valor      = valor.
+    l_ztemps-string     = string.
+    l_ztemps-ernam      = sy-uname.
+    l_ztemps-erdat      = sy-datum.
+    l_ztemps-erzet      = sy-uzeit.
+    l_ztemps-permanente = permanente.
+    MODIFY ztemps FROM l_ztemps.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" VERSION="1" LANGU="S" DESCRIPT="Fijar valores (estatico)" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Campo de texto, longitud 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="INDICE" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMPS-INDICE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="PERMANENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="INDICE_AUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_ST" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_string_st.
+    DATA l_ztemps TYPE ztemps.
+
+    CLEAR l_ztemps.
+    l_ztemps-clave    = clave.
+    l_ztemps-subclave = subclave.
+    l_ztemps-indice   = indice.
+
+    IF indice_auto = &apos;X&apos; AND l_ztemps-indice IS INITIAL.
+      SELECT MAX( indice ) FROM ztemps
+        INTO l_ztemps-indice
+        WHERE clave    = clave
+          AND subclave = l_ztemps-subclave.
+      l_ztemps-indice = l_ztemps-indice + 1.
+    ENDIF.
+
+    l_ztemps-string     = string.
+    l_ztemps-ernam      = sy-uname.
+    l_ztemps-erdat      = sy-datum.
+    l_ztemps-erzet      = sy-uzeit.
+    l_ztemps-valor      = valor.
+    l_ztemps-texto      = texto.
+    l_ztemps-permanente = permanente.
+    MODIFY ztemps FROM l_ztemps.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_TABLA" VERSION="1" LANGU="S" DESCRIPT="Fijar valores TABLA" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_TEMP" CMPNAME="SET_STRING_TABLA" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Texto de 40 caracteres" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTEMPS-VALOR" PAROPTIONL="X"/>
+  <source>METHOD set_string_tabla.
+    DATA: l_ztemps  TYPE ztemps,
+          l_stringx TYPE xstring.
+
+    CHECK me-&gt;no_grabar IS INITIAL.
+
+    IF tabla IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    indice = indice + 1.
+
+    CLEAR l_ztemps.
+    l_ztemps-clave    = clave.
+    l_ztemps-subclave = subclave.
+    l_ztemps-indice   = indice.
+    l_ztemps-valor    = valor.
+
+    CALL TRANSFORMATION id
+         SOURCE tabla = tabla
+         RESULT XML l_stringx.
+    l_ztemps-string = zcl_ap_string=&gt;xstring2string( l_stringx ).
+
+    l_ztemps-ernam  = sy-uname.
+    l_ztemps-erdat  = sy-datum.
+    l_ztemps-erzet  = sy-uzeit.
+    MODIFY ztemps FROM l_ztemps.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

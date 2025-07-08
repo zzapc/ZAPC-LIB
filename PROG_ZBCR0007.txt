@@ -1,0 +1,315 @@
+************************************************************************
+* MÓDULO      : BC
+* TIPO        : Utilidad
+* TITULO      : Carga/descarga del contenido de una tabla desde/a ficher
+* DESCRIPCION :                                                        *
+* ...                                                                  *
+* ...                                                                  *
+* AUTOR: Andrés Picazo (Altimia)                FECHA: 08/01/2002      *
+*                                 ORDEN DE TRANSPORTE:                 *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE            RUTA               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username          VXXXXX-X           P01K90XXXXX        *
+************************************************************************
+REPORT zbcvx001 .
+
+TABLES: dd02t,                         "R/3-DD: Textos de tablas SAP
+        dd03l.                         "Campos de tabla
+
+* Línea
+DATA: i_source LIKE line OCCURS 100 WITH HEADER LINE.
+DATA l_resp.
+DATA: program_name     LIKE sy-cprog.
+DATA: l_mandt.
+
+DATA: l_linea(72).
+DATA: l_tabla(5000).
+DEFINE ap.
+  append &1 to i_source.
+END-OF-DEFINITION.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME.
+PARAMETERS: tabla LIKE dd03l-tabname OBLIGATORY."Nombre de tabla
+PARAMETERS: path LIKE rlgrap-filename  "Directorio de salida
+                   DEFAULT 'C:\TEMP\' OBLIGATORY,
+            ftype  LIKE rlgrap-filetype DEFAULT 'DAT'.
+PARAMETERS:  borrar AS CHECKBOX,
+             sinmdt AS CHECKBOX.
+SELECTION-SCREEN END OF BLOCK blk_par.
+SELECTION-SCREEN BEGIN OF BLOCK blk_par3 WITH FRAME TITLE text-003."WHE
+PARAMETERS: p_w1(80),
+            p_w2(80),
+            p_w3(80),
+            p_w4(80),
+            p_w5(80).
+SELECTION-SCREEN END OF BLOCK blk_par3.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_par2 WITH FRAME.
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) t_grabar.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: p_grab RADIOBUTTON GROUP rad1 DEFAULT 'X'.    "Grabar
+SELECTION-SCREEN END OF LINE.
+
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) t_cargar.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: p_carg RADIOBUTTON GROUP rad1.                "Cargar
+SELECTION-SCREEN COMMENT 16(16) text-007. "Fichero a cargar
+PARAMETERS: p_fcarg LIKE rlgrap-filename. "Fichero local para upload/dow
+SELECTION-SCREEN END OF LINE.
+SELECTION-SCREEN END OF BLOCK blk_par2.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_par4 WITH FRAME.
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) t_insert.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: p_ins RADIOBUTTON GROUP rad2 DEFAULT 'X'.    "Insert
+SELECTION-SCREEN END OF LINE.
+
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) t_modify.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: p_mod RADIOBUTTON GROUP rad2.                "Modify
+SELECTION-SCREEN END OF LINE.
+SELECTION-SCREEN END OF BLOCK blk_par4.
+
+INITIALIZATION.
+  t_grabar = 'Grabar'.
+  t_cargar = 'Cargar'.
+  t_insert = 'Insert'.
+  t_modify = 'Modify'.
+
+START-OF-SELECTION.
+
+  PERFORM generar_report.
+
+  IF NOT p_carg IS INITIAL.
+    IF NOT borrar IS INITIAL.
+      PERFORM borrar_tabla.
+    ENDIF.
+    PERFORM cargar_tabla.
+  ELSE.
+    PERFORM grabar_tabla.
+  ENDIF.
+
+
+
+*---------------------------------------------------------------------*
+*       FORM GENERAR_REPORT                                           *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM generar_report.
+  DATA l_tabla(10).
+
+  CLEAR l_mandt.
+  SELECT * FROM dd03l
+   WHERE tabname = tabla
+     AND fieldname = 'MANDT'.
+    l_mandt = 'X'.
+  ENDSELECT.
+
+
+  CONCATENATE 'I_' tabla INTO l_tabla.
+  ap 'REPORT Z.'.
+  CONCATENATE 'TABLES' tabla '.' INTO l_linea SEPARATED BY space.
+  ap l_linea.
+  CONCATENATE 'DATA' l_tabla
+              'LIKE' tabla 'OCCURS 1000 WITH HEADER LINE.'
+              INTO l_linea SEPARATED BY space.
+  ap l_linea.
+  IF NOT sinmdt IS INITIAL.
+    DATA l_tabla2 LIKE l_tabla.
+    CONCATENATE l_tabla '2' INTO l_tabla2.
+    CONCATENATE l_tabla2 '(1000)' INTO l_linea.
+    CONCATENATE 'DATA' l_linea 'OCCURS 1000 WITH HEADER LINE.'
+                INTO l_linea SEPARATED BY space.
+    ap l_linea.
+  ENDIF.
+
+  ap 'FORM BORRAR_TABLA.'.
+
+  IF l_mandt = 'X'.
+    CONCATENATE 'DELETE FROM' tabla
+                'CLIENT SPECIFIED WHERE MANDT = SY-MANDT.'
+                INTO l_linea SEPARATED BY space.
+    ap l_linea.
+  ELSE.
+    IF borrar = 'X'.
+      CONCATENATE 'SELECT * FROM ' tabla '.'
+                INTO l_linea SEPARATED BY space.
+      ap l_linea.
+      CONCATENATE 'DELETE' tabla '.'
+                INTO l_linea SEPARATED BY space.
+      ap l_linea.
+      ap 'ENDSELECT.'.
+    ENDIF.
+  ENDIF.
+
+  ap 'ENDFORM.        "BORRAR TABLA'.
+
+  ap 'FORM GRABAR_TABLA.'.
+  CONCATENATE 'SELECT * FROM' tabla
+              'INTO TABLE ' l_tabla
+              INTO l_linea SEPARATED BY space.
+  ap l_linea.
+  IF NOT p_w1 IS INITIAL.
+    CONCATENATE 'WHERE' p_w1 INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    ap p_w2.
+    ap p_w3.
+    ap p_w4.
+    ap p_w5.
+  ENDIF.
+  ap '.'.
+  ap 'CALL FUNCTION ''WS_DOWNLOAD'''.
+  ap 'EXPORTING'.
+  IF p_fcarg IS INITIAL.
+    CONCATENATE  'FILENAME = ''' path tabla '.DAT''' INTO l_linea.
+  ELSE.
+    CONCATENATE  'FILENAME = ''' p_fcarg '''' INTO l_linea.
+  ENDIF.
+  ap l_linea.
+  CONCATENATE 'FILETYPE = ''' ftype '''' INTO l_linea.
+  ap l_linea.
+  ap 'TABLES'.
+  CONCATENATE 'DATA_TAB = ' l_tabla '.' INTO l_linea
+  SEPARATED BY space.
+  ap l_linea.
+  ap 'ENDFORM.        "GRABAR_TABLA'.
+
+  ap 'FORM CARGAR_TABLA.'.
+  ap 'CALL FUNCTION ''WS_UPLOAD'''.
+  ap 'EXPORTING'.
+  IF p_fcarg IS INITIAL.
+    CONCATENATE  'FILENAME = ''' path tabla '.DAT'''  INTO l_linea.
+  ELSE.
+    CONCATENATE  'FILENAME = ''' p_fcarg ''''  INTO l_linea.
+  ENDIF.
+  ap l_linea.
+  CONCATENATE 'FILETYPE = ''' ftype '''' INTO l_linea.
+  ap l_linea.
+  ap 'TABLES'.
+  IF sinmdt IS INITIAL.
+    CONCATENATE 'DATA_TAB = ' l_tabla '.' INTO l_linea
+    SEPARATED BY space.
+    ap l_linea.
+  ELSE.
+    CONCATENATE 'DATA_TAB = ' l_tabla2 '.' INTO l_linea
+    SEPARATED BY space.
+    ap l_linea.
+    CONCATENATE 'LOOP AT' l_tabla2 '.' INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    CONCATENATE l_tabla '+3' INTO l_linea.
+    CONCATENATE l_linea ' = ' l_tabla2 '.'
+                INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    CONCATENATE 'append' l_tabla '.' INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    ap 'endloop.'.
+  ENDIF.
+
+  IF l_mandt = 'X'.
+    CONCATENATE 'LOOP AT ' l_tabla '.' INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    CONCATENATE l_tabla '-MANDT = SY-MANDT.' INTO l_linea.
+    ap l_linea.
+    CONCATENATE 'MODIFY ' l_tabla '.' INTO l_linea SEPARATED BY space.
+    ap l_linea.
+    ap 'ENDLOOP.'.
+  ENDIF.
+
+  IF p_ins = 'X'.
+    CONCATENATE 'INSERT ' tabla
+                'FROM TABLE ' l_tabla '.'
+                INTO l_linea SEPARATED BY space.
+  ELSE.
+    CONCATENATE 'MODIFY ' tabla
+                'FROM TABLE ' l_tabla '.'
+                INTO l_linea SEPARATED BY space.
+  ENDIF.
+  ap l_linea.
+  ap 'ENDFORM.        "CARGAR_TABLA'.
+
+  PERFORM generate_subroutine_pool TABLES i_source.
+
+ENDFORM.                    "GENERAR_REPORT
+
+
+*---------------------------------------------------------------------*
+*       FORM GRABAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM grabar_tabla.
+  PERFORM grabar_tabla IN PROGRAM (program_name).
+ENDFORM.                    "GRABAR_TABLA
+
+*---------------------------------------------------------------------*
+*       FORM CARGAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM cargar_tabla.
+
+* message i208(00) with '¿Está seguro de querer cargar los datos?'.
+  PERFORM cargar_tabla IN PROGRAM (program_name).
+ENDFORM.                    "CARGAR_TABLA
+
+*---------------------------------------------------------------------*
+*       FORM BORRAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM borrar_tabla.
+  SELECT * FROM dd02t
+   WHERE tabname = tabla
+     AND ddlanguage = sy-langu.
+    EXIT.
+  ENDSELECT.
+  CONCATENATE '¿Desea borra tabla' tabla INTO l_linea
+                                   SEPARATED BY space.
+  CONCATENATE l_linea '?' INTO l_linea.
+
+  CALL FUNCTION 'POPUP_CONTINUE_YES_NO'
+    EXPORTING
+      defaultoption = 'N'
+      textline1     = l_linea
+      textline2     = dd02t-ddtext
+      titel         = 'Confirmación'
+    IMPORTING
+      answer        = l_resp
+    EXCEPTIONS
+      OTHERS        = 1.
+
+  IF l_resp = 'J'.
+    PERFORM borrar_tabla IN PROGRAM (program_name).
+  ENDIF.
+ENDFORM.                    "BORRAR_TABLA
+*---------------------------------------------------------------------*
+*       FORM GENERATE_SUBROUTINE_POOL                                 *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+*  -->  SOURCE_TAB                                                    *
+*---------------------------------------------------------------------*
+FORM generate_subroutine_pool TABLES source_tab.
+
+  DATA:   line_no          TYPE i,
+          syntax_check_message(128).
+  DESCRIBE TABLE source_tab.
+  CHECK sy-tfill GT 0.
+  GENERATE SUBROUTINE POOL source_tab
+    NAME program_name
+    MESSAGE syntax_check_message
+    LINE line_no.
+  IF sy-subrc NE 0.
+    WRITE: / 'Error de sintaxis, mensaje', syntax_check_message,
+    / 'en linea', line_no.
+    STOP.
+  ENDIF.
+ENDFORM.                    "GENERATE_SUBROUTINE_POOL

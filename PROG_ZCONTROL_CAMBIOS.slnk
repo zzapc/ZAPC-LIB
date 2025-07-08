@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZCONTROL_CAMBIOS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Listado control de cambios" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_OBJECT" ENTRY="D       ." LENGTH="37 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_FNAME" ENTRY="D       ." LENGTH="20 "/>
+   <textElement ID="S" KEY="S_ID" ENTRY="D       ." LENGTH="23 "/>
+   <textElement ID="S" KEY="S_TABLE" ENTRY="D       ." LENGTH="13 "/>
+   <textElement ID="S" KEY="S_TCODE" ENTRY="D       ." LENGTH="26 "/>
+   <textElement ID="S" KEY="S_UDATE" ENTRY="D       ." LENGTH="13 "/>
+   <textElement ID="S" KEY="S_USER" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="S_UTIME" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado Control de cambios
+* DESCRIPCION : Listado Control de cambios
+*
+* AUTOR: Andrés Picazo                                FECHA: 04/06/2014
+*
+***********************************************************************
+REPORT zcontrol_cambios.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: cdhdr, cdpos, sscrfields, zcdpos_coment.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+         check,
+         objectid    LIKE cdhdr-objectid,
+         udate       LIKE cdhdr-udate,
+         utime       LIKE cdhdr-utime,
+         username    LIKE cdhdr-username,
+         tcode       LIKE cdhdr-tcode,
+         changenr    TYPE cdpos-changenr,
+         tabname     LIKE cdpos-tabname,
+         tabkey      LIKE cdpos-tabkey,
+         fname       LIKE cdpos-fname,
+         chngind     TYPE cdpos-chngind,
+         ddtext      TYPE dd04t-ddtext,
+         value_old   LIKE cdpos-value_old,
+         value_new   LIKE cdpos-value_new,
+         comentarios TYPE sstn_comments,
+         tabix       TYPE sy-tabix,
+       END OF t_listado.
+DATA: i_listado TYPE TABLE OF t_listado,
+      l_listado TYPE t_listado.
+
+FIELD-SYMBOLS &lt;listado&gt; TYPE t_listado.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: visualizar_objeto REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: top_of_page REDEFINITION.
+ENDCLASS. &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+  PARAMETERS: p_object LIKE cdhdr-objectclas OBLIGATORY.
+  SELECT-OPTIONS: s_id FOR cdhdr-objectid,
+                  s_user FOR cdhdr-username,
+                  s_udate FOR cdhdr-udate,
+                  s_utime FOR cdhdr-utime,
+                  s_table FOR cdpos-tabname,
+                  s_fname FOR cdpos-fname,
+                  s_tcode FOR cdhdr-tcode.
+
+  PARAMETERS: p_nocamp TYPE text255 NO-DISPLAY.
+  SELECTION-SCREEN: SKIP 1.
+  PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2,
+FUNCTION KEY 3,
+FUNCTION KEY 4.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    DATA: l_list        TYPE t_listado,
+          zcdpos_coment TYPE zcdpos_coment.
+
+    l_list = list.
+    CASE column.
+      WHEN &apos;COMENTARIOS&apos;.
+        o_prog-&gt;string = l_list-comentarios.
+        DATA mod TYPE xfeld.
+        zcl_ap_string=&gt;popup_texto( EXPORTING editar = &apos;X&apos; IMPORTING modificado = mod CHANGING texto = o_prog-&gt;string ).
+        IF mod = &apos;X&apos;.
+          i_listado[ tabix = l_list-tabix ]-comentarios = o_prog-&gt;string.
+          l_list-comentarios = o_prog-&gt;string.
+
+          MOVE-CORRESPONDING l_list TO zcdpos_coment.
+          zcdpos_coment-objectclas = p_object.
+          MODIFY zcdpos_coment FROM zcdpos_coment.
+          o_alv-&gt;refresh( ).
+        ENDIF.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+
+    CASE ucomm.
+      WHEN &apos;EXCEL&apos;.
+        exportar_excel( ).
+
+      WHEN &apos;COMENT&apos;.
+        DATA l_return TYPE xfeld.
+        CLEAR zcdpos_coment.
+        zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;ZCDPOS_COMENT-COMENTARIOS&apos;
+                                       titulo = &apos;Introduzca justificación&apos;
+                                     IMPORTING  return = l_return
+                                      CHANGING  valor1 = zcdpos_coment-comentarios ).
+        IF l_return NE &apos;A&apos; AND zcdpos_coment-comentarios NE &apos;&apos;.
+          LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+            &lt;listado&gt;-comentarios = zcdpos_coment-comentarios.
+            MOVE-CORRESPONDING &lt;listado&gt; TO zcdpos_coment.
+            zcdpos_coment-objectclas = p_object.
+            MODIFY zcdpos_coment FROM zcdpos_coment.
+          ENDLOOP.
+          o_alv-&gt;refresh( ).
+        ENDIF.
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+  METHOD top_of_page.
+    CLEAR o_content.
+
+    o_top_page-&gt;set_titulo( sy-title ).
+
+    o_top_page-&gt;add_rango_auto( ).
+*    o_top_page-&gt;add_rango( texto = &apos;Centro&apos; rango = s_vbeln[] ).
+    o_top_page-&gt;crea_info_seleccion( ).
+
+    o_content = o_top_page-&gt;get_grid( ).
+
+  ENDMETHOD.                    &quot;top_of_page
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+    DATA: i_cdhdr             TYPE TABLE OF cdhdr,
+          i_cdpos             TYPE TABLE OF cdpos,
+          l_tabla_comentarios TYPE tabname.
+
+    FIELD-SYMBOLS: &lt;cdpos&gt; TYPE cdpos,
+                   &lt;cdhdr&gt; TYPE cdhdr.
+
+    SELECT SINGLE tabname FROM dd02l
+      INTO l_tabla_comentarios
+     WHERE tabname = &apos;ZCDPOS_COMENT&apos;.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+
+    SELECT * FROM cdhdr
+      INTO TABLE i_cdhdr
+     WHERE objectclas = p_object
+       AND objectid   IN s_id
+       AND username   IN s_user
+       AND udate      IN s_udate
+       AND utime      IN s_utime
+       AND tcode      IN s_tcode.
+
+    IF sy-subrc = 0.
+      SELECT * FROM  cdpos                         &quot;#EC CI_NO_TRANSFORM
+        INTO TABLE i_cdpos
+        FOR ALL ENTRIES IN i_cdhdr
+             WHERE  objectclas  = i_cdhdr-objectclas
+             AND    objectid    = i_cdhdr-objectid
+             AND    changenr    = i_cdhdr-changenr
+             AND    tabname     IN s_table
+             AND    fname       IN s_fname.
+
+      LOOP AT i_cdpos ASSIGNING &lt;cdpos&gt;.
+        READ TABLE i_cdhdr ASSIGNING &lt;cdhdr&gt; WITH KEY changenr = &lt;cdpos&gt;-changenr.
+        IF sy-subrc = 0.
+          CLEAR l_listado.
+          MOVE-CORRESPONDING &lt;cdhdr&gt; TO l_listado.
+          MOVE-CORRESPONDING &lt;cdpos&gt; TO l_listado.
+          IF NOT &lt;cdpos&gt;-fname IS INITIAL.
+            l_listado-ddtext = zcl_ap_dev=&gt;get_descripcion_campo( campo = &lt;cdpos&gt;-fname tabla = &lt;cdpos&gt;-tabname ).
+          ENDIF.
+
+          IF NOT l_tabla_comentarios IS INITIAL.
+            SELECT SINGLE comentarios FROM (l_tabla_comentarios)
+              INTO l_listado-comentarios
+             WHERE objectclas = &lt;cdpos&gt;-objectclas
+               AND objectid   = &lt;cdpos&gt;-objectid
+               AND changenr   = &lt;cdpos&gt;-changenr
+               AND tabname    = &lt;cdpos&gt;-tabname
+               AND tabkey     = &lt;cdpos&gt;-tabkey
+               AND fname      = &lt;cdpos&gt;-fname
+               AND chngind    = &lt;cdpos&gt;-chngind.
+          ENDIF.
+
+          APPEND l_listado TO i_listado.
+        ENDIF.
+      ENDLOOP.
+
+      LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+        &lt;listado&gt;-tabix = sy-tabix.
+      ENDLOOP.
+    ENDIF.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+*    o_alv-&gt;set_top_of_page( ).
+
+
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;set_field_quitar( &apos;TABIX&apos; ).
+    o_alv-&gt;set_field_noout( &apos;CHANGENR&apos; ).
+    SELECT SINGLE tabname FROM dd02l
+      INTO @DATA(l_tabla_comentarios)
+     WHERE tabname = &apos;ZCDPOS_COMENT&apos;.
+    IF sy-subrc NE 0.
+      o_alv-&gt;set_field_quitar( &apos;COMENTARIOS&apos; ).
+    ELSE.
+      o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Comentario para todo&apos;  icon = icon_change ucomm = &apos;COMENT&apos; ).
+      o_alv-&gt;set_field_hotspot( campo = &apos;COMENTARIOS&apos; valor = &apos;TEXT_EDT&apos; ).
+    ENDIF.
+
+    IF NOT p_nocamp IS INITIAL.
+      o_alv-&gt;set_field_noout( p_nocamp ).
+    ENDIF.
+
+    o_alv-&gt;set_orden( &apos;OBJECTID,UDATE,UTIME&apos; ).
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status = &apos;&apos;.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status      = &apos;STANDARD_ALV_DYN&apos;
+      status_prog = &apos;ZAP_STATUS&apos;.
+  p_vari = o_alv-&gt;get_default_layout( ).
+
+
+  o_prog-&gt;initialization( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog-&gt;at_selection(  ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

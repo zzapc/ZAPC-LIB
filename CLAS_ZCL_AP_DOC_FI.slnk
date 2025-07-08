@@ -1,0 +1,1467 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_DOC_FI" VERSION="1" LANGU="S" DESCRIPT="Documentos FI" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="CAM" ENTRY="Campo" LENGTH="15 "/>
+   <textElement ID="I" KEY="DNE" ENTRY="Documento/posición no existe" LENGTH="56 "/>
+   <textElement ID="I" KEY="DYA" ENTRY="Documento ya anulado" LENGTH="40 "/>
+   <textElement ID="I" KEY="ICA" ENTRY="Informe campo" LENGTH="23 "/>
+   <textElement ID="I" KEY="IDP" ENTRY="Informe datos de posición" LENGTH="50 "/>
+   <textElement ID="I" KEY="NEB" ENTRY="no existe en BSEG" LENGTH="27 "/>
+   <textElement ID="I" KEY="NMV" ENTRY="No se ha modificado el valor del campo" LENGTH="76 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_DOC_FI" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <typeClasDef CLSNAME="ZCL_AP_DOC_FI" TYPEGROUP="ZCL_C" VERSION="1" TPUTYPE="1" IMPLICIT="X"/>
+ <attribute CLSNAME="ZCL_AP_DOC_FI" CMPNAME="BKPF" VERSION="1" LANGU="S" DESCRIPT="Cabecera de documento para Contabilidad" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BKPF" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" VERSION="1" LANGU="S" DESCRIPT="Actualiza campo via UPDATEs en tabla BSEG e INDICES" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="BUKRS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="BELNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BELNR_D"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="GJAHR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ACTUALIZAR_CAMPO_BSEG" SCONAME="BUZEI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUZEI"/>
+  <source>METHOD actualizar_campo_bseg.
+    DATA: l_aux   TYPE sgtxt,
+          l_set   TYPE string,
+          l_koart TYPE koart,
+          l_kunnr TYPE kunnr,
+          l_lifnr TYPE lifnr,
+          l_hkont TYPE hkont,
+          l_augbl TYPE augbl,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_dd03l TYPE dd03l,
+          l_tabla TYPE string.
+
+    WRITE valor TO l_aux. &quot; EC *
+    CONCATENATE campo &apos;=&apos; l_aux INTO l_set SEPARATED BY space.
+
+    SELECT SINGLE koart kunnr lifnr hkont augbl FROM bseg
+      INTO (l_koart, l_kunnr, l_lifnr, l_hkont, l_augbl)
+       WHERE bukrs = bukrs
+         AND belnr = belnr
+         AND gjahr = gjahr
+         AND buzei = buzei.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    UPDATE bseg
+       SET (l_set)
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr
+       AND buzei = buzei.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CASE l_koart.
+      WHEN &apos;D&apos;.
+        SELECT SINGLE fieldname FROM dd03l
+          INTO l_dd03l-fieldname
+         WHERE tabname   = &apos;BSID&apos;
+           AND fieldname = campo.
+        IF sy-subrc = 0.
+          IF l_augbl IS INITIAL.
+            l_tabla = &apos;BSID&apos;.
+          ELSE.
+            l_tabla = &apos;BSAD&apos;.
+          ENDIF.
+          UPDATE (l_tabla)
+           SET (l_set)
+         WHERE bukrs = bukrs
+           AND kunnr = l_kunnr
+           AND belnr = belnr
+           AND gjahr = gjahr
+           AND buzei = buzei.
+        ENDIF.
+      WHEN &apos;K&apos;.
+        SELECT SINGLE fieldname FROM dd03l
+          INTO l_dd03l-fieldname
+         WHERE tabname   = &apos;BSIK&apos;
+           AND fieldname = campo.
+        IF sy-subrc = 0.
+          IF l_augbl IS INITIAL.
+            l_tabla = &apos;BSIK&apos;.
+          ELSE.
+            l_tabla = &apos;BSAK&apos;.
+          ENDIF.
+          UPDATE (l_tabla)
+           SET (l_set)
+         WHERE bukrs = bukrs
+           AND lifnr = l_lifnr
+           AND belnr = belnr
+           AND gjahr = gjahr
+           AND buzei = buzei.
+        ENDIF.
+
+      WHEN &apos;S&apos;.
+        SELECT SINGLE fieldname FROM dd03l
+          INTO l_dd03l-fieldname
+         WHERE tabname   = &apos;BSIS&apos;
+           AND fieldname = campo.
+        IF sy-subrc = 0.
+          IF l_augbl IS INITIAL.
+            l_tabla = &apos;BSIS&apos;.
+          ELSE.
+            l_tabla = &apos;BSAS&apos;.
+          ENDIF.
+          UPDATE (l_tabla)
+           SET (l_set)
+         WHERE bukrs = bukrs
+           AND hkont = l_hkont
+           AND belnr = belnr
+           AND gjahr = gjahr
+           AND buzei = buzei.
+        ENDIF.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" VERSION="1" LANGU="S" DESCRIPT="Anular compensación" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="ANULAR_DOCUMENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo de ejecución batch input (A, E, N)" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_AMOD" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="STGRD" VERSION="1" LANGU="S" DESCRIPT="Motivo de anulación o contabilización inversa" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RF05R-STGRD" PARVALUE="&apos;01&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="GJAHR_ANUL" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="BELNR_ANUL" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_COMPENSACION" SCONAME="ANUL_OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD anular_compensacion.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+    CLEAR: anul_ok, gjahr_anul, belnr_anul, message.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Imagen de selecc. anulación de conciliación
+    o_bi-&gt;dynpro( program = &apos;SAPMF05R&apos; dynpro = &apos;0100&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=RAGL&apos; ).
+    o_bi-&gt;campos( campo = &apos;RF05R-AUGBL&apos; valor = belnr ). &quot; Número del documento de compensación
+    o_bi-&gt;campos( campo = &apos;RF05R-BUKRS&apos; valor = bukrs ). &quot; Sociedad
+    o_bi-&gt;campos( campo = &apos;RF05R-GJAHR&apos; valor = gjahr ). &quot; Ejercicio
+    IF NOT stgrd IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RF05R-STGRD&apos; valor = stgrd ).  &quot; Motivo de anulación
+    ENDIF.
+    message = o_bi-&gt;llamar_transaccion( tcode = &apos;FBRA&apos; modo = modo ).
+
+    IF o_bi-&gt;msgty &lt;&gt; &apos;S&apos;.
+      RETURN.
+    ELSE.
+      IF o_bi-&gt;msgid = &apos;F5&apos; AND o_bi-&gt;msgno = &apos;539&apos;.
+        anul_ok = &apos;X&apos;.
+      ENDIF.
+      CLEAR message.
+      IF anular_documento = &apos;X&apos;.
+        SELECT COUNT( * ) FROM bseg
+          INTO sy-tfill
+         WHERE bukrs = bukrs
+           AND belnr = belnr
+           AND gjahr = gjahr.
+        IF sy-tfill &gt; 0.
+          anular_documento( EXPORTING bukrs = bukrs belnr = belnr gjahr = gjahr budat = budat modo = modo
+                            IMPORTING belnr_anul = belnr_anul gjahr_anul = gjahr_anul message = message ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Anular documento" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo de ejecución batch input (A, E, N)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_AMOD" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="GJAHR_ANUL" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="BELNR_ANUL" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ANULAR_DOCUMENTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD anular_documento.
+    DATA: l_bkpf  LIKE bkpf,
+          l_stgrd TYPE uf05a-stgrd,
+          o_bi    TYPE REF TO zcl_ap_batch_input.
+
+    SELECT SINGLE budat gjahr stblg FROM bkpf
+      INTO CORRESPONDING FIELDS OF l_bkpf
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr.
+    IF sy-subrc = 0 AND NOT l_bkpf-stblg IS INITIAL.
+      message = &apos;Documento ya anulado&apos;(dya).
+      belnr_anul = l_bkpf-stblg.
+      gjahr_anul = l_bkpf-gjahr.
+    ELSE.
+      IF     NOT budat        IS INITIAL
+         AND     l_bkpf-budat &lt;&gt; budat.
+        l_stgrd = &apos;02&apos;.
+      ELSE.
+        l_stgrd = &apos;01&apos;.
+      ENDIF.
+
+      o_bi = NEW #( ).
+
+      o_bi-&gt;inicio( ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPMF05A&apos; dynpro = &apos;0105&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+      o_bi-&gt;campos( campo = &apos;RF05A-BELNS&apos; valor = belnr ). &quot; Documento a anular
+      o_bi-&gt;campos( campo = &apos;BKPF-BUKRS&apos; valor = bukrs ). &quot; Sociedad
+      o_bi-&gt;campos( campo = &apos;RF05A-GJAHS&apos; valor = gjahr ). &quot; Ejercicio
+      o_bi-&gt;campos( campo = &apos;UF05A-STGRD&apos; valor = l_stgrd ). &quot; Motivo de anulación o contabilización inversa
+
+      IF NOT budat IS INITIAL.
+        o_bi-&gt;campos( campo = &apos;BSIS-BUDAT&apos; valor = budat ).
+      ENDIF.
+
+      message = o_bi-&gt;llamar_transaccion( tcode = &apos;FB08&apos; modo = modo ).
+
+      IF     o_bi-&gt;msgty = &apos;S&apos; AND o_bi-&gt;msgid = &apos;F5&apos;
+         AND o_bi-&gt;msgno = &apos;312&apos;.
+        belnr_anul = o_bi-&gt;msgv1.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = belnr_anul ).
+        IF budat IS INITIAL.
+          gjahr_anul = l_bkpf-gjahr.
+        ELSE.
+          gjahr_anul = budat(4).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Compensar por documento" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="KUNNR" VERSION="1" LANGU="S" DESCRIPT="Número de deudor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="WAERS" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="&apos;EUR&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="DOCUMENTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TCM_T_CO_BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="MODO_CT" VERSION="1" LANGU="S" DESCRIPT="Batch input modo ejecución" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDCMODE" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="CMES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="PARAR_SI_DIFERENCIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="COMPENSAR_POR_DOCUMENTO" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <source>METHOD compensar_por_documento.
+    DATA: l_tcode   TYPE sy-tcode,
+          o_bi      TYPE REF TO zcl_ap_batch_input,
+          l_ind     TYPE numc2,
+          l_mensaje TYPE bapireturn1-message.
+
+    IF NOT kunnr IS INITIAL.
+      l_tcode = &apos;F-32&apos;.
+    ENDIF.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMF05A&apos; dynpro = &apos;0131&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;RF05A-AGKON&apos; valor = kunnr ). &quot; Número de cuenta o clave de un pool de trabajo
+    o_bi-&gt;campos( campo = &apos;BKPF-BUDAT&apos; valor = budat ). &quot; Fecha de contabilización en el documento
+    o_bi-&gt;campos( campo = &apos;BKPF-BUKRS&apos; valor = bukrs ). &quot; Sociedad
+    o_bi-&gt;campos( campo = &apos;BKPF-WAERS&apos; valor = waers ). &quot; Clave de moneda
+    o_bi-&gt;campos( campo = &apos;RF05A-XNOPS&apos; valor = &apos;X&apos; ). &quot; Indicador: ¿seleccionar sólo PAs que no sean oper.CME?
+    o_bi-&gt;campos( campo = &apos;RF05A-XPOS1(01)&apos; valor = &apos;&apos; ). &quot; Campo para marcar
+    o_bi-&gt;campos( campo = &apos;RF05A-XPOS1(03)&apos; valor = &apos;X&apos; ). &quot; Campo para marcar
+    o_bi-&gt;campos( campo = &apos;RF05A-AGUMS&apos; valor = cmes ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMF05A&apos; dynpro = &apos;0731&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+    LOOP AT documentos ASSIGNING FIELD-SYMBOL(&lt;belnr&gt;).
+      l_ind = sy-tabix.
+      o_bi-&gt;campos( campo = &apos;RF05A-SEL01&apos; ind = l_ind valor = &lt;belnr&gt; ). &quot; Campo entrada p.concepto búsqueda p.selección part.abiertas
+    ENDLOOP.
+
+    message = o_bi-&gt;llamar_transaccion( tcode = &apos;F-32&apos; modo = modo_ct ).
+
+    IF o_bi-&gt;msgid = &apos;F5&apos; AND o_bi-&gt;msgno = &apos;312&apos; AND o_bi-&gt;msgty = &apos;S&apos;.
+      belnr = sy-msgv1.
+      __poner_ceros belnr.
+      gjahr = budat(4).
+      CLEAR message.
+    ELSE.
+* Si falla con este mensaje es porque hay diferencias.
+      IF message CS &apos;SAPMF05A 0700&apos;.
+        IF parar_si_diferencias = &apos;X&apos; AND modo_ct = &apos;N&apos;.
+          message = o_bi-&gt;llamar_transaccion( tcode = &apos;F-32&apos; modo = &apos;E&apos; ).
+        ELSE.
+          message = &apos;No es posible compensar por existir diferencias&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" VERSION="1" LANGU="S" DESCRIPT="Convertir moneda" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Valor neto en moneda de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="MONEDA" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="WKURS" VERSION="1" LANGU="S" DESCRIPT="Tipo de cambio de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WKURS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha conversión" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="TYPE_OF_RATE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;M&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="MONEDA_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="&apos;EUR&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EUR" SCONAME="IMPORTE_EUR" VERSION="1" LANGU="S" DESCRIPT="Valor neto en moneda de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NETWR"/>
+  <source>METHOD convertir_moneda_eur.
+    CLEAR importe_eur.
+
+    CALL FUNCTION &apos;CONVERT_TO_LOCAL_CURRENCY&apos;
+      EXPORTING
+        date                    = fecha
+        foreign_amount          = importe
+        foreign_currency        = moneda
+        local_currency          = moneda_local
+        rate                    = wkurs
+        type_of_rate            = type_of_rate
+*     READ_TCURR              = &apos;X&apos;
+      IMPORTING
+*     EXCHANGE_RATE           =
+*     FOREIGN_FACTOR          =
+        local_amount            = importe_eur
+*     LOCAL_FACTOR            =
+*     EXCHANGE_RATEX          =
+*     FIXED_RATE              =
+*     DERIVED_RATE_TYPE       =
+     EXCEPTIONS
+       no_rate_found           = 1
+       overflow                = 2
+       no_factors_found        = 3
+       no_spread_found         = 4
+       derived_2_times         = 5
+       OTHERS                  = 6.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" VERSION="1" LANGU="S" DESCRIPT="Convertir moneda extranjera" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="IMPORTE_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Valor neto en moneda de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="MONEDA" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="WKURS" VERSION="1" LANGU="S" DESCRIPT="Tipo de cambio de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WKURS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha conversión" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="TYPE_OF_RATE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;M&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="MONEDA_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="&apos;EUR&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CONVERTIR_MONEDA_EXT" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Valor neto en moneda de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NETWR"/>
+  <source>METHOD convertir_moneda_ext.
+    CLEAR importe.
+
+    CALL FUNCTION &apos;CONVERT_TO_FOREIGN_CURRENCY&apos;
+      EXPORTING
+*   CLIENT                  = SY-MANDT
+        date                    = fecha
+        foreign_currency        = moneda
+        local_amount            = importe_local
+        local_currency          = moneda_local
+        rate                    = wkurs
+        type_of_rate            = type_of_rate
+*   READ_TCURR              = &apos;X&apos;
+      IMPORTING
+*   EXCHANGE_RATE           = EXCHANGE_RATE
+        foreign_amount          = importe
+*   FOREIGN_FACTOR          = FOREIGN_FACTOR
+*   LOCAL_FACTOR            = LOCAL_FACTOR
+*   EXCHANGE_RATEX          = EXCHANGE_RATEX
+*   DERIVED_RATE_TYPE       = DERIVED_RATE_TYPE
+*   FIXED_RATE              = FIXED_RATE
+     EXCEPTIONS
+       no_rate_found           = 1
+       overflow                = 2
+       no_factors_found        = 3
+       no_spread_found         = 4
+       derived_2_times         = 5.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CUENTA_TIENE_IMPUTACION" VERSION="1" LANGU="S" DESCRIPT="Imputaciones a la cuenta" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CUENTA_TIENE_IMPUTACION" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CUENTA_TIENE_IMPUTACION" SCONAME="SAKNR" VERSION="1" LANGU="S" DESCRIPT="Número de la cuenta de mayor" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SKB1-SAKNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CUENTA_TIENE_IMPUTACION" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="CUENTA_TIENE_IMPUTACION" SCONAME="SI" VERSION="1" LANGU="S" DESCRIPT="Indicador: Documento contabilizado neto" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BKPF-XNETB"/>
+  <source>METHOD cuenta_tiene_imputacion.
+    TYPES: BEGIN OF t_cobs,
+             bukrs TYPE bseg-bukrs,
+             saknr TYPE bseg-saknr,
+             field TYPE tcobf-field,
+             mwskz TYPE bseg-mwskz,
+             xintb TYPE skb1-xintb,
+           END OF t_cobs.
+
+    DATA: xcobf  TYPE TABLE OF tcobf,
+          l_cobf TYPE tcobf,
+          l_cobs TYPE t_cobs,
+          xcobs  TYPE TABLE OF t_cobs.
+    DATA: t169o TYPE t169o,
+          skb1  TYPE skb1,
+          t004f TYPE t004f.
+
+    DATA: feldauswahl TYPE c LENGTH 140,
+          i           TYPE i.
+
+    CLEAR si.
+
+    SELECT * FROM tcobf
+      INTO TABLE xcobf
+      ORDER BY PRIMARY KEY.
+
+*------ Entfernen der Felder aus T169O
+    LOOP AT xcobf INTO l_cobf.
+      SELECT SINGLE * FROM t169o
+      INTO t169o
+       WHERE field = l_cobf-field.
+      IF sy-subrc &lt;&gt; 0.
+        CONTINUE.
+      ENDIF.
+      DELETE xcobf.
+    ENDLOOP.
+
+*-----  Kundendefinierte Felder gefüllt?
+*------ Sachkonto lesen -----------------------------------------------*
+    CALL FUNCTION &apos;READ_SACHKONTO&apos;
+      EXPORTING
+        buchungskreis = bukrs
+        sachkonto     = saknr
+      IMPORTING
+        sachkonto_wa  = skb1.
+
+    IF campo = &apos;MWSKZ&apos;.
+      IF NOT skb1-mwskz IS INITIAL.
+        si = &apos;X&apos;.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE * FROM t004f INTO t004f WHERE bukrs = bukrs
+                                            AND fstag = skb1-fstag.
+
+*------ Steuerkennzeichen setzen -------------------------------------*
+    IF skb1-mwskz = &apos;&lt; &apos; OR skb1-mwskz = &apos;&gt; &apos;.
+      l_cobs-mwskz = skb1-mwskz.
+    ENDIF.
+
+*------ Gegebenenfalls Flag &quot;nur automatisch bebuchbar&quot; setzen -------*
+    IF skb1-xintb &lt;&gt; space OR skb1-mitkz &lt;&gt; space.
+      l_cobs-xintb = &apos;X&apos;.
+    ENDIF.
+
+*------ &quot;Keyfelder&quot; von XCOBS füllen ---------------------------------*
+    l_cobs-bukrs = bukrs.
+    l_cobs-saknr = saknr.
+    APPEND l_cobs TO xcobs.
+
+*------ Entfernen der Felder aufgrund T004F-Steuerung -----------------*
+    LOOP AT xcobf INTO l_cobf.
+      feldauswahl(50) = t004f-faus1.
+      feldauswahl+90(50) = t004f-faus2.
+      i = l_cobf-group1 - 1.
+      SHIFT feldauswahl BY i PLACES.
+      IF NOT ( feldauswahl(1) = &apos;+&apos; OR feldauswahl(1) = &apos;.&apos; ).
+        CONTINUE.
+      ENDIF.
+      l_cobs-field = l_cobf-field.
+      APPEND l_cobs TO xcobs.
+    ENDLOOP.
+
+    IF line_exists( xcobs[ field = campo ] ).
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="DECLARADO_SII" VERSION="1" LANGU="S" DESCRIPT="Documento declarado en SII" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="DECLARADO_SII" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="DECLARADO_SII" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="DECLARADO_SII" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="DECLARADO_SII" SCONAME="DECLARADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD declarado_sii.
+    DATA l_source_key TYPE edocument-source_key.
+
+    CONCATENATE bukrs belnr gjahr INTO l_source_key.
+
+    SELECT SINGLE source_key FROM edocument
+      INTO l_source_key
+     WHERE source_type = &apos;FI_INVOICE&apos;
+       AND source_key  = l_source_key.
+    IF sy-subrc = 0.
+      declarado = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_ANULADO" VERSION="1" LANGU="S" DESCRIPT="Devuelve documento de anulaciÃ³n" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_ANULADO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_ANULADO" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_ANULADO" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_ANULADO" SCONAME="ANULADO" VERSION="1" LANGU="S" DESCRIPT="Anulado" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BKPF-XNETB"/>
+  <source>METHOD es_anulado.
+    DATA l_bkpf TYPE bkpf.
+
+    CLEAR anulado.
+* Compruebo si tiene documento de anulaciÃ³n
+    l_bkpf = get_bkpf( bukrs = bukrs belnr = belnr gjahr = gjahr ).
+    IF NOT l_bkpf-stblg IS INITIAL.
+      anulado = &apos;X&apos;.
+* Por si acaso, verificamos que estÃ© anulado, el documento anulaciÃ³n
+      l_bkpf = get_bkpf( bukrs = bukrs
+                         belnr = l_bkpf-stblg
+                         gjahr = l_bkpf-stjah ).
+      IF l_bkpf-stblg IS INITIAL.
+        CLEAR anulado.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" VERSION="1" LANGU="S" DESCRIPT="Verifica si el periodo está abierto" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="GJAHR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="MONAT" VERSION="1" LANGU="S" DESCRIPT="Mes contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MONAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="KOART" VERSION="1" LANGU="S" DESCRIPT="Clase de cuenta o enmascaramiento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T001B-MKOAR" PARVALUE="&apos;+&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="KONTO" VERSION="1" LANGU="S" DESCRIPT="De cuenta" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T001B-VKONT" PARVALUE="&apos;+&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="GLVOR" VERSION="1" LANGU="S" DESCRIPT="Operación empresarial" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="GLVOR" PARVALUE="&apos;RFBU&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="ES_ABIERTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_periodo_abierto.
+    DATA: l_gjahr  TYPE gjahr,
+          l_monat  TYPE monat,
+          l_period TYPE t001b-frpe1.
+
+    IF NOT budat IS INITIAL.
+      CALL FUNCTION &apos;FI_PERIOD_DETERMINE&apos;
+        EXPORTING
+          i_budat        = budat
+          i_bukrs        = bukrs
+*       I_PERIV        = &apos; &apos;
+*       I_GJAHR        = 0000
+*       I_MONAT        = 00
+*       X_XMO16        = &apos; &apos;
+        IMPORTING
+          e_gjahr        = l_gjahr
+          e_monat        = l_monat
+*       E_POPER        =
+        EXCEPTIONS
+          fiscal_year    = 1
+          period         = 2
+          period_version = 3
+          posting_period = 4
+          special_period = 5
+          version        = 6
+          posting_date   = 7
+          OTHERS         = 8.
+    ELSE.
+      l_gjahr = gjahr.
+      l_monat = monat.
+    ENDIF.
+
+    l_period = l_monat.
+
+    CALL FUNCTION &apos;FI_PERIOD_CHECK&apos;
+      EXPORTING
+        i_bukrs          = bukrs
+*     I_OPVAR          = &apos; &apos;
+        i_gjahr          = l_gjahr
+        i_koart          = koart
+        i_konto          = konto
+        i_monat          = l_period
+        i_glvor          = glvor
+*     I_SPERI          =
+* IMPORTING
+*     E_OPER           =
+      EXCEPTIONS
+        error_period     = 1
+        error_period_acc = 2
+        OTHERS           = 3.
+
+    IF sy-subrc = 0.
+      es_abierto = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="FB03" VERSION="1" LANGU="S" DESCRIPT="Visualiza documento FI" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="FB03" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="FB03" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="FB03" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="FB03" SCONAME="BUZEI" VERSION="1" LANGU="S" DESCRIPT="Número del apunte contable dentro del documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-BUZEI" PAROPTIONL="X"/>
+  <source>METHOD fb03.
+    SET PARAMETER ID: &apos;BLN&apos; FIELD belnr,
+                      &apos;BUK&apos; FIELD bukrs,
+                      &apos;GJR&apos; FIELD gjahr.
+
+    IF buzei IS INITIAL.
+      CALL TRANSACTION &apos;FB03&apos; AND SKIP FIRST SCREEN.       &quot;#EC CI_CALLTA
+    ELSE.
+      SET PARAMETER ID &apos;BUZ&apos; FIELD buzei.
+      CALL TRANSACTION &apos;FB09&apos; AND SKIP FIRST SCREEN.       &quot;#EC CI_CALLTA
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BKPF" VERSION="1" LANGU="S" DESCRIPT="Recupera datos de caberca" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BKPF" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BKPF" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BKPF" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BKPF" SCONAME="BKPF" VERSION="1" LANGU="S" DESCRIPT="Cabecera de documento para Contabilidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BKPF"/>
+  <source>METHOD get_bkpf.
+    SELECT SINGLE * FROM bkpf
+      INTO bkpf
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BSCHL_ANUL" VERSION="1" LANGU="S" DESCRIPT="Devuelve la clave contable inversa" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BSCHL_ANUL" SCONAME="BSCHL" VERSION="1" LANGU="S" DESCRIPT="Clave de contabilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSCHL"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_BSCHL_ANUL" SCONAME="BSCHL_ANUL" VERSION="1" LANGU="S" DESCRIPT="Clave de contabilización" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSCHL"/>
+  <source>METHOD get_bschl_anul.
+    SELECT SINGLE stbsl FROM tbsl
+      INTO bschl_anul
+     WHERE bschl = bschl.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" VERSION="1" LANGU="S" DESCRIPT="Devuelve información IVA" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="MWSKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador IVA" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MWSKZ"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="WAERS" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="ZCL_C=&gt;WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="WRBTR" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_DATOS_IVA" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG-WRBTR"/>
+  <source>METHOD get_datos_iva.
+    DATA taxcom TYPE taxcom.
+
+    CLEAR importe.
+    taxcom-bukrs = bukrs.
+    taxcom-budat = fecha.
+    taxcom-waers = waers.
+    taxcom-kposn = &apos;999999&apos;.
+    taxcom-mwskz = mwskz.
+    taxcom-koart = space.
+    taxcom-shkzg = &apos;H&apos;.
+    taxcom-wrbtr = wrbtr.
+    taxcom-wmwst = 0.
+    taxcom-xmwst = &apos;X&apos;.
+    taxcom-wskto = 0.
+    taxcom-skfbt = 0.
+    taxcom-zbd1p = 0.
+
+    CALL FUNCTION &apos;CALCULATE_TAX_ITEM&apos;
+      EXPORTING
+*      dialog     = &apos;N&apos;
+*      inklusive  = space
+        i_taxcom   = taxcom
+*      pruefen    = space
+*     reset      = space
+      IMPORTING
+*      e_navfw    = e_navfw
+        e_taxcom   = taxcom.
+*      e_xstvr    = e_xstvr
+*      nav_anteil = nav_anteil.
+
+    importe = taxcom-wmwst.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nÂº de pedido de compras a partir del doc. FI" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" SCONAME="EBELN" VERSION="1" LANGU="S" DESCRIPT="NÃºmero del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG-EBELN"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_EBELN_SIMPLE" SCONAME="EBELP" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de posiciÃ³n del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG-EBELP"/>
+  <source>METHOD get_ebeln_simple.
+    DATA l_bkpf TYPE bkpf.
+
+    l_bkpf = get_bkpf( bukrs = bukrs belnr = belnr gjahr = gjahr ).
+
+    IF l_bkpf-awtyp = &apos;RMRP&apos;.
+      l_bkpf-gjahr = l_bkpf-awkey+10(4).
+      zcl_ap_factura_mm=&gt;get_ebeln_simple(
+        EXPORTING
+          belnr = l_bkpf-awkey(10)
+          gjahr = l_bkpf-gjahr
+        IMPORTING
+          ebeln = ebeln
+          ebelp = ebelp ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_FECHA_PAGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve la fecha de pago a partir de una condición de pago" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_FECHA_PAGO" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_FECHA_PAGO" SCONAME="ZTERM" VERSION="1" LANGU="S" DESCRIPT="Clave de condiciones de pago" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DZTERM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_FECHA_PAGO" SCONAME="FECHA_PAGO" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <source>METHOD get_fecha_pago.
+    DATA: l_count TYPE i,
+          l_t052  TYPE t052.
+
+    CLEAR fecha_pago.
+    SELECT COUNT( * ) FROM  t052                           &quot;#EC CI_BYPASS
+      INTO l_count
+     WHERE zterm = zterm.
+
+    IF l_count = 1.
+      SELECT  * FROM  t052
+        INTO l_t052
+        UP TO 1 ROWS
+       WHERE zterm = zterm
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      IF l_t052-zmona IS INITIAL AND l_t052-ztag2 IS INITIAL.
+        IF l_t052-ztag1 = &apos;030&apos;.
+          fecha_pago = zcl_ap_fechas=&gt;suma_meses( meses = 1 fecha = fecha ).
+        ELSE.
+          fecha_pago = fecha + l_t052-ztag1.
+        ENDIF.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    CALL FUNCTION &apos;FI_TERMS_OF_PAYMENT_PROPOSE&apos;
+      EXPORTING
+        i_bldat         = fecha
+        i_budat         = fecha
+*     I_CPUDT         = SY-DATUM
+*     I_ZFBDT         =
+        i_zterm         = zterm
+*     I_REINDAT       =
+*     I_LIFNR         =
+*     I_BUKRS         =
+      IMPORTING
+*     E_ZBD1T         =
+*     E_ZBD1P         =
+*     E_ZBD2T         =
+*     E_ZBD2P         =
+*     E_ZBD3T         =
+        e_zfbdt         = fecha_pago
+*     E_SPLIT         =
+*     E_ZSCHF         =
+*     E_ZLSCH         =
+*     E_T052          =
+      EXCEPTIONS
+        terms_not_found = 1
+        OTHERS          = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el importe del IVA a partir del neto" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" SCONAME="MWSKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador IVA" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MWSKZ"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" SCONAME="WAERS" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="ZCL_C=&gt;WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" SCONAME="WRBTR" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_IVA" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG-WRBTR"/>
+  <source>METHOD get_importe_iva.
+    DATA: l_wrbtr TYPE bseg-wrbtr,
+          i_mwdat TYPE TABLE OF rtax1u15.
+
+    l_wrbtr = wrbtr.
+    CALL FUNCTION &apos;CALCULATE_TAX_FROM_NET_AMOUNT&apos;
+      EXPORTING
+        i_bukrs                 = bukrs
+        i_mwskz                 = mwskz
+*   I_TXJCD                 = &apos; &apos;
+        i_waers                 = waers
+        i_wrbtr                 = l_wrbtr
+*   I_ZBD1P                 = 0
+*   I_PRSDT                 =
+*   I_PROTOKOLL             =
+*   I_TAXPS                 =
+*   I_ACCNT_EXT             =
+*   I_ACCDATA               =
+      IMPORTING
+*   E_FWNAV                 =
+*   E_FWNVV                 =
+        e_fwste                 = importe
+*   E_FWAST                 =
+      TABLES
+        t_mwdat                 = i_mwdat
+     EXCEPTIONS
+       bukrs_not_found         = 1
+       country_not_found       = 2
+       mwskz_not_defined       = 3
+       mwskz_not_valid         = 4
+       ktosl_not_found         = 5
+       kalsm_not_found         = 6
+       parameter_error         = 7
+       knumh_not_found         = 8
+       kschl_not_found         = 9
+       unknown_error           = 10
+       account_not_found       = 11
+       txjcd_not_valid         = 12
+       OTHERS                  = 13.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" VERSION="1" LANGU="S" DESCRIPT="Recupera el importe por cuenta asignaciÃ³n" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="HKONT" VERSION="1" LANGU="S" DESCRIPT="Cuenta de mayor de la contabilidad principal" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-HKONT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="ZUONR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de asignaciÃ³n" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-ZUONR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="BLART" VERSION="1" LANGU="S" DESCRIPT="Clase de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BLART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="XREF3" VERSION="1" LANGU="S" DESCRIPT="Clave de referencia para la posiciÃ³n de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-XREF3" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-AUFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="EBELN" VERSION="1" LANGU="S" DESCRIPT="Número del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="EBELP" VERSION="1" LANGU="S" DESCRIPT="Número de posición del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe en moneda local con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DMBTRV"/>
+  <source>METHOD get_importe_por_cuenta.
+    &quot; TODO: parameter EBELN is never used (ABAP cleaner)
+    &quot; TODO: parameter EBELP is never used (ABAP cleaner)
+
+    DATA: r_zuonr TYPE RANGE OF bsas-zuonr,
+          r_blart TYPE RANGE OF bsas-blart,
+          r_xref3 TYPE RANGE OF bsas-xref3,
+          r_aufnr TYPE RANGE OF bsas-aufnr,
+          l_zuonr LIKE LINE OF r_zuonr,
+          l_blart LIKE LINE OF r_blart,
+          l_xref3 LIKE LINE OF r_xref3,
+          l_aufnr LIKE LINE OF r_aufnr,
+          i_bsas  TYPE TABLE OF bsas,
+          l_bsas  TYPE bsas.
+
+    CLEAR importe.
+
+    IF NOT zuonr IS INITIAL.
+      l_zuonr-option = &apos;EQ&apos;.
+      l_zuonr-sign   = &apos;I&apos;.
+      l_zuonr-low    = zuonr.
+      APPEND l_zuonr TO r_zuonr.
+    ENDIF.
+
+    IF NOT blart IS INITIAL.
+      l_blart-option = &apos;EQ&apos;.
+      l_blart-sign   = &apos;I&apos;.
+      l_blart-low    = blart.
+      APPEND l_blart TO r_blart.
+    ENDIF.
+
+    IF NOT xref3 IS INITIAL.
+      l_xref3-option = &apos;EQ&apos;.
+      l_xref3-sign   = &apos;I&apos;.
+      l_xref3-low    = xref3.
+      APPEND l_xref3 TO r_xref3.
+    ENDIF.
+
+    IF NOT aufnr IS INITIAL.
+      l_aufnr-option = &apos;EQ&apos;.
+      l_aufnr-sign   = &apos;I&apos;.
+      l_aufnr-low    = aufnr.
+      APPEND l_aufnr TO r_aufnr.
+    ENDIF.
+
+    SELECT dmbtr shkzg FROM bsas
+      INTO CORRESPONDING FIELDS OF TABLE i_bsas
+     WHERE bukrs  = bukrs
+       AND hkont  = hkont
+       AND blart IN r_blart
+       AND zuonr IN r_zuonr
+       AND xref3 IN r_xref3
+       AND aufnr IN r_aufnr.
+
+    SELECT dmbtr shkzg FROM bsis
+      APPENDING CORRESPONDING FIELDS OF TABLE i_bsas
+     WHERE bukrs  = bukrs
+       AND hkont  = hkont
+       AND blart IN r_blart
+       AND zuonr IN r_zuonr
+       AND xref3 IN r_xref3
+       AND aufnr IN r_aufnr.
+
+    LOOP AT i_bsas INTO l_bsas.
+      IF l_bsas-shkzg = &apos;S&apos;.
+        importe = importe + l_bsas-dmbtr.
+      ELSE.
+        importe = importe - l_bsas-dmbtr.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" VERSION="1" LANGU="S" DESCRIPT="Recupera el importe por cuenta en documento" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="KOART" VERSION="1" LANGU="S" DESCRIPT="Clase de cuenta" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-KOART" PARVALUE="&apos;S&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="HKONT" VERSION="1" LANGU="S" DESCRIPT="Cuenta de mayor de la contabilidad principal" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-HKONT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMPORTE_POR_CUENTA_DOC" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe en moneda local con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DMBTRV"/>
+  <source>METHOD get_importe_por_cuenta_doc.
+    DATA: i_bseg TYPE TABLE OF bseg,
+          l_bseg TYPE bseg.
+
+    CLEAR importe.
+    IF es_anulado( bukrs = bukrs belnr = belnr  gjahr = gjahr )
+       IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT dmbtr shkzg FROM bseg
+      INTO CORRESPONDING FIELDS OF TABLE i_bseg
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr
+       AND koart = koart
+       AND hkont = hkont
+      ORDER BY PRIMARY KEY.
+
+    LOOP AT i_bseg INTO l_bseg.
+      IF l_bseg-shkzg = &apos;S&apos;.
+        importe = importe + l_bseg-dmbtr.
+      ELSE.
+        importe = importe - l_bseg-dmbtr.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el importe del IVA a partir del bruto" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" SCONAME="MWSKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador IVA" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MWSKZ"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" SCONAME="WAERS" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="ZCL_C=&gt;WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" SCONAME="WRBTR" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_IMP_IVA_DESDE_BRUTO" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe en la moneda del documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG-WRBTR"/>
+  <source>METHOD get_imp_iva_desde_bruto.
+    DATA: l_wrbtr TYPE bseg-wrbtr,
+          i_mwdat TYPE TABLE OF rtax1u15.
+
+    l_wrbtr = wrbtr.
+
+    CALL FUNCTION &apos;CALCULATE_TAX_FROM_GROSSAMOUNT&apos;
+      EXPORTING
+          i_bukrs                 = bukrs
+          i_mwskz                 = mwskz
+*   I_TXJCD                 = &apos; &apos;
+          i_waers                 = waers
+          i_wrbtr                 = l_wrbtr
+*   I_ZBD1P                       = 0
+*   I_PRSDT                       =
+*   I_PROTOKOLL                   =
+*   I_TAXPS                       =
+*   I_ACCNT_EXT                   =
+*   I_ACCDATA                     =
+*   IS_ENHANCEMENT                =
+      IMPORTING
+*   E_FWNAV                       =
+*   E_FWNVV                       =
+          e_fwste                 = importe
+*   E_FWAST                       =
+      TABLES
+          t_mwdat                 = i_mwdat
+     EXCEPTIONS
+       bukrs_not_found               = 1
+       country_not_found             = 2
+       mwskz_not_defined             = 3
+       mwskz_not_valid               = 4
+       account_not_found             = 5
+       different_discount_base       = 6
+       different_tax_base            = 7
+       txjcd_not_valid               = 8
+       not_found                     = 9
+       ktosl_not_found               = 10
+       kalsm_not_found               = 11
+       parameter_error               = 12
+       knumh_not_found               = 13
+       kschl_not_found               = 14
+       unknown_error                 = 15
+       OTHERS                        = 16.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_NOMBRE_CUENTA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre de la cuenta" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_NOMBRE_CUENTA" SCONAME="SAKNR" VERSION="1" LANGU="S" DESCRIPT="Número de la cuenta de mayor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SAKNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_NOMBRE_CUENTA" SCONAME="KTOPL" VERSION="1" LANGU="S" DESCRIPT="Plan de cuentas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KTOPL" PARVALUE="ZCL_C=&gt;PLAN_CUENTAS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_NOMBRE_CUENTA" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_NOMBRE_CUENTA" SCONAME="TXT20" VERSION="1" LANGU="S" DESCRIPT="Texto breve de las cuentas de mayor" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TXT20_SKAT"/>
+  <source>METHOD get_nombre_cuenta.
+    CLEAR txt20.
+    IF NOT saknr IS INITIAL.
+      SELECT SINGLE txt20 FROM  skat
+        INTO txt20
+       WHERE spras = spras
+         AND ktopl = ktopl
+         AND saknr = saknr.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el saldo de una cuenta a fecha" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA" SCONAME="HKONT" VERSION="1" LANGU="S" DESCRIPT="Cuenta de mayor de la contabilidad principal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HKONT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA" SCONAME="SALDO" VERSION="1" LANGU="S" DESCRIPT="Saldo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CFSALDO"/>
+  <source>METHOD get_saldo_cuenta.
+    TYPES: BEGIN OF t_partidas,
+             dmbtr TYPE bsas-dmbtr,
+             shkzg TYPE bsas-shkzg,
+           END OF t_partidas.
+
+    DATA i_partidas TYPE TABLE OF t_partidas.
+
+    FIELD-SYMBOLS &lt;partida&gt; TYPE t_partidas.
+
+    SELECT SUM( dmbtr ) shkzg FROM bsis
+      INTO TABLE i_partidas
+     WHERE bukrs  = bukrs
+       AND hkont  = hkont
+       AND budat &lt;= fecha
+     GROUP BY shkzg.
+
+    CLEAR saldo.
+    LOOP AT i_partidas ASSIGNING &lt;partida&gt;.
+      IF &lt;partida&gt;-shkzg = &apos;H&apos;.
+        saldo = saldo + &lt;partida&gt;-dmbtr.
+      ELSE.
+        saldo = saldo - &lt;partida&gt;-dmbtr.
+      ENDIF.
+    ENDLOOP.
+
+    IF fecha &lt; sy-datum.
+      SELECT SUM( dmbtr ) shkzg FROM bsas
+        INTO TABLE i_partidas
+       WHERE bukrs = bukrs
+         AND hkont = hkont
+         AND augdt &gt; fecha
+       GROUP BY shkzg.
+
+      LOOP AT i_partidas ASSIGNING &lt;partida&gt;.
+        IF &lt;partida&gt;-shkzg = &apos;H&apos;.
+          saldo = saldo + &lt;partida&gt;-dmbtr.
+        ELSE.
+          saldo = saldo - &lt;partida&gt;-dmbtr.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" VERSION="1" LANGU="S" DESCRIPT="Devuelve el saldo de una cuenta a fecha" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="HKONT" VERSION="1" LANGU="S" DESCRIPT="Cuenta de mayor de la contabilidad principal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HKONT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="PERIODO" VERSION="1" LANGU="S" DESCRIPT="Periodo de análisis Mes" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPMON" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="SOLO_VALOR_MES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_SALDO_CUENTA_GLT0" SCONAME="SALDO" VERSION="1" LANGU="S" DESCRIPT="Saldo" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CFSALDO"/>
+  <source>METHOD get_saldo_cuenta_glt0.
+    DATA: l_perio TYPE spmon,
+          l_glt0  TYPE glt0,
+          l_hsl   TYPE glt0-hsl01,
+          l_mes   TYPE n LENGTH 2.
+
+    IF NOT periodo IS INITIAL.
+      l_perio = periodo.
+    ELSE.
+      l_perio = fecha(6).
+    ENDIF.
+
+    CLEAR saldo.
+    SELECT * FROM glt0                          &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_glt0
+     WHERE rldnr = &apos;00&apos;
+       AND rrcty = &apos;0&apos;
+       AND rvers = &apos;001&apos;
+       AND bukrs = bukrs
+       AND ryear = l_perio(4)
+       AND racct = hkont.
+
+      IF solo_valor_mes IS INITIAL.
+        saldo = saldo + l_glt0-hslvt.
+      ENDIF.
+
+      DO VARYING l_hsl FROM l_glt0-hsl01 NEXT l_glt0-hsl02.
+        l_mes = sy-index.
+
+        IF solo_valor_mes IS INITIAL OR l_mes = l_perio+4(2).
+          saldo = saldo + l_hsl.
+        ENDIF.
+
+        IF l_mes = 12 OR l_mes = l_perio+4(2).
+          EXIT.
+        ENDIF.
+      ENDDO.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el tipo de cambio" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" SCONAME="MON_EXT" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" SCONAME="MON_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Clave de moneda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WAERS" PARVALUE="&apos;EUR&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" SCONAME="TIPO_CAMBIO" VERSION="1" LANGU="S" DESCRIPT="Tipo de cotización" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TCURR-KURST" PARVALUE="&apos;M&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_TIPO_CAMBIO" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TCURR-UKURS"/>
+  <source>METHOD get_tipo_cambio.
+    CALL FUNCTION &apos;READ_EXCHANGE_RATE&apos;
+      EXPORTING
+        date             = fecha
+        foreign_currency = mon_ext
+        local_currency   = mon_local
+        type_of_rate     = tipo_cambio
+      IMPORTING
+        exchange_rate    = tipo
+      EXCEPTIONS
+        error_message    = 1.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" VERSION="1" LANGU="S" DESCRIPT="Recupera el último documento contabilizado" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="HKONT" VERSION="1" LANGU="S" DESCRIPT="Cuenta de mayor de la contabilidad principal" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-HKONT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="ZUONR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de asignaciÃ³n" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-ZUONR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="BLART" VERSION="1" LANGU="S" DESCRIPT="Clase de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BLART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="XREF3" VERSION="1" LANGU="S" DESCRIPT="Clave de referencia para la posiciÃ³n de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-XREF3" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="AUFNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-AUFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="EBELN" VERSION="1" LANGU="S" DESCRIPT="Número del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="EBELP" VERSION="1" LANGU="S" DESCRIPT="Número de posición del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_ULT_DOC_POR_CUENTA" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <source>METHOD get_ult_doc_por_cuenta.
+    &quot; TODO: parameter EBELN is never used (ABAP cleaner)
+    &quot; TODO: parameter EBELP is never used (ABAP cleaner)
+
+    DATA: r_zuonr TYPE RANGE OF bsas-zuonr,
+          r_blart TYPE RANGE OF bsas-blart,
+          r_xref3 TYPE RANGE OF bsas-xref3,
+          r_aufnr TYPE RANGE OF bsas-aufnr,
+          l_zuonr LIKE LINE OF r_zuonr,
+          l_blart LIKE LINE OF r_blart,
+          l_xref3 LIKE LINE OF r_xref3,
+          l_aufnr LIKE LINE OF r_aufnr,
+          i_bsas  TYPE TABLE OF bsas,
+          l_bsas  TYPE bsas.
+
+    IF NOT zuonr IS INITIAL.
+      l_zuonr-option = &apos;EQ&apos;.
+      l_zuonr-sign   = &apos;I&apos;.
+      l_zuonr-low    = zuonr.
+      APPEND l_zuonr TO r_zuonr.
+    ENDIF.
+
+    IF NOT blart IS INITIAL.
+      l_blart-option = &apos;EQ&apos;.
+      l_blart-sign   = &apos;I&apos;.
+      l_blart-low    = blart.
+      APPEND l_blart TO r_blart.
+    ENDIF.
+
+    IF NOT xref3 IS INITIAL.
+      l_xref3-option = &apos;EQ&apos;.
+      l_xref3-sign   = &apos;I&apos;.
+      l_xref3-low    = xref3.
+      APPEND l_xref3 TO r_xref3.
+    ENDIF.
+
+    IF NOT aufnr IS INITIAL.
+      l_aufnr-option = &apos;EQ&apos;.
+      l_aufnr-sign   = &apos;I&apos;.
+      l_aufnr-low    = aufnr.
+      APPEND l_aufnr TO r_aufnr.
+    ENDIF.
+
+    SELECT belnr bukrs gjahr FROM bsas
+      INTO CORRESPONDING FIELDS OF TABLE i_bsas
+     WHERE bukrs  = bukrs
+       AND hkont  = hkont
+       AND blart IN r_blart
+       AND zuonr IN r_zuonr
+       AND xref3 IN r_xref3
+       AND aufnr IN r_aufnr.
+
+    SELECT belnr bukrs gjahr FROM bsis
+      APPENDING CORRESPONDING FIELDS OF TABLE i_bsas
+     WHERE bukrs  = bukrs
+       AND hkont  = hkont
+       AND blart IN r_blart
+       AND zuonr IN r_zuonr
+       AND xref3 IN r_xref3
+       AND aufnr IN r_aufnr.
+
+    SORT i_bsas BY gjahr DESCENDING belnr DESCENDING.
+
+    CLEAR: belnr, gjahr.
+    LOOP AT i_bsas INTO l_bsas.
+      IF es_anulado( bukrs = l_bsas-bukrs
+                     belnr = l_bsas-belnr
+                     gjahr = l_bsas-gjahr ) = &apos;&apos;.
+        belnr = l_bsas-belnr.
+        gjahr = l_bsas-gjahr.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve URL por titulo" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="Documentos URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_url_por_titulo_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    IF NOT belnr IS INITIAL.
+      CONCATENATE bukrs belnr gjahr INTO l_clave.
+      url = zcl_ap_gos=&gt;get_url_por_titulo_st( tipo   = &apos;BKPF&apos;
+                                            clave  = l_clave
+                                            titulo = titulo ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve la utilización del pago" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="AUGBL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUGBL"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="AUGDT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="AUGDT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="CUENTAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="PROVEEDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="CLIENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="BLART" VERSION="1" LANGU="S" DESCRIPT="Clase de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BLART" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="GET_UTILIZACION_PAGO" SCONAME="I_BSEG" VERSION="1" LANGU="S" DESCRIPT="Clase tabla p.BSEG" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSEG_T"/>
+  <source>METHOD get_utilizacion_pago.
+    FIELD-SYMBOLS: &lt;bsas&gt; TYPE bsas,
+                   &lt;bsak&gt; TYPE bsak,
+                   &lt;bsad&gt; TYPE bsad.
+
+    DATA: r_blart  TYPE RANGE OF blart,
+          lr_blart LIKE LINE OF r_blart,
+          i_bsas   TYPE TABLE OF bsas,
+          l_bseg   TYPE bseg,
+          i_bsak   TYPE TABLE OF bsak,
+          i_bsad   TYPE TABLE OF bsad.
+
+    IF NOT blart IS INITIAL.
+      CLEAR lr_blart.
+      lr_blart-option = &apos;EQ&apos;.
+      lr_blart-sign   = &apos;I&apos;.
+      lr_blart-low    = blart.
+      APPEND lr_blart TO r_blart.
+    ENDIF.
+
+    CLEAR i_bseg.
+    IF cuentas = &apos;X&apos;.
+      SELECT * FROM bsas
+        INTO TABLE i_bsas
+       WHERE bukrs  = bukrs
+         AND augdt  = augdt
+         AND augbl  = augbl
+         AND blart IN r_blart.
+      LOOP AT i_bsas ASSIGNING &lt;bsas&gt;.
+        MOVE-CORRESPONDING &lt;bsas&gt; TO l_bseg.
+        SELECT SINGLE koart lifnr kunnr FROM bseg
+          INTO (l_bseg-koart, l_bseg-lifnr, l_bseg-kunnr)
+         WHERE bukrs = l_bseg-bukrs
+           AND belnr = l_bseg-belnr
+           AND gjahr = l_bseg-gjahr
+           AND buzei = l_bseg-buzei.
+        APPEND l_bseg TO i_bseg.
+      ENDLOOP.
+    ENDIF.
+
+    IF proveedor = &apos;X&apos;.
+      SELECT * FROM bsak
+        INTO CORRESPONDING FIELDS OF TABLE i_bsak
+       WHERE bukrs  = bukrs
+         AND augdt  = augdt
+         AND augbl  = augbl
+         AND blart IN r_blart.
+      LOOP AT i_bsak ASSIGNING &lt;bsak&gt;.
+        MOVE-CORRESPONDING &lt;bsak&gt; TO l_bseg.
+        l_bseg-koart = &apos;K&apos;.
+        APPEND l_bseg TO i_bseg.
+      ENDLOOP.
+    ENDIF.
+
+    IF cliente = &apos;X&apos;.
+      SELECT * FROM bsad
+        INTO CORRESPONDING FIELDS OF TABLE i_bseg
+       WHERE bukrs  = bukrs
+         AND augdt  = augdt
+         AND augbl  = augbl
+         AND blart IN r_blart.
+
+      LOOP AT i_bsad ASSIGNING &lt;bsad&gt;.
+        MOVE-CORRESPONDING &lt;bsad&gt; TO l_bseg.
+        l_bseg-koart = &apos;D&apos;.
+        APPEND l_bseg TO i_bseg.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INFO_PARTIDA" VERSION="1" LANGU="S" DESCRIPT="Devuelve información de la partida" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INFO_PARTIDA" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INFO_PARTIDA" SCONAME="RFPOSXEXT" VERSION="1" LANGU="S" DESCRIPT="## AUTOMATICALLY GENERATED. DO NOT CHANGE OR RE-USE ! ##" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="RFPOSXEXT"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INFO_PARTIDA" SCONAME="T001" VERSION="1" LANGU="S" DESCRIPT="Sociedades" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="T001" PAROPTIONL="X"/>
+  <source>METHOD info_partida.
+    IF t001-bukrs &lt;&gt; rfposxext-bukrs.
+      SELECT SINGLE * FROM t001 INTO t001 WHERE bukrs = rfposxext-bukrs.
+    ENDIF.
+    CALL FUNCTION &apos;ITEM_DERIVE_FIELDS&apos;
+      EXPORTING
+        s_t001    = t001
+*       S_BSEGP   =
+        key_date  = fecha
+*       XOPVW     = &apos;X&apos;
+*       X_ICONS_ONLY       = &apos; &apos;
+*       I_KALSM   =
+      CHANGING
+        s_item    = rfposxext
+      EXCEPTIONS
+        bad_input = 1
+        OTHERS    = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Insertar URL en documento" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="POSICIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Se ha producido error" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EKKO-LOEKZ"/>
+  <source>METHOD insertar_url_gos_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+    DATA: i_bseg TYPE TABLE OF bseg,
+          l_bseg TYPE bseg.
+
+    CONCATENATE bukrs belnr gjahr INTO l_clave.
+    error = zcl_ap_gos=&gt;insertar_url_gos_st( tipo   = &apos;BKPF&apos;
+                                          clave  = l_clave
+                                          titulo = titulo
+                                          url    = url ).
+
+    IF posiciones &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    SELECT buzei FROM bseg
+      INTO CORRESPONDING FIELDS OF TABLE i_bseg
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr
+      ORDER BY PRIMARY KEY.
+    LOOP AT i_bseg INTO l_bseg.
+      CONCATENATE bukrs belnr gjahr l_bseg-buzei INTO l_clave.
+      error = zcl_ap_gos=&gt;insertar_url_gos_st( tipo   = &apos;BSEG&apos;
+                                            clave  = l_clave
+                                            titulo = titulo
+                                            url    = url ).
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" VERSION="1" LANGU="S" DESCRIPT="Modifica campo posición" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" SCONAME="BSEG" VERSION="1" LANGU="S" DESCRIPT="Segmento de documento de Contabilidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" SCONAME="SEGUNDOS_ESPERA" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="MODIFICACION_CAMPO_POS" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD modificacion_campo_pos.
+    DATA: l_bseg    TYPE bseg,
+          l_campo   TYPE c LENGTH 40,
+          it_buztab TYPE tpit_t_buztab,
+          l_buztab  TYPE tpit_buztab,
+          l_fname   TYPE tpit_fname,
+          it_fldtab TYPE tpit_t_fname,
+          errtab    TYPE tpit_t_errdoc.
+
+    FIELD-SYMBOLS: &lt;bseg_old&gt; TYPE any,
+                   &lt;bseg_new&gt; TYPE any.
+
+    TYPE-POOLS tpit.
+
+    IF bseg IS INITIAL.
+      message = &apos;Informe datos de posicion&apos;(idp).
+      RETURN.
+    ENDIF.
+
+    IF campo IS INITIAL.
+      message = &apos;Informe campo&apos;(ica).
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE * FROM  bseg                  &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO l_bseg
+     WHERE bukrs = bseg-bukrs
+       AND belnr = bseg-belnr
+       AND gjahr = bseg-gjahr
+       AND buzei = bseg-buzei.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Documento/posicion no existe&apos;(dne).
+      RETURN.
+    ENDIF.
+
+    CONCATENATE &apos;L_BSEG-&apos; campo INTO l_campo.
+    ASSIGN (l_campo) TO &lt;bseg_old&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;Campo&apos;(cam) campo &apos;no existe en BSEG&apos;(neb) INTO message SEPARATED BY space.
+      RETURN.
+    ELSE.
+      CONCATENATE &apos;BSEG-&apos; campo INTO l_campo.
+      ASSIGN (l_campo) TO &lt;bseg_new&gt;.
+      IF &lt;bseg_new&gt; = &lt;bseg_old&gt;.
+        &quot; No hace falta modificar nada, salidmos
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    CLEAR it_buztab.
+    MOVE-CORRESPONDING bseg TO l_buztab.
+    APPEND l_buztab TO it_buztab.
+
+    l_fname-fname = campo.
+    APPEND l_fname TO it_fldtab.
+
+    CALL FUNCTION &apos;FI_ITEMS_MASS_CHANGE&apos;
+      EXPORTING
+        s_bseg     = bseg
+      IMPORTING
+        errtab     = errtab
+      TABLES
+        it_buztab  = it_buztab
+        it_fldtab  = it_fldtab
+      EXCEPTIONS
+        bdc_errors = 1.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+      IF segundos_espera &gt; 0.
+        WAIT UP TO segundos_espera SECONDS.
+      ENDIF.
+
+      DO 2 TIMES.
+        SELECT SINGLE * FROM  bseg              &quot;#EC CI_ALL_FIELDS_NEEDED
+          INTO l_bseg
+         WHERE bukrs = bseg-bukrs
+           AND belnr = bseg-belnr
+           AND gjahr = bseg-gjahr
+           AND buzei = bseg-buzei.
+        CONCATENATE &apos;L_BSEG-&apos; campo INTO l_campo.
+        ASSIGN (l_campo) TO &lt;bseg_old&gt;.
+        IF &lt;bseg_new&gt; = &lt;bseg_old&gt; OR segundos_espera &gt; 0.
+          EXIT.
+        ELSE.
+          WAIT UP TO 1 SECONDS. &quot; La actualización parece que se hacen en fondo, a veces hay que esperar
+        ENDIF.
+      ENDDO.
+      IF &lt;bseg_new&gt; &lt;&gt; &lt;bseg_old&gt;.
+        CONCATENATE &apos;No se ha modificado el valor del campo&apos;(nmv) campo INTO message SEPARATED BY space.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DOC_FI" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualiza documento FI" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="VISUALIZAR" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS" PARVALUE="ZCL_C=&gt;BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="VISUALIZAR" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="NÃºmero de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_DOC_FI" CMPNAME="VISUALIZAR" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <source>METHOD visualizar.
+    DATA: l_bkpf   TYPE bkpf,
+          l_dialog TYPE boole VALUE &apos;X&apos;.
+
+    SELECT SINGLE awkey awsys awtyp FROM bkpf
+      INTO CORRESPONDING FIELDS OF l_bkpf
+     WHERE bukrs = bukrs
+       AND belnr = belnr
+       AND gjahr = gjahr.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;AC_DOCUMENT_RECORD&apos;
+      EXPORTING
+        i_awtyp      = l_bkpf-awtyp
+        i_awref      = l_bkpf-awkey+00(10)
+        i_aworg      = l_bkpf-awkey+10(10)
+        i_awsys      = l_bkpf-awsys
+*       i_awtyp_incl = &apos;BKPF&apos;
+        i_awtyp_excl = &apos; &apos;
+        i_bukrs      = bukrs
+        i_valutyp    = &apos;0&apos;
+        x_dialog     = l_dialog.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

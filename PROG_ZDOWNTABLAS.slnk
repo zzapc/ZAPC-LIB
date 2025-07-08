@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZDOWNTABLAS" VARCL="X" SUBC="1" RMAND="200" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Carga/descarga contenido de tablas" LENGTH="34 "/>
+   <textElement ID="S" KEY="BORRAR" ENTRY="        Borra el contenido actual" LENGTH="33 "/>
+   <textElement ID="S" KEY="FTYPE" ENTRY="D       Formato transferencia datos" LENGTH="35 "/>
+   <textElement ID="S" KEY="PATH" ENTRY="D       Fichero" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_CARG" ENTRY="        Desde fichero" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_FCARG" ENTRY="D       Fichero" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_GRAB" ENTRY="        Grabar datos" LENGTH="20 "/>
+   <textElement ID="S" KEY="P_INS" ENTRY="        Insertar" LENGTH="16 "/>
+   <textElement ID="S" KEY="P_MOD" ENTRY="        Modificar" LENGTH="17 "/>
+   <textElement ID="S" KEY="P_W1" ENTRY="        Línea 1 Where" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_W2" ENTRY="        Línea 2 Where" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_W3" ENTRY="        Línea 3 Where" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_W4" ENTRY="        Línea 4 Where" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_W5" ENTRY="        Línea 5 Where" LENGTH="21 "/>
+   <textElement ID="S" KEY="SINMDT" ENTRY="        Tabla sin mandante" LENGTH="26 "/>
+   <textElement ID="S" KEY="TABLA" ENTRY="D       Tabla" LENGTH="13 "/>
+  </language>
+ </textPool>
+ <source>************************************************************************
+* MÓDULO      : BC
+* TIPO        : Utilidad
+* TITULO      : Carga/descarga del contenido de una tabla desde/a ficher
+* DESCRIPCION :                                                        *
+* ...                                                                  *
+* ...                                                                  *
+* AUTOR: Andrés Picazo (Altimia)                FECHA: 08/01/2002      *
+*                                 ORDEN DE TRANSPORTE:                 *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE            RUTA               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username          VXXXXX-X           P01K90XXXXX        *
+************************************************************************
+REPORT ZBCVX001 .
+
+TABLES: DD02T,                         &quot;R/3-DD: Textos de tablas SAP
+        DD03L.                         &quot;Campos de tabla
+
+* Línea
+DATA: I_SOURCE LIKE LINE OCCURS 100 WITH HEADER LINE.
+DATA L_RESP.
+DATA: PROGRAM_NAME     LIKE SY-CPROG.
+DATA: L_MANDT.
+
+DATA: L_LINEA(72).
+DATA: L_TABLA(2000).
+define ap.
+  APPEND &amp;1 TO I_SOURCE.
+end-of-definition.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK BLK_PAR WITH FRAME.
+PARAMETERS: TABLA LIKE DD03L-TABNAME OBLIGATORY.&quot;Nombre de tabla
+PARAMETERS: PATH LIKE RLGRAP-FILENAME  &quot;Directorio de salida
+                   DEFAULT &apos;C:\TEMP\&apos; OBLIGATORY,
+            FTYPE  LIKE RLGRAP-FILETYPE DEFAULT &apos;DAT&apos;.
+PARAMETERS:  BORRAR AS CHECKBOX,
+             SINMDT AS CHECKBOX.
+SELECTION-SCREEN END OF BLOCK BLK_PAR.
+SELECTION-SCREEN BEGIN OF BLOCK BLK_PAR3 WITH FRAME TITLE TEXT-003.&quot;WHE
+PARAMETERS: P_W1(80),
+            P_W2(80),
+            P_W3(80),
+            P_W4(80),
+            P_W5(80).
+SELECTION-SCREEN END OF BLOCK BLK_PAR3.
+
+SELECTION-SCREEN BEGIN OF BLOCK BLK_PAR2 WITH FRAME.
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) T_grabar.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: P_GRAB RADIOBUTTON GROUP RAD1 DEFAULT &apos;X&apos;.    &quot;Grabar
+SELECTION-SCREEN END OF LINE.
+
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) T_cargar.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: P_CARG RADIOBUTTON GROUP RAD1.                &quot;Cargar
+SELECTION-SCREEN COMMENT 16(16) TEXT-007. &quot;Fichero a cargar
+PARAMETERS: P_FCARG LIKE RLGRAP-FILENAME. &quot;Fichero local para upload/dow
+SELECTION-SCREEN END OF LINE.
+SELECTION-SCREEN END OF BLOCK BLK_PAR2.
+
+SELECTION-SCREEN BEGIN OF BLOCK BLK_PAR4 WITH FRAME.
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) T_insert.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: P_INS RADIOBUTTON GROUP RAD2 DEFAULT &apos;X&apos;.    &quot;Insert
+SELECTION-SCREEN END OF LINE.
+
+SELECTION-SCREEN BEGIN OF LINE.
+SELECTION-SCREEN COMMENT 1(6) t_modify.
+SELECTION-SCREEN POSITION 10.
+PARAMETERS: P_MOD RADIOBUTTON GROUP RAD2.                &quot;Modify
+SELECTION-SCREEN END OF LINE.
+SELECTION-SCREEN END OF BLOCK BLK_PAR4.
+
+INITIALIZATION.
+  T_GRABAR = &apos;Grabar&apos;.
+  t_cargar = &apos;Cargar&apos;.
+  t_insert = &apos;Insert&apos;.
+  t_modify = &apos;Modify&apos;.
+
+START-OF-SELECTION.
+
+  PERFORM GENERAR_REPORT.
+
+  IF NOT P_CARG IS INITIAL.
+    IF NOT BORRAR IS INITIAL.
+      PERFORM BORRAR_TABLA.
+    ENDIF.
+    PERFORM CARGAR_TABLA.
+  ELSE.
+    PERFORM GRABAR_TABLA.
+  ENDIF.
+
+
+
+*---------------------------------------------------------------------*
+*       FORM GENERAR_REPORT                                           *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM GENERAR_REPORT.
+  DATA L_TABLA(10).
+
+  CLEAR L_MANDT.
+  SELECT * FROM DD03L
+   WHERE TABNAME = TABLA
+     AND FIELDNAME = &apos;MANDT&apos;.
+    L_MANDT = &apos;X&apos;.
+  ENDSELECT.
+
+
+  CONCATENATE &apos;I_&apos; TABLA INTO L_TABLA.
+  AP &apos;REPORT Z.&apos;.
+  CONCATENATE &apos;TABLES&apos; TABLA &apos;.&apos; INTO L_LINEA SEPARATED BY SPACE.
+  AP L_LINEA.
+  CONCATENATE &apos;DATA&apos; L_TABLA
+              &apos;LIKE&apos; TABLA &apos;OCCURS 1000 WITH HEADER LINE.&apos;
+              INTO L_LINEA SEPARATED BY SPACE.
+  AP L_LINEA.
+  IF NOT SINMDT IS INITIAL.
+    DATA L_TABLA2 LIKE L_TABLA.
+    CONCATENATE L_TABLA &apos;2&apos; INTO L_TABLA2.
+    CONCATENATE L_TABLA2 &apos;(1000)&apos; INTO L_LINEA.
+    CONCATENATE &apos;DATA&apos; L_LINEA &apos;OCCURS 1000 WITH HEADER LINE.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+  ENDIF.
+
+  AP &apos;FORM BORRAR_TABLA.&apos;.
+
+  IF L_MANDT = &apos;X&apos;.
+    CONCATENATE &apos;DELETE FROM&apos; TABLA
+                &apos;CLIENT SPECIFIED WHERE MANDT = SY-MANDT.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+  ELSE.
+    IF BORRAR = &apos;X&apos;.
+      CONCATENATE &apos;SELECT * FROM &apos; TABLA &apos;.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+      AP L_LINEA.
+      CONCATENATE &apos;DELETE&apos; TABLA &apos;.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+      AP L_LINEA.
+      AP &apos;ENDSELECT.&apos;.
+    ENDIF.
+  ENDIF.
+
+  AP &apos;ENDFORM.        &quot;BORRAR TABLA&apos;.
+
+  AP &apos;FORM GRABAR_TABLA.&apos;.
+  CONCATENATE &apos;SELECT * FROM&apos; TABLA
+              &apos;INTO TABLE &apos; L_TABLA
+              INTO L_LINEA SEPARATED BY SPACE.
+  AP L_LINEA.
+  IF NOT P_W1 IS INITIAL.
+    CONCATENATE &apos;WHERE&apos; P_W1 INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    AP P_W2.
+    AP P_W3.
+    AP P_W4.
+    AP P_W5.
+  ENDIF.
+  AP &apos;.&apos;.
+  AP &apos;CALL FUNCTION &apos;&apos;WS_DOWNLOAD&apos;&apos;&apos;.
+  AP &apos;EXPORTING&apos;.
+  IF P_FCARG IS INITIAL.
+    CONCATENATE  &apos;FILENAME = &apos;&apos;&apos; PATH TABLA &apos;.DAT&apos;&apos;&apos; INTO L_LINEA.
+  ELSE.
+    CONCATENATE  &apos;FILENAME = &apos;&apos;&apos; P_FCARG &apos;&apos;&apos;&apos; INTO L_LINEA.
+  ENDIF.
+  AP L_LINEA.
+  CONCATENATE &apos;FILETYPE = &apos;&apos;&apos; FTYPE &apos;&apos;&apos;&apos; INTO L_LINEA.
+  AP L_LINEA.
+  AP &apos;TABLES&apos;.
+  CONCATENATE &apos;DATA_TAB = &apos; L_TABLA &apos;.&apos; INTO L_LINEA
+  SEPARATED BY SPACE.
+  AP L_LINEA.
+  AP &apos;ENDFORM.        &quot;GRABAR_TABLA&apos;.
+
+  AP &apos;FORM CARGAR_TABLA.&apos;.
+  AP &apos;CALL FUNCTION &apos;&apos;WS_UPLOAD&apos;&apos;&apos;.
+  AP &apos;EXPORTING&apos;.
+  IF P_FCARG IS INITIAL.
+    CONCATENATE  &apos;FILENAME = &apos;&apos;&apos; PATH TABLA &apos;.DAT&apos;&apos;&apos;  INTO L_LINEA.
+  ELSE.
+    CONCATENATE  &apos;FILENAME = &apos;&apos;&apos; P_FCARG &apos;&apos;&apos;&apos;  INTO L_LINEA.
+  ENDIF.
+  AP L_LINEA.
+  CONCATENATE &apos;FILETYPE = &apos;&apos;&apos; FTYPE &apos;&apos;&apos;&apos; INTO L_LINEA.
+  AP L_LINEA.
+  AP &apos;TABLES&apos;.
+  IF SINMDT IS INITIAL.
+    CONCATENATE &apos;DATA_TAB = &apos; L_TABLA &apos;.&apos; INTO L_LINEA
+    SEPARATED BY SPACE.
+    AP L_LINEA.
+  ELSE.
+    CONCATENATE &apos;DATA_TAB = &apos; L_TABLA2 &apos;.&apos; INTO L_LINEA
+    SEPARATED BY SPACE.
+    AP L_LINEA.
+    CONCATENATE &apos;LOOP AT&apos; L_TABLA2 &apos;.&apos; INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    CONCATENATE L_TABLA &apos;+3&apos; INTO L_LINEA.
+    CONCATENATE L_LINEA &apos; = &apos; L_TABLA2 &apos;.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    CONCATENATE &apos;append&apos; L_TABLA &apos;.&apos; INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    AP &apos;endloop.&apos;.
+  ENDIF.
+
+  IF L_MANDT = &apos;X&apos;.
+    CONCATENATE &apos;LOOP AT &apos; L_TABLA &apos;.&apos; INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    CONCATENATE L_TABLA &apos;-MANDT = SY-MANDT.&apos; INTO L_LINEA.
+    AP L_LINEA.
+    CONCATENATE &apos;MODIFY &apos; L_TABLA &apos;.&apos; INTO L_LINEA SEPARATED BY SPACE.
+    AP L_LINEA.
+    AP &apos;ENDLOOP.&apos;.
+  ENDIF.
+
+  IF P_INS = &apos;X&apos;.
+    CONCATENATE &apos;INSERT &apos; TABLA
+                &apos;FROM TABLE &apos; L_TABLA &apos;.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+  ELSE.
+    CONCATENATE &apos;MODIFY &apos; TABLA
+                &apos;FROM TABLE &apos; L_TABLA &apos;.&apos;
+                INTO L_LINEA SEPARATED BY SPACE.
+  ENDIF.
+  AP L_LINEA.
+  AP &apos;ENDFORM.        &quot;CARGAR_TABLA&apos;.
+
+  PERFORM GENERATE_SUBROUTINE_POOL TABLES I_SOURCE.
+
+ENDFORM.
+
+
+*---------------------------------------------------------------------*
+*       FORM GRABAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM GRABAR_TABLA.
+  PERFORM GRABAR_TABLA IN PROGRAM (PROGRAM_NAME).
+ENDFORM.
+
+*---------------------------------------------------------------------*
+*       FORM CARGAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM CARGAR_TABLA.
+
+* message i208(00) with &apos;¿Está seguro de querer cargar los datos?&apos;.
+  PERFORM CARGAR_TABLA IN PROGRAM (PROGRAM_NAME).
+ENDFORM.
+
+*---------------------------------------------------------------------*
+*       FORM BORRAR_TABLA                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+FORM BORRAR_TABLA.
+  SELECT * FROM DD02T
+   WHERE TABNAME = TABLA
+     AND DDLANGUAGE = SY-LANGU.
+    EXIT.
+  ENDSELECT.
+  CONCATENATE &apos;¿Desea borra tabla&apos; TABLA INTO L_LINEA
+                                   SEPARATED BY SPACE.
+  CONCATENATE L_LINEA &apos;?&apos; INTO L_LINEA.
+
+  CALL FUNCTION &apos;POPUP_CONTINUE_YES_NO&apos;
+       EXPORTING
+            DEFAULTOPTION = &apos;N&apos;
+            TEXTLINE1     = L_LINEA
+            TEXTLINE2     = DD02T-DDTEXT
+            TITEL         = &apos;Confirmación&apos;
+       IMPORTING
+            ANSWER        = L_RESP
+       EXCEPTIONS
+            OTHERS        = 1.
+
+  IF L_RESP = &apos;J&apos;.
+    PERFORM BORRAR_TABLA IN PROGRAM (PROGRAM_NAME).
+  ENDIF.
+ENDFORM.
+*---------------------------------------------------------------------*
+*       FORM GENERATE_SUBROUTINE_POOL                                 *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+*  --&gt;  SOURCE_TAB                                                    *
+*---------------------------------------------------------------------*
+FORM GENERATE_SUBROUTINE_POOL TABLES SOURCE_TAB.
+
+  DATA:   LINE_NO          TYPE I,
+          SYNTAX_CHECK_MESSAGE(128).
+  DESCRIBE TABLE SOURCE_TAB.
+  CHECK SY-TFILL GT 0.
+  GENERATE SUBROUTINE POOL SOURCE_TAB
+    NAME PROGRAM_NAME
+    MESSAGE SYNTAX_CHECK_MESSAGE
+    line line_no.
+  if sy-subrc ne 0.
+    WRITE: / &apos;Error de sintaxis, mensaje&apos;, SYNTAX_CHECK_MESSAGE,
+    / &apos;en linea&apos;, LINE_NO.
+    stop.
+  endif.
+ENDFORM.</source>
+</PROG>

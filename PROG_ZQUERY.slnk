@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZQUERY" VARCL="X" SUBC="1" RSTAT="K" RMAND="810" RLOAD="P" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="001" ENTRY="Query is syntactically correct." LENGTH="40 "/>
+   <textElement ID="I" KEY="002" ENTRY="Query saved successfully." LENGTH="40 "/>
+   <textElement ID="I" KEY="003" ENTRY="Performance Analyzer" LENGTH="30 "/>
+   <textElement ID="I" KEY="004" ENTRY="Inverse Names" LENGTH="20 "/>
+   <textElement ID="I" KEY="005" ENTRY="Generate Type" LENGTH="20 "/>
+   <textElement ID="I" KEY="006" ENTRY="Performance Analyzer" LENGTH="30 "/>
+   <textElement ID="I" KEY="007" ENTRY="Type name" LENGTH="20 "/>
+   <textElement ID="I" KEY="008" ENTRY="SQL Statement" LENGTH="20 "/>
+   <textElement ID="I" KEY="009" ENTRY="ABAP Procedures" LENGTH="20 "/>
+   <textElement ID="I" KEY="010" ENTRY="Query name" LENGTH="20 "/>
+   <textElement ID="I" KEY="011" ENTRY="Overwrite existing query?" LENGTH="31 "/>
+   <textElement ID="I" KEY="012" ENTRY="The selected record(s) will be deleted. Are you sure?" LENGTH="70 "/>
+   <textElement ID="I" KEY="013" ENTRY="Table Name" LENGTH="15 "/>
+   <textElement ID="I" KEY="014" ENTRY="Field Name" LENGTH="15 "/>
+   <textElement ID="I" KEY="015" ENTRY="Description" LENGTH="15 "/>
+   <textElement ID="I" KEY="016" ENTRY="Select fields to WHERE clause" LENGTH="45 "/>
+   <textElement ID="I" KEY="017" ENTRY="WHERE Generator" LENGTH="20 "/>
+   <textElement ID="I" KEY="018" ENTRY="Yes" LENGTH="3 "/>
+   <textElement ID="I" KEY="019" ENTRY="No" LENGTH="3 "/>
+   <textElement ID="I" KEY="E01" ENTRY="No query entry to execute" LENGTH="30 "/>
+   <textElement ID="I" KEY="E02" ENTRY="Canceled" LENGTH="10 "/>
+   <textElement ID="I" KEY="E03" ENTRY="Allowed only 70 fields or less" LENGTH="50 "/>
+   <textElement ID="I" KEY="E04" ENTRY="No queries found" LENGTH="30 "/>
+   <textElement ID="S" KEY="P_QNAME" ENTRY="        Query Name" LENGTH="18 "/>
+   <textElement ID="S" KEY="S_USER" ENTRY="D       ." LENGTH="17 "/>
+  </language>
+ </textPool>
+ <dynpros>
+  <dynpro PROG="ZQUERY" DNUM="0100" FNUM="0100" BZMX="200 " BZBR="240 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="200 " NOCO="240 " VALP="0 " CUAN="G" SPRA="E" DTEXT="Tela Inicial">
+   <dynprofield FNAM="C_CONTAINER" DIDX="00C8" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="F0" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="01" ADEZ="01"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0100.
+  MODULE zm_initialize_0100.
+
+PROCESS AFTER INPUT.
+  MODULE zm_user_command_0100.
+  MODULE zm_exit_command_0100 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+  <dynpro PROG="ZQUERY" DNUM="0200" TYPE="M" FNUM="0200" BZMX="21 " BZBR="102 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="21 " NOCO="110 " VALP="0 " CUAN="G" SPRA="E" DTEXT="Type Generator">
+   <dynprofield FNAM="C_TYPE_CONTAINER" DIDX="0015" FLG1="00" FLG2="00" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="66" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="01" ADEZ="01"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0200.
+  MODULE zm_initialize_0200.
+
+PROCESS AFTER INPUT.
+  MODULE zm_user_command_0200.
+  MODULE zm_exit_command_0200 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+  <dynpro PROG="ZQUERY" DNUM="0300" TYPE="M" FNUM="0300" BZMX="30 " BZBR="146 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="30 " NOCO="146 " VALP="0 " CUAN="G" SPRA="E" DTEXT="Performance Analyzer">
+   <dynprofield FNAM="GRAPH_CONTAINER" DIDX="001D" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="92" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="01" ADEZ="01"/>
+   <dynprofield FNAM="%#AUTOTEXT001" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FILL="P" FMB1="30" FMB2="00" LENG="06" LINE="1E" COLN="8E" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="102" AGLT="00" ADEZ="00" STXT="Close" RES1="                                                                                                                                                                        ENTER"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0300.
+  MODULE zm_initialize_0300.
+
+PROCESS AFTER INPUT.
+  MODULE zm_user_command_0300.
+  MODULE zm_exit_command_0300 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+  <dynpro PROG="ZQUERY" DNUM="0500" TYPE="M" FNUM="0500" BZMX="200 " BZBR="240 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="200 " NOCO="240 " VALP="0 " CUAN="G" SPRA="E" DTEXT="SELECT fields for user interaction">
+   <dynprofield FNAM="V_SELECT_TYPE" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FMB1="30" FMB2="00" LENG="0B" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="0" AGLT="00" ADEZ="00" STXT="Select Type" RES1="                                                                                                                                                                                                                                                        X"/>
+   <dynprofield FNAM="V_SELECT_TYPE" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FMB1="00" FMB2="00" LENG="1E" LINE="01" COLN="14" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="______________________________" RES1=" DL                                                                                                                                                                     SQL_FUNC"/>
+   <dynprofield FNAM="CONTAINER" DIDX="00C7" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="F0" LINE="02" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="01" ADEZ="01"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0500.
+  MODULE zm_initialize_0500.
+
+PROCESS AFTER INPUT.
+  MODULE zm_user_command_0500.
+  MODULE zm_exit_command_0500 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+  <dynpro PROG="ZQUERY" DNUM="0600" TYPE="M" FNUM="0600" BZMX="200 " BZBR="240 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="200 " NOCO="240 " VALP="0 " CUAN="G" SPRA="E" DTEXT="Screen for FROM generator">
+   <dynprofield FNAM="%#AUTOTEXT001" DIDX="0005" FLG1="00" FLG2="00" FLG3="00" FILL="R" FMB1="30" FMB2="00" LENG="73" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="101" AGLT="00" ADEZ="00" STXT="Parameters"/>
+   <dynprofield FNAM="V_TABNAME" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FMB1="30" FMB2="00" LENG="0F" LINE="02" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="0" AGLT="00" ADEZ="00" STXT="Table Name" RES1="                                                                                                                                                                                                                                                        X"/>
+   <dynprofield FNAM="V_TABNAME" DIDX="0000" FLG1="80" FLG2="00" FLG3="A0" FMB1="00" FMB2="08" LENG="22" LINE="02" COLN="13" LANF="00" LBLK="00" LREP="00" PAID="DTB" TYPE="CHAR" DMAC="DD_DBTB_16" ITYP="C" AGLT="1E" ADEZ="00" STXT="__________________________________"/>
+   <dynprofield FNAM="V_TABDESCR" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="31" FMB2="00" LENG="3C" LINE="02" COLN="37" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="3C" ADEZ="00" STXT="____________________________________________________________"/>
+   <dynprofield FNAM="V_TABALIAS" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FMB1="30" FMB2="00" LENG="0B" LINE="03" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="0" AGLT="00" ADEZ="00" STXT="Table Alias" RES1="                                                                                                                                                                                                                                                        X"/>
+   <dynprofield FNAM="V_TABALIAS" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FMB1="00" FMB2="00" LENG="22" LINE="03" COLN="13" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="__________________________________"/>
+   <dynprofield FNAM="V_CREATE_SELECT" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FILL="C" FMB1="30" FMB2="00" LENG="16" LINE="04" COLN="03" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="102" ITYP="0" AGLT="00" ADEZ="00" STXT="Generate SELECT clause"/>
+   <dynprofield FNAM="V_CREATE_SELECT" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FILL="C" FMB1="00" FMB2="00" LENG="01" LINE="04" COLN="1A" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="102" ITYP="C" AGLT="00" ADEZ="00"/>
+   <dynprofield FNAM="V_CREATE_WHERE" DIDX="0000" FLG1="00" FLG2="00" FLG3="00" FILL="C" FMB1="30" FMB2="00" LENG="15" LINE="04" COLN="1E" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="103" ITYP="0" AGLT="00" ADEZ="00" STXT="Generate WHERE Clause"/>
+   <dynprofield FNAM="V_CREATE_WHERE" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FILL="C" FMB1="00" FMB2="00" LENG="01" LINE="04" COLN="34" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AUTH="103" ITYP="C" AGLT="00" ADEZ="00"/>
+   <dynprofield FNAM="CONTAINER_FROM" DIDX="00C3" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="F0" LINE="06" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="104" AGLT="01" ADEZ="01"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0600.
+  MODULE zm_initialize_0600.
+
+PROCESS AFTER INPUT.
+  FIELD v_create_select. FIELD v_create_where.
+  FIELD v_tabname MODULE zm_tablename ON REQUEST.
+  FIELD v_tabalias MODULE zm_tablealias ON REQUEST.
+
+  MODULE zm_user_command_0600.
+  MODULE zm_exit_command_0600 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+  <dynpro PROG="ZQUERY" DNUM="0700" TYPE="M" FNUM="0700" BZMX="0 " BZBR="0 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="200 " NOCO="240 " VALP="0 " CUAN="G" SPRA="E" DTEXT="Screen for Fields of a Join Table">
+   <dynprofield FNAM="CONTAINER_JOIN" DIDX="00C8" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="F0" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="01" ADEZ="01"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE zm_status_0700.
+  MODULE zm_initialize_0700.
+
+PROCESS AFTER INPUT.
+  MODULE zm_user_command_0700.
+  MODULE zm_exit_command_0700 AT EXIT-COMMAND.</dynproflowsource>
+  </dynpro>
+ </dynpros>
+ <pfstatus>
+  <pfstatus_sta CODE="PF_0100" MODAL="D" ACTCODE="000001" PFKCODE="000002" BUTCODE="0001" INT_NOTE="Tela inicial"/>
+  <pfstatus_sta CODE="PF_0200" MODAL="P" PFKCODE="000003" BUTCODE="0001" INT_NOTE="Type Generator"/>
+  <pfstatus_sta CODE="PF_0500" MODAL="P" PFKCODE="000005" BUTCODE="0001" INT_NOTE="Status for screen 500"/>
+  <pfstatus_sta CODE="PF_0600" MODAL="P" PFKCODE="000006" BUTCODE="0001" INT_NOTE="Status for screen 600"/>
+  <pfstatus_sta CODE="PF_0700" MODAL="P" PFKCODE="000007" BUTCODE="0001" INT_NOTE="Status for screen 700"/>
+  <pfstatus_sta CODE="PF_SALV_STATUS" MODAL="P" PFKCODE="000004" BUTCODE="0001" INT_NOTE="Standard for General List Output in Dialog Box with Checkbox"/>
+  <pfstatus_fun CODE="%SC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH" ICON_ID="@13@" FUN_TEXT="Search" PATH="E"/>
+  <pfstatus_fun CODE="%SC+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH_NEXT" ICON_ID="@4E@" FUN_TEXT="Find Next"/>
+  <pfstatus_fun CODE="&amp;AC1" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancel"/>
+  <pfstatus_fun CODE="&amp;ALL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_ALL" ICON_ID="@4B@" FUN_TEXT="Select All" PATH="S"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_SAVE" ICON_ID="@DN@" FUN_TEXT="Save Layout..."/>
+  <pfstatus_fun CODE="&amp;CRB" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_LEFT" ICON_ID="@0B@" FUN_TEXT="First Column"/>
+  <pfstatus_fun CODE="&amp;CRE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_RIGHT" ICON_ID="@0C@" FUN_TEXT="Last Column"/>
+  <pfstatus_fun CODE="&amp;CRL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_LEFT" ICON_ID="@0D@" FUN_TEXT="Column Left"/>
+  <pfstatus_fun CODE="&amp;CRR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_RIGHT" ICON_ID="@0E@" FUN_TEXT="Column Right"/>
+  <pfstatus_fun CODE="&amp;EB9" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TABLE_SETTINGS" ICON_ID="@36@" FUN_TEXT="Call Up Report..." PATH="B"/>
+  <pfstatus_fun CODE="&amp;ELP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_HELP" ICON_ID="@35@" FUN_TEXT="Help"/>
+  <pfstatus_fun CODE="&amp;ERW" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_CHOOSE" ICON_ID="@DM@" FUN_TEXT="Administration..." ICON_TEXT="Admin" INFO_TEXT="Manage Layouts..." PATH="A"/>
+  <pfstatus_fun CODE="&amp;ETA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Details"/>
+  <pfstatus_fun CODE="&amp;IC1" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Choose"/>
+  <pfstatus_fun CODE="&amp;ILD" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER_UNDO" ICON_ID="@GD@" FUN_TEXT="Delete Filter" PATH="L"/>
+  <pfstatus_fun CODE="&amp;ILT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER" ICON_ID="@4G@" FUN_TEXT="Set Filter" PATH="F"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_CHOOSE" ICON_ID="@DM@" FUN_TEXT="Select Layout..."/>
+  <pfstatus_fun CODE="&amp;ODN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_DOWN" ICON_ID="@3F@" FUN_TEXT="Sort in Descending Order" PATH="O"/>
+  <pfstatus_fun CODE="&amp;OL0" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANTS" ICON_ID="@LZ@" FUN_TEXT="Change..."/>
+  <pfstatus_fun CODE="&amp;OMP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Collapse"/>
+  <pfstatus_fun CODE="&amp;ONT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OKAY" ICON_ID="@0V@" FUN_TEXT="Continue"/>
+  <pfstatus_fun CODE="&amp;OUP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_UP" ICON_ID="@3E@" FUN_TEXT="Sort in Ascending Order" PATH="I"/>
+  <pfstatus_fun CODE="&amp;RNT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Print" PATH="P"/>
+  <pfstatus_fun CODE="&amp;SAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DESELECT_ALL" ICON_ID="@4D@" FUN_TEXT="Deselect All" PATH="D"/>
+  <pfstatus_fun CODE="&amp;SUM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INTERMEDIATE_SUM" ICON_ID="@5V@" FUN_TEXT="Subtotals..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;UMC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SUM" ICON_ID="@3Z@" FUN_TEXT="Total" PATH="T"/>
+  <pfstatus_fun CODE="&amp;XPA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Expand"/>
+  <pfstatus_fun CODE="BACK" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Voltar"/>
+  <pfstatus_fun CODE="BACK" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Back"/>
+  <pfstatus_fun CODE="CANCEL" TEXTNO="001" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar"/>
+  <pfstatus_fun CODE="CANCEL" TEXTNO="002" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancel"/>
+  <pfstatus_fun CODE="CHECK" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CHECK" ICON_ID="@38@" FUN_TEXT="Check syntax" ICON_TEXT="Check"/>
+  <pfstatus_fun CODE="DEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Delete" INFO_TEXT="Delete selected query(ies)"/>
+  <pfstatus_fun CODE="ENTER" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OKAY" ICON_ID="@0V@" FUN_TEXT="Ok"/>
+  <pfstatus_fun CODE="EXEC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Execute" ICON_TEXT="Execute"/>
+  <pfstatus_fun CODE="EXEC_NO" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Exec. no conversion"/>
+  <pfstatus_fun CODE="EXIT" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Encerrar"/>
+  <pfstatus_fun CODE="EXIT" TEXTNO="002" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Exit"/>
+  <pfstatus_fun CODE="FIELDS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CHOOSE_COLUMNS" ICON_ID="@HE@" FUN_TEXT="... SELECT clause" ICON_TEXT="Generate SELECT clause"/>
+  <pfstatus_fun CODE="FROM" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="... FROM clause" PATH="F"/>
+  <pfstatus_fun CODE="MINE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="My queries..." PATH="M"/>
+  <pfstatus_fun CODE="OPEN" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Open query..." PATH="O"/>
+  <pfstatus_fun CODE="P+" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Next Page"/>
+  <pfstatus_fun CODE="P++" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Last Page"/>
+  <pfstatus_fun CODE="P-" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Previous Page"/>
+  <pfstatus_fun CODE="P--" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="First Page"/>
+  <pfstatus_fun CODE="SAVE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Save"/>
+  <pfstatus_fun CODE="SELECT" TEXTNO="001" TEXT_TYPE="S" ICON_ID="@HE@" FUN_TEXT="... SELECT clause" PATH="S"/>
+  <pfstatus_fun CODE="WHERE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INSPECTION_METHOD" ICON_ID="@GS@" FUN_TEXT="... WHERE clause" ICON_TEXT="Generate WHERE clause" PATH="W"/>
+  <pfstatus_men CODE="000006" NO="01" REF_TYPE="F" REF_CODE="OPEN" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="02" REF_TYPE="F" REF_CODE="MINE" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="03" REF_TYPE="F" REF_CODE="EXEC_NO" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="01" REF_TYPE="F" REF_CODE="SELECT" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="02" REF_TYPE="F" REF_CODE="FROM" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="03" REF_TYPE="F" REF_CODE="WHERE" REF_NO="001"/>
+  <pfstatus_mtx CODE="000006" TEXT_TYPE="S" TEXT="Options" PATH="O"/>
+  <pfstatus_mtx CODE="000007" TEXT_TYPE="S" TEXT="Generate" PATH="G"/>
+  <pfstatus_act CODE="000001" NO="01" MENUCODE="000006"/>
+  <pfstatus_act CODE="000001" NO="02" MENUCODE="000007"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0002" NO="01" PFNO="00"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0003" NO="01" PFNO="00"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="02" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000003" CODE="0001" NO="01" PFNO="00"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="01" PFNO="00"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="02" PFNO="39"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="03" PFNO="37"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="04" PFNO="05"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="05" PFNO="06"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="06" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="07" PFNO="40"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="08" PFNO="71"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="09" PFNO="84"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="10" PFNO="29"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="11" PFNO="38"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="12" PFNO="30"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="13" PFNO="42"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="14" PFNO="35"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="15" PFNO="47"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="16" PFNO="86"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="17" PFNO="32"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="18" PFNO="33"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="19" PFNO="34"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="20" PFNO="36"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="21" PFNO="01"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="22" PFNO="18"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="23" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="24" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="25" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000004" CODE="0001" NO="26" PFNO="94"/>
+  <pfstatus_but PFK_CODE="000005" CODE="0001" NO="01" PFNO="00"/>
+  <pfstatus_but PFK_CODE="000005" CODE="0001" NO="02" PFNO="12"/>
+  <pfstatus_but PFK_CODE="000006" CODE="0001" NO="01" PFNO="11"/>
+  <pfstatus_but PFK_CODE="000006" CODE="0001" NO="02" PFNO="12"/>
+  <pfstatus_but PFK_CODE="000007" CODE="0001" NO="01" PFNO="00"/>
+  <pfstatus_pfk CODE="000001" PFNO="00" FUNCODE="ENTER" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="BACK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="EXEC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="EXIT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="26" FUNCODE="CHECK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="03" FUNCODE="BACK" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="08" FUNCODE="EXEC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="11" FUNCODE="SAVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="12" FUNCODE="CANCEL" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="15" FUNCODE="EXIT" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="18" FUNCODE="SELECT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="19" FUNCODE="FROM" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="20" FUNCODE="WHERE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="26" FUNCODE="CHECK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="32" FUNCODE="EXEC_NO" FUNNO="001"/>
+  <pfstatus_pfk CODE="000003" PFNO="00" FUNCODE="ENTER" FUNNO="001"/>
+  <pfstatus_pfk CODE="000003" PFNO="12" FUNCODE="CANCEL" FUNNO="002"/>
+  <pfstatus_pfk CODE="000004" PFNO="00" FUNCODE="&amp;ONT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="01" FUNCODE="&amp;ELP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="02" FUNCODE="&amp;IC1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="05" FUNCODE="&amp;ALL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="06" FUNCODE="&amp;SAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="12" FUNCODE="&amp;AC1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="18" FUNCODE="&amp;CRB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="19" FUNCODE="&amp;CRE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="21" FUNCODE="P--" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="22" FUNCODE="P-" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="23" FUNCODE="P+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="24" FUNCODE="P++" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="26" FUNCODE="&amp;CRL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="27" FUNCODE="&amp;CRR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="28" FUNCODE="&amp;OUP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="29" FUNCODE="&amp;ILT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="30" FUNCODE="&amp;UMC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="32" FUNCODE="&amp;OL0" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="33" FUNCODE="&amp;OAD" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="34" FUNCODE="&amp;AVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="35" FUNCODE="&amp;XPA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="36" FUNCODE="&amp;ERW" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="37" FUNCODE="&amp;EB9" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="38" FUNCODE="&amp;ILD" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="39" FUNCODE="&amp;ETA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="40" FUNCODE="&amp;ODN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="42" FUNCODE="&amp;SUM" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="47" FUNCODE="&amp;OMP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="71" FUNCODE="%SC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="80" FUNCODE="P--" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="81" FUNCODE="P-" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="82" FUNCODE="P+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="83" FUNCODE="P++" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="84" FUNCODE="%SC+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="86" FUNCODE="&amp;RNT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000004" PFNO="94" FUNCODE="DEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000005" PFNO="00" FUNCODE="ENTER" FUNNO="001"/>
+  <pfstatus_pfk CODE="000005" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000006" PFNO="11" FUNCODE="SAVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000006" PFNO="12" FUNCODE="CANCEL" FUNNO="002"/>
+  <pfstatus_pfk CODE="000007" PFNO="00" FUNCODE="ENTER" FUNNO="001"/>
+  <pfstatus_pfk CODE="000007" PFNO="12" FUNCODE="CANCEL" FUNNO="002"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="CHECK"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="EXEC"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="EXEC_NO"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="FIELDS"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="FROM"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="MINE"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="OPEN"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="SAVE"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="SELECT"/>
+  <pfstatus_set STATUS="PF_0100" FUNCTION="WHERE"/>
+  <pfstatus_set STATUS="PF_0200" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="PF_0200" FUNCTION="ENTER"/>
+  <pfstatus_set STATUS="PF_0500" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="PF_0500" FUNCTION="ENTER"/>
+  <pfstatus_set STATUS="PF_0600" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="PF_0600" FUNCTION="SAVE"/>
+  <pfstatus_set STATUS="PF_0700" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="PF_0700" FUNCTION="ENTER"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="%CH"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="%PC"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="%SC"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="%SC+"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="%SL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;AC1"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ALL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;AVE"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;CRB"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;CRE"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;CRL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;CRR"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;EB3"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;EB9"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ELP"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ERW"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ETA"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;IC1"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ILD"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ILT"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;OAD"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ODN"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;OL0"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;OMP"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;ONT"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;OUP"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;RNT"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;SAL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;SUM"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;UMC"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="&amp;XPA"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BAC1"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEB1"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEB2"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEB9"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEBA"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEBB"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEBC"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEBD"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="BEBN"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="DEL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="DRUK"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="DSAL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="EXPA"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="GLIS"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="KOMP"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="P+"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="P++"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="P-"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="P--"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PF09"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PF13"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PIC1"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PICK"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PRI"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="PRNT"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="RW"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SALL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SCRB"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SCRE"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SCRL"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SCRR"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SODN"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SOUP"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="SUMC"/>
+  <pfstatus_set STATUS="PF_SALV_STATUS" FUNCTION="ZSUM"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="Tela inicial"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="P" INT_NOTE="Tela inicial"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="C" INT_NOTE="Tela inicial"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0002" MODAL="P" INT_NOTE="Status for Type Generator"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0003" MODAL="P" INT_NOTE="Performance Analyzer"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000002" MODAL="D" INT_NOTE="Tela inicial"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000002" SUB_CODE="0001" MODAL="D" INT_NOTE="Tela inicial"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000003" MODAL="P" INT_NOTE="Type Generator"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000003" SUB_CODE="0001" MODAL="P" INT_NOTE="Type Generator"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000004" MODAL="P" NORM="X" INT_NOTE="Standard Dialog Box"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000004" SUB_CODE="0001" MODAL="P" INT_NOTE="Standard Dialog Box"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000005" MODAL="P" INT_NOTE="Status for screen 500"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000005" SUB_CODE="0001" MODAL="P" INT_NOTE="Status for screen 500"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000006" MODAL="P" INT_NOTE="Status for screen 600"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000006" SUB_CODE="0001" MODAL="P" INT_NOTE="Status for screen 600"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000007" MODAL="P" INT_NOTE="Status for screen 700"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000007" SUB_CODE="0001" MODAL="P" INT_NOTE="Status for screen 700"/>
+  <pfstatus_tit CODE="TITLE_0100" TEXT="ZQUERY - Open SQL Editor"/>
+ </pfstatus>
+ <source>*/--------------------------------------------------------------------------------------\
+*|  &quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;       &quot;&quot;&quot;&quot;&quot;      &quot;&quot;&quot;&quot;    &quot;&quot;&quot;&quot;  &quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;  &quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;     &quot;&quot;&quot;&quot;&quot;   &quot;&quot;&quot;&quot;&quot;  |
+*|  &quot;         &quot;     &quot;       &quot;    &quot;  &quot;    &quot;  &quot;  &quot;         &quot;  &quot;        &quot;    &quot;   &quot; &quot;   &quot;   |
+*|  &quot;&quot;&quot;&quot;&quot;     &quot;    &quot;   &quot;&quot;&quot;   &quot;   &quot;  &quot;    &quot;  &quot;  &quot;    &quot;&quot;&quot;&quot;&quot;&quot;  &quot;   &quot; &quot;   &quot;    &quot;   &quot;   &quot;    |
+*|     &quot;     &quot;    &quot;   &quot;   &quot;   &quot;  &quot;  &quot;    &quot;  &quot;  &quot;    &quot;&quot;&quot;     &quot;   &quot; &quot;   &quot;     &quot;     &quot;     |
+*|    &quot;     &quot;     &quot;   &quot;   &quot;   &quot;  &quot;  &quot;    &quot;  &quot;  &quot;      &quot;     &quot;        &quot;       &quot;   &quot;      |
+*|   &quot;     &quot;      &quot;    &quot;&quot;&quot;    &quot;  &quot;  &quot;    &quot;  &quot;  &quot;    &quot;&quot;&quot;     &quot;   &quot;&quot;    &quot;      &quot;   &quot;      |
+*|  &quot;     &quot;&quot;&quot;&quot;&quot;    &quot;         &quot;   &quot;    &quot;&quot;    &quot;  &quot;    &quot;&quot;&quot;&quot;&quot;&quot;  &quot;   &quot; &quot;    &quot;     &quot;   &quot;      |
+*|  &quot;         &quot;     &quot;     &quot;   &quot;    &quot;       &quot;   &quot;         &quot;  &quot;   &quot;  &quot;    &quot;    &quot;   &quot;      |
+*|  &quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;       &quot;&quot;&quot;&quot;&quot; &quot;        &quot;&quot;&quot;&quot;&quot;     &quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;  &quot;&quot;&quot;&quot;&quot;   &quot;&quot;&quot;&quot;&quot;&quot;   &quot;&quot;&quot;&quot;&quot;      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*|   Welcome to the ZQUERY Open SQL Editor.                                             |
+*|                                                                                      |
+*|   This is an open source project that aims the SAP ABAP developers                   |
+*|   create your own queries without a need to create a test program.                   |
+*|   It provides the possibility to execute many queries at the same                    |
+*|   time and also generate a SELECT command, FROM command and even a                   |
+*|   WHERE command.                                                                     |
+*|                                                                                      |
+*|   Feel free to use and share!                                                        |
+*|                                                                                      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*|                                                                                      |
+*| This project is shared via Saplink: http://www.saplink.org                           |
+*|                                                                                      |
+*| You can find tutorials here:                                                         |
+*| http://zquery.wordpress.com/how-to-tutorials/                                        |
+*|                                                                                      |
+*| Let me know your opinion, suggestion, doubt, anything by here:                       |
+*| http://zquery.wordpress.com/contact/                                                 |
+*|                                                                                      |
+*\--------------------------------------------------------------------------------------/
+*/--------------------------------------------------------------------------------------\
+*| Developed by: Vinícius Rodrigues de Alcântara                                        |
+*\--------------------------------------------------------------------------------------/
+
+REPORT zquery.
+
+&quot;$. Region DATA
+TABLES: sscrfields.
+
+INTERFACE lif_screen    DEFERRED.
+CLASS lcl_query_element DEFINITION DEFERRED.
+CLASS lcl_query_agent   DEFINITION DEFERRED.
+CLASS lcl_field         DEFINITION DEFERRED.
+CLASS lcl_table         DEFINITION DEFERRED.
+CLASS lcl_screen        DEFINITION DEFERRED.
+CLASS lcl_screen_600    DEFINITION DEFERRED.
+CLASS lcl_join_fields   DEFINITION DEFERRED.
+
+TYPE-POOLS: gfw, vrm.
+
+TYPES: yt_query_elements TYPE TABLE OF REF TO lcl_query_element,
+       yt_t_fields       TYPE TABLE OF REF TO lcl_field,
+       yt_t_table        TYPE TABLE OF REF TO lcl_table,
+       yt_lines          TYPE TABLE OF tline,
+       yt_screen         TYPE TABLE OF REF TO lcl_screen,
+       yt_rsdstabs       TYPE TABLE OF rsdstabs,
+       yt_rsdsfields     TYPE TABLE OF rsdsfields,
+       yt_t_query_agent  TYPE TABLE OF REF TO lcl_query_agent,
+       yt_t_query        TYPE TABLE OF salv_wd_t_string,
+
+       BEGIN OF yt_analyzer,
+         analyzer_id   TYPE i,
+         start_runtime TYPE i,
+         end_runtime   TYPE i,
+       END OF yt_analyzer,
+       tyt_analyzer TYPE TABLE OF yt_analyzer,
+
+       BEGIN OF yt_analyzer_ids,
+         analyzer_id TYPE i,
+         description TYPE string,
+       END OF yt_analyzer_ids,
+
+       BEGIN OF yt_user_range,
+         sign   TYPE sign,
+         option TYPE option,
+         low    TYPE sy-uname,
+         high   TYPE sy-uname,
+       END OF yt_user_range,
+       tyt_user_range TYPE TABLE OF yt_user_range,
+
+       BEGIN OF yt_query,
+         check       TYPE c,
+         query       TYPE rsod_query,
+         user        TYPE xubname,
+         date        TYPE cdat,
+         t_cell_type TYPE salv_t_int4_column,
+       END OF yt_query,
+       tyt_query TYPE TABLE OF yt_query,
+
+       BEGIN OF ty_where_fields,
+         mark        TYPE c,
+         tabname     TYPE char30,
+         fieldname   TYPE char30,
+         description TYPE char40,
+         type        TYPE rsscr_type,
+         where_leng  TYPE rsdswhleng,
+         sign	       TYPE signflag,
+         decimals    TYPE rsdecimals,
+       END OF ty_where_fields,
+       tyt_where_fields TYPE TABLE OF ty_where_fields,
+
+       BEGIN OF ty_table_fields,
+         mark          TYPE boolean,
+         tabname       TYPE lvc_tname,
+         fieldname     TYPE lvc_fname,
+         descr         TYPE scrtext_l,
+         tab_alias     TYPE string,
+         field_alias   TYPE string,
+         sql_function  TYPE char128,
+         internal_type TYPE inttype,
+         style         TYPE lvc_t_styl,
+       END OF ty_table_fields,
+       tyt_table_fields TYPE TABLE OF ty_table_fields,
+
+       BEGIN OF ty_join_fields,
+         fortable             TYPE fortable,
+         forkey               TYPE forkey,
+         signal               TYPE char2,
+         checktable           TYPE checktable,
+         checkfield           TYPE fieldname,
+         dd_handle_forkey     TYPE int4,
+         dd_handle_checktable TYPE int4,
+         dd_handle_checkfield TYPE int4,
+         style                TYPE lvc_t_styl,
+       END OF ty_join_fields,
+       tyt_join_fields TYPE TABLE OF ty_join_fields,
+
+       BEGIN OF ty_join_table,
+         tabname     TYPE tabname,
+         alias       TYPE char10,
+         join_kind   TYPE char20,
+         icon        TYPE iconname,
+         join_fields TYPE REF TO lcl_join_fields,
+         style       TYPE lvc_t_styl,
+       END OF ty_join_table,
+       tyt_join_table TYPE TABLE OF ty_join_table,
+
+       BEGIN OF ty_handle,
+         tabname       TYPE string,
+         tab_handle    TYPE i,
+         fields_handle TYPE i,
+       END OF ty_handle.
+
+DATA: o_screen_100       TYPE REF TO lif_screen,
+      o_screen_200       TYPE REF TO lif_screen,
+      o_screen_300       TYPE REF TO lif_screen,
+      o_selection_screen TYPE REF TO lif_screen,
+      o_screen_500       TYPE REF TO lif_screen,
+      o_screen_600       TYPE REF TO lcl_screen_600,
+      o_screen_700       TYPE REF TO lif_screen,
+      v_select_type      TYPE char80,
+      v_tabname          TYPE dd02l-tabname,
+      v_tabalias         TYPE char30,
+      v_tabdescr         TYPE dd02t-ddtext,
+      v_create_where     TYPE xfeld,
+      v_create_select    TYPE xfeld,
+      l_screen           TYPE i.
+
+SELECTION-SCREEN: BEGIN OF SCREEN 0400.
+SELECT-OPTIONS s_user FOR sy-uname NO INTERVALS DEFAULT sy-uname.
+PARAMETERS p_qname TYPE thead-tdname.
+SELECTION-SCREEN: END OF SCREEN 0400.
+&quot;$. Endregion DATA
+
+INCLUDE zquery_class_definition.
+INCLUDE zquery_class_implementation.
+
+AT SELECTION-SCREEN.
+  l_screen = sy-dynnr.
+  TRY.
+      o_selection_screen ?= lcl_screen=&gt;get_instance( l_screen ).
+      o_selection_screen-&gt;user_command( sscrfields-ucomm ).
+    CATCH cx_root.                                       &quot;#EC NO_HANDLE
+  ENDTRY.
+
+START-OF-SELECTION.
+  o_screen_100 ?= lcl_screen=&gt;get_instance( 100 ).
+  o_screen_100-&gt;show( ).
+
+  &quot;$. Region PBO Modules
+*&amp;---------------------------------------------------------------------*
+*&amp; Module zm_status_0100 OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0100 OUTPUT.
+  o_screen_100-&gt;screen_status( ).
+ENDMODULE. &quot; zm_status_0100 OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp; Module zm_initialize_0100 OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0100 OUTPUT.
+  o_screen_100-&gt;initialize_screen( ).
+ENDMODULE. &quot; zm_initialize_0100 OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  zm_status_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0200 OUTPUT.
+  o_screen_200 ?= lcl_screen=&gt;get_instance( 200 ).
+  o_screen_200-&gt;screen_status( ).
+ENDMODULE.                 &quot; zm_status_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  zm_initialize_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0200 OUTPUT.
+  o_screen_200-&gt;initialize_screen( ).
+ENDMODULE.                 &quot; zm_initialize_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_STATUS_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0300 OUTPUT.
+  o_screen_300 ?= lcl_screen=&gt;get_instance( 300 ).
+  o_screen_300-&gt;screen_status( ).
+ENDMODULE.                 &quot; ZM_STATUS_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_INITIALIZE_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0300 OUTPUT.
+  o_screen_300-&gt;initialize_screen( ).
+ENDMODULE.                 &quot; ZM_INITIALIZE_0300  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_STATUS_0500  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0500 OUTPUT.
+  o_screen_500 ?= lcl_screen=&gt;get_instance( 500 ).
+  o_screen_500-&gt;screen_status( ).
+ENDMODULE.                 &quot; ZM_STATUS_0500  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_INITIALIZE_0500  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0500 OUTPUT.
+  o_screen_500-&gt;initialize_screen( ).
+ENDMODULE.                 &quot; ZM_INITIALIZE_0500  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_STATUS_0600  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0600 OUTPUT.
+  o_screen_600 ?= lcl_screen=&gt;get_instance( 600 ).
+  o_screen_600-&gt;screen_status( ).
+ENDMODULE.                 &quot; ZM_STATUS_0600  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_INITIALIZE_0600  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0600 OUTPUT.
+  o_screen_600-&gt;initialize_screen( ).
+ENDMODULE.                 &quot; ZM_INITIALIZE_0600  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_STATUS_0700  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_status_0700 OUTPUT.
+  o_screen_700 = lcl_screen=&gt;get_instance( 700 ).
+  o_screen_700-&gt;screen_status( ).
+ENDMODULE.                 &quot; ZM_STATUS_0700  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_INITIALIZE_0700  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_initialize_0700 OUTPUT.
+  o_screen_700-&gt;initialize_screen( ).
+ENDMODULE.                 &quot; ZM_INITIALIZE_0700  OUTPUT
+&quot;$. Endregion PBO Modules
+
+&quot;$. Region Modules PAI
+*&amp;---------------------------------------------------------------------*
+*&amp; Module zm_exit_command_0100 INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0100 INPUT.
+  o_screen_100-&gt;exit_command( sy-ucomm ).
+ENDMODULE. &quot; zm_exit_command_0100 INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp; Module zm_user_command_0100 INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0100 INPUT.
+  o_screen_100-&gt;user_command( sy-ucomm ).
+ENDMODULE. &quot; zm_user_command_0100 INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  zm_exit_command_0200  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0200 INPUT.
+  o_screen_200-&gt;exit_command( sy-ucomm ).
+ENDMODULE.                 &quot; zm_exit_command_0200  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  zm_user_command_0200  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0200 INPUT.
+  o_screen_200-&gt;user_command( sy-ucomm ).
+ENDMODULE.                 &quot; zm_user_command_0200  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_USER_COMMAND_0300  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0300 INPUT.
+  o_screen_300-&gt;user_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_USER_COMMAND_0300  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_EXIT_COMMAND_0300  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0300 INPUT.
+  o_screen_300-&gt;exit_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_EXIT_COMMAND_0300  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_USER_COMMAND_0500  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0500 INPUT.
+  o_screen_500-&gt;user_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_USER_COMMAND_0500  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_EXIT_COMMAND_0500  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0500 INPUT.
+  o_screen_500-&gt;exit_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_EXIT_COMMAND_0500  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_USER_COMMAND_0600  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0600 INPUT.
+  o_screen_600-&gt;user_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_USER_COMMAND_0600  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_EXIT_COMMAND_0600  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0600 INPUT.
+  o_screen_600-&gt;exit_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_EXIT_COMMAND_0600  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_TABLENAME  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_tablename INPUT.
+  o_screen_600-&gt;user_command( lcl_screen_600=&gt;c_tabname ).
+ENDMODULE.                 &quot; ZM_TABLENAME  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_TABLEALIAS  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_tablealias INPUT.
+  o_screen_600-&gt;user_command( lcl_screen_600=&gt;c_tabalias ).
+ENDMODULE.                 &quot; ZM_TABLEALIAS  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_USER_COMMAND_0700  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_user_command_0700 INPUT.
+  o_screen_700-&gt;user_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_USER_COMMAND_0700  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  ZM_EXIT_COMMAND_0700  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE zm_exit_command_0700 INPUT.
+  o_screen_700-&gt;exit_command( sy-ucomm ).
+ENDMODULE.                 &quot; ZM_EXIT_COMMAND_0700  INPUT
+&quot;$. Endregion Modules PAI</source>
+</PROG>

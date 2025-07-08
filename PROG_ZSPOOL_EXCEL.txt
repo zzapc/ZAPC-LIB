@@ -1,0 +1,271 @@
+************************************************************************
+* MÓDULO      : FI                                                     *
+* TIPO        : Listado                                                *
+* TITULO      : Generación fichero Excel
+* DESCRIPCION : Genera un fichero Excel a partir de una orden de spool
+*
+* AUTOR: Andres Picazo (Altimia)                FECHA: 30/06/2003      *
+* MODIFICACIONES                                                       *
+* --------------                                                       *
+* FECHA        NOMBRE              DESCRIPCION                         *
+* -------------------------------------------------------------------- *
+************************************************************************
+REPORT zbcut001
+      NO STANDARD PAGE HEADING
+      LINE-COUNT 065
+      LINE-SIZE 080.
+
+INCLUDE ole2incl.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+
+*------TABLAS INTERNAS-------------------------------------------------*
+DATA i_buffer(132) OCCURS 1000000 WITH HEADER LINE.
+DATA i_buff(132) OCCURS 65000 WITH HEADER LINE.
+DATA i_buff_2(132) OCCURS 65000.
+
+*------VARIABLES-------------------------------------------------------*
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME TITLE text-sel. "Pará
+PARAMETERS: p_spool LIKE tsp01-rqident OBLIGATORY.
+SELECTION-SCREEN END OF BLOCK blk_par.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_wor WITH FRAME TITLE text-wor.
+PARAMETERS: p_excel AS CHECKBOX DEFAULT 'X'.
+PARAMETERS: p_fexc LIKE rlgrap-filename DEFAULT 'C:\DIARIO.XLS'.
+SELECTION-SCREEN END OF BLOCK blk_wor.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_fic WITH FRAME TITLE text-fic.
+PARAMETERS: p_ctxt AS CHECKBOX DEFAULT ''.
+PARAMETERS: p_ftxt LIKE rlgrap-filename DEFAULT 'C:\DIARIO.TXT'.
+SELECTION-SCREEN END OF BLOCK blk_fic.
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_par2 WITH FRAME TITLE text-par.
+PARAMETERS: p_desde TYPE i DEFAULT 1,
+            p_hasta TYPE i DEFAULT 9999999,
+            p_bloque TYPE i DEFAULT 63000.
+SELECTION-SCREEN END OF BLOCK blk_par2.
+
+************************************************************************
+*
+*                  LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  DATA o_sgpi TYPE REF TO zcl_ap_sgpi.
+  CREATE OBJECT o_sgpi.
+  PERFORM leer_spool.
+
+  IF NOT p_ctxt IS INITIAL.
+    PERFORM graba_fichero.
+  ENDIF.
+
+  IF NOT p_excel IS INITIAL.
+    PERFORM lanza_excel.
+  ENDIF.
+
+************************************************************************
+*
+*                  FORMS ADICIONALES
+*
+************************************************************************
+*&---------------------------------------------------------------------*
+*&      Form  LEER_SPOOL
+*&---------------------------------------------------------------------*
+*       Lee la orden de spool en el buffer
+*----------------------------------------------------------------------*
+FORM leer_spool.
+
+  o_sgpi->texto( 'Leyendo orden de spool' ).
+  CALL FUNCTION 'RSPO_RETURN_ABAP_SPOOLJOB'
+    EXPORTING
+      rqident              = p_spool
+      first_line           = p_desde
+      last_line            = p_hasta
+      PAGES                = 'X'
+    TABLES
+      buffer               = i_buffer
+    EXCEPTIONS
+      no_such_job          = 1
+      not_abap_list        = 2
+      job_contains_no_data = 3
+      selection_empty      = 4
+      no_permission        = 5
+      can_not_access       = 6
+      read_error           = 7
+      OTHERS               = 8.
+
+  IF sy-subrc NE 0.
+    MESSAGE e398(00) WITH 'Error' sy-subrc
+                        'al leer la orden de spool' p_spool.
+  ENDIF.
+
+ENDFORM.                               " LEER_SPOOL
+
+*&---------------------------------------------------------------------*
+*&      Form  GRABA_FICHERO
+*&---------------------------------------------------------------------*
+*       Graba el contenido del spool a fichero de texto.
+*----------------------------------------------------------------------*
+FORM graba_fichero.
+
+  o_sgpi->texto( 'Grabando fichero de texto' ).
+  CALL FUNCTION 'WS_DOWNLOAD'
+       EXPORTING
+*         BIN_FILESIZE            = ' '
+*         CODEPAGE                = ' '
+            filename                = p_ftxt
+            filetype                = 'ASC'
+*         MODE                    = ' '
+*         WK1_N_FORMAT            = ' '
+*         WK1_N_SIZE              = ' '
+*         WK1_T_FORMAT            = ' '
+*         WK1_T_SIZE              = ' '
+*         COL_SELECT              = ' '
+*         COL_SELECTMASK          = ' '
+*         NO_AUTH_CHECK           = ' '
+*    IMPORTING
+*         FILELENGTH              =
+       TABLES
+            data_tab                = i_buffer
+*         FIELDNAMES              =
+       EXCEPTIONS
+            file_open_error         = 1
+            file_write_error        = 2
+            invalid_filesize        = 3
+            invalid_table_width     = 4
+            invalid_type            = 5
+            no_batch                = 6
+            unknown_error           = 7
+            gui_refuse_filetransfer = 8
+            OTHERS                  = 9.
+
+  IF sy-subrc NE 0.
+    MESSAGE e398(00) WITH 'Error' sy-subrc
+                        'al grabar el fichero' p_ftxt.
+  ENDIF.
+
+ENDFORM.                               " GRABA_FICHERO
+*&---------------------------------------------------------------------*
+*&      Form  LANZA_EXCEL
+*&---------------------------------------------------------------------*
+*       Excel
+*----------------------------------------------------------------------*
+FORM lanza_excel.
+  DATA: l_cont TYPE i, l_fin, l_hoja TYPE i, l_hojatxt(5).
+  DATA: excelapp TYPE ole2_object,
+        workbooks TYPE ole2_object,
+        selection TYPE ole2_object,
+        sheets TYPE ole2_object,
+        activesheet TYPE ole2_object.
+  DATA: oselection TYPE ole2_object,
+        ofont         TYPE ole2_object.
+
+  o_sgpi->get_filas_tabla( i_buffer[] ).
+  LOOP AT i_buffer.
+    o_sgpi->porcentaje( texto = 'Generando Excel' cantidad = p_bloque ).
+    AT FIRST.
+      l_hoja = 1.
+* Abre Excel
+      CREATE OBJECT excelapp 'excel.application'.
+      IF sy-subrc NE 0.
+        MESSAGE e398(00) WITH 'No se ha podido abrir Excel'.
+      ENDIF.
+* Lo pone en visible
+      SET PROPERTY OF excelapp 'Visible' = 1.
+* Cogemes el objeto documento
+      CALL METHOD OF excelapp 'WorkBooks' = workbooks.
+      CALL METHOD OF workbooks 'Add'.
+    ENDAT.
+
+    ADD 1 TO l_cont.
+    AT LAST.
+      l_cont = p_bloque.
+      l_fin = 'X'.
+    ENDAT.
+    APPEND i_buffer TO i_buff.
+    IF l_cont = p_bloque.
+      CLEAR l_cont.
+
+* Copia el contenido del buffer en el portapeles
+*      CALL FUNCTION 'CLPB_EXPORT'
+*           TABLES
+*                DATA_TAB   = I_BUFF
+*           EXCEPTIONS
+*                CLPB_ERROR = 1
+*                OTHERS     = 2.
+      DATA l_rc TYPE i.
+      i_buff_2 = i_buff[].
+      CALL METHOD cl_gui_frontend_services=>clipboard_export
+        IMPORTING
+          data = i_buff_2
+        CHANGING
+          rc   = l_rc.
+
+      REFRESH i_buff.
+
+* Si es una hoja de las ya existentes selecciona la que toque
+      IF l_hoja <= 3.
+        CASE l_hoja.
+          WHEN 1.
+            CALL METHOD OF excelapp 'Sheets' = sheets EXPORTING #1 = 'Hoja1'.
+          WHEN 2.
+            CALL METHOD OF excelapp 'Sheets' = sheets EXPORTING #1 = 'Hoja2'.
+          WHEN 3.
+            CALL METHOD OF excelapp 'Sheets' = sheets EXPORTING #1 = 'Hoja3'.
+        ENDCASE.
+        CALL METHOD OF sheets 'Select'.
+      ELSE.
+* Si no, crea una nueva
+        CALL METHOD OF excelapp 'Sheets' = sheets.
+        CALL METHOD OF sheets 'Add'.
+      ENDIF.
+* Pega el trozo seleccionado
+      ADD 1 TO l_hoja.
+      CALL METHOD OF excelapp 'ActiveSheet' = activesheet.
+      CALL METHOD OF activesheet 'Paste'.
+      IF sy-subrc NE 0.
+        MESSAGE e398(00) WITH 'Error al pegar contenido del portapapeles'.
+      ENDIF.
+
+* Formateamos lo que acabamos de pegar
+      CALL METHOD OF excelapp 'Selection' = oselection.
+      IF sy-subrc NE 0.
+        MESSAGE e398(00) WITH 'oselection'.
+      ENDIF.
+      SET PROPERTY OF oselection 'NumberFormat' = '@'.
+      CALL METHOD OF oselection 'Font' = ofont.
+      SET PROPERTY OF ofont 'Name' = 'Courier New'.
+      SET PROPERTY OF ofont 'Size' = '8'.
+      CALL METHOD OF oselection 'Columns' = ofont.
+      CALL METHOD OF ofont 'AutoFit'.
+      IF sy-subrc NE 0.
+        MESSAGE e398(00) WITH 'ofont'.
+      ENDIF.
+
+      IF l_fin = 'X'.
+* Graba el fichero
+        CALL METHOD OF excelapp 'ActiveWorkbook' = workbooks.
+        CALL METHOD OF workbooks 'SaveAs' EXPORTING #1 = p_fexc.
+        IF sy-subrc NE 0.
+          MESSAGE e398(00) WITH 'Error al grabar el nuevo documento'.
+        ENDIF.
+* Cierra Word
+        CALL METHOD OF excelapp 'Quit'.
+        IF sy-subrc NE 0.
+          MESSAGE e398(00) WITH 'Error al cerrar Excel'.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.                               " LANZA_EXCEL

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSTATUS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Programa status genéricos" LENGTH="25 "/>
+  </language>
+ </textPool>
+ <dynpros>
+  <dynpro PROG="ZSTATUS" DNUM="0100" TYPE="M" FNUM="0100" BZMX="0 " BZBR="0 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="120 " VALP="0 " CUAN="G" SPRA="S" DGEN="20160321" TGEN="172140" DTEXT="MODAL OK CANCEL">
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0100.
+*
+PROCESS AFTER INPUT.
+* MODULE USER_COMMAND_0100.</dynproflowsource>
+  </dynpro>
+ </dynpros>
+ <pfstatus>
+  <pfstatus_sta CODE="OK_CANCEL" MODAL="P" PFKCODE="000001" BUTCODE="0001" INT_NOTE="Modal OK / CANCEL"/>
+  <pfstatus_fun CODE="CANCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar"/>
+  <pfstatus_fun CODE="OK" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OKAY" ICON_ID="@0V@" FUN_TEXT="OK" INFO_TEXT="Aceptar"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="12"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="OK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+  <pfstatus_set STATUS="OK_CANCEL" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="OK_CANCEL" FUNCTION="OK"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="P" INT_NOTE="Modal OK / CANCEL"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="P" INT_NOTE="Modal OK / CANCEL"/>
+ </pfstatus>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  ZSTATUS
+*&amp;
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;
+*&amp;---------------------------------------------------------------------*
+
+REPORT  ZSTATUS.
+
+START-OF-SELECTION.
+
+  call SCREEN 0100 STARTING AT 1 1 ENDING AT 80 10.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+module STATUS_0100 output.
+  SET PF-STATUS &apos;OK_CANCEL&apos;.
+*  SET TITLEBAR &apos;xxx&apos;.
+
+endmodule.                 &quot; STATUS_0100  OUTPUT</source>
+</PROG>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_FIX_DEVC" VARCL="X" SUBC="1" RMAND="600" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Corrige asignación de paquetes" LENGTH="30 "/>
+   <textElement ID="S" KEY="P_AUTOR" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="P_CLI" ENTRY="        Clientes tras copia" LENGTH="27 "/>
+   <textElement ID="S" KEY="P_CT" ENTRY="        Corrige paquetes" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_DEVCL" ENTRY="D       ." LENGTH="23 "/>
+   <textElement ID="S" KEY="P_FILE" ENTRY="        Fichero" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_G" ENTRY="        Graba asignación" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_P" ENTRY="        Carga asignación" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_SYSID" ENTRY="D       ." LENGTH="34 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report ZAP_FIX_DEVC
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT zap_fix_devc.
+
+TABLES: tdevc, tadir.
+
+DATA: BEGIN OF i_p OCCURS 0,
+        pgmid    TYPE tadir-pgmid,
+        object   TYPE tadir-object,
+        obj_name TYPE tadir-obj_name,
+        devclass TYPE tadir-devclass,
+      END OF i_p.
+
+PARAMETERS: p_sysid LIKE sy-sysid DEFAULT sy-sysid OBLIGATORY,
+            p_autor LIKE sy-uname DEFAULT &apos;APC&apos; OBLIGATORY,
+            p_devcl LIKE tdevc-pdevclass OBLIGATORY,
+            p_file  LIKE t001-butxt DEFAULT &apos;D:\P.CSV&apos;.
+
+PARAMETERS: p_ct  RADIOBUTTON GROUP g,
+            p_p   RADIOBUTTON GROUP g,
+            p_g   RADIOBUTTON GROUP g,
+            p_cli RADIOBUTTON GROUP g.
+
+INITIALIZATION.
+
+
+  CASE sy-sysid.
+    WHEN &apos;EIN&apos;. p_devcl = &apos;ZEIN&apos;.
+    WHEN &apos;QAS&apos;. p_devcl = &apos;SAP&apos;.
+    WHEN &apos;GFT&apos;. p_devcl = &apos;ZGFT&apos;.
+    WHEN &apos;YWD&apos;. p_devcl = &apos;ZYWD&apos;.
+  ENDCASE.
+
+START-OF-SELECTION.
+
+  IF p_ct = &apos;X&apos;.
+    PERFORM corrige_paquetes.
+  ELSEIF p_g = &apos;X&apos;.
+    PERFORM graba_fichero_asign.
+  ELSEIF p_p = &apos;X&apos;.
+    PERFORM carga_fichero_asign.
+  ELSEIF p_cli = &apos;X&apos;.
+
+    IF sy-sysid = &apos;QAS&apos;.
+      UPDATE tadir
+         SET srcsystem = sy-sysid
+       WHERE obj_name LIKE &apos;Z%&apos;
+         AND srcsystem IN (&apos;EIN&apos;, &apos;ELO&apos;, &apos;FGV&apos;, &apos;ERD&apos;, &apos;TOR&apos; ).
+
+      UPDATE tdevc
+         SET pdevclass = p_devcl
+       WHERE devclass LIKE &apos;Z%&apos;
+         AND devclass LIKE &apos;Y%&apos;
+         AND pdevclass IN (&apos;ZEIN&apos;, &apos;ZTOR&apos;, &apos;ZELO&apos;, &apos;ZQAS&apos;, &apos;ZFGV&apos; ).
+    ENDIF.
+  ENDIF.
+
+FORM corrige_paquetes.
+
+  SELECT devclass FROM tdevc                            &quot;#EC CI_GENBUFF
+    INTO TABLE @DATA(i_tdevc)
+     WHERE devclass LIKE &apos;ZAPC%&apos;
+       AND devclass NE &apos;ZAPCMD&apos;.
+
+  LOOP AT i_tdevc ASSIGNING FIELD-SYMBOL(&lt;tdevc&gt;).
+    tdevc-devclass = &lt;tdevc&gt;-devclass.
+    tdevc-devclass(1) = &apos;Y&apos;.
+    UPDATE tdevc
+       SET devclass = tdevc-devclass
+   WHERE devclass = &lt;tdevc&gt;-devclass.
+  ENDLOOP.
+
+  UPDATE tdevc
+     SET parentcl = &apos;YAPC&apos;
+   WHERE parentcl = &apos;ZAPC&apos;.
+
+  __data_set_vart tadir.
+  SELECT obj_name FROM tadir                            &quot;#EC CI_GENBUFF
+    INTO CORRESPONDING FIELDS OF TABLE i_tadir
+   WHERE pgmid  = &apos;R3TR&apos;
+     AND object = &apos;DEVC&apos;
+     AND obj_name LIKE &apos;ZAPC%&apos;
+     AND obj_name NE &apos;ZAPCMD&apos;.
+
+  LOOP AT i_tadir ASSIGNING &lt;tadir&gt;.
+    tadir-obj_name = &lt;tadir&gt;-obj_name.
+    tadir-obj_name(1) = &apos;Y&apos;.
+    UPDATE tadir
+       SET obj_name = tadir-obj_name
+   WHERE pgmid  = &apos;R3TR&apos;
+     AND object = &apos;DEVC&apos;
+     AND obj_name = &lt;tadir&gt;-obj_name.
+
+
+    UPDATE tadir
+       SET devclass = tadir-obj_name
+   WHERE pgmid  = &apos;R3TR&apos;
+     AND obj_name LIKE &apos;Z%&apos;
+     AND devclass = &lt;tadir&gt;-obj_name.
+
+  ENDLOOP.
+
+
+*  UPDATE tadir
+*     SET srcsystem = p_sysid
+*         author    = p_autor
+*   WHERE pgmid  = &apos;R3TR&apos;
+*     AND object = &apos;DEVC&apos;
+*     AND obj_name LIKE &apos;YAPC%&apos;.
+
+  UPDATE tdevc
+     SET pdevclass = p_devcl
+         created_by = p_autor
+         changed_by = p_autor
+   WHERE devclass LIKE &apos;YAPC%&apos;.
+
+  UPDATE tadir
+     SET srcsystem = p_sysid
+         author    = p_autor
+   WHERE pgmid  = &apos;R3TR&apos;
+     AND obj_name LIKE &apos;Z%&apos;
+     AND devclass LIKE &apos;YAPC%&apos;
+     AND srcsystem NE p_sysid.
+
+*  UPDATE tadir
+*   SET devclass = &apos;YAPC_BASE&apos;
+* WHERE pgmid  = &apos;R3TR&apos;
+*   AND obj_name LIKE &apos;Z%&apos;
+*   AND devclass = &apos;YAPC&apos;.
+
+ENDFORM.
+
+FORM graba_fichero_asign .
+
+  SELECT * FROM tadir                                   &quot;#EC CI_GENBUFF
+    INTO CORRESPONDING FIELDS OF TABLE i_p
+   WHERE pgmid  = &apos;R3TR&apos;
+     AND devclass LIKE &apos;YAPC%&apos;
+     AND devclass NE &apos;YAPCMD&apos;.
+
+  zcl_ap_ficheros=&gt;grabar( EXPORTING fichero = p_file tipo = &apos;DAT&apos; CHANGING tabla = i_p[] ).
+
+ENDFORM.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  CARGA_FICHERO_ASIGN
+*&amp;---------------------------------------------------------------------*
+FORM carga_fichero_asign .
+
+  zcl_ap_ficheros=&gt;leer( EXPORTING fichero = p_file tipo = &apos;DAT&apos; CHANGING tabla = i_p[] ).
+
+  LOOP AT i_p.
+    SELECT SINGLE * FROM tadir
+     WHERE pgmid     = i_p-pgmid
+       AND object    = i_p-object
+       AND obj_name  = i_p-obj_name.
+    IF sy-subrc = 0.
+      IF tadir-devclass NE i_p-devclass.
+        SELECT SINGLE * FROM tdevc
+         WHERE devclass = i_p-devclass.
+        IF sy-subrc NE 0.
+          SELECT SINGLE * FROM tdevc
+           WHERE devclass = &apos;YAPC_BASE&apos;.
+          IF sy-subrc = 0.
+            tdevc-devclass = i_p-devclass.
+            INSERT tdevc.
+          ENDIF.
+        ENDIF.
+
+        UPDATE tadir
+           SET devclass  = i_p-devclass
+         WHERE pgmid     = i_p-pgmid
+           AND object    = i_p-object
+           AND obj_name  = i_p-obj_name.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.</source>
+</PROG>

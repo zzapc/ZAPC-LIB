@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_NECESIDAD" VERSION="1" LANGU="S" DESCRIPT="Necesidades" UUID="E43CB57E2E0F97F1AEFD005056860029" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <publicSection>class ZCL_AP_NECESIDAD definition
+  public
+  create public .
+
+*&quot;* public components of class ZCL_AP_NECESIDAD
+*&quot;* do not include other source files here!!!
+public section.
+
+  class-methods VISUALIZAR
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !FINI type BEGDA default SY-DATUM
+      !FFIN type ENDDA default &apos;99991231&apos;
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos; .
+  type-pools ABAP .
+  class-methods MODIFICAR_SIMPLE
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos;
+      !PERXX type ANY optional
+      !VERVS type VERVS default &apos;X&apos;
+      !DELETE_OLD type ABAP_BOOL default &apos;&apos;
+      !PLNMG type PBED-PLNMG
+      !PDATU type PBED-PDATU
+      !DATE_TYPE type PBED-ENTLI optional
+    returning
+      value(MESSAGE) type BAPIRETURN1-MESSAGE .
+  class-methods GET_VALOR
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos;
+      !FECHA type BEGDA optional
+      !PERXX type ANY optional
+      !VERVS type VERVS default &apos;X&apos;
+    returning
+      value(VALOR) type PBED-PLNMG .
+  class-methods GET_PBDNR
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos;
+      !FECHA type BEGDA optional
+      !PERXX type ANY optional
+      !VERVS type VERVS default &apos;X&apos;
+    returning
+      value(PBDNR) type PBIM-PBDNR .
+  class-methods GET_DATOS
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos;
+      !FECHA type BEGDA optional
+      !PERXX type PBED-PERXX optional
+      !VERVS type VERVS default &apos;X&apos;
+    changing
+      value(I_SCHED) type TABLE .
+  class-methods GET_PBED
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D
+      !BEDAE type PBIM-BEDAE default &apos;&apos;
+      !VERSB type PBIM-VERSB default &apos;00&apos;
+      !FECHA type BEGDA optional
+      !PERXX type ANY optional
+      !VERVS type VERVS default &apos;X&apos;
+    returning
+      value(PBED) type PBED .</publicSection>
+ <protectedSection>*&quot;* protected components of class ZCL_AP_NECESIDAD
+*&quot;* do not include other source files here!!!
+protected section.</protectedSection>
+ <privateSection>*&quot;* private components of class ZCL_AP_NECESIDAD
+*&quot;* do not include other source files here!!!
+private section.</privateSection>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes
+
+types: t_sched type table of BAPISITMEO.</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_NECESIDAD" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" VERSION="1" LANGU="S" DESCRIPT="Recupera valor" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="PERXX" VERSION="1" LANGU="S" DESCRIPT="Período de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBED-PERXX" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="VERVS" VERSION="1" LANGU="S" DESCRIPT="Indicador de versión activa" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VERVS" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_DATOS" SCONAME="I_SCHED" VERSION="1" LANGU="S" DESCRIPT="Cantidad plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_datos.
+  DATA: l_pbdnr TYPE pbim-pbdnr,
+        i_return TYPE TABLE OF bapireturn1,
+        l_return TYPE bapireturn1.
+
+  l_pbdnr = get_pbdnr( matnr = matnr werks = werks bedae = bedae versb = versb vervs = vervs ).
+  IF NOT l_pbdnr IS INITIAL.
+    CLEAR i_sched.
+
+    CALL FUNCTION &apos;BAPI_REQUIREMENTS_GETDETAIL&apos;
+      EXPORTING
+        material         = matnr
+        plant            = werks
+        requirementstype = bedae
+        version          = versb
+        reqmtsplannumber = l_pbdnr
+      TABLES
+        requirements_out = i_sched
+        return           = i_return.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" VERSION="1" LANGU="S" DESCRIPT="Recupera valor" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="PERXX" VERSION="1" LANGU="S" DESCRIPT="Período de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="VERVS" VERSION="1" LANGU="S" DESCRIPT="Indicador de versión activa" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VERVS" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBDNR" SCONAME="PBDNR" VERSION="1" LANGU="S" DESCRIPT="Cantidad plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PBIM-PBDNR"/>
+  <source>METHOD GET_PBDNR.
+
+  IF NOT perxx IS INITIAL.
+    SELECT SINGLE pbdnr FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO pbdnr
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND perxx = perxx
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ELSEif not fecha is initial.
+    SELECT SINGLE pbdnr FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO pbdnr
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND pdatu = fecha
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  else.
+    SELECT SINGLE pbdnr FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO pbdnr
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" VERSION="1" LANGU="S" DESCRIPT="Recupera valor" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="PERXX" VERSION="1" LANGU="S" DESCRIPT="Período de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="VERVS" VERSION="1" LANGU="S" DESCRIPT="Indicador de versión activa" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VERVS" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_PBED" SCONAME="PBED" VERSION="1" LANGU="S" DESCRIPT="Cantidad plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PBED"/>
+  <source>METHOD GET_PBED.
+
+  IF NOT perxx IS INITIAL.
+    SELECT SINGLE * FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO CORRESPONDING FIELDS OF PBED
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND perxx = perxx
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ELSE.
+    SELECT SINGLE * FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO CORRESPONDING FIELDS OF PBED
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND pdatu = fecha
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Recupera valor" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="PERXX" VERSION="1" LANGU="S" DESCRIPT="Período de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="VERVS" VERSION="1" LANGU="S" DESCRIPT="Indicador de versión activa" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VERVS" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Cantidad plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PBED-PLNMG"/>
+  <source>METHOD get_valor.
+
+  IF NOT perxx IS INITIAL.
+    SELECT SINGLE plnmg FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO valor
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND perxx = perxx
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ELSE.
+    SELECT SINGLE plnmg FROM  pbim JOIN pbed ON pbim~bdzei = pbed~bdzei
+      INTO valor
+     WHERE matnr = matnr
+       AND werks = werks
+       AND bedae = bedae
+       AND versb = versb
+       AND vervs = vervs
+       AND pdatu = fecha
+       AND pbim~loevr = &apos;&apos;
+       AND pbed~loevr = &apos;&apos;.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Modifica necesidad individual" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="PERXX" VERSION="1" LANGU="S" DESCRIPT="Período de planificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="VERVS" VERSION="1" LANGU="S" DESCRIPT="Indicador de versión activa" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VERVS" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="DELETE_OLD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="PLNMG" VERSION="1" LANGU="S" DESCRIPT="Cantidad plan" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBED-PLNMG"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="PDATU" VERSION="1" LANGU="S" DESCRIPT="Fecha de entrega/fin-orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBED-PDATU"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="DATE_TYPE" VERSION="1" LANGU="S" DESCRIPT="Tipo de fecha (día, semana, mes, intervalo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBED-ENTLI" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="MODIFICAR_SIMPLE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD modificar_simple.
+  DATA: i_sched TYPE TABLE OF bapisshdin,
+        l_sched TYPE bapisshdin,
+        i_return TYPE TABLE OF bapireturn1,
+        l_return TYPE bapireturn1,
+        l_pbed TYPE pbed,
+        l_pbdnr TYPE pbim-pbdnr.
+
+  l_pbdnr = get_pbdnr( matnr = matnr werks = werks bedae = bedae versb = versb vervs = vervs perxx = perxx ).
+*  IF l_pbed IS INITIAL.
+*    message = &apos;No existe planificación&apos;.
+*  ELSE.
+  l_pbed = get_pbed( matnr = matnr werks = werks bedae = bedae versb = versb vervs = vervs perxx = perxx ).
+  IF l_pbed-plnmg = plnmg.
+* Como no hay cambios, no hacemos nada
+    EXIT.
+  ENDIF.
+
+  CLEAR l_sched.
+
+  IF NOT perxx IS INITIAL.
+    IF date_type IS INITIAL.
+      l_sched-date_type = l_pbed-entli.
+    ELSE.
+      l_sched-date_type = date_type.
+    ENDIF.
+    l_sched-req_date  = pdatu.
+    l_sched-req_qty   = plnmg.
+    IF l_pbed-meins IS INITIAL.
+      l_sched-unit      = zcl_material=&gt;get_unidad_base( matnr ).
+    ELSE.
+      l_sched-unit      = l_pbed-meins.
+    ENDIF.
+    APPEND l_sched TO i_sched.
+  ENDIF.
+
+  CALL FUNCTION &apos;BAPI_REQUIREMENTS_CHANGE&apos;
+    EXPORTING
+      material                 = matnr
+      plant                    = werks
+      requirementstype         = bedae
+      version                  = versb
+      vers_activ               = vervs
+      reqmtsplannumber         = l_pbdnr
+      delete_old               = delete_old
+    TABLES
+      requirements_schedule_in = i_sched
+      return                   = i_return.
+
+  READ TABLE i_return INTO l_return WITH KEY type = &apos;E&apos;.
+  IF sy-subrc = 0.
+    message = l_return-message.
+  ELSE.
+    zcl_ap_dev=&gt;commit( ).
+  ENDIF.
+*  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar necesidades" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="FINI" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="FFIN" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="&apos;99991231&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="BEDAE" VERSION="1" LANGU="S" DESCRIPT="Clase de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-BEDAE" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_NECESIDAD" CMPNAME="VISUALIZAR" SCONAME="VERSB" VERSION="1" LANGU="S" DESCRIPT="Número de versión de necesidad primaria" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PBIM-VERSB" PARVALUE="&apos;00&apos;" PAROPTIONL="X"/>
+  <source>method VISUALIZAR.
+
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+  CREATE OBJECT o_bi.
+
+  o_bi-&gt;inicio( ).
+
+* Pantalla inicial Crear neces. prim. plan.
+  o_bi-&gt;dynpro( program = &apos;SAPMM60X&apos; dynpro = &apos;0105&apos;).
+  o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos;).
+  o_bi-&gt;campos( campo = &apos;AM60X-MATAW&apos; valor = &apos;X&apos;). &quot; Seleccionar material
+  o_bi-&gt;campos( campo = &apos;AM60X-MATNR&apos; valor = matnr ). &quot; Número de material
+  o_bi-&gt;campos( campo = &apos;AM60X-PRGRP&apos; valor = &apos;&apos;). &quot; Nombre del grupo de productos
+  o_bi-&gt;campos( campo = &apos;AM60X-WERKS&apos; valor = werks ). &quot; Centro
+  o_bi-&gt;campos( campo = &apos;RM60X-BEDAE&apos; valor = BEDAE ). &quot; Clase de necesidad
+  o_bi-&gt;campos( campo = &apos;AM60X-VERAW&apos; valor = &apos;X&apos;). &quot; Visualizar/modificar indicador-selección para nec.primarias
+  o_bi-&gt;campos( campo = &apos;RM60X-VERSB&apos; valor = VERSB ). &quot; Número de versión de necesidad primaria
+  o_bi-&gt;campos( campo = &apos;RM60X-DATVE&apos; valor = fini ). &quot; Inicio del período de observación
+  o_bi-&gt;campos( campo = &apos;RM60X-DATBE&apos; valor = ffin ). &quot; Fin del período de observación
+
+  o_bi-&gt;llamar_transaccion( tcode = &apos;MD63&apos; modo = &apos;E&apos;).
+
+endmethod.</source>
+ </method>
+</CLAS>

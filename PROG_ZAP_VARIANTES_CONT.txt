@@ -1,0 +1,240 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado contenido de variantes
+* DESCRIPCION : Listado contenido de variantes
+*
+* AUTOR: Andrés Picazo                                FECHA: 29/06/2022
+*
+***********************************************************************
+REPORT ZAP_VARIANTES_CONT.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: visualizar_objeto REDEFINITION.
+ENDCLASS.                    "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             report  TYPE vari-report,
+             variant TYPE vari-variant,
+             relid   TYPE vari-relid,
+             selname TYPE rsparams-selname,
+             kind    TYPE rsparams-kind,
+             sign    TYPE rsparams-sign,
+             option  TYPE rsparams-option,
+             low     TYPE rsparams-low,
+             high    TYPE rsparams-high,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv.                    "#EC NEEDED
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog   TYPE REF TO zcl_report,
+      rsparams TYPE rsparams.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_report FOR vari-report OBLIGATORY,
+                s_varian FOR vari-variant,
+                s_relid  FOR vari-relid DEFAULT 'VA',
+                s_param  FOR rsparams-selname.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_nojob AS CHECKBOX DEFAULT 'X'.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+
+  METHOD visualizar_objeto.
+    DATA l_list TYPE o_prog->t_listado.
+    l_list = list.
+    CASE column.
+*      WHEN 'BUKRS'.
+*        MESSAGE l_list-bukrs TYPE 'I'.
+      WHEN OTHERS. message = 'No implementado'.
+    ENDCASE.
+  ENDMETHOD. "handle_double_click
+
+
+  METHOD handle_user_command.
+    check_ucomm_sel = 'F01'.
+
+    super->handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN 'F01'.
+        LOOP AT o_prog->i_listado ASSIGNING FIELD-SYMBOL(<listado>) WHERE check = 'X'.
+* TO DO!
+        ENDLOOP.
+        IF sy-subrc = 0.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+    DATA l_listado TYPE t_listado.
+    sgpi_texto( 'Seleccionando datos'(sda) ).
+    SELECT relid, report, variant FROM vari
+      INTO TABLE @DATA(i_vari)
+     WHERE relid IN @s_relid
+       AND report IN @s_report
+       AND variant IN @s_varian
+     ORDER BY PRIMARY KEY.
+
+    DELETE ADJACENT DUPLICATES FROM i_vari COMPARING report variant.
+    IF p_nojob = 'X'.
+      DELETE i_vari WHERE variant(1) = '&'.
+    ENDIF.
+
+    DATA(o_var) = NEW zcl_ap_variante( ).
+
+
+    o_prog->o_sgpi->get_filas_tabla( i_vari[] ).
+    LOOP AT i_vari ASSIGNING FIELD-SYMBOL(<vari>).
+      sgpi_texto( texto1 = 'Procesando datos'(pda) cant_porc = 100 ).
+      o_var->get_contenidos( report  = <vari>-report variant = <vari>-variant ).
+
+      CLEAR l_listado.
+      MOVE-CORRESPONDING <vari> TO l_listado.
+      LOOP AT o_var->i_valores ASSIGNING FIELD-SYMBOL(<valores>) WHERE selname IN s_param.
+        MOVE-CORRESPONDING <valores> TO l_listado.
+        APPEND l_listado TO i_listado.
+      ENDLOOP.
+    ENDLOOP.
+
+    SORT i_listado.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe'(gin) ).
+
+    o_alv->add_button( button = 'F01' text = 'Excel'  icon = icon_xls ucomm = 'EXCEL' ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_top_of_page(
+                      i_param = VALUE #( ( tipo = 'R' param = 'S_REPORT' texto = 'Report' )
+                                         ( tipo = 'R' param = 'S_VARIAN' texto = 'Variante' )
+                                         ( tipo = 'R' param = 'S_PARAM' texto = 'Parámetro' ) ) ).
+
+    o_alv->set_field( campo = 'REPORT,VARIANT' op = 'KEY' ).
+    o_alv->set_field_quitar( 'CHECK' ).
+    o_alv->set_field_noout( 'RELID' ).
+    o_alv->set_field_text( campo = 'HIGH' valor = 'V.Hasta' valor2 = 'Valor hasta' ).
+
+
+    o_alv->set_orden( 'REPORT,VARIANT,SELNAME' ).
+    o_alv->get_datos_layout( EXPORTING reordenar_tabla = 'X' tabla_ref = 'X' CHANGING t_tabla = i_listado ).
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = 'INICIO_DYN'
+                  status_prog  = 'ZAP_STATUS'
+                  no_param     = 'X'
+                  guardar_logz = '' ).
+
+  PERFORM add_button IN PROGRAM zap_status USING 'M01' 'Log'(log) '' ''.
+
+  o_prog->o_alv =  NEW #( status             = 'STANDARD_ALV_DYN'
+                          status_prog        = 'ZAP_STATUS'
+                          top_of_page_auto   = 'X'
+                          top_of_page_titulo = 'X'
+                          o_dev              = o_prog ).
+
+
+  p_vari = o_prog->o_alv->get_default_layout( ).
+
+  o_prog->initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN OUTPUT.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog->o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN 'ONLI'.
+      o_prog->validar_seleccion_obligatoria( campos_or = '*' msgty = 'W' ).
+    WHEN OTHERS.
+      o_prog->at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

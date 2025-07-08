@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZEDIT" VARCL="X" SUBC="1" RMAND="600" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="Editor" LENGTH="6 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="EDitor" LENGTH="6 "/>
+   <textElement ID="S" KEY="PROGRAMM" ENTRY="D       ." LENGTH="16 "/>
+  </language>
+ </textPool>
+ <source>*---------------------------------------------------------------------*
+* Programa para editar cualquier report, sin control de SAP           *
+* ¡Se cuidadoso utilizándolo!                                         *
+*---------------------------------------------------------------------*
+* http://www.sap4.com                                                 *
+*---------------------------------------------------------------------*
+REPORT zeditor MESSAGE-ID 0k NO STANDARD PAGE HEADING.
+
+TABLES: trdir, ztemp.
+
+DATA: content(255)     OCCURS 0 WITH HEADER LINE, msg(400), answer,
+      content_ini(255) OCCURS 0 WITH HEADER LINE.
+
+PARAMETERS: programm LIKE rs38m-programm.
+
+PARAMETERS: clase   LIKE seoclass-clsname,
+            metodo  LIKE rs38m-programm, &quot;seocpdkey-cpdname,
+            funcion LIKE tfdir-funcname.
+SELECTION-SCREEN SKIP.
+PARAMETERS rfc AS CHECKBOX.
+
+AT SELECTION-SCREEN.
+
+  IF NOT clase IS INITIAL.
+    DATA: l_mtdkey TYPE seocpdkey.
+
+    l_mtdkey-clsname = clase.
+    l_mtdkey-cpdname = metodo.
+    CALL FUNCTION &apos;SEO_METHOD_GET_SOURCE&apos;
+      EXPORTING
+        mtdkey                        = l_mtdkey
+*       STATE                         =
+      IMPORTING
+        incname                       = programm
+      EXCEPTIONS
+        _internal_method_not_existing = 1
+        _internal_class_not_existing  = 2
+        version_not_existing          = 3
+        inactive_new                  = 4
+        inactive_deleted              = 5
+        OTHERS                        = 6.
+
+    IF metodo IS INITIAL.
+      programm+30 = &apos;CP&apos;.
+    ENDIF.
+
+  ELSEIF NOT funcion IS INITIAL.
+    DATA tfdir TYPE tfdir.
+    SELECT SINGLE * FROM tfdir
+     WHERE funcname = funcion.
+    IF sy-subrc = 0.
+      CONCATENATE tfdir-pname+3 &apos;U&apos; tfdir-include INTO programm.
+    ENDIF.
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR programm.
+  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z.
+
+  CREATE OBJECT o_popup
+    EXPORTING
+      tabname = &apos;ZTEMP&apos;.
+
+  o_popup-&gt;add_field( field = &apos;TEXTO&apos; selectflag = &apos;X&apos; ).
+  o_popup-&gt;add_field( &apos;VALOR1&apos; ).
+  o_popup-&gt;add_field( &apos;VALOR2&apos; ).
+  o_popup-&gt;add_field( &apos;VALOR3&apos; ).
+  o_popup-&gt;add_field( &apos;ERDAT&apos; ).
+  o_popup-&gt;add_field( &apos;ERZET&apos; ).
+  o_popup-&gt;add_field( &apos;ERNAM&apos; ).
+
+  SELECT * FROM ztemp
+    INTO ztemp
+    UP TO 50 ROWS
+   WHERE clave = &apos;ZEDIT&apos;
+  ORDER BY erdat DESCENDING erzet DESCENDING.
+
+    o_popup-&gt;add_valor( ztemp-texto ).
+    o_popup-&gt;add_valor( ztemp-valor1 ).
+    o_popup-&gt;add_valor( ztemp-valor2 ).
+    o_popup-&gt;add_valor( ztemp-valor3 ).
+    o_popup-&gt;add_valor( ztemp-erdat ).
+    o_popup-&gt;add_valor( ztemp-erzet ).
+    o_popup-&gt;add_valor( ztemp-ernam ).
+  ENDSELECT.
+
+
+  o_popup-&gt;matchcode( EXPORTING field   = &apos;TEXTO&apos;
+                      CHANGING  valor   = programm ).
+
+
+
+START-OF-SELECTION.
+
+  DATA l_fecha TYPE d.
+  l_fecha = sy-datum - 100.
+  DELETE FROM ztemp
+   WHERE clave = &apos;ZEDIT&apos;
+     AND erdat &lt; l_fecha.
+
+  IF rfc IS INITIAL.
+    READ REPORT programm INTO content.
+    content_ini[] = content[].
+    PERFORM editor.
+    CLEAR msg.
+  ELSE.
+    CALL FUNCTION &apos;Z_RFC_GET_SOURCE&apos;
+*      DESTINATION zcl_c=&gt;rfc_APICAZO_sc
+      EXPORTING
+        report    = programm
+      TABLES
+        i_content = content.
+  ENDIF.
+  INSERT REPORT programm FROM content.                      &quot;#EC *
+  DELETE FROM ztemp
+   WHERE clave = &apos;ZEDIT&apos;
+     AND texto = programm.
+  zcl_ap_temp=&gt;set_st( clave = &apos;ZEDIT&apos; subclave_auto = &apos;X&apos; valor1 = funcion valor2 = clase valor3 = metodo texto = programm permanente = &apos;X&apos; ).
+
+  SELECT SINGLE * FROM trdir WHERE name = programm.
+  IF sy-subrc NE 0.
+    CLEAR trdir.
+    trdir-name = programm.
+    trdir-clas = &apos;TEMP&apos;.
+    trdir-dbna = &apos; &apos;.
+    trdir-fixpt = &apos;X&apos;.
+    trdir-rstat = &apos;P&apos;.
+    trdir-subc = &apos;1&apos;.
+    trdir-rmand = sy-mandt.
+    IF trdir-sqlx LT &apos;R&apos;.
+      trdir-sqlx = &apos;R&apos;.
+    ENDIF.
+    MODIFY trdir.
+  ENDIF.
+  CALL FUNCTION &apos;DB_COMMIT&apos;.
+  msg = &apos;Línea:&apos;.
+  IF trdir-subc NE &apos;I&apos;.
+    GENERATE REPORT programm LINE msg+10(10) MESSAGE msg+50.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE i000 WITH msg(50) msg+50(50) msg+100(50) msg+150(50).
+      DATA l_hora LIKE sy-uzeit.
+      l_hora = sy-uzeit - 60.
+      DELETE FROM snap
+       WHERE datum = sy-datum
+         AND uzeit &gt;= l_hora
+         AND uname = sy-uname
+         AND mandt = sy-mandt.
+    ELSE.
+      CALL FUNCTION &apos;POPUP_FOR_INTERACTION&apos;
+        EXPORTING
+          headline       = &apos;Programa generado con éxito&apos;
+          text1          = &apos;Se ha generado el programa&apos;
+          text2          = programm
+          text3          = &apos;¿Desea ejecutarlo ahora?&apos;
+          ticon          = &apos;S&apos;
+          button_1       = &apos;Finalizar&apos;
+          button_2       = &apos;Ejecutar&apos;
+        IMPORTING
+          button_pressed = answer
+        EXCEPTIONS
+          OTHERS         = 1.
+      IF answer = &apos;2&apos;.
+        SUBMIT (programm)
+          AND RETURN
+          VIA SELECTION-SCREEN.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+*---------------------------------------------------------------------*
+*       FORM editor                                                   *
+*---------------------------------------------------------------------*
+FORM editor.
+
+  DATA: u-index        LIKE sy-index, u-txtindex(50), u-title(50).
+  CONCATENATE &apos;Editando programa&apos; programm
+         INTO u-title SEPARATED BY &apos; &apos;.
+  EDITOR-CALL FOR content TITLE u-title.
+  IF sy-subrc = 4. STOP. ENDIF.
+  CALL FUNCTION &apos;EDITOR_SYNTAX_CHECK&apos;
+    EXPORTING
+      i_program       = programm
+    IMPORTING
+      o_error_line    = u-index
+      o_error_message = msg
+    TABLES
+      i_source        = content.
+  IF NOT msg IS INITIAL.
+    u-txtindex = u-index - 2.
+    SHIFT u-txtindex LEFT DELETING LEADING space.
+    CONCATENATE &apos;Error de sintaxis en línea:&apos; u-txtindex INTO u-txtindex
+     SEPARATED BY space.
+    CALL FUNCTION &apos;POPUP_FOR_INTERACTION&apos;
+      EXPORTING
+        headline       = u-txtindex
+        text1          = msg(60)
+        text2          = msg+60(60)
+        text3          = msg+120(60)
+        text4          = msg+180(60)
+        text5          = msg+240(60)
+        text6          = msg+300(60)
+        ticon          = &apos;E&apos;
+        button_1       = &apos;Finalizar.&apos;
+        button_2       = &apos;Volver al editor&apos;
+      IMPORTING
+        button_pressed = answer
+      EXCEPTIONS
+        OTHERS         = 1.
+    ROLLBACK WORK.
+    IF answer = &apos;1&apos;. LEAVE PROGRAM. ENDIF.
+    IF answer = &apos;2&apos;. PERFORM editor. ENDIF.
+  ELSE.
+    IF lines( content ) &gt; 3 AND lines( content_ini ) &gt; 3.
+      IF content[ 1 ] NE content_ini[ 1 ] OR
+         content[ 2 ] NE content_ini[ 2 ] OR
+         content[ 3 ] NE content_ini[ 3 ].
+        CALL FUNCTION &apos;POPUP_FOR_INTERACTION&apos;
+          EXPORTING
+            headline       = &apos;Verifique el programa es el mismo!&apos;
+            text1          = content[ 1 ]
+            text2          = content[ 2 ]
+            text3          = content[ 3 ]
+            text4          = content_ini[ 1 ]
+            text5          = content_ini[ 2 ]
+            text6          = content_ini[ 3 ]
+            ticon          = &apos;E&apos;
+            button_1       = &apos;Finalizar.&apos;
+            button_2       = &apos;Volver al editor&apos;
+          IMPORTING
+            button_pressed = answer
+          EXCEPTIONS
+            OTHERS         = 1.
+        IF answer = &apos;2&apos;. PERFORM editor. ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDFORM.                               &quot; EDITOR</source>
+</PROG>

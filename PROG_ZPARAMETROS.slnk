@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPARAMETROS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Mantenimiento parámetros" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_ALV" ENTRY="        Mantenimiento por ALV" LENGTH="29 "/>
+   <textElement ID="S" KEY="P_CAMPO" ENTRY="        Subclave" LENGTH="16 "/>
+   <textElement ID="S" KEY="P_CLAVE" ENTRY="        Clave" LENGTH="13 "/>
+   <textElement ID="S" KEY="P_SM30" ENTRY="        Mantenimiento por SM30" LENGTH="30 "/>
+   <textElement ID="S" KEY="P_VALOR" ENTRY="        Valor" LENGTH="13 "/>
+   <textElement ID="S" KEY="P_VIS" ENTRY="        Sólo visualizar" LENGTH="23 "/>
+  </language>
+ </textPool>
+ <dynpros>
+  <dynpro PROG="ZPARAMETROS" DNUM="0100" FNUM="0100" BZMX="57 " BZBR="255 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="57 " NOCO="255 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Grid">
+   <dynprofield FNAM="GRID" DIDX="0039" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="FF" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="14" ADEZ="63"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0100.
+*
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_0100 AT EXIT-COMMAND.
+
+ MODULE USER_COMMAND_0100.</dynproflowsource>
+  </dynpro>
+ </dynpros>
+ <pfstatus ACTCODE="000001" MENCODE="000005" PFKCODE="000001">
+  <pfstatus_sta CODE="INICIO" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_fun CODE="ALLS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Selecciones (todas)" PATH="L"/>
+  <pfstatus_fun CODE="CLAVES" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Claves" PATH="C"/>
+  <pfstatus_fun CODE="DELA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Borrar selecciones por completo" PATH="E"/>
+  <pfstatus_fun CODE="DELS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE_ROW" ICON_ID="@18@" FUN_TEXT="Borrar línea de selección" PATH="S"/>
+  <pfstatus_fun CODE="DOCU" TEXTNO="001" TYPE="H" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Documentación de programa"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Delimitaciones opcionales" PATH="D"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="002" TEXT_TYPE="D" TEXT_NAME="SSCRTEXTS-DYNSEL"/>
+  <pfstatus_fun CODE="E" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Back" PATH="K"/>
+  <pfstatus_fun CODE="ECAN" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Cancelar" PATH="C"/>
+  <pfstatus_fun CODE="ENDE" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="FC01" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_01"/>
+  <pfstatus_fun CODE="FC02" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_02"/>
+  <pfstatus_fun CODE="FC03" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_03"/>
+  <pfstatus_fun CODE="FC04" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_04"/>
+  <pfstatus_fun CODE="FC05" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_05"/>
+  <pfstatus_fun CODE="FEWS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Selecciones efectuadas" PATH="U"/>
+  <pfstatus_fun CODE="GET" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Traer..." PATH="T"/>
+  <pfstatus_fun CODE="GET" TEXTNO="002" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Traer variante..." PATH="V"/>
+  <pfstatus_fun CODE="LOG" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log modificaciones"/>
+  <pfstatus_fun CODE="LOG_MOD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log modificaciones" PATH="L"/>
+  <pfstatus_fun CODE="LVUV" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Variables usuario..." PATH="B"/>
+  <pfstatus_fun CODE="MOD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log modificaciones"/>
+  <pfstatus_fun CODE="ONLI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Ejecutar" PATH="A"/>
+  <pfstatus_fun CODE="OPTI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECTION" ICON_ID="@7X@" FUN_TEXT="Opciones de selección" PATH="O"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="SCRH" TEXTNO="001" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Ayuda imagen de selección" PATH="A"/>
+  <pfstatus_fun CODE="SJOB" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ejecutar en proceso fondo" PATH="E"/>
+  <pfstatus_fun CODE="SPOS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar como variante..." INFO_TEXT="Grabar como variante" PATH="G"/>
+  <pfstatus_fun CODE="VDEL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Borrar..." PATH="B"/>
+  <pfstatus_fun CODE="VSHO" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Visualizar..." PATH="A"/>
+  <pfstatus_men CODE="000001" NO="01" REF_TYPE="F" REF_CODE="ONLI" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="02" REF_TYPE="F" REF_CODE="PRIN" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="03" REF_TYPE="F" REF_CODE="SJOB" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000001" NO="05" REF_TYPE="F" REF_CODE="ENDE" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="01" REF_TYPE="F" REF_CODE="ALLS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="02" REF_TYPE="F" REF_CODE="FEWS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="04" REF_TYPE="F" REF_CODE="OPTI" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="06" REF_TYPE="F" REF_CODE="DELS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="07" REF_TYPE="F" REF_CODE="DELA" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="09" REF_TYPE="F" REF_CODE="DYNS" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="10" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="11" REF_TYPE="F" REF_CODE="ECAN" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="01" REF_TYPE="M" REF_CODE="000004"/>
+  <pfstatus_men CODE="000003" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="03" REF_TYPE="F" REF_CODE="LVUV" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="05" REF_TYPE="F" REF_CODE="SCRH" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="07" REF_TYPE="F" REF_CODE="E" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="01" REF_TYPE="F" REF_CODE="GET" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="02" REF_TYPE="F" REF_CODE="VSHO" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="03" REF_TYPE="F" REF_CODE="VDEL" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="04" REF_TYPE="F" REF_CODE="SPOS" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="01" REF_TYPE="F" REF_CODE="CLAVES" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="02" REF_TYPE="F" REF_CODE="LOG_MOD" REF_NO="001"/>
+  <pfstatus_mtx CODE="000001" TEXT_TYPE="S" TEXT="Programa" PATH="R" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000002" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000003" TEXT_TYPE="S" TEXT="Pasar a" PATH="P" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000004" TEXT_TYPE="S" TEXT="Variantes" PATH="V" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000005" TEXT_TYPE="S" TEXT="Mantenimiento" PATH="M"/>
+  <pfstatus_act CODE="000001" NO="01" MENUCODE="000005"/>
+  <pfstatus_act CODE="000001" NO="02" MENUCODE="000001"/>
+  <pfstatus_act CODE="000001" NO="03" MENUCODE="000002"/>
+  <pfstatus_act CODE="000001" NO="04" MENUCODE="000003"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="03" PFNO="16"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="04" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="05" PFNO="20"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="06" PFNO="13"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="07" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="08" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="09" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="10" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="11" PFNO="29"/>
+  <pfstatus_pfk CODE="000001" PFNO="02" FUNCODE="OPTI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="E" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="ONLI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="09" FUNCODE="SJOB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="11" FUNCODE="SPOS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="ECAN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="13" FUNCODE="DOCU" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="14" FUNCODE="DELS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="ENDE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="16" FUNCODE="DYNS" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="17" FUNCODE="GET" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="18" FUNCODE="SCRH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="19" FUNCODE="ALLS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="20" FUNCODE="FEWS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="25" FUNCODE="FC01" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="26" FUNCODE="FC02" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="27" FUNCODE="FC03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="28" FUNCODE="FC04" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="29" FUNCODE="FC05" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="30" FUNCODE="LVUV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="86" FUNCODE="PRIN" FUNNO="002"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CLAVES"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LOG"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LOG_MOD"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="MOD"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VSHO"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="A"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="D" INT_NOTE="P"/>
+ </pfstatus>
+ <source>***********************************************************************
+* TIPO : MANTENIMIENTO
+* TITULO : Mantenimiento parámetros
+* DESCRIPCION : Mantenimiento parámetros
+*
+* AUTOR: Andrés Picazo                                FECHA: 01/03/2020
+* ANALISTA: Andrés Picazo
+*
+***********************************************************************
+REPORT  zparametros.
+
+TABLES: zparametros,
+        ztclave_param.
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: data_changed REDEFINITION,
+             user_command REDEFINITION,
+             toolbar      REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF  t_listado,
+             check      TYPE xfeld,
+             lights     TYPE zico_estado_mensaje,
+             clave      TYPE zparametros-clave,
+             campo      TYPE zparametros-campo,
+             valor      TYPE zparametros-valor,
+             valor2     TYPE zparametros-valor2,
+             valor3     TYPE zparametros-valor3,
+             valor4     TYPE zparametros-valor4,
+             atributo1  TYPE zparametros-atributo1,
+             atributo2  TYPE zparametros-atributo2,
+             atributo3  TYPE zparametros-atributo3,
+             atributo4  TYPE zparametros-atributo4,
+             atributo5  TYPE zparametros-atributo5,
+             atributo6  TYPE zparametros-atributo6,
+             atributo7  TYPE zparametros-atributo7,
+             atributo8  TYPE zparametros-atributo8,
+             atributo9  TYPE zparametros-atributo9,
+             atributo10 TYPE zparametros-atributo10,
+             comentario TYPE zparametros-comentario,
+             aenam      TYPE zparametros-aenam,
+             aedat      TYPE zparametros-aedat,
+             aezet      TYPE zparametros-aezet,
+             message    TYPE bapi_msg,
+             style      TYPE lvc_t_styl,
+             color      TYPE lvc_t_scol,
+             updkz      TYPE char1,
+             tabix      TYPE int4,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+
+    DATA: i_listado     TYPE tt_listado,
+          i_listado_ini TYPE tt_listado,
+          campos_clave  TYPE string VALUE &apos;CAMPO,VALOR,VALOR2,VALOR3,VALOR4&apos;,
+          tabix         TYPE sy-tabix.
+
+    DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
+          o_event TYPE REF TO lcl_event_grid.
+
+    METHODS: buscar_datos REDEFINITION,
+
+      validaciones IMPORTING !mod    TYPE abap_bool DEFAULT &apos;&apos;
+                   CHANGING  listado TYPE t_listado ##NEEDED,
+
+      status_dynpro_0100,
+      command_dynpro_0100.
+
+ENDCLASS.
+
+DATA o_prog TYPE REF TO zcl_report ##NEEDED.
+
+PARAMETERS: p_clave LIKE zparametros-clave MATCHCODE OBJECT
+                                                     ztclave_param,
+            p_campo LIKE zparametros-campo,
+            p_valor LIKE zparametros-valor.
+
+SELECTION-SCREEN SKIP 1.
+
+PARAMETERS: p_alv  RADIOBUTTON GROUP g DEFAULT &apos;X&apos; MODIF ID no,
+            p_sm30 RADIOBUTTON GROUP g MODIF ID no.
+SELECTION-SCREEN SKIP 1.
+PARAMETERS p_vis AS CHECKBOX.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+  METHOD toolbar.
+    super-&gt;toolbar( e_object = e_object e_interactive = e_interactive ).
+
+    add_boton( function = &apos;COPIAR&apos; icon = icon_system_copy text = &apos;Copiar&apos; quickinfo = &apos;Copiar&apos; e_object = e_object ).
+  ENDMETHOD.
+
+  METHOD user_command.
+    DATA: l_listado TYPE o_prog-&gt;t_listado,
+          l_hay_sel TYPE c LENGTH 1.
+
+    CASE e_ucomm.
+      WHEN &apos;NUEVO&apos;.
+        l_listado-clave = p_clave.
+        l_listado-campo = p_campo.
+        l_listado-valor = p_valor.
+        o_prog-&gt;tabix = o_prog-&gt;tabix + 1.
+        l_listado-tabix = o_prog-&gt;tabix.
+        o_prog-&gt;validaciones( EXPORTING mod = &apos;I&apos; CHANGING listado = l_listado ).
+        APPEND l_listado TO o_prog-&gt;i_listado.
+
+        o_alv-&gt;refrescar_grid( ).
+      WHEN &apos;BORRAR&apos;.
+        o_alv-&gt;comprobar_cambios( ).
+        o_alv-&gt;set_marca_filas_sel( EXPORTING validar_seleccion = &apos;X&apos; CHANGING t_tabla = o_prog-&gt;i_listado hay_sel = l_hay_sel ).
+        IF l_hay_sel = &apos;X&apos;.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;.
+            IF &lt;listado&gt;-updkz = &apos;I&apos;.
+              DELETE o_prog-&gt;i_listado.
+            ELSEIF &lt;listado&gt;-updkz = &apos;D&apos;.
+              CLEAR: &lt;listado&gt;-updkz, &lt;listado&gt;-lights, &lt;listado&gt;-check.
+              o_prog-&gt;validaciones( EXPORTING mod = &apos;U&apos; CHANGING listado = &lt;listado&gt; ).
+            ELSE.
+              o_prog-&gt;validaciones( EXPORTING mod = &apos;D&apos; CHANGING listado = &lt;listado&gt; ).
+            ENDIF.
+          ENDLOOP.
+          o_alv-&gt;refrescar_grid( ).
+        ENDIF.
+
+      WHEN &apos;COPIAR&apos;.
+        o_alv-&gt;comprobar_cambios( ).
+        o_alv-&gt;set_marca_filas_sel( EXPORTING validar_seleccion = &apos;X&apos; CHANGING t_tabla = o_prog-&gt;i_listado hay_sel = l_hay_sel ).
+        IF l_hay_sel = &apos;X&apos;.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+            CLEAR &lt;listado&gt;-check.
+            l_listado = &lt;listado&gt;.
+            o_prog-&gt;validaciones( EXPORTING mod = &apos;I&apos; CHANGING listado = l_listado ).
+            APPEND l_listado TO o_prog-&gt;i_listado.
+          ENDLOOP.
+          SORT o_prog-&gt;i_listado BY tabix.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt;.
+            &lt;listado&gt;-tabix = sy-tabix.
+          ENDLOOP.
+          o_alv-&gt;refrescar_grid( soft_refresh = &apos;&apos; ).
+        ENDIF.
+      WHEN OTHERS.
+        super-&gt;user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD data_changed.
+    ini_data_changed( cambios = er_data_changed-&gt;mt_good_cells  ).
+
+    LOOP AT i_cambios_celda INTO cambio_celda.
+      AT NEW row_id.
+        READ TABLE o_prog-&gt;i_listado INTO DATA(l_listado_ini) INDEX cambio_celda-row_id. &quot;#EC CI_SUBRC
+        DATA(l_listado) = l_listado_ini.
+      ENDAT.
+
+      set_valor_mod( CHANGING datos = l_listado ).
+
+      AT END OF row_id.
+        o_prog-&gt;validaciones( EXPORTING mod = &apos;U&apos; CHANGING listado = l_listado ).
+        MODIFY o_prog-&gt;i_listado FROM l_listado INDEX cambio_celda-row_id.
+        actualizar_fila( fila_ini = l_listado_ini fila_fin = l_listado er_data_changed = er_data_changed fila = cambio_celda-row_id ).
+      ENDAT.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD buscar_datos.
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+    CLEAR i_listado.
+    SELECT * FROM zparametros
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE clave = p_clave
+      ORDER BY PRIMARY KEY.
+
+    IF NOT p_campo IS INITIAL.
+      DELETE i_listado WHERE campo &lt;&gt; p_campo.
+    ENDIF.
+
+    IF NOT p_valor IS INITIAL.
+      DELETE i_listado WHERE valor &lt;&gt; p_valor.
+    ENDIF.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      tabix = sy-tabix.
+      &lt;listado&gt;-tabix = tabix.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+      validaciones( CHANGING listado = &lt;listado&gt; ).
+    ENDLOOP.
+
+    i_listado_ini = i_listado.
+  ENDMETHOD.                                               &quot; seleccionar_datos
+
+  METHOD status_dynpro_0100.
+    IF inicio IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    CONCATENATE &apos;Mantenimiento parámetros&apos; p_clave p_campo INTO string SEPARATED BY space.
+    status_dynpro( EXPORTING cprog = &apos;ZAP_STATUS&apos; status = &apos;ST_DYN&apos; titulo = string CHANGING i_listado = i_listado ).
+
+    inicio = &apos;X&apos;.
+
+    o_alv-&gt;registrar_mod( ).
+    o_alv-&gt;set_layout( ancho_optimizado = &apos;X&apos; no_rowmove = &apos;X&apos; no_rowins = &apos;X&apos; style = &apos;STYLE&apos; colort = &apos;COLOR&apos; ).
+    o_alv-&gt;quitar_opciones( cl_gui_alv_grid=&gt;mc_fc_refresh ).
+    o_alv-&gt;set_campos_tabint( i_listado[] ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK,MESSAGE,TABIX,UPDKZ&apos; ).
+    o_alv-&gt;set_field_noout( &apos;CLAVE&apos; ).
+    IF NOT p_campo IS INITIAL.
+      o_alv-&gt;set_field_noout( &apos;CAMPO&apos; ).
+    ENDIF.
+    IF NOT p_valor IS INITIAL.
+      o_alv-&gt;set_field_noout( &apos;VALOR&apos; ).
+    ENDIF.
+    o_alv-&gt;set_field_text( &apos;COMENTARIO&apos; ).
+
+    DEFINE set_campo.
+      IF NOT ztclave_param-&amp;1 IS INITIAL.
+        IF ztclave_param-&amp;1 = &apos;INVISIBLE&apos;.
+          o_alv-&gt;set_field_quitar( &apos;&amp;1&apos;  ).
+        ELSE.
+          o_alv-&gt;set_field_text( campo = &apos;&amp;1&apos; valor = ztclave_param-&amp;1 ).
+        ENDIF.
+      ELSEIF &apos;&amp;1&apos; = &apos;VALOR3&apos; OR &apos;&amp;1&apos; = &apos;VALOR4&apos;. &quot; Claves recientes, que no se suelen usar
+        o_alv-&gt;set_field_quitar( &apos;&amp;1&apos;  ).
+      ENDIF.
+    END-OF-DEFINITION.
+
+    DEFINE set_campo_new.
+      IF NOT ztclave_param-&amp;1 IS INITIAL.
+        IF ztclave_param-&amp;1 = &apos;INVISIBLE&apos;.
+          o_alv-&gt;set_field_quitar( &apos;&amp;1&apos;  ).
+        ELSE.
+          o_alv-&gt;set_field_text( campo = &apos;&amp;1&apos; valor = ztclave_param-&amp;1 ).
+        ENDIF.
+      ELSE.
+        o_alv-&gt;set_field_quitar( &apos;&amp;1&apos;  ).
+      ENDIF.
+    END-OF-DEFINITION.
+
+    set_campo: campo, valor, valor2, valor3, valor4, atributo1, atributo2, atributo3, atributo4, comentario.
+    set_campo_new: atributo5, atributo6, atributo7, atributo8, atributo9, atributo10.
+
+    IF p_vis IS INITIAL.
+      o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Grabar&apos; icon = icon_system_save ucomm = &apos;GRABAR&apos; ).
+      o_alv-&gt;add_button( button = &apos;M01&apos; text = &apos;Copiar en otra clave&apos; ucomm = &apos;COPIAR&apos; ).
+      o_alv-&gt;add_button( button = &apos;M02&apos; text = &apos;Grabar JSON&apos; ucomm = &apos;JSON&apos; ).
+
+      IF sy-sysid = zcl_c=&gt;entorno_desarrollo.
+        o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Crear OT&apos;  icon =  icon_import_transport_request ucomm = &apos;OT&apos; ).
+        o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Comparar con producción&apos;  icon =  icon_compare ucomm = &apos;COMP&apos; ).
+      ELSE.
+        o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Comparar con desarrollo&apos;  icon =  icon_compare ucomm = &apos;COMP&apos; ).
+      ENDIF.
+      o_alv-&gt;set_field_input( &apos;ATRIBUTO1,ATRIBUTO2,ATRIBUTO3,ATRIBUTO4,ATRIBUTO5,ATRIBUTO6,ATRIBUTO7,ATRIBUTO8,ATRIBUTO9,ATRIBUTO10,COMENTARIO&apos; ).
+    ENDIF.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+    o_alv-&gt;show( CHANGING tabla = i_listado ).
+
+    CONCATENATE ztclave_param-descripcion p_campo p_valor INTO string SEPARATED BY space.
+    o_alv-&gt;set_titulo( string ).
+  ENDMETHOD.
+
+  METHOD command_dynpro_0100.
+    DATA: l_comm_sel           TYPE string VALUE &apos;OT&apos;,
+          l_hay_sel            TYPE c LENGTH 1,
+          zparametros          TYPE zparametros,
+          zparametros_bd       TYPE zparametros,
+          l_objectid           TYPE cdhdr-objectid,
+          i_icdtxt_zparametros TYPE TABLE OF cdtxt,
+          l_cont               TYPE i.
+    DATA: i_list_dup TYPE TABLE OF t_listado,
+          l_list_dup TYPE t_listado.
+    DATA: l_key  TYPE c LENGTH 120,
+          i_keys TYPE TABLE OF string.
+    DATA: l_return TYPE char1,
+          l_clave  TYPE zparametros-clave.
+
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
+                            CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
+
+    CASE ucomm.
+      WHEN &apos;GRABAR&apos;.
+        LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+          IF line_exists( i_list_dup[ clave = &lt;listado&gt;-clave campo = &lt;listado&gt;-campo
+                                      valor = &lt;listado&gt;-valor  valor2 = &lt;listado&gt;-valor2
+                                      valor3 = &lt;listado&gt;-valor3 valor4 = &lt;listado&gt;-valor4 ] ).
+            i_list_dup[ clave  = &lt;listado&gt;-clave campo = &lt;listado&gt;-campo
+                        valor  = &lt;listado&gt;-valor  valor2 = &lt;listado&gt;-valor2
+                        valor3 = &lt;listado&gt;-valor3 valor4 = &lt;listado&gt;-valor4 ]-tabix = 2.
+          ELSE.
+            l_list_dup-clave  = &lt;listado&gt;-clave.
+            l_list_dup-campo  = &lt;listado&gt;-campo.
+            l_list_dup-valor  = &lt;listado&gt;-valor.
+            l_list_dup-valor2 = &lt;listado&gt;-valor2.
+            l_list_dup-valor3 = &lt;listado&gt;-valor3.
+            l_list_dup-valor4 = &lt;listado&gt;-valor4.
+            l_list_dup-tabix  = 1.
+            APPEND l_list_dup TO i_list_dup.
+          ENDIF.
+          CLEAR &lt;listado&gt;-color.
+        ENDLOOP.
+        LOOP AT i_list_dup ASSIGNING FIELD-SYMBOL(&lt;list&gt;) WHERE tabix &gt; 1.
+          LOOP AT i_listado ASSIGNING &lt;listado&gt; WHERE     clave  = &lt;list&gt;-clave  AND campo  = &lt;list&gt;-campo
+                                                      AND valor  = &lt;list&gt;-valor  AND valor2 = &lt;list&gt;-valor2
+                                                      AND valor3 = &lt;list&gt;-valor3 AND valor4 = &lt;list&gt;-valor4.
+            set_status_list( EXPORTING color = &apos;R&apos; CHANGING list = &lt;listado&gt; ).
+          ENDLOOP.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          MESSAGE &apos;No puede grabar si hay duplicados&apos; TYPE &apos;I&apos;.
+          o_alv-&gt;refrescar_grid( ).
+          RETURN.
+        ENDIF.
+
+        LOOP AT i_listado ASSIGNING &lt;listado&gt; WHERE updkz &lt;&gt; &apos;&apos;.
+
+          MOVE-CORRESPONDING &lt;listado&gt; TO zparametros.
+
+          SELECT SINGLE funcname FROM tfdir
+            INTO @DATA(l_funcname)
+           WHERE funcname = &apos;ZPARAMETROS_WRITE_DOCUMENT&apos;.
+          IF sy-subrc = 0.
+            CLEAR zparametros_bd.
+            SELECT SINGLE * FROM  (&apos;ZPARAMETROS&apos;)
+              INTO zparametros_bd
+             WHERE clave  = &lt;listado&gt;-clave
+               AND campo  = &lt;listado&gt;-campo
+               AND valor  = &lt;listado&gt;-valor
+               AND valor2 = &lt;listado&gt;-valor2
+               AND valor3 = &lt;listado&gt;-valor3
+               AND valor4 = &lt;listado&gt;-valor4.
+            CLEAR: zparametros_bd-aedat, zparametros_bd-aezet, zparametros_bd-aenam.
+
+            l_objectid = zparametros+3(115).
+            CALL FUNCTION l_funcname
+              EXPORTING
+                objectid                = l_objectid
+                tcode                   = &apos;ZPARAMETROS&apos;
+                utime                   = sy-uzeit
+                udate                   = sy-datum
+                username                = sy-uname
+                object_change_indicator = &lt;listado&gt;-updkz
+                n_zparametros           = zparametros
+                o_zparametros           = zparametros_bd
+                upd_zparametros         = &lt;listado&gt;-updkz
+              TABLES
+                icdtxt_zparametros      = i_icdtxt_zparametros.
+          ENDIF.
+
+          l_cont = l_cont + 1.
+          IF &lt;listado&gt;-updkz = &apos;D&apos;.
+            DELETE FROM zparametros
+             WHERE clave  = &lt;listado&gt;-clave
+               AND campo  = &lt;listado&gt;-campo
+               AND valor  = &lt;listado&gt;-valor
+               AND valor2 = &lt;listado&gt;-valor2
+               AND valor3 = &lt;listado&gt;-valor3
+               AND valor4 = &lt;listado&gt;-valor4.
+            IF sy-subrc = 0.
+              DELETE i_listado.
+            ENDIF.
+          ELSE.
+            &lt;listado&gt;-aenam = sy-uname.
+            &lt;listado&gt;-aedat = sy-datum.
+            &lt;listado&gt;-aezet = sy-uzeit.
+            CLEAR: &lt;listado&gt;-updkz, &lt;listado&gt;-lights, &lt;listado&gt;-message, &lt;listado&gt;-style.
+            CLEAR zparametros.
+            MOVE-CORRESPONDING &lt;listado&gt; TO zparametros.
+            MODIFY zparametros FROM zparametros.
+          ENDIF.
+        ENDLOOP.
+
+        IF l_cont = 0.
+          MESSAGE &apos;No había cambios&apos; TYPE &apos;S&apos;.
+        ELSE.
+          MESSAGE |Se han grabado { l_cont } registros| TYPE &apos;S&apos;.
+          i_listado_ini = i_listado.
+        ENDIF.
+        o_alv-&gt;refrescar_grid( ).
+
+      WHEN &apos;OT&apos;.
+        LOOP AT i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+          MOVE-CORRESPONDING &lt;listado&gt; TO zparametros.
+          zparametros-mandt = sy-mandt.
+          l_key = |{ zparametros(119) }*|. &quot; Debería ser 188, pero SAP restringe, así que se limita a los 3 primero campos clave
+          APPEND l_key TO i_keys.
+        ENDLOOP.
+
+        zcl_ap_utils=&gt;grabar_tabla_en_ot( tabla = &apos;ZPARAMETROS&apos; i_keys = i_keys ).
+
+      WHEN &apos;COMP&apos;.
+        SUBMIT zap_comparar_tablas
+          AND RETURN
+               WITH s_table = &apos;ZPARAMETROS&apos;
+               WITH p_clave = p_clave
+               WITH p_clave2 = p_campo.
+
+      WHEN &apos;JSON&apos;.
+        zcl_ap_segw=&gt;get_json( EXPORTING datos = i_listado IMPORTING json = DATA(l_json) ).
+        IF NOT l_json IS INITIAL.
+          zcl_ap_ficheros=&gt;grabar_xstring( fichero = |{ p_clave }.json| dialogo = &apos;X&apos; string = l_json ).
+        ENDIF.
+
+      WHEN &apos;COPIAR&apos;.
+        zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;ZPARAMETROS-CLAVE&apos;
+                                          titulo = &apos;Seleccione nueva clave destino&apos;
+                                IMPORTING return = l_return
+                                CHANGING  valor1 = l_clave ).
+        IF l_return = &apos;&apos; AND NOT l_clave IS INITIAL.
+          IF l_clave = p_clave.
+            MESSAGE &apos;La clave debe ser diferente a la origen&apos; TYPE &apos;I&apos;.
+          ELSE.
+            SELECT SINGLE clave_param FROM ztclave_param
+              INTO l_clave
+             WHERE clave_param = l_clave.
+            IF sy-subrc &lt;&gt; 0.
+              MESSAGE &apos;La clave destino no existe&apos; TYPE &apos;I&apos;.
+            ELSE.
+              SELECT COUNT(  * ) FROM zparametros
+                INTO sy-tabix
+               WHERE clave = l_clave.
+              IF sy-tabix &gt; 0.
+                MESSAGE &apos;No es posible copiar si ya hay parámetros en destino&apos; TYPE &apos;I&apos;.
+              ELSE.
+                LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+                  MOVE-CORRESPONDING &lt;listado&gt; TO zparametros.
+                  zparametros-clave = l_clave.
+                  zparametros-aenam = sy-uname.
+                  zparametros-aedat = sy-datum.
+                  zparametros-aezet = sy-uzeit.
+                  MODIFY zparametros FROM zparametros.
+                ENDLOOP.
+                message |Se han copiado los parámetros a la nueva clave { l_clave }| TYPE &apos;I&apos;.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD validaciones.
+    DATA campos_edit TYPE string.
+
+    CLEAR: listado-message, listado-style, listado-color, listado-lights.
+
+    CASE mod.
+      WHEN &apos;I&apos;.
+        listado-updkz = &apos;I&apos;.
+      WHEN &apos;D&apos;.
+        listado-updkz = &apos;D&apos;.
+      WHEN &apos;U&apos;.
+        IF listado-updkz IS INITIAL.
+          ASSIGN i_listado_ini[ tabix = listado-tabix ] TO FIELD-SYMBOL(&lt;ini&gt;).
+          IF sy-subrc &lt;&gt; 0.
+            listado-updkz = &apos;U&apos;.
+          ELSEIF &lt;ini&gt; &lt;&gt; listado.
+            listado-updkz = &apos;U&apos;.
+          ENDIF.
+        ENDIF.
+    ENDCASE.
+
+    CASE listado-updkz.
+      WHEN &apos;I&apos;.
+        DATA(l_icono) = icon_create.
+        campos_edit = &apos;VALOR2,VALOR3,VALOR4&apos;.
+        IF p_valor IS INITIAL.
+          __add_lista campos_edit &apos;VALOR&apos;.
+        ENDIF.
+
+        IF p_campo IS INITIAL.
+          __add_lista campos_edit &apos;CAMPO&apos;.
+        ENDIF.
+      WHEN &apos;D&apos;.
+        l_icono = icon_delete.
+      WHEN &apos;U&apos;.
+        l_icono = icon_change.
+    ENDCASE.
+
+    set_status_list( EXPORTING message = listado-message icono = l_icono campos_editables = campos_edit CHANGING list = listado ).
+  ENDMETHOD.
+ENDCLASS.
+
+INITIALIZATION.
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  guardar_logz = &apos;X&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos; ).
+
+  sscrfields-functxt_03 = |{ icon_mail } Plantillas mail|.
+  sscrfields-functxt_04 = |{ icon_list } Mantenimientos|.
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+  IF zcl_ap_autorizacion=&gt;es_usuario_sistemas( ).
+    sscrfields-functxt_02 = |{ icon_system_extended_help } Gestión exits|.
+  ELSE.
+    CLEAR sscrfields-functxt_02.
+  ENDIF.
+  zcl_ap_documentos=&gt;get_documentos_por_clas( EXPORTING tcode = &apos;ZPARAMETROS&apos;
+                                                        clasificacion = &apos;MANUAL&apos;
+                                              IMPORTING i_documentos = DATA(i_documentos)
+                                                        eliminados = DATA(l_eliminados) ).
+  IF NOT i_documentos IS INITIAL.
+    sscrfields-functxt_05 = icon_message_information.
+    PERFORM set_sscrfields IN PROGRAM zap_status USING sscrfields IF FOUND.
+  ENDIF.
+
+  PERFORM add_button IN PROGRAM zap_status USING: &apos;M01&apos; &apos;Claves&apos; &apos;&apos; &apos;&apos;,
+                                                  &apos;M02&apos; &apos;Log modificaciones&apos; &apos;&apos; &apos;&apos;.
+
+  IF sy-batch IS INITIAL.
+    o_prog-&gt;o_event = NEW #( boton_refrescar = &apos;X&apos;
+                             boton_excel     = &apos;Y&apos;
+                             boton_nuevo     = &apos;X&apos;
+                             boton_borrar    = &apos;X&apos;
+                             o_prog          = o_prog ).
+
+    o_prog-&gt;o_alv   = NEW #( estructura = &apos;&apos;
+                             o_event    = o_prog-&gt;o_event ).
+  ENDIF.
+
+* Ya no queremos mantenimiento por SM30
+AT SELECTION-SCREEN OUTPUT.
+  p_alv = &apos;X&apos;.
+  p_sm30 = &apos;&apos;.
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;NO&apos; variable = &apos;&apos; ).
+
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;M01&apos;.
+      IF p_clave IS INITIAL.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZTCLAVE_PARAM&apos; ).
+      ELSE.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZTCLAVE_PARAM&apos; campo_filtro = &apos;CLAVE_PARAM&apos; op_filtro = &apos;EQ&apos; valor_filtro = p_clave ).
+      ENDIF.
+    WHEN &apos;M02&apos;.
+      RANGES r_id FOR cdhdr-objectid.
+      IF NOT p_clave IS INITIAL.
+        r_id-option = &apos;CP&apos;.
+        r_id-sign   = &apos;I&apos;.
+        CONCATENATE p_clave &apos;*&apos; INTO r_id-low.
+        APPEND r_id.
+      ENDIF.
+      SUBMIT zcontrol_cambios
+        AND RETURN
+             VIA SELECTION-SCREEN
+             WITH p_object = &apos;ZPARAMETROS&apos;
+             WITH s_id IN r_id.
+    WHEN &apos;ONLI&apos;.
+      IF p_clave IS INITIAL.
+        MESSAGE &apos;Informe campo clave&apos; TYPE &apos;E&apos;.
+      ELSE.
+        SELECT SINGLE * FROM (&apos;ZTCLAVE_PARAM&apos;)
+          INTO ztclave_param
+         WHERE clave_param = p_clave.
+        IF sy-subrc = 0.
+          sy-title = ztclave_param-descripcion.
+        ENDIF.
+      ENDIF.
+    WHEN &apos;FC02&apos;.
+      SUBMIT zap_exits
+             VIA SELECTION-SCREEN
+        AND RETURN.
+    WHEN &apos;FC03&apos;.
+      SUBMIT zap_textos_mail
+             VIA SELECTION-SCREEN
+             AND RETURN.
+    WHEN &apos;FC04&apos;.
+      SUBMIT zspro
+      AND RETURN.
+    WHEN &apos;FC05&apos;.
+      zcl_ap_documentos=&gt;popup_list( tcode = &apos;ZPARAMETROS&apos; clasificacion = &apos;MANUAL&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+START-OF-SELECTION.
+  IF p_sm30 = &apos;X&apos;.
+    DATA o_par TYPE REF TO zcl_ap_parametros.
+
+    o_par = NEW #(
+        clave = p_clave
+        campo = p_campo ).
+
+    IF p_vis IS INITIAL.
+      o_par-&gt;mantenimiento( alv = &apos;&apos; ).
+    ELSE.
+      o_par-&gt;mantenimiento( alv = &apos;&apos; action = &apos;S&apos; ).
+    ENDIF.
+
+  ELSEIF p_alv = &apos;X&apos;.
+
+    o_prog-&gt;buscar_datos( ).
+
+    IF sy-batch IS INITIAL.
+      CALL SCREEN 0100.
+    ELSE.
+      MESSAGE &apos;Este programa no se puede ejecutar en fondo&apos;(pnf) TYPE &apos;E&apos;.
+    ENDIF.
+  ENDIF.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog-&gt;status_dynpro_0100( ).
+
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  o_prog-&gt;command_dynpro_0100( ).
+
+
+ENDMODULE.</source>
+</PROG>

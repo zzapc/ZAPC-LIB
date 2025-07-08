@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_ALVF_2024" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="CAR" ENTRY="Cargar" LENGTH="16 "/>
+   <textElement ID="I" KEY="CRR" ENTRY="Cargar registros" LENGTH="26 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="IMF" ENTRY="Importando fichero" LENGTH="28 "/>
+   <textElement ID="I" KEY="IRE" ENTRY="Importar registros" LENGTH="28 "/>
+   <textElement ID="I" KEY="PRF" ENTRY="Procesando fichero" LENGTH="28 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Plantilla ALV con documentación para subida de ficheros" LENGTH="55 "/>
+   <textElement ID="S" KEY="P_FILE" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andres Picazo                                FECHA: 24/09/2024
+* ANALISTA: ??
+*
+***********************************************************************
+REPORT zplantilla_alvf_2024.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, mara.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS handle_user_command REDEFINITION.
+    METHODS visualizar_objeto   REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             message TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv ##NEEDED.
+
+    METHODS  main.
+
+    METHODS: listado,
+      cargar_fichero.
+
+ENDCLASS.
+
+*------VARIABLES-------------------------------------------------------*
+DATA o_prog TYPE REF TO zcl_report.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+PARAMETERS p_file TYPE localfile OBLIGATORY.
+SELECTION-SCREEN SKIP 1.
+PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+    DATA l_list TYPE o_prog-&gt;t_listado.
+
+    l_list = list.
+    CASE column.
+*      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot; handle_double_click
+
+  METHOD handle_user_command.
+    check_ucomm_sel = &apos;IMPORTAR&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;IMPORTAR&apos;.
+        LOOP AT o_prog-&gt;i_listado TRANSPORTING NO FIELDS WHERE check = &apos;X&apos; AND lights(3) = icon_red_light(3).
+          MESSAGE &apos;No seleccione registros con errores&apos; TYPE &apos;I&apos;.
+          RETURN.
+        ENDLOOP.
+        LOOP AT o_prog-&gt;i_listado TRANSPORTING NO FIELDS WHERE check = &apos;X&apos; AND lights(3) = icon_green_light(3).
+          MESSAGE &apos;No seleccione registros ya importados&apos; TYPE &apos;I&apos;.
+          RETURN.
+        ENDLOOP.
+
+        LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;.
+* TO DO!
+        ENDLOOP.
+        IF sy-subrc = 0.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    cargar_fichero( ).
+    listado( ).
+  ENDMETHOD.                    &quot; REPORT
+
+  METHOD cargar_fichero.
+    TYPES: BEGIN OF t_fichero,
+             id             TYPE c LENGTH 10,
+             charg          TYPE c LENGTH 10,
+             nserie         TYPE c LENGTH 10,
+             maktx          TYPE c LENGTH 80,
+             cal_funcional  TYPE c LENGTH 10,
+             calidad_visual TYPE c LENGTH 10,
+             potencia       TYPE c LENGTH 20,
+             orden          TYPE c LENGTH 10,
+           END OF t_fichero.
+
+    DATA: o_excel   TYPE REF TO zcl_ap_abap2xls,
+          i_fichero TYPE TABLE OF t_fichero,
+          l_row     TYPE i,
+          l_listado TYPE t_listado.
+
+    FIELD-SYMBOLS &lt;fichero&gt; TYPE t_fichero.
+
+    o_prog-&gt;sgpi_texto( &apos;Importando fichero&apos;(imf) ).
+    o_excel = NEW #( ).
+    o_excel-&gt;lee_fichero( EXPORTING fichero = p_file
+*                                    hoja    = p_hojm_1
+                                    get_datos = &apos;X&apos;
+                                    huge      = &apos;X&apos;
+                                    mostrar_error = &apos;X&apos;
+                                    validar_maestros = &apos;X&apos;
+                          IMPORTING datos   = i_fichero ).
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_fichero[] ).
+    LOOP AT i_fichero ASSIGNING &lt;fichero&gt;.
+      l_row = sy-tabix + 1.
+      CLEAR l_listado.
+      o_prog-&gt;o_sgpi-&gt;porcentaje( texto = &apos;Procesando fichero&apos;(prf) cantidad = 1000 ).
+      MOVE-CORRESPONDING &lt;fichero&gt; TO l_listado.
+      l_listado-message = o_excel-&gt;get_msg( row = l_row ).
+
+      set_status_list( EXPORTING message = l_listado-message criterio = &apos;V&apos; CHANGING list = l_listado ).
+      APPEND l_listado TO i_listado.
+    ENDLOOP.
+  ENDMETHOD.                    &quot; seleccionar_datos
+
+  METHOD listado.
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Importar registros&apos;(ire)  icon = icon_execute_object ucomm = &apos;IMPORTAR&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_top_of_page( ).
+
+*    o_alv-&gt;set_field_hotspot( campo = &apos;EBELN&apos; auto = &apos;X&apos; ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+  ENDMETHOD.
+ENDCLASS.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( status   = &apos;INICIO_DYN&apos; status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param = &apos;X&apos;          guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv = NEW #( status           = &apos;STANDARD_ALV_DYN&apos; status_prog        = &apos;ZAP_STATUS&apos;
+                  top_of_page_auto = &apos;X&apos;                top_of_page_titulo = &apos;X&apos;
+                  o_dev = o_prog ).
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_file.
+  p_file = zcl_ap_ficheros=&gt;popup_select_fichero( file_filter = zcl_ap_ficheros=&gt;c_filtro_xls ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;main( ).</source>
+</PROG>

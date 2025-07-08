@@ -1,0 +1,126 @@
+==================================================
+ZCL_C=========================CCDEF
+==================================================
+*"* use this source file for any type declarations (class
+*"* definitions, interfaces or data types) you need for method
+*"* implementation or private method's signature
+==================================================
+ZCL_C=========================CCIMP
+==================================================
+*"* local class implementation for public class
+*"* use this source file for the implementation part of
+*"* local helper classes
+==================================================
+ZCL_C=========================CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+==================================================
+ZCL_C=========================CI
+==================================================
+*"* private components of class ZCL_C
+*"* do not include other source files here!!!
+private section.
+==================================================
+ZCL_C=========================CO
+==================================================
+*"* protected components of class ZCL_C
+*"* do not include other source files here!!!
+protected section.
+==================================================
+ZCL_C=========================CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_C
+
+*"* local type definitions
+include ZCL_C=========================ccdef.
+
+*"* class ZCL_C definition
+*"* public declarations
+  include ZCL_C=========================cu.
+*"* protected declarations
+  include ZCL_C=========================co.
+*"* private declarations
+  include ZCL_C=========================ci.
+endclass. "ZCL_C definition
+
+*"* macro definitions
+include ZCL_C=========================ccmac.
+*"* local class implementation
+include ZCL_C=========================ccimp.
+
+class ZCL_C implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_C implementation
+
+==================================================
+ZCL_C=========================CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_C and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_C=========================CU
+==================================================
+class ZCL_C definition
+  public
+  final
+  create public .
+
+*"* public components of class ZCL_C
+*"* do not include other source files here!!!
+public section.
+
+  constants BUKRS type BKPF-BUKRS value 'FGV' ##NO_TEXT.
+  constants EMPRESA type BKPF-XBLNR value 'FGV' ##NO_TEXT.
+  constants RUTA_DESCARGA_SLNK type STRING value 'd:\Google Drive\CODIGO\Reports slnk\FGV\'. ##NO_TEXT.
+  constants ENTORNO_DESARROLLO type SY-SYSID value 'EIN' ##NO_TEXT.
+  constants ENTORNO_PRODUCCION type SY-SYSID value 'PRD' ##NO_TEXT.
+  constants RFC_PRODUCCION type CHAR40 value 'TMSSUP@PRD.DOMAIN_PRD' ##NO_TEXT.
+  constants WAERS type WAERS value 'EUR' ##NO_TEXT.
+  constants ENTORNO_CALIDAD type SY-SYSID value 'TOR' ##NO_TEXT.
+  constants PLAN_CUENTAS type KTOPL value 'FGV' ##NO_TEXT.
+  constants RFC_DESARROLLO type CHAR40 value 'TMSSUP@TOR.DOMAIN_TOR' ##NO_TEXT.
+  constants USUARIO_AP type UNAME value 'DESARROLLO' ##NO_TEXT.
+  constants NOMBRE_PC type STRING value 'FIJO,FIJOI7,ANDRES-PC,S3,MACBOOK' ##NO_TEXT.
+  constants SALIDA_MAIL_DESARROLLO type ABAP_BOOL value 'X' ##NO_TEXT.
+  constants SOCIEDAD_CO type KOKRS value 'FGV' ##NO_TEXT.
+  constants RUTAS_TASKS type STRING value 'http://minisap.sap4.com:443/sap/bc/bsp/sap/ztasksf/index.html?&cliente=FGV&objeto=' ##NO_TEXT.
+  constants CLIENTE_TASKS type CHAR3 value 'FGV' ##NO_TEXT.
+  constants CODEPAGE type TCP00-CPCODEPAGE value '4103' ##NO_TEXT.
+  constants CODEPAGE_HTML type TCP00-CPCODEPAGE value '4103' ##NO_TEXT.
+  constants USUARIOS_SISTEMAS type STRING value 'DESARROLLO,2572,1050,ANDRES_EDU' ##NO_TEXT.
+  constants PROG_ZLOG type SY-REPID value 'ZLOG' ##NO_TEXT.
+  constants ZDOCUMENTOS_GRABAR_XSTRING type ABAP_BOOL value 'X' ##NO_TEXT.
+  constants ZDOCUMENTOS_CODEPAGE_OLD type TCP00-CPCODEPAGE value '1100' ##NO_TEXT.
+
+  class-methods GET_CONSTANTE
+    importing
+      !CONSTANTE type ANY
+    returning
+      value(VALOR) type STRING .
+==================================================
+ZCL_C=GET_CONSTANTE
+==================================================
+  METHOD get_constante.
+    DATA: l_campo(80),
+          l_atributo1 TYPE zparametros-atributo1.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    CONCATENATE 'ZCL_C=>' constante INTO l_campo.
+    ASSIGN (l_campo) TO <fs>.
+    IF sy-subrc = 0.
+      valor = <fs>.
+    ELSE.
+      SELECT SINGLE atributo1 FROM zparametros
+        INTO l_atributo1
+       WHERE clave = 'ZCL_C'
+         AND valor = constante.
+      IF sy-subrc = 0.
+        valor = l_atributo1.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.

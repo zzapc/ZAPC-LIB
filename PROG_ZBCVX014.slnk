@@ -1,0 +1,896 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZBCVX014" VARCL="X" SUBC="1" APPL="*" LEVL="40B" RMAND="012" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Mantenimiento de variantes de programas" LENGTH="39 "/>
+   <textElement ID="S" KEY="P_REPORT" ENTRY="        Report" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="        Variante" LENGTH="16 "/>
+  </language>
+ </textPool>
+ <pfstatus>
+  <pfstatus_sta CODE="S001" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="Listado de hojas de ruta"/>
+  <pfstatus_sta CODE="STANDARD" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="Standard für allgemeine Listausgabe"/>
+  <pfstatus_fun CODE="%EX" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar"/>
+  <pfstatus_fun CODE="%PC" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Fichero..." PATH="F"/>
+  <pfstatus_fun CODE="%SC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH" ICON_ID="@13@" FUN_TEXT="Buscar" PATH="B"/>
+  <pfstatus_fun CODE="%SC+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH_NEXT" ICON_ID="@4E@" FUN_TEXT="Continuar búsqueda"/>
+  <pfstatus_fun CODE="%SL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Oficina" PATH="O"/>
+  <pfstatus_fun CODE="%ST" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Árbol de informes" PATH="R"/>
+  <pfstatus_fun CODE="&amp;ALL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_ALL" ICON_ID="@4B@" FUN_TEXT="Marcar todo" PATH="T"/>
+  <pfstatus_fun CODE="&amp;AUF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Especificar desglose..." PATH="E"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Grabar..." PATH="G"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Grab.variante visualización" ICON_TEXT="Grabar"/>
+  <pfstatus_fun CODE="&amp;BS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OVERVIEW" ICON_ID="@3Q@" FUN_TEXT="Resumen de las secciones de las listas"/>
+  <pfstatus_fun CODE="&amp;BS+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PREVIOUS_VALUE" ICON_ID="@0H@" FUN_TEXT="Sección siguiente"/>
+  <pfstatus_fun CODE="&amp;BS-" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_NEXT_VALUE" ICON_ID="@0I@" FUN_TEXT="Sección anterior"/>
+  <pfstatus_fun CODE="&amp;CDF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Anular fijación" PATH="I"/>
+  <pfstatus_fun CODE="&amp;CFI" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Fijar hasta columna" PATH="F"/>
+  <pfstatus_fun CODE="&amp;CRB" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_LEFT" ICON_ID="@0B@" FUN_TEXT="Primera columna"/>
+  <pfstatus_fun CODE="&amp;CRE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_RIGHT" ICON_ID="@0C@" FUN_TEXT="Última columna"/>
+  <pfstatus_fun CODE="&amp;CRL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_LEFT" ICON_ID="@0D@" FUN_TEXT="Columna izquierda"/>
+  <pfstatus_fun CODE="&amp;CRR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_RIGHT" ICON_ID="@0E@" FUN_TEXT="Columna derecha"/>
+  <pfstatus_fun CODE="&amp;EB3" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TABLE_SETTINGS" ICON_ID="@36@" FUN_TEXT="Otros informes"/>
+  <pfstatus_fun CODE="&amp;ELP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_HELP" ICON_ID="@35@" FUN_TEXT="Ayuda"/>
+  <pfstatus_fun CODE="&amp;ERW" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Gestión..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;ETA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Seleccionar detalle"/>
+  <pfstatus_fun CODE="&amp;F03" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Back" PATH="K"/>
+  <pfstatus_fun CODE="&amp;F12" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar" PATH="N"/>
+  <pfstatus_fun CODE="&amp;F15" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="&amp;IC1" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Seleccionar"/>
+  <pfstatus_fun CODE="&amp;ILD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Borrar filtros" PATH="L"/>
+  <pfstatus_fun CODE="&amp;ILT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER" ICON_ID="@4G@" FUN_TEXT="Fijar filtros" PATH="F"/>
+  <pfstatus_fun CODE="&amp;KOM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Seleccionar..." PATH="A"/>
+  <pfstatus_fun CODE="&amp;LFO" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Status listas..." PATH="L"/>
+  <pfstatus_fun CODE="&amp;LFO" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Status listas..."/>
+  <pfstatus_fun CODE="&amp;LIS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Lista básica" PATH="I"/>
+  <pfstatus_fun CODE="&amp;NFO" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Selecciones..." ICON_TEXT="Selecciones" PATH="E"/>
+  <pfstatus_fun CODE="&amp;NTE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Refrescar"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Seleccionar..." PATH="E"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Selec.variante visualización..." ICON_TEXT="Seleccionar"/>
+  <pfstatus_fun CODE="&amp;ODN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_DOWN" ICON_ID="@3F@" FUN_TEXT="Clasificación descendente" PATH="C"/>
+  <pfstatus_fun CODE="&amp;OL0" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Variante visualiz.actual"/>
+  <pfstatus_fun CODE="&amp;OL1" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="GT_STACK2-BUTTON_COL1"/>
+  <pfstatus_fun CODE="&amp;OL2" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="GT_STACK2-BUTTON_COL2"/>
+  <pfstatus_fun CODE="&amp;OL3" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="GT_STACK2-BUTTON_COL3"/>
+  <pfstatus_fun CODE="&amp;OL4" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="GT_STACK2-BUTTON_COL4"/>
+  <pfstatus_fun CODE="&amp;OL5" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="GT_STACK2-BUTTON_COL5"/>
+  <pfstatus_fun CODE="&amp;OLX" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Actuales..." PATH="A"/>
+  <pfstatus_fun CODE="&amp;OMP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Comprimir"/>
+  <pfstatus_fun CODE="&amp;OPT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Optimizar ancho" PATH="P"/>
+  <pfstatus_fun CODE="&amp;OUP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_UP" ICON_ID="@3E@" FUN_TEXT="Clasificación ascendente" PATH="I"/>
+  <pfstatus_fun CODE="&amp;RNT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Imprimir" PATH="I"/>
+  <pfstatus_fun CODE="&amp;SAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DESELECT_ALL" ICON_ID="@4D@" FUN_TEXT="Desmarcar todo" PATH="D"/>
+  <pfstatus_fun CODE="&amp;SUM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INTERMEDIATE_SUM" ICON_ID="@5V@" FUN_TEXT="Subtotal..." PATH="S"/>
+  <pfstatus_fun CODE="&amp;UMC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SUM" ICON_ID="@3Z@" FUN_TEXT="Totalizar valores" PATH="A"/>
+  <pfstatus_fun CODE="&amp;XPA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Desplegar"/>
+  <pfstatus_fun CODE="BACK" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Back"/>
+  <pfstatus_fun CODE="BACK2" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Back"/>
+  <pfstatus_fun CODE="BACKFER" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Back"/>
+  <pfstatus_fun CODE="BOTON" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="D" INFO_TEXT="Dd"/>
+  <pfstatus_fun CODE="CAMBIA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CHARACTERISTICS_ACT" ICON_ID="@81@" FUN_TEXT="Cambia formato" INFO_TEXT="Cambia formato visualización"/>
+  <pfstatus_fun CODE="CANCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar"/>
+  <pfstatus_fun CODE="CANCEL2" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar"/>
+  <pfstatus_fun CODE="DELVAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE_ROW" ICON_ID="@18@" FUN_TEXT="Borrar Selección" ICON_TEXT="Borrar Valor" INFO_TEXT="Borrar Valor de Selección"/>
+  <pfstatus_fun CODE="DSELEC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DESELECT_ALL" ICON_ID="@4D@" FUN_TEXT="Deseleccionar todos" ICON_TEXT="Deseleccionar todos" INFO_TEXT="Deselecciona todas las entradas"/>
+  <pfstatus_fun CODE="EXCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_BIW_REPORT" ICON_ID="@6T@" FUN_TEXT="Exportar a Excel" ICON_TEXT="Exportar a Excel" INFO_TEXT="Exportar a Excel"/>
+  <pfstatus_fun CODE="EXIT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar"/>
+  <pfstatus_fun CODE="EXIT2" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar"/>
+  <pfstatus_fun CODE="FICHA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Ficha Instrucciones" ICON_TEXT="Ficha Instrucciones" INFO_TEXT="Impresión de la ficha de instrucciones"/>
+  <pfstatus_fun CODE="IMP2" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Impresión en el SPOOL" ICON_TEXT="Impresión en el SPOOL" INFO_TEXT="Impresión en el SPOOL del formulario"/>
+  <pfstatus_fun CODE="IMPORT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_IMPORT" ICON_ID="@48@" FUN_TEXT="Importar desde fichero" ICON_TEXT="Importar" INFO_TEXT="Importar datos desde fichero"/>
+  <pfstatus_fun CODE="IMPR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Impresión inmediata" ICON_TEXT="Impresión inmediata" INFO_TEXT="Impresión inmediata del formulario"/>
+  <pfstatus_fun CODE="P+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_NEXT_PAGE" ICON_ID="@30@" FUN_TEXT="Primera página"/>
+  <pfstatus_fun CODE="P+" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Página siguiente"/>
+  <pfstatus_fun CODE="P++" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_LAST_PAGE" ICON_ID="@31@" FUN_TEXT="Página anterior"/>
+  <pfstatus_fun CODE="P++" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Última página"/>
+  <pfstatus_fun CODE="P-" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PREVIOUS_PAGE" ICON_ID="@2Z@" FUN_TEXT="Página siguiente"/>
+  <pfstatus_fun CODE="P-" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Página anterior"/>
+  <pfstatus_fun CODE="P--" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FIRST_PAGE" ICON_ID="@2Y@" FUN_TEXT="Ultima página"/>
+  <pfstatus_fun CODE="P--" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Primera página"/>
+  <pfstatus_fun CODE="PEDI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DISPLAY" ICON_ID="@10@" FUN_TEXT="Vis. Pedido" ICON_TEXT="Visualizar Pedido" INFO_TEXT="Visualización del pedido"/>
+  <pfstatus_fun CODE="PONERC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ANNOTATION" ICON_ID="@0J@" FUN_TEXT="Poner Control de Calidad" ICON_TEXT="Poner C.Calidad" INFO_TEXT="Poner Indicador de Control de Calidad a Posición de Pedido"/>
+  <pfstatus_fun CODE="PRI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Imprimir"/>
+  <pfstatus_fun CODE="QUITARC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CREATE_NOTE" ICON_ID="@0K@" FUN_TEXT="Quitar Control de Calidad" ICON_TEXT="Quitar C.Calidad" INFO_TEXT="Eliminar el indicador de Control de Calidad a Pos.Pedido"/>
+  <pfstatus_fun CODE="RW" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar"/>
+  <pfstatus_fun CODE="SAVE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar"/>
+  <pfstatus_fun CODE="SELEC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_ALL" ICON_ID="@4B@" FUN_TEXT="Seleccionar Todos" ICON_TEXT="Seleccionar Todos" INFO_TEXT="Selecciona todas las entradas"/>
+  <pfstatus_fun CODE="SELVAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECTION" ICON_ID="@7X@" FUN_TEXT="Seleccionar valores" ICON_TEXT="Seleccionar valores" INFO_TEXT="Asignar datos de selección"/>
+  <pfstatus_fun CODE="ZCAM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CHARACTERISTICS_ACT" ICON_ID="@81@" FUN_TEXT="Cambia formato" INFO_TEXT="Cambia formato visualización"/>
+  <pfstatus_men CODE="000001" NO="01" REF_TYPE="F" REF_CODE="&amp;RNT" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="02" REF_TYPE="M" REF_CODE="000002"/>
+  <pfstatus_men CODE="000001" NO="03" REF_TYPE="F" REF_CODE="&amp;F15" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="01" REF_TYPE="F" REF_CODE="%SL" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="02" REF_TYPE="F" REF_CODE="%ST" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="03" REF_TYPE="F" REF_CODE="%PC" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="01" REF_TYPE="F" REF_CODE="&amp;ALL" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="02" REF_TYPE="F" REF_CODE="&amp;SAL" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="04" REF_TYPE="F" REF_CODE="&amp;ILT" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="05" REF_TYPE="F" REF_CODE="&amp;ILD" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="07" REF_TYPE="F" REF_CODE="&amp;OUP" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="08" REF_TYPE="F" REF_CODE="&amp;ODN" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="09" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="10" REF_TYPE="F" REF_CODE="&amp;UMC" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="11" REF_TYPE="F" REF_CODE="&amp;SUM" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="12" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="13" REF_TYPE="F" REF_CODE="%SC" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="14" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="15" REF_TYPE="F" REF_CODE="&amp;F12" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="01" REF_TYPE="F" REF_CODE="&amp;F03" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="01" REF_TYPE="F" REF_CODE="&amp;LIS" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000005" NO="03" REF_TYPE="M" REF_CODE="000006"/>
+  <pfstatus_men CODE="000005" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000005" NO="05" REF_TYPE="M" REF_CODE="000007"/>
+  <pfstatus_men CODE="000005" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000005" NO="07" REF_TYPE="M" REF_CODE="000008"/>
+  <pfstatus_men CODE="000005" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000005" NO="09" REF_TYPE="F" REF_CODE="&amp;NFO" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="10" REF_TYPE="F" REF_CODE="&amp;LFO" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="01" REF_TYPE="F" REF_CODE="&amp;OLX" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="02" REF_TYPE="F" REF_CODE="&amp;OAD" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000006" NO="04" REF_TYPE="F" REF_CODE="&amp;AVE" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000006" NO="06" REF_TYPE="F" REF_CODE="&amp;ERW" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="01" REF_TYPE="F" REF_CODE="&amp;KOM" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="02" REF_TYPE="F" REF_CODE="&amp;AUF" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="01" REF_TYPE="F" REF_CODE="&amp;OPT" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000008" NO="03" REF_TYPE="F" REF_CODE="&amp;CFI" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="04" REF_TYPE="F" REF_CODE="&amp;CDF" REF_NO="001"/>
+  <pfstatus_mtx CODE="000001" TEXT_TYPE="S" TEXT="Lista" PATH="L"/>
+  <pfstatus_mtx CODE="000002" TEXT_TYPE="S" TEXT="Grabar" PATH="G"/>
+  <pfstatus_mtx CODE="000003" TEXT_TYPE="S" TEXT="Tratar" PATH="T"/>
+  <pfstatus_mtx CODE="000004" TEXT_TYPE="S" TEXT="Pasar a" PATH="P"/>
+  <pfstatus_mtx CODE="000005" TEXT_TYPE="S" TEXT="Opciones" PATH="O"/>
+  <pfstatus_mtx CODE="000006" TEXT_TYPE="S" TEXT="Variante de visualización" PATH="A"/>
+  <pfstatus_mtx CODE="000007" TEXT_TYPE="S" TEXT="Niveles de totalización" PATH="S"/>
+  <pfstatus_mtx CODE="000008" TEXT_TYPE="S" TEXT="Columnas" PATH="C"/>
+  <pfstatus_act CODE="000002" NO="01" MENUCODE="000001"/>
+  <pfstatus_act CODE="000002" NO="02" MENUCODE="000003"/>
+  <pfstatus_act CODE="000002" NO="03" MENUCODE="000004"/>
+  <pfstatus_act CODE="000002" NO="04" MENUCODE="000005"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="03" PFNO="06"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="04" PFNO="05"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="01" PFNO="29"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="02" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="03" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="04" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="05" PFNO="42"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="06" PFNO="43"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="07" PFNO="34"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="08" PFNO="39"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="09" PFNO="41"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="10" PFNO="40"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="11" PFNO="05"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="12" PFNO="06"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="13" PFNO="38"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="14" PFNO="30"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="15" PFNO="31"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="16" PFNO="37"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="17" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="18" PFNO="32"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="19" PFNO="44"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="20" PFNO="45"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="21" PFNO="46"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="22" PFNO="33"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="23" PFNO="36"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="24" PFNO="35"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="25" PFNO="07"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="26" PFNO="14"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="27" PFNO="16"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="28" PFNO="17"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="BACK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="05" FUNCODE="DSELEC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="06" FUNCODE="SELEC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="EXIT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="25" FUNCODE="IMP2" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="28" FUNCODE="IMPR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="71" FUNCODE="%SC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="80" FUNCODE="P--" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="81" FUNCODE="P-" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="82" FUNCODE="P+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="83" FUNCODE="P++" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="84" FUNCODE="%SC+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="86" FUNCODE="PRI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="01" FUNCODE="&amp;ELP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="02" FUNCODE="&amp;IC1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="03" FUNCODE="BACK" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="04" FUNCODE="CAMBIA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="05" FUNCODE="&amp;ALL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="06" FUNCODE="&amp;SAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="07" FUNCODE="&amp;NFO" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="08" FUNCODE="&amp;NTE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="09" FUNCODE="PEDI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="11" FUNCODE="SAVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="13" FUNCODE="&amp;RNT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="14" FUNCODE="IMPORT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="15" FUNCODE="EXIT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="16" FUNCODE="SELVAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="17" FUNCODE="DELVAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="19" FUNCODE="&amp;UMC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="20" FUNCODE="BOTON" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="21" FUNCODE="P--" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="22" FUNCODE="P-" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="23" FUNCODE="P+" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="24" FUNCODE="P++" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="25" FUNCODE="&amp;SUM" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="26" FUNCODE="&amp;CRL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="27" FUNCODE="&amp;CRR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="28" FUNCODE="&amp;CRE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="29" FUNCODE="&amp;CRB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="30" FUNCODE="&amp;XPA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="31" FUNCODE="&amp;OMP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="32" FUNCODE="&amp;OL0" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="33" FUNCODE="&amp;OAD" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="34" FUNCODE="&amp;BS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="35" FUNCODE="&amp;LFO" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="36" FUNCODE="&amp;AVE" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="37" FUNCODE="&amp;EB3" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="38" FUNCODE="&amp;ILT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="39" FUNCODE="&amp;ETA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="40" FUNCODE="&amp;ODN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="41" FUNCODE="&amp;OUP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="42" FUNCODE="&amp;BS-" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="43" FUNCODE="&amp;BS+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="44" FUNCODE="&amp;OL1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="45" FUNCODE="&amp;OL2" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="46" FUNCODE="&amp;OL3" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="47" FUNCODE="&amp;OL4" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="48" FUNCODE="&amp;OL5" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="71" FUNCODE="%SC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="80" FUNCODE="P--" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="81" FUNCODE="P-" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="82" FUNCODE="P+" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="83" FUNCODE="P++" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="84" FUNCODE="%SC+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="86" FUNCODE="&amp;RNT" FUNNO="001"/>
+  <pfstatus_set STATUS="S001" FUNCTION="%EX"/>
+  <pfstatus_set STATUS="S001" FUNCTION="%SC"/>
+  <pfstatus_set STATUS="S001" FUNCTION="%SC+"/>
+  <pfstatus_set STATUS="S001" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="S001" FUNCTION="BACKFER"/>
+  <pfstatus_set STATUS="S001" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="S001" FUNCTION="DSELEC"/>
+  <pfstatus_set STATUS="S001" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="S001" FUNCTION="IMP2"/>
+  <pfstatus_set STATUS="S001" FUNCTION="IMPR"/>
+  <pfstatus_set STATUS="S001" FUNCTION="P+"/>
+  <pfstatus_set STATUS="S001" FUNCTION="P++"/>
+  <pfstatus_set STATUS="S001" FUNCTION="P-"/>
+  <pfstatus_set STATUS="S001" FUNCTION="P--"/>
+  <pfstatus_set STATUS="S001" FUNCTION="PRI"/>
+  <pfstatus_set STATUS="S001" FUNCTION="RW"/>
+  <pfstatus_set STATUS="S001" FUNCTION="SELEC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%CH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%EX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%PC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%ST"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CDF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CFI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;EB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ERW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F03"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F12"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F15"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;IC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;KOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OAD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL4"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL5"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OPT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;RNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SUM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;UMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BAC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BACK2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB9"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEBN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BOTON"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="CAMBIA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="CANCEL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="CANCEL2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DELVAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DRUK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DSAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ENTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXIT2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FICHA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="GLIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="HELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="IMPORT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="INFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="KOMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="LOAD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P++"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P--"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PEDI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF09"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF13"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PIC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PICK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PONERC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="QUITARC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="RW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SELVAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SKOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SOUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SUMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="VERW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ZCAM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ZSUM"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="Listado de hojas de ruta"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" NORM="X" INT_NOTE="Listado de hojas de ruta"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="D" INT_NOTE="Listado de hojas de ruta"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000002" MODAL="D" INT_NOTE="Standardoberfläche              STANDARD"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000002" MODAL="D" NORM="X" INT_NOTE="Standard maximale Interaktion"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000002" SUB_CODE="0001" MODAL="D" INT_NOTE="Standard maximale Interaktion"/>
+ </pfstatus>
+ <source>************************************************************************
+* MÓDULO      : BC                                                     *
+* TIPO        : Utilidad                                               *
+* TITULO      : Mantenimiento de valores de variantes                  *
+* DESCRIPCION : Crea/Modifica/Borra valores de los parámetros          *
+*               y select-options de una variante de un report          *
+*                                                                      *
+* CREADO POR : Lucía Rodríguez                                         *
+* FECHA      : 03/01/2006                                              *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE                               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username                             P01K90XXXXX        *
+************************************************************************
+************************************************************************
+*  Autor: Daniel Garcia Infiesta                                       *
+*  Fecha: 19/6/2006                                                    *
+*  Modificación: dgi19062006_001                                       *
+*  Descripción: LLamada a función ws_upload no correcta substitución   *
+*  funcion gui_upload                                                  *
+************************************************************************
+
+REPORT zbcvx014 MESSAGE-ID zbc.
+
+TABLES: trdir,               &quot; Tabla de sistema
+        varis,               &quot; Variantes
+        dd03l.               &quot; Campos de tablas de sap
+
+INCLUDE zbcvk002.            &quot;Rutinas de SAPGUI PROGRESS INDICATOR
+INCLUDE zbcvk003.            &quot;Include rutinas comunes listados ALV
+INCLUDE zbcvk004.            &quot;Rutinas para ayudas para búsqueda
+INCLUDE zppvk000.            &quot;Rutinas con utilidades
+
+DATA: BEGIN OF i_datos OCCURS 0,
+        cell01(80) TYPE c,
+      END OF i_datos.
+
+PARAMETERS: p_report LIKE vari-report OBLIGATORY.
+
+
+DATA: i_rsparams LIKE rsparams  OCCURS 0 WITH HEADER LINE,
+      i_vartext LIKE rsvseltext OCCURS 0 WITH HEADER LINE,
+      i_sscr LIKE rsscr OCCURS 0 WITH HEADER LINE,
+      l_vari LIKE varis-variant,
+      l_exito TYPE i.
+
+DATA: BEGIN OF i_listado OCCURS 0,
+          check,
+          selname LIKE rsparams-selname,
+          text LIKE rsvseltext-text,
+          dbfield LIKE rsscr-dbfield,
+          kind LIKE rsparams-kind,
+          sign LIKE rsparams-sign,
+          option LIKE rsparams-option,
+          low LIKE rsparams-low,
+          high LIKE rsparams-high,
+          type LIKE rsscr-type,
+      END OF i_listado.
+DATA: i_vari LIKE rvari OCCURS 0 WITH HEADER LINE,
+      i_varivdat LIKE rsvarivdat OCCURS 0 WITH HEADER LINE,
+      i_varidyn LIKE rsvaridyn OCCURS 0 WITH HEADER LINE,
+      i_vdatdyn LIKE rsvdatdyn OCCURS 0 WITH HEADER LINE.
+
+DATA: STR_FICHERO_UPLOAD TYPE STRING.      &quot;dgi19062006_001
+
+AT SELECTION-SCREEN.
+  trdir-name = p_report.
+  READ TABLE trdir.
+  IF sy-subrc NE 0.
+    MESSAGE e002 WITH p_report.
+  ENDIF.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_report.
+  PERFORM sel_report.
+
+START-OF-SELECTION.
+* comprobar usuario solicitante para que no se lance sin autorizacion
+  IF sy-uname+0(5) NE &apos;SPVCA&apos; AND sy-uname+0(5) NE &apos;SPVBC&apos;.
+    MESSAGE e010.
+    EXIT.
+  ENDIF.
+
+  PERFORM obtener_parametros CHANGING l_exito.
+  CHECK l_exito = 1.
+  PERFORM sgpi_texto USING &apos;Generando listado&apos;.
+  v_alv_nombre_checkbox = &apos;CHECK&apos;.
+  PERFORM initialize_fieldcat USING alv_fieldtab[].
+  PERFORM alv_sortinfo TABLES alv_sort.
+  PERFORM listado_tabla_alv TABLES i_listado
+                             USING &apos;I_LISTADO&apos;
+                                   alv_fieldtab.
+
+**---------------------------------------------------------------------*
+**       FORM alv_sortinfo                                             *
+**---------------------------------------------------------------------*
+**       Opciones de ordenación                                        *
+**---------------------------------------------------------------------*
+FORM alv_sortinfo TABLES p_alv_sort TYPE slis_t_sortinfo_alv.
+*
+  DATA sortinfo_alv TYPE slis_sortinfo_alv.
+
+
+ENDFORM.                               &quot; ALV_SORTINFO
+
+*---------------------------------------------------------------------*
+*       FORM initialize_fieldcat                                      *
+*---------------------------------------------------------------------*
+FORM initialize_fieldcat USING p_fieldtab TYPE slis_t_fieldcat_alv.
+
+  fieldcat_checkbox &apos;CHECK&apos;.
+  CLEAR alv_fieldcat.
+  alv_fieldcat-tabname      = &apos;I_LISTADO&apos;.
+  alv_fieldcat-fieldname    = &apos;LOW&apos;.
+  alv_fieldcat-outputlen    = &apos;20&apos;.
+  alv_fieldcat-input        = &apos;X&apos;.
+  APPEND alv_fieldcat TO p_fieldtab.
+  CLEAR alv_fieldcat.
+  alv_fieldcat-tabname      = &apos;I_LISTADO&apos;.
+  alv_fieldcat-fieldname    = &apos;HIGH&apos;.
+  alv_fieldcat-outputlen    = &apos;20&apos;.
+  alv_fieldcat-input        = &apos;X&apos;.
+  APPEND alv_fieldcat TO p_fieldtab.
+
+  fieldcat_no_out: &apos;TYPE&apos;.
+  fieldcat_text_simple_long_m:
+                               &apos;DBFIELD&apos; &apos;Campo&apos; 20,
+                               &apos;TEXT&apos; &apos;Descripción&apos; 30.
+ENDFORM.                               &quot; INITIALIZE_FIELDCAT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  SEL_REPORT
+*&amp;---------------------------------------------------------------------*
+*  Procedimiento con el que mostraremos una ventana de ayuda para la
+*  selección del report
+*----------------------------------------------------------------------*
+*  --&gt;  p1        text
+*  &lt;--  p2        text
+*----------------------------------------------------------------------*
+FORM sel_report.
+
+  PERFORM hv_inicio.
+  PERFORM hv_add_field USING: &apos;VARIS&apos; &apos;REPORT&apos; &apos;X&apos;,
+                              &apos;VARIS&apos; &apos;DYNNR&apos; &apos;&apos;.
+  SELECT * FROM varis.
+    PERFORM hv_add_value USING: varis-report, varis-dynnr.
+  ENDSELECT.
+*  Mostramos la tabla para seleccionar valores.
+  PERFORM hv_help_value USING &apos;VARIS&apos; &apos;REPORT&apos;
+                     CHANGING p_report.
+
+ENDFORM.                    &quot; sel_report
+
+
+*---------------------------------------------------------------------*
+*       FORM user_command                                             *
+*---------------------------------------------------------------------*
+*       Comprueba acciones de usuario
+*---------------------------------------------------------------------*
+FORM user_command
+  USING pu_okcode
+        pu_selfield TYPE slis_selfield.
+  DATA: fich_imp LIKE rlgrap-filename,
+        l_low LIKE rsparams-low,
+        filename TYPE string,
+        path type string,
+        fullpath type string.
+
+  CASE pu_okcode.
+    WHEN &apos;BACK&apos;.
+      LEAVE PROGRAM.
+    WHEN &apos;CANCEL&apos;.
+      LEAVE PROGRAM.
+    WHEN &apos;EXIT&apos;.
+      LEAVE PROGRAM.
+    WHEN &apos;SELVAL&apos;.
+      LOOP AT i_listado WHERE check = &apos;X&apos;.
+        l_low = i_listado-low.
+        DATA: dato(30).
+        RANGES r_datos FOR dato.
+        REFRESH r_datos.
+        CALL FUNCTION &apos;FI_COMPLEX_SELECTIONS_DIALOG&apos;
+          EXPORTING
+             title          = &apos;Selección&apos;
+             text           = &apos;Proveedores&apos;
+*            SIGNED         = &apos;X&apos;
+*            LOWER_CASE     = &apos; &apos;
+*            JUST_DISPLAY   = &apos; &apos;
+             i_fieldname    = &apos;LIFNR&apos;
+             i_tabname      = &apos;LFA1&apos;
+             i_f4_type      = &apos;1&apos;
+*            I_MACOBJ       = &apos; &apos;
+          TABLES
+             range          = r_datos
+*            T_FIELDTAB     =
+*            T_VALUETAB     =
+          EXCEPTIONS
+             no_range_tab   = 1
+             cancelled      = 2
+             internal_error = 3
+             OTHERS         = 4.
+
+        IF sy-subrc NE 0.
+          MESSAGE e005 WITH i_listado-selname.
+        ENDIF.
+        LOOP AT r_datos.
+          MOVE-CORRESPONDING r_datos TO i_listado.
+          i_listado-check = &apos; &apos;.
+          APPEND i_listado.
+        ENDLOOP.
+        IF sy-subrc = 0 AND l_low IS INITIAL.
+          DELETE i_listado.
+        ELSE.
+          CLEAR i_listado-check.
+          MODIFY i_listado.
+        ENDIF.
+      ENDLOOP.
+      SORT i_listado.
+      DELETE ADJACENT DUPLICATES FROM i_listado.
+      pu_selfield-refresh    = &apos;X&apos;.
+      pu_selfield-col_stable = &apos;X&apos;.
+      pu_selfield-row_stable = &apos;X&apos;.
+
+    WHEN &apos;DELVAL&apos;.
+      LOOP AT i_listado WHERE check = &apos;X&apos;.
+        DELETE i_listado.
+      ENDLOOP.
+      SORT i_listado.
+      pu_selfield-refresh    = &apos;X&apos;.
+      pu_selfield-col_stable = &apos;X&apos;.
+      pu_selfield-row_stable = &apos;X&apos;.
+      MESSAGE s008.
+    WHEN &apos;SAVE&apos;.
+      REFRESH i_rsparams.
+      LOOP AT i_listado.
+        MOVE-CORRESPONDING i_listado TO i_rsparams.
+        IF i_listado-type = &apos;D&apos; AND NOT i_listado-low IS INITIAL.
+          CONCATENATE i_listado-low+6(4) i_listado-low+3(2)
+                      i_listado-low(2)
+                 INTO i_rsparams-low.
+        ENDIF.
+        IF i_listado-type = &apos;D&apos; AND NOT i_listado-high IS INITIAL.
+          CONCATENATE i_listado-high+6(4) i_listado-high+3(2)
+                      i_listado-high(2)
+                 INTO i_rsparams-high.
+        ENDIF.
+        APPEND i_rsparams.
+      ENDLOOP.
+      LOOP AT i_sscr.
+        READ TABLE i_listado WITH KEY selname = i_sscr-name.
+        IF sy-subrc NE 0.
+          CLEAR i_rsparams.
+          i_rsparams-selname = i_sscr-name.
+          i_rsparams-kind = i_sscr-kind.
+          APPEND i_rsparams.
+        ENDIF.
+      ENDLOOP.
+      CALL FUNCTION &apos;RS_CHANGE_CREATED_VARIANT&apos;
+           EXPORTING
+             curr_report               = p_report
+             curr_variant              = l_vari
+             vari_desc                 = &apos;Hola&apos;
+        TABLES
+             vari_contents             = i_rsparams
+*            VARI_TEXT                 =
+        EXCEPTIONS
+             illegal_report_or_variant = 1
+             illegal_variantname       = 2
+             not_authorized            = 3
+             not_executed              = 4
+             report_not_existent       = 5
+             report_not_supplied       = 6
+             variant_doesnt_exist      = 7
+             variant_locked            = 8
+             selections_no_match       = 9
+             OTHERS                    = 10.
+
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE e006 WITH l_vari.
+      ENDIF.
+      MESSAGE s007 WITH l_vari.
+
+    WHEN &apos;IMPORT&apos;.
+      LOOP AT i_listado WHERE check = &apos;X&apos;.
+        IF i_listado-kind &lt;&gt; &apos;S&apos;.
+          MESSAGE e011.
+        ENDIF.
+        l_low = i_listado-low.
+*          SELECCIONA_FICHERO FICH_IMP.
+        selecciona_fichero filename
+                           path
+                           fullpath.           &quot; ers 16.06.2006
+        MOVE fullpath TO fich_imp.             &quot; ers 16.06.2006
+        REFRESH i_datos.
+
+      CLEAR STR_FICHERO_UPLOAD.                  &quot;dgi19062006_001
+      MOVE fich_imp TO STR_FICHERO_UPLOAD.       &quot;dgi19062006_001
+
+       CALL FUNCTION &apos;GUI_UPLOAD&apos;            &quot;dgi19062006_001
+        EXPORTING
+          FILENAME                      = STR_FICHERO_UPLOAD
+*          FILETYPE                      = &apos;DAT&apos;
+      HAS_FIELD_SEPARATOR           = &apos;X&apos;
+*     HEADER_LENGTH                 = 0
+*     READ_BY_LINE                  = &apos;X&apos;
+*     DAT_MODE                      = &apos; &apos;
+*     CODEPAGE                      = &apos; &apos;
+*     IGNORE_CERR                   = ABAP_TRUE
+*     REPLACEMENT                   = &apos;#&apos;
+*     CHECK_BOM                     = &apos; &apos;
+*     NO_AUTH_CHECK                 = &apos; &apos;
+*      IMPORTING
+*          FILELENGTH                    = NR_OF_BYTES
+*     HEADER                        =
+      TABLES
+          DATA_TAB                      =  i_datos
+   EXCEPTIONS
+     FILE_OPEN_ERROR               = 1
+     FILE_READ_ERROR               = 2
+     NO_BATCH                      = 3
+     GUI_REFUSE_FILETRANSFER       = 4
+     INVALID_TYPE                  = 5
+     NO_AUTHORITY                  = 6
+     UNKNOWN_ERROR                 = 7
+     BAD_DATA_FORMAT               = 8
+     HEADER_NOT_ALLOWED            = 9
+     SEPARATOR_NOT_ALLOWED         = 10
+     HEADER_TOO_LONG               = 11
+     UNKNOWN_DP_ERROR              = 12
+     ACCESS_DENIED                 = 13
+     DP_OUT_OF_MEMORY              = 14
+     DISK_FULL                     = 15
+     DP_TIMEOUT                    = 16
+     OTHERS                        = 17
+            .                             &quot;dgi19062006_001
+
+
+*        CALL FUNCTION &apos;WS_UPLOAD&apos;        &quot;dgi19062006_001
+*           EXPORTING
+**               CODEPAGE                = &apos; &apos;
+*              filename                = fich_imp
+*              filetype                = &apos;DAT&apos;
+*         TABLES
+*              data_tab                = i_datos
+*         EXCEPTIONS
+*              conversion_error        = 1
+*              file_open_error         = 2
+*              file_read_error         = 3
+*              invalid_table_width     = 4
+*              invalid_type            = 5
+*              no_batch                = 6
+*              unknown_error           = 7
+*              gui_refuse_filetransfer = 8
+*              customer_error          = 9
+*              OTHERS                  = 10.  &quot;dgi19062006_001
+        IF sy-subrc NE 0.
+          MESSAGE e009 WITH fich_imp.
+        ENDIF.
+        LOOP AT i_datos.
+          i_listado-check = &apos; &apos;.
+          i_listado-sign = &apos;I&apos;.
+          i_listado-option = &apos;EQ&apos;.
+          i_listado-low = i_datos-cell01.
+          CLEAR i_listado-high.
+          APPEND i_listado.
+        ENDLOOP.
+        IF sy-subrc = 0 AND l_low IS INITIAL.
+          DELETE i_listado.
+        ELSE.
+          i_listado-check = &apos; &apos;.
+          MODIFY i_listado.
+        ENDIF.
+      ENDLOOP.
+      SORT i_listado.
+      DELETE ADJACENT DUPLICATES FROM i_listado.
+      pu_selfield-refresh    = &apos;X&apos;.
+      pu_selfield-col_stable = &apos;X&apos;.
+      pu_selfield-row_stable = &apos;X&apos;.
+
+  ENDCASE.
+ENDFORM.                    &quot;USER_COMMAND
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  OBTENER_PARAMETROS
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  --&gt;  p1        text
+*  &lt;--  p2        text
+*----------------------------------------------------------------------*
+FORM obtener_parametros CHANGING p_exito.
+  DATA l_varkey LIKE rsvarkey.
+
+  p_exito = 1.
+  REFRESH: i_rsparams, i_vartext, i_listado, i_sscr, i_vari,
+           i_varivdat, i_varidyn, i_vdatdyn.
+  l_varkey-report = p_report.
+
+  CALL FUNCTION &apos;RS_VARIANT_FETCH&apos;
+    EXPORTING
+      function             = &apos;GET&apos;
+      report               = p_report
+      rkey                 = l_varkey
+      submode              = space
+      internal_call        = &apos;X&apos;
+    IMPORTING
+      variant              = l_vari
+    TABLES
+      selctab              = i_sscr
+      p_vari               = i_vari
+      p_varivdat           = i_varivdat
+      p_varidyn            = i_varidyn
+      p_vdatdyn            = i_vdatdyn
+    EXCEPTIONS
+      variant_name         = 1
+      no_variants          = 2
+      variant_inconsistent = 3
+      only_background      = 4
+      OTHERS               = 5.
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE s004 WITH p_report.
+    p_exito = 0.
+    EXIT.
+  ENDIF.
+
+
+  CALL FUNCTION &apos;RS_VARIANT_VALUES_TECH_DATA&apos;
+    EXPORTING
+      report               = p_report
+      variant              = l_vari
+      sel_text             = &apos;X&apos;
+      move_or_write        = &apos;W&apos;
+      sorted               = &apos;X&apos;
+    TABLES
+      variant_values       = i_rsparams
+      variant_text         = i_vartext
+    EXCEPTIONS
+      variant_non_existent = 1
+      variant_obsolete     = 2
+      OTHERS               = 3.
+
+
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE s003 WITH p_report l_vari.
+    p_exito = 0.
+    EXIT.
+  ENDIF.
+
+  LOOP AT i_rsparams.
+    CLEAR i_listado.
+    MOVE-CORRESPONDING i_rsparams TO i_listado.
+    READ TABLE i_sscr WITH KEY name = i_rsparams-selname.
+    IF sy-subrc = 0.
+      i_listado-dbfield = i_sscr-dbfield.
+      i_listado-type = i_sscr-type.
+    ENDIF.
+    READ TABLE i_vartext WITH KEY tech_name = i_rsparams-selname.
+    IF sy-subrc = 0.
+      i_listado-text = i_vartext-text.
+    ENDIF.
+    IF i_listado-selname = i_listado-text.
+      PERFORM buscar_descripcion USING i_listado-dbfield
+                                 CHANGING i_listado-text.
+    ENDIF.
+    APPEND i_listado.
+  ENDLOOP.
+  SORT i_listado.
+ENDFORM.                    &quot; OBTENER_PARAMETROS
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  BUSCAR_DESCRIPCION
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_I_LISTADO_DBFIELD  text                                    *
+*      &lt;--P_I_LISTADO_TEXT  text                                       *
+*----------------------------------------------------------------------*
+FORM buscar_descripcion USING    p_dbfield
+                        CHANGING p_text.
+  DATA: l_pos TYPE i,
+        l_posd TYPE i,
+        l_table LIKE dd03l-tabname,
+        l_field LIKE dd03l-fieldname,
+        l_reptext LIKE dd04t-reptext.
+
+  SEARCH p_dbfield FOR &apos;-&apos;.
+  IF sy-subrc NE 0.
+    EXIT.
+  ENDIF.
+  l_pos = sy-fdpos.
+  l_posd = l_pos + 1.
+  l_table = p_dbfield(l_pos).
+  l_field = p_dbfield+l_posd.
+  SELECT SINGLE *
+    FROM dd03l
+   WHERE tabname = l_table
+     AND fieldname = l_field.
+  IF sy-subrc = 0.
+    SELECT SINGLE reptext INTO l_reptext
+      FROM dd04t
+     WHERE rollname = dd03l-rollname
+       AND ddlanguage = sy-langu.
+    p_text = l_reptext(30).
+  ENDIF.
+ENDFORM.                    &quot; BUSCAR_DESCRIPCION</source>
+</PROG>

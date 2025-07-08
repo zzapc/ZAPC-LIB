@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_ALV_TREE" VERSION="1" LANGU="S" DESCRIPT="ALV Arbol" UUID="0050569B70FA1ED980852427008360D3" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <publicSection>class zcl_ap_alv_tree definition
+  public
+  create public .
+
+*&quot;* public components of class ZCL_AP_ALV_TREE
+*&quot;* do not include other source files here!!!
+  public section.
+
+    data o_alv type ref to cl_salv_tree .
+    data o_functions type ref to cl_salv_functions_tree .
+    data o_columns type ref to cl_salv_columns_tree .
+    data o_column type ref to cl_salv_column .
+    data o_dspset type ref to cl_salv_display_settings .
+    data o_layout type ref to cl_salv_layout .
+    data o_selections type ref to cl_salv_selections_tree .
+    data o_events type ref to cl_salv_events_tree .
+    data i_columns type salv_t_column_ref .
+    data o_content type ref to cl_salv_form_element .
+    data i_rows type salv_t_row .
+    data campo_check type fieldname .
+    data o_functions_list type ref to cl_salv_functions_list .
+    data status type string read-only .
+
+    methods constructor
+      importing
+        !tabla            type string default &apos;I_LISTADO&apos;
+        !list_display     type abap_bool default &apos;&apos;
+        !cprog            type sy-cprog default sy-cprog
+        !optimize         type abap_bool default &apos;X&apos;
+        !botones_standard type abap_bool default &apos;X&apos;
+        !color            type lvc_fname default &apos; &apos;
+        !status           type sypfkey default &apos; &apos;
+        !sel              type c default &apos;&apos;
+        !campo_check      type fieldname default &apos;&apos;
+        !lights           type string default &apos;&apos;
+        !container_name   type c default &apos;&apos; .
+    methods show .
+    methods handle_double_click
+        for event if_salv_events_tree~double_click of cl_salv_events_tree
+      importing
+        !node_key
+        !columnname .
+    methods handle_user_command
+        for event if_salv_events_functions~added_function of cl_salv_events_tree
+      importing
+        !e_salv_function .
+    methods set_field
+      importing
+        !op     type text10
+        !campo  type any
+        !valor  type any optional
+        !valor2 type any optional .
+    methods handle_top_of_page
+        for event if_salv_events_tree~double_click of cl_salv_events_tree .
+    methods handle_end_of_page
+        for event end_of_page of cl_salv_events_table .
+    methods top_of_page .
+    methods end_of_page .
+    methods show_popup
+      importing
+        !start_column type i default 1
+        !end_column   type i default 100
+        !start_line   type i default 1
+        !end_line     type i default 20
+        !sel          type abap_bool default &apos;X&apos; .
+    methods set_color
+      importing
+        !campo type string
+        !color type i .
+    methods set_status
+      importing
+        !status type sypfkey .
+    methods get_seleccion .
+    methods set_orden
+      importing
+        !campo  type string optional
+        !up     type char1 default &apos;X&apos;
+        !down   type char1 default &apos;&apos;
+        !group  type salv_de_sort_group default if_salv_c_sort=&gt;group_none
+        !subtot type char1 default &apos;&apos;
+          preferred parameter campo .
+    methods set_agregacion
+      importing
+        !campo type string
+        !AGGREGATION type SALV_DE_AGGREGATION default IF_SALV_C_AGGREGATION=&gt;TOTAL.
+    methods refresh .
+    methods set_top_of_page .
+    methods set_end_of_page .
+    methods get_f4_layout
+      returning
+        value(layout) type disvariant-variant .
+    methods set_layout
+      importing
+        !layout type disvariant-variant .
+    methods get_fila_activa
+      returning
+        value(key) type salv_de_node_key .
+    methods constructor_tabla
+      importing
+        !list_display     type abap_bool default &apos;&apos;
+        !optimize         type abap_bool default &apos;X&apos;
+        !botones_standard type abap_bool default &apos;X&apos;
+        !color            type lvc_fname default &apos; &apos;
+        !status           type sypfkey default &apos; &apos;
+        !sel              type c default &apos;&apos;
+        !campo_check      type fieldname default &apos;&apos;
+        !lights           type string default &apos;&apos;
+        !container_name   type c default &apos;&apos;
+        !tabla            type string default &apos;I_LISTADO&apos;
+        !cprog            type sy-cprog default sy-cprog
+        !handle           type slis_handl default &apos;&apos;
+      changing
+        !t_tabla          type table .
+    methods add_nodo
+      importing
+        !registro     type any
+        !key          type lvc_nkey
+        !text         type any default &apos;&apos;
+      returning
+        value(salida) type lvc_nkey .
+    methods expand_all .
+    methods free .
+    methods convertir_a_tabla_plana
+      importing
+        !show           type abap_bool default &apos;&apos;
+        !generar_excel  type any default &apos;&apos;
+      returning
+        value(lr_table) type ref to cl_salv_table .</publicSection>
+ <protectedSection>protected section.
+*&quot;* protected components of class ZCL_AP_ALV
+*&quot;* do not include other source files here!!!
+
+    data nombre_tabla type string .</protectedSection>
+ <privateSection>private section.
+*&quot;* private components of class ZCL_AP_ALV_TREE
+*&quot;* do not include other source files here!!!
+
+    data o_sorts type ref to cl_salv_sorts .
+    data o_aggregation type ref to cl_salv_aggregations .
+    data o_container type ref to cl_gui_custom_container .
+    data key_layout type salv_s_layout_key .
+
+    methods inicializa_objetos
+      importing
+        !list_display     type abap_bool default &apos;&apos;
+        !optimize         type abap_bool default &apos;X&apos;
+        !botones_standard type abap_bool default &apos;X&apos;
+        !color            type lvc_fname default &apos; &apos;
+        !status           type sypfkey default &apos; &apos;
+        !sel              type c default &apos;&apos;
+        !campo_check      type fieldname default &apos;&apos;
+        !lights           type string default &apos;&apos;
+        !tabla            type string default &apos;I_LISTADO&apos;
+        !cprog            type sy-cprog default sy-cprog
+        !handle           type slis_handl default &apos;&apos; .</privateSection>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="ANP" ENTRY="ALV display not possible" LENGTH="48 "/>
+   <textElement ID="I" KEY="CAM" ENTRY="Campo" LENGTH="15 "/>
+   <textElement ID="I" KEY="EGA" ENTRY="Error generando ALV" LENGTH="29 "/>
+   <textElement ID="I" KEY="ERN" ENTRY="Error recuperando nodos" LENGTH="46 "/>
+   <textElement ID="I" KEY="ESF" ENTRY="Error en SET_FIELD OP=" LENGTH="44 "/>
+   <textElement ID="I" KEY="JER" ENTRY="Jerarquía" LENGTH="19 "/>
+   <textElement ID="I" KEY="NOD" ENTRY="no definida" LENGTH="21 "/>
+   <textElement ID="I" KEY="NOE" ENTRY="no existe" LENGTH="19 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_ALV_TREE" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CAMPO_CHECK" VERSION="1" LANGU="S" DESCRIPT="Nombre del campo check" EXPOSURE="2" STATE="1" EDITORDER="12 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="FIELDNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="I_COLUMNS" VERSION="1" LANGU="S" DESCRIPT="Columns of ALV List" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SALV_T_COLUMN_REF" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="I_ROWS" VERSION="1" LANGU="S" DESCRIPT="Rows" EXPOSURE="2" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SALV_T_ROW" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="KEY_LAYOUT" VERSION="1" LANGU="S" DESCRIPT="Layout clave" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SALV_S_LAYOUT_KEY" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="NOMBRE_TABLA" VERSION="1" LANGU="S" DESCRIPT="Nombre de la tabla" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_AGGREGATION" VERSION="1" LANGU="S" DESCRIPT="All Aggregation Objects" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_AGGREGATIONS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_ALV" VERSION="1" LANGU="S" DESCRIPT="Basis Class for Tree Structure" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_TREE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_COLUMN" VERSION="1" LANGU="S" DESCRIPT="Individual Column Object" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_COLUMN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_COLUMNS" VERSION="1" LANGU="S" DESCRIPT="Columns in the Tree Structure" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_COLUMNS_TREE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_CONTAINER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_GUI_CUSTOM_CONTAINER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_CONTENT" VERSION="1" LANGU="S" DESCRIPT="General Element in Design Object" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_FORM_ELEMENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_DSPSET" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_DISPLAY_SETTINGS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_EVENTS" VERSION="1" LANGU="S" DESCRIPT="Events for Tree Structures" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_EVENTS_TREE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_FUNCTIONS" VERSION="1" LANGU="S" DESCRIPT="Generic and User-Defined Functions in Tree Structures" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_FUNCTIONS_TREE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_FUNCTIONS_LIST" VERSION="1" LANGU="S" DESCRIPT="Generic and User-Defined Functions in List-Type Tables" EXPOSURE="2" STATE="1" EDITORDER="13 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_FUNCTIONS_LIST" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_LAYOUT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_LAYOUT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_SELECTIONS" VERSION="1" LANGU="S" DESCRIPT="Selections in Tree Structures" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_SELECTIONS_TREE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="O_SORTS" VERSION="1" LANGU="S" DESCRIPT="All Sort Objects" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_SALV_SORTS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="STATUS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="ADD_NODO" VERSION="1" LANGU="S" DESCRIPT="Añadir nodo al arbol" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="ADD_NODO" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="ADD_NODO" SCONAME="KEY" VERSION="1" LANGU="S" DESCRIPT="Control árbol LVA: Clave de nodo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_NKEY"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="ADD_NODO" SCONAME="TEXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="ADD_NODO" SCONAME="SALIDA" VERSION="1" LANGU="S" DESCRIPT="Control árbol LVA: Clave de nodo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LVC_NKEY"/>
+  <source>method add_nodo.
+    data: nodes  type ref to cl_salv_nodes,
+          node   type ref to cl_salv_node,
+          l_text type lvc_value.
+
+    check not o_alv is initial.
+
+    nodes = o_alv-&gt;get_nodes( ).
+
+    try.
+        node = nodes-&gt;add_node( related_node = key
+                                data_row     = registro
+                                relationship =
+    cl_gui_column_tree=&gt;relat_last_child ).
+
+        if not text is initial.
+          l_text = text.
+          node-&gt;set_text( l_text ).
+        endif.
+
+        salida = node-&gt;get_key( ).
+      catch cx_salv_msg.
+    endtry.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;I_LISTADO&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="LIST_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="CPROG" VERSION="1" LANGU="S" DESCRIPT="Calling Program" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="OPTIMIZE" VERSION="1" LANGU="S" DESCRIPT="Optimizar ancho" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="BOTONES_STANDARD" VERSION="1" LANGU="S" DESCRIPT="Mostrar el ALV como Popup" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="COLOR" VERSION="1" LANGU="S" DESCRIPT="Columna con campo color" CMPTYPE="1" MTDTYPE="2" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_FNAME" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPFKEY" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="SEL" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos; No, &apos;X&apos; Simple, &apos;M&apos; Multiple" CMPTYPE="1" MTDTYPE="2" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="CAMPO_CHECK" VERSION="1" LANGU="S" DESCRIPT="Field Name" CMPTYPE="1" MTDTYPE="2" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FIELDNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="LIGHTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR" SCONAME="CONTAINER_NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <source>method constructor.
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR diferido con tabla" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="LIST_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="OPTIMIZE" VERSION="1" LANGU="S" DESCRIPT="Optimizar ancho" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="BOTONES_STANDARD" VERSION="1" LANGU="S" DESCRIPT="Mostrar el ALV como Popup" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="COLOR" VERSION="1" LANGU="S" DESCRIPT="Columna con campo color" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_FNAME" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPFKEY" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="SEL" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos; No, &apos;X&apos; Simple, &apos;M&apos; Multiple" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="CAMPO_CHECK" VERSION="1" LANGU="S" DESCRIPT="Field Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FIELDNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="LIGHTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="CONTAINER_NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;I_LISTADO&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="CPROG" VERSION="1" LANGU="S" DESCRIPT="Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="ID de gestión para llamada múltiple desde el mismo programa" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SLIS_HANDL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONSTRUCTOR_TABLA" SCONAME="T_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>method constructor_tabla.
+    data: l_error  type string,
+          l_string type string.
+
+    try.
+        if not container_name is initial.
+          create object o_container
+            exporting
+              container_name = container_name.
+
+          l_string = container_name.
+
+
+          try.
+              call method cl_salv_tree=&gt;factory
+                exporting
+                  r_container = o_container
+*                 hide_header =
+                importing
+                  r_salv_tree = o_alv
+                changing
+                  t_table     = t_tabla.
+            catch cx_salv_error .
+              clear o_alv.
+              message &apos;ALV display not possible&apos;(anp) type &apos;I&apos; display like &apos;E&apos;.
+          endtry.
+
+        else.
+          try.
+              cl_salv_tree=&gt;factory(
+                importing r_salv_tree = o_alv
+                changing  t_table = t_tabla ).
+            catch cx_root.
+              message &apos;ALV display not possible&apos;(anp) type &apos;I&apos; display like &apos;E&apos;.
+              return.
+          endtry.
+        endif.
+
+
+        inicializa_objetos( list_display     = list_display
+                            optimize         = optimize
+                            botones_standard = botones_standard
+                            color            = color
+                            status           = status
+                            sel              = sel
+                            campo_check      = campo_check
+                            lights           = lights
+                            tabla            = tabla
+                            cprog            = cprog
+                            handle           = handle ).
+
+      catch cx_salv_msg.
+        message &apos;ALV display not possible&apos;(anp) type &apos;I&apos; display like &apos;E&apos;.
+    endtry.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONVERTIR_A_TABLA_PLANA" VERSION="1" LANGU="S" DESCRIPT="Convertir ALV a tabla plana" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONVERTIR_A_TABLA_PLANA" SCONAME="SHOW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONVERTIR_A_TABLA_PLANA" SCONAME="GENERAR_EXCEL" VERSION="1" LANGU="S" DESCRIPT="Nombre fichero excel de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="CONVERTIR_A_TABLA_PLANA" SCONAME="LR_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="CL_SALV_TABLE"/>
+  <source>method convertir_a_tabla_plana.
+*https://blogs.sap.com/2015/07/24/salv-tree-to-excel-xlsx/
+    constants:lc_xlspace     type c value &apos; &apos;. &quot;Hexa value for this field should be 0030
+
+    data: lv_level type i,
+          lv_xlsx  type xstring,
+          lt_table type ref to data,
+          lr_data  type ref to data,
+          lt_nodes type salv_t_nodes,
+          ls_node  like line of lt_nodes,
+          lr_node  type ref to cl_salv_node.
+
+    field-symbols: &lt;data&gt;  type any,
+                   &lt;table&gt; type standard table,
+                   &lt;str&gt;   type any.
+
+    try.
+        lt_nodes = o_alv-&gt;get_nodes( )-&gt;get_all_nodes( ).
+      catch cx_root.
+        message &apos;Error recuperando nodos&apos;(ern) type &apos;E&apos;.
+    endtry.
+
+    loop at lt_nodes into ls_node.
+      lr_node = ls_node-node.
+      clear lv_level.
+      do.
+        try.
+            lr_node = lr_node-&gt;get_parent( ).
+            add 1 to lv_level.
+          catch cx_salv_msg.
+            exit.
+        endtry.
+      enddo.
+
+      lr_data = ls_node-node-&gt;get_data_row( ).
+
+      assign lr_data-&gt;* to &lt;data&gt;.
+      if &lt;table&gt; is not assigned.
+        create data lt_table like standard table of &lt;data&gt;.
+        assign lt_table-&gt;* to &lt;table&gt;.
+      endif.
+
+      assign component 1 of structure &lt;data&gt; to &lt;str&gt;.
+      subtract 1 from lv_level.
+      do lv_level times.
+        concatenate lc_xlspace &lt;str&gt; into &lt;str&gt;.
+      enddo.
+
+      append &lt;data&gt; to &lt;table&gt;.
+    endloop.
+
+    try.
+        cl_salv_table=&gt;factory(
+          importing
+            r_salv_table = lr_table
+          changing
+            t_table = &lt;table&gt; ).
+      catch cx_root.
+        message &apos;Error generando ALV&apos;(ega) type &apos;E&apos;.
+    endtry.
+
+    if show = &apos;X&apos;.
+      lr_table-&gt;display( ).
+    endif.
+
+
+    lv_xlsx = lr_table-&gt;to_xml( if_salv_bs_xml=&gt;c_type_xlsx ).
+
+
+    if not generar_excel is initial.
+      data: lr_zip         type ref to cl_abap_zip,
+            lr_xlnode      type ref to if_ixml_node,
+            lr_xldimension type ref to if_ixml_node,
+            lr_xlsheetpr   type ref to if_ixml_element,
+            lr_xloutlinepr type ref to if_ixml_element,
+            lv_file        type xstring,
+            lr_file        type ref to cl_xml_document,
+            lr_xlrows      type ref to if_ixml_node_list,
+            lr_xlrow       type ref to if_ixml_element,
+            lr_xlformat    type ref to if_ixml_element,
+            lr_xlworksheet type ref to if_ixml_element,
+            lv_tabix       type i,
+            lv_maxlevel    type i,
+            lv_levels      type string.
+
+      create object lr_zip.
+
+      lr_zip-&gt;load( lv_xlsx ).
+
+*Get Worksheet XML file
+
+      lr_zip-&gt;get( exporting name = &apos;xl/worksheets/sheet1.xml&apos;
+                   importing content = lv_file ).
+
+      create object lr_file.
+      lr_file-&gt;parse_xstring( lv_file ).
+*Row elements are under SheetData
+      lr_xlnode = lr_file-&gt;find_node( &apos;sheetData&apos; ).
+      lr_xlrows = lr_xlnode-&gt;get_children( ).
+      do lr_xlrows-&gt;get_length( ) times.
+        lv_tabix = sy-index - 1.
+        lr_xlrow ?= lr_xlrows-&gt;get_item( lv_tabix ).
+*Find the same node in the SALV Tree object
+        read table lt_nodes into ls_node index lv_tabix.
+        if sy-subrc eq 0.
+          lr_node = ls_node-node.
+*Find the level of the node
+          clear lv_level.
+          do.
+            try.
+                lr_node = lr_node-&gt;get_parent( ).
+                add 1 to lv_level.
+              catch cx_salv_msg.
+                exit.
+            endtry.
+          enddo.
+
+          subtract 1 from lv_level.
+
+          if lv_level ne 0.
+            lv_levels = lv_level.
+            if lv_level &gt; lv_maxlevel.
+              lv_maxlevel = lv_level.
+            endif.
+
+            condense lv_levels.
+*Assign the level to row
+            lr_xlrow-&gt;set_attribute( name = &apos;outlineLevel&apos; value = lv_levels ).
+            lr_xlrow-&gt;set_attribute( name = &apos;hidden&apos; value = &apos;true&apos; ).
+          endif.
+        endif.
+      enddo.
+*Set maximum levels used in the sheet
+
+      lv_levels = lv_maxlevel.
+
+      condense lv_levels.
+
+      lr_xlformat ?= lr_file-&gt;find_node( &apos;sheetFormatPr&apos; ).
+
+      lr_xlformat-&gt;set_attribute( name = &apos;outlineLevelRow&apos; value = lv_levels ).
+
+*Create new element in the XML file
+      lr_xlworksheet ?= lr_file-&gt;find_node( &apos;worksheet&apos; ).
+      lr_xldimension ?= lr_file-&gt;find_node( &apos;dimension&apos; ).
+      lr_xlsheetpr = cl_ixml=&gt;create( )-&gt;create_document( )-&gt;create_element( name = &apos;sheetPr&apos; ).
+      lr_xloutlinepr = cl_ixml=&gt;create( )-&gt;create_document( )-&gt;create_element( name = &apos;outlinePr&apos; ).
+      lr_xlsheetpr-&gt;if_ixml_node~append_child( lr_xloutlinepr ).
+      lr_xloutlinepr-&gt;set_attribute( name = &apos;summaryBelow&apos; value = &apos;false&apos; ).
+      lr_xlworksheet-&gt;if_ixml_node~insert_child( new_child = lr_xlsheetpr ref_child = lr_xldimension ).
+
+*Create Xstring file for the XML, and add it to Excel Zip file
+      lr_file-&gt;render_2_xstring( importing stream = lv_file ).
+      lr_zip-&gt;delete( exporting name = &apos;xl/worksheets/sheet1.xml&apos; ).
+      lr_zip-&gt;add( exporting name = &apos;xl/worksheets/sheet1.xml&apos;
+      content = lv_file ).
+
+      lv_xlsx = lr_zip-&gt;save( ).
+
+      zcl_ap_ficheros=&gt;grabar_xstring( fichero = generar_excel xstring = lv_xlsx  ).
+    endif.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="END_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="Imprimir contenido end of page" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method end_of_page.
+
+    clear o_content.
+*  DATA: lr_header TYPE REF TO cl_salv_form_header_info,
+*        l_text    TYPE string.
+*  l_text = &apos;end of page for the report&apos;.
+*  CREATE OBJECT lr_header
+*    EXPORTING
+*      text    = l_text
+*      tooltip = l_text.
+*  o_content = lr_header.
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="EXPAND_ALL" VERSION="1" LANGU="S" DESCRIPT="Expande todos los nodos" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method expand_all.
+    data: nodes type ref to cl_salv_nodes.
+
+    nodes = o_alv-&gt;get_nodes( ).
+    nodes-&gt;expand_all( ).
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Borrar variables" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method free.
+
+    cl_gui_cfw=&gt;flush( ).
+    if not o_container is initial.
+      o_container-&gt;free( ).
+      clear o_container.
+      cl_gui_cfw=&gt;flush( ).
+    endif.
+
+    if not o_alv is initial.
+      clear o_alv.
+    endif.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="GET_F4_LAYOUT" VERSION="1" LANGU="S" DESCRIPT="Matchcode de F4 para posibles layouts" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="GET_F4_LAYOUT" SCONAME="LAYOUT" VERSION="1" LANGU="S" DESCRIPT="Layout" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DISVARIANT-VARIANT"/>
+  <source>method get_f4_layout.
+    data: ls_layout type salv_s_layout_info.
+
+    ls_layout = cl_salv_layout_service=&gt;f4_layouts(
+                             s_key    = key_layout
+                             restrict = cl_salv_layout=&gt;restrict_none ).
+
+    layout = ls_layout-layout.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="GET_FILA_ACTIVA" VERSION="1" LANGU="S" DESCRIPT="Devuelve la fila en la que está posicionado el cursor" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="GET_FILA_ACTIVA" SCONAME="KEY" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SALV_DE_NODE_KEY"/>
+  <source>method get_fila_activa.
+
+    clear: key.
+*  i_rows = o_selections-&gt;get_selected_rows( ).
+*  READ TABLE i_rows INTO fila INDEX 1.
+
+*... §5.2 get the currently selected item
+    data: lr_item type ref to cl_salv_item,
+          ls_node type salv_s_nodes.
+
+    o_selections = o_alv-&gt;get_selections( ).
+    lr_item      = o_selections-&gt;get_selected_item( ).
+
+    if lr_item is bound.
+      ls_node-node = lr_item-&gt;get_node( ).
+      ls_node-key  = ls_node-node-&gt;get_key( ).
+      key         = ls_node-key.
+    endif.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="GET_SELECCION" VERSION="1" LANGU="S" DESCRIPT="Recupera las filas seleccionadas" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method get_seleccion.
+*  DATA: l_campo TYPE string,
+*        l_row TYPE int4.
+*
+*  FIELD-SYMBOLS: &lt;tabla&gt; TYPE table,
+*                 &lt;check&gt; TYPE ANY,
+*                 &lt;campo&gt; TYPE c.
+*
+*  CLEAR i_rows.
+*  IF NOT o_selections IS INITIAL.
+*    i_rows = o_selections-&gt;get_selected_rows( ).
+*
+*    IF NOT campo_check IS INITIAL.
+*      ASSIGN (nombre_tabla) TO &lt;tabla&gt;.
+*      IF sy-subrc = 0.
+*        LOOP AT &lt;tabla&gt; ASSIGNING &lt;check&gt;.
+*          CONCATENATE &apos;&lt;CHECK&gt;-&apos; campo_check INTO l_campo.
+*          ASSIGN (l_campo) TO &lt;campo&gt;.
+*          READ TABLE i_rows FROM sy-tabix TRANSPORTING NO FIELDS.
+*          IF sy-subrc = 0.
+*            &lt;campo&gt; = &apos;X&apos;.
+*          ELSE.
+*            CLEAR &lt;campo&gt;.
+*          ENDIF.
+*        ENDLOOP.
+*      ENDIF.
+*
+*    ENDIF.
+*  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_DOUBLE_CLICK" VERSION="1" LANGU="S" DESCRIPT="Doble click" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_SALV_EVENTS_TREE" REFINTNAME="IF_SALV_EVENTS_TREE" REFCMPNAME="DOUBLE_CLICK" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_DOUBLE_CLICK" SCONAME="NODE_KEY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_DOUBLE_CLICK" SCONAME="COLUMNNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <source>method handle_double_click.
+
+*  BREAK-POINT.
+*    FIELD-SYMBOLS &lt;scarr&gt; TYPE scarr.
+*    READ TABLE scarr_tab INDEX row ASSIGNING &lt;scarr&gt;.
+*    IF sy-subrc &lt;&gt; 0.
+*      RETURN.
+*    ENDIF.
+*    IF column = &apos;CARRNAME&apos;.
+*      demo=&gt;detail( &lt;scarr&gt;-carrid ).
+*    ELSEIF column = &apos;URL&apos;.
+*      demo=&gt;browser( &lt;scarr&gt;-url ).
+*    ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_END_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="End of page" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_SALV_EVENTS_TABLE" REFCMPNAME="END_OF_PAGE" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method handle_end_of_page.
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_TOP_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="Top of page" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_SALV_EVENTS_TREE" REFINTNAME="IF_SALV_EVENTS_TREE" REFCMPNAME="DOUBLE_CLICK" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method handle_top_of_page.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_USER_COMMAND" VERSION="1" LANGU="S" DESCRIPT="User Command" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="1" MTDDECLTYP="0" REFCLSNAME="CL_SALV_EVENTS_TREE" REFINTNAME="IF_SALV_EVENTS_FUNCTIONS" REFCMPNAME="ADDED_FUNCTION" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="HANDLE_USER_COMMAND" SCONAME="E_SALV_FUNCTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="1" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="0"/>
+  <source>method handle_user_command.
+
+*  BREAK-POINT.
+
+    get_seleccion( ).
+
+
+*    FIELD-SYMBOLS &lt;scarr&gt; TYPE scarr.
+*    READ TABLE scarr_tab INDEX row ASSIGNING &lt;scarr&gt;.
+*    IF sy-subrc &lt;&gt; 0.
+*      RETURN.
+*    ENDIF.
+*    IF column = &apos;CARRNAME&apos;.
+*      demo=&gt;detail( &lt;scarr&gt;-carrid ).
+*    ELSEIF column = &apos;URL&apos;.
+*      demo=&gt;browser( &lt;scarr&gt;-url ).
+*    ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" VERSION="1" LANGU="S" DESCRIPT="Creación inicial de los objetos relacionados con el ALV" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="LIST_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="OPTIMIZE" VERSION="1" LANGU="S" DESCRIPT="Optimizar ancho" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="BOTONES_STANDARD" VERSION="1" LANGU="S" DESCRIPT="Mostrar el ALV como Popup" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="COLOR" VERSION="1" LANGU="S" DESCRIPT="Columna con campo color" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_FNAME" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPFKEY" PARVALUE="&apos; &apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="SEL" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos; No, &apos;X&apos; Simple, &apos;M&apos; Multiple" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="CAMPO_CHECK" VERSION="1" LANGU="S" DESCRIPT="Field Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FIELDNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="LIGHTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;I_LISTADO&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="CPROG" VERSION="1" LANGU="S" DESCRIPT="Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="INICIALIZA_OBJETOS" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="ID de gestión para llamada múltiple desde el mismo programa" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SLIS_HANDL" PARVALUE="&apos;&apos;"/>
+  <source>method inicializa_objetos.
+    data: l_error  type string,
+          l_string type string.
+
+    check not o_alv is initial.
+    o_columns = o_alv-&gt;get_columns( ).
+    o_columns-&gt;set_optimize( optimize ).
+
+*... § 2.1 build the hierarchy header
+    data: settings type ref to cl_salv_tree_settings.
+
+    settings = o_alv-&gt;get_tree_settings( ).
+    settings-&gt;set_hierarchy_header( &apos;Jerarquía&apos;(jer) ).
+    settings-&gt;set_hierarchy_tooltip( &apos;Jerarquía&apos;(jer) ).
+    settings-&gt;set_hierarchy_size( 30 ).
+
+    data: title type salv_de_tree_text.
+    title = sy-title.
+    settings-&gt;set_header( title ).
+
+
+    o_layout = o_alv-&gt;get_layout( ).
+
+
+    key_layout-report = cprog.
+    if not handle is initial.
+      key_layout-handle = handle.
+    else.
+      key_layout-handle = tabla.
+    endif.
+
+    o_layout-&gt;set_key( key_layout ).
+    o_layout-&gt;set_default( &apos;X&apos; ).
+    o_layout-&gt;set_save_restriction( if_salv_c_layout=&gt;restrict_none ).
+
+    me-&gt;status = status.
+
+    o_selections = o_alv-&gt;get_selections( ).
+
+* activate ALV generic Functions
+    if botones_standard = &apos;X&apos;.
+      o_functions = o_alv-&gt;get_functions( ).
+      o_functions-&gt;set_all( &apos;X&apos; ).
+
+
+*    o_alv-&gt;SET_SCREEN_STATUS( PFSTATUS = &apos;DISPLAY&apos;
+*                                 REPORT = SY-REPID
+*                                 SET_FUNCTIONS = o_alv-&gt;C_FUNCTIONS_ALL ).
+    endif.
+
+    if not status is initial.
+*        set_status( status ).
+      call method o_alv-&gt;set_screen_status(
+        exporting
+          report        = sy-cprog
+          pfstatus      = status
+          set_functions = o_alv-&gt;c_functions_all ).
+    endif.
+
+    o_events = o_alv-&gt;get_event( ).
+    set handler handle_double_click for o_events.
+    set handler handle_user_command for o_events.
+
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="REFRESH" VERSION="1" LANGU="S" DESCRIPT="Refrescar display" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method refresh.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_AGREGACION" VERSION="1" LANGU="S" DESCRIPT="Subtotales" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_AGREGACION" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_AGREGACION" SCONAME="AGGREGATION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SALV_DE_AGGREGATION" PARVALUE="IF_SALV_C_AGGREGATION=&gt;TOTAL"/>
+  <source>method set_agregacion.
+    data l_columname type lvc_fname.
+
+    l_columname = campo.
+    if o_aggregation is initial.
+      o_aggregation ?= o_alv-&gt;get_aggregations( ).
+    endif.
+    try.
+        o_aggregation-&gt;add_aggregation(
+          columnname  = l_columname
+          aggregation = aggregation
+        ).
+*      catch cx_salv_data_error.
+*      catch cx_salv_not_found.
+*      catch cx_salv_existing.
+      catch cx_root.
+    endtry.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_COLOR" VERSION="1" LANGU="S" DESCRIPT="Fija color" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_COLOR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_COLOR" SCONAME="COLOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <source>method set_color.
+    data: ls_color  type lvc_s_colo,
+          lr_column type ref to cl_salv_column_table,
+          l_column  type lvc_fname.
+
+    l_column = campo.
+    try.
+        lr_column ?= o_columns-&gt;get_column( l_column ).
+      catch cx_root.
+        return.
+    endtry.
+
+    ls_color-col = color.
+
+    ls_color-int = 0.
+
+    ls_color-inv = 0.
+
+    lr_column-&gt;set_color( ls_color ).
+
+* El campo de color debe de ser: t_color TYPE lvc_t_scol
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_END_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="Fijar top of page" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method set_end_of_page.
+
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_FIELD" VERSION="1" LANGU="S" DESCRIPT="Fija atributos de un campo" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_FIELD" SCONAME="OP" VERSION="1" LANGU="S" DESCRIPT="Operación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TEXT10"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_FIELD" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_FIELD" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_FIELD" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>method set_field.
+    data: l_column   type lvc_fname,
+          i_column   type table of lvc_fname,
+          l_error    type string,
+          l_texto    type scrtext_s,
+          l_texto2   type scrtext_l,
+          l_texto3   type scrtext_m,
+          l_decimals type lvc_decmls.
+
+    split campo at &apos;,&apos; into table i_column.
+    loop at i_column into l_column.
+      translate l_column to upper case.
+      try.
+          call method o_columns-&gt;get_column
+            exporting
+              columnname = l_column
+            receiving
+              value      = o_column.
+          case op.
+            when &apos;EDIT&apos; or &apos;INPUT&apos;.  &quot;o_column-&gt;set_edit( &apos;X&apos; ).
+            when &apos;NOOUT&apos; or &apos;NO_OUT&apos;. o_column-&gt;set_visible( &apos; &apos; ).
+            when &apos;OUT&apos;. o_column-&gt;set_visible( &apos;X&apos; ).
+            when &apos;DECIMALS&apos;.
+              l_decimals = valor.
+              o_column-&gt;set_decimals( l_decimals ).
+              if not valor2 is initial.
+                try.
+                    o_column-&gt;set_decimals_column( valor2 ).
+                  catch cx_root.
+                endtry.
+              endif.
+            when &apos;SUM&apos; or &apos;DOSUM&apos;.
+              set_agregacion( campo ).
+            when &apos;MAX&apos;.
+              set_agregacion(
+                campo = campo
+                aggregation = if_salv_c_aggregation=&gt;maximum
+              ).
+            when &apos;MERGE&apos;. &quot;&lt;fcat&gt;-no_merging = &apos;&apos;.
+            when &apos;KEY&apos;. &quot;&lt;fcat&gt;-key = &apos;X&apos;.
+            when &apos;LONG&apos;. &quot;&lt;fcat&gt;-outputlen = valor.
+            when &apos;NO_CERO&apos;. &quot;&lt;fcat&gt;-no_zero = &apos;X&apos;.
+            when &apos;CHECKBOX&apos;.
+*           o_column-&gt;set_cell_type( if_salv_c_cell_type=&gt;checkbox ).
+*            DATA lr_column  TYPE REF TO cl_salv_column_table.
+*            lr_column ?= o_columns-&gt;get_column( l_column ).
+*            lr_column-&gt;set_cell_type( if_salv_c_cell_type=&gt;checkbox ).
+
+            when &apos;DROPDOWN&apos;.
+              &quot;&lt;fcat&gt;-drdn_hndl = valor.
+            when &apos;TEXTO&apos;.
+              l_texto = valor.
+
+              if valor2 is initial.
+                l_texto2 = valor.
+              else.
+                l_texto2 = valor2.
+              endif.
+              o_column-&gt;set_short_text( l_texto ).
+              l_texto3 = l_texto2.
+              o_column-&gt;set_medium_text( l_texto3 ).
+              o_column-&gt;set_long_text( l_texto2 ).
+            when others.
+              message e398(00) with &apos;Error en SET_FIELD OP=&apos;(esf) op
+                                    &apos;no definida&apos;(nod) &apos;&apos;.
+          endcase.
+          .
+        catch cx_salv_not_found .
+          concatenate &apos;Campo&apos;(cam) campo &apos;no existe&apos;(noe) into l_error
+            separated by space.
+          message l_error type &apos;I&apos;
+                  display like &apos;E&apos;.
+      endtry.
+    endloop.
+
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_LAYOUT" VERSION="1" LANGU="S" DESCRIPT="Fija el layout" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_LAYOUT" SCONAME="LAYOUT" VERSION="1" LANGU="S" DESCRIPT="Layout" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DISVARIANT-VARIANT"/>
+  <source>method set_layout.
+
+    o_layout-&gt;set_initial_layout( layout ).
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" VERSION="1" LANGU="S" DESCRIPT="Criterios de ordenación" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" SCONAME="UP" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" SCONAME="DOWN" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" SCONAME="GROUP" VERSION="1" LANGU="S" DESCRIPT="Cambio de grupo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SALV_DE_SORT_GROUP" PARVALUE="IF_SALV_C_SORT=&gt;GROUP_NONE"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_ORDEN" SCONAME="SUBTOT" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;&apos;"/>
+  <source>method set_orden.
+    data: l_columname type lvc_fname,
+          l_sequence  type salv_de_sort_sequence.
+
+    if down = &apos;X&apos;.
+      l_sequence = 2.
+    else.
+      l_sequence = 1.
+    endif.
+
+    l_columname = campo.
+    try.
+        o_sorts-&gt;add_sort( columnname = l_columname
+                           subtotal = subtot
+                           sequence = l_sequence
+                           group    = group ).
+      catch cx_root.
+    endtry.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_STATUS" VERSION="1" LANGU="S" DESCRIPT="Fija el status de pantalla" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" DESCRIPT="Current GUI Status" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPFKEY"/>
+  <source>method set_status.
+    data: repid type sy-repid.
+
+    repid = sy-repid.
+    call method o_alv-&gt;set_screen_status(
+      exporting
+        report        = repid
+        pfstatus      = status
+        set_functions = o_alv-&gt;c_functions_all ).
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SET_TOP_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="Fijar top of page" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method set_top_of_page.
+
+    set handler handle_top_of_page for o_events.
+    top_of_page( ).
+    o_alv-&gt;set_top_of_list( o_content ).
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW" VERSION="1" LANGU="S" DESCRIPT="Muestra ALV" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method show.
+    o_alv-&gt;display( ).
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" VERSION="1" LANGU="S" DESCRIPT="Muestra ALV como popup" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" SCONAME="START_COLUMN" VERSION="1" LANGU="S" DESCRIPT="2 byte integer (signed)" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" SCONAME="END_COLUMN" VERSION="1" LANGU="S" DESCRIPT="2 byte integer (signed)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="100"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" SCONAME="START_LINE" VERSION="1" LANGU="S" DESCRIPT="2 byte integer (signed)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" SCONAME="END_LINE" VERSION="1" LANGU="S" DESCRIPT="2 byte integer (signed)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="20"/>
+  <parameter CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="SHOW_POPUP" SCONAME="SEL" VERSION="1" LANGU="S" DESCRIPT="Selccionar" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>method show_popup.
+
+    o_alv-&gt;set_screen_popup(
+      start_column = start_column
+      end_column   = end_column
+      start_line   = start_line
+      end_line     = end_line ).
+
+    o_alv-&gt;display( ).
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ALV_TREE" CMPNAME="TOP_OF_PAGE" VERSION="1" LANGU="S" DESCRIPT="Imprimir contenido top of page" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method top_of_page.
+
+    clear o_content.
+*  DATA: lr_grid   TYPE REF TO cl_salv_form_layout_grid,
+*        lr_grid_1 TYPE REF TO cl_salv_form_layout_grid,
+*        lr_label  TYPE REF TO cl_salv_form_label,
+*        lr_text   TYPE REF TO cl_salv_form_text,
+*        l_text    TYPE string.
+*  CREATE OBJECT lr_grid.
+*  l_text = &apos;TOP OF PAGE for the report&apos; .
+*  lr_grid-&gt;create_header_information(
+*    row    = 1
+*    column = 1
+*    text    = l_text
+*    tooltip = l_text ).
+*  lr_grid-&gt;add_row( ).
+*  lr_grid_1 = lr_grid-&gt;create_grid(
+*                row    = 3
+*                column = 1 ).
+*  lr_label = lr_grid_1-&gt;create_label(
+*    row     = 1
+*    column  = 1
+*    text    = &apos;Number of Data Records&apos;
+*    tooltip = &apos;Number of Data Records&apos; ).
+*  lr_text = lr_grid_1-&gt;create_text(
+*    row     = 1
+*    column  = 2
+*    text    = &apos;10&apos;
+*    tooltip = &apos;10&apos; ).
+*  lr_label-&gt;set_label_for( lr_text ).
+*  lr_label = lr_grid_1-&gt;create_label(
+*    row    = 2
+*    column = 1
+*    text    = &apos;date&apos;
+*    tooltip = &apos;date&apos; ).
+*  l_text = &apos;today&apos;.
+*  lr_text = lr_grid_1-&gt;create_text(
+*    row    = 2
+*    column = 2
+*    text    = &apos;today&apos;
+*    tooltip = &apos;today&apos; ).
+*  lr_label-&gt;set_label_for( lr_text ).
+*  o_content = lr_grid.
+
+  endmethod.</source>
+ </method>
+</CLAS>

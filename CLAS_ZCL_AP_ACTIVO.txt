@@ -1,0 +1,27 @@
+
+class ZCL_AP_ACTIVO definition
+  public
+  create public .
+
+public section.
+
+  class ZCL_C definition load .
+  class-methods VISUALIZAR
+    importing
+      !ANLN1 type ANLN1
+      !ANLN2 type ANLN2 default '0000'
+      !BUKRS type BUKRS default ZCL_C=>BUKRS .
+protected section.
+private section.
+endclass. "ZCL_AP_ACTIVO definition
+class ZCL_AP_ACTIVO implementation.
+METHOD visualizar.
+
+  SET PARAMETER ID 'BUK' FIELD bukrs.
+  SET PARAMETER ID 'AN1' FIELD anln1.
+  SET PARAMETER ID 'AN2' FIELD anln2.
+
+  CALL TRANSACTION 'AW01N' AND SKIP FIRST SCREEN.
+
+ENDMETHOD.
+endclass. "ZCL_AP_ACTIVO implementation

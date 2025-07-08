@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZFTP_LIST" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Listado ficheros FTP" LENGTH="20 "/>
+   <textElement ID="S" KEY="P_DFTP" ENTRY="        Dirección FTP" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_DIREC" ENTRY="        Directorio" LENGTH="18 "/>
+   <textElement ID="S" KEY="P_PASS" ENTRY="        Password" LENGTH="16 "/>
+   <textElement ID="S" KEY="P_RFC" ENTRY="        Destino RFC" LENGTH="19 "/>
+   <textElement ID="S" KEY="P_USER" ENTRY="        Usuario" LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado ficheros FTP
+* DESCRIPCION : Listado ficheros FTP
+*
+* AUTOR: Andrés Picazo                                FECHA: 29/10/2024
+*
+***********************************************************************
+REPORT zftp_list.
+
+DATA i_listado TYPE rstt_t_files.
+
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv FINAL.
+  PUBLIC SECTION.
+    METHODS visualizar_objeto REDEFINITION.
+ENDCLASS.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME.
+
+  PARAMETERS: p_dftp  TYPE text50 MODIF ID ftp,
+              p_user  TYPE text50 MODIF ID ftp,
+              p_pass  TYPE text50 MODIF ID ftp,
+              p_direc TYPE text255 MODIF ID ftp,
+              p_rfc   TYPE rfcdes-rfcdest DEFAULT &apos;SAPFTPA&apos;.
+SELECTION-SCREEN END OF BLOCK b01.
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    DATA l_list TYPE file_info.
+    DATA l_dir  TYPE text255.
+
+    l_list = list.
+    IF l_list-isdir = 1.
+      IF p_direc IS INITIAL.
+        l_dir = l_list-filename.
+      ELSE.
+        l_dir = |{ p_direc }/{ l_list-filename }|.
+      ENDIF.
+      SUBMIT zftp_list
+        AND RETURN
+             WITH p_dftp = p_dftp
+             WITH p_user = p_user
+             WITH p_pass = p_pass
+             WITH p_rfc   = p_rfc
+             WITH p_direc = l_dir.
+    ELSE.
+      NEW zcl_ap_ftp( )-&gt;leer_fichero( EXPORTING host = p_dftp
+                 user = p_user
+                 password = p_pass
+                 destino_rfc = p_rfc
+                 directorio = p_direc
+                 fichero = l_list-filename
+                                   IMPORTING message = DATA(l_msg)
+                                             xstring = DATA(xstring) ).
+      IF NOT l_msg IS INITIAL.
+        MESSAGE l_msg TYPE &apos;I&apos;.
+      ELSE.
+        zcl_ap_ficheros=&gt;visualizar( xstring = xstring fichero = l_list-filename ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD. &quot; handle_double_click
+ENDCLASS.
+
+INITIALIZATION.
+
+AT SELECTION-SCREEN OUTPUT.
+  LOOP AT SCREEN.
+    IF screen-name = &apos;P_PASS&apos;.
+      screen-invisible = &apos;1&apos;.
+      MODIFY SCREEN.
+    ENDIF.
+  ENDLOOP.
+
+AT SELECTION-SCREEN.
+  IF p_dftp IS INITIAL.
+    MESSAGE &apos;Informe dirección FTP&apos; TYPE &apos;E&apos;.
+  ENDIF.
+  IF p_user IS INITIAL.
+    MESSAGE &apos;Informe usuario FTP&apos; TYPE &apos;E&apos;.
+  ENDIF.
+
+START-OF-SELECTION.
+  DATA(o_ftp) = NEW zcl_ap_ftp( host = p_dftp
+                 user = p_user
+                 password = p_pass
+                 destino_rfc = p_rfc ).
+  IF o_ftp-&gt;error_conexion = &apos;X&apos;.
+    MESSAGE &apos;Error de conexión a FTP&apos; TYPE &apos;I&apos;.
+    RETURN.
+  ENDIF.
+
+  o_ftp-&gt;lista_ficheros( EXPORTING directorio = p_direc
+                         IMPORTING message = DATA(l_msg)
+                                  i_ficheros = i_listado ).
+  IF NOT l_msg IS INITIAL.
+    MESSAGE l_msg TYPE &apos;I&apos;.
+    RETURN.
+  ENDIF.
+
+  DATA(o_alv) = NEW lcl_alv( ).
+  o_alv-&gt;set_titulo_col_sin_nombre( ).
+  o_alv-&gt;show( ).</source>
+</PROG>

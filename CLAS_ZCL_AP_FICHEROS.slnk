@@ -1,0 +1,2247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FICHEROS" VERSION="1" LANGU="S" DESCRIPT="Métodos de Ficheros" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="AAA" ENTRY="a" LENGTH="11 "/>
+   <textElement ID="I" KEY="EAC" ENTRY="Error al copiar" LENGTH="25 "/>
+   <textElement ID="I" KEY="EAF" ENTRY="Error al abrir fichero" LENGTH="44 "/>
+   <textElement ID="I" KEY="EBD" ENTRY="Error borrando directorio" LENGTH="50 "/>
+   <textElement ID="I" KEY="EBR" ENTRY="Error borrando fichero" LENGTH="44 "/>
+   <textElement ID="I" KEY="ECD" ENTRY="Error creando directorio" LENGTH="48 "/>
+   <textElement ID="I" KEY="ECF" ENTRY="Error al cerrar fichero" LENGTH="46 "/>
+   <textElement ID="I" KEY="EEF" ENTRY="Error al escribir fichero" LENGTH="50 "/>
+   <textElement ID="I" KEY="EFD" ENTRY="Error en formato de datos" LENGTH="50 "/>
+   <textElement ID="I" KEY="ELD" ENTRY="Error leyendo directorio" LENGTH="48 "/>
+   <textElement ID="I" KEY="ERC" ENTRY="Error de conversión" LENGTH="29 "/>
+   <textElement ID="I" KEY="ERT" ENTRY="Error recuperando directorio temporal" LENGTH="74 "/>
+   <textElement ID="I" KEY="NAF" ENTRY="No autorizado a abrir el fichero" LENGTH="64 "/>
+   <textElement ID="I" KEY="NED" ENTRY="No existe el directorio" LENGTH="46 "/>
+   <textElement ID="I" KEY="NPA" ENTRY="No se puede abrir el fichero" LENGTH="56 "/>
+   <textElement ID="I" KEY="PCC" ENTRY="Problemas conversión codepage" LENGTH="58 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_FICHEROS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_FICHEROS" CMPNAME="C_FILTRO_TXT" VERSION="1" LANGU="S" DESCRIPT="Filtro texto" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="&apos;Texto |*.TXT&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FICHEROS" CMPNAME="C_FILTRO_XLS" VERSION="1" LANGU="S" DESCRIPT="Filtro Excel" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;Excel |*.XLS*&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FICHEROS" CMPNAME="C_FILTRO_XLSX" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="2" ATTVALUE="&apos;Excel |*.XLSX&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_DIRECTORIO" VERSION="1" LANGU="S" DESCRIPT="Borrar directorio" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_DIRECTORIO" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_DIRECTORIO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_DIRECTORIO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar_directorio.
+    DATA: l_directorio TYPE string,
+          l_servidor   TYPE abap_bool,
+          l_rc         TYPE i.
+    DATA: l_cmd   TYPE text255,
+          l_lines TYPE TABLE OF char255.
+
+    l_directorio = directorio.
+
+    IF servidor = &apos;X&apos;.
+      l_servidor = &apos;X&apos;.
+    ENDIF.
+
+    IF l_servidor IS INITIAL.
+      cl_gui_frontend_services=&gt;directory_delete(
+        EXPORTING
+          directory               = l_directorio
+        CHANGING
+          rc                      = l_rc
+        EXCEPTIONS
+          directory_delete_failed = 1
+          cntl_error              = 2
+          error_no_gui            = 3
+          path_not_found          = 4
+          directory_access_denied = 5
+          unknown_error           = 6
+          not_supported_by_gui    = 7
+          wrong_parameter         = 8 ).
+      IF sy-subrc &lt;&gt; 0.                                     &quot;#EC *
+        mensaje = &apos;Error borrando directorio&apos;(ebd).         &quot;#EC *
+      ENDIF.                                                &quot;#EC *
+    ELSE.
+      CONCATENATE &apos;rmdir&apos; l_directorio INTO l_cmd SEPARATED BY space.
+      CALL &apos;SYSTEM&apos; ID &apos;COMMAND&apos; FIELD l_cmd              &quot;#EC CI_CCALL
+           ID &apos;TAB&apos; FIELD l_lines.
+
+      IF sy-subrc &lt;&gt; 0.                                     &quot;#EC *
+        mensaje = &apos;Error borrando directorio&apos;(ebd).         &quot;#EC *
+      ENDIF.                                                &quot;#EC *
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Borrar fichero" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_FICHERO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BORRAR_FICHERO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar_fichero.
+    DATA: l_fichero  TYPE string,
+          l_servidor TYPE abap_bool,
+          l_rc       TYPE i.
+
+    l_fichero = fichero.
+
+    IF servidor = &apos;X&apos;.
+      l_servidor = &apos;X&apos;.
+    ELSEIF NOT l_fichero CS &apos;:&apos;.
+      l_servidor = &apos;X&apos;.
+    ENDIF.
+
+    IF l_servidor IS INITIAL.
+      cl_gui_frontend_services=&gt;file_delete(
+        EXPORTING
+          filename             = l_fichero
+        CHANGING
+          rc                   = l_rc
+        EXCEPTIONS
+          file_delete_failed   = 1
+          cntl_error           = 2
+          error_no_gui         = 3
+          file_not_found       = 4
+          access_denied        = 5
+          unknown_error        = 6
+          not_supported_by_gui = 7
+          wrong_parameter      = 8
+          OTHERS               = 9 ).
+      IF sy-subrc &lt;&gt; 0 OR l_rc &lt;&gt; 0.
+        mensaje = &apos;Error borrando fichero&apos;(ebr).
+      ENDIF.
+    ELSE.
+      DELETE DATASET l_fichero.
+      IF sy-subrc &lt;&gt; 0.
+        mensaje = &apos;Error borrando fichero&apos;(ebr).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BUSCAR_RUTA_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Busca ruta donde se encuentra el fichero" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BUSCAR_RUTA_FICHERO" SCONAME="RUTAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BUSCAR_RUTA_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="BUSCAR_RUTA_FICHERO" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD buscar_ruta_fichero.
+    DATA i_rutas TYPE TABLE OF string.
+
+    FIELD-SYMBOLS &lt;ruta&gt; TYPE string.
+
+    i_rutas = zcl_ap_lista=&gt;lista2tabla( rutas ).
+
+    LOOP AT i_rutas ASSIGNING &lt;ruta&gt;.
+      IF fichero IS INITIAL.
+        ruta = &lt;ruta&gt;.
+        IF existe_directorio( ruta ) = &apos;X&apos;.
+          EXIT.
+        ELSE.
+          CLEAR ruta.
+        ENDIF.
+      ELSE.
+        ruta = concat_ruta( directorio = &lt;ruta&gt; fichero = fichero ).
+        IF existe( ruta ) = &apos;X&apos;.
+          EXIT.
+        ELSE.
+          CLEAR ruta.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" VERSION="1" LANGU="S" DESCRIPT="Concatenate ruta" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" SCONAME="DIRECTORIO_TEMPORAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CONCAT_RUTA" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD concat_ruta.
+    DATA: l_dir_temp   TYPE string,
+          l_directorio TYPE string,
+          l_separador  TYPE c LENGTH 1,
+          l_ext        TYPE c LENGTH 30.
+
+    IF directorio_temporal = &apos;X&apos; AND directorio IS INITIAL.
+      l_dir_temp = zcl_ap_documentos=&gt;get_directorio_temporal( ).
+    ENDIF.
+
+    IF directorio IS INITIAL.
+      IF l_dir_temp IS INITIAL.
+        ruta = fichero.
+      ELSE.
+        CONCATENATE l_dir_temp &apos;\&apos; fichero INTO ruta.
+      ENDIF.
+    ELSE.
+      IF directorio IS INITIAL.
+        l_directorio = l_dir_temp.
+      ELSE.
+        l_directorio = directorio.
+      ENDIF.
+
+      IF l_directorio CS &apos;/&apos;.
+        l_separador = &apos;/&apos;.
+      ELSE.
+        l_separador = &apos;\&apos;.
+      ENDIF.
+
+      IF ultima_letra_ruta( l_directorio ) = l_separador.
+        CONCATENATE l_directorio fichero INTO ruta.
+      ELSE.
+        CONCATENATE l_directorio l_separador fichero INTO ruta.
+      ENDIF.
+    ENDIF.
+
+    IF NOT extension IS INITIAL.
+      CONCATENATE &apos;.&apos; extension INTO l_ext.
+      IF NOT fichero CS l_ext.
+        CONCATENATE ruta l_ext INTO ruta.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_LOCAL_2_SERV" VERSION="1" LANGU="S" DESCRIPT="Copia fichero del PC local al servidor" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_LOCAL_2_SERV" SCONAME="FICHERO_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_LOCAL_2_SERV" SCONAME="FICHERO_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_LOCAL_2_SERV" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_LOCAL_2_SERV" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD copia_local_2_serv.
+    DATA: path       TYPE sapb-sappfad,
+          targetpath TYPE sapb-sappfad.
+
+    path = fichero_origen.
+    targetpath = fichero_destino.
+
+    CALL FUNCTION &apos;ARCHIVFILE_CLIENT_TO_SERVER&apos;
+      EXPORTING
+        path       = path
+        targetpath = targetpath
+      EXCEPTIONS
+        error_file = 1.
+    IF sy-subrc &lt;&gt; 0.
+      error = &apos;X&apos;.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE e398(00) WITH &apos;Error al copiar&apos;(eac) path &apos;a&apos;(aaa) targetpath.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Copia fichero del servidor a PC Local" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="FICHERO_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="FICHERO_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD copia_serv_2_local.
+    DATA: path       TYPE sapb-sappfad,
+          targetpath TYPE sapb-sappfad.
+
+    path = fichero_origen.
+    targetpath = fichero_destino.
+
+    CALL FUNCTION &apos;ARCHIVFILE_SERVER_TO_CLIENT&apos;
+      EXPORTING
+        path       = path
+        targetpath = targetpath
+      EXCEPTIONS
+        error_file = 1.
+    IF sy-subrc &lt;&gt; 0.
+      error = &apos;X&apos;.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE e398(00) WITH &apos;Error al copiar&apos;(eac) path &apos;a&apos;(aaa) targetpath.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CREAR_DIRECTORIO_SERV" VERSION="1" LANGU="S" DESCRIPT="Crea directorio en servidor" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CREAR_DIRECTORIO_SERV" SCONAME="DIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CREAR_DIRECTORIO_SERV" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD crear_directorio_serv.
+    DATA: l_cmd   TYPE text255,
+          l_lines TYPE TABLE OF char255.
+
+    CONCATENATE &apos;mkdir&apos; dir INTO l_cmd SEPARATED BY space.
+    TRY.
+        CALL &apos;SYSTEM&apos; ID &apos;COMMAND&apos; FIELD l_cmd            &quot;#EC CI_CCALL
+             ID &apos;TAB&apos; FIELD l_lines.
+
+        IF sy-subrc &lt;&gt; 0.
+          message = &apos;Error creando directorio&apos;(ecd).
+        ENDIF.
+      CATCH cx_root.                                        &quot;#EC *
+        message = &apos;Error creando directorio&apos;(ecd).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Selecciona fichero a grabar" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" SCONAME="FICHERO_INICIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="DIALOGO_GRABAR_FICHERO" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <source>METHOD dialogo_grabar_fichero.
+    DATA: l_fichero    TYPE string,
+          l_extension  TYPE string,
+          l_directorio TYPE string,
+          l_path       TYPE string,
+          l_fullpath   TYPE string.
+    DATA l_txt TYPE text1024.
+
+    l_fichero = fichero_inicial.
+    l_extension = get_extension( l_fichero ).
+    l_directorio = get_directorio_fichero( l_fichero ).
+    l_fichero = get_nombre_fichero( l_fichero ).
+    cl_gui_frontend_services=&gt;file_save_dialog(
+      EXPORTING
+*     window_title         =
+        default_extension    = l_extension
+        default_file_name    = l_fichero
+*     with_encoding        =
+*     file_filter          =
+        initial_directory    = l_directorio
+*     prompt_on_overwrite  = &apos;X&apos;
+      CHANGING
+        filename             = l_fichero
+        path                 = l_path
+        fullpath             = l_fullpath
+*     user_action          =
+*     file_encoding        =
+      EXCEPTIONS
+        cntl_error           = 1
+        error_no_gui         = 2
+        not_supported_by_gui = 3
+        OTHERS               = 4 ).
+    IF sy-subrc &lt;&gt; 0.
+      num_excepcion = sy-subrc.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4
+                INTO mensaje.
+        RETURN.
+      ENDIF.
+    ELSE.
+* Los XLSX los acorta a XLS!
+      IF strlen( l_extension ) &gt; 3.
+        DATA(l_extension_final) = get_extension( l_fullpath ).
+        IF strlen( l_extension_final ) = 3.
+          DATA(l_long) = strlen( l_fullpath ) - 3.
+          l_txt = l_fullpath.
+          l_txt+l_long = l_extension.
+          l_fullpath = l_txt.
+        ENDIF.
+      ENDIF.
+
+      l_fichero = l_fullpath.
+      ruta = l_fullpath.
+      IF l_fullpath IS INITIAL.
+        num_excepcion = 99.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE" VERSION="1" LANGU="S" DESCRIPT="¿Existe fichero?" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe.
+    DATA l_file TYPE string.
+
+    l_file = fichero.
+    CLEAR existe.
+
+    IF get_tipo_ruta( fichero = l_file servidor = servidor dialogo = &apos;&apos; ) = &apos;L&apos;.
+      cl_gui_frontend_services=&gt;file_exist(
+        EXPORTING
+          file                 = l_file
+        RECEIVING
+          result               = existe
+        EXCEPTIONS
+          cntl_error           = 1
+          error_no_gui         = 2
+          wrong_parameter      = 3
+          not_supported_by_gui = 4
+          OTHERS               = 5 ).
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR existe.
+      ENDIF.
+    ELSE.
+      TRY.
+          OPEN DATASET l_file FOR INPUT IN TEXT MODE ENCODING DEFAULT.
+          IF sy-subrc = 0.
+            existe = &apos;X&apos;.
+            CLOSE DATASET l_file.
+          ENDIF.
+        CATCH cx_root.                                      &quot;#EC *
+          CLEAR existe.
+      ENDTRY.
+
+      IF existe IS INITIAL AND servidor IS INITIAL AND sy-batch IS INITIAL.
+        cl_gui_frontend_services=&gt;file_exist(
+          EXPORTING
+            file                 = l_file
+          RECEIVING
+            result               = existe
+          EXCEPTIONS
+            cntl_error           = 1
+            error_no_gui         = 2
+            wrong_parameter      = 3
+            not_supported_by_gui = 4
+            OTHERS               = 5 ).
+        IF sy-subrc &lt;&gt; 0.
+          CLEAR existe.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIR" VERSION="1" LANGU="S" DESCRIPT="Existe directorio?" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIR" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIR" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIR" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_dir.
+    DATA: l_dir      TYPE string,
+          l_name     TYPE salfile-longname,
+          i_file_tbl TYPE TABLE OF salfldir.
+
+    CLEAR existe.
+
+    IF get_tipo_ruta( fichero = CONV #( directorio ) servidor = servidor dialogo = &apos;&apos; ) = &apos;L&apos;.
+      l_dir = directorio.
+      cl_gui_frontend_services=&gt;directory_exist(
+        EXPORTING
+          directory            = l_dir
+        RECEIVING
+          result               = existe
+        EXCEPTIONS
+          cntl_error           = 1
+          error_no_gui         = 2
+          wrong_parameter      = 3
+          not_supported_by_gui = 4
+          OTHERS               = 5 ).
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR existe.
+      ENDIF.
+    ELSE.
+      l_name = directorio.
+      CALL FUNCTION &apos;RZL_READ_DIR_LOCAL&apos;
+        EXPORTING
+          name           = l_name
+        TABLES
+          file_tbl       = i_file_tbl
+        EXCEPTIONS
+          argument_error = 1
+          not_found      = 2
+          OTHERS         = 3.
+      IF sy-subrc = 0.
+        existe = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIRECTORIO" VERSION="1" LANGU="S" DESCRIPT="¿Existe directorio?" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIRECTORIO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="EXISTE_DIRECTORIO" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_directorio.
+    DATA l_file TYPE string.
+
+    l_file = fichero.
+    CLEAR existe.
+
+    IF get_tipo_ruta( fichero = l_file  ) = &apos;L&apos;.
+      cl_gui_frontend_services=&gt;directory_exist(
+        EXPORTING
+          directory            = l_file
+        RECEIVING
+          result               = existe
+        EXCEPTIONS
+          cntl_error           = 1
+          error_no_gui         = 2
+          wrong_parameter      = 3
+          not_supported_by_gui = 4
+          OTHERS               = 5 ).
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR existe.
+      ENDIF.
+    ELSE.
+      OPEN DATASET l_file FOR INPUT IN TEXT MODE ENCODING DEFAULT.
+      IF sy-subrc = 0.
+        existe = &apos;X&apos;.
+        CLOSE DATASET l_file.
+      ELSE.
+        existe = existe_dir( directorio = fichero ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el directorio del fichero" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_FICHERO" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_directorio_fichero.
+    DATA i_path TYPE text1024.
+    DATA e_path TYPE string.
+
+    i_path = fichero.
+    CALL FUNCTION &apos;CACS_SPLIT_PATH&apos;
+      EXPORTING
+        i_path = i_path
+      IMPORTING
+        e_path = directorio.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_TEMPORAL" VERSION="1" LANGU="S" DESCRIPT="Recupera el directorio temporal de windows" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_TEMPORAL" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_TEMPORAL" SCONAME="NUEVO_SI_EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_DIRECTORIO_TEMPORAL" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_directorio_temporal.
+    DATA: l_fichero   TYPE string,
+          l_extension TYPE string,
+          l_index     TYPE int4.
+
+    cl_gui_frontend_services=&gt;environment_get_variable(
+      EXPORTING
+        variable             = &apos;TEMP&apos;
+      CHANGING
+        value                = directorio
+      EXCEPTIONS
+        cntl_error           = 1
+        error_no_gui         = 2
+        not_supported_by_gui = 3
+        OTHERS               = 4 ).
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando directorio temporal&apos;(ert) TYPE &apos;E&apos;.
+    ENDIF.
+
+    cl_gui_cfw=&gt;flush(
+      EXCEPTIONS
+        cntl_system_error = 1
+        cntl_error        = 2
+        OTHERS            = 3 ).
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Refresco&apos; TYPE &apos;S&apos;.
+    ENDIF.
+
+    IF NOT fichero IS INITIAL.
+      DATA(l_dir) = directorio.
+      directorio = concat_ruta( directorio = directorio
+                                fichero    = fichero ).
+
+      IF nuevo_si_existe = &apos;X&apos;.
+        CALL FUNCTION &apos;CRM_EMAIL_SPLIT_FILENAME&apos;
+          EXPORTING
+            iv_path      = fichero
+          IMPORTING
+            ev_filename  = l_fichero
+            ev_extension = l_extension.
+
+        DO.
+          IF existe( directorio ).
+            l_index = l_index + 1.
+            DATA(l_fichero2) = |{ l_fichero } ({ l_index }).{ l_extension }|.
+            directorio = concat_ruta( directorio = l_dir
+                                      fichero    = l_fichero2 ).
+          ELSE.
+            RETURN.
+          ENDIF.
+        ENDDO.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_EXTENSION" VERSION="1" LANGU="S" DESCRIPT="Devuelve la extensión del fichero" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_EXTENSION" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_EXTENSION" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_extension.
+    DATA: l_filename  TYPE c LENGTH 1000,
+          l_extension TYPE c LENGTH 30.
+
+    IF fichero NS &apos;.&apos;.
+      RETURN.
+    ENDIF.
+
+    l_filename = fichero.
+    l_filename = to_upper( l_filename ).
+    CALL FUNCTION &apos;TRINT_FILE_GET_EXTENSION&apos;
+      EXPORTING
+        filename  = l_filename
+        uppercase = &apos;X&apos;
+      IMPORTING
+        extension = l_extension.
+    extension = l_extension.
+
+    IF extension = &apos;BIN&apos;.
+      IF zcl_ap_string=&gt;right( entrada = l_filename long = 3 ) &lt;&gt; &apos;BIN&apos;.
+        CLEAR l_extension.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_FICHERO_VAR" VERSION="1" LANGU="S" DESCRIPT="Sustituye variables en fichero" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_FICHERO_VAR" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_FICHERO_VAR" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_fichero_var.
+    DATA: l_fecha TYPE c LENGTH 10,
+          l_hora  TYPE c LENGTH 8.
+
+    salida = fichero.
+    DATA(var) = zcl_ap_regexp=&gt;buscar_llaves( fichero ).
+
+    LOOP AT var ASSIGNING FIELD-SYMBOL(&lt;var&gt;).
+      TRANSLATE &lt;var&gt; TO UPPER CASE.
+      CASE &lt;var&gt;.
+        WHEN &apos;{FECHA}&apos;.
+          WRITE sy-datum TO l_fecha.
+          REPLACE ALL OCCURRENCES OF &apos;.&apos; IN l_fecha WITH &apos;-&apos;.
+          REPLACE ALL OCCURRENCES OF &lt;var&gt; IN salida WITH l_fecha IGNORING CASE.
+        WHEN &apos;{SY-DATUM}&apos; OR &apos;{SY_DATUM}&apos;.
+          REPLACE ALL OCCURRENCES OF &lt;var&gt; IN salida WITH sy-datum IGNORING CASE.
+        WHEN &apos;{HORA}&apos; OR &apos;{SY-UZEIT}&apos; OR &apos;{SY_UZEIT}&apos;.
+          REPLACE ALL OCCURRENCES OF &lt;var&gt; IN salida WITH sy-uzeit IGNORING CASE.
+        WHEN &apos;{USUARIO}&apos; OR &apos;{SY-UNAME}&apos; OR &apos;{SY_UNAME}&apos;.
+          REPLACE ALL OCCURRENCES OF &lt;var&gt; IN salida WITH sy-uname IGNORING CASE.
+        WHEN &apos;{SISTEMA}&apos; OR &apos;{SY-SYSID}&apos; OR &apos;{SY_SYSID}&apos;.
+          REPLACE ALL OCCURRENCES OF &lt;var&gt; IN salida WITH sy-sysid IGNORING CASE.
+      ENDCASE.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_NOMBRE_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del fichero" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_NOMBRE_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_NOMBRE_FICHERO" SCONAME="CON_EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_NOMBRE_FICHERO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_nombre_fichero.
+    DATA: iv_path      TYPE string,
+          ev_filename  TYPE string,
+          ev_extension TYPE string.
+
+    iv_path = fichero.
+    CALL FUNCTION &apos;CRM_EMAIL_SPLIT_FILENAME&apos;
+      EXPORTING
+        iv_path      = iv_path
+      IMPORTING
+        ev_filename  = ev_filename
+        ev_extension = ev_extension.
+
+    IF con_extension IS INITIAL.
+      nombre = ev_filename.
+    ELSE.
+      CONCATENATE ev_filename ev_extension INTO nombre SEPARATED BY &apos;.&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el tipo de ruta" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GET_TIPO_RUTA" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="&apos;L&apos;ocal / &apos;S&apos;ervidor" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR1"/>
+  <source>METHOD get_tipo_ruta.
+    DATA l_local           TYPE char1.
+    DATA lv_update_process TYPE sy-subrc.
+
+    CLEAR tipo.
+    DATA(l_fichero) = to_lower( fichero ).
+    IF servidor = &apos;X&apos;.
+      tipo = &apos;S&apos;.
+    ELSEIF servidor = &apos;N&apos;.
+      tipo = &apos;L&apos;.
+    ELSEIF dialogo = &apos;X&apos;.
+      tipo = &apos;X&apos;.
+    ELSEIF sy-batch = &apos;X&apos;.
+      tipo = &apos;S&apos;.
+    ELSEIF local = &apos;X&apos;.
+      tipo = &apos;L&apos;.
+    ELSEIF fichero CS &apos;:&apos;.
+      tipo = &apos;L&apos;.
+    ELSE.
+      TRY.
+          CALL METHOD (&apos;ZCL_FICHEROS&apos;)=&gt;es_ruta_local
+            EXPORTING
+              fichero = l_fichero
+            RECEIVING
+              local   = l_local.
+          IF l_local = &apos;X&apos;.
+            tipo = &apos;L&apos;.
+          ELSE.
+            tipo = &apos;S&apos;.
+          ENDIF.
+        CATCH cx_root INTO DATA(o_root).                    &quot;#EC * &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          IF fichero CS &apos;/&apos;.
+            tipo = &apos;S&apos;.
+          ELSE.
+            CALL FUNCTION &apos;TH_IN_UPDATE_TASK&apos;             &quot; En fondo asumimos que siempre es en el servidor
+              IMPORTING
+                in_update_task = lv_update_process.
+            IF lv_update_process = 0.
+              tipo = &apos;L&apos;.
+            ELSE.
+              tipo = &apos;S&apos;.
+            ENDIF.
+          ENDIF.
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" VERSION="1" LANGU="S" DESCRIPT="Grabar fichero local" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR10" PARVALUE="&apos;ASC&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="TRUNC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="BIN_FILESIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="WRITE_LF_AFTER_LAST_LINE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR" SCONAME="FICHERO_DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD grabar.
+    DATA: l_fichero      TYPE string,
+          l_bin_filesize TYPE i,
+          l_dat_mode     TYPE c LENGTH 1,
+          l_codepage     TYPE abap_encoding,
+          lx_root        TYPE REF TO cx_root.
+
+    l_fichero = fichero.
+    IF dialogo = &apos;X&apos;.
+      dialogo_grabar_fichero( EXPORTING fichero_inicial = l_fichero
+                                        mostrar_error   = mostrar_error
+                              IMPORTING ruta            = l_fichero
+                                        mensaje         = mensaje
+                                        num_excepcion   = num_excepcion ).
+
+      fichero_dialogo = l_fichero.
+      IF NOT num_excepcion IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    IF tipo = &apos;BIN&apos;.
+      l_bin_filesize = bin_filesize.
+    ENDIF.
+    IF tipo = &apos;DAT&apos;.
+      l_dat_mode = &apos;X&apos;.
+    ENDIF.
+
+    l_codepage = codepage.
+    TRY.
+        cl_gui_frontend_services=&gt;gui_download(
+          EXPORTING
+             bin_filesize              = l_bin_filesize
+             filename                  = l_fichero
+             filetype                  = tipo
+*      append                    = SPACE
+*      write_field_separator     = SPACE
+*      header                    = &apos;00&apos;
+*      trunc_trailing_blanks     = space
+*      write_lf                  = &apos;X&apos;
+*      col_select                = SPACE
+*      col_select_mask           = SPACE
+             dat_mode                  = l_dat_mode
+*      confirm_overwrite         = SPACE
+*      no_auth_check             = SPACE
+             codepage                  = l_codepage
+*      ignore_cerr               = ABAP_TRUE
+*      replacement               = &apos;#&apos;
+*      write_bom                 = SPACE
+             trunc_trailing_blanks_eol = trunc
+             write_lf_after_last_line  = write_lf_after_last_line
+*      wk1_n_format              = SPACE
+*      wk1_n_size                = SPACE
+*      wk1_t_format              = SPACE
+*      wk1_t_size                = SPACE
+*    IMPORTING
+*      filelength                =
+          CHANGING
+            data_tab                  = tabla
+          EXCEPTIONS
+            file_write_error          = 1
+            no_batch                  = 2
+            gui_refuse_filetransfer   = 3
+            invalid_type              = 4
+            no_authority              = 5
+            unknown_error             = 6
+            header_not_allowed        = 7
+            separator_not_allowed     = 8
+            filesize_not_allowed      = 9
+            header_too_long           = 10
+            dp_error_create           = 11
+            dp_error_send             = 12
+            dp_error_write            = 13
+            unknown_dp_error          = 14
+            access_denied             = 15
+            dp_out_of_memory          = 16
+            disk_full                 = 17
+            dp_timeout                = 18
+            file_not_found            = 19
+            dataprovider_exception    = 20
+            control_flush_error       = 21
+            not_supported_by_gui      = 22
+            error_no_gui              = 23
+            OTHERS                    = 24 ).
+        IF sy-subrc &lt;&gt; 0.
+          num_excepcion = sy-subrc.
+        ENDIF.
+      CATCH cx_root INTO lx_root.                           &quot;#EC *
+        sy-subrc = 1001.
+        mensaje = lx_root-&gt;if_message~get_text( ).
+    ENDTRY.
+
+    IF mostrar_error = &apos;X&apos;.
+      IF num_excepcion &lt;&gt; 0.
+        CASE num_excepcion.
+          WHEN 1.                                           &quot;#EC *
+            MESSAGE e153(14) WITH fichero.                  &quot;#EC *
+          WHEN OTHERS.                                      &quot;#EC *
+            MESSAGE e153(14) WITH fichero.                  &quot;#EC *
+        ENDCASE.
+      ENDIF.
+    ELSE.
+      IF num_excepcion &lt;&gt; 0 AND mensaje IS INITIAL.
+        CASE num_excepcion.
+          WHEN 1.                                           &quot;#EC *
+            MESSAGE e153(14) WITH fichero INTO mensaje.     &quot;#EC *
+          WHEN OTHERS.                                      &quot;#EC *
+            MESSAGE e153(14) WITH fichero INTO mensaje.     &quot;#EC *
+        ENDCASE.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Graba fichero y determina si en PC o en servidor" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="MODO_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="MOSTRAR_MENSAJES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="UNICODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="TRUNC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="BINARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="BIN_FILESIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="TABLA_BIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="DESC_FRONT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ENCODING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_FICHERO" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <source>METHOD grabar_fichero.
+    DATA: l_tipo       TYPE c LENGTH 10,
+          l_modo_texto TYPE c LENGTH 1.
+
+    IF binario = &apos;X&apos;.
+      l_tipo = &apos;BIN&apos;.
+    ELSE.
+      l_modo_texto = &apos;X&apos;.
+      l_tipo = &apos;ASC&apos;.
+    ENDIF.
+
+    IF get_tipo_ruta( fichero = CONV #( fichero ) local = desc_front   ) = &apos;L&apos;.
+      IF NOT xstring IS INITIAL.
+        grabar_xstring( EXPORTING fichero       = fichero
+                          mostrar_error = mostrar_mensajes
+                          bin_filesize  = bin_filesize
+                          xstring       = xstring
+                          codepage      = codepage
+                IMPORTING mensaje       = mensaje ).
+      ELSE.
+        grabar( EXPORTING fichero       = fichero
+                          mostrar_error = mostrar_mensajes
+                          trunc         = trunc
+                          bin_filesize  = bin_filesize
+                          tipo          = l_tipo
+                          codepage      = codepage
+                IMPORTING mensaje       = mensaje
+                CHANGING  tabla         = tabla ).
+      ENDIF.
+    ELSE.
+      graba_fich_servidor( EXPORTING  fichero              = fichero
+                                      mostrar_mensajes     = mostrar_mensajes
+                                      unicode              = unicode
+                                      modo_texto           = l_modo_texto
+                                      bin_filesize         = bin_filesize
+                                      string               = string
+                                      xstring              = xstring
+                                      tabla_bin            = tabla_bin
+                           IMPORTING  mensaje              = mensaje
+                           CHANGING   tabla   = tabla
+                           EXCEPTIONS error_abrir_fichero  = 1
+                                      error_transfer       = 2
+                                      error_cerrar_fichero = 3
+                                     OTHERS               = 4 ).
+      IF sy-subrc &lt;&gt; 0.
+        IF mensaje IS INITIAL.
+          mensaje = |Error grabando fichero { fichero }|.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" VERSION="1" LANGU="S" DESCRIPT="Grabar fichero XML" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="ZCL_C=&gt;CODEPAGE"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="PARTIR_XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XML" SCONAME="FICHERO_DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD grabar_xml.
+    DATA: tempstring     TYPE string,
+          l_long         TYPE i,
+          temptable_char TYPE table_of_strings,
+          l_unicode      TYPE c LENGTH 1.
+
+    FIELD-SYMBOLS &lt;string&gt; TYPE string.
+
+    IF NOT string IS INITIAL.
+      tempstring = string.
+      l_long = strlen( string ).
+    ELSE.
+      tempstring = zcl_ap_string=&gt;xstring2string( xstring ).
+      l_long = xstrlen( xstring ).
+    ENDIF.
+
+    IF partir_xml IS INITIAL.
+      SPLIT tempstring AT cl_abap_char_utilities=&gt;newline INTO TABLE temptable_char.
+    ELSE.
+      temptable_char = zcl_ap_ws=&gt;xml_str2table( string ).
+    ENDIF.
+
+* Eliminamos posible carÃ¡cter extraÃ±o al inicio del fichero.
+    ASSIGN temptable_char[ 1 ] TO &lt;string&gt;.
+    IF sy-subrc = 0.
+      l_long = strlen( &lt;string&gt; ).
+      IF l_long &gt; 1.
+        IF &lt;string&gt;(1) &lt;&gt; &apos;&lt;&apos;.
+          &lt;string&gt; = &lt;string&gt;+1.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF fichero CS &apos;:&apos; OR dialogo = &apos;X&apos; OR local = &apos;X&apos;.
+      grabar( EXPORTING fichero       = fichero
+                        tipo          = &apos;DAT&apos;
+                        mostrar_error = &apos;X&apos;
+                        codepage      = codepage
+                        dialogo       = dialogo
+              IMPORTING num_excepcion = num_excepcion
+              CHANGING  tabla = temptable_char
+                        fichero_dialogo = fichero_dialogo ).
+    ELSE.
+      IF codepage = &apos;4110&apos;.
+        l_unicode = &apos;X&apos;.
+      ENDIF.
+      zcl_ap_ficheros=&gt;grabar_fichero( EXPORTING fichero = fichero
+                                                 binario = &apos;X&apos;
+                                                 bin_filesize = l_long
+                                                 unicode = l_unicode
+                                       IMPORTING mensaje = mensaje
+                                       CHANGING  tabla   = temptable_char ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" VERSION="1" LANGU="S" DESCRIPT="Grabar xstring" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ENCODING" PARVALUE="&apos;4102&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="BIN_FILESIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABAR_XSTRING" SCONAME="FICHERO_FINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD grabar_xstring.
+    DATA: l_xstring    TYPE xstring,
+          l_filelength TYPE i,
+          i_tabla      TYPE STANDARD TABLE OF x255,
+          l_fichero    TYPE string,
+          l_subrc      TYPE sy-subrc,
+          l_dir        TYPE string,
+          l_lineas     TYPE i,
+          l_resto      TYPE i,
+          l_tabla      TYPE x255,
+          l_last       TYPE c LENGTH 1,
+          l_long       TYPE i,
+          l_servidor   TYPE abap_bool.
+
+    IF NOT xstring IS INITIAL.
+      l_xstring = xstring.
+    ELSE.
+      l_xstring = zcl_ap_string=&gt;string2xstring( string ).
+    ENDIF.
+
+    CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+      EXPORTING
+        buffer        = l_xstring
+      IMPORTING
+        output_length = l_filelength
+      TABLES
+        binary_tab    = i_tabla.
+
+    IF NOT bin_filesize IS INITIAL.
+      l_filelength = bin_filesize.
+    ENDIF.
+
+    l_fichero = get_fichero_var( fichero = CONV #( fichero ) ).
+
+    IF get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ) = &apos;L&apos;.
+      grabar( EXPORTING fichero         = l_fichero
+                        tipo            = &apos;BIN&apos;
+                        mostrar_error   = mostrar_error
+                        codepage        = codepage
+                        dialogo         = dialogo
+                        bin_filesize    = l_filelength
+              IMPORTING num_excepcion   = num_excepcion
+                        mensaje         = mensaje
+              CHANGING  tabla           = i_tabla
+                        fichero_dialogo = fichero_final ).
+    ELSE.
+*Download file to the application server
+      TRY.
+          OPEN DATASET l_fichero FOR OUTPUT IN BINARY MODE.
+          l_subrc = sy-subrc.
+          IF sy-subrc = 8.
+            l_dir = get_directorio_fichero( l_fichero ).
+            IF existe_directorio( l_dir ) = &apos;&apos;.
+              mensaje = crear_directorio_serv( l_dir ).
+              IF mensaje IS INITIAL.
+                OPEN DATASET l_fichero FOR OUTPUT IN BINARY MODE.
+                l_subrc = sy-subrc.
+              ELSE.
+                __concat3 mensaje &apos;No existe el directorio&apos;(ned) l_dir mensaje.
+                RETURN.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+
+          IF l_subrc &lt;&gt; 0.
+            mensaje = &apos;Error al abrir fichero&apos;(eaf).
+          ELSE.
+            l_lineas = lines( i_tabla ).
+            l_resto = l_filelength.
+            LOOP AT i_tabla INTO l_tabla.
+              AT LAST.
+                l_last = &apos;X&apos;.
+              ENDAT.
+
+              IF l_lineas = 1.
+                TRANSFER l_tabla TO l_fichero LENGTH l_filelength.
+              ELSEIF l_last = &apos;X&apos;.
+                TRANSFER l_tabla TO l_fichero LENGTH l_resto.
+              ELSE.
+                TRANSFER l_tabla TO l_fichero.
+                l_long = xstrlen( l_tabla ).
+                l_resto = l_resto - l_long.
+              ENDIF.
+              IF sy-subrc &lt;&gt; 0.
+                mensaje = &apos;Error al escribir fichero&apos;(eef).
+                EXIT.
+              ENDIF.
+            ENDLOOP.
+            IF mensaje IS INITIAL.
+              TRY.
+                  CLOSE DATASET l_fichero.
+                  IF sy-subrc &lt;&gt; 0.
+                    mensaje = &apos;Error al cerrar fichero&apos;(ecf).
+                  ENDIF.
+                CATCH cx_root INTO DATA(o_root).            &quot;#EC *
+                  mensaje = o_root-&gt;get_text( ).
+              ENDTRY.
+            ENDIF.
+          ENDIF.
+
+        CATCH cx_sy_file_authority.
+          CONCATENATE &apos;No autorizado a abrir el fichero&apos;(naf) l_fichero INTO mensaje SEPARATED BY space.
+        CATCH cx_root INTO o_root.                          &quot;#EC *
+          mensaje = o_root-&gt;get_text( ).
+      ENDTRY.
+    ENDIF.
+
+    IF fichero_final IS INITIAL.
+      fichero_final = l_fichero.
+    ENDIF.
+
+    IF mostrar_error = &apos;X&apos; AND NOT mensaje IS INITIAL.
+      MESSAGE e153(14) WITH l_fichero.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" VERSION="1" LANGU="S" DESCRIPT="Graba fichero en el servidor" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="MODO_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="MOSTRAR_MENSAJES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="UNICODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="BIN_FILESIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ENCODING" PARVALUE="&apos;UTF-8&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="TABLA_BIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <exception CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="ERROR_ABRIR_FICHERO" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="ERROR_TRANSFER" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_FICHEROS" CMPNAME="GRABA_FICH_SERVIDOR" SCONAME="ERROR_CERRAR_FICHERO" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="3 "/>
+  <source>METHOD graba_fich_servidor.
+    DATA: mess          TYPE string,
+          l_dir         TYPE string,
+          l_xstring     TYPE xstring,
+          l_string      TYPE string,
+          l_linea       TYPE c LENGTH 65535,
+          cvto_utf8     TYPE REF TO cl_abap_conv_out_ce,
+          l_long        TYPE i,
+          l_err_file_io TYPE REF TO cx_sy_file_io.
+
+    FIELD-SYMBOLS &lt;linea&gt; TYPE any.
+
+    IF modo_texto = &apos;X&apos; AND tabla_bin IS INITIAL.
+      IF unicode IS INITIAL.
+        OPEN DATASET fichero FOR OUTPUT IN TEXT MODE ENCODING NON-UNICODE MESSAGE mess.
+      ELSE.
+        OPEN DATASET fichero FOR OUTPUT IN TEXT MODE ENCODING UTF-8 MESSAGE mess.
+      ENDIF.
+    ELSE.
+      OPEN DATASET fichero FOR OUTPUT IN BINARY MODE.
+      IF sy-subrc = 8.
+        l_dir = get_directorio_fichero( fichero ).
+        IF existe_directorio( l_dir ) = &apos;&apos;.
+          mess = crear_directorio_serv( l_dir ).
+          IF mess IS INITIAL.
+            OPEN DATASET fichero FOR OUTPUT IN BINARY MODE.
+          ELSE.
+            IF mostrar_mensajes = &apos;X&apos;.
+              MESSAGE e398(00) WITH &apos;No existe el directorio&apos;(ned) l_dir mess &apos;&apos;.
+            ELSE.
+              __concat3 mensaje &apos;No existe el directorio&apos;(ned) l_dir mess.
+              RAISE error_abrir_fichero.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_mensajes = &apos;X&apos;.
+        MESSAGE e093(ch) WITH fichero.
+      ELSE.
+        MESSAGE e093(ch) WITH fichero INTO mensaje.
+      ENDIF.
+      RAISE error_abrir_fichero.
+    ENDIF.
+
+    IF modo_texto = &apos;&apos; AND unicode = &apos;X&apos;.
+      IF tabla_bin IS INITIAL.
+        IF NOT xstring IS INITIAL.
+          l_xstring = xstring.
+        ELSE.
+          IF NOT string IS INITIAL.
+            l_string = string.
+          ELSE.
+            l_string = zcl_ap_string=&gt;tabla2string( tabla ).
+          ENDIF.
+          IF     NOT bin_filesize IS INITIAL
+             AND NOT string       IS INITIAL. &quot; Este ajuste no funciona si viene de tabla
+            l_linea = l_string.
+            l_linea+bin_filesize = cl_abap_char_utilities=&gt;newline.
+            l_string = l_linea.
+          ENDIF.
+*    TRANSFER l_string TO fichero. &quot;LENGTH l_long.
+          cvto_utf8 = cl_abap_conv_out_ce=&gt;create( encoding = codepage ).
+          TRY.
+              cvto_utf8-&gt;write( data = l_string ).
+            CATCH cx_sy_conversion_codepage.
+              mensaje = &apos;Error de conversión&apos;(erc).
+          ENDTRY.
+
+          l_xstring = cvto_utf8-&gt;get_buffer( ).
+        ENDIF.
+
+        l_long = xstrlen( l_xstring ).
+*    l_xstring = zcl_ap_string=&gt;string2xstring( l_string ).
+      ELSE.
+        l_long = bin_filesize.
+        CALL FUNCTION &apos;SCMS_BINARY_TO_XSTRING&apos;
+          EXPORTING
+            input_length = bin_filesize
+*           FIRST_LINE   = 0
+*           LAST_LINE    = 0
+          IMPORTING
+            buffer       = l_xstring
+          TABLES
+            binary_tab   = tabla
+          EXCEPTIONS
+            failed       = 1
+            OTHERS       = 2.
+        IF sy-subrc &lt;&gt; 0.
+          IF mostrar_mensajes = &apos;X&apos;.
+            MESSAGE ID sy-msgid TYPE &apos;E&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ELSE.
+            MESSAGE ID sy-msgid TYPE &apos;E&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO mensaje.
+          ENDIF.
+        ENDIF.
+
+      ENDIF.
+      TRANSFER l_xstring TO fichero LENGTH l_long.
+    ELSE.
+      LOOP AT tabla ASSIGNING &lt;linea&gt;.
+        l_linea = &lt;linea&gt;.
+        TRY.
+            IF modo_texto = &apos;X&apos;.
+              TRANSFER &lt;linea&gt; TO fichero.
+            ELSE.
+              IF unicode = &apos;X&apos;.
+                cvto_utf8 = cl_abap_conv_out_ce=&gt;create( encoding = codepage ).
+                l_long = strlen( l_linea ).
+                cvto_utf8-&gt;write( data = l_linea(l_long) ).
+                l_xstring = cvto_utf8-&gt;get_buffer( ).
+                l_long = xstrlen( l_xstring ).
+                TRANSFER l_xstring TO fichero LENGTH l_long.
+              ELSE.
+                l_long = strlen( l_linea ).
+                TRANSFER l_linea TO fichero LENGTH l_long.
+              ENDIF.
+            ENDIF.
+          CATCH cx_sy_conversion_codepage.
+            l_string = l_linea.
+            zcl_ap_string=&gt;quitar_caracteres_extranos( CHANGING string = l_string ).
+            l_linea = l_string.
+            TRANSFER l_linea TO fichero.
+          CATCH cx_sy_file_io INTO l_err_file_io.
+            mensaje = l_err_file_io-&gt;get_text( ).
+            EXIT.
+        ENDTRY.
+        IF sy-subrc &lt;&gt; 0.
+          IF mostrar_mensajes = &apos;X&apos;.
+            MESSAGE e094(ch) WITH fichero.
+          ELSE.
+            MESSAGE e094(ch) WITH fichero INTO mensaje.
+          ENDIF.
+          RAISE error_transfer.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    CLOSE DATASET fichero.
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_mensajes = &apos;X&apos;.
+        MESSAGE e411(tl) WITH fichero.
+      ELSE.
+        MESSAGE e411(tl) WITH fichero INTO mensaje.
+      ENDIF.
+      RAISE error_cerrar_fichero.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" VERSION="1" LANGU="S" DESCRIPT="Leer fichero local" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR10" PARVALUE="&apos;ASC&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="FILELENGTH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD leer.
+    DATA: l_tipo    TYPE char10,
+          l_sep     TYPE c LENGTH 1,
+          l_fichero TYPE string.
+
+    l_tipo = tipo.
+    IF tipo = &apos;DAT&apos;.
+      l_sep = &apos;X&apos;.
+      l_tipo = &apos;ASC&apos;.
+    ENDIF.
+
+    l_fichero = fichero.
+    cl_gui_frontend_services=&gt;gui_upload(
+      EXPORTING
+        filename                = l_fichero
+        filetype                = l_tipo
+        has_field_separator     = l_sep
+*     header_length           = 0
+*     read_by_line            = &apos;X&apos;
+        dat_mode                = l_sep
+        codepage                = codepage
+*     ignore_cerr             = ABAP_TRUE
+*     replacement             = &apos;#&apos;
+*     virus_scan_profile      =
+      IMPORTING
+        filelength              = filelength
+*     header                  =
+      CHANGING
+        data_tab                = tabla
+      EXCEPTIONS
+        file_open_error         = 1
+        file_read_error         = 2
+        no_batch                = 3
+        gui_refuse_filetransfer = 4
+        invalid_type            = 5
+        no_authority            = 6
+        unknown_error           = 7
+        bad_data_format         = 8
+        header_not_allowed      = 9
+        separator_not_allowed   = 10
+        header_too_long         = 11
+        unknown_dp_error        = 12
+        access_denied           = 13
+        dp_out_of_memory        = 14
+        disk_full               = 15
+        dp_timeout              = 16
+        not_supported_by_gui    = 17
+        error_no_gui            = 18
+        OTHERS                  = 19 ).
+    num_excepcion = sy-subrc.
+
+    IF mostrar_error = &apos;X&apos;.
+      IF num_excepcion &lt;&gt; 0.
+        CASE num_excepcion.
+          WHEN 1.
+            MESSAGE e503(0u) WITH fichero.
+          WHEN 8.
+            MESSAGE &apos;Error en formato de datos&apos;(efd) TYPE &apos;E&apos;.
+          WHEN OTHERS.
+            MESSAGE e503(0u) WITH fichero.
+        ENDCASE.
+      ENDIF.
+    ELSE.
+      IF num_excepcion &lt;&gt; 0.
+        CASE num_excepcion.
+          WHEN 1.
+            MESSAGE i503(0u) WITH fichero INTO mensaje.
+          WHEN 8.
+            mensaje = &apos;Error en formato de datos&apos;(efd).
+          WHEN OTHERS.
+            MESSAGE i503(0u) WITH fichero INTO mensaje.
+        ENDCASE.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Leer fichero y determina si es local o servidor" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR10" PARVALUE="&apos;ASC&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="FILELENGTH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_FICHERO" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD leer_fichero.
+    DATA l_modo_texto TYPE c LENGTH 1.
+
+    IF get_tipo_ruta( fichero = CONV #( fichero ) ) = &apos;L&apos;.
+      leer( EXPORTING fichero  = fichero
+                      tipo     = tipo
+                      codepage = codepage
+                      mostrar_error = mostrar_error
+            IMPORTING num_excepcion = num_excepcion
+                      mensaje       = mensaje
+                      filelength    = filelength
+            CHANGING  tabla = tabla ).
+    ELSE.
+      IF tipo &lt;&gt; &apos;BIN&apos;.
+        l_modo_texto = &apos;X&apos;.
+      ENDIF.
+      lee_fich_servidor( EXPORTING fichero = fichero
+                                   modo_texto = l_modo_texto
+                                   mostrar_mensajes = mostrar_error
+                                   codepage      = codepage
+                         IMPORTING mensaje       = mensaje
+                                   longitud      = filelength
+                         CHANGING  tabla = tabla ).
+      IF mensaje CS &apos;codepage&apos;.
+        CLEAR mensaje.
+        lee_fich_servidor( EXPORTING fichero = fichero
+                                     modo_texto = l_modo_texto
+                                     mostrar_mensajes = mostrar_error
+                                     codepage = &apos;4110&apos;
+                           IMPORTING mensaje       = mensaje
+                                     longitud      = filelength
+                            CHANGING tabla = tabla ).
+        IF mensaje CS &apos;codepage&apos; AND l_modo_texto = &apos;X&apos;.
+          CLEAR l_modo_texto.
+          CLEAR mensaje.
+          lee_fich_servidor( EXPORTING fichero = fichero
+                                       modo_texto = l_modo_texto
+                                       mostrar_mensajes = mostrar_error
+                             IMPORTING mensaje       = mensaje
+                                       longitud      = filelength
+                              CHANGING tabla = tabla ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" VERSION="1" LANGU="S" DESCRIPT="Leer fichero XML" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XML" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD leer_xml.
+    DATA: temptable  TYPE table_of_strings,
+          tempstring TYPE string,
+          l_last     TYPE c LENGTH 1.
+
+    CLEAR string.
+
+    IF fichero CS &apos;:&apos;.
+      leer( EXPORTING fichero = fichero
+                      tipo    = &apos;DAT&apos;
+                      mostrar_error = mostrar_error
+              IMPORTING num_excepcion = num_excepcion
+              CHANGING  tabla = temptable ).
+    ELSE.
+      leer_fichero( EXPORTING fichero = fichero
+                              mostrar_error = mostrar_error
+                    IMPORTING mensaje = mensaje
+                     CHANGING  tabla = temptable ).
+    ENDIF.
+
+    LOOP AT temptable INTO tempstring.
+      AT LAST.
+        l_last = &apos;X&apos;.
+      ENDAT.
+      IF l_last IS INITIAL.
+        CONCATENATE string tempstring cl_abap_char_utilities=&gt;newline
+                    INTO string.
+      ELSE.
+        CONCATENATE string tempstring INTO string.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" VERSION="1" LANGU="S" DESCRIPT="Leer fichero en binario" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="GET_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="GET_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="POPUP_SELECT_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="I_TABLA_TXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEER_XSTRING" SCONAME="FICHERO_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD leer_xstring.
+    &quot; TODO: parameter SERVIDOR is never used (ABAP cleaner)
+    &quot; TODO: parameter LOCAL is never used (ABAP cleaner)
+
+    DATA: l_fichero  TYPE string,
+          l_serv     TYPE abap_bool,
+          i_tabla    TYPE STANDARD TABLE OF x255,
+          l_long     TYPE i,
+          l_err_root TYPE REF TO cx_root,
+          i_solix    TYPE solix_tab.
+
+    CLEAR string.
+
+    IF popup_select_fichero = &apos;X&apos;.
+      l_fichero = popup_select_fichero( ).
+    ELSE.
+      l_fichero = fichero.
+    ENDIF.
+
+    IF NOT l_fichero IS INITIAL AND sy-batch IS INITIAL.
+      cl_gui_frontend_services=&gt;file_exist(
+        EXPORTING
+          file                 = l_fichero
+        RECEIVING
+          result               = DATA(l_existe)
+        EXCEPTIONS
+          cntl_error           = 1
+          error_no_gui         = 2
+          wrong_parameter      = 3
+          not_supported_by_gui = 4
+          OTHERS               = 5 ).
+      IF sy-subrc = 0.
+        IF l_existe IS INITIAL.
+          l_serv = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+    ELSEIF get_tipo_ruta( fichero = l_fichero  ) = &apos;S&apos;.
+      l_serv = &apos;X&apos;.
+    ENDIF.
+
+    fichero_salida = l_fichero.
+
+    IF l_serv IS INITIAL.
+      leer( EXPORTING fichero = l_fichero
+                      tipo    = &apos;BIN&apos;
+                      mostrar_error = mostrar_error
+              IMPORTING num_excepcion = num_excepcion
+                        filelength = longitud
+              CHANGING  tabla = i_tabla ).
+
+      CALL FUNCTION &apos;SCMS_BINARY_TO_XSTRING&apos;
+        EXPORTING
+          input_length = longitud
+        IMPORTING
+          buffer       = xstring
+        TABLES
+          binary_tab   = i_tabla
+        EXCEPTIONS
+          failed       = 1
+          OTHERS       = 2.
+
+      IF sy-subrc = 0.
+        IF get_tabla = &apos;X&apos;.
+          CALL FUNCTION &apos;SCMS_BINARY_TO_TEXT&apos;
+            EXPORTING
+              input_length  = longitud
+            IMPORTING
+              output_length = longitud
+            TABLES
+              binary_tab    = i_tabla
+              text_tab      = i_tabla_txt
+            EXCEPTIONS
+              failed        = 1
+              OTHERS        = 2.
+          IF sy-subrc &lt;&gt; 0.
+            message = &apos;Error convirtiendo binario a texto&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      TRY.
+          OPEN DATASET l_fichero FOR INPUT IN BINARY MODE.
+          IF sy-subrc &lt;&gt; 0.
+            CONCATENATE &apos;No se puede abrir el fichero&apos;(npa) fichero INTO message SEPARATED BY space.
+          ELSE.
+            READ DATASET l_fichero INTO xstring LENGTH l_long.
+            IF sy-subrc = 0.
+              longitud = longitud + l_long.
+            ENDIF.
+
+            CLOSE DATASET l_fichero.
+          ENDIF.
+        CATCH cx_root INTO l_err_root.                      &quot;#EC *
+          message = l_err_root-&gt;get_text( ).
+      ENDTRY.
+
+      IF message IS INITIAL.
+        IF get_tabla = &apos;X&apos;.
+          i_solix = cl_bcs_convert=&gt;xstring_to_solix( xstring ).
+
+          CALL FUNCTION &apos;SCMS_BINARY_TO_TEXT&apos;
+            EXPORTING
+              input_length  = longitud
+            IMPORTING
+              output_length = longitud
+            TABLES
+              binary_tab    = i_solix
+              text_tab      = i_tabla_txt
+            EXCEPTIONS
+              failed        = 1
+              OTHERS        = 2.
+          IF sy-subrc &lt;&gt; 0.
+            message = &apos;Error convirtiendo binario a texto&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT message IS INITIAL.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE message TYPE &apos;E&apos;.
+      ENDIF.
+    ELSE.
+
+      IF get_string = &apos;X&apos;.
+        string = zcl_ap_string=&gt;xstring2string( xstring ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" VERSION="1" LANGU="S" DESCRIPT="Lee ficheros del servidor" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="DIR_NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="FILE_MASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="RECURSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="SOLO_DIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_LISTA_FICHEROS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="MAX_FICHEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="9999"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="MAYUSCULAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="DIR_LIST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_LISTA_FICHEROS"/>
+  <exception CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="READ_DIRECTORY_FAILED" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICHEROS_SERVIDOR" SCONAME="EMPTY_DIRECTORY_LIST" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="2 "/>
+  <source>METHOD lee_ficheros_servidor.
+    DATA file_counter TYPE i.
+    DATA: i_dir      TYPE zt_lista_ficheros,
+          l_dir_list TYPE zt_lista_ficheros.
+    DATA l_dir_name TYPE c LENGTH 75.
+    DATA: BEGIN OF file,
+            dirname TYPE c LENGTH 75,            &quot; name of directory. (possibly truncated.)
+            name    TYPE c LENGTH 75,            &quot; name of entry. (possibly truncated.)
+            type    TYPE c LENGTH 10,            &quot; type of entry.
+            len     TYPE p LENGTH 8  DECIMALS 0, &quot; length in bytes.
+            owner   TYPE c LENGTH 8,             &quot; owner of the entry.
+            mtime   TYPE p LENGTH 6  DECIMALS 0, &quot; last modification date, seconds since 1970
+            mode    TYPE c LENGTH 9,             &quot; like &quot;rwx-r-x--x&quot;: protection mode.
+            errno   TYPE c LENGTH 3,
+            errmsg  TYPE c LENGTH 40,
+          END OF file,
+          l_dir  TYPE zlista_ficheros,
+          l_time TYPE c LENGTH 8,
+          l_cont TYPE i.
+
+* get directory listing
+    CALL &apos;C_DIR_READ_FINISH&apos;                              &quot;#EC CI_CCALL
+         ID &apos;ERRNO&apos;  FIELD file-errno
+         ID &apos;ERRMSG&apos; FIELD file-errmsg.
+
+    CALL &apos;C_DIR_READ_START&apos;                               &quot;#EC CI_CCALL
+         ID &apos;DIR&apos;    FIELD dir_name
+         ID &apos;FILE&apos;   FIELD file_mask
+         ID &apos;ERRNO&apos;  FIELD file-errno
+         ID &apos;ERRMSG&apos; FIELD file-errmsg.
+    IF sy-subrc &lt;&gt; 0.
+      RAISE read_directory_failed.
+    ENDIF.
+
+    CLEAR dir_list.
+    DO.
+      IF l_cont &gt; max_ficheros.
+        EXIT.
+      ENDIF.
+
+      CLEAR file.
+      CLEAR l_dir.
+      CALL &apos;C_DIR_READ_NEXT&apos;                              &quot;#EC CI_CCALL
+           ID &apos;TYPE&apos;   FIELD file-type
+           ID &apos;NAME&apos;   FIELD file-name
+           ID &apos;LEN&apos;    FIELD file-len
+           ID &apos;OWNER&apos;  FIELD file-owner
+           ID &apos;MTIME&apos;  FIELD file-mtime
+           ID &apos;MODE&apos;   FIELD file-mode
+           ID &apos;ERRNO&apos;  FIELD file-errno
+           ID &apos;ERRMSG&apos; FIELD file-errmsg.
+
+      IF    sy-subrc = 0
+         OR sy-subrc = 4. &quot; Filename too long!
+
+*      IF file-type(1) = &apos;f&apos; OR              &quot; regular file
+*         file-type(1) = &apos;F&apos;.
+        IF file-name(1) &lt;&gt; &apos;.&apos;.
+          IF file-type = &apos;directory&apos;.
+            IF mayusculas = &apos;X&apos;.
+              TRANSLATE file-name TO UPPER CASE.
+            ENDIF.
+            IF NOT line_exists( solo_dir[ dirname = file-name ] ) AND NOT solo_dir IS INITIAL. &quot;#EC CI_STDSEQ
+              CONTINUE.
+            ENDIF.
+          ENDIF.
+
+          MOVE-CORRESPONDING file TO l_dir.
+          PERFORM p6_to_date_time_tz IN PROGRAM rstr0400 USING file-mtime
+                                                     l_time
+                                                     l_dir-mod_date.
+          IF l_time CS &apos;:&apos;.
+            REPLACE &apos;:&apos; WITH &apos;&apos; INTO l_time.
+            REPLACE &apos;:&apos; WITH &apos;&apos; INTO l_time.
+            CONDENSE l_time NO-GAPS.
+          ENDIF.
+          l_dir-mod_time = l_time.
+
+          file_counter = file_counter + 1.
+          l_dir-dirname   = dir_name.
+          l_dir-procesado = &apos;X&apos;.
+* APC170108 Para homogeneizar, devolvemos los ficheros siempre
+* en mayÃºsculas
+          IF mayusculas = &apos;X&apos;.
+            TRANSLATE l_dir-name TO UPPER CASE.
+            TRANSLATE l_dir-dirname TO UPPER CASE.
+          ENDIF.
+          APPEND l_dir TO dir_list.
+          l_cont = l_cont + 1.
+        ENDIF.
+      ELSEIF sy-subrc = 1.
+        EXIT.
+      ELSE.
+* APC170108 Para homogeneizar, devolvemos los ficheros siempre
+* en mayÃºsculas
+        IF mayusculas = &apos;X&apos;.
+          TRANSLATE l_dir-name TO UPPER CASE.
+          TRANSLATE l_dir-dirname TO UPPER CASE.
+        ENDIF.
+        APPEND l_dir TO dir_list.
+        l_cont = l_cont + 1.
+      ENDIF.
+    ENDDO.
+
+    CALL &apos;C_DIR_READ_FINISH&apos;                              &quot;#EC CI_CCALL
+         ID &apos;ERRNO&apos;  FIELD file-errno
+         ID &apos;ERRMSG&apos; FIELD file-errmsg.
+
+    IF file_counter &gt; 0.
+      SORT dir_list BY name ASCENDING.
+    ELSE.
+      RAISE empty_directory_list.
+    ENDIF.
+
+    IF recursion = &apos;X&apos;.
+      LOOP AT dir_list INTO l_dir WHERE     type      = &apos;directory&apos; &quot;#EC CI_STDSEQ
+                                        AND procesado = &apos;X&apos;.
+        TRANSLATE l_dir-name TO UPPER CASE.
+        TRANSLATE l_dir-dirname TO UPPER CASE.
+        APPEND l_dir TO i_dir.
+        CLEAR l_dir-procesado.
+        MODIFY dir_list FROM l_dir.
+      ENDLOOP.
+      LOOP AT i_dir INTO l_dir.
+        CONCATENATE dir_name &apos;\&apos; l_dir-name INTO l_dir_name.
+        REFRESH l_dir_list.
+        lee_ficheros_servidor(
+          EXPORTING
+            dir_name              = l_dir_name
+            file_mask             = file_mask
+            recursion             = recursion
+            solo_dir              = solo_dir
+            max_ficheros          = max_ficheros
+            mayusculas            = mayusculas
+          CHANGING
+            dir_list              = l_dir_list
+          EXCEPTIONS
+            read_directory_failed = 1
+            empty_directory_list  = 2 ).
+        IF sy-subrc = 0.
+          LOOP AT l_dir_list INTO l_dir.
+            TRANSLATE l_dir-name TO UPPER CASE.
+            TRANSLATE l_dir-dirname TO UPPER CASE.
+            APPEND l_dir TO dir_list.
+          ENDLOOP.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" VERSION="1" LANGU="S" DESCRIPT="Lee fichero del servidor" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="MODO_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="MOSTRAR_MENSAJES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="LEGACY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ENCODING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LEE_FICH_SERVIDOR" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD lee_fich_servidor.
+    DATA: l_long  TYPE i,
+          l_linea TYPE c LENGTH 65535.
+
+    IF modo_texto = &apos;X&apos;.
+      IF legacy IS INITIAL.
+        IF codepage = &apos;4110&apos;.
+          OPEN DATASET fichero FOR INPUT IN TEXT MODE ENCODING UTF-8.
+        ELSEIF codepage &lt;&gt; &apos;&apos;.
+          OPEN DATASET fichero FOR INPUT IN TEXT MODE ENCODING NON-UNICODE.
+        ELSE.
+          OPEN DATASET fichero FOR INPUT IN TEXT MODE ENCODING DEFAULT.
+        ENDIF.
+      ELSE.
+        IF codepage IS INITIAL.
+          OPEN DATASET fichero FOR INPUT IN LEGACY TEXT MODE.
+        ELSE.
+          OPEN DATASET fichero FOR INPUT IN LEGACY TEXT MODE CODE PAGE codepage.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      OPEN DATASET fichero FOR INPUT IN BINARY MODE.
+    ENDIF.
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_mensajes = &apos;X&apos;.
+        MESSAGE e025(ba) WITH fichero.
+      ELSE.
+        MESSAGE e025(ba) WITH fichero INTO mensaje.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    FREE tabla.
+    DO.
+      CLEAR l_long.
+      TRY.
+          CLEAR l_linea.
+          READ DATASET fichero INTO l_linea LENGTH l_long.
+          IF sy-subrc &lt;&gt; 0 AND l_long = 0.
+            EXIT.
+          ELSE.
+            APPEND l_linea TO tabla.
+            longitud = longitud + l_long.
+          ENDIF.
+        CATCH cx_sy_file_open_mode.
+          IF mostrar_mensajes = &apos;X&apos;.
+            MESSAGE e151(0d) WITH fichero.
+          ELSE.
+            MESSAGE e151(0d) WITH fichero INTO mensaje.
+            EXIT.
+          ENDIF.
+        CATCH cx_sy_conversion_codepage.
+          IF l_linea IS INITIAL.
+            IF mostrar_mensajes = &apos;X&apos;.
+              MESSAGE e202(0k) WITH fichero.
+            ELSE.
+              MESSAGE e202(0k) WITH fichero INTO mensaje.
+              EXIT.
+            ENDIF.
+          ELSE.
+            APPEND l_linea TO tabla.
+            longitud = longitud + l_long.
+            mensaje = &apos;Problemas conversión codepage&apos;(pcc).
+          ENDIF.
+      ENDTRY.
+    ENDDO.
+
+    CLOSE DATASET fichero.
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_mensajes = &apos;X&apos;.
+        MESSAGE e804(fu) WITH fichero.
+      ELSE.
+        MESSAGE e804(fu) WITH fichero INTO mensaje.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LIMPIAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Corrige posibles errores en ruta del fichero" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LIMPIAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LIMPIAR_FICHERO" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD limpiar_fichero.
+    DATA l_linea TYPE c LENGTH 10000.
+
+    l_linea = fichero.
+    REPLACE &apos;\\&apos; WITH &apos;\&apos; INTO l_linea+1.
+    salida = l_linea.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" VERSION="1" LANGU="S" DESCRIPT="Lista de ficheros" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" SCONAME="DIRECTORY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*.*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" SCONAME="RECURSIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" SCONAME="MAX_FICHEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="9999"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS" SCONAME="FILE_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_FILES"/>
+  <source>METHOD lista_ficheros.
+    DATA: l_dir         TYPE string,
+          l_filter      TYPE string,
+          i_directorios TYPE TABLE OF file_info,
+          l_count       TYPE i,
+          l_fichero     TYPE file_info,
+          l_dir_aux     TYPE string,
+          l_files_aux   TYPE TABLE OF file_info,
+          l_cont        TYPE i,
+          l_directorio  TYPE file_info,
+          l_file        TYPE c LENGTH 1000,
+          i_ficheros    TYPE TABLE OF file_info.
+
+    REFRESH file_table.
+
+    l_dir = directory.
+    l_filter = filter.
+    cl_gui_frontend_services=&gt;directory_list_files(
+      EXPORTING
+        directory                   = l_dir
+        filter                      = l_filter
+      CHANGING
+        file_table                  = i_directorios
+        count                       = l_count
+      EXCEPTIONS
+        cntl_error                  = 1
+        directory_list_files_failed = 2
+        wrong_parameter             = 3
+        error_no_gui                = 4
+        not_supported_by_gui        = 5
+        OTHERS                      = 6 ).
+    IF sy-subrc = 0.
+      LOOP AT i_directorios INTO l_fichero WHERE isdir = 0.
+        CONCATENATE directory &apos;\&apos; l_fichero-filename
+                    INTO l_fichero-filename.
+        REPLACE &apos;\\&apos; WITH &apos;\&apos; INTO l_fichero-filename+2.
+        APPEND l_fichero TO file_table.
+        ADD 1 TO l_count.
+        IF max_ficheros &gt; 0 AND l_cont &gt; max_ficheros.
+          RETURN.
+        ENDIF.
+      ENDLOOP.
+
+      IF recursivo = &apos;X&apos;.
+        LOOP AT i_directorios INTO l_fichero WHERE isdir = 1.
+          DATA(l_max) = max_ficheros - l_count.
+          IF l_max &gt; 0 or max_ficheros = 0.
+            CONCATENATE directory &apos;\&apos; l_fichero-filename
+                        INTO l_fichero-filename.
+            DATA(i_fich) = lista_ficheros( directory = l_fichero-filename
+                                           recursivo = recursivo
+                                           filter    = filter
+                                           max_ficheros = l_max ).
+            APPEND LINES OF i_fich TO file_table.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" VERSION="1" LANGU="S" DESCRIPT="Lista de ficheros" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="DIRECTORY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*.*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="RECURSIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="MAX_FICHEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="9999"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="MAYUSCULAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="MASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="LISTA_FICHEROS_COMUN" SCONAME="FILE_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_FILES"/>
+  <source>METHOD lista_ficheros_comun.
+    DATA: l_dir      TYPE text255,
+          i_dir_list TYPE zt_lista_ficheros,
+          l_file     TYPE file_info.
+    DATA: l_aux1      TYPE string,
+          l_ext_mask  TYPE string,
+          l_file_mask TYPE string,
+          l_p1        TYPE string,
+          l_p2        TYPE string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_p3        TYPE string,
+          l_ext_file  TYPE string,
+          l_file_file TYPE string.
+
+    FIELD-SYMBOLS &lt;dir&gt; TYPE zlista_ficheros.
+
+    SET PARAMETER ID &apos;ZLF_MSG&apos; FIELD &apos;&apos; ##EXISTS.
+
+    IF servidor IS INITIAL.
+      file_table = lista_ficheros( directory = directory
+                                   filter    = filter
+                                   max_ficheros = max_ficheros
+                                   recursivo = recursivo ).
+    ELSE.
+      l_dir = directory.
+      IF mayusculas = &apos;X&apos;.
+        TRANSLATE l_dir TO UPPER CASE.
+      ENDIF.
+
+      lee_ficheros_servidor(
+        EXPORTING
+          dir_name              = l_dir
+          file_mask             = filter
+          recursion             = recursivo
+          max_ficheros          = max_ficheros
+          mayusculas            = mayusculas
+*       solo_dir              =
+        CHANGING
+          dir_list              = i_dir_list
+        EXCEPTIONS
+          read_directory_failed = 1
+          empty_directory_list  = 2
+          OTHERS                = 3 ).
+
+      IF sy-subrc = 1.
+        SET PARAMETER ID &apos;ZLF_MSG&apos; FIELD &apos;Error leyendo directorio&apos;(eld) ##EXISTS.
+      ENDIF.
+
+      LOOP AT i_dir_list ASSIGNING &lt;dir&gt;.
+        CLEAR l_file.
+        IF &lt;dir&gt;-type = &apos;directory&apos;.
+          l_file-isdir = 1.
+        ENDIF.
+        l_file-filename   = zcl_ap_ficheros=&gt;concat_ruta( directorio = &lt;dir&gt;-dirname
+                                                          fichero    = &lt;dir&gt;-name ).
+        l_file-filelength = &lt;dir&gt;-len.
+        l_file-createdate = &lt;dir&gt;-mod_date.
+        l_file-createtime = &lt;dir&gt;-mod_time.
+        APPEND l_file TO file_table.
+      ENDLOOP.
+    ENDIF.
+
+    IF mask &lt;&gt; &apos;&apos; AND mask &lt;&gt; &apos;*.*&apos;.
+      IF NOT mask IS INITIAL.
+        l_aux1 = mask.
+        l_aux1 = to_upper( l_aux1 ).
+        l_ext_mask = zcl_ap_ficheros=&gt;get_extension( l_aux1 ).
+        l_file_mask = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_aux1 con_extension = &apos;&apos; ).
+      ENDIF.
+      SPLIT l_file_mask AT &apos;*&apos; INTO l_p1 l_p2 l_p3.
+
+      LOOP AT file_table INTO l_file.
+        l_aux1 = l_file-filename.
+        l_aux1 = to_upper( l_aux1 ).
+        l_ext_file = zcl_ap_ficheros=&gt;get_extension( l_aux1 ).
+        l_file_file = zcl_ap_ficheros=&gt;get_nombre_fichero( fichero = l_aux1 con_extension = &apos;&apos; ).
+
+        IF l_ext_mask &lt;&gt; l_ext_file.
+          DELETE file_table.
+        ELSEIF NOT l_p1 IS INITIAL AND NOT l_file_file CS l_p1.
+          DELETE file_table.
+        ELSEIF NOT l_p2 IS INITIAL AND NOT l_file_file CS l_p2.
+          DELETE file_table.
+        ELSEIF NOT l_p2 IS INITIAL AND NOT l_file_file CS l_p2.
+          DELETE file_table.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" VERSION="1" LANGU="S" DESCRIPT="Leer fichero local" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="DIRECTORIO_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="SERVIDOR_ORIG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="SERVIDOR_DEST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="CREAR_DIR_DEST_SERV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="NUM_EXCEPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="MOVER" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD mover.
+    DATA: l_serv_orig TYPE c LENGTH 1,
+          l_serv_dest TYPE c LENGTH 1,
+          l_file      TYPE string,
+          l_xstring   TYPE xstring,
+          l_long      TYPE i.
+    DATA: l_cmd   TYPE text255,
+          l_lines TYPE TABLE OF char255.
+
+    IF servidor_orig = &apos;X&apos;.
+      l_serv_orig = &apos;X&apos;.
+    ELSEIF servidor_orig IS INITIAL AND NOT fichero CS &apos;:&apos;.
+      l_serv_orig = &apos;X&apos;.
+    ENDIF.
+
+    IF servidor_dest = &apos;X&apos;.
+      l_serv_dest = &apos;X&apos;.
+    ELSEIF servidor_dest IS INITIAL AND NOT fichero CS &apos;:&apos;.
+      l_serv_dest = &apos;X&apos;.
+    ENDIF.
+
+    l_file = get_nombre_fichero( fichero = fichero con_extension = &apos;X&apos; ).
+    l_file = concat_ruta( fichero = l_file directorio = directorio_destino ).
+
+    leer_xstring(
+      EXPORTING
+        fichero       = fichero
+        mostrar_error = mostrar_error
+        servidor      = l_serv_orig
+      IMPORTING
+        num_excepcion = num_excepcion
+        xstring       = l_xstring
+        message       = mensaje
+        longitud      = l_long ).
+
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF l_serv_dest = &apos;X&apos; AND crear_dir_dest_serv = &apos;X&apos;.
+      IF existe_dir( directorio = directorio_destino servidor = l_serv_dest ) = &apos;&apos;.
+        CONCATENATE &apos;mkdir&apos; directorio_destino INTO l_cmd SEPARATED BY space.
+        CALL &apos;SYSTEM&apos; ID &apos;COMMAND&apos; FIELD l_cmd            &quot;#EC CI_CCALL
+             ID &apos;TAB&apos; FIELD l_lines.
+
+        IF sy-subrc &lt;&gt; 0.
+          mensaje = &apos;Error creando directorio&apos;(ecd).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    grabar_xstring(
+      EXPORTING
+        mostrar_error = mostrar_error
+        xstring       = l_xstring
+        fichero       = l_file
+        bin_filesize  = l_long
+        servidor      = l_serv_dest
+      IMPORTING
+        num_excepcion = num_excepcion
+        mensaje       = mensaje ).
+
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    mensaje = borrar_fichero(
+                  fichero  = fichero
+                  servidor = l_serv_orig ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_DIRECTORIO" VERSION="1" LANGU="S" DESCRIPT="Popup para seleccionar directorio" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_DIRECTORIO" SCONAME="INITIAL_DIRECTORY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;C:\&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_DIRECTORIO" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_DIRECTORIO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_DIRECTORIO" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD popup_select_directorio.
+    DATA l_dir TYPE string.
+
+    IF servidor IS INITIAL.
+      cl_gui_frontend_services=&gt;directory_browse(
+        EXPORTING
+          window_title         = titulo
+          initial_folder       = initial_directory
+        CHANGING
+          selected_folder      = l_dir
+        EXCEPTIONS
+          cntl_error           = 1
+          error_no_gui         = 2
+          not_supported_by_gui = 3
+          OTHERS               = 4 ).
+      IF sy-subrc = 0 AND NOT l_dir IS INITIAL.
+        directorio = l_dir.
+      ENDIF.
+    ELSE.
+      IF initial_directory CS &apos;:&apos;.
+        CLEAR l_dir.
+      ELSE.
+        l_dir = initial_directory.
+      ENDIF.
+      CALL FUNCTION &apos;/SAPDMC/LSM_F4_SERVER_FILE&apos;
+        EXPORTING
+          directory        = l_dir
+          filemask         = &apos;directory&apos;
+        IMPORTING
+          serverfile       = directorio
+        EXCEPTIONS
+          canceled_by_user = 1
+          OTHERS           = 2.
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR directorio.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Popup para seleccionar fichero" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" SCONAME="DEFAULT_EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" SCONAME="INITIAL_DIRECTORY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" SCONAME="FILE_FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="POPUP_SELECT_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD popup_select_fichero.
+    DATA: l_rc       TYPE i,
+          i_ficheros TYPE filetable,
+          l_fichero  TYPE file_table,
+          i_path     TYPE dxfields-longpath,
+          filemask   TYPE dxfields-filemask,
+          o_path     TYPE dxfields-longpath,
+          abend_flag TYPE dxfields-abendflag.
+
+    IF servidor IS INITIAL.
+      cl_gui_frontend_services=&gt;file_open_dialog(
+                     EXPORTING default_extension = default_extension
+                               initial_directory = initial_directory
+                               file_filter       = file_filter
+                     CHANGING  rc = l_rc
+                               file_table = i_ficheros ).
+
+      READ TABLE i_ficheros INTO l_fichero INDEX 1.
+      IF sy-subrc = 0.
+        fichero = l_fichero.
+      ENDIF.
+    ELSE.
+      i_path = initial_directory.
+      filemask = file_filter.
+      CALL FUNCTION &apos;F4_DXFILENAME_TOPRECURSION&apos;
+        EXPORTING
+          i_location_flag = &apos;A&apos;
+          i_server        = &apos;&apos;
+          i_path          = i_path
+          filemask        = filemask
+        IMPORTING
+          o_path          = o_path
+          abend_flag      = abend_flag
+        EXCEPTIONS
+          rfc_error       = 1
+          error_with_gui  = 2
+          OTHERS          = 3.
+      IF sy-subrc = 0 AND abend_flag IS INITIAL.
+        fichero = o_path.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="ULTIMA_LETRA_RUTA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último carácter de la ruta" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="ULTIMA_LETRA_RUTA" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="ULTIMA_LETRA_RUTA" SCONAME="LETRA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR1"/>
+  <source>METHOD ultima_letra_ruta.
+    DATA: l_char TYPE c LENGTH 1000,
+          l_lon  TYPE i.
+
+    l_char = directorio.
+    l_lon = strlen( l_char ).
+    IF l_lon &gt; 1.
+      l_lon = l_lon - 1.
+    ENDIF.
+    letra = l_char+l_lon(1).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VER_FICHERO_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Visualiza fichero de texto" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VER_FICHERO_TEXTO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VER_FICHERO_TEXTO" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD ver_fichero_texto.
+    DATA: l_fichero   TYPE string,
+          i_tabla     TYPE TABLE OF string,
+          l_documento TYPE zdocumentos.
+
+    IF NOT existe( fichero ).
+      RETURN.
+    ENDIF.
+
+    l_fichero = fichero.
+    IF NOT fichero CS &apos;:&apos;.
+      lee_fich_servidor( EXPORTING fichero = l_fichero
+                         CHANGING  tabla   = i_tabla ).
+
+      l_documento-nombre  = &apos;temporal&apos;.
+      l_documento-fichero = fichero.
+      l_fichero = zcl_ap_documentos=&gt;get_nombre_fichero_temporal( l_documento ).
+      grabar( EXPORTING fichero = l_fichero
+              CHANGING tabla   = i_tabla ).
+    ENDIF.
+    zcl_ap_gos=&gt;visualizar_fichero_st( fichero = l_fichero extension = extension ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="BIN_FILESIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="VISUALIZAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD visualizar.
+    DATA: l_fichero TYPE string,
+          l_xstring TYPE xstring,
+          l_ruta    TYPE string.
+
+    CLEAR message.
+    IF xstring IS INITIAL.
+      l_fichero = concat_ruta( fichero = fichero directorio = directorio ).
+      leer_xstring( EXPORTING fichero       = l_fichero
+                              servidor      = servidor
+                    IMPORTING xstring       = l_xstring ).
+    ELSE.
+      l_xstring = xstring.
+    ENDIF.
+    IF l_xstring IS INITIAL.
+      RETURN.
+    ENDIF.
+    l_ruta = get_directorio_temporal( ).
+    IF l_ruta IS INITIAL.
+      message = &apos;Error recuperando ruta temporal&apos;.
+      RETURN.
+    ENDIF.
+    l_fichero = get_nombre_fichero( fichero = fichero con_extension = &apos;X&apos; ).
+    l_fichero = concat_ruta( fichero = l_fichero directorio = l_ruta ).
+    grabar_xstring( EXPORTING xstring       = l_xstring
+                              fichero       = l_fichero
+                              bin_filesize  = bin_filesize
+                    IMPORTING mensaje = message ).
+    IF message IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+    zcl_ap_gos=&gt;visualizar_fichero_st( l_fichero ).
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

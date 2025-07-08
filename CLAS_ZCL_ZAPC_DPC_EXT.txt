@@ -1,0 +1,256 @@
+==================================================
+ZCL_ZAPC_DPC_EXT=/IWBEP/IF_MGW_APPL_SRV_
+==================================================
+METHOD /iwbep/if_mgw_appl_srv_runtime~execute_action.
+  DATA: ls_parameter       TYPE /iwbep/s_mgw_name_value_pair,
+        l_message          TYPE string,
+        l_respuesta_accion TYPE zap_sapui5_accion,
+        l_accion           TYPE string,
+        l_datos            TYPE string,
+        l_clave            TYPE string,
+        l_otros            TYPE string.
+
+  o_segw->v_log = 'EXECUTE_ACTION'.
+
+  o_segw->set_log( p1 = 'Acción=' p2 = iv_action_name type = 'I' ).
+
+  CASE iv_action_name.
+    WHEN 'getDatos'.
+      get_valor_parametro: 'accion'  l_accion,
+                           'datos'   l_datos,
+                           'clave'   l_clave,
+                           'otros'   l_otros.
+
+      CASE l_accion.
+        WHEN 'getTabla'.
+          l_respuesta_accion = o_segw->get_datos_tabla( tabla = l_datos campos = l_clave where = l_otros ).
+
+        WHEN OTHERS.
+          l_respuesta_accion-message = |Acción { l_accion } no implementada|.
+          l_respuesta_accion-type = 'E'.
+      ENDCASE.
+
+      copy_data_to_ref( EXPORTING is_data = l_respuesta_accion
+                         CHANGING cr_data = er_data ).
+
+
+      IF NOT l_respuesta_accion-message IS INITIAL.
+        o_segw->set_log( p1 = 'Error ejecutando acción' p2 = l_accion p3 = l_clave p4 = l_respuesta_accion-message type = 'E' ).
+      ELSE.
+        o_segw->set_log( p1 = 'Se ha generado accion' p2 = l_accion p3 = l_clave type = 'S' ).
+      ENDIF.
+
+
+    WHEN OTHERS.
+      MESSAGE e398(00) WITH 'FunctionImport' iv_action_name 'no definido'.
+
+
+
+  ENDCASE.
+ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT==============CCDEF
+==================================================
+*"* use this source file for any type of declarations (class
+*"* definitions, interfaces or type declarations) you need for
+*"* components in the private section
+==================================================
+ZCL_ZAPC_DPC_EXT==============CCIMP
+==================================================
+*"* use this source file for the definition and implementation of
+*"* local helper classes, interface definitions and type
+*"* declarations
+==================================================
+ZCL_ZAPC_DPC_EXT==============CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+
+INCLUDE zmacros_ap_segw.
+==================================================
+ZCL_ZAPC_DPC_EXT==============CI
+==================================================
+private section.
+
+  data V_HEADER type IHTTPNVP .
+==================================================
+ZCL_ZAPC_DPC_EXT==============CO
+==================================================
+protected section.
+
+  methods DATOS_CREATE_ENTITY
+    redefinition .
+  methods DATOS_GET_ENTITY
+    redefinition .
+  methods PARAMETROS_GET_ENTITY
+    redefinition .
+  methods PARAMETROS_GET_ENTITYSET
+    redefinition .
+  methods DATOS_GET_ENTITYSET
+    redefinition .
+==================================================
+ZCL_ZAPC_DPC_EXT==============CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_ZAPC_DPC_EXT
+
+*"* local type definitions
+include ZCL_ZAPC_DPC_EXT==============ccdef.
+
+*"* class ZCL_ZAPC_DPC_EXT definition
+*"* public declarations
+  include ZCL_ZAPC_DPC_EXT==============cu.
+*"* protected declarations
+  include ZCL_ZAPC_DPC_EXT==============co.
+*"* private declarations
+  include ZCL_ZAPC_DPC_EXT==============ci.
+endclass. "ZCL_ZAPC_DPC_EXT definition
+
+*"* macro definitions
+include ZCL_ZAPC_DPC_EXT==============ccmac.
+*"* local class implementation
+include ZCL_ZAPC_DPC_EXT==============ccimp.
+
+class ZCL_ZAPC_DPC_EXT implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_ZAPC_DPC_EXT implementation
+
+==================================================
+ZCL_ZAPC_DPC_EXT==============CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_ZAPC_DPC_EXT and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_ZAPC_DPC_EXT==============CU
+==================================================
+class ZCL_ZAPC_DPC_EXT definition
+  public
+  inheriting from ZCL_ZAPC_DPC
+  create public .
+
+public section.
+
+  data O_SEGW type ref to ZCL_SEGW .
+  data O_CACHE type ref to ZCL_AP_CACHE .
+  constants C_ODATA type STRING value 'ZAPC_SRV' ##NO_TEXT.
+
+  methods CONSTRUCTOR .
+
+  methods /IWBEP/IF_MGW_APPL_SRV_RUNTIME~EXECUTE_ACTION
+    redefinition .
+==================================================
+ZCL_ZAPC_DPC_EXT=CONSTRUCTOR
+==================================================
+METHOD constructor.
+
+    super->constructor( ).
+
+    CREATE OBJECT me->o_segw
+      EXPORTING
+        nombre_odata = 'ZAPC'.
+
+*    o_segw->v_clave_parametro = 'FIRMAS'.
+
+  ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT=DATOS_CREATE_ENTITY
+==================================================
+  METHOD datos_create_entity.
+    DATA: l_msg_err TYPE string,
+          l_msg_ok  TYPE string.
+
+    io_data_provider->read_entry_data( IMPORTING es_data = er_entity ).
+
+    CASE er_entity-clave.
+      WHEN 'METODO'.
+*        zcl_ap_dev=>exec_method_st( EXPORTING clase = er_entity-subclave
+*                                              metodo = er_entity-valor
+*                                              name1 = 'CLAVE' value1 = er_entity-texto
+*                                              name2 = 'STRING' value2 = er_entity-string
+*                                    IMPORTING message = DATA(msg) ).
+        TRY.
+            CALL METHOD (er_entity-subclave)=>(er_entity-valor)
+              EXPORTING
+                clave   = er_entity-texto
+                string  = er_entity-string
+              IMPORTING
+                msg_err = l_msg_err
+                msg_ok  = l_msg_ok.
+            IF NOT l_msg_err IS INITIAL.
+*              o_segw->raise_message( io_context = mo_context message = l_msg_err ).
+              er_entity-texto  = 'E'.
+              er_entity-string = l_msg_err.
+
+            ELSE.
+              er_entity-texto  = 'S'.
+              er_entity-string = l_msg_ok.
+            ENDIF.
+          CATCH cx_root INTO DATA(o_root).
+            l_msg_err = o_root->get_longtext( ).
+            IF l_msg_err IS INITIAL.
+              l_msg_err = o_root->get_text( ).
+            ENDIF.
+*            o_segw->raise_message( io_context = mo_context message = l_msg_err ).
+            er_entity-texto  = 'E'.
+            er_entity-string = l_msg_err.
+
+        ENDTRY.
+      WHEN OTHERS.
+        o_segw->raise_message( io_context = mo_context message = |{ er_entity-clave } no reconocido| ).
+    ENDCASE.
+
+  ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT=DATOS_GET_ENTITY
+==================================================
+  METHOD datos_get_entity.
+
+    er_entity-clave = 'x'.
+    er_entity-subclave = 'x'.
+    er_entity-indice = '1'.
+  ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT=DATOS_GET_ENTITYSET
+==================================================
+  METHOD datos_get_entityset.
+
+    APPEND VALUE #( clave = 'a' subclave = 'b' indice = '1' ) TO et_entityset.
+
+  ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT=PARAMETROS_GET_ENTITY
+==================================================
+METHOD parametros_get_entity.
+
+    o_segw->get_entity_parametro( EXPORTING it_key_tab = it_key_tab
+                                  IMPORTING er_entity  = er_entity
+                                            message    = DATA(l_message) ).
+
+    IF NOT l_message IS INITIAL.
+      o_segw->raise_message( io_context = mo_context message = l_message ).
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_ZAPC_DPC_EXT=PARAMETROS_GET_ENTITYSE
+==================================================
+METHOD parametros_get_entityset.
+
+    CALL METHOD o_segw->get_entityset_parametros
+      EXPORTING
+        it_filter_select_options = it_filter_select_options
+        is_paging                = is_paging
+        it_key_tab               = it_key_tab
+        it_order                 = it_order
+      IMPORTING
+        et_entityset             = et_entityset
+        es_response_context      = es_response_context
+        message                  = DATA(l_message).
+
+    IF NOT l_message IS INITIAL.
+      o_segw->raise_message( io_context = mo_context message = l_message ).
+    ENDIF.
+
+  ENDMETHOD.

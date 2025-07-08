@@ -1,0 +1,505 @@
+************************************************************************
+* MÓDULO      : BC                                                     *
+* TIPO        : Utilidad                                               *
+* TITULO      : Mantenimiento de valores de variantes                  *
+* DESCRIPCION : Crea/Modifica/Borra valores de los parámetros          *
+*               y select-options de una variante de un report          *
+*                                                                      *
+* CREADO POR : Lucía Rodríguez                                         *
+* FECHA      : 03/01/2006                                              *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE                               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username                             P01K90XXXXX        *
+************************************************************************
+************************************************************************
+*  Autor: Daniel Garcia Infiesta                                       *
+*  Fecha: 19/6/2006                                                    *
+*  Modificación: dgi19062006_001                                       *
+*  Descripción: LLamada a función ws_upload no correcta substitución   *
+*  funcion gui_upload                                                  *
+************************************************************************
+
+REPORT zbcvx014 MESSAGE-ID zbc.
+
+TABLES: trdir,               " Tabla de sistema
+        varis,               " Variantes
+        dd03l.               " Campos de tablas de sap
+
+INCLUDE zbcvk002.            "Rutinas de SAPGUI PROGRESS INDICATOR
+INCLUDE zbcvk003.            "Include rutinas comunes listados ALV
+INCLUDE zbcvk004.            "Rutinas para ayudas para búsqueda
+INCLUDE zppvk000.            "Rutinas con utilidades
+
+DATA: BEGIN OF i_datos OCCURS 0,
+        cell01(80) TYPE c,
+      END OF i_datos.
+
+PARAMETERS: p_report LIKE vari-report OBLIGATORY.
+
+
+DATA: i_rsparams LIKE rsparams  OCCURS 0 WITH HEADER LINE,
+      i_vartext LIKE rsvseltext OCCURS 0 WITH HEADER LINE,
+      i_sscr LIKE rsscr OCCURS 0 WITH HEADER LINE,
+      l_vari LIKE varis-variant,
+      l_exito TYPE i.
+
+DATA: BEGIN OF i_listado OCCURS 0,
+          check,
+          selname LIKE rsparams-selname,
+          text LIKE rsvseltext-text,
+          dbfield LIKE rsscr-dbfield,
+          kind LIKE rsparams-kind,
+          sign LIKE rsparams-sign,
+          option LIKE rsparams-option,
+          low LIKE rsparams-low,
+          high LIKE rsparams-high,
+          type LIKE rsscr-type,
+      END OF i_listado.
+DATA: i_vari LIKE rvari OCCURS 0 WITH HEADER LINE,
+      i_varivdat LIKE rsvarivdat OCCURS 0 WITH HEADER LINE,
+      i_varidyn LIKE rsvaridyn OCCURS 0 WITH HEADER LINE,
+      i_vdatdyn LIKE rsvdatdyn OCCURS 0 WITH HEADER LINE.
+
+DATA: STR_FICHERO_UPLOAD TYPE STRING.      "dgi19062006_001
+
+AT SELECTION-SCREEN.
+  trdir-name = p_report.
+  READ TABLE trdir.
+  IF sy-subrc NE 0.
+    MESSAGE e002 WITH p_report.
+  ENDIF.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_report.
+  PERFORM sel_report.
+
+START-OF-SELECTION.
+* comprobar usuario solicitante para que no se lance sin autorizacion
+  IF sy-uname+0(5) NE 'SPVCA' AND sy-uname+0(5) NE 'SPVBC'.
+    MESSAGE e010.
+    EXIT.
+  ENDIF.
+
+  PERFORM obtener_parametros CHANGING l_exito.
+  CHECK l_exito = 1.
+  PERFORM sgpi_texto USING 'Generando listado'.
+  v_alv_nombre_checkbox = 'CHECK'.
+  PERFORM initialize_fieldcat USING alv_fieldtab[].
+  PERFORM alv_sortinfo TABLES alv_sort.
+  PERFORM listado_tabla_alv TABLES i_listado
+                             USING 'I_LISTADO'
+                                   alv_fieldtab.
+
+**---------------------------------------------------------------------*
+**       FORM alv_sortinfo                                             *
+**---------------------------------------------------------------------*
+**       Opciones de ordenación                                        *
+**---------------------------------------------------------------------*
+FORM alv_sortinfo TABLES p_alv_sort TYPE slis_t_sortinfo_alv.
+*
+  DATA sortinfo_alv TYPE slis_sortinfo_alv.
+
+
+ENDFORM.                               " ALV_SORTINFO
+
+*---------------------------------------------------------------------*
+*       FORM initialize_fieldcat                                      *
+*---------------------------------------------------------------------*
+FORM initialize_fieldcat USING p_fieldtab TYPE slis_t_fieldcat_alv.
+
+  fieldcat_checkbox 'CHECK'.
+  CLEAR alv_fieldcat.
+  alv_fieldcat-tabname      = 'I_LISTADO'.
+  alv_fieldcat-fieldname    = 'LOW'.
+  alv_fieldcat-outputlen    = '20'.
+  alv_fieldcat-input        = 'X'.
+  APPEND alv_fieldcat TO p_fieldtab.
+  CLEAR alv_fieldcat.
+  alv_fieldcat-tabname      = 'I_LISTADO'.
+  alv_fieldcat-fieldname    = 'HIGH'.
+  alv_fieldcat-outputlen    = '20'.
+  alv_fieldcat-input        = 'X'.
+  APPEND alv_fieldcat TO p_fieldtab.
+
+  fieldcat_no_out: 'TYPE'.
+  fieldcat_text_simple_long_m:
+                               'DBFIELD' 'Campo' 20,
+                               'TEXT' 'Descripción' 30.
+ENDFORM.                               " INITIALIZE_FIELDCAT
+
+*&---------------------------------------------------------------------*
+*&      Form  SEL_REPORT
+*&---------------------------------------------------------------------*
+*  Procedimiento con el que mostraremos una ventana de ayuda para la
+*  selección del report
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM sel_report.
+
+  PERFORM hv_inicio.
+  PERFORM hv_add_field USING: 'VARIS' 'REPORT' 'X',
+                              'VARIS' 'DYNNR' ''.
+  SELECT * FROM varis.
+    PERFORM hv_add_value USING: varis-report, varis-dynnr.
+  ENDSELECT.
+*  Mostramos la tabla para seleccionar valores.
+  PERFORM hv_help_value USING 'VARIS' 'REPORT'
+                     CHANGING p_report.
+
+ENDFORM.                    " sel_report
+
+
+*---------------------------------------------------------------------*
+*       FORM user_command                                             *
+*---------------------------------------------------------------------*
+*       Comprueba acciones de usuario
+*---------------------------------------------------------------------*
+FORM user_command
+  USING pu_okcode
+        pu_selfield TYPE slis_selfield.
+  DATA: fich_imp LIKE rlgrap-filename,
+        l_low LIKE rsparams-low,
+        filename TYPE string,
+        path type string,
+        fullpath type string.
+
+  CASE pu_okcode.
+    WHEN 'BACK'.
+      LEAVE PROGRAM.
+    WHEN 'CANCEL'.
+      LEAVE PROGRAM.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'SELVAL'.
+      LOOP AT i_listado WHERE check = 'X'.
+        l_low = i_listado-low.
+        DATA: dato(30).
+        RANGES r_datos FOR dato.
+        REFRESH r_datos.
+        CALL FUNCTION 'FI_COMPLEX_SELECTIONS_DIALOG'
+          EXPORTING
+             title          = 'Selección'
+             text           = 'Proveedores'
+*            SIGNED         = 'X'
+*            LOWER_CASE     = ' '
+*            JUST_DISPLAY   = ' '
+             i_fieldname    = 'LIFNR'
+             i_tabname      = 'LFA1'
+             i_f4_type      = '1'
+*            I_MACOBJ       = ' '
+          TABLES
+             range          = r_datos
+*            T_FIELDTAB     =
+*            T_VALUETAB     =
+          EXCEPTIONS
+             no_range_tab   = 1
+             cancelled      = 2
+             internal_error = 3
+             OTHERS         = 4.
+
+        IF sy-subrc NE 0.
+          MESSAGE e005 WITH i_listado-selname.
+        ENDIF.
+        LOOP AT r_datos.
+          MOVE-CORRESPONDING r_datos TO i_listado.
+          i_listado-check = ' '.
+          APPEND i_listado.
+        ENDLOOP.
+        IF sy-subrc = 0 AND l_low IS INITIAL.
+          DELETE i_listado.
+        ELSE.
+          CLEAR i_listado-check.
+          MODIFY i_listado.
+        ENDIF.
+      ENDLOOP.
+      SORT i_listado.
+      DELETE ADJACENT DUPLICATES FROM i_listado.
+      pu_selfield-refresh    = 'X'.
+      pu_selfield-col_stable = 'X'.
+      pu_selfield-row_stable = 'X'.
+
+    WHEN 'DELVAL'.
+      LOOP AT i_listado WHERE check = 'X'.
+        DELETE i_listado.
+      ENDLOOP.
+      SORT i_listado.
+      pu_selfield-refresh    = 'X'.
+      pu_selfield-col_stable = 'X'.
+      pu_selfield-row_stable = 'X'.
+      MESSAGE s008.
+    WHEN 'SAVE'.
+      REFRESH i_rsparams.
+      LOOP AT i_listado.
+        MOVE-CORRESPONDING i_listado TO i_rsparams.
+        IF i_listado-type = 'D' AND NOT i_listado-low IS INITIAL.
+          CONCATENATE i_listado-low+6(4) i_listado-low+3(2)
+                      i_listado-low(2)
+                 INTO i_rsparams-low.
+        ENDIF.
+        IF i_listado-type = 'D' AND NOT i_listado-high IS INITIAL.
+          CONCATENATE i_listado-high+6(4) i_listado-high+3(2)
+                      i_listado-high(2)
+                 INTO i_rsparams-high.
+        ENDIF.
+        APPEND i_rsparams.
+      ENDLOOP.
+      LOOP AT i_sscr.
+        READ TABLE i_listado WITH KEY selname = i_sscr-name.
+        IF sy-subrc NE 0.
+          CLEAR i_rsparams.
+          i_rsparams-selname = i_sscr-name.
+          i_rsparams-kind = i_sscr-kind.
+          APPEND i_rsparams.
+        ENDIF.
+      ENDLOOP.
+      CALL FUNCTION 'RS_CHANGE_CREATED_VARIANT'
+           EXPORTING
+             curr_report               = p_report
+             curr_variant              = l_vari
+             vari_desc                 = 'Hola'
+        TABLES
+             vari_contents             = i_rsparams
+*            VARI_TEXT                 =
+        EXCEPTIONS
+             illegal_report_or_variant = 1
+             illegal_variantname       = 2
+             not_authorized            = 3
+             not_executed              = 4
+             report_not_existent       = 5
+             report_not_supplied       = 6
+             variant_doesnt_exist      = 7
+             variant_locked            = 8
+             selections_no_match       = 9
+             OTHERS                    = 10.
+
+      IF sy-subrc <> 0.
+        MESSAGE e006 WITH l_vari.
+      ENDIF.
+      MESSAGE s007 WITH l_vari.
+
+    WHEN 'IMPORT'.
+      LOOP AT i_listado WHERE check = 'X'.
+        IF i_listado-kind <> 'S'.
+          MESSAGE e011.
+        ENDIF.
+        l_low = i_listado-low.
+*          SELECCIONA_FICHERO FICH_IMP.
+        selecciona_fichero filename
+                           path
+                           fullpath.           " ers 16.06.2006
+        MOVE fullpath TO fich_imp.             " ers 16.06.2006
+        REFRESH i_datos.
+
+      CLEAR STR_FICHERO_UPLOAD.                  "dgi19062006_001
+      MOVE fich_imp TO STR_FICHERO_UPLOAD.       "dgi19062006_001
+
+       CALL FUNCTION 'GUI_UPLOAD'            "dgi19062006_001
+        EXPORTING
+          FILENAME                      = STR_FICHERO_UPLOAD
+*          FILETYPE                      = 'DAT'
+      HAS_FIELD_SEPARATOR           = 'X'
+*     HEADER_LENGTH                 = 0
+*     READ_BY_LINE                  = 'X'
+*     DAT_MODE                      = ' '
+*     CODEPAGE                      = ' '
+*     IGNORE_CERR                   = ABAP_TRUE
+*     REPLACEMENT                   = '#'
+*     CHECK_BOM                     = ' '
+*     NO_AUTH_CHECK                 = ' '
+*      IMPORTING
+*          FILELENGTH                    = NR_OF_BYTES
+*     HEADER                        =
+      TABLES
+          DATA_TAB                      =  i_datos
+   EXCEPTIONS
+     FILE_OPEN_ERROR               = 1
+     FILE_READ_ERROR               = 2
+     NO_BATCH                      = 3
+     GUI_REFUSE_FILETRANSFER       = 4
+     INVALID_TYPE                  = 5
+     NO_AUTHORITY                  = 6
+     UNKNOWN_ERROR                 = 7
+     BAD_DATA_FORMAT               = 8
+     HEADER_NOT_ALLOWED            = 9
+     SEPARATOR_NOT_ALLOWED         = 10
+     HEADER_TOO_LONG               = 11
+     UNKNOWN_DP_ERROR              = 12
+     ACCESS_DENIED                 = 13
+     DP_OUT_OF_MEMORY              = 14
+     DISK_FULL                     = 15
+     DP_TIMEOUT                    = 16
+     OTHERS                        = 17
+            .                             "dgi19062006_001
+
+
+*        CALL FUNCTION 'WS_UPLOAD'        "dgi19062006_001
+*           EXPORTING
+**               CODEPAGE                = ' '
+*              filename                = fich_imp
+*              filetype                = 'DAT'
+*         TABLES
+*              data_tab                = i_datos
+*         EXCEPTIONS
+*              conversion_error        = 1
+*              file_open_error         = 2
+*              file_read_error         = 3
+*              invalid_table_width     = 4
+*              invalid_type            = 5
+*              no_batch                = 6
+*              unknown_error           = 7
+*              gui_refuse_filetransfer = 8
+*              customer_error          = 9
+*              OTHERS                  = 10.  "dgi19062006_001
+        IF sy-subrc NE 0.
+          MESSAGE e009 WITH fich_imp.
+        ENDIF.
+        LOOP AT i_datos.
+          i_listado-check = ' '.
+          i_listado-sign = 'I'.
+          i_listado-option = 'EQ'.
+          i_listado-low = i_datos-cell01.
+          CLEAR i_listado-high.
+          APPEND i_listado.
+        ENDLOOP.
+        IF sy-subrc = 0 AND l_low IS INITIAL.
+          DELETE i_listado.
+        ELSE.
+          i_listado-check = ' '.
+          MODIFY i_listado.
+        ENDIF.
+      ENDLOOP.
+      SORT i_listado.
+      DELETE ADJACENT DUPLICATES FROM i_listado.
+      pu_selfield-refresh    = 'X'.
+      pu_selfield-col_stable = 'X'.
+      pu_selfield-row_stable = 'X'.
+
+  ENDCASE.
+ENDFORM.                    "USER_COMMAND
+
+*&---------------------------------------------------------------------*
+*&      Form  OBTENER_PARAMETROS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM obtener_parametros CHANGING p_exito.
+  DATA l_varkey LIKE rsvarkey.
+
+  p_exito = 1.
+  REFRESH: i_rsparams, i_vartext, i_listado, i_sscr, i_vari,
+           i_varivdat, i_varidyn, i_vdatdyn.
+  l_varkey-report = p_report.
+
+  CALL FUNCTION 'RS_VARIANT_FETCH'
+    EXPORTING
+      function             = 'GET'
+      report               = p_report
+      rkey                 = l_varkey
+      submode              = space
+      internal_call        = 'X'
+    IMPORTING
+      variant              = l_vari
+    TABLES
+      selctab              = i_sscr
+      p_vari               = i_vari
+      p_varivdat           = i_varivdat
+      p_varidyn            = i_varidyn
+      p_vdatdyn            = i_vdatdyn
+    EXCEPTIONS
+      variant_name         = 1
+      no_variants          = 2
+      variant_inconsistent = 3
+      only_background      = 4
+      OTHERS               = 5.
+
+  IF sy-subrc <> 0.
+    MESSAGE s004 WITH p_report.
+    p_exito = 0.
+    EXIT.
+  ENDIF.
+
+
+  CALL FUNCTION 'RS_VARIANT_VALUES_TECH_DATA'
+    EXPORTING
+      report               = p_report
+      variant              = l_vari
+      sel_text             = 'X'
+      move_or_write        = 'W'
+      sorted               = 'X'
+    TABLES
+      variant_values       = i_rsparams
+      variant_text         = i_vartext
+    EXCEPTIONS
+      variant_non_existent = 1
+      variant_obsolete     = 2
+      OTHERS               = 3.
+
+
+  IF sy-subrc <> 0.
+    MESSAGE s003 WITH p_report l_vari.
+    p_exito = 0.
+    EXIT.
+  ENDIF.
+
+  LOOP AT i_rsparams.
+    CLEAR i_listado.
+    MOVE-CORRESPONDING i_rsparams TO i_listado.
+    READ TABLE i_sscr WITH KEY name = i_rsparams-selname.
+    IF sy-subrc = 0.
+      i_listado-dbfield = i_sscr-dbfield.
+      i_listado-type = i_sscr-type.
+    ENDIF.
+    READ TABLE i_vartext WITH KEY tech_name = i_rsparams-selname.
+    IF sy-subrc = 0.
+      i_listado-text = i_vartext-text.
+    ENDIF.
+    IF i_listado-selname = i_listado-text.
+      PERFORM buscar_descripcion USING i_listado-dbfield
+                                 CHANGING i_listado-text.
+    ENDIF.
+    APPEND i_listado.
+  ENDLOOP.
+  SORT i_listado.
+ENDFORM.                    " OBTENER_PARAMETROS
+*&---------------------------------------------------------------------*
+*&      Form  BUSCAR_DESCRIPCION
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_I_LISTADO_DBFIELD  text                                    *
+*      <--P_I_LISTADO_TEXT  text                                       *
+*----------------------------------------------------------------------*
+FORM buscar_descripcion USING    p_dbfield
+                        CHANGING p_text.
+  DATA: l_pos TYPE i,
+        l_posd TYPE i,
+        l_table LIKE dd03l-tabname,
+        l_field LIKE dd03l-fieldname,
+        l_reptext LIKE dd04t-reptext.
+
+  SEARCH p_dbfield FOR '-'.
+  IF sy-subrc NE 0.
+    EXIT.
+  ENDIF.
+  l_pos = sy-fdpos.
+  l_posd = l_pos + 1.
+  l_table = p_dbfield(l_pos).
+  l_field = p_dbfield+l_posd.
+  SELECT SINGLE *
+    FROM dd03l
+   WHERE tabname = l_table
+     AND fieldname = l_field.
+  IF sy-subrc = 0.
+    SELECT SINGLE reptext INTO l_reptext
+      FROM dd04t
+     WHERE rollname = dd03l-rollname
+       AND ddlanguage = sy-langu.
+    p_text = l_reptext(30).
+  ENDIF.
+ENDFORM.                    " BUSCAR_DESCRIPCION

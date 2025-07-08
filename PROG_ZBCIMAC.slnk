@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZBCIMAC" VARCL="X" SUBC="I" APPL="M" RMAND="001" RLOAD="E" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include ZBCIMAC" LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>************************************************************************
+* TITULO      : Macros útiles                                          *
+* DESCRIPCION :                                                        *
+* AUTOR       : Andrés Picazo                   FECHA: 24/04/99        *
+* RUTA:                           ORDEN DE TRANSPORTE:                 *
+*    ADDRANGO_EQ -&gt; Rellena un rango con opciones de inclusión
+*    ADDRANGO_BT -&gt; Rellena un rango con opciones de inclusión entre 2
+*                   valores.
+*
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA            NOMBRE            RUTA           ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy       username          XXXXX-X        sidK9nnnnn         *
+************************************************************************
+
+TABLES: sscrfields. &quot;Campos en las imágenes de selección
+
+DATA: v_btn LIKE smp_dyntxt.
+DATA: v_ucomm1 LIKE sy-ucomm,
+       v_ucomm2 LIKE sy-ucomm,
+       v_ucomm3 LIKE sy-ucomm,
+       v_ucomm4 LIKE sy-ucomm,
+       v_ucomm5 LIKE sy-ucomm.
+
+DATA : i_excel TYPE  kcde_cells OCCURS 1000 WITH HEADER LINE,
+       v_aux_filename LIKE rlgrap-filename,
+       v_string_aux TYPE string,
+       l_mac_cant1 LIKE ekpo-menge,
+       l_mac_cant2 LIKE ekpo-menge.
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Macro ADDRANGO_EQ
+*&amp;---------------------------------------------------------------------*
+*       Rellena un rango con opciones de inclusión
+*       Ej:  ADDRANGO_EQ P_BUKRS &apos;Z021&apos;.
+*----------------------------------------------------------------------*
+DEFINE addrango_eq.
+  clear &amp;1.
+  &amp;1-option = &apos;EQ&apos;.
+  &amp;1-sign = &apos;I&apos;.
+  &amp;1-low = &amp;2.
+  append &amp;1.
+END-OF-DEFINITION.
+
+DEFINE addrango_neq.
+  clear &amp;1.
+  &amp;1-option = &apos;EQ&apos;.
+  &amp;1-sign = &apos;E&apos;.
+  &amp;1-low = &amp;2.
+  append &amp;1.
+END-OF-DEFINITION.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Macro ADDRANGO_BT
+*&amp;---------------------------------------------------------------------*
+*       Rellena un rango con opciones de inclusión entre 2 valores
+*       Ej:  ADDRANGO_EQ P_BUKRS &apos;Z001&apos;. &apos;Z021&apos;.
+*----------------------------------------------------------------------*
+DEFINE addrango_bt.
+  clear &amp;1.
+  &amp;1-option = &apos;BT&apos;.
+  &amp;1-sign = &apos;I&apos;.
+  &amp;1-low = &amp;2.
+  &amp;1-high = &amp;3.
+  append &amp;1.
+END-OF-DEFINITION.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Macro PARAM_CHECKBOX
+*&amp;---------------------------------------------------------------------*
+*       Linea de checkbox formateada
+*----------------------------------------------------------------------*
+DEFINE param_checkbox.
+  selection-screen begin of line.
+  selection-screen comment 1(30) &amp;2 for field &amp;1.
+  parameters: &amp;1 as checkbox default &amp;3.
+  selection-screen end of line.
+END-OF-DEFINITION.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Macro PARAM_RADIOBUTTON
+*&amp;---------------------------------------------------------------------*
+*       Linea de radio button formateada
+*----------------------------------------------------------------------*
+DEFINE param_radiobutton.
+  selection-screen begin of line.
+  selection-screen comment 1(30) for field &amp;1.
+  parameters: &amp;1 radiobutton group &amp;2.
+  selection-screen end of line.
+END-OF-DEFINITION.
+
+DEFINE param_radiobutton_def.
+  selection-screen begin of line.
+  selection-screen comment 1(30) for field &amp;1.
+  parameters: &amp;1 radiobutton group &amp;2 default &apos;X&apos;.
+  selection-screen end of line.
+END-OF-DEFINITION.
+
+
+
+* Convierte una fecha en formato AAAAMMDD a formato DDMMAAAA
+DEFINE invertir_fecha.
+  &amp;2(2) = &amp;1+6(2).
+  &amp;2+2(2) = &amp;1+4(2).
+  &amp;2+4(4) = &amp;1(4).
+END-OF-DEFINITION.
+
+* Convierte una fecha en formato DDMMAAAA a formato AAAAMMDD
+DEFINE invertir_fecha_inv.
+  &amp;2(4) = &amp;1+4(4).
+  &amp;2+4(2) = &amp;1+2(2).
+  &amp;2+6(2) = &amp;1(2).
+END-OF-DEFINITION.
+
+DEFINE format_fecha.
+  call function &apos;CONVERT_DATE_TO_EXTERNAL&apos;
+    exporting
+      date_internal = &amp;1
+    importing
+      date_external = &amp;2.
+END-OF-DEFINITION.
+
+* Permite seleccionar un fichero local
+DEFINE selecciona_fichero.
+  call function &apos;WS_FILENAME_GET&apos;
+       exporting
+             def_filename = &amp;1
+             def_path = &apos;\&apos;
+             mask = &apos;,*.*,*.*.&apos;
+             mode = &apos;O&apos;
+             title = &apos;Selecciona fichero&apos;
+       importing
+             filename = &amp;1
+*              rc               =
+       exceptions
+             inv_winsys = 01
+             no_batch = 02
+             selection_cancel = 03
+             selection_error = 04.
+END-OF-DEFINITION.
+
+DEFINE leer_fichero_dat.
+  free &amp;2.
+  v_string_aux = &amp;1.
+  call function &apos;GUI_UPLOAD&apos;
+    exporting
+      filename                      = v_string_aux
+      filetype                      = &apos;ASC&apos;
+      has_field_separator           = &apos;X&apos;
+*   HEADER_LENGTH                 = 0
+*   READ_BY_LINE                  = &apos;X&apos;
+    dat_mode                      = &apos;X&apos;
+*   CODEPAGE                      = &apos; &apos;
+*   IGNORE_CERR                   = ABAP_TRUE
+*   REPLACEMENT                   = &apos;#&apos;
+*   CHECK_BOM                     = &apos; &apos;
+* IMPORTING
+*   FILELENGTH                    =
+*   HEADER                        =
+    tables
+      data_tab                      = &amp;2
+  exceptions
+    file_open_error               = 1
+    file_read_error               = 2
+    no_batch                      = 3
+    gui_refuse_filetransfer       = 4
+    invalid_type                  = 5
+    no_authority                  = 6
+    unknown_error                 = 7
+    bad_data_format               = 8
+    header_not_allowed            = 9
+    separator_not_allowed         = 10
+    header_too_long               = 11
+    unknown_dp_error              = 12
+    access_denied                 = 13
+    dp_out_of_memory              = 14
+    disk_full                     = 15
+    dp_timeout                    = 16
+    others                        = 17
+           .
+
+  if sy-subrc &lt;&gt; 0.
+    case sy-subrc.
+      when 2.
+        message e015(ba) with &amp;1.  &quot;no es posible abrir el fichero
+      when 3.
+        message e252(tq) with &amp;1.  &quot;error lectura en fichero &amp;
+      when 4.
+        message e422(so).              &quot;tipo de fichero no válido &amp;
+      when 8.
+        message i398(00) with &apos;Formato de datos incorrectos&apos;.
+      when others.
+        message e252(tq) with &amp;1.  &quot;error lectura en fichero &amp;
+    endcase.
+  endif.
+END-OF-DEFINITION.
+
+DEFINE leer_fichero_asc.
+  free &amp;2.
+  v_string_aux = &amp;1.
+  call function &apos;GUI_UPLOAD&apos;
+    exporting
+      filename                      = v_string_aux
+      filetype                      = &apos;ASC&apos;
+      has_field_separator           = &apos;&apos;
+*   HEADER_LENGTH                 = 0
+*   READ_BY_LINE                  = &apos;X&apos;
+    dat_mode                      = &apos;&apos;
+*   CODEPAGE                      = &apos; &apos;
+*   IGNORE_CERR                   = ABAP_TRUE
+*   REPLACEMENT                   = &apos;#&apos;
+*   CHECK_BOM                     = &apos; &apos;
+* IMPORTING
+*   FILELENGTH                    =
+*   HEADER                        =
+    tables
+      data_tab                      = &amp;2
+  exceptions
+    file_open_error               = 1
+    file_read_error               = 2
+    no_batch                      = 3
+    gui_refuse_filetransfer       = 4
+    invalid_type                  = 5
+    no_authority                  = 6
+    unknown_error                 = 7
+    bad_data_format               = 8
+    header_not_allowed            = 9
+    separator_not_allowed         = 10
+    header_too_long               = 11
+    unknown_dp_error              = 12
+    access_denied                 = 13
+    dp_out_of_memory              = 14
+    disk_full                     = 15
+    dp_timeout                    = 16
+    others                        = 17
+           .
+
+  if sy-subrc &lt;&gt; 0.
+    case sy-subrc.
+      when 2.
+        message e015(ba) with &amp;1.  &quot;no es posible abrir el fichero
+      when 3.
+        message e252(tq) with &amp;1.  &quot;error lectura en fichero &amp;
+      when 4.
+        message e422(so).              &quot;tipo de fichero no válido &amp;
+      when 8.
+        message i398(00) with &apos;Formato de datos incorrectos&apos;.
+      when others.
+        message e252(tq) with &amp;1.  &quot;error lectura en fichero &amp;
+    endcase.
+  endif.
+END-OF-DEFINITION.
+
+
+DEFINE quitar_ceros.
+  call function &apos;CONVERSION_EXIT_ALPHA_OUTPUT&apos;
+    exporting
+      input  = &amp;1
+    importing
+      output = &amp;1.
+END-OF-DEFINITION.
+
+DEFINE poner_ceros.
+  call function &apos;CONVERSION_EXIT_ALPHA_INPUT&apos;
+    exporting
+      input  = &amp;1
+    importing
+      output = &amp;1.
+END-OF-DEFINITION.
+
+* Leer fichero Excel
+DEFINE lee_fichero_excel.
+  v_aux_filename = &amp;1.
+  call function &apos;KCD_EXCEL_OLE_TO_INT_CONVERT&apos;
+    exporting
+      filename                = v_aux_filename
+      i_begin_col             = &amp;2
+      i_begin_row             = &amp;3
+      i_end_col               = &amp;4
+      i_end_row               = &amp;5
+    tables
+      intern                  = i_excel
+    exceptions
+      inconsistent_parameters = 1
+      upload_ole              = 2
+      others                  = 3.
+  if sy-subrc ne 0.
+    case sy-subrc.
+      when 2.
+        message e398(00) with &apos;Error al leer el fichero&apos; v_aux_filename.
+      when others.
+        message e398(00) with &apos;Error&apos; sy-subrc
+                              &apos;al cargar fichero Excel&apos;.
+    endcase.
+  endif.
+  sort i_excel.
+END-OF-DEFINITION.
+
+DEFINE col_excel.
+when &amp;1.
+  &amp;2 = i_excel-value.
+END-OF-DEFINITION.
+
+
+DEFINE col_excel_importe.
+when &amp;1.
+  replace &apos;.&apos; with &apos;&apos; into i_excel-value.
+  replace &apos;.&apos; with &apos;&apos; into i_excel-value.
+  replace &apos;,&apos; with &apos;.&apos; into i_excel-value.
+  condense i_excel-value no-gaps.
+  &amp;2 = i_excel-value.
+END-OF-DEFINITION.
+
+DEFINE col_excel_fecha.
+when &amp;1.
+  call function &apos;KCD_EXCEL_DATE_CONVERT&apos;
+    exporting
+      excel_date  = i_excel-value
+      date_format = &apos;TMJ&apos;
+    importing
+      sap_date    = &amp;2.
+END-OF-DEFINITION.
+
+* Llamada al mantenimiento estándard
+DEFINE mantener_tabla.
+  call function &apos;VIEW_MAINTENANCE_CALL&apos;
+    exporting
+      action    = &apos;U&apos;
+      view_name = &amp;1.
+*       TABLES
+*            DBA_SELLIST = SELTAB.
+END-OF-DEFINITION.
+
+* Llamada al mantenimiento incluyendo un filtro
+DATA: seltab LIKE vimsellist OCCURS 1 WITH HEADER LINE.
+DEFINE mantener_tabla_filtro.
+  free seltab.
+  seltab-viewfield = &apos;PGM&apos;.
+  seltab-value = &amp;2.
+  seltab-operator = &apos;LK&apos;.
+  append seltab.
+  call function &apos;VIEW_MAINTENANCE_CALL&apos;
+    exporting
+      action      = &apos;U&apos;
+      view_name   = &amp;1
+    tables
+      dba_sellist = seltab.
+END-OF-DEFINITION.
+
+* Convierte una fecha en formato AAAAMMDD a formato DDMMAAAA
+DEFINE invertir_fecha.
+  &amp;2(2) = &amp;1+6(2).
+  &amp;2+2(2) = &amp;1+4(2).
+  &amp;2+4(4) = &amp;1(4).
+END-OF-DEFINITION.
+
+* Convierte una fecha en formato DDMMAAAA a formato AAAAMMDD
+DEFINE invertir_fecha_inv.
+  &amp;2(4) = &amp;1+4(4).
+  &amp;2+4(2) = &amp;1+2(2).
+  &amp;2+6(2) = &amp;1(2).
+END-OF-DEFINITION.
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      CONVERTIR_A_KILOS
+*&amp;--------------------------------------------------------------------*
+*       Convierte unidades a kilos
+*         -&gt; &amp;1 Material
+*         -&gt; &amp;2 Cantidad
+*         -&gt; &amp;3 Unidad origen
+*         &lt;- &amp;4 Cantidad en kilos
+*         &lt;- &amp;5 Unidad Kilos
+*---------------------------------------------------------------------*
+DEFINE convertir_a_kilos.
+
+  if &amp;3 = &apos;KG&apos;.
+    &amp;4 = &amp;2.
+    &amp;5 = &amp;3.
+  elseif &amp;2 = 0.
+    &amp;4 = 0.
+    &amp;5 = &apos;KG&apos;.
+  else.
+    call function &apos;MD_CONVERT_MATERIAL_UNIT&apos;
+      exporting
+        i_matnr              = &amp;1
+        i_in_me              = &amp;3
+        i_out_me             = &apos;KG&apos;
+        i_menge              = &amp;2
+      importing
+        e_menge              = &amp;4
+      exceptions
+        error_in_application = 1
+        error                = 2
+        others               = 3.
+    if sy-subrc = 0.
+      &amp;5 = &apos;KG&apos;.
+    else.
+      &amp;5 = &amp;3.
+    endif.
+  endif.
+
+END-OF-DEFINITION.
+
+DEFINE convertir_unidad_mat.
+
+  l_mac_cant1 = &amp;2.
+  l_mac_cant2 = &amp;4.
+  call function &apos;MD_CONVERT_MATERIAL_UNIT&apos;
+    exporting
+      i_matnr              = &amp;1
+      i_in_me              = &amp;3
+      i_out_me             = &amp;5
+      i_menge              = l_mac_cant1
+    importing
+      e_menge              = l_mac_cant2
+    exceptions
+      error_in_application = 1
+      error                = 2
+      others               = 3.
+  &amp;2 = l_mac_cant1.
+  &amp;4 = l_mac_cant2.
+
+END-OF-DEFINITION.
+
+DEFINE convertir_unidad_tiempo.
+  if &amp;2 ne &amp;3.
+    call function &apos;MS_CONVERT_UNIT_TO_TIME&apos;
+      exporting
+        i_unit              = &amp;2
+        time_unit           = &amp;3
+        i_amount            = &amp;1
+      importing
+        o_amount            = &amp;1
+      exceptions
+        unit_missing        = 1
+        time_unit_missing   = 2
+        no_conversion       = 3
+        numerator_missing   = 4
+        denominator_missing = 5
+        no_factors          = 6
+        unit_wrong          = 7
+        unit_not_time       = 8
+        others              = 9.
+  endif.
+END-OF-DEFINITION.
+
+DEFINE traducir_unidad.
+  call function &apos;CONVERSION_EXIT_CUNIT_OUTPUT&apos;
+    exporting
+      input                = &amp;1
+*   LANGUAGE             = SY-LANGU
+    importing
+*   LONG_TEXT            =
+      output               = &amp;2
+*   SHORT_TEXT           =
+   exceptions
+     unit_not_found       = 1
+     others               = 2.
+END-OF-DEFINITION.
+
+DEFINE traducir_unidad_input.
+  call function &apos;CONVERSION_EXIT_CUNIT_INPUT&apos;
+    exporting
+      input                = &amp;1
+*   LANGUAGE             = SY-LANGU
+    importing
+      output               = &amp;2
+    exceptions
+      unit_not_found       = 1
+      others               = 2.
+END-OF-DEFINITION.
+
+DEFINE format_texto2importe.
+  replace &apos;.&apos; with &apos; &apos; into &amp;1.
+  replace &apos;.&apos; with &apos; &apos; into &amp;1.
+  replace &apos;.&apos; with &apos; &apos; into &amp;1.
+  replace &apos;,&apos; with &apos;.&apos; into &amp;1.
+  condense &amp;1 no-gaps.
+END-OF-DEFINITION.
+
+DEFINE get_valor_dominio.
+  select single ddtext from dd07t
+    into &amp;3
+   where domname = &amp;1
+    and as4local = &apos;A&apos;
+    and domvalue_l = &amp;2.
+END-OF-DEFINITION.
+
+* Ejemplo botón
+DEFINE fill_btn.
+  v_btn-text =  &amp;1.               &quot;Fuction text (menu)
+  v_btn-icon_id =  &amp;2.               &quot;Icon ID
+  v_btn-icon_text =  &amp;3.               &quot;Icon text
+  v_btn-quickinfo =  &amp;4.               &quot;Quick info
+  v_btn-path =  &apos; &apos;.               &quot;Direct path (one char)
+  move v_btn to &amp;5.
+END-OF-DEFINITION. &quot;FILL_BTN
+*selection-screen function key 1.             &quot;Button #1 - Hint
+*  fill_btn &apos;Proceso automático&apos;              &quot;Menu function text
+*           &apos;@BF@&apos;      &quot;@BF@ or @AI@ or @5Y@ &quot;Icon ID
+*            &apos;Proceso automático&apos;             &quot;Icon text
+*            &apos;Proceso automático&apos;             &quot;Quick info
+*            sscrfields-functxt_01.
+
+* Ejemplo tabs
+*SELECTION-SCREEN BEGIN OF SCREEN 1400 AS SUBSCREEN.
+*SELECTION-SCREEN BEGIN OF BLOCK parau WITH FRAME TITLE text-tpa.
+*
+*SELECTION-SCREEN SKIP.
+*
+*SELECTION-SCREEN BEGIN OF LINE.
+*SELECTION-SCREEN POSITION 10.
+*SELECTION-SCREEN PUSHBUTTON 10(30) b_pau USER-COMMAND baf.
+*SELECTION-SCREEN END OF LINE.
+*
+*SELECTION-SCREEN SKIP.
+*SELECTION-SCREEN END OF BLOCK  parau.
+*SELECTION-SCREEN END OF SCREEN 1400.
+*SELECTION-SCREEN BEGIN OF TABBED BLOCK tabs FOR 32 LINES.
+*SELECTION-SCREEN TAB (20) tabs1 USER-COMMAND ucomm1
+* DEFAULT SCREEN 1100.
+*SELECTION-SCREEN TAB (22) tabs3 USER-COMMAND ucomm3
+* DEFAULT SCREEN 1200.
+*SELECTION-SCREEN END OF BLOCK tabs.</source>
+</PROG>

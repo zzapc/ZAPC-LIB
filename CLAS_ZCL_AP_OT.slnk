@@ -1,0 +1,1530 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_OT" VERSION="1" LANGU="S" DESCRIPT="Orden de transporte" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_OT" CMPNAME="ZT_LTAP_CREAT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="6 " SRCCOLUMN1="10 " SRCROW2="6 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="zt_ltap_creat TYPE TABLE OF ltap_creat
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="BLQ" ENTRY="bloqueada" LENGTH="19 "/>
+   <textElement ID="I" KEY="BPE" ENTRY="bloqueada para entradas" LENGTH="46 "/>
+   <textElement ID="I" KEY="BPS" ENTRY="bloqueada para salidas" LENGTH="44 "/>
+   <textElement ID="I" KEY="DBL" ENTRY="Datos bloqueados" LENGTH="26 "/>
+   <textElement ID="I" KEY="DOT" ENTRY="de la OT" LENGTH="18 "/>
+   <textElement ID="I" KEY="ECO" ENTRY="Error al crear OT" LENGTH="27 "/>
+   <textElement ID="I" KEY="ECU" ENTRY="Error al intentar crear ubicación" LENGTH="66 "/>
+   <textElement ID="I" KEY="EPF" ENTRY="Error en parámetros llamada función" LENGTH="70 "/>
+   <textElement ID="I" KEY="ERR" ENTRY="Error" LENGTH="15 "/>
+   <textElement ID="I" KEY="ICO" ENTRY="al intentar crear OT" LENGTH="40 "/>
+   <textElement ID="I" KEY="NCU" ENTRY="No se ha podido crear ubicación" LENGTH="62 "/>
+   <textElement ID="I" KEY="NEO" ENTRY="No existe la OT" LENGTH="25 "/>
+   <textElement ID="I" KEY="NEP" ENTRY="No existe la posición" LENGTH="42 "/>
+   <textElement ID="I" KEY="NOE" ENTRY="no existe" LENGTH="19 "/>
+   <textElement ID="I" KEY="ONE" ENTRY="OT no existe" LENGTH="22 "/>
+   <textElement ID="I" KEY="OYB" ENTRY="OT ya estaba borrada" LENGTH="40 "/>
+   <textElement ID="I" KEY="OYC" ENTRY="La OT ya estaba creada" LENGTH="44 "/>
+   <textElement ID="I" KEY="SCO" ENTRY="Se ha creado OT" LENGTH="25 "/>
+   <textElement ID="I" KEY="SEI" ENTRY="¡Se ha producido un error inesperado!" LENGTH="74 "/>
+   <textElement ID="I" KEY="SOV" ENTRY="Seleccione OT a visualizar" LENGTH="52 "/>
+   <textElement ID="I" KEY="STP" ENTRY="Stock preadjudicado" LENGTH="29 "/>
+   <textElement ID="I" KEY="UBI" ENTRY="Ubicación" LENGTH="19 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_OT" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <typeClasDef CLSNAME="ZCL_AP_OT" TYPEGROUP="ZCL_C" VERSION="1" TPUTYPE="1" IMPLICIT="X"/>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_OT" VERSION="1" LANGU="S" DESCRIPT="Anula OT completa" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_OT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_OT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_OT" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_OT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD anular_ot.
+    DATA l_ltak TYPE ltak.
+    DATA o_bi   TYPE REF TO zcl_ap_batch_input.
+
+    SELECT SINGLE kquit FROM ltak
+      INTO l_ltak-kquit
+     WHERE lgnum = lgnum
+       AND tanum = tanum.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;OT no existe&apos;(one).
+    ELSE.
+      IF l_ltak-kquit = &apos;X&apos;.
+        message = &apos;OT ya estaba borrada&apos;(oyb).
+        ok = &apos;X&apos;.
+      ELSE.
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+* Anular OT: pantalla inicial
+        o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0118&apos; ).
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+        o_bi-&gt;campos( campo = &apos;LTAK-TANUM&apos; valor = tanum ). &quot; Número de orden de transporte
+        o_bi-&gt;campos( campo = &apos;RL03T-TAPOS&apos; valor = &apos;&apos; ). &quot; Posición de orden de transporte
+        o_bi-&gt;campos( campo = &apos;LTAK-LGNUM&apos; valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+        o_bi-&gt;campos( campo = &apos;RL03T-RHELL&apos; valor = &apos;&apos; ). &quot; Proceso visible de la transacción
+        o_bi-&gt;campos( campo = &apos;RL03T-RDNKL&apos; valor = &apos;X&apos; ). &quot; Proceso no visible de la transacción
+
+        message = o_bi-&gt;llamar_transaccion( tcode = &apos;LT15&apos; modo = &apos;N&apos; ).
+
+        SELECT SINGLE kquit FROM ltak
+          INTO l_ltak-kquit
+         WHERE lgnum = lgnum
+           AND tanum = tanum.
+
+        IF l_ltak-kquit = &apos;X&apos;.
+          ok = &apos;X&apos;.
+          CLEAR message.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" VERSION="1" LANGU="S" DESCRIPT="Anular posición OT" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" SCONAME="TAPOS" VERSION="1" LANGU="S" DESCRIPT="Posición de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-TAPOS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ANULAR_POS_OT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD anular_pos_ot.
+    DATA: l_ltap_cancel TYPE ltap_cancl,
+          i_ltap_cancel TYPE TABLE OF ltap_cancl.
+
+    CLEAR l_ltap_cancel.
+    l_ltap_cancel-tanum = tanum.
+    l_ltap_cancel-tapos = tapos.
+    APPEND l_ltap_cancel TO i_ltap_cancel.
+
+    CALL FUNCTION &apos;L_TO_CANCEL&apos;
+      EXPORTING
+        i_lgnum                      = lgnum
+        i_tanum                      = tanum
+*     I_SOLEX                      = 0
+        i_cancl                      = &apos;X&apos;
+*     I_SUBST                      = &apos; &apos;
+*     I_QNAME                      = SY-UNAME
+*     I_UPDATE_TASK                = &apos; &apos;
+        i_commit_work                = commit
+      TABLES
+        t_ltap_cancl                 = i_ltap_cancel
+      EXCEPTIONS
+        to_confirmed                 = 1
+        to_doesnt_exist              = 2
+        item_confirmed               = 3
+        item_doesnt_exist            = 4
+        foreign_lock                 = 5
+        double_lines                 = 6
+        nothing_to_do                = 7
+        xfeld_wrong                  = 8
+        su_movement_partly_confirmed = 9
+        update_without_commit        = 10
+        no_authority                 = 11
+        error_message                = 999 &quot; Cualquier otra excepción!
+        OTHERS                       = 12.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH
+              sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" VERSION="1" LANGU="S" DESCRIPT="Borra posición OT" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" SCONAME="TAPOS" VERSION="1" LANGU="S" DESCRIPT="Posición de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-TAPOS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BORRA_POS_OT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD borra_pos_ot.
+    DATA l_ltap TYPE ltap.
+    DATA o_bi   TYPE REF TO zcl_ap_batch_input.
+
+*  CALL FUNCTION &apos;L_TO_DELETE_ITEM_INT&apos;
+*    EXPORTING
+*      i_lgnum = lgnum
+*      i_tanum = tanum
+*      i_tapos = tapos.
+
+    SELECT SINGLE pquit vdifm vsola FROM ltap
+      INTO CORRESPONDING FIELDS OF l_ltap
+     WHERE lgnum = lgnum
+       AND tanum = tanum
+       AND tapos = tapos.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;OT no existe&apos;(one).
+    ELSE.
+      l_ltap-vdifm = abs( l_ltap-vdifm ).
+      IF l_ltap-pquit = &apos;X&apos; AND l_ltap-vdifm = l_ltap-vsola.
+        message = &apos;OT ya estaba borrada&apos;(oyb).
+        ok = &apos;X&apos;.
+      ELSE.
+        o_bi = NEW #( ).
+
+        o_bi-&gt;inicio( ).
+
+* Anular OT: pantalla inicial
+        o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0118&apos; ).
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+        o_bi-&gt;campos( campo = &apos;LTAK-TANUM&apos; valor = tanum ). &quot; Número de orden de transporte
+        o_bi-&gt;campos( campo = &apos;RL03T-TAPOS&apos; valor = tapos ). &quot; Posición de orden de transporte
+        o_bi-&gt;campos( campo = &apos;LTAK-LGNUM&apos; valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+        o_bi-&gt;campos( campo = &apos;RL03T-RHELL&apos; valor = &apos;&apos; ). &quot; Proceso visible de la transacción
+        o_bi-&gt;campos( campo = &apos;RL03T-RDNKL&apos; valor = &apos;X&apos; ). &quot; Proceso no visible de la transacción
+
+        message = o_bi-&gt;llamar_transaccion( tcode = &apos;LT15&apos; modo = &apos;N&apos; ).
+
+        SELECT SINGLE pquit vdifm vsola FROM ltap
+          INTO CORRESPONDING FIELDS OF l_ltap
+         WHERE lgnum = lgnum
+           AND tanum = tanum
+           AND tapos = tapos.
+
+        l_ltap-vdifm = abs( l_ltap-vdifm ).
+        IF l_ltap-pquit = &apos;X&apos; AND l_ltap-vdifm = l_ltap-vsola.
+          ok = &apos;X&apos;.
+          CLEAR message.
+        ENDIF.
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de OTs" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="NLTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGTYP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="NLPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGPLA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="CONFIRMADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="ANULADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="LZNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="GET_LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="I_LTAP" VERSION="1" LANGU="S" DESCRIPT="Posiciones OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_LTAP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="BUSCAR_OTS" SCONAME="LISTA_OTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD buscar_ots.
+    FIELD-SYMBOLS &lt;ltap&gt; TYPE ltap.
+
+    DATA l_tanum TYPE tanum.
+
+    DEFINE declara_rango.
+      DATA: r_&amp;1  TYPE RANGE OF &amp;2-&amp;1,
+            lr_&amp;1 LIKE LINE OF r_&amp;1.
+    END-OF-DEFINITION.
+
+    DEFINE rango_ltap.
+      declara_rango &amp;1 lTAP.
+      IF NOT &amp;1 IS INITIAL.
+        __rangoc_eq r_&amp;1 &amp;1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    DEFINE rango_ltak.
+      declara_rango &amp;1 ltak.
+      IF NOT &amp;1 IS INITIAL.
+        __rangoc_eq r_&amp;1 &amp;1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    rango_ltap: nltyp, nlpla, matnr.
+    rango_ltak lznum.
+
+    declara_rango: pquit ltap,
+                   vorga ltap.
+
+    IF anulada = &apos;X&apos;.
+      __rangoc_eq: r_pquit &apos;X&apos;,
+                   r_vorga &apos;ST&apos;.
+    ELSE.
+      IF anulada = &apos;&apos;.
+        __rangoc_ne r_vorga &apos;ST&apos;.
+      ENDIF.
+
+      IF confirmada = &apos;X&apos;.
+        __rangoc_eq r_pquit &apos;X&apos;.
+        __rangoc_ne r_vorga &apos;ST&apos;.
+      ELSEIF confirmada = &apos;&apos;.
+        __rangoc_eq r_pquit &apos;&apos;.
+      ENDIF.
+    ENDIF.
+
+    SELECT * FROM ltap JOIN ltak ON  ltak~lgnum = ltap~lgnum
+                                 AND ltak~tanum = ltap~tanum
+      INTO CORRESPONDING FIELDS OF TABLE i_ltap
+     WHERE ltak~lgnum  = lgnum
+       AND lznum      IN r_lznum
+       AND matnr      IN r_matnr
+       AND nltyp      IN r_nltyp
+       AND nlpla      IN r_nlpla
+       AND pquit      IN r_pquit
+       AND vorga      IN r_vorga.
+
+    IF get_lista = &apos;X&apos;.
+      LOOP AT i_ltap ASSIGNING &lt;ltap&gt;.
+        __add_lista_no0 lista_ots &lt;ltap&gt;-tanum.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" VERSION="1" LANGU="S" DESCRIPT="Confirmar OT" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="MOSTRAR_MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="IN_UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="AUSFB" VERSION="1" LANGU="S" DESCRIPT="Comentario sobre ejecución OT (indicador)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVS_AUSFB" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="QUKNZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de confirmación p.confirmación separada" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TQUKNZ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="SQUIT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Confirmación de una posición de OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TSQUIT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="I_LTAP_CONF" VERSION="1" LANGU="S" DESCRIPT="Posiciones OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="PDT_T_LTAP_CONF"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_OT" SCONAME="CONFIRMACION_OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD confirmar_ot.
+    DATA: l_ltap_conf TYPE ltap_conf,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_ltap      TYPE ltap.
+
+    CLEAR message.
+
+    LOOP AT i_ltap_conf INTO l_ltap_conf.
+      SELECT SINGLE tanum FROM ltap
+        INTO l_ltap-tanum
+       WHERE lgnum = lgnum
+         AND tanum = l_ltap_conf-tanum
+         AND tapos = l_ltap_conf-tapos.
+      IF sy-subrc &lt;&gt; 0.
+        CONCATENATE &apos;No existe la posición&apos;(nep) l_ltap_conf-tapos &apos;de la OT&apos;(dot) l_ltap_conf-tanum
+                    INTO message SEPARATED BY space.
+      ENDIF.
+    ENDLOOP.
+
+*QUKNZ
+*           Confirmar toma y transporte de material
+*1  Sólo confirmar toma
+*2  Sólo confirmar transporte de material
+*3  Sólo información
+    IF message IS INITIAL.
+      CALL FUNCTION &apos;L_TO_CONFIRM&apos;
+        EXPORTING
+          i_lgnum                        = lgnum
+          i_tanum                        = tanum
+          i_squit                        = squit  &quot; Posición de orden de transporte completa
+          i_quknz                        = quknz  &quot; Confirmación separada
+*       I_SUBST                        = &apos; &apos;
+*       I_QNAME                        = SY-UNAME
+*       I_ENAME                        = SY-UNAME
+*       I_SOLEX                        = 0
+*       I_PERNR                        = 0
+*       I_STDAT                        = INIT_DATUM
+*       I_STUZT                        = 0
+*       I_ENDAT                        = INIT_DATUM
+*       I_ENUZT                        = 0
+*       I_ISTWM                        = 0
+*       I_KOMIM                        = &apos; &apos;
+*       I_EINLM                        = &apos; &apos;
+*       I_TBELI                        = &apos; &apos;
+          i_update_task                  = in_update_task
+          i_commit_work                  = commit_work
+          i_ausfb                        = ausfb
+        TABLES
+          t_ltap_conf                    = i_ltap_conf
+*       T_LTAP_CONF_HU                 = T_LTAP_CONF_HU
+*       T_LTAP_CONF_HU_SERIAL          = T_LTAP_CONF_HU_SERIAL
+        EXCEPTIONS
+          to_confirmed                   = 1
+          to_doesnt_exist                = 2
+          item_confirmed                 = 3
+          item_subsystem                 = 4
+          item_doesnt_exist              = 5
+          item_without_zero_stock_check  = 6
+          item_with_zero_stock_check     = 7
+          one_item_with_zero_stock_check = 8
+          item_su_bulk_storage           = 9
+          item_no_su_bulk_storage        = 10
+          one_item_su_bulk_storage       = 11
+          foreign_lock                   = 12
+          squit_or_quantities            = 13
+          vquit_or_quantities            = 14
+          bquit_or_quantities            = 15
+          quantity_wrong                 = 16
+          double_lines                   = 17
+          kzdif_wrong                    = 18
+          no_difference                  = 19
+          no_negative_quantities         = 20
+          wrong_zero_stock_check         = 21
+          su_not_found                   = 22
+          no_stock_on_su                 = 23
+          su_wrong                       = 24
+          too_many_su                    = 25
+          nothing_to_do                  = 26
+          no_unit_of_measure             = 27
+          xfeld_wrong                    = 28
+          update_without_commit          = 29
+          no_authority                   = 30
+          lqnum_missing                  = 31
+          charg_missing                  = 32
+          no_sobkz                       = 33
+          no_charg                       = 34
+          nlpla_wrong                    = 35
+          two_step_confirmation_required = 36
+          two_step_conf_not_allowed      = 37
+          pick_confirmation_missing      = 38
+          quknz_wrong                    = 39
+          hu_data_wrong                  = 40
+          no_hu_data_required            = 41
+          hu_data_missing                = 42
+          hu_not_found                   = 43
+          picking_of_hu_not_possible     = 44
+          not_enough_stock_in_hu         = 45
+          serial_number_data_wrong       = 46
+          serial_numbers_not_required    = 47
+          no_differences_allowed         = 48
+          serial_number_not_available    = 49
+          serial_number_data_missing     = 50
+          to_item_split_not_allowed      = 51
+          input_wrong                    = 52
+          error_message                  = 53.       &quot; Cualquier otra excepción!
+
+      IF sy-subrc = 3 OR sy-subrc = 0. &quot; Item confirmed
+        confirmacion_ok = &apos;X&apos;.
+      ELSE.
+        IF sy-subrc &lt;&gt; 0.
+          IF dequeue_all = &apos;X&apos;.
+            CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+          ENDIF.
+        ENDIF.
+
+        IF NOT sy-msgty IS INITIAL.
+          IF mostrar_mensaje = &apos;X&apos; OR sy-msgty &lt;&gt; &apos;I&apos; OR sy-msgty = &apos;S&apos;.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH
+                    sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+          ENDIF.
+        ELSE.
+          message = &apos;¡Se ha producido un error inesperado!&apos;(sei).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      sy-msgty = &apos;E&apos;.
+      sy-msgid = &apos;00&apos;.
+      sy-msgno = &apos;398&apos;.
+      sy-msgv1 = message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" VERSION="1" LANGU="S" DESCRIPT="Confirmar Posición OT" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="MOSTRAR_MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="IN_UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="AUSFB" VERSION="1" LANGU="S" DESCRIPT="Comentario sobre ejecución OT (indicador)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVS_AUSFB" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="QUKNZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de confirmación p.confirmación separada" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TQUKNZ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="CTD_CONF" VERSION="1" LANGU="S" DESCRIPT="Ctd.real de destino en unidad de medida alternativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="TAPOS" VERSION="1" LANGU="S" DESCRIPT="Posiciones OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-TAPOS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="KZDIF" VERSION="1" LANGU="S" DESCRIPT="Indicador de diferencias" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVS_KZDIF" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="NQUIT" VERSION="1" LANGU="S" DESCRIPT="Indicador de confirmación para la posición &apos;hacia&apos;" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TNQUIT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="CTD_DIF" VERSION="1" LANGU="S" DESCRIPT="Ctd.real de destino en unidad de medida alternativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="NLPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación de destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-NLPLA" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="SQUIT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Confirmación de una posición de OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TSQUIT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONFIRMAR_POS_OT" SCONAME="CONFIRMACION_OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD confirmar_pos_ot.
+    &quot; TODO: parameter MOSTRAR_MENSAJE is never used (ABAP cleaner)
+    &quot; TODO: parameter IN_UPDATE_TASK is never used (ABAP cleaner)
+    &quot; TODO: parameter AUSFB is never used (ABAP cleaner)
+
+    DATA: i_ltap_conf TYPE TABLE OF ltap_conf,
+          l_ltap      TYPE ltap.
+
+    FIELD-SYMBOLS &lt;ltap_conf&gt; TYPE ltap_conf.
+
+    CLEAR confirmacion_ok.
+
+    SELECT * FROM ltap
+      INTO CORRESPONDING FIELDS OF TABLE i_ltap_conf
+     WHERE lgnum = lgnum
+       AND tanum = tanum
+       AND tapos = tapos.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR confirmacion_ok.
+      CONCATENATE &apos;No existe la OT&apos;(neo) tanum tapos INTO message SEPARATED BY space.
+    ELSE.
+      IF quknz = &apos;2&apos;.
+        SELECT SINGLE pquit FROM ltap
+          INTO l_ltap-pquit
+         WHERE lgnum = lgnum
+           AND tanum = tanum
+           AND tapos = tapos.
+        IF l_ltap-pquit = &apos;X&apos;.
+* Entrega ya confirmada
+          confirmacion_ok = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+
+      IF confirmacion_ok IS INITIAL.
+
+        LOOP AT i_ltap_conf ASSIGNING &lt;ltap_conf&gt;.
+          CLEAR &lt;ltap_conf&gt;-nlpla.
+          &lt;ltap_conf&gt;-nista = ctd_conf.
+          &lt;ltap_conf&gt;-ndifa = ctd_dif.
+          &lt;ltap_conf&gt;-kzdif = kzdif.
+          &lt;ltap_conf&gt;-nquit = nquit.
+          &lt;ltap_conf&gt;-squit = squit.
+          IF NOT nlpla IS INITIAL.
+            &lt;ltap_conf&gt;-nlpla = nlpla.
+          ENDIF.
+        ENDLOOP.
+
+        confirmar_ot( EXPORTING lgnum           = lgnum
+                                tanum           = tanum
+                                quknz           = quknz
+                                squit           = &apos;&apos;  &quot; Confirmar posición única
+                                commit_work     = commit_work
+                                dequeue_all     = dequeue_all
+                      CHANGING  i_ltap_conf     = i_ltap_conf
+                                message         = message
+                                confirmacion_ok = confirmacion_ok ).
+
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" VERSION="1" LANGU="S" DESCRIPT="Convierte cantidad a unidad WM" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="CANTIDAD_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Campo de cantidad, longitud 13, con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MENGV13" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="CANTIDAD_WM" VERSION="1" LANGU="S" DESCRIPT="Campo de cantidad, longitud 13, con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="MENGV13"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CONVERT_CTD_WM" SCONAME="UNIDAD_WM" VERSION="1" LANGU="S" DESCRIPT="Unidad medida para 1ª cantidad de medios auxiliares de carga" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="LHMEH1"/>
+  <source>METHOD convert_ctd_wm.
+    DATA: l_unidad_origen TYPE meins,
+          l_lhmg1         TYPE mlgn-lhmg1,
+          l_ctd_origen    TYPE mengv13.
+
+    l_unidad_origen = unidad_origen.
+    SELECT SINGLE lhme1 lhmg1 FROM  mlgn
+      INTO (unidad_wm, l_lhmg1)
+     WHERE matnr = matnr
+       AND lgnum = lgnum.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    l_ctd_origen = cantidad_origen.
+    IF l_unidad_origen = &apos;*&apos;.
+      l_unidad_origen = zcl_ap_material=&gt;get_unidad_base( matnr ).
+      l_ctd_origen = l_lhmg1.
+    ENDIF.
+
+    IF l_ctd_origen = 0.
+      RETURN.
+    ENDIF.
+
+    IF l_unidad_origen IS INITIAL.
+      l_unidad_origen = zcl_ap_material=&gt;get_unidad_base( matnr ).
+    ENDIF.
+
+    IF l_unidad_origen = unidad_wm.
+      RETURN.
+    ENDIF.
+
+    cantidad_wm = zcl_ap_material=&gt;convertir_unidad( matnr          = matnr
+                                                     cantidad       = l_ctd_origen
+                                                     unidad_origen  = l_unidad_origen
+                                                     unidad_destino = unidad_wm ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" VERSION="1" LANGU="S" DESCRIPT="Crear OT con referencia a NT" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="TBNUM" VERSION="1" LANGU="S" DESCRIPT="Número de necesidad de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TBNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="T_POS" VERSION="1" LANGU="S" DESCRIPT="Tabla de transferencia en L_TO_CREATE_TR" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="L03B_TRITE_T"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="USAR_BI" VERSION="1" LANGU="S" DESCRIPT="Usar Batch Input en lugar de función (sólo para única pos.)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="SQUIT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Confirmación de una posición de OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RL03TSQUIT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_DESDE_NT" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD crear_ot_desde_nt.
+    DATA: l_pos   TYPE l03b_trite,
+          l_lagp  TYPE lagp,
+          l_fehlt TYPE t333-fehlt,
+          i_mens  TYPE TABLE OF wmgrp_msg,
+          l_subrc TYPE sy-subrc.
+    DATA l_mensaje TYPE bapireturn1-message.
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+
+    CLEAR message.
+
+    LOOP AT t_pos INTO l_pos.
+      SELECT SINGLE skzsa skzse skzsi skzua skzue FROM lagp
+        INTO CORRESPONDING FIELDS OF l_lagp
+        WHERE lgnum = lgnum
+          AND lgtyp = l_pos-vltyp
+          AND lgpla = l_pos-vlpla.
+      IF sy-subrc = 0.
+        IF l_lagp-skzua = &apos;X&apos; OR l_lagp-skzue = &apos;X&apos;.
+          CONCATENATE &apos;Ubicación&apos;(ubi) l_pos-vltyp l_pos-vlpla
+                      &apos;bloqueada&apos;(blq)
+                      INTO message SEPARATED BY space.
+          EXIT.
+        ENDIF.
+      ELSE.
+        CONCATENATE &apos;Ubicación&apos;(ubi) l_pos-vltyp l_pos-vlpla &apos;no existe&apos;(noe)
+                    INTO message SEPARATED BY space.
+        EXIT.
+      ENDIF.
+
+      SELECT SINGLE skzsa skzse skzsi skzua skzue FROM lagp
+        INTO CORRESPONDING FIELDS OF l_lagp
+        WHERE lgnum = lgnum
+          AND lgtyp = l_pos-nltyp
+          AND lgpla = l_pos-nlpla.
+      IF sy-subrc = 0.
+        IF    l_lagp-skzua = &apos;X&apos; OR l_lagp-skzue = &apos;X&apos;
+           OR l_lagp-skzsa = &apos;X&apos; OR l_lagp-skzse = &apos;X&apos;
+           OR l_lagp-skzsi = &apos;X&apos;.
+          CONCATENATE &apos;Ubicación&apos;(ubi) l_pos-nltyp l_pos-nlpla
+                      &apos;bloqueada&apos;(blq)
+                      INTO message SEPARATED BY space.
+          EXIT.
+        ENDIF.
+      ELSE.
+        CONCATENATE &apos;Ubicación&apos;(ubi) l_pos-nltyp l_pos-nlpla &apos;no existe&apos;(noe)
+                    INTO message SEPARATED BY space.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+    IF message IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE fehlt FROM t333
+      INTO l_fehlt
+     WHERE lgnum = lgnum
+       AND bwlvs = &apos;101&apos;.
+    IF l_fehlt = &apos;X&apos;.
+      UPDATE t333
+         SET fehlt = &apos;&apos;
+       WHERE lgnum = lgnum
+         AND bwlvs = &apos;101&apos;.
+    ENDIF.
+
+    DESCRIBE TABLE t_pos LINES sy-tfill.
+    IF usar_bi IS INITIAL OR sy-tfill &gt; 1.
+      CALL FUNCTION &apos;L_TO_CREATE_TR&apos;
+        EXPORTING
+          i_lgnum                        = lgnum
+          i_tbnum                        = tbnum
+          it_trite                       = t_pos
+          i_squit                        = squit
+        IMPORTING
+          e_tanum                        = tanum
+        TABLES
+          t_wmgrp_msg                    = i_mens
+        EXCEPTIONS
+          foreign_lock                   = 1
+          qm_relevant                    = 2
+          tr_completed                   = 3
+          xfeld_wrong                    = 4
+          ldest_wrong                    = 5
+          drukz_wrong                    = 6
+          tr_wrong                       = 7
+          squit_forbidden                = 8
+          no_to_created                  = 9
+          update_without_commit          = 10
+          no_authority                   = 11
+          preallocated_stock             = 12
+          partial_transfer_req_forbidden = 13
+          input_error                    = 14
+          error_message                  = 999 &quot; Cualquier otra excepción!
+          OTHERS                         = 15.
+      l_subrc = sy-subrc.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH
+              sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO l_mensaje.
+    ELSE.
+
+      READ TABLE t_pos INTO l_pos INDEX 1.
+      o_bi = NEW #( ).
+
+      o_bi-&gt;inicio( ).
+
+* Crear OT a partir de NT: pantalla inicial
+      o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0131&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+      o_bi-&gt;campos( campo = &apos;LTAK-LGNUM&apos; valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+      o_bi-&gt;campos( campo = &apos;LTBK-TBNUM&apos; valor = tbnum ). &quot; Número de necesidad de transporte
+      o_bi-&gt;campos( campo = &apos;*LTBP-TBPOS&apos; valor = l_pos-tbpos ).
+      o_bi-&gt;campos( campo = &apos;RL03T-ALAKT&apos; valor = &apos;X&apos; ). &quot; Marcar todas las posiciones
+
+* Crear orden transp.: pantalla preparatoria para entrada mat.
+      o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0104&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+      o_bi-&gt;campos( campo = &apos;RL03T-ANZL2&apos; valor = &apos;&apos; ). &quot; Número de unidades de almacén a entrar
+      o_bi-&gt;campos( campo = &apos;LTAPE-ANFME(01)&apos; valor = l_pos-anfme ). &quot; Ctd teórica &apos;hacia&apos; en unidad de medida alternativa
+      o_bi-&gt;campos( campo = &apos;LTAPE-NLTYP(01)&apos; valor = l_pos-nltyp ). &quot; Tipo almacén destino
+      o_bi-&gt;campos( campo = &apos;LTAPE-NLPLA(01)&apos; valor = l_pos-nlpla ). &quot; Ubicación de destino
+
+      IF usar_bi = &apos;X&apos;.
+        l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;LT04&apos; modo = &apos;N&apos; ).
+      ELSE.
+        l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;LT04&apos; modo = usar_bi ).
+      ENDIF.
+
+      IF o_bi-&gt;msgty = &apos;S&apos; AND o_bi-&gt;msgid = &apos;L3&apos; AND o_bi-&gt;msgno = &apos;016&apos;.
+        tanum = o_bi-&gt;msgv1.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = tanum ).
+      ENDIF.
+    ENDIF.
+
+    IF tanum IS INITIAL.
+      IF l_mensaje IS INITIAL.
+        CASE L_subrc.
+          WHEN 1.
+            message = &apos;Datos bloqueados&apos;(dbl).
+          WHEN 3.
+            message = &apos;La OT ya estaba creada&apos;(oyc).
+            READ TABLE t_pos INTO l_pos INDEX 1.
+            SELECT SINGLE tanum FROM ltbp
+              INTO tanum
+             WHERE lgnum = lgnum
+               AND tbnum = tbnum
+               AND tbpos = l_pos-tbpos.
+          WHEN 12.
+            message = &apos;Stock preadjudicado&apos;(stp).
+          WHEN 14.
+            message = &apos;Error en parámetros llamada función&apos;(epf).
+          WHEN OTHERS.
+            IF message IS INITIAL.
+              message(4) = sy-subrc.
+              CONCATENATE &apos;Error&apos;(err) message &apos;al intentar crear OT&apos;(ico)
+                          INTO message SEPARATED BY space.
+            ENDIF.
+        ENDCASE.
+      ELSE.
+        message = l_mensaje.
+      ENDIF.
+    ELSE.
+      CONCATENATE &apos;Se ha creado OT&apos;(sco) tanum INTO message
+                  SEPARATED BY space.
+    ENDIF.
+
+    IF l_fehlt = &apos;X&apos;.
+      UPDATE t333
+         SET fehlt = &apos;X&apos;
+       WHERE lgnum = lgnum
+         AND bwlvs = &apos;101&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" VERSION="1" LANGU="S" DESCRIPT="Crear OT" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="BWLVS" VERSION="1" LANGU="S" DESCRIPT="Cl.movim.gestión almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BWLVS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="LTAK" VERSION="1" LANGU="S" DESCRIPT="Estruct. transf. LTAD + LTAK1 para progr. actual. y otros" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK_VB" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="BETYP" VERSION="1" LANGU="S" DESCRIPT="Tipo de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BETYP" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="BENUM" VERSION="1" LANGU="S" DESCRIPT="Número de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BENUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="MOSTRAR_MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="IN_UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="ESPERA_A_GRABADO" VERSION="1" LANGU="S" DESCRIPT="Espera a que esté grabado en tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="AUSFB" VERSION="1" LANGU="S" DESCRIPT="Comentario sobre ejecución OT (indicador)" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVS_AUSFB" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="SOLO_VERIFICACIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="USAR_BI" VERSION="1" LANGU="S" DESCRIPT="Usar Batch Input en lugar de función (sólo para única pos.)" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="LZNUM" VERSION="1" LANGU="S" DESCRIPT="Número adicional de ref. a transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LZNUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="I_LTAP_CREAT" VERSION="1" LANGU="S" DESCRIPT="Posiciones OT" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_LTAP_CREAT"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_MULTIPLE" SCONAME="I_LTAK" VERSION="1" LANGU="S" DESCRIPT="Tabla con cabeceras orden transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="PDT_T_LTAK_VB" PAROPTIONL="X"/>
+  <source>METHOD crear_ot_multiple.
+    DATA: l_ltap  TYPE ltap_creat,
+          l_lagp  TYPE lagp,
+          l_t333  TYPE t333,
+          l_ltak  TYPE ltak_vb,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_tanum TYPE tanum.
+
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message.
+
+    CLEAR: tanum, message.
+
+    IF ltak IS SUPPLIED.
+      APPEND ltak TO i_ltak.
+    ENDIF.
+
+    LOOP AT i_ltap_creat INTO l_ltap.
+      SELECT SINGLE skzse skzsi skzua skzue FROM lagp
+        INTO CORRESPONDING FIELDS OF l_lagp
+        WHERE lgnum = lgnum
+          AND lgtyp = l_ltap-vltyp
+          AND lgpla = l_ltap-vlpla.
+      IF sy-subrc = 0.
+        IF l_lagp-skzua = &apos;X&apos; OR l_lagp-skzsi = &apos;X&apos;.
+          CONCATENATE &apos;Ubicación&apos;(ubi) l_ltap-vltyp l_ltap-vlpla
+                      &apos;bloqueada para salidas&apos;(bps)
+                      INTO message SEPARATED BY space.
+          EXIT.
+        ENDIF.
+      ELSE.
+        CONCATENATE &apos;Ubicación&apos;(ubi) l_ltap-vltyp l_ltap-vlpla &apos;no existe&apos;(noe)
+                    INTO message SEPARATED BY space.
+        EXIT.
+      ENDIF.
+
+      IF l_ltap-nlpla = &apos;&apos;.
+        CONTINUE.
+      ENDIF.
+
+      SELECT SINGLE skzse skzsi skzue FROM lagp
+        INTO CORRESPONDING FIELDS OF l_lagp
+        WHERE lgnum = lgnum
+          AND lgtyp = l_ltap-nltyp
+          AND lgpla = l_ltap-nlpla.
+      IF sy-subrc = 0.
+        IF l_lagp-skzue = &apos;X&apos; OR l_lagp-skzse = &apos;X&apos; OR l_lagp-skzsi = &apos;X&apos;.
+          CONCATENATE &apos;Ubicación&apos;(ubi) l_ltap-nltyp l_ltap-nlpla
+                      &apos;bloqueada para entradas&apos;(bpe)
+                      INTO message SEPARATED BY space.
+          EXIT.
+        ENDIF.
+      ELSE.
+
+*--------------------------------------------------------------------
+* En el caso de que la clase de movimiento tenga ubicación de destino
+* DINÁMICA, no se debe enviar este mensaje.
+        CLEAR l_t333.
+        SELECT SINGLE * FROM t333
+          INTO l_t333
+         WHERE lgnum = lgnum
+           AND bwlvs = bwlvs.
+        IF l_t333-nkdyn IS INITIAL.
+          CONCATENATE &apos;Ubicación&apos;(ubi) l_ltap-nltyp l_ltap-nlpla &apos;no existe&apos;(noe)
+                      INTO message SEPARATED BY space.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    IF message IS INITIAL.
+
+      IF solo_verificaciones IS INITIAL.
+        DESCRIBE TABLE i_ltap_creat LINES sy-tfill.
+        IF usar_bi IS INITIAL OR sy-tfill &gt; 1.
+          CALL FUNCTION &apos;L_TO_CREATE_MULTIPLE&apos;
+            EXPORTING
+              i_lgnum                = lgnum
+              i_bwlvs                = bwlvs
+              i_betyp                = betyp
+              i_benum                = benum
+              i_lznum                = lznum
+              i_update_task          = in_update_task
+              i_commit_work          = commit_work
+              i_ausfb                = ausfb
+            IMPORTING
+              e_tanum                = tanum
+            TABLES
+              t_ltap_creat           = i_ltap_creat
+              t_ltak                 = i_ltak
+            EXCEPTIONS
+              no_to_created          = 1
+              bwlvs_wrong            = 2
+              betyp_wrong            = 3
+              benum_missing          = 4
+              betyp_missing          = 5
+              foreign_lock           = 6
+              vltyp_wrong            = 7
+              vlpla_wrong            = 8
+              vltyp_missing          = 9
+              nltyp_wrong            = 10
+              nlpla_wrong            = 11
+              nltyp_missing          = 12
+              rltyp_wrong            = 13
+              rlpla_wrong            = 14
+              rltyp_missing          = 15
+              squit_forbidden        = 16
+              manual_to_forbidden    = 17
+              letyp_wrong            = 18
+              vlpla_missing          = 19
+              nlpla_missing          = 20
+              sobkz_wrong            = 21
+              sobkz_missing          = 22
+              sonum_missing          = 23
+              bestq_wrong            = 24
+              lgber_wrong            = 25
+              xfeld_wrong            = 26
+              date_wrong             = 27
+              drukz_wrong            = 28
+              ldest_wrong            = 29
+              update_without_commit  = 30
+              no_authority           = 31
+              material_not_found     = 32
+              lenum_wrong            = 33
+              matnr_missing          = 34
+              werks_missing          = 35
+              anfme_missing          = 36
+              altme_missing          = 37
+              lgort_wrong_or_missing = 38
+              error_message          = 999 &quot; Cualquier otra excepción!
+              OTHERS                 = 39.
+          IF sy-subrc &lt;&gt; 0.
+            DATA(l_sy) = sy.
+          ENDIF.
+        ELSE.
+
+          READ TABLE i_ltap_creat INTO l_ltap INDEX 1.
+
+          o_bi = NEW #( ).
+
+          o_bi-&gt;inicio( ).
+
+* Anlegen Transportauftrag: Anforderdynpro
+          o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0101&apos; ).
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+          o_bi-&gt;campos( campo = &apos;LTAK-LGNUM&apos; valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+          o_bi-&gt;campos( campo = &apos;LTAK-BENUM&apos; valor = benum ). &quot; Número de necesidad
+          o_bi-&gt;campos( campo = &apos;LTAK-BETYP&apos; valor = betyp ). &quot; Tipo de necesidad
+          o_bi-&gt;campos( campo = &apos;LTAK-BWLVS&apos; valor = bwlvs ). &quot; Cl.movim.gestión almacenes
+          o_bi-&gt;campos( campo = &apos;LTAP-MATNR&apos; valor = l_ltap-matnr ). &quot; Número de material
+          o_bi-&gt;campos( campo = &apos;RL03T-ANFME&apos; valor = l_ltap-anfme ). &quot; Cantidad solicitada en unidad medida alternativa
+          o_bi-&gt;campos( campo = &apos;LTAP-ALTME&apos; valor = l_ltap-altme ). &quot; Unidad de medida alternativa
+          o_bi-&gt;campos( campo = &apos;LTAP-BESTQ&apos; valor = l_ltap-bestq ). &quot; Diferenciación de stock en sistema de gestión de almacenes
+          o_bi-&gt;campos( campo = &apos;LTAP-WERKS&apos; valor = l_ltap-werks ). &quot; Centro
+          o_bi-&gt;campos( campo = &apos;LTAP-LGORT&apos; valor = l_ltap-lgort ). &quot; Almacén
+          o_bi-&gt;campos( campo = &apos;LTAP-SOBKZ&apos; valor = l_ltap-sobkz ). &quot; Indicador de stock especial
+          o_bi-&gt;campos( campo = &apos;RL03T-LSONR&apos; valor = l_ltap-sonum ). &quot; Número de stock especial
+
+* Crear orden transp.: pantalla preparatoria p. salida stock
+          IF bwlvs = &apos;999&apos;.
+* Crear orden transporte: pantalla de posición individual
+            o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0102&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+
+            o_bi-&gt;campos( campo = &apos;LTAP-VLTYP&apos; valor = l_ltap-vltyp ). &quot; Tipo alm.procedencia
+            o_bi-&gt;campos( campo = &apos;LTAP-VLPLA&apos; valor = l_ltap-vlpla ). &quot; Ubic.proced.
+            o_bi-&gt;campos( campo = &apos;LTAP-VLQNR&apos; valor = l_ltap-vlqnr ). &quot; Cuanto
+            o_bi-&gt;campos( campo = &apos;LTAP-NLTYP&apos; valor = l_ltap-nltyp ). &quot; Tipo alm.procedencia
+            o_bi-&gt;campos( campo = &apos;LTAP-NLPLA&apos; valor = l_ltap-nlpla ). &quot; Ubicación de destino
+            o_bi-&gt;campos( campo = &apos;LTAP-NLQNR&apos; valor = l_ltap-nlqnr ). &quot; Cuanto
+          ELSE.
+
+            o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0105&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TAH2&apos; ).
+            o_bi-&gt;campos( campo = &apos;LTAPA-ANFME(01)&apos; valor = l_ltap-anfme ). &quot; Cantidad teórica &apos;desde&apos; en unidad-medida alternativa
+            o_bi-&gt;campos( campo = &apos;LTAPA-VLTYP(01)&apos; valor = l_ltap-vltyp ). &quot; Tipo alm.procedencia
+            o_bi-&gt;campos( campo = &apos;LTAPA-VLBER(01)&apos; valor = &apos;&apos; ). &quot; Área de almacén de procedencia
+            o_bi-&gt;campos( campo = &apos;LTAPA-VLPLA(01)&apos; valor = l_ltap-vlpla ). &quot; Ubic.proced.
+
+* Crear orden transporte: pantalla de posición individual
+            o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0102&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+
+            o_bi-&gt;campos( campo = &apos;LTAP-VLQNR&apos; valor = l_ltap-vlqnr ). &quot; Cuanto
+            o_bi-&gt;campos( campo = &apos;LTAP-NLPLA&apos; valor = l_ltap-nlpla ). &quot; Ubicación de destino
+            o_bi-&gt;campos( campo = &apos;LTAP-NLQNR&apos; valor = l_ltap-nlqnr ). &quot; Cuanto
+
+* Crear orden transp.: pantalla preparatoria p. salida stock
+            o_bi-&gt;dynpro( program = &apos;SAPML03T&apos; dynpro = &apos;0105&apos; ).
+            o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos; ).
+          ENDIF.
+
+          IF usar_bi = &apos;X&apos;.
+            l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;LT01&apos; modo = &apos;N&apos; ).
+          ELSE.
+            l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;LT01&apos; modo = usar_bi ).
+          ENDIF.
+
+          IF o_bi-&gt;msgty = &apos;S&apos; AND o_bi-&gt;msgid = &apos;L3&apos; AND o_bi-&gt;msgno = &apos;016&apos;.
+            tanum = o_bi-&gt;msgv1.
+            zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = tanum ).
+          ENDIF.
+
+        ENDIF.
+
+* Caso de tener más de una OT, no informa TANUM
+        IF tanum IS INITIAL AND NOT i_ltak IS INITIAL.
+          READ TABLE i_ltak INTO l_ltak INDEX 1.
+          IF sy-subrc = 0.
+            tanum = l_ltak-tanum.
+          ENDIF.
+        ENDIF.
+
+        IF NOT tanum IS INITIAL.
+          IF espera_a_grabado = &apos;X&apos; AND commit_work = &apos;X&apos;.
+            DO 5 TIMES.
+              SELECT SINGLE tanum FROM ltak
+                INTO l_tanum
+               WHERE lgnum = lgnum
+                 AND tanum = tanum.
+              IF sy-subrc = 0.
+                EXIT.
+              ELSE.
+                WAIT UP TO 1 SECONDS.
+              ENDIF.
+            ENDDO.
+          ENDIF.
+        ELSE.
+          IF dequeue_all = &apos;X&apos;.
+            CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+          ENDIF.
+        ENDIF.
+
+        IF NOT l_sy-msgty IS INITIAL.
+          IF mostrar_mensaje = &apos;X&apos; OR l_sy-msgty &lt;&gt; &apos;I&apos; OR l_sy-msgty = &apos;S&apos;.
+            MESSAGE ID l_sy-msgid TYPE l_sy-msgty NUMBER l_sy-msgno WITH
+                    l_sy-msgv1 l_sy-msgv2 l_sy-msgv3 l_sy-msgv4 INTO message.
+          ENDIF.
+        ELSE.
+          message = &apos;¡Se ha producido un error inesperado!&apos;(sei).
+        ENDIF.
+
+        IF tanum IS INITIAL AND message IS INITIAL.
+          message = &apos;Error al crear OT&apos;(eco).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      sy-msgty = &apos;E&apos;.
+      sy-msgid = &apos;00&apos;.
+      sy-msgno = &apos;398&apos;.
+      sy-msgv1 = message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Crear OT sencilla" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="BWLVS" VERSION="1" LANGU="S" DESCRIPT="Cl.movim.gestión almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BWLVS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="LTAK" VERSION="1" LANGU="S" DESCRIPT="Estruct. transf. LTAD + LTAK1 para progr. actual. y otros" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK_VB" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="BETYP" VERSION="1" LANGU="S" DESCRIPT="Tipo de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BETYP" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="BENUM" VERSION="1" LANGU="S" DESCRIPT="Número de necesidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-BENUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="MOSTRAR_MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="IN_UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="ESPERA_A_GRABADO" VERSION="1" LANGU="S" DESCRIPT="Espera a que esté grabado en tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="AUSFB" VERSION="1" LANGU="S" DESCRIPT="Comentario sobre ejecución OT (indicador)" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVS_AUSFB" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="SOLO_VERIFICACIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="USAR_BI" VERSION="1" LANGU="S" DESCRIPT="Usar Batch Input en lugar de función (sólo para única pos.)" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="ANFME" VERSION="1" LANGU="S" DESCRIPT="Cantidad solicitada en unidad medida alternativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="ALTME" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida alternativa" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="BESTQ" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BESTQ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="SOBKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="SONUM" VERSION="1" LANGU="S" DESCRIPT="Número de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="VLTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo alm.procedencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-VLTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="VLPLA" VERSION="1" LANGU="S" DESCRIPT="Ubic.proced." CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-VLPLA"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="NLTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-NLTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="NLPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación de destino" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-NLPLA"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="VLQNR" VERSION="1" LANGU="S" DESCRIPT="Cuanto" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-VLQNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="NLQNR" VERSION="1" LANGU="S" DESCRIPT="Cuanto" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-NLQNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="LZNUM" VERSION="1" LANGU="S" DESCRIPT="Número adicional de ref. a transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LZNUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="29 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="30 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_OT_SIMPLE" SCONAME="I_LTAK" VERSION="1" LANGU="S" DESCRIPT="Tabla con cabeceras orden transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="31 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PDT_T_LTAK_VB"/>
+  <source>METHOD crear_ot_simple.
+    DATA: l_ltap TYPE ltap_creat,
+          i_ltap TYPE TABLE OF ltap_creat.
+
+    l_ltap-matnr = matnr.
+    l_ltap-anfme = anfme.
+    IF altme IS INITIAL.
+      l_ltap-altme = zcl_ap_material=&gt;get_unidad_base( matnr ).
+    ELSE.
+      l_ltap-altme = altme.
+    ENDIF.
+    l_ltap-bestq = bestq.
+    l_ltap-werks = werks.
+    l_ltap-lgort = lgort.
+    l_ltap-sobkz = sobkz.
+    l_ltap-sonum = sonum.
+    l_ltap-vltyp = vltyp.
+    l_ltap-vlpla = vlpla.
+    l_ltap-nltyp = nltyp.
+    l_ltap-nlpla = nlpla.
+    l_ltap-vlqnr = vlqnr.
+    l_ltap-nlqnr = nlqnr.
+    APPEND l_ltap TO i_ltap.
+
+    crear_ot_multiple(
+      EXPORTING
+        lgnum               = lgnum
+        bwlvs               = bwlvs
+        ltak                = ltak
+        betyp               = betyp
+        benum               = benum
+        lznum               = lznum
+        mostrar_mensaje     = mostrar_mensaje
+        in_update_task      = in_update_task
+        espera_a_grabado    = espera_a_grabado
+        ausfb               = ausfb
+        commit_work         = commit_work
+        dequeue_all         = dequeue_all
+        solo_verificaciones = solo_verificaciones
+        usar_bi             = usar_bi
+      CHANGING
+        i_ltap_creat        = i_ltap
+        i_ltak              = i_ltak
+        tanum               = tanum
+        message             = message ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" VERSION="1" LANGU="S" DESCRIPT="Crea ubicación (si no existe)" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LAGP-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LAGP-LGTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LAGP-LGPLA"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="LGBER" VERSION="1" LANGU="S" DESCRIPT="Área de almacenamiento" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LAGP-LGBER" PARVALUE="&apos;001&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="LPTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo de ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LAGP-LPTYP" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="CREAR_UBICACION" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD crear_ubicacion.
+    DATA: l_lagp TYPE lagp,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          i_lagp TYPE TABLE OF lagp.
+
+    CLEAR mensaje.
+    SELECT SINGLE lgnum FROM lagp
+      INTO l_lagp-lgnum
+     WHERE lgnum = lgnum
+       AND lgtyp = lgtyp
+       AND lgpla = lgpla.
+    IF sy-subrc = 0.
+      RETURN.
+    ENDIF.
+
+    CLEAR l_lagp.
+    l_lagp-lgnum = lgnum.
+    l_lagp-lgtyp = lgtyp.
+    l_lagp-lgpla = lgpla.
+    l_lagp-lgber = lgber.
+    l_lagp-lptyp = lptyp.
+    APPEND l_lagp TO i_lagp.
+
+    TRY.
+        CALL FUNCTION &apos;L_LAGP_HINZUFUEGEN&apos;
+          EXPORTING
+            xlagp = l_lagp.
+
+      CATCH cx_sy_dyn_call_illegal_type.
+        CONCATENATE &apos;Error al intentar crear ubicación&apos;(ecu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
+    ENDTRY.
+
+    SELECT SINGLE lgpla FROM lagp
+      INTO l_lagp-lgpla
+     WHERE lgnum = lgnum
+       AND lgtyp = lgtyp
+       AND lgpla = lgpla.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No se ha podido crear ubicación&apos;(ncu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="ESTA_BLOQUEADA" VERSION="1" LANGU="S" DESCRIPT="¿OT Bloqueada?" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ESTA_BLOQUEADA" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ESTA_BLOQUEADA" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TANUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="ESTA_BLOQUEADA" SCONAME="BLOQUEADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_bloqueada.
+    bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;LTAK&apos;
+                                                 clave = sy-mandt
+                                                 clave2 = lgnum
+                                                 clave3 = tanum ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" VERSION="1" LANGU="S" DESCRIPT="Devuelve cantidad ubicación" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGPLA"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="DISPONIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="ENTRADAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="SALIDAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="UNIDAD_SALIDA" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_CTD_UBICACION" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Campo de cantidad, longitud 13, con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="MENGV13"/>
+  <source>METHOD get_ctd_ubicacion.
+    __data_set_vart lqua.
+    CLEAR cantidad.
+    SELECT ausme einme matnr meins verme FROM lqua
+      INTO CORRESPONDING FIELDS OF TABLE i_lqua
+     WHERE lgnum = lgnum
+       AND lgtyp = lgtyp
+       AND lgpla = lgpla.
+
+    LOOP AT i_lqua ASSIGNING &lt;lqua&gt;.
+      IF disponible = &apos;X&apos; AND &lt;lqua&gt;-verme &lt;&gt; 0.
+        IF &lt;lqua&gt;-meins &lt;&gt; unidad_salida.
+          &lt;lqua&gt;-verme = zcl_ap_material=&gt;convertir_unidad( matnr = &lt;lqua&gt;-matnr unidad_origen = &lt;lqua&gt;-meins unidad_destino = unidad_salida cantidad = &lt;lqua&gt;-verme ).
+        ENDIF.
+        cantidad = cantidad + &lt;lqua&gt;-verme.
+      ENDIF.
+
+      IF entradas = &apos;X&apos; AND &lt;lqua&gt;-einme &lt;&gt; 0.
+        IF &lt;lqua&gt;-meins &lt;&gt; unidad_salida.
+          &lt;lqua&gt;-einme = zcl_ap_material=&gt;convertir_unidad( matnr = &lt;lqua&gt;-matnr unidad_origen = &lt;lqua&gt;-meins unidad_destino = unidad_salida cantidad = &lt;lqua&gt;-einme ).
+        ENDIF.
+        cantidad = cantidad + &lt;lqua&gt;-einme.
+      ENDIF.
+
+      IF salidas = &apos;X&apos; AND &lt;lqua&gt;-ausme &lt;&gt; 0.
+        IF &lt;lqua&gt;-meins &lt;&gt; unidad_salida.
+          &lt;lqua&gt;-ausme = zcl_ap_material=&gt;convertir_unidad( matnr = &lt;lqua&gt;-matnr unidad_origen = &lt;lqua&gt;-meins unidad_destino = unidad_salida cantidad = &lt;lqua&gt;-ausme ).
+        ENDIF.
+        cantidad = cantidad + &lt;lqua&gt;-ausme.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_DATOS_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos WM por defecto del usuario" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_DATOS_USUARIO" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_DATOS_USUARIO" SCONAME="DATOS" VERSION="1" LANGU="S" DESCRIPT="Asignación usuario -&gt; cola" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LRF_WKQU"/>
+  <source>METHOD get_datos_usuario.
+    DATA lt_xuser TYPE TABLE OF lrf_wkqu.
+
+    CLEAR datos.
+
+    CALL FUNCTION &apos;L_USER_DATA_GET&apos;
+      EXPORTING
+        i_uname        = uname
+      TABLES
+        t_xuser        = lt_xuser
+      EXCEPTIONS
+        no_entry_found = 1
+        OTHERS         = 2.
+
+    IF sy-subrc = 0.
+      READ TABLE lt_xuser INTO datos WITH KEY statu = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_LGNUM_DEF_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve nº almacén por defecto para el usuario" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LGNUM_DEF_USUARIO" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LGNUM_DEF_USUARIO" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Asignación usuario -&gt; cola" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LGNUM"/>
+  <source>METHOD get_lgnum_def_usuario.
+    DATA lrf_wkqu TYPE lrf_wkqu.
+
+    lrf_wkqu = get_datos_usuario( uname ).
+    lgnum = lrf_wkqu-lgnum.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos de LQUA" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-WERKS" PARVALUE="ZCL_C=&gt;WERKS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGNUM" PARVALUE="ZCL_C=&gt;LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="SONUM" VERSION="1" LANGU="S" DESCRIPT="Número de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-SONUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAK-VBELN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGTYP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGPLA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="POSNR" VERSION="1" LANGU="S" DESCRIPT="Posición documento ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAP-POSNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="BESTQ" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-BESTQ" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="SOLO_DISP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="SOBKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOBKZ" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="NEW_MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_LQUA" SCONAME="I_LQUA" VERSION="1" LANGU="S" DESCRIPT="Stock disponible" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LQUA_T"/>
+  <source>METHOD get_lqua.
+    DATA l_sonum TYPE lqua-sonum.
+
+    FIELD-SYMBOLS &lt;lqua&gt; TYPE lqua.
+
+    __def_rangoc: bestq, lqua_verme, lgtyp, lgpla, werks_d, matnr, sobkz, lvs_sonum.
+
+    IF bestq &lt;&gt; &apos;*&apos;.
+      __rangoc_eq r_bestq bestq.
+    ENDIF.
+
+    IF solo_disp = &apos;X&apos;.
+      CLEAR lr_lqua_verme.
+      lr_lqua_verme-option = &apos;GT&apos;.
+      lr_lqua_verme-sign   = &apos;I&apos;.
+      APPEND lr_lqua_verme TO r_lqua_verme.
+    ENDIF.
+
+    IF NOT sonum IS INITIAL.
+      l_sonum = sonum.
+    ELSEIF NOT vbeln IS INITIAL.
+      IF posnr IS INITIAL.
+        CONCATENATE vbeln &apos;000010&apos; INTO l_sonum.
+      ELSE.
+        CONCATENATE vbeln posnr INTO l_sonum.
+      ENDIF.
+    ENDIF.
+    IF NOT l_sonum IS INITIAL.
+      __rangoc_eq r_lvs_sonum l_sonum.
+    ENDIF.
+
+    DEFINE rango.
+      IF NOT &amp;1 IS INITIAL.
+        __rangoc_eq r_&amp;1 &amp;1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    rango: matnr, lgtyp, lgpla, sobkz.
+    IF NOT werks IS INITIAL.
+      __rangoc_eq r_werks_d werks.
+    ENDIF.
+
+    SELECT * FROM lqua
+      INTO TABLE i_lqua
+     WHERE lgnum  = lgnum
+       AND matnr IN r_matnr
+       AND werks IN r_werks_d
+       AND sobkz IN r_sobkz
+       AND sonum IN r_lvs_sonum
+       AND lgtyp IN r_lgtyp
+       AND lgpla IN r_lgpla
+       AND bestq IN r_bestq
+       AND verme IN r_lqua_verme.
+
+    IF NOT new_meins IS INITIAL.
+      LOOP AT i_lqua ASSIGNING &lt;lqua&gt; WHERE verme &lt;&gt; 0 AND meins &lt;&gt; new_meins.
+        &lt;lqua&gt;-verme = zcl_ap_material=&gt;convertir_unidad( matnr = &lt;lqua&gt;-matnr cantidad = &lt;lqua&gt;-verme unidad_origen = &lt;lqua&gt;-meins unidad_destino = new_meins ).
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" VERSION="1" LANGU="S" DESCRIPT="Rango estrategias" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="LGNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="KZEAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-KZEAR"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="LGTKZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-LGTKZ"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="BESTQ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-BESTQ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="SOBKZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-SOBKZ"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="LAGKL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-LAGKL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="BWREF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T334T-BWREF"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_RANGO_LGTYP_EST" SCONAME="R_LGTYP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TAB_RANGE_C3"/>
+  <source>METHOD get_rango_lgtyp_est.
+    DATA: l_t334t  TYPE t334t,
+          lr_lgtyp TYPE range_c3,
+          l_tip    TYPE t334t-lgty0.
+
+    SELECT SINGLE * FROM t334t
+      INTO l_t334t
+     WHERE lgnum = lgnum
+       AND kzear = kzear
+       AND lgtkz = lgtkz
+       AND bestq = bestq
+       AND sobkz = sobkz
+       AND lagkl = lagkl
+       AND bwref = bwref.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR lr_lgtyp.
+      lr_lgtyp-option = &apos;EQ&apos;.
+      lr_lgtyp-sign   = &apos;I&apos;.
+      lr_lgtyp-low    = &apos;?&apos;.
+      COLLECT lr_lgtyp INTO r_lgtyp.
+    ELSE.
+      DO 9 TIMES VARYING l_tip FROM l_t334t-lgty0 NEXT l_t334t-lgty1.
+        IF NOT l_tip IS INITIAL.
+          CLEAR lr_lgtyp.
+          lr_lgtyp-option = &apos;EQ&apos;.
+          lr_lgtyp-sign   = &apos;I&apos;.
+          lr_lgtyp-low    = l_tip.
+          COLLECT lr_lgtyp INTO r_lgtyp.
+        ENDIF.
+      ENDDO.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" VERSION="1" LANGU="S" DESCRIPT="Devuelve el stock en la ubicación" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-MATNR"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-WERKS" PARVALUE="&apos;0002&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGNUM" PARVALUE="&apos;002&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="SONUM" VERSION="1" LANGU="S" DESCRIPT="Número de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-SONUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAK-VBELN" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGPLA"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_STOCK_UBICACION" SCONAME="VERME" VERSION="1" LANGU="S" DESCRIPT="Stock disponible" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LQUA-VERME"/>
+  <source>METHOD get_stock_ubicacion.
+    DATA l_sonum TYPE lqua-sonum.
+
+    IF NOT sonum IS INITIAL.
+      l_sonum = sonum.
+    ELSEIF NOT vbeln IS INITIAL.
+      CONCATENATE vbeln &apos;000010&apos; INTO l_sonum.
+    ENDIF.
+
+    IF NOT l_sonum IS INITIAL.
+      SELECT SUM( verme ) FROM lqua
+        INTO verme
+       WHERE lgnum = lgnum
+         AND matnr = matnr
+         AND werks = werks
+         AND sonum = l_sonum
+         AND lgtyp = lgtyp
+         AND lgpla = lgpla
+         AND bestq = &apos;&apos;.
+    ELSE.
+      SELECT SUM( verme ) FROM lqua
+        INTO verme
+       WHERE lgnum = lgnum
+         AND matnr = matnr
+         AND werks = werks
+         AND lgtyp = lgtyp
+         AND lgpla = lgpla
+         AND bestq = &apos;&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="GET_UNIDAD_WM" VERSION="1" LANGU="S" DESCRIPT="Devuelve unidad de medida WM" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_UNIDAD_WM" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_UNIDAD_WM" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="GET_UNIDAD_WM" SCONAME="LHME1" VERSION="1" LANGU="S" DESCRIPT="Unidad medida para 1ª cantidad de medios auxiliares de carga" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LHMEH1"/>
+  <source>METHOD get_unidad_wm.
+    SELECT SINGLE lhme1 FROM  mlgn
+      INTO (lhme1)
+     WHERE matnr = matnr
+       AND lgnum = lgnum.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="LS03N" VERSION="1" LANGU="S" DESCRIPT="Visualizar ubicación" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="LS03N" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="LS03N" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGTYP"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="LS03N" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGPLA"/>
+  <source>METHOD ls03n.
+    DATA(l_lgnum) = lgnum.
+    IF l_lgnum IS INITIAL.
+      SELECT lgnum  &quot;#EC CI_NOFIRST.
+        FROM lagp
+        WHERE lgtyp = @lgtyp
+          AND lgpla = @lgpla
+        ORDER BY PRIMARY KEY
+        INTO @l_lgnum
+        UP TO 1 ROWS.
+      ENDSELECT.
+    ENDIF.
+
+    SET PARAMETER ID &apos;LGN&apos; FIELD l_lgnum.
+    SET PARAMETER ID &apos;LGT&apos; FIELD lgtyp.
+    SET PARAMETER ID &apos;LGP&apos; FIELD lgpla.
+    CALL TRANSACTION &apos;LS03N&apos; AND SKIP FIRST SCREEN.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="UBIC_PERM_STOCK_NEG" VERSION="1" LANGU="S" DESCRIPT="Ubicación permite stocks negativos" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="UBIC_PERM_STOCK_NEG" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGNUM" PARVALUE="ZCL_C=&gt;LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="UBIC_PERM_STOCK_NEG" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGTYP" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="UBIC_PERM_STOCK_NEG" SCONAME="NEGAT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Se permite stock negativo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T331-NEGAT"/>
+  <source>METHOD ubic_perm_stock_neg.
+    SELECT SINGLE negat FROM t331
+      INTO negat
+     WHERE lgnum = lgnum
+       AND lgtyp = lgtyp.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar OT" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAK-LGNUM" PARVALUE="&apos;002&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR" SCONAME="TANUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR" SCONAME="TAPOS" VERSION="1" LANGU="S" DESCRIPT="Posición de orden de transporte" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LTAP-TAPOS" PAROPTIONL="X"/>
+  <source>METHOD visualizar.
+    TYPES: BEGIN OF t_ot,
+             tanum TYPE ltak-tanum,
+           END OF t_ot,
+           BEGIN OF t_tanum,
+             tanum TYPE tanum,
+           END OF t_tanum.
+
+    DATA: i_tanum TYPE TABLE OF t_tanum,
+          l_tanum TYPE tanum,
+          i_ot    TYPE TABLE OF t_ot,
+          l_ot    TYPE t_ot,
+          l_ok    TYPE c LENGTH 1,
+          l_fila  TYPE i.
+
+    i_tanum = zcl_ap_lista=&gt;lista2tabla_n10( lista = tanum ).
+    DESCRIBE TABLE i_tanum LINES sy-tfill.
+    IF sy-tfill = 1.
+      READ TABLE i_tanum INTO l_tanum INDEX 1.
+
+      SET PARAMETER ID &apos;LGN&apos; FIELD lgnum.
+      SET PARAMETER ID &apos;TAN&apos; FIELD l_tanum.
+      SET PARAMETER ID &apos;TAP&apos; FIELD tapos.
+      CALL TRANSACTION &apos;LT21&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+    ELSEIF sy-tfill &gt; 1.
+      SELECT * FROM ltak
+        INTO CORRESPONDING FIELDS OF TABLE i_ot
+        FOR ALL ENTRIES IN i_tanum
+       WHERE lgnum = lgnum
+         AND tanum = i_tanum-tanum
+       ORDER BY PRIMARY KEY.
+      DESCRIBE TABLE i_ot LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_ot INTO l_ot INDEX 1.
+        SET PARAMETER ID &apos;LGN&apos; FIELD lgnum.
+        SET PARAMETER ID &apos;TAN&apos; FIELD l_tanum.
+        SET PARAMETER ID &apos;TAP&apos; FIELD tapos.
+        CALL TRANSACTION &apos;LT21&apos; AND SKIP FIRST SCREEN.     &quot;#EC CI_CALLTA
+      ELSEIF sy-tfill &gt; 1.
+        CALL FUNCTION &apos;Z_POPUP_ALV&apos;
+          EXPORTING
+            titulo           = &apos;Seleccione OT a visualizar&apos;(sov)
+            ancho            = 40
+            solo_aceptar     = &apos;&apos;
+            seleccionar_fila = &apos;X&apos;
+          IMPORTING
+            ok               = l_ok
+            fila             = l_fila
+          TABLES
+            t_datos          = i_ot.
+
+        IF l_ok = &apos;X&apos;.
+          READ TABLE i_ot INTO l_ot INDEX l_fila.
+          IF sy-subrc = 0.
+            SET PARAMETER ID &apos;LGN&apos; FIELD lgnum.
+            SET PARAMETER ID &apos;TAN&apos; FIELD l_ot-tanum.
+            SET PARAMETER ID &apos;TAP&apos; FIELD tapos.
+            CALL TRANSACTION &apos;LT21&apos; AND SKIP FIRST SCREEN. &quot;#EC CI_CALLTA
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" VERSION="1" LANGU="S" DESCRIPT="Visualizar stock de material" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-MATNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-WERKS" PARVALUE="ZCL_C=&gt;WERKS"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="LGNUM" VERSION="1" LANGU="S" DESCRIPT="Núm.almacén/Complejo alm." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGNUM" PARVALUE="ZCL_C=&gt;LGNUM"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="LGTYP" VERSION="1" LANGU="S" DESCRIPT="Tipo almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGTYP" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="LGPLA" VERSION="1" LANGU="S" DESCRIPT="Ubicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-LGPLA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="SONUM" VERSION="1" LANGU="S" DESCRIPT="Número de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-SONUM" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_OT" CMPNAME="VISUALIZAR_STOCK_MATERIAL" SCONAME="SOBKZ" VERSION="1" LANGU="S" DESCRIPT="Indicador de stock especial" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LQUA-SOBKZ" PARVALUE="&apos;&apos;"/>
+  <source>METHOD visualizar_stock_material.
+    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_mensaje TYPE bapireturn1-message.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+* Visualizar cuantos del material: pantalla inicial
+    o_bi-&gt;dynpro( program = &apos;SAPML01S&apos; dynpro = &apos;0209&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos; ).
+    o_bi-&gt;campos( campo = &apos;RL01S-LGNUM&apos;
+                  valor = lgnum ). &quot; Núm.almacén/Complejo alm.
+    o_bi-&gt;campos( campo = &apos;RL01S-MATNR&apos;
+                  valor = matnr ). &quot; Número de material
+    o_bi-&gt;campos( campo = &apos;RL01S-WERKS&apos;
+                  valor = werks ). &quot; Centro
+    o_bi-&gt;campos( campo = &apos;RL01S-BESTQ&apos;
+                  valor = &apos;*&apos; ). &quot; Diferenciación de stock en sistema
+    IF sonum IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RL01S-SOBKZ&apos;
+                    valor = &apos;*&apos; ). &quot; Indicador de stock especial
+    ELSE.
+      o_bi-&gt;campos( campo = &apos;RL01S-SOBKZ&apos; valor = sobkz ).
+      o_bi-&gt;campos( campo = &apos;RL01S-LSONR&apos; valor = sonum ).
+    ENDIF.
+
+    IF NOT lgtyp IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RL01S-LGTYP&apos; valor = lgtyp ).
+    ENDIF.
+    IF NOT lgpla IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RL01S-LGPLA&apos; valor = lgpla ).
+    ENDIF.
+
+    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;LS24&apos;
+                        modo = &apos;E&apos; ).
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,45 @@
+*&---------------------------------------------------------------------*
+*& Report  ZPARAMETROS
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+REPORT  zparametros_ap.
+
+TABLES: zparametros_ap,
+        ztclave_param.
+
+PARAMETERS: p_clave LIKE zparametros_ap-clave MATCHCODE OBJECT
+                                                     ZTCLAVE_PARAM,
+            p_campo LIKE zparametros_ap-campo.
+
+INITIALIZATION.
+  SET PF-STATUS 'INICIO'.
+
+AT SELECTION-SCREEN.
+
+  IF sy-ucomm = 'CLAVES'.
+    zcl_ap_utils=>mantener_tabla( tabla = 'ZTCLAVE_PARAM' ).
+  ELSEIF sy-ucomm = 'ONLI'.
+    IF p_clave IS INITIAL.
+      MESSAGE 'Informe campo clave' TYPE 'E'.
+    ELSE.
+      SELECT SINGLE * FROM ztclave_param
+       WHERE clave_param = p_clave.
+      IF sy-subrc = 0.
+        sy-title = ztclave_param-descripcion.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+START-OF-SELECTION.
+
+  DATA: o_par TYPE REF TO zcl_ap_parametros.
+
+  CREATE OBJECT o_par
+    EXPORTING
+      clave = p_clave
+      campo = p_campo.
+
+  o_par->mantenimiento( ).

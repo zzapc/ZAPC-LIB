@@ -1,0 +1,2068 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Fechas" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="T_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="4 " SRCROW2="15 " SRCCOLUMN2="20 " TYPESRC_LENG="209 " TYPESRC="BEGIN OF t_fechas,
+        fecha       TYPE scdatum,
+        dia         TYPE ktag,
+        numero_dia  TYPE wotnr,
+        nombre_diac TYPE wotnr,
+        nombre_dia  TYPE langt,
+      END OF t_fechas
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="TT_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="17 " SRCCOLUMN1="4 " SRCROW2="17 " SRCCOLUMN2="64 " TYPESRC_LENG="63 " TYPESRC="tt_fechas TYPE SORTED TABLE OF t_fechas WITH UNIQUE KEY fecha
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="T_FECHA_CAL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="19 " SRCCOLUMN1="4 " SRCROW2="29 " SRCCOLUMN2="23 " TYPESRC_LENG="409 " TYPESRC="BEGIN OF t_fecha_cal,
+        fecha             TYPE scdatum,
+        dia               TYPE ktag,
+        numero_dia        TYPE wotnr,
+        nombre_diac       TYPE wotnr,
+        nombre_dia        TYPE langt,
+        festivo           TYPE feiertagkz,
+        categoria_festivo TYPE kklass,
+        descr_corta       TYPE textk,
+        descr_larga       TYPE textl_d,
+      END OF t_fecha_cal
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="TT_FECHA_CAL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="31 " SRCCOLUMN1="4 " SRCROW2="31 " SRCCOLUMN2="70 " TYPESRC_LENG="69 " TYPESRC="tt_fecha_cal TYPE SORTED TABLE OF t_fecha_cal WITH UNIQUE KEY fecha
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="T_DIA_HORAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="33 " SRCCOLUMN1="4 " SRCROW2="38 " SRCCOLUMN2="23 " TYPESRC_LENG="161 " TYPESRC="BEGIN OF t_dia_horas,
+        dia   TYPE dats,
+        beguz TYPE beguz,
+        enduz TYPE enduz,
+        orden TYPE n LENGTH 3,
+      END OF t_dia_horas
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="TT_DIA_HORAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " TYPTYPE="4" SRCROW1="40 " SRCCOLUMN1="4 " SRCROW2="40 " SRCCOLUMN2="41 " TYPESRC_LENG="40 " TYPESRC="tt_dia_horas TYPE TABLE OF t_dia_horas
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="T_MESES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " TYPTYPE="4" SRCROW1="42 " SRCCOLUMN1="4 " SRCROW2="46 " SRCCOLUMN2="19 " TYPESRC_LENG="122 " TYPESRC="BEGIN OF t_meses,
+        perio TYPE spmon,
+        begda TYPE begda,
+        endda TYPE endda,
+      END OF t_meses
+"/>
+ <types CLSNAME="ZCL_AP_FECHAS" CMPNAME="TT_MESES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " TYPTYPE="4" SRCROW1="48 " SRCCOLUMN1="4 " SRCROW2="48 " SRCCOLUMN2="48 " TYPESRC_LENG="47 " TYPESRC="tt_meses TYPE TABLE OF t_meses WITH KEY perio
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="DFE" ENTRY="Día fin no puede ser menor que día inicial" LENGTH="84 "/>
+   <textElement ID="I" KEY="HFE" ENTRY="Hora fin no puede ser meno que hora inicio" LENGTH="84 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_FECHAS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="AAAAMMDD_2_DDMMAAAA" VERSION="1" LANGU="S" DESCRIPT="Convierte fecha  formato DDMMAAAA" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="AAAAMMDD_2_DDMMAAAA" SCONAME="FECHA_AAAAMMDD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="AAAAMMDD_2_DDMMAAAA" SCONAME="FECHA_DDMMAAAA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <source>METHOD aaaammdd_2_ddmmaaaa.
+    fecha_ddmmaaaa(2) = fecha_aaaammdd+6(2).
+    fecha_ddmmaaaa+2(2) = fecha_aaaammdd+4(2).
+    fecha_ddmmaaaa+4(4) = fecha_aaaammdd(4).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="CL_RECA_DATE" VERSION="1" LANGU="S" DESCRIPT="CL_RECA_DATE" EXPOSURE="2" STATE="1" EDITORDER="52 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD cl_reca_date. &quot;#EC EMPTY_PROCEDURE
+* Recordatorio de que existe esta clase estándar con utilidades
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONDENSAR_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Condensa tabla fechas" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONDENSAR_FECHAS" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONDENSAR_FECHAS" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONDENSAR_FECHAS" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD condensar_fechas.
+    TYPES: BEGIN OF t_fechas_cond,
+             clave     TYPE c LENGTH 40,
+             clave2    TYPE c LENGTH 40,
+             begda     TYPE begda,
+             endda     TYPE endda,
+             registros TYPE c LENGTH 1000,
+           END OF t_fechas_cond.
+
+    DATA: l_tabix       TYPE c LENGTH 5,
+          l_fechas      TYPE t_fechas_cond,
+          i_fechas      TYPE TABLE OF t_fechas_cond,
+          l_fechas_cond TYPE t_fechas_cond,
+          l_new         TYPE c LENGTH 1,
+          l_end         TYPE c LENGTH 1,
+          l_last        TYPE c LENGTH 1,
+          i_fechas_cond TYPE TABLE OF t_fechas_cond,
+          l_endda       TYPE d,
+          l_nbor        TYPE i,
+          i_registros   TYPE TABLE OF string,
+          l_registro    TYPE string,
+          l_first       TYPE c LENGTH 1,
+          l_reg         TYPE sy-tabix.
+
+    DATA l_campo TYPE c LENGTH 40.
+
+    FIELD-SYMBOLS: &lt;dyn_wa&gt; TYPE any,
+                   &lt;fs&gt;     TYPE any.
+
+    LOOP AT tabla ASSIGNING &lt;dyn_wa&gt;.        &quot; New record
+      l_tabix = sy-tabix.
+
+      CLEAR l_fechas.
+
+      CONCATENATE &apos;&lt;dyn_wa&gt;-&apos; &apos;BEGDA&apos; INTO l_campo.
+      ASSIGN (l_campo) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        l_fechas-begda = &lt;fs&gt;.
+      ENDIF.
+      CONCATENATE &apos;&lt;dyn_wa&gt;-&apos; &apos;ENDDA&apos; INTO l_campo.
+      ASSIGN (l_campo) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        l_fechas-endda = &lt;fs&gt;.
+      ENDIF.
+      CONCATENATE &apos;&lt;dyn_wa&gt;-&apos; clave INTO l_campo.
+      ASSIGN (l_campo) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        l_fechas-clave = &lt;fs&gt;.
+      ENDIF.
+      IF NOT clave2 IS INITIAL.
+        CONCATENATE &apos;&lt;dyn_wa&gt;-&apos; clave2 INTO l_campo.
+        ASSIGN (l_campo) TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          l_fechas-clave2 = &lt;fs&gt;.
+        ENDIF.
+      ENDIF.
+
+      l_fechas-registros = l_tabix.
+      APPEND l_fechas TO i_fechas.
+    ENDLOOP.
+
+    SORT i_fechas.
+
+    CLEAR l_fechas_cond.
+    LOOP AT i_fechas INTO l_fechas.
+      CLEAR: l_new, l_end, l_last.
+      AT NEW clave2.
+        l_new = &apos;X&apos;.
+      ENDAT.
+      AT END OF clave2.
+        l_end = &apos;X&apos;.
+      ENDAT.
+      AT LAST.
+        l_last = &apos;X&apos;.
+      ENDAT.
+
+* Si no hay registro previo.
+      IF l_fechas_cond IS INITIAL.
+        l_fechas_cond-clave     = l_fechas-clave.
+        l_fechas_cond-clave2    = l_fechas-clave2.
+        l_fechas_cond-begda     = l_fechas-begda.
+        l_fechas_cond-endda     = l_fechas-endda.
+        l_fechas_cond-registros = l_fechas-registros.
+
+        IF l_end = &apos;X&apos;.
+*     Si es el final lo guardamos
+          APPEND l_fechas_cond TO i_fechas_cond.
+          CLEAR: l_fechas_cond, l_endda.
+        ELSE.
+*     Si no, esperamos si el siguiente registro continua
+          l_endda = l_fechas-endda + 1.
+        ENDIF.
+      ELSE.
+        IF l_end = &apos;X&apos;.
+
+*     Si es el final y continua, lo guardamos
+          IF l_fechas-begda = l_endda.
+            l_fechas_cond-endda = l_fechas-endda.
+            CONCATENATE l_fechas_cond-registros &apos;,&apos;
+                        l_fechas-registros INTO l_fechas_cond-registros.
+            CONDENSE l_fechas_cond-registros NO-GAPS.
+            APPEND l_fechas_cond TO i_fechas_cond.
+          ELSE.
+*     Si es el final y no consecutivo, guardamos dos treamso.
+            APPEND l_fechas_cond TO i_fechas_cond.
+            APPEND l_fechas TO i_fechas_cond.
+          ENDIF.
+          CLEAR: l_fechas_cond, l_endda.
+        ELSE.
+*     Si no, esperamos si el siguiente registro continua
+          IF l_fechas-begda = l_endda.
+            l_fechas_cond-endda = l_fechas-endda.
+            CONCATENATE l_fechas_cond-registros &apos;,&apos;
+                        l_fechas-registros INTO l_fechas_cond-registros.
+            CONDENSE l_fechas_cond-registros NO-GAPS.
+          ELSE.
+*     Si es el final y no consecutivo, guardamos dos treamso.
+            APPEND l_fechas_cond TO i_fechas_cond.
+            l_fechas_cond = l_fechas.
+          ENDIF.
+          l_endda = l_fechas-endda + 1.
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
+
+    CLEAR l_nbor.
+    SORT i_fechas_cond BY registros.
+    LOOP AT i_fechas_cond INTO l_fechas.
+      SPLIT l_fechas-registros AT &apos;,&apos; INTO TABLE i_registros.
+      LOOP AT i_registros INTO l_registro.
+
+        CLEAR l_first.
+        l_reg = l_registro - l_nbor.
+
+        AT FIRST.
+          l_first = &apos;X&apos;.
+          ASSIGN tabla[ l_reg ] TO &lt;dyn_wa&gt;.
+          IF sy-subrc = 0.
+            CONCATENATE &apos;&lt;dyn_wa&gt;-&apos; &apos;ENDDA&apos; INTO l_campo.
+            ASSIGN (l_campo) TO &lt;fs&gt;.
+            IF sy-subrc = 0.
+              &lt;fs&gt; = l_fechas-endda.
+            ENDIF.
+          ENDIF.
+        ENDAT.
+
+        IF l_first IS INITIAL.
+          DELETE tabla INDEX l_reg.
+          l_nbor = l_nbor + 1.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONTIENE_MES" VERSION="1" LANGU="S" DESCRIPT="El mes está contenido entre dos fechas" EXPOSURE="2" STATE="1" EDITORDER="48 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONTIENE_MES" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONTIENE_MES" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONTIENE_MES" SCONAME="MES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NUMC2"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="CONTIENE_MES" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_mes.
+    DATA: l_f1    TYPE d,
+          l_f2    TYPE d,
+          l_meses TYPE pea_scrmm,
+          l_dif   TYPE i.
+
+    CONCATENATE fini(6) &apos;01&apos; INTO l_f1.
+    CONCATENATE ffin(6) &apos;01&apos; INTO l_f2.
+
+    CALL FUNCTION &apos;HR_HK_DIFF_BT_2_DATES&apos; ##FM_SUBRC_OK
+      EXPORTING
+        date1                   = l_f2
+        date2                   = l_f1
+        output_format           = &apos;08&apos;
+      IMPORTING
+        months                  = l_meses
+      EXCEPTIONS
+        invalid_dates_specified = 1
+        OTHERS                  = 2.
+
+    IF l_meses &gt;= 11.
+      si = &apos;X&apos;.
+    ELSEIF l_f2+4(2) &gt;= mes.
+      l_dif = l_f2+4(2) - mes.
+      IF l_dif &lt;= l_meses.
+        si = &apos;X&apos;.
+      ENDIF.
+    ELSEIF l_f1(4) &lt; l_f2(4). &quot; Son años diferentes
+      IF l_f1+4(2) &lt;= mes.
+        si = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="DATETIMEWS_2_FECHAHORA" VERSION="1" LANGU="S" DESCRIPT="Convierte fecha en formato WS a fecha / hora sap" EXPOSURE="2" STATE="1" EDITORDER="39 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="DATETIMEWS_2_FECHAHORA" SCONAME="FECHA_WS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="DATETIMEWS_2_FECHAHORA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="DATETIMEWS_2_FECHAHORA" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <source>METHOD datetimews_2_fechahora.
+    DATA: l_cadena TYPE c LENGTH 40,
+          l_fecha  TYPE c LENGTH 10,
+          l_hora   TYPE c LENGTH 8.
+
+    TRY.
+        cl_bs_soa_convert_date_time=&gt;map_utc_date_time_in( EXPORTING iv_utc_datetime = fecha_ws iv_timezone = sy-zonlo
+                                                           IMPORTING ev_date = fecha ev_time = hora ).
+      CATCH cx_bs_soa_exception.
+        l_cadena = fecha_ws.
+
+        IF l_cadena CS &apos;T&apos;.
+          SPLIT l_cadena AT &apos;T&apos; INTO l_fecha l_hora.
+        ELSE.
+          l_fecha = l_cadena(10).
+          l_hora  = l_cadena+11(8).
+        ENDIF.
+        fecha = string2fecha( l_fecha ).
+        hora  = string2hora( l_hora ).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_DIA_LABORABLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve si la fecha es laborable" EXPOSURE="2" STATE="1" EDITORDER="57 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_DIA_LABORABLE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_DIA_LABORABLE" SCONAME="CALENDARIO" VERSION="1" LANGU="S" DESCRIPT="Calendario de fábrica" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-FCALID"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_DIA_LABORABLE" SCONAME="LABORABLE" VERSION="1" LANGU="S" DESCRIPT="Casilla de selección" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XFELD"/>
+  <source>METHOD es_dia_laborable.
+    CLEAR laborable.
+    CALL FUNCTION &apos;DATE_CHECK_WORKINGDAY&apos;
+      EXPORTING
+        date                       = fecha
+        factory_calendar_id        = calendario
+        message_type               = &apos;I&apos;
+      EXCEPTIONS
+        date_after_range           = 1
+        date_before_range          = 2
+        date_invalid               = 3
+        date_no_workingday         = 4
+        factory_calendar_not_found = 5
+        message_type_invalid       = 6
+        OTHERS                     = 7.
+    IF sy-subrc = 0.
+      laborable = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_FESTIVO" VERSION="1" LANGU="S" DESCRIPT="Devuelve si el día es laborable" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_FESTIVO" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_FESTIVO" SCONAME="CALID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ES&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_FESTIVO" SCONAME="FESTIVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_festivo.
+    DATA: l_calid     TYPE scal-fcalid,
+          l_sig_fecha TYPE d.
+
+    CLEAR festivo.
+    l_calid = calid.
+    CALL FUNCTION &apos;DATE_CONVERT_TO_FACTORYDATE&apos;
+      EXPORTING
+        correct_option               = &apos;+&apos;
+        date                         = fecha
+        factory_calendar_id          = l_calid
+      IMPORTING
+        date                         = l_sig_fecha
+      EXCEPTIONS
+        calendar_buffer_not_loadable = 1
+        correct_option_invalid       = 2
+        date_after_range             = 3
+        date_before_range            = 4
+        date_invalid                 = 5
+        factory_calendar_not_found   = 6
+        OTHERS                       = 7.
+
+    IF sy-subrc = 0.
+      IF fecha &lt;&gt; l_sig_fecha.
+        festivo = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_VALIDA" VERSION="1" LANGU="S" DESCRIPT="Verifica si la fecha es valida" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_VALIDA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="ES_VALIDA" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_valida.
+    CLEAR ok.
+    CALL FUNCTION &apos;DATE_CHECK_PLAUSIBILITY&apos;
+      EXPORTING
+        date                      = fecha
+      EXCEPTIONS
+        plausibility_check_failed = 1
+        OTHERS                    = 2.
+    IF sy-subrc = 0.
+      ok = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHAHORA_2_TIMESTAMP" VERSION="1" LANGU="S" DESCRIPT="Devuelve fecha en formato timestamp" EXPOSURE="2" STATE="1" EDITORDER="40 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHAHORA_2_TIMESTAMP" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHAHORA_2_TIMESTAMP" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHAHORA_2_TIMESTAMP" SCONAME="TZONE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-ZONLO" PARVALUE="SY-ZONLO"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHAHORA_2_TIMESTAMP" SCONAME="TIMESTAMP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TZONREF-TSTAMPS"/>
+  <source>METHOD fechahora_2_timestamp.
+    CALL FUNCTION &apos;IB_CONVERT_INTO_TIMESTAMP&apos;
+      EXPORTING
+        i_datlo     = fecha
+        i_timlo     = hora
+        i_tzone     = tzone
+      IMPORTING
+        e_timestamp = timestamp.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_A_LETRAS" VERSION="1" LANGU="S" DESCRIPT="Formatea fecha  formato letras" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_A_LETRAS" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_A_LETRAS" SCONAME="IDIOMA" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Clave de idioma de entorno de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_A_LETRAS" SCONAME="LETRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD fecha_a_letras.
+    IF NOT fecha IS INITIAL.
+      letras = get_nombre_mes( mes = fecha+4(2) idioma = idioma ).
+      IF idioma = &apos;S&apos;.
+        CONCATENATE fecha+6(2) &apos;de&apos; letras &apos; de&apos; fecha(4) INTO letras SEPARATED BY space.
+      ELSE.
+        CONCATENATE fecha+6(2) letras fecha(4) INTO letras SEPARATED BY space.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" VERSION="1" LANGU="S" DESCRIPT="¿La fecha/hora indicada están dentro del rango?" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" SCONAME="R_HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="JIT_ITIME_RANGE_TT"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="FECHA_HORA_EN_RANGO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD fecha_hora_en_rango.
+    DATA: l_hini  TYPE sy-uzeit,
+          l_hfin  TYPE sy-uzeit,
+          l_rhora TYPE jit_itime_range,
+          l_fini  TYPE d,
+          l_ffin  TYPE d.
+
+    IF r_horas IS INITIAL.
+      l_hini = &apos;000000&apos;.
+      l_hfin = &apos;235959&apos;.
+    ELSE.
+      READ TABLE r_horas INTO l_rhora INDEX 1.
+      l_hini = l_rhora-low.
+      IF l_rhora-high IS INITIAL.
+        l_hfin = l_rhora-low.
+      ELSE.
+        l_hfin = l_rhora-high.
+      ENDIF.
+    ENDIF.
+
+    rango2fechas( EXPORTING r_fechas = r_fechas
+                  IMPORTING fecha_desde = l_fini
+                            fecha_hasta = l_ffin ).
+
+    si = hay_solapamiento_fechas( fini1 = l_fini
+                                  ffin1 = l_ffin
+                                  hini1 = l_hini
+                                  hfin1 = l_hfin
+                                  fini2 = fecha
+                                  ffin2 = fecha
+                                  hini2 = hora
+                                  hfin2 = hora ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" VERSION="1" LANGU="S" DESCRIPT="Devuelve la duración del intervalo en horas" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="HINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="HFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="VER_NEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO" SCONAME="HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HOURS"/>
+  <source>METHOD get_duracion_intervalo.
+    DATA: l_dias  TYPE i,
+          l_horas TYPE p LENGTH 8 DECIMALS 4.
+
+    IF    fini IS INITIAL
+       OR ffin IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_dias = ffin - fini.
+    IF l_dias &gt; 69000.
+      horas = 99999.
+    ELSE.
+      IF l_dias &gt;= 0.
+        l_horas = ( hfin - hini ) / 3600.
+        IF l_horas &gt; 0 OR ver_neg = &apos;X&apos; OR l_dias &gt; 0.
+          TRY.
+              horas = 24 * l_dias + l_horas.
+            CATCH cx_sy_arithmetic_overflow.
+              horas = 99999.
+          ENDTRY.
+        ENDIF.
+      ELSEIF ver_neg = &apos;X&apos;.
+        l_horas = ( hfin - hini ) / 3600.
+        IF l_horas &gt; 0 OR l_dias &gt; 0.
+          TRY.
+              horas = 24 * l_dias + l_horas.
+            CATCH cx_sy_arithmetic_overflow.
+              horas = 99999.
+          ENDTRY.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" VERSION="1" LANGU="S" DESCRIPT="Devuelve la duración del intervalo en minutos" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="HINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="HFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="VER_NEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_MIN" SCONAME="HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EAUSZT"/>
+  <source>METHOD get_duracion_intervalo_min.
+    DATA: l_dias  TYPE i,
+          l_horas TYPE p LENGTH 8 DECIMALS 2.
+
+    IF    fini IS INITIAL
+       OR ffin IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_dias = ffin - fini.
+    IF l_dias &gt; 69000.
+      l_horas = 99999.
+    ELSE.
+      IF l_dias &gt;= 0 OR ver_neg = &apos;X&apos;.
+        l_horas = ( hfin - hini ) / 60.
+        horas = l_horas.
+        IF l_horas &gt; 0 OR l_dias &gt; 0.
+          horas = ( 24 * 60 ) * l_dias + l_horas.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" VERSION="1" LANGU="S" DESCRIPT="Devuelve la duración del intervalo en segundos" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" SCONAME="HINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" SCONAME="HFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_DURACION_INTERVALO_SEC" SCONAME="SEGUNDOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EAUSZT"/>
+  <source>METHOD get_duracion_intervalo_sec.
+    DATA: l_dias     TYPE i,
+          l_segundos TYPE p LENGTH 8 DECIMALS 2.
+
+    IF    fini IS INITIAL
+       OR ffin IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_dias = ffin - fini.
+    IF l_dias &gt; 69000.
+      l_segundos = 999999.
+    ELSE.
+      IF l_dias &gt;= 0.
+        l_segundos = ( hfin - hini ).
+        IF l_segundos &gt; 0 OR l_dias &gt; 0.
+          segundos = ( 24 * 60 * 60 ) * l_dias + l_segundos.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla fechas" EXPOSURE="2" STATE="1" EDITORDER="58 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS" SCONAME="FINI" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS" SCONAME="FFIN" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS" SCONAME="I_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_FECHAS"/>
+  <source>METHOD get_fechas.
+    DATA t_fechas TYPE t_fechas.
+
+    CLEAR i_fechas.
+
+    DATA(i_atributos) = lista_dias( fini = fini ffin = ffin ).
+
+    LOOP AT i_atributos ASSIGNING FIELD-SYMBOL(&lt;atributos&gt;).
+      CLEAR t_fechas.
+      t_fechas-fecha       = &lt;atributos&gt;-date.
+      t_fechas-dia         = &lt;atributos&gt;-date+6(2).
+
+      t_fechas-numero_dia  = &lt;atributos&gt;-weekday.
+      t_fechas-nombre_diac = &lt;atributos&gt;-weekday_s.
+      IF &lt;atributos&gt;-weekday = 3.
+        t_fechas-nombre_diac = &apos;X&apos;.
+      ENDIF.
+      t_fechas-nombre_dia = &lt;atributos&gt;-weekday_l.
+
+      APPEND t_fechas TO i_fechas.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS_CALENDARIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve fechas según calendario" EXPOSURE="2" STATE="1" EDITORDER="56 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS_CALENDARIO" SCONAME="FINI" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS_CALENDARIO" SCONAME="FFIN" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS_CALENDARIO" SCONAME="CALENDARIO" VERSION="1" LANGU="S" DESCRIPT="Calendario de fábrica" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TFACD-IDENT"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHAS_CALENDARIO" SCONAME="I_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_FECHA_CAL"/>
+  <source>METHOD get_fechas_calendario.
+    DATA: l_hocid  TYPE tfacd-hocid,
+          l_fecha  TYPE d,
+          t_fechas TYPE t_fecha_cal.
+
+    CLEAR i_fechas.
+
+    SELECT SINGLE hocid FROM tfacd
+      INTO l_hocid
+     WHERE ident = calendario.
+
+    l_fecha = fini.
+    DO.
+      IF l_fecha &gt; ffin.
+        EXIT.
+      ENDIF.
+
+      CLEAR t_fechas.
+      t_fechas-fecha = l_fecha.
+      t_fechas-dia   = l_fecha+6(2).
+
+      IF NOT es_dia_laborable( fecha = l_fecha calendario = calendario ).
+        t_fechas-festivo = &apos;X&apos;.
+      ENDIF.
+
+      DATA(i_atributos) = lista_dias( fcal = calendario hcal = l_hocid fini = l_fecha ffin = l_fecha ).
+      ASSIGN i_atributos[ 1 ] TO FIELD-SYMBOL(&lt;atributos&gt;).
+      IF sy-subrc = 0.
+        t_fechas-numero_dia  = &lt;atributos&gt;-weekday.
+        t_fechas-nombre_diac = &lt;atributos&gt;-weekday_s.
+        IF &lt;atributos&gt;-weekday = 3.
+          t_fechas-nombre_diac = &apos;X&apos;.
+        ENDIF.
+        t_fechas-nombre_dia  = &lt;atributos&gt;-weekday_l.
+        t_fechas-descr_corta = &lt;atributos&gt;-txt_short.
+        t_fechas-descr_larga = &lt;atributos&gt;-txt_long.
+
+        SELECT SINGLE klass FROM thol
+          INTO t_fechas-categoria_festivo
+         WHERE ftgid = &lt;atributos&gt;-holiday_id.
+
+      ENDIF.
+
+*      SELECT SINGLE * FROM tfain
+*        INTO l_tfain
+*       WHERE ident = calendario
+*         AND jahr  = t_fechas-fecha(4)
+*         AND von  &lt;= t_fechas-fecha
+*         AND bis  &gt;= t_fechas-fecha
+*         AND wert  = 1.
+*      IF sy-subrc = 0.
+*        t_fechas-laborable = &apos;X&apos;.
+*      ENDIF.
+
+      APPEND t_fechas TO i_fechas.
+
+      l_fecha = l_fecha + 1.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_FORMATEADA" VERSION="1" LANGU="S" DESCRIPT="Devuelve fecha formateda" EXPOSURE="2" STATE="1" EDITORDER="45 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_FORMATEADA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_FORMATEADA" SCONAME="FORMATO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_FORMATEADA" SCONAME="DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_fecha_formateada.
+    DATA: l_nombre_dia TYPE c LENGTH 30,
+          l_long       TYPE i,
+          l_nombre_mes TYPE c LENGTH 30.
+
+    IF fecha IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    dia = formato.
+*  &apos;Nd, DD de nm de AAAA&apos; -&gt; Sábado, 25 de enero de 2014
+    IF dia CS &apos;ND&apos; OR dia CS &apos;Nd&apos; OR dia CS &apos;nd&apos;.
+      l_nombre_dia = get_nombre_numero_dia( fecha ).
+      l_long = strlen( l_nombre_dia ).
+      FIND FIRST OCCURRENCE OF &apos;Nd&apos; IN dia.
+      IF sy-subrc = 0.
+        l_nombre_dia+1 = to_lower( l_nombre_dia+1 ).
+        REPLACE &apos;Nd&apos; WITH l_nombre_dia(l_long) INTO dia.
+      ELSE.
+        FIND FIRST OCCURRENCE OF &apos;nd&apos; IN dia.
+        IF sy-subrc = 0.
+          l_nombre_dia = to_lower( l_nombre_dia ).
+          REPLACE &apos;nd&apos; WITH l_nombre_dia(l_long) INTO dia.
+        ELSE.
+          REPLACE &apos;ND&apos; WITH l_nombre_dia(l_long) INTO dia.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF dia CS &apos;NM&apos; OR dia CS &apos;Nm&apos; OR dia CS &apos;nm&apos;.
+      l_nombre_mes = get_nombre_mes( fecha+4(2) ).
+      l_long = strlen( l_nombre_mes ).
+      FIND FIRST OCCURRENCE OF &apos;Nm&apos; IN dia.
+      IF sy-subrc = 0.
+        l_nombre_mes+1 = to_lower( l_nombre_mes+1 ).
+        REPLACE &apos;Nm&apos; WITH l_nombre_mes(l_long) INTO dia.
+      ELSE.
+        FIND FIRST OCCURRENCE OF &apos;nm&apos; IN dia.
+        IF sy-subrc = 0.
+          l_nombre_mes = to_lower( l_nombre_mes ).
+          REPLACE &apos;nm&apos; WITH l_nombre_mes(l_long) INTO dia.
+        ELSE.
+          REPLACE &apos;NM&apos; WITH l_nombre_mes(l_long) INTO dia.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF dia CS &apos;DD&apos;.
+      REPLACE &apos;DD&apos; WITH fecha+6(2) INTO dia.
+    ENDIF.
+
+    IF dia CS &apos;AAAA&apos;.
+      REPLACE &apos;AAAA&apos; WITH fecha(4) INTO dia.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_WS" VERSION="1" LANGU="S" DESCRIPT="Devuelve fecha en formato WS" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_WS" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_WS" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_WS" SCONAME="TZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_FECHA_WS" SCONAME="FECHA_WS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_fecha_ws.
+    DATA l_sep  TYPE char1.
+    DATA l_text TYPE c LENGTH 50.
+
+    IF tz &lt;&gt; &apos;N&apos;.
+      l_sep = &apos;T&apos;.
+    ENDIF.
+
+    CLEAR fecha_ws.
+    CONCATENATE fecha(4) &apos;-&apos; fecha+4(2) &apos;-&apos; fecha+6(2)
+               l_sep hora(2) &apos;:&apos; hora+2(2) &apos;:&apos; hora+4(2)
+                INTO fecha_ws RESPECTING BLANKS.
+    IF tz = &apos;Z&apos;.
+      CONCATENATE fecha_ws &apos;Z&apos; INTO fecha_ws.
+    ELSEIF tz = &apos;N&apos; OR tz = &apos;M&apos;. &quot;#EC EMPTY_IF_BRANCH
+* En este caso no queremos añadir nada a la hora
+    ELSE.
+      CONCATENATE fecha_ws &apos;+01:00&apos; INTO fecha_ws.
+
+      IF tz IS INITIAL.
+        l_text = fecha_ws.
+        CLEAR l_text+10(1).
+        CLEAR l_text+19.
+        fecha_ws = l_text.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con intervalos horarios" EXPOSURE="2" STATE="1" EDITORDER="43 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="DIA_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="BEGUZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGUZ" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="ENDUZ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDUZ" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="MINUTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="INTERVALOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_DIA_HORAS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_INTERVALOS_HORAS" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_intervalos_horas.
+    DATA: l_dia_fin TYPE d,
+          l_fecha   TYPE d,
+          l_horas   TYPE t_dia_horas,
+          l_hora    TYPE sy-uzeit,
+          l_orden   TYPE n LENGTH 3.
+
+    IF dia_fin IS INITIAL.
+      l_dia_fin = dia.
+    ELSE.
+      IF dia_fin &lt; dia.
+        mensaje = &apos;Día fin no puede ser menor que día inicial&apos;(dfe).
+        RETURN.
+      ELSE.
+        l_dia_fin = dia_fin.
+      ENDIF.
+    ENDIF.
+
+    IF enduz &lt; beguz.
+      mensaje = &apos;Hora fin no puede ser menor que hora inicio&apos;(hfe).
+      RETURN.
+    ENDIF.
+
+    l_fecha = dia.
+    WHILE l_fecha &lt;= l_dia_fin.
+      CLEAR l_horas.
+      l_horas-dia = l_fecha.
+
+      l_hora = beguz.
+      CLEAR l_orden.
+      WHILE l_hora &lt;= enduz.
+        l_horas-beguz = l_hora.
+        l_hora = l_hora + minutos * 60.
+        l_horas-enduz = l_hora - 1.
+
+        l_orden = l_orden + 1.
+        l_horas-orden = l_orden.
+        APPEND l_horas TO intervalos.
+
+        IF l_hora = &apos;000000&apos; AND l_hora &lt; l_horas-beguz.
+          l_hora = &apos;240000&apos;.
+        ENDIF.
+
+        IF l_hora &gt;= enduz.
+          EXIT.
+        ENDIF.
+      ENDWHILE.
+      l_fecha = l_fecha + 1.
+    ENDWHILE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA" VERSION="1" LANGU="S" DESCRIPT="Devuelve la letra del nombre del día" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA" SCONAME="LETRA_DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR1"/>
+  <source>METHOD get_letra_numero_dia.
+    DATA l_wotnr TYPE p LENGTH 8 DECIMALS 0.
+
+    l_wotnr = get_numero_dia( fecha ).
+    CASE l_wotnr.
+      WHEN 1. letra_dia = &apos;L&apos;.
+      WHEN 2. letra_dia = &apos;M&apos;.
+      WHEN 3. letra_dia = &apos;X&apos;.
+      WHEN 4. letra_dia = &apos;J&apos;.
+      WHEN 5. letra_dia = &apos;V&apos;.
+      WHEN 6. letra_dia = &apos;S&apos;.
+      WHEN 7. letra_dia = &apos;D&apos;.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA3" VERSION="1" LANGU="S" DESCRIPT="Devuelve la letra del nombre del día" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA3" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_LETRA_NUMERO_DIA3" SCONAME="LETRA_DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR3"/>
+  <source>METHOD get_letra_numero_dia3.
+    DATA l_wotnr TYPE p LENGTH 8 DECIMALS 0.
+
+    l_wotnr = get_numero_dia( fecha ).
+    CASE l_wotnr.
+      WHEN 1. letra_dia = &apos;LUN&apos;.
+      WHEN 2. letra_dia = &apos;MAR&apos;.
+      WHEN 3. letra_dia = &apos;MIE&apos;.
+      WHEN 4. letra_dia = &apos;JUE&apos;.
+      WHEN 5. letra_dia = &apos;VIE&apos;.
+      WHEN 6. letra_dia = &apos;SAB&apos;.
+      WHEN 7. letra_dia = &apos;DOM&apos;.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_MESES" VERSION="1" LANGU="S" DESCRIPT="Recupar table con meses entre fechas" EXPOSURE="2" STATE="1" EDITORDER="59 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_MESES" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_MESES" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_MESES" SCONAME="I_MESES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_MESES"/>
+  <source>METHOD get_meses.
+    DATA: lv_current_date TYPE d,
+          ls_date_range   TYPE t_meses,
+          lv_month_end    TYPE d.
+
+    CLEAR i_meses.
+
+    &quot; Verificar rango de fechas válido
+    IF fini IS INITIAL OR ffin IS INITIAL OR fini &gt; ffin.
+      RETURN.
+    ENDIF.
+
+    &quot; Comenzar con la fecha inicial
+    lv_current_date = fini.
+
+    &quot; Procesar cada mes hasta alcanzar o superar la fecha final
+    WHILE lv_current_date &lt;= ffin.
+      &quot; Establecer fecha de inicio para este segmento
+      ls_date_range-begda = lv_current_date.
+
+      &quot; Calcular último día del mes actual
+      CALL FUNCTION &apos;RP_LAST_DAY_OF_MONTHS&apos;
+        EXPORTING
+          day_in            = lv_current_date
+        IMPORTING
+          last_day_of_month = lv_month_end.
+
+      &quot; Si el fin de mes supera la fecha final general, limitarlo
+      IF lv_month_end &gt; ffin.
+        lv_month_end = ffin.
+      ENDIF.
+
+      &quot; Establecer fecha final para este segmento
+      ls_date_range-endda = lv_month_end.
+
+      ls_date_range-perio = lv_current_date(6).
+      &quot; Agregar este rango de fechas a la tabla de resultados
+      APPEND ls_date_range TO i_meses.
+
+      &quot; Moverse al primer día del siguiente mes
+      lv_current_date = lv_month_end + 1.
+    ENDWHILE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del mes" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES" SCONAME="MES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T247-MNR"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES" SCONAME="IDIOMA" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Clave de idioma de entorno de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T247-LTX"/>
+  <source>METHOD get_nombre_mes.
+    CLEAR nombre.
+    SELECT SINGLE ltx FROM t247
+      INTO nombre
+    WHERE spras = idioma
+      AND mnr   = mes.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES_CORTO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre corto del mes" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES_CORTO" SCONAME="MES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T247-MNR"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES_CORTO" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_MES_CORTO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T247-LTX"/>
+  <source>METHOD get_nombre_mes_corto.
+    CLEAR nombre.
+    SELECT SINGLE ktx FROM t247
+      INTO nombre
+    WHERE spras = spras
+      AND mnr   = mes.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_NUMERO_DIA" VERSION="1" LANGU="S" DESCRIPT="Devuelve la letra del nombre del día" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_NUMERO_DIA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NOMBRE_NUMERO_DIA" SCONAME="DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_nombre_numero_dia.
+    DATA l_wotnr TYPE p LENGTH 8 DECIMALS 0.
+
+    l_wotnr = get_numero_dia( fecha ).
+    CASE l_wotnr.
+      WHEN 1. dia = &apos;LUNES&apos;.
+      WHEN 2. dia = &apos;MARTES&apos;.
+      WHEN 3. dia = &apos;MIERCOLES&apos;.
+      WHEN 4. dia = &apos;JUEVES&apos;.
+      WHEN 5. dia = &apos;VIERNES&apos;.
+      WHEN 6. dia = &apos;SABADO&apos;.
+      WHEN 7. dia = &apos;DOMINGO&apos;.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUMERO_DIA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el ordinar del día" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUMERO_DIA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUMERO_DIA" SCONAME="NUM_DIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NUMC1"/>
+  <source>METHOD get_numero_dia.
+    DATA l_wotnr TYPE p LENGTH 8 DECIMALS 0.
+
+    CALL FUNCTION &apos;DAY_IN_WEEK&apos;
+      EXPORTING
+        datum = fecha
+      IMPORTING
+        wotnr = l_wotnr.
+    num_dia = l_wotnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUM_DIAS_LABORALES" VERSION="1" LANGU="S" DESCRIPT="Devuelve dias laborables entre las dos fechas" EXPOSURE="2" STATE="1" EDITORDER="50 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUM_DIAS_LABORALES" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUM_DIAS_LABORALES" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUM_DIAS_LABORALES" SCONAME="FABKL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FABKL"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_NUM_DIAS_LABORALES" SCONAME="DIAS_LABORABLES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD get_num_dias_laborales.
+    DATA it_days TYPE TABLE OF rke_dat.
+
+    IF fini &gt; ffin.
+      RETURN.
+    ELSE.
+      CALL FUNCTION &apos;RKE_SELECT_FACTDAYS_FOR_PERIOD&apos;
+        EXPORTING
+          i_datab               = fini
+          i_datbi               = ffin
+          i_factid              = fabkl
+        TABLES
+          eth_dats              = it_days
+        EXCEPTIONS
+          date_conversion_error = 1
+          OTHERS                = 2.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ENDIF.
+
+      dias_laborables = lines( it_days ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_ANTERIOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el periodo anterior (AAAAMM) a la fecha dada" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_ANTERIOR" SCONAME="PER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPMON" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_ANTERIOR" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_ANTERIOR" SCONAME="PERIODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SPMON"/>
+  <source>METHOD get_periodo_anterior.
+    DATA l_fecha TYPE d.
+
+    IF NOT per IS INITIAL.
+      CONCATENATE per &apos;01&apos; INTO l_fecha.
+    ELSE.
+      l_fecha = fecha.
+    ENDIF.
+    l_fecha = suma_meses( meses = -1 fecha = l_fecha ).
+
+    periodo = l_fecha(6).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_SIGUIENTE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el periodo siguiente (AAAAMM) a la fecha dada" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_SIGUIENTE" SCONAME="PER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPMON" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_SIGUIENTE" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PERIODO_SIGUIENTE" SCONAME="PERIODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SPMON"/>
+  <source>METHOD get_periodo_siguiente.
+    DATA l_fecha TYPE d.
+
+    IF NOT per IS INITIAL.
+      CONCATENATE per &apos;01&apos; INTO l_fecha.
+    ELSE.
+      l_fecha = fecha.
+    ENDIF.
+    l_fecha = suma_meses( meses = 1 fecha = l_fecha ).
+
+    periodo = l_fecha(6).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_MES" VERSION="1" LANGU="S" DESCRIPT="Devuelve el primer día del mes" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_MES" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_MES" SCONAME="NUEVA_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD get_primer_dia_mes.
+    nueva_fecha = fecha.
+    nueva_fecha+6(2) = &apos;01&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_SEMANA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el primer día de una semana" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_SEMANA" SCONAME="SEMANA" VERSION="1" LANGU="S" DESCRIPT="Calendario de fábrica: semana" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-WEEK" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_SEMANA" SCONAME="FECHA_SEL" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_SEMANA" SCONAME="SUMA_SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_PRIMER_DIA_SEMANA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SCAL-DATE"/>
+  <source>METHOD get_primer_dia_semana.
+    DATA: l_week  TYPE scal-week,
+          l_fecha TYPE dats.
+
+    IF NOT semana IS INITIAL.
+      l_week = semana.
+    ELSE.
+      IF suma_semanas IS INITIAL.
+        l_fecha = fecha_sel.
+      ELSE.
+        l_fecha = fecha_sel + 7 * suma_semanas.
+      ENDIF.
+      l_week = get_semana( l_fecha ).
+    ENDIF.
+
+    CALL FUNCTION &apos;WEEK_GET_FIRST_DAY&apos; ##FM_SUBRC_OK
+      EXPORTING
+        week         = l_week
+      IMPORTING
+        date         = fecha
+      EXCEPTIONS
+        week_invalid = 1
+        OTHERS       = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_SEMANA" VERSION="1" LANGU="S" DESCRIPT="Devuelve semana a partir de fecha" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_SEMANA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_SEMANA" SCONAME="SEMANA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SCAL-WEEK"/>
+  <source>METHOD get_semana.
+    CALL FUNCTION &apos;DATE_GET_WEEK&apos; ##FM_SUBRC_OK
+      EXPORTING
+        date         = fecha
+      IMPORTING
+        week         = semana
+      EXCEPTIONS
+        date_invalid = 1
+        OTHERS       = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_TRIMESTRE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nº de trimestre" EXPOSURE="2" STATE="1" EDITORDER="55 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_TRIMESTRE" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_TRIMESTRE" SCONAME="TRIMESTRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR2"/>
+  <source>METHOD get_trimestre.
+    CASE fecha+4(2).
+      WHEN &apos;01&apos; OR &apos;02&apos; OR &apos;03&apos;. trimestre = &apos;T1&apos;.
+      WHEN &apos;04&apos; OR &apos;05&apos; OR &apos;06&apos;. trimestre = &apos;T2&apos;.
+      WHEN &apos;07&apos; OR &apos;08&apos; OR &apos;09&apos;. trimestre = &apos;T3&apos;.
+      WHEN &apos;10&apos; OR &apos;11&apos; OR &apos;12&apos;. trimestre = &apos;T4&apos;.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último día del mes" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES" SCONAME="NUEVA_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD get_ultimo_dia_mes.
+    CALL FUNCTION &apos;RP_LAST_DAY_OF_MONTHS&apos; ##FM_SUBRC_OK
+      EXPORTING
+        day_in            = fecha
+      IMPORTING
+        last_day_of_month = nueva_fecha
+      EXCEPTIONS
+        day_in_no_date    = 1
+        OTHERS            = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES_ANTERIOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último día del mes anterior" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES_ANTERIOR" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_MES_ANTERIOR" SCONAME="NUEVA_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD get_ultimo_dia_mes_anterior.
+    DATA l_fecha TYPE d.
+
+    CONCATENATE fecha(6) &apos;01&apos; INTO l_fecha.
+    nueva_fecha = l_fecha - 1.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_SEMANA" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último día de una semana" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_SEMANA" SCONAME="SEMANA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-WEEK"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="GET_ULTIMO_DIA_SEMANA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SCAL-DATE"/>
+  <source>METHOD get_ultimo_dia_semana.
+    fecha = get_primer_dia_semana( semana ).
+    fecha = fecha + 6.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Interseccion fechas" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="FINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="FFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="HINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="HFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="FINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="FFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="HINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="HFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="HAY_SOLAPAMIENTO_FECHAS" SCONAME="HAY_SOLAPAMIENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD hay_solapamiento_fechas.
+    DATA: l_ini1 TYPE c LENGTH 14,
+          l_ini2 TYPE c LENGTH 14,
+          l_fin1 TYPE c LENGTH 14,
+          l_fin2 TYPE c LENGTH 14.
+
+    CONCATENATE fini1 hini1 INTO l_ini1.
+    CONCATENATE fini2 hini2 INTO l_ini2.
+    CONCATENATE ffin1 hfin1 INTO l_fin1.
+    CONCATENATE ffin2 hfin2 INTO l_fin2.
+
+    CLEAR hay_solapamiento.
+    IF     l_ini1 &lt;= l_fin2
+       AND l_fin1 &gt;= l_ini2.
+
+      hay_solapamiento = &apos;X&apos;.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Interseccion fechas" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="FINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="FFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="HINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="HFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="FINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="FFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="HINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="HFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="RHINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="RHFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="RFINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="INTERSECCION_FECHAS" SCONAME="RFFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <source>METHOD interseccion_fechas.
+    CLEAR: rfini, rffin, rhini, rhfin.
+
+    IF hay_solapamiento_fechas( fini1 = fini1 ffin1 = ffin1
+                                fini2 = fini2 ffin2 = ffin2
+                                hini1 = hini1 hfin1 = hfin1
+                                hini2 = hini2 hfin2 = hfin2 ) &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    IF fini1 = fini2.
+      rfini = fini1.
+      IF hini1 &gt;= hini2.
+        rhini = hini1.
+      ELSE.
+        rhini = hini2.
+      ENDIF.
+    ELSEIF fini1 &lt; fini2.
+      rfini = fini2.
+      rhini = hini2.
+    ELSE.
+      rfini = fini1.
+      rhini = hini1.
+    ENDIF.
+
+    IF ffin1 = ffin2.
+      rffin = ffin1.
+      IF hfin1 &gt;= hfin2.
+        rhfin = hfin2.
+      ELSE.
+        rhfin = hfin1.
+      ENDIF.
+    ELSEIF ffin1 &lt; ffin2.
+      rffin = ffin1.
+      rhfin = hfin1.
+    ELSE.
+      rffin = ffin2.
+      rhfin = hfin2.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de días con sus atributos" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" SCONAME="FINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" SCONAME="FFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" SCONAME="FCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-FCALID" PARVALUE="&apos;ES&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" SCONAME="HCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-FCALID" PARVALUE="&apos;ES&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="LISTA_DIAS" SCONAME="I_DIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RMXTTY_MTP_DATE_ATTRIBUTES"/>
+  <source>METHOD lista_dias.
+    CLEAR i_dias.
+    CALL FUNCTION &apos;DAY_ATTRIBUTES_GET&apos; ##FM_SUBRC_OK
+      EXPORTING
+        factory_calendar           = fcal
+        holiday_calendar           = hcal
+        date_from                  = fini
+        date_to                    = ffin
+      TABLES
+        day_attributes             = i_dias
+      EXCEPTIONS
+        factory_calendar_not_found = 1
+        holiday_calendar_not_found = 2
+        date_has_invalid_format    = 3
+        date_inconsistency         = 4
+        OTHERS                     = 5.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Periodos restando fechas" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="FECHA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="FECHA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="OUTPUT_FORMAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR2" PARVALUE="&apos;05&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="ANYOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="P0347-SCRYY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="MESES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="P0347-SCRMM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PERIODOS_RESTA_FECHAS" SCONAME="DIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="P0347-SCRDD"/>
+  <source>METHOD periodos_resta_fechas.
+
+    CLEAR: anyos, meses, dias.
+    CALL FUNCTION &apos;HR_HK_DIFF_BT_2_DATES&apos; ##FM_SUBRC_OK
+      EXPORTING
+        date1                   = fecha1
+        date2                   = fecha2
+        output_format           = output_format
+      IMPORTING
+        years                   = anyos
+        months                  = meses
+        days                    = dias
+      EXCEPTIONS
+        invalid_dates_specified = 1
+        OTHERS                  = 2.
+    if sy-subrc ne 0.
+      CLEAR: anyos, meses, dias.
+    endif.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" VERSION="1" LANGU="S" DESCRIPT="Popup fecha" EXPOSURE="2" STATE="1" EDITORDER="49 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Fecha&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" SCONAME="LINEA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" SCONAME="LINEA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="POPUP_FECHA" SCONAME="FECHA_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <source>METHOD popup_fecha.
+    DATA l_linea1 TYPE c LENGTH 132.
+
+    IF linea1 IS INITIAL.
+      l_linea1 = titulo.
+    ELSE.
+      l_linea1 = linea1.
+    ENDIF.
+
+    CALL FUNCTION &apos;TR_POPUP_INPUT_DATE&apos;
+      EXPORTING
+        iv_title               = titulo
+        iv_description1        = l_linea1
+        iv_description2        = linea2
+        iv_date                = fecha
+      IMPORTING
+        ev_date                = fecha_salida
+      EXCEPTIONS
+        action_aborted_by_user = 1
+        value_not_changed      = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR fecha_salida.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="PRIMER_DIA_LAB_DESDE_FECHA" VERSION="1" LANGU="S" DESCRIPT="Primer día laboral desde una fecha dada" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PRIMER_DIA_LAB_DESDE_FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PRIMER_DIA_LAB_DESDE_FECHA" SCONAME="CALID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-FCALID" PARVALUE="&apos;ES&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PRIMER_DIA_LAB_DESDE_FECHA" SCONAME="CORRECT_OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-INDICATOR" PARVALUE="&apos;+&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="PRIMER_DIA_LAB_DESDE_FECHA" SCONAME="FECHA_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD primer_dia_lab_desde_fecha.
+*       Si la fecha dada es laborable devuelve esa fecha,
+*       sino devuelve el primer día laborable a partir de esa fecha
+
+    CLEAR fecha_salida.
+    CALL FUNCTION &apos;DATE_CONVERT_TO_FACTORYDATE&apos; ##FM_SUBRC_OK
+      EXPORTING
+        correct_option               = correct_option
+        date                         = fecha
+        factory_calendar_id          = calid
+      IMPORTING
+        date                         = fecha_salida
+      EXCEPTIONS
+        calendar_buffer_not_loadable = 1
+        correct_option_invalid       = 2
+        date_after_range             = 3
+        date_before_range            = 4
+        date_invalid                 = 5
+        factory_calendar_not_found   = 6
+        OTHERS                       = 7.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2FECHAS" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección a fechas desde / hasta" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2FECHAS" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2FECHAS" SCONAME="FECHA_DESDE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2FECHAS" SCONAME="FECHA_HASTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <source>METHOD rango2fechas.
+    DATA: l_fecha      TYPE tpms_r_date,
+          r_fechas_aux TYPE tpmy_r_date.
+
+    DESCRIBE TABLE r_fechas LINES sy-tfill.
+
+    IF sy-tfill = 0.
+      fecha_desde = &apos;00000000&apos;.
+      fecha_hasta = &apos;99991231&apos;.
+    ELSEIF sy-tfill = 1.
+      READ TABLE r_fechas INTO l_fecha INDEX 1.
+      fecha_desde = l_fecha-low.
+      IF l_fecha-high IS INITIAL.
+        IF l_fecha-option(1) = &apos;G&apos;.
+          fecha_hasta = &apos;99991231&apos;.
+        ELSE.
+          fecha_hasta = fecha_desde.
+        ENDIF.
+      ELSE.
+        fecha_hasta = l_fecha-high.
+      ENDIF.
+    ELSE.
+      r_fechas_aux = r_fechas.
+      SORT r_fechas_aux BY low.
+      READ TABLE r_fechas_aux INTO l_fecha INDEX 1.
+      fecha_desde = l_fecha-low.
+      DESCRIBE TABLE r_fechas LINES sy-tfill.
+      READ TABLE r_fechas_aux INTO l_fecha INDEX sy-tfill.
+      IF l_fecha-high IS INITIAL.
+        fecha_hasta = l_fecha-low.
+        IF l_fecha-option(1) = &apos;G&apos;.
+          fecha_hasta = &apos;99991231&apos;.
+        ELSE.
+          fecha_hasta = l_fecha-low.
+        ENDIF.
+      ELSE.
+        fecha_hasta = l_fecha-high.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2HORAS" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección a horas desde / hasta" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2HORAS" SCONAME="R_HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EMMA_TIME_RANGE_TAB"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2HORAS" SCONAME="HORA_DESDE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGUZ"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2HORAS" SCONAME="HORA_HASTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDUZ"/>
+  <source>METHOD rango2horas.
+    DATA: l_hora      TYPE emma_time_range,
+          r_horas_aux TYPE emma_time_range_tab.
+
+    DESCRIBE TABLE r_horas LINES sy-tfill.
+
+    IF sy-tfill = 0.
+      hora_desde = &apos;000000&apos;.
+      hora_hasta = &apos;235959&apos;.
+    ELSEIF sy-tfill = 1.
+      READ TABLE r_horas INTO l_hora INDEX 1.
+      hora_desde = l_hora-low.
+      IF l_hora-high IS INITIAL.
+        hora_hasta = hora_desde.
+      ELSE.
+        hora_hasta = l_hora-high.
+      ENDIF.
+    ELSE.
+      r_horas_aux = r_horas.
+      SORT r_horas_aux BY low.
+      READ TABLE r_horas_aux INTO l_hora INDEX 1.
+      hora_desde = l_hora-low.
+      DESCRIBE TABLE r_horas LINES sy-tfill.
+      READ TABLE r_horas_aux INTO l_hora INDEX sy-tfill.
+      IF l_hora-high IS INITIAL.
+        hora_hasta = l_hora-low.
+      ELSE.
+        hora_hasta = l_hora-high.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2STRING" VERSION="1" LANGU="S" DESCRIPT="Formatea rango de fechas a string" EXPOSURE="2" STATE="1" EDITORDER="47 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2STRING" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD rango2string.
+    DATA: l_f1     TYPE c LENGTH 10,
+          l_string TYPE string,
+          l_f2     TYPE c LENGTH 10.
+
+    FIELD-SYMBOLS &lt;fechas&gt; TYPE tpms_r_date.
+
+    CLEAR string.
+    LOOP AT r_fechas ASSIGNING &lt;fechas&gt;.
+      IF NOT &lt;fechas&gt;-low IS INITIAL.
+        WRITE &lt;fechas&gt;-low TO l_f1.
+        IF &lt;fechas&gt;-high IS INITIAL OR &lt;fechas&gt;-low = &lt;fechas&gt;-high.
+          l_string = l_f1.
+        ELSE.
+          WRITE &lt;fechas&gt;-high TO l_f2.
+          CONCATENATE l_f1 &apos;a&apos; l_f2 INTO l_string SEPARATED BY space.
+        ENDIF.
+      ELSEIF NOT &lt;fechas&gt;-high IS INITIAL.
+        WRITE &lt;fechas&gt;-high TO l_f1.
+        l_string = l_f1.
+      ENDIF.
+
+      IF &lt;fechas&gt;-sign = &apos;E&apos; OR &lt;fechas&gt;-option = &apos;NE&apos;.
+        CONCATENATE &apos;EXCLUIR&apos; l_string INTO l_string.
+      ENDIF.
+
+      IF string IS INITIAL.
+        string = l_string.
+      ELSE.
+        CONCATENATE string l_string INTO string SEPARATED BY &apos;,&apos;.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección a tabla semanas" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" SCONAME="MAX_SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="99"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" SCONAME="FECHA_INICIO_SI_VACIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" SCONAME="I_SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ZAP_ALV_COLUMNAS3_T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGO2TABLA_SEMANAS" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD rango2tabla_semanas.
+    DATA: l_begda  TYPE begda,
+          l_endda  TYPE endda,
+          l_fecha  TYPE d,
+          l_cont   TYPE n LENGTH 3,
+          l_semana TYPE zap_alv_columnas3,
+          l_week   TYPE scal-week.
+
+    rango2fechas( EXPORTING r_fechas = r_fechas
+                  IMPORTING fecha_desde = l_begda
+                            fecha_hasta = l_endda ).
+
+    IF l_begda IS INITIAL.
+      l_begda = fecha_inicio_si_vacia.
+    ENDIF.
+
+    l_fecha = l_begda + 1 - get_numero_dia( l_begda ).
+
+    WHILE l_fecha &lt;= l_endda.
+      IF l_cont &gt;= max_semanas.
+        l_cont = max_semanas.
+        CONCATENATE &apos;Se utilizará un máximo de&apos; l_cont &apos;semanas&apos; INTO mensaje SEPARATED BY space.
+        EXIT.
+      ENDIF.
+      l_cont = l_cont + 1.
+      CLEAR l_semana.
+      l_semana-colum = l_cont.
+      l_week = get_semana( l_fecha ).
+      l_semana-aux1  = l_week.
+      l_semana-begda = l_fecha.
+      l_semana-endda = l_semana-begda + 6.
+      APPEND l_semana TO i_semanas.
+      l_fecha = l_fecha + 7.
+    ENDWHILE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOPERIO" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección de fechas a periodos" EXPOSURE="2" STATE="1" EDITORDER="53 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOPERIO" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOPERIO" SCONAME="R_PERIODOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_RANGO_PERIODOS"/>
+  <source>METHOD rangofechas_2_rangoperio.
+    DATA: l_fecha   TYPE tpms_r_date,
+          l_periodo TYPE spmonr.
+
+    CLEAR r_periodos.
+    DESCRIBE TABLE r_fechas LINES sy-tfill.
+
+    IF sy-tfill &lt;= 0.
+      RETURN.
+    ENDIF.
+
+    LOOP AT r_fechas INTO l_fecha.
+      l_periodo-option = l_fecha-option.
+      l_periodo-sign   = l_fecha-sign.
+      l_periodo-low    = l_fecha-low(6).
+      IF NOT l_fecha-high IS INITIAL.
+        l_periodo-high = l_fecha-high(6).
+      ENDIF.
+      APPEND l_periodo TO r_periodos.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOSEM" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección de fechas a semanas" EXPOSURE="2" STATE="1" EDITORDER="60 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOSEM" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOFECHAS_2_RANGOSEM" SCONAME="R_SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSARCH_RT_CALWEEK"/>
+  <source>METHOD rangofechas_2_rangosem.
+    DATA: l_fecha TYPE tpms_r_date,
+          l_week  TYPE rsarch_rs_calweek.
+
+    CLEAR r_semanas.
+    IF r_fechas IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    LOOP AT r_fechas INTO l_fecha.
+      l_week-option = &apos;BT&apos;.
+      l_week-sign   = l_fecha-sign.
+      l_week-low    = get_semana( l_fecha-low ).
+      IF l_fecha-high IS INITIAL.
+        l_week-high = l_week-low.
+      ELSE.
+        l_week-high = get_semana( l_fecha-high ).
+      ENDIF.
+      APPEND l_week TO r_semanas.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_RANGOFECHAS" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección de periodos a fechas" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_RANGOFECHAS" SCONAME="R_PERIODOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_RANGO_PERIODOS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_RANGOFECHAS" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <source>METHOD rangoperio_2_rangofechas.
+    DATA: l_periodo TYPE spmonr,
+          l_fecha   TYPE tpms_r_date.
+
+    CLEAR r_fechas.
+    DESCRIBE TABLE r_periodos LINES sy-tfill.
+
+    IF sy-tfill &lt;= 0.
+      RETURN.
+    ENDIF.
+
+    LOOP AT r_periodos INTO l_periodo.
+      l_fecha-option = &apos;BT&apos;.
+      l_fecha-sign   = l_periodo-sign.
+      CONCATENATE l_periodo-low &apos;01&apos; INTO l_fecha-low.
+      IF l_periodo-high IS INITIAL.
+        l_fecha-high = get_ultimo_dia_mes( l_fecha-low ).
+      ELSE.
+        CONCATENATE l_periodo-high &apos;01&apos; INTO l_fecha-high.
+        l_fecha-high = get_ultimo_dia_mes( l_fecha-high ).
+      ENDIF.
+      APPEND l_fecha TO r_fechas.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_TABLAPERIO" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección a tabla interna con periodos" EXPOSURE="2" STATE="1" EDITORDER="42 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_TABLAPERIO" SCONAME="R_PERIODOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZT_RANGO_PERIODOS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOPERIO_2_TABLAPERIO" SCONAME="I_PERIODOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZSPMON_T"/>
+  <source>METHOD rangoperio_2_tablaperio.
+    DATA: l_periodo TYPE spmonr,
+          l_fecha   TYPE tpms_r_date.
+
+    CLEAR i_periodos.
+    DESCRIBE TABLE r_periodos LINES sy-tfill.
+
+    IF sy-tfill &lt;= 0.
+      RETURN.
+    ENDIF.
+
+    LOOP AT r_periodos INTO l_periodo.
+      IF l_periodo-option = &apos;EQ&apos;.
+        APPEND l_periodo-low TO i_periodos.
+      ELSE.
+        CONCATENATE l_periodo-low &apos;01&apos; INTO l_fecha-low.
+        IF l_periodo-high IS INITIAL.
+          l_fecha-high = get_ultimo_dia_mes( l_fecha-low ).
+        ELSE.
+          CONCATENATE l_periodo-high &apos;01&apos; INTO l_fecha-high.
+          l_fecha-high = get_ultimo_dia_mes( l_fecha-high ).
+        ENDIF.
+        WHILE l_fecha-low(6) &lt;= l_fecha-high(6).
+          APPEND l_fecha-low(6) TO i_periodos.
+          l_fecha-low = suma_meses( fecha = l_fecha-low meses = 1 ).
+        ENDWHILE.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOSEM_2_RANGOFECHAS" VERSION="1" LANGU="S" DESCRIPT="Convierte rango de selección de semanas a fechas" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOSEM_2_RANGOFECHAS" SCONAME="R_SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSARCH_RT_CALWEEK"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RANGOSEM_2_RANGOFECHAS" SCONAME="R_FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TPMY_R_DATE"/>
+  <source>METHOD rangosem_2_rangofechas.
+    DATA: l_week  TYPE rsarch_rs_calweek,
+          l_fecha TYPE tpms_r_date.
+
+    CLEAR r_fechas.
+    DESCRIBE TABLE r_semanas LINES sy-tfill.
+
+    IF sy-tfill &lt;= 0.
+      RETURN.
+    ENDIF.
+
+    LOOP AT r_semanas INTO l_week.
+      l_fecha-option = &apos;BT&apos;.
+      l_fecha-sign   = l_week-sign.
+      l_fecha-low    = get_primer_dia_semana( l_week-low ).
+      IF l_week-high IS INITIAL.
+        l_fecha-high = get_ultimo_dia_semana( l_week-low ).
+      ELSE.
+        IF l_week-high+4(2) &gt; &apos;53&apos;.
+          l_fecha-high = |{ l_week-high(4) }1231|.
+        ELSE.
+          l_fecha-high = get_ultimo_dia_semana( l_week-high ).
+          IF l_fecha-high(3) = &apos;000&apos;.
+            l_fecha-high = |{ l_week-high(4) }1231|.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+      APPEND l_fecha TO r_fechas.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Resta fechas" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="FINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="FFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="HINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="HFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="FINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="FFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="HINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="HFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="RHINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="RHFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="RFINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="RESTA_FECHAS" SCONAME="RFFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <source>METHOD resta_fechas.
+    DATA: l_ini1 TYPE c LENGTH 14,
+          l_ini2 TYPE c LENGTH 14,
+          l_fin1 TYPE c LENGTH 14,
+          l_fin2 TYPE c LENGTH 14.
+
+    CONCATENATE fini1 hini1 INTO l_ini1.
+    CONCATENATE fini2 hini2 INTO l_ini2.
+    CONCATENATE ffin1 hfin1 INTO l_fin1.
+    CONCATENATE ffin2 hfin2 INTO l_fin2.
+
+    rfini = fini1. rffin = ffin1.
+    rhini = hini1. rhfin = hfin1.
+
+    IF     l_ini1 &lt;= l_fin2
+       AND l_fin1 &gt;= l_ini2.
+
+      IF l_ini1 &lt;= l_fin2.
+        rfini = fini1.
+        rhini = hini1.
+      ELSE.
+        rfini = ffin2.
+        rhini = hfin2.
+      ENDIF.
+
+      IF l_fin1 &gt;= l_ini2.
+        rffin = ffin2.
+        rhfin = hfin2.
+      ELSE.
+        rffin = fini2.
+        rhfin = hini2.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2FECHA" VERSION="1" LANGU="S" DESCRIPT="Convierte a formato interno" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2FECHA" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2FECHA" SCONAME="CORREGIR_ERRORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <source>METHOD string2fecha.
+    DATA: l_cadena TYPE c LENGTH 20,
+          l_long   TYPE i,
+          l_aux1   TYPE c LENGTH 4,
+          l_aux2   TYPE c LENGTH 4,
+          l_aux3   TYPE c LENGTH 4,
+          l_dia    TYPE c LENGTH 2,
+          l_aux_a  TYPE c LENGTH 10,
+          l_aux_b  TYPE c LENGTH 10,
+          l_aux_c  TYPE c LENGTH 10,
+          l_mes    TYPE c LENGTH 20,
+          l_mesn   TYPE c LENGTH 2.
+
+    l_cadena = cadena.
+    DO 14 TIMES.
+      IF l_cadena(1) = &apos;&apos;.
+        l_cadena = l_cadena+1.
+      ELSE.
+        EXIT.
+      ENDIF.
+    ENDDO.
+
+    l_cadena = to_upper( l_cadena ).
+    l_long = strlen( l_cadena ).
+
+    IF l_cadena CS ` `.
+      SPLIT l_cadena AT ` ` INTO l_aux1 l_aux2 l_aux3.
+      l_aux2 = to_upper( l_aux2 ).
+      IF strlen( l_aux1 ) = 1.
+        l_dia = l_aux1.
+        __poner_ceros l_dia.
+        l_aux1 = l_dia.
+      ENDIF.
+    ENDIF.
+
+    IF l_cadena CS &apos;/&apos;.
+      IF corregir_errores = &apos;X&apos;.
+        SPLIT l_cadena AT &apos;/&apos; INTO l_aux_a l_aux_b l_aux_c.
+* Sólo una barra.
+        IF l_aux_c IS INITIAL.
+          IF l_cadena CS &apos;.&apos;.
+            REPLACE &apos;.&apos; WITH &apos;/&apos; INTO l_cadena.
+            SPLIT l_cadena AT &apos;/&apos; INTO l_aux_a l_aux_b l_aux_c.
+          ENDIF.
+        ENDIF.
+        IF l_aux_c IS INITIAL.
+          IF strlen( l_aux_a ) = 5.
+            l_cadena+2(1) = &apos;/&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      SPLIT l_cadena AT &apos;/&apos; INTO fecha+6(2) fecha+4(2) fecha(4).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+6(2) ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+4(2) ).
+      IF strlen( condense( fecha(4) ) ) = 2.
+        fecha(4) = |20{ condense( fecha(4) ) }|.
+      ENDIF.
+
+    ELSEIF l_cadena CS &apos;-&apos;.
+      SPLIT l_cadena AT &apos;-&apos; INTO l_aux1 l_aux2 l_aux3.
+      IF strlen( l_aux1 ) = 2 AND strlen( l_aux2 ) = 3.
+        fecha(4) = |20{ l_aux3 }|.
+        fecha+6(2) = l_aux1.
+        CASE l_aux2.
+          WHEN &apos;ENE&apos; OR &apos;JAN&apos;. fecha+4(2) = &apos;01&apos;.
+          WHEN &apos;FEB&apos;. fecha+4(2) = &apos;02&apos;.
+          WHEN &apos;MAR&apos;. fecha+4(2) = &apos;03&apos;.
+          WHEN &apos;ABR&apos; OR &apos;APR&apos;. fecha+4(2) = &apos;04&apos;.
+          WHEN &apos;MAY&apos;. fecha+4(2) = &apos;05&apos;.
+          WHEN &apos;JUN&apos;. fecha+4(2) = &apos;06&apos;.
+          WHEN &apos;JUL&apos;. fecha+4(2) = &apos;07&apos;.
+          WHEN &apos;AGO&apos; OR &apos;AUG&apos;. fecha+4(2) = &apos;08&apos;.
+          WHEN &apos;SEP&apos;. fecha+4(2) = &apos;09&apos;.
+          WHEN &apos;OCT&apos;. fecha+4(2) = &apos;10&apos;.
+          WHEN &apos;NOV&apos;. fecha+4(2) = &apos;11&apos;.
+          WHEN &apos;DIC&apos; OR &apos;DEC&apos;. fecha+4(2) = &apos;12&apos;.
+        ENDCASE.
+      ELSE.
+        l_long = strlen( l_aux1 ).
+        IF l_long = 4.
+          fecha(4) = l_aux1.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux3.
+        ELSEIF strlen( l_aux3 ) = 4.
+          fecha(4) = l_aux3.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux1.
+        ELSEIF strlen( l_aux3 ) = 2 AND strlen( l_aux1 ) = 2.
+          fecha(4) = |20{ l_aux3 }|.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux1.
+        ENDIF.
+      ENDIF.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+6(2) ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+4(2) ).
+    ELSEIF    l_cadena(3) = &apos;LUN&apos; OR l_cadena(3) = &apos;MAR&apos; OR l_cadena(3) = &apos;MIÉ&apos; OR l_cadena(4) = &apos;JUE&apos;
+           OR l_cadena(3) = &apos;VIE&apos; OR l_cadena(3) = &apos;SÁB&apos; OR l_cadena(3) = &apos;DOM&apos;.
+      l_cadena = l_cadena+4.
+      SPLIT l_cadena AT &apos; &apos; INTO l_dia l_mes.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_dia ).
+      SELECT mnr FROM t247
+        INTO l_mesn
+        UP TO 1 ROWS
+      WHERE spras = sy-langu
+        AND ktx   = l_mes
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        CONCATENATE sy-datum(4) l_mesn l_dia INTO fecha.
+      ENDIF.
+    ELSEIF    l_aux2 = &apos;JAN&apos; OR l_aux2 = &apos;FEB&apos; OR l_aux2 = &apos;MAR&apos; OR l_aux2 = &apos;APR&apos;
+           OR l_aux2 = &apos;MAY&apos; OR l_aux2 = &apos;JUN&apos; OR l_aux2 = &apos;JUL&apos; OR l_aux2 = &apos;AUG&apos;
+           OR l_aux2 = &apos;SEP&apos; OR l_aux2 = &apos;OCT&apos; OR l_aux2 = &apos;NOV&apos; OR l_aux2 = &apos;DEC&apos;.
+      IF strlen( l_aux1 ) = 2 AND strlen( l_aux2 ) = 3.
+        fecha(4) = l_aux3.
+        fecha+6(2) = l_aux1.
+        CASE l_aux2.
+          WHEN &apos;JAN&apos;. fecha+4(2) = &apos;01&apos;.
+          WHEN &apos;FEB&apos;. fecha+4(2) = &apos;02&apos;.
+          WHEN &apos;MAR&apos;. fecha+4(2) = &apos;03&apos;.
+          WHEN &apos;APR&apos;. fecha+4(2) = &apos;04&apos;.
+          WHEN &apos;MAY&apos;. fecha+4(2) = &apos;05&apos;.
+          WHEN &apos;JUN&apos;. fecha+4(2) = &apos;06&apos;.
+          WHEN &apos;JUL&apos;. fecha+4(2) = &apos;07&apos;.
+          WHEN &apos;AUG&apos;. fecha+4(2) = &apos;08&apos;.
+          WHEN &apos;SEP&apos;. fecha+4(2) = &apos;09&apos;.
+          WHEN &apos;OCT&apos;. fecha+4(2) = &apos;10&apos;.
+          WHEN &apos;NOV&apos;. fecha+4(2) = &apos;11&apos;.
+          WHEN &apos;DEC&apos;. fecha+4(2) = &apos;12&apos;.
+        ENDCASE.
+      ELSE.
+        l_long = strlen( l_aux1 ).
+        IF l_long = 4.
+          fecha(4) = l_aux1.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux3.
+        ELSEIF strlen( l_aux3 ) = 4.
+          fecha(4) = l_aux3.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux1.
+        ELSEIF strlen( l_aux3 ) = 2 AND strlen( l_aux1 ) = 2.
+          fecha(4) = |20{ l_aux3 }|.
+          fecha+4(2) = l_aux2.
+          fecha+6(2) = l_aux1.
+        ENDIF.
+      ENDIF.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+6(2) ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = fecha+4(2) ).
+    ELSE.
+      CALL FUNCTION &apos;CONVERT_DATE_TO_INTERNAL&apos;
+        EXPORTING
+          date_external            = l_cadena
+          accept_initial_date      = &apos;X&apos;
+        IMPORTING
+          date_internal            = fecha
+        EXCEPTIONS
+          date_external_is_invalid = 1
+          OTHERS                   = 2.
+      IF sy-subrc &lt;&gt; 0.
+        sy-tfill = strlen( l_cadena ).
+        IF sy-tfill = 8.
+          IF l_cadena(8) CO &apos;0123456789&apos;.
+            fecha = l_cadena.
+          ELSEIF l_cadena+6(2) CO &apos;0123456789&apos; AND l_cadena+3(2) CO &apos;0123456789&apos; AND l_cadena(2) CO &apos;0123456789&apos;.
+            IF l_cadena+2(1) = &apos;-&apos; AND l_cadena+5(1) = &apos;-&apos;.
+              CONCATENATE l_cadena+6(2) l_cadena+3(2) &apos;20&apos; l_cadena(2) INTO fecha.
+            ELSEIF l_cadena+2(1) = &apos; &apos; AND l_cadena+5(1) = &apos; &apos;.
+              CONCATENATE l_cadena(2) l_cadena+3(2) &apos;20&apos; l_cadena+6(2) INTO fecha.
+            ENDIF.
+          ENDIF.
+        ELSEIF sy-tfill = 10.
+          IF l_cadena+2(1) = &apos;-&apos; AND l_cadena+5(1) = &apos;-&apos;.
+            CONCATENATE l_cadena+6(4) l_cadena+3(2) l_cadena(2) INTO fecha.
+          ENDIF.
+        ENDIF.
+        IF NOT fecha IS INITIAL.
+          IF es_valida( fecha ) = &apos;&apos;.
+            CLEAR fecha.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF fecha IS INITIAL.
+      IF cadena CO &apos;0123456789&apos;.
+        l_long = strlen( cadena ).
+        TRY.
+            IF cadena = 0.
+              fecha = &apos;00000000&apos;.
+            ELSEIF cadena &lt;= 2958465.
+              fecha = &apos;19000101&apos;.
+              fecha = fecha + cadena - 2.
+            ENDIF.
+          CATCH cx_root. &quot;#EC *
+        ENDTRY.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2HORA" VERSION="1" LANGU="S" DESCRIPT="Convierte string a hora" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2HORA" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="STRING2HORA" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <source>METHOD string2hora.
+    DATA: l_hh TYPE c LENGTH 10,
+          l_mm TYPE c LENGTH 10,
+          l_ss TYPE c LENGTH 10,
+          l_m  TYPE n LENGTH 2,
+          l_s  TYPE n LENGTH 2,
+          l_h  TYPE n LENGTH 2.
+
+    IF string CS &apos;:&apos;.
+      SPLIT string AT &apos;:&apos; INTO l_hh l_mm.
+      IF l_mm CS &apos;:&apos;.
+        SPLIT l_mm AT &apos;:&apos; INTO l_mm l_ss.
+        l_m = l_mm(2).
+        l_s = l_ss(2).
+      ELSE.
+        l_m = l_mm(2).
+        l_s = &apos;00&apos;.
+      ENDIF.
+      l_h = l_hh(2).
+
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_h ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_m ).
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_s ).
+      CONCATENATE l_h l_m l_s INTO hora.
+    ELSEIF string CS &apos;,&apos;.
+      l_hh = string.
+      REPLACE &apos;,&apos; WITH &apos;.&apos; INTO l_hh.
+      hora = l_hh * 24 * 3600.
+    ELSE.
+      IF strlen( string ) = 4.
+        CONCATENATE string &apos;00&apos; INTO hora.
+      ELSEIF strlen( string ) = 2.
+        CONCATENATE string &apos;0000&apos; INTO hora.
+      ELSEIF strlen( string ) = 1.
+        CONCATENATE &apos;0&apos; string &apos;0000&apos; INTO hora.
+      ELSE.
+        hora = string.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_DIAS_LABORABLES" VERSION="1" LANGU="S" DESCRIPT="Suma dias laborables" EXPOSURE="2" STATE="1" EDITORDER="51 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_DIAS_LABORABLES" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_DIAS_LABORABLES" SCONAME="DIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_DIAS_LABORABLES" SCONAME="CALID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TFACD-IDENT"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_DIAS_LABORABLES" SCONAME="FECHA_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <source>METHOD suma_dias_laborables.
+    IF dias IS INITIAL.
+      fecha_salida = fecha.
+    ELSE.
+      CALL FUNCTION &apos;BKK_ADD_WORKINGDAY&apos;
+        EXPORTING
+          i_date      = fecha
+          i_days      = dias
+          i_calendar1 = calid
+        IMPORTING
+          e_date      = fecha_salida.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" VERSION="1" LANGU="S" DESCRIPT="Suma X horas a una fecha/hora inicio" EXPOSURE="2" STATE="1" EDITORDER="54 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" SCONAME="FECHA_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" SCONAME="HORA_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" SCONAME="HORAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" SCONAME="FECHA_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_HORAS" SCONAME="HORA_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <source>METHOD suma_horas.
+    DATA l_horas TYPE p2012-anzhl.
+
+    l_horas = horas.
+    CALL FUNCTION &apos;CATT_ADD_TO_TIME&apos;
+      EXPORTING
+        idate = fecha_ini
+        itime = hora_ini
+        stdaz = l_horas
+      IMPORTING
+        edate = fecha_fin
+        etime = hora_fin.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_MESES" VERSION="1" LANGU="S" DESCRIPT="Suma (o resta) X meses a una fecha" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_MESES" SCONAME="MESES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_MESES" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_MESES" SCONAME="NUEVA_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD suma_meses.
+    CALL FUNCTION &apos;MONTH_PLUS_DETERMINE&apos;
+      EXPORTING
+        months  = meses
+        olddate = fecha
+      IMPORTING
+        newdate = nueva_fecha.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_SEMANAS" VERSION="1" LANGU="S" DESCRIPT="Suma X semanas a una semana" EXPOSURE="2" STATE="1" EDITORDER="46 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_SEMANAS" SCONAME="SEMANA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SCAL-WEEK"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_SEMANAS" SCONAME="SEMANAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_SEMANAS" SCONAME="DIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="SUMA_SEMANAS" SCONAME="SEMANA_FIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SCAL-WEEK"/>
+  <source>METHOD suma_semanas.
+    DATA: l_fecha TYPE d,
+          l_dias  TYPE i.
+
+    l_fecha = get_primer_dia_semana( semana ).
+    l_dias = dias + semanas * 7.
+    l_fecha = l_fecha + l_dias.
+    semana_fin = get_semana( l_fecha ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="TIMESTAMP_2_FECHAHORA" VERSION="1" LANGU="S" DESCRIPT="Devuelve fecha en formato timestamp a fecha/hora sap" EXPOSURE="2" STATE="1" EDITORDER="41 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="TIMESTAMP_2_FECHAHORA" SCONAME="TZONE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-ZONLO" PARVALUE="SY-ZONLO"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="TIMESTAMP_2_FECHAHORA" SCONAME="TIMESTAMP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="TIMESTAMP_2_FECHAHORA" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="TIMESTAMP_2_FECHAHORA" SCONAME="HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT"/>
+  <source>METHOD timestamp_2_fechahora.
+  DATA:
+    l_tzone     TYPE sy-zonlo,
+    l_timestamp TYPE tzntstmps,
+    l_char(20).
+
+CONSTANTS:
+* high_value - 1 day
+  gc_timestamp_high_minus TYPE tzntstmps VALUE &apos;99991201000000&apos;,
+* 2. January of the year 1.A lower value result in an error
+  gc_timestamp_low_plus   TYPE tzntstmps VALUE &apos;00010102000000&apos;,
+* initial value date
+  gc_date_low             LIKE sy-datum VALUE &apos;00000000&apos;,
+  gc_date_low_plus        LIKE sy-datum VALUE &apos;00010102&apos;,
+  gc_date_high_minus      LIKE sy-datum VALUE &apos;99991201&apos;,
+  gc_time_low             LIKE sy-uzeit VALUE &apos;000000&apos;.
+
+*    DATA l_timestamp TYPE tzonref-tstamps.
+
+    l_timestamp = timestamp.
+
+*    CALL FUNCTION &apos;IB_CONVERT_FROM_TIMESTAMP&apos;
+*      EXPORTING
+*        i_timestamp = l_timestamp
+*        i_tzone     = tzone
+*      IMPORTING
+*        e_datlo     = fecha
+*        e_timlo     = hora.
+
+
+*  l_timestamp = i_timestamp.
+
+  l_tzone = tzone.
+  IF l_tzone = space.
+    l_tzone = &apos;CET   &apos;.
+  ENDIF.
+* the whole day first day of time calculation is set to 0
+  IF l_timestamp &lt; gc_timestamp_low_plus.
+    l_timestamp = ibxx_utc_low.
+  ENDIF.
+* the whole day at the end of the year 9999 is set to the
+* end of SAP time calculation.
+  IF l_timestamp &gt; gc_timestamp_high_minus.
+    l_timestamp = ibxx_utc_high.
+  ENDIF.
+
+  CASE l_timestamp.
+    WHEN ibxx_utc_low.
+      fecha = gc_date_low.           &quot;&apos;00000000&apos;.
+      hora = gc_time_low.                                &quot;&apos;000000&apos;.
+    WHEN ibxx_utc_high.
+      fecha = ibxx_date_high.        &quot;&apos;99991231&apos;.
+      hora = ibxx_time_high.                             &quot;&apos;235959&apos;.
+    WHEN OTHERS.                       &quot;usual time
+      CONVERT TIME STAMP l_timestamp TIME ZONE l_tzone
+       INTO DATE fecha TIME hora.
+
+      IF NOT sy-subrc IS INITIAL.
+        l_char = l_timestamp.
+        fecha = l_char(8).
+        hora  = l_char+8(6).
+      ENDIF.
+  ENDCASE.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Unión fechas" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="FINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="FFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="HINI1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="HFIN1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="FINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="FFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="HINI2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="HFIN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="T" PARVALUE="&apos;240000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="RHINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="RHFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="T"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="RFINI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <parameter CLSNAME="ZCL_AP_FECHAS" CMPNAME="UNION_FECHAS" SCONAME="RFFIN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="D"/>
+  <source>METHOD union_fechas.
+    CLEAR: rfini, rffin, rhini, rhfin.
+
+    IF fini1 = fini2.
+      rfini = fini1.
+      IF hini1 &lt;= hini2.
+        rhini = hini1.
+      ELSE.
+        rhini = hini2.
+      ENDIF.
+    ELSEIF fini1 &gt; fini2.
+      rfini = fini2.
+      rhini = hini2.
+    ELSE.
+      rfini = fini1.
+      rhini = hini1.
+    ENDIF.
+
+    IF ffin1 = ffin2.
+      rffin = ffin1.
+      IF hfin1 &lt;= hfin2.
+        rhfin = hfin2.
+      ELSE.
+        rhfin = hfin1.
+      ENDIF.
+    ELSEIF ffin1 &gt; ffin2.
+      rffin = ffin1.
+      rhfin = hfin1.
+    ELSE.
+      rffin = ffin2.
+      rhfin = hfin2.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

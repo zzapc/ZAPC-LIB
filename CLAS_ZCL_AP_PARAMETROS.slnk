@@ -1,0 +1,1333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_PARAMETROS" VERSION="1" LANGU="S" DESCRIPT="Parámetros" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+TYPES: BEGIN OF t_param_rangos,
+         campo  TYPE rstt_t_range_string,
+         valor  TYPE rstt_t_range_string,
+         valor2 TYPE rstt_t_range_string,
+         atributo1 TYPE zparametros-atributo1,
+         atributo2 TYPE zparametros-atributo2,
+         atributo3 TYPE zparametros-atributo3,
+       END OF t_param_rangos,
+       tt_param_rangos type table of t_param_rangos.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_PARAMETROS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <typeClasDef CLSNAME="ZCL_AP_PARAMETROS" TYPEGROUP="ZCL_C" VERSION="1" TPUTYPE="1" IMPLICIT="X"/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZCAMPO_PARAM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZCLAVE_PARAM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="I_PAR" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZPARAMETROS" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZT_PARAMETROS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="I_PAR_RANGOS" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_PARAM_RANGOS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" DESCRIPT="&apos;&apos;" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="PAR" VERSION="1" LANGU="S" DESCRIPT="Tabla Parámetros Siliken" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZPARAMETROS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="RANGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ZTCLAVE_PARAM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTCLAVE_PARAM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ADD_DESTINATARIOS" VERSION="1" LANGU="S" DESCRIPT="Añade destinatarios de mail" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ADD_DESTINATARIOS" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EMAIL&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ADD_DESTINATARIOS" SCONAME="O_MAIL" VERSION="1" LANGU="S" DESCRIPT="Envio mail" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ENVIO_MAIL"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ADD_DESTINATARIOS" SCONAME="FORZAR_MAIL_EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="ADD_DESTINATARIOS" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD add_destinatarios.
+    error = &apos;X&apos;.
+    LOOP AT i_par INTO par WHERE campo = campo.
+      IF par-atributo1 IS INITIAL.
+        o_mail-&gt;add_destinatario( destinatario = par-valor forzar_mail_externo = forzar_mail_externo ).
+        CLEAR error.
+      ELSEIF NOT par-atributo1 IS INITIAL.
+        o_mail-&gt;add_destinatario( destinatario = par-atributo1 forzar_mail_externo = forzar_mail_externo ).
+        CLEAR error.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CLAVES_SIN_CEROS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CLAVES_SIN_CEROS" SCONAME="PAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CLAVES_SIN_CEROS" SCONAME="PAR_SC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZPARAMETROS"/>
+  <source>METHOD claves_sin_ceros.
+    par_sc = par.
+    __quitar_ceros: par_sc-campo, par_sc-valor, par_sc-valor2, par_sc-valor3, par_sc-valor4.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" SCONAME="RANGOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="CONSTRUCTOR" SCONAME="FICHERO_JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    me-&gt;clave         = clave.
+    me-&gt;campo         = campo.
+    me-&gt;mostrar_error = mostrar_error.
+    me-&gt;rangos        = rangos.
+
+    inicio( fichero_json = fichero_json ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" VERSION="1" LANGU="S" DESCRIPT="Verifica existencia de parámetro" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIST" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD exist.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_param TYPE zparametros.
+
+    CLEAR si.
+    SELECT SINGLE clave FROM  zparametros
+      INTO l_param-clave
+     WHERE clave  = clave
+       AND campo  = campo
+       AND valor  = valor
+       AND valor2 = valor2
+       AND valor3 = valor3
+       AND valor4 = valor4.
+    IF sy-subrc = 0.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" VERSION="1" LANGU="S" DESCRIPT="Verifica existencia de parámetro" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="VALOR2" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe.
+    DATA l_param TYPE zparametros.
+
+    CLEAR si.
+
+    IF quitar_ceros = &apos;X&apos;.
+      l_param-campo  = campo.
+      l_param-valor  = valor.
+      l_param-valor2 = valor2.
+      l_param-valor3 = valor3.
+      l_param-valor4 = valor4.
+      DATA(l_par_sc) = claves_sin_ceros(  l_param ).
+    ENDIF.
+
+    IF valor2 IS SUPPLIED.
+      SELECT SINGLE clave FROM  zparametros
+        INTO l_param-clave
+       WHERE clave  = clave
+         AND campo  = campo
+         AND valor  = valor
+         AND valor2 = valor2
+         AND valor3 = valor3
+         AND valor4 = valor4.
+      IF sy-subrc = 0.
+        si = &apos;X&apos;.
+      ELSE.
+        IF quitar_ceros = &apos;X&apos;.
+          SELECT SINGLE clave FROM  zparametros
+            INTO l_param-clave
+           WHERE clave  = clave
+             AND campo  = l_par_sc-campo
+             AND valor  = l_par_sc-valor
+             AND valor2 = l_par_sc-valor2
+             AND valor3 = l_par_sc-valor3
+             AND valor4 = l_par_sc-valor4.
+          IF sy-subrc = 0.
+            si = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      SELECT SINGLE clave FROM  zparametros
+        INTO l_param-clave
+       WHERE clave = clave
+         AND campo = campo
+         AND valor = valor.
+      IF sy-subrc = 0.
+        si = &apos;X&apos;.
+      ELSE.
+        IF quitar_ceros = &apos;X&apos;.
+          SELECT SINGLE clave FROM  zparametros
+            INTO l_param-clave
+           WHERE clave = clave
+             AND campo = l_par_sc-campo
+             AND valor = l_par_sc-valor.
+          IF sy-subrc = 0.
+            si = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" VERSION="1" LANGU="S" DESCRIPT="Verifica existencia de parámetro" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXISTE_I" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_i.
+    DATA: l_campo_sin_ceros  TYPE zparametros-campo,
+          l_valor_sin_ceros  TYPE zparametros-valor,
+          l_valor2_sin_ceros TYPE zparametros-valor2.
+
+    CLEAR: si, par.
+
+    IF valor2 IS SUPPLIED.
+      READ TABLE i_par INTO par WITH KEY campo = campo
+                                         valor = valor
+                                         valor2 = valor2.
+      IF sy-subrc &lt;&gt; 0.
+        IF quitar_ceros = &apos;X&apos;.
+          zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+          zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+          zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
+          READ TABLE i_par INTO par WITH KEY campo = l_campo_sin_ceros
+                                             valor = l_valor_sin_ceros
+                                             valor2 = l_valor2_sin_ceros.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      READ TABLE i_par INTO par WITH KEY campo = campo
+                                         valor = valor.
+      IF sy-subrc &lt;&gt; 0.
+        IF quitar_ceros = &apos;X&apos;.
+          zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+          zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+          READ TABLE i_par INTO par WITH KEY campo = l_campo_sin_ceros
+                                             valor = l_valor_sin_ceros.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+    IF NOT par IS INITIAL.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIT_ACTIVA" VERSION="1" LANGU="S" DESCRIPT="¿Exit activa?" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIT_ACTIVA" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EXITS&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIT_ACTIVA" SCONAME="USUARIO" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIT_ACTIVA" SCONAME="EXIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="EXIT_ACTIVA" SCONAME="ACTIVA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD exit_activa.
+    DATA l_param TYPE zparametros.
+
+    CLEAR activa.
+    SELECT atributo1
+      FROM zparametros
+      WHERE clave  = @clave
+        AND campo  = @exit
+        AND valor  = @usuario
+        AND valor2 = &apos;&apos;
+      ORDER BY PRIMARY KEY
+      INTO @l_param-atributo1
+      UP TO 1 ROWS.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      activa = l_param-atributo1.
+    ELSE.
+      SELECT atributo1
+        FROM zparametros
+        WHERE clave  = @clave
+          AND campo  = @exit
+          AND valor  = &apos;&apos;
+          AND valor2 = &apos;&apos;
+        ORDER BY PRIMARY KEY
+        INTO @l_param-atributo1
+        UP TO 1 ROWS.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        activa = l_param-atributo1.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 1" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="N10" VERSION="1" LANGU="S" DESCRIPT="Devuelve un N10" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atr1.
+    DATA: l_campo_sin_ceros  TYPE zparametros-campo,
+          l_valor_sin_ceros  TYPE zparametros-valor,
+          l_valor2_sin_ceros TYPE zparametros-valor2,
+          l_n10              TYPE n LENGTH 10,
+          l_ctd              TYPE mengev,
+          l_mensaje          TYPE bapi_msg,
+          error              TYPE string.
+
+    CLEAR par.
+    READ TABLE i_par INTO par WITH KEY campo = campo
+                                       valor = valor
+                                       valor2 = valor2.
+    IF sy-subrc &lt;&gt; 0.
+      IF quitar_ceros = &apos;X&apos;.
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
+        READ TABLE i_par INTO par WITH KEY campo = l_campo_sin_ceros
+                                           valor = l_valor_sin_ceros
+                                           valor2 = l_valor2_sin_ceros.
+      ENDIF.
+    ENDIF.
+    IF NOT par IS INITIAL.
+      atributo1 = par-atributo1.
+
+      IF n10 = &apos;X&apos;.
+        l_n10 = atributo1.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_n10 ).
+        atributo1 = l_n10.
+      ELSEIF ctd = &apos;X&apos;.
+        zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = atributo1
+                                   IMPORTING cantidad  = l_ctd
+                                             mensaje   = l_mensaje ).
+        IF l_mensaje IS INITIAL.
+          atributo1 = l_ctd.
+        ELSE.
+          CONCATENATE &apos;Valor no es cantidad en&apos; campo valor l_mensaje INTO error SEPARATED BY space.
+          IF mostrar_error = &apos;X&apos;.
+            MESSAGE error TYPE &apos;E&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo valor INTO error SEPARATED BY space.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE error TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1_USR" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 1 en base al usuario en campo VALOR2" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1_USR" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1_USR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1_USR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR1_USR" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atr1_usr.
+    CLEAR error.
+    READ TABLE i_par INTO par WITH KEY campo = campo
+                                       valor = valor
+                                       valor2 = uname.
+    IF sy-subrc = 0.
+      atributo1 = par-atributo1.
+    ELSE.
+      READ TABLE i_par INTO par WITH KEY campo = campo
+                                         valor = valor
+                                         valor2 = &apos;&apos;.
+      IF sy-subrc = 0.
+        atributo1 = par-atributo1.
+      ELSE.
+        IF mostrar_error = &apos;X&apos;.
+          MESSAGE e398(00) WITH &apos;No existe entrada ZPARAMETROS&apos; campo valor &apos;&apos;.
+        ELSE.
+          CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo valor INTO error SEPARATED BY space.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR2" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 2" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR2" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR2" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR2" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR2" SCONAME="ATRIBUTO2" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atr2.
+    CLEAR error.
+    READ TABLE i_par INTO par WITH KEY campo = campo
+                                       valor = valor
+                                       valor2 = valor2.
+    IF sy-subrc = 0.
+      atributo2 = par-atributo2.
+    ELSE.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE e398(00) WITH &apos;No existe entrada ZPARAMETROS&apos; campo valor &apos;&apos;.
+      ELSE.
+        CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo valor INTO error SEPARATED BY space.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 3" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="N10" VERSION="1" LANGU="S" DESCRIPT="Devuelve un N10" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR3" SCONAME="ATRIBUTO3" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atr3.
+    DATA: l_campo_sin_ceros  TYPE zparametros-campo,
+          l_valor_sin_ceros  TYPE zparametros-valor,
+          l_valor2_sin_ceros TYPE zparametros-valor2,
+          l_n10              TYPE n LENGTH 10,
+          l_ctd              TYPE mengev,
+          l_mensaje          TYPE bapi_msg,
+          error              TYPE string.
+
+    CLEAR par.
+    READ TABLE i_par INTO par WITH KEY campo = campo
+                                       valor = valor
+                                       valor2 = valor2.
+    IF sy-subrc &lt;&gt; 0.
+      IF quitar_ceros = &apos;X&apos;.
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+        zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
+        READ TABLE i_par INTO par WITH KEY campo = l_campo_sin_ceros
+                                           valor = l_valor_sin_ceros
+                                           valor2 = l_valor2_sin_ceros.
+      ENDIF.
+    ENDIF.
+    IF NOT par IS INITIAL.
+      atributo3 = par-atributo3.
+
+      IF n10 = &apos;X&apos;.
+        l_n10 = atributo3.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_n10 ).
+        atributo3 = l_n10.
+      ELSEIF ctd = &apos;X&apos;.
+        zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = atributo3
+                                   IMPORTING cantidad  = l_ctd
+                                             mensaje   = l_mensaje ).
+        IF l_mensaje IS INITIAL.
+          atributo3 = l_ctd.
+        ELSE.
+          CONCATENATE &apos;Valor no es cantidad en&apos; campo valor l_mensaje INTO error SEPARATED BY space.
+          IF mostrar_error = &apos;X&apos;.
+            MESSAGE error TYPE &apos;E&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo valor INTO error SEPARATED BY space.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE error TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 1 (Static)" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="N10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="CTD" VERSION="1" LANGU="S" DESCRIPT="Validar que es campo cantidad correcto" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atributo1.
+    DATA: l_ok      TYPE abap_bool,
+          l_param   TYPE zparametros,
+          l_n10     TYPE n LENGTH 10,
+          l_ctd     TYPE mengev,
+          l_mensaje TYPE bapi_msg.
+
+    SELECT SINGLE atributo1 FROM  zparametros
+      INTO atributo1
+     WHERE clave  = clave
+       AND campo  = campo
+       AND valor  = valor
+       AND valor2 = valor2
+       AND valor3 = valor3
+       AND valor4 = valor4.
+    IF sy-subrc = 0.
+      l_ok = &apos;X&apos;.
+    ELSEIF quitar_ceros = &apos;X&apos;.
+      IF quitar_ceros = &apos;X&apos;.
+        l_param-campo  = campo.
+        l_param-valor  = valor.
+        l_param-valor2 = valor2.
+        l_param-valor3 = valor3.
+        l_param-valor4 = valor4.
+        DATA(l_par_sc) = claves_sin_ceros(  l_param ).
+      ENDIF.
+      SELECT SINGLE atributo1 FROM  zparametros
+        INTO atributo1
+       WHERE clave  = clave
+         AND campo  = l_par_sc-campo
+         AND valor  = l_par_sc-valor
+         AND valor2 = l_par_sc-valor2
+         AND valor3 = l_par_sc-valor3
+         AND valor4 = l_par_sc-valor4.
+      IF sy-subrc = 0.
+        l_ok = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF l_ok = &apos;X&apos;.
+      IF n10 = &apos;X&apos;.
+        l_n10 = atributo1.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_n10 ).
+        atributo1 = l_n10.
+      ELSEIF ctd = &apos;X&apos;.
+        zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = atributo1
+                                   IMPORTING cantidad  = l_ctd
+                                             mensaje   = l_mensaje ).
+        IF l_mensaje IS INITIAL.
+          atributo1 = l_ctd.
+          CONDENSE atributo1 NO-GAPS.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 1 en base al usuario en campo VALOR2" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO1_USR" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atributo1_usr.
+    SELECT atributo1
+      FROM zparametros
+      WHERE clave  = @clave
+        AND campo  = @campo
+        AND valor  = @valor
+        AND valor2 = @uname
+      ORDER BY PRIMARY KEY
+      INTO @atributo1
+      UP TO 1 ROWS.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT atributo1
+        FROM zparametros
+        WHERE clave  = @clave
+          AND campo  = @campo
+          AND valor  = @valor
+          AND valor2 = &apos;&apos;
+        ORDER BY PRIMARY KEY
+        INTO @atributo1
+        UP TO 1 ROWS.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 2 (Static)" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="N10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="CTD" VERSION="1" LANGU="S" DESCRIPT="Validar que es campo cantidad correcto" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATRIBUTO2" SCONAME="ATRIBUTO2" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZATRIB_PARAM"/>
+  <source>METHOD get_atributo2.
+    DATA: l_campo_sin_ceros  TYPE zparametros-valor,
+          l_valor_sin_ceros  TYPE zparametros-valor,
+          l_valor2_sin_ceros TYPE zparametros-valor2,
+          l_ok               TYPE c LENGTH 1,
+          l_n10              TYPE n LENGTH 10,
+          l_ctd              TYPE mengev,
+          l_mensaje          TYPE bapi_msg.
+
+    IF quitar_ceros = &apos;X&apos;.
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
+    ENDIF.
+
+    SELECT atributo2
+      FROM zparametros
+      WHERE clave  = @clave
+        AND campo  = @campo
+        AND valor  = @valor
+        AND valor2 = @valor2
+      ORDER BY PRIMARY KEY
+      INTO @atributo2
+      UP TO 1 ROWS.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      l_ok = &apos;X&apos;.
+    ELSEIF quitar_ceros = &apos;X&apos;.
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
+      zcl_ap_string=&gt;quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
+      SELECT atributo2
+        FROM zparametros
+        WHERE clave  = @clave
+          AND campo  = @l_campo_sin_ceros
+          AND valor  = @l_valor_sin_ceros
+          AND valor2 = @l_valor2_sin_ceros
+        ORDER BY PRIMARY KEY
+        INTO @atributo2
+        UP TO 1 ROWS.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        l_ok = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF l_ok = &apos;X&apos;.
+      IF n10 = &apos;X&apos;.
+        l_n10 = atributo2.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_n10 ).
+        atributo2 = l_n10.
+      ELSEIF ctd = &apos;X&apos;.
+        zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = atributo2
+                                   IMPORTING cantidad  = l_ctd
+                                             mensaje   = l_mensaje ).
+        IF l_mensaje IS INITIAL.
+          atributo2 = l_ctd.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve atributos buscando por rango" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="ATRIBUTO2" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_ATR_RANGO" SCONAME="ATRIBUTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD get_atr_rango.
+    DATA l_param_rango TYPE t_param_rangos.
+
+    LOOP AT i_par_rangos INTO l_param_rango.
+      IF     campo  IN l_param_rango-campo
+         AND valor  IN l_param_rango-valor
+         AND valor2 IN l_param_rango-valor2.
+        atributo1 = l_param_rango-atributo1.
+        atributo2 = l_param_rango-atributo2.
+        atributo3 = l_param_rango-atributo3.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" VERSION="1" LANGU="S" DESCRIPT="Recupera lista de la columna indicada" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;VALOR&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA" SCONAME="LISTA" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_lista.
+    DATA l_ok TYPE c LENGTH 1.
+
+    CLEAR: error, par, lista.
+    CASE columna.
+      WHEN &apos;VALOR&apos;.
+        LOOP AT i_par INTO par WHERE campo = campo.
+          l_ok = &apos;X&apos;.
+          __add_lista lista par-valor.
+        ENDLOOP.
+      WHEN &apos;VALOR2&apos;.
+        LOOP AT i_par INTO par WHERE campo = campo AND valor = valor.
+          l_ok = &apos;X&apos;.
+          __add_lista lista par-valor2.
+        ENDLOOP.
+      WHEN &apos;VALOR3&apos;.
+        LOOP AT i_par INTO par WHERE campo = campo AND valor = valor AND valor2 = valor2.
+          l_ok = &apos;X&apos;.
+          __add_lista lista par-valor3.
+        ENDLOOP.
+      WHEN &apos;VALOR4&apos;.
+        LOOP AT i_par INTO par WHERE campo = campo AND valor = valor AND valor2 = valor2 AND valor3 = valor3.
+          l_ok = &apos;X&apos;.
+          __add_lista lista par-valor4.
+        ENDLOOP.
+      WHEN &apos;ATRIBUTO1&apos;.
+        LOOP AT i_par INTO par WHERE campo = campo AND valor = valor AND valor2 = valor2 AND valor3 = valor3 AND valor4 = valor4.
+          l_ok = &apos;X&apos;.
+          __add_lista lista par-atributo1.
+        ENDLOOP.
+    ENDCASE.
+    IF l_ok IS INITIAL.
+      CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo INTO error SEPARATED BY space.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE error TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA_ATR1" VERSION="1" LANGU="S" DESCRIPT="Recupera atributo 1" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA_ATR1" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA_ATR1" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_LISTA_ATR1" SCONAME="LISTA" VERSION="1" LANGU="S" DESCRIPT="Atributo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_lista_atr1.
+    DATA: error              TYPE string,
+          l_n10              TYPE n LENGTH 10,
+          l_campo_sin_ceros  TYPE zparametros-campo,
+          l_valor_sin_ceros  TYPE zparametros-valor,
+          l_valor2_sin_ceros TYPE zparametros-valor2,
+          l_mensaje          TYPE bapi_msg,
+          l_ctd              TYPE mengev.
+
+    CLEAR: error, par, lista.
+    LOOP AT i_par INTO par WHERE campo = campo.
+      __add_lista lista par-atributo1.
+    ENDLOOP.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No existe entrada ZPARAMETROS&apos; campo INTO error SEPARATED BY space.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE error TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_PARAMETRO" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZPARAMETROS"/>
+  <source>METHOD get_parametro.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_ok    TYPE abap_bool,
+          l_param TYPE zparametros.
+
+    CLEAR parametros.
+    SELECT SINGLE * FROM  zparametros
+      INTO parametros
+     WHERE clave  = clave
+       AND campo  = campo
+       AND valor  = valor
+       AND valor2 = valor2
+       AND valor3 = valor3
+       AND valor4 = valor4.
+    IF sy-subrc = 0.
+      l_ok = &apos;X&apos;.
+    ELSEIF quitar_ceros = &apos;X&apos;.
+      IF quitar_ceros = &apos;X&apos;.
+        l_param-campo  = campo.
+        l_param-valor  = valor.
+        l_param-valor2 = valor2.
+        l_param-valor3 = valor3.
+        l_param-valor4 = valor4.
+        DATA(l_par_sc) = claves_sin_ceros(  l_param ).
+      ENDIF.
+      SELECT SINGLE * FROM  zparametros
+        INTO parametros
+         WHERE clave  = clave
+           AND campo  = l_par_sc-campo
+           AND valor  = l_par_sc-valor
+           AND valor2 = l_par_sc-valor2
+           AND valor3 = l_par_sc-valor3
+           AND valor4 = l_par_sc-valor4.
+      IF sy-subrc = 0.
+        l_ok = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con parámetros con filtro por campo" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="ATRIBUTO1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="CAMPO_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ATRIBUTO1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="SIGN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="TODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="ERROR_SI_VACIO" VERSION="1" LANGU="S" DESCRIPT="Si rango vacio, devolver entrada ?" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="VALOR_FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO" SCONAME="R_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD get_rango_tabla_campo.
+    DATA: l_campo TYPE c LENGTH 40,
+          l_linea TYPE rstt_s_range_string.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CLEAR r_rango.
+    LOOP AT i_par INTO par.
+      IF NOT ( par-campo = campo OR todo = &apos;X&apos; ).
+        CONTINUE.
+      ENDIF.
+
+      IF valor IS SUPPLIED.
+        IF valor &lt;&gt; par-valor.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF valor2 IS SUPPLIED.
+        IF valor2 &lt;&gt; par-valor2.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF atributo1 IS SUPPLIED.
+        IF atributo1 &lt;&gt; par-atributo1.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF NOT filtro_por_campo IS INITIAL.
+        CONCATENATE &apos;PAR-&apos; filtro_por_campo INTO l_campo.
+        ASSIGN (l_campo) TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          IF &lt;fs&gt; &lt;&gt; valor_filtro_por_campo.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      CLEAR l_linea.
+
+      CASE campo_rango.
+        WHEN &apos;CAMPO&apos;.
+          l_linea-low = par-campo.
+        WHEN &apos;ATRIBUTO1&apos;.
+          l_linea-low = par-atributo1.
+        WHEN &apos;ATRIBUTO2&apos;.
+          l_linea-low = par-atributo2.
+        WHEN &apos;VALOR&apos;.
+          l_linea-low = par-valor.
+        WHEN &apos;VALOR2&apos;.
+          l_linea-low = par-valor2.
+      ENDCASE.
+
+      IF option = &apos;*&apos;.
+        IF l_linea-low CS &apos;*&apos;.
+          l_linea-option = &apos;CP&apos;.
+        ELSE.
+          l_linea-option = &apos;EQ&apos;.
+        ENDIF.
+      ELSE.
+        l_linea-option = option.
+      ENDIF.
+
+      l_linea-sign = sign.
+
+      COLLECT l_linea INTO r_rango.
+    ENDLOOP.
+
+    IF r_rango IS INITIAL AND error_si_vacio &lt;&gt; &apos;&apos;.
+      CLEAR l_linea.
+      l_linea-option = &apos;EQ&apos;.
+      l_linea-sign   = &apos;I&apos;.
+      IF error_si_vacio = &apos;X&apos;.
+        l_linea-low = &apos;?&apos;.
+      ELSE.
+        IF option = &apos;*&apos; AND error_si_vacio CS &apos;*&apos;.
+          l_linea-option = &apos;CP&apos;.
+        ENDIF.
+
+        l_linea-low = error_si_vacio.
+      ENDIF.
+      COLLECT l_linea INTO r_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con parámetros con filtro por campo. Dev.N10" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="CAMPO_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ATRIBUTO1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="SIGN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="TODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="ERROR_SI_VACIO" VERSION="1" LANGU="S" DESCRIPT="Si rango vacio, devolver entrada ?" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="VALOR_FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N10" SCONAME="R_RANGO_N10" VERSION="1" LANGU="S" DESCRIPT="Tabla ámbito de valores para campo numérico (10 posiciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="LXHME_RANGE_N10_T"/>
+  <source>METHOD get_rango_tabla_campo_n10.
+    DATA: r_rango     TYPE rstt_t_range_string,
+          l_linea     TYPE rstt_s_range_string,
+          l_linea_n10 TYPE lxhme_range_n10.
+
+    IF valor IS SUPPLIED.
+      IF valor2 IS SUPPLIED.
+        r_rango = get_rango_tabla_campo( campo = campo
+                                         valor = valor
+                                         valor2 = valor2
+                                         campo_rango = campo_rango
+                                         option = option
+                                         sign   = sign
+                                         todo   = todo
+                                         error_si_vacio = error_si_vacio
+                                         filtro_por_campo = filtro_por_campo
+                                         valor_filtro_por_campo = valor_filtro_por_campo ).
+      ELSE.
+        r_rango = get_rango_tabla_campo( campo = campo
+                                         valor = valor
+                                         campo_rango = campo_rango
+                                         option = option
+                                         sign   = sign
+                                         todo   = todo
+                                         error_si_vacio = error_si_vacio
+                                         filtro_por_campo = filtro_por_campo
+                                         valor_filtro_por_campo = valor_filtro_por_campo ).
+      ENDIF.
+    ELSE.
+      r_rango = get_rango_tabla_campo( campo = campo
+                                       campo_rango = campo_rango
+                                       option = option
+                                       sign   = sign
+                                       todo   = todo
+                                       error_si_vacio = error_si_vacio
+                                       filtro_por_campo = filtro_por_campo
+                                       valor_filtro_por_campo = valor_filtro_por_campo ).
+    ENDIF.
+
+    LOOP AT r_rango INTO l_linea.
+      CLEAR l_linea_n10.
+      MOVE-CORRESPONDING l_linea TO l_linea_n10.
+      IF NOT l_linea-low IS INITIAL.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING  cadena =  l_linea_n10-low ).
+      ENDIF.
+      IF NOT l_linea-high IS INITIAL.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING  cadena =  l_linea_n10-high ).
+      ENDIF.
+      APPEND l_linea_n10 TO r_rango_n10.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con parámetros con filtro por campo. Dev.N18" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="CAMPO_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ATRIBUTO1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="SIGN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="TODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="ERROR_SI_VACIO" VERSION="1" LANGU="S" DESCRIPT="Si rango vacio, devolver entrada ?" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="VALOR_FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_RANGO_TABLA_CAMPO_N18" SCONAME="R_RANGO_N18" VERSION="1" LANGU="S" DESCRIPT="Tabla ámbito de valores para campo numérico (10 posiciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RANGE_T_MATNR"/>
+  <source>METHOD get_rango_tabla_campo_n18.
+    DATA: r_rango     TYPE rstt_t_range_string,
+          l_linea     TYPE rstt_s_range_string,
+          l_linea_n18 TYPE range_s_matnr.
+
+    IF valor IS SUPPLIED.
+      IF valor2 IS SUPPLIED.
+        r_rango = get_rango_tabla_campo( campo = campo
+                                         valor = valor
+                                         valor2 = valor2
+                                         campo_rango = campo_rango
+                                         option = option
+                                         sign   = sign
+                                         todo   = todo
+                                         error_si_vacio = error_si_vacio
+                                         filtro_por_campo = filtro_por_campo
+                                         valor_filtro_por_campo = valor_filtro_por_campo ).
+      ELSE.
+        r_rango = get_rango_tabla_campo( campo = campo
+                                         valor = valor
+                                         campo_rango = campo_rango
+                                         option = option
+                                         sign   = sign
+                                         todo   = todo
+                                         error_si_vacio = error_si_vacio
+                                         filtro_por_campo = filtro_por_campo
+                                         valor_filtro_por_campo = valor_filtro_por_campo ).
+      ENDIF.
+    ELSE.
+      r_rango = get_rango_tabla_campo( campo = campo
+                                       campo_rango = campo_rango
+                                       option = option
+                                       sign   = sign
+                                       todo   = todo
+                                       error_si_vacio = error_si_vacio
+                                       filtro_por_campo = filtro_por_campo
+                                       valor_filtro_por_campo = valor_filtro_por_campo ).
+    ENDIF.
+
+    LOOP AT r_rango INTO l_linea.
+      CLEAR l_linea_n18.
+      MOVE-CORRESPONDING l_linea TO l_linea_n18.
+      IF NOT l_linea-low IS INITIAL.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING  cadena =  l_linea_n18-low ).
+      ENDIF.
+      IF NOT l_linea-high IS INITIAL.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING  cadena =  l_linea_n18-high ).
+      ENDIF.
+      APPEND l_linea_n18 TO r_rango_n18.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con parámetros con filtro por campo" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_CAMPO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_CAMPO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_CAMPO" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_CAMPO" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZPARAMETROS" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_PARAMETROS"/>
+  <source>METHOD get_tabla_campo.
+    CLEAR i_tabla.
+    LOOP AT i_par INTO par WHERE campo = campo.
+
+      IF valor IS SUPPLIED.
+        IF valor &lt;&gt; par-valor.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF valor2 IS SUPPLIED.
+        IF valor2 &lt;&gt; par-valor2.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      APPEND par TO i_tabla.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_FORMATEADA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_FORMATEADA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="GET_TABLA_FORMATEADA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_tabla_formateada.
+    DATA l_campo TYPE string.
+
+    CLEAR: message, tabla.
+    IF me-&gt;ztclave_param IS INITIAL.
+      SELECT SINGLE * FROM ztclave_param
+        INTO me-&gt;ztclave_param
+       WHERE clave_param = clave.
+      IF sy-subrc &lt;&gt; 0.
+        message = &apos;Debe parametrizar campos primero&apos;.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    SELECT fieldname FROM dd03l
+      INTO TABLE @DATA(i_campos)
+     WHERE tabname   = &apos;ZPARAMETROS&apos;
+       AND position &gt;= &apos;0003&apos;  &quot; Sólo queremos los campos útiles
+       and not fieldname in (&apos;AEDAT&apos;, &apos;AENAM&apos;, &apos;AEZET&apos;)
+     ORDER BY position.
+
+    DATA(i_campos_final) = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( tabla ).
+
+    LOOP AT i_par ASSIGNING FIELD-SYMBOL(&lt;param&gt;).
+      APPEND INITIAL LINE TO tabla ASSIGNING FIELD-SYMBOL(&lt;tabla&gt;).
+      LOOP AT i_campos ASSIGNING FIELD-SYMBOL(&lt;campo&gt;).
+        ASSIGN COMPONENT &lt;campo&gt; OF STRUCTURE ztclave_param TO FIELD-SYMBOL(&lt;columna&gt;).
+        IF sy-subrc &lt;&gt; 0.
+          CONTINUE.
+        ENDIF.
+
+        IF &lt;columna&gt; IS INITIAL OR &lt;columna&gt; = &apos;INVISIBLE&apos;.
+          l_campo = &lt;campo&gt;.
+        ELSE.
+          l_campo = to_upper( &lt;columna&gt; ).
+          CONDENSE l_campo.
+          REPLACE ALL OCCURRENCES OF ` ` IN l_campo WITH &apos;_&apos;.
+        ENDIF.
+        ASSIGN COMPONENT l_campo OF STRUCTURE &lt;tabla&gt; TO FIELD-SYMBOL(&lt;dato&gt;).
+        IF sy-subrc &lt;&gt; 0.
+          CONTINUE.
+        ENDIF.
+
+        ASSIGN COMPONENT &lt;campo&gt; OF STRUCTURE &lt;param&gt; TO FIELD-SYMBOL(&lt;valor&gt;).
+
+
+* Si el campo destino tiene rutina de conversión la aplicamos
+        ASSIGN i_campos_final[ fieldname = l_campo ]-edit_mask TO FIELD-SYMBOL(&lt;mask&gt;).
+        IF &lt;mask&gt;(2) = &apos;==&apos;.
+          DATA(l_funcion) = |CONVERSION_EXIT_{ &lt;mask&gt;+2 }_INPUT|.
+          TRY.
+              CALL FUNCTION l_funcion
+                EXPORTING
+                  input  = &lt;valor&gt;
+                IMPORTING
+                  output = &lt;dato&gt;.
+            CATCH cx_root into data(o_root). &quot;#EC *
+              message = |Error formateando campo { l_campo } { o_root-&gt;get_text( ) }|.
+          ENDTRY.
+        ELSEIF i_campos_final[ fieldname = l_campo ]-datatype = &apos;DATS&apos;.
+          &lt;dato&gt; = zcl_ap_fechas=&gt;string2fecha( &lt;valor&gt; ).
+        else.
+          &lt;dato&gt; = &lt;valor&gt;.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="INICIO" VERSION="1" LANGU="S" DESCRIPT="Inicia variables" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="INICIO" SCONAME="FICHERO_JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <source>METHOD inicio.
+    DATA: l_par         TYPE zparametros,
+          l_param_rango TYPE t_param_rangos.
+
+    IF NOT fichero_json IS INITIAL.
+      zcl_ap_ficheros=&gt;leer_xstring( EXPORTING fichero = fichero_json get_string = &apos;X&apos;
+                                     IMPORTING string = DATA(l_json) ).
+      zcl_ap_segw=&gt;set_json( EXPORTING json = l_json
+                              IMPORTING datos = i_par ).
+    ENDIF.
+    IF i_par IS INITIAL.
+      IF campo IS INITIAL.
+        SELECT * FROM zparametros
+          INTO TABLE i_par
+         WHERE clave = clave
+          ORDER BY PRIMARY KEY.
+      ELSE.
+        SELECT * FROM zparametros
+          INTO TABLE i_par
+         WHERE clave = clave
+           AND campo = campo
+          ORDER BY PRIMARY KEY.
+      ENDIF.
+    ENDIF.
+
+    IF rangos = &apos;X&apos;.
+      CLEAR i_par_rangos.
+      LOOP AT i_par INTO l_par.
+        CLEAR l_param_rango.
+        l_param_rango-campo  = zcl_ap_string=&gt;lista2rango( l_par-campo ).
+        l_param_rango-valor  = zcl_ap_string=&gt;lista2rango( l_par-valor ).
+        l_param_rango-valor2 = zcl_ap_string=&gt;lista2rango( l_par-valor2 ).
+        DELETE l_param_rango-valor2 WHERE low = &apos;¿¿¿¿????&apos;.
+
+        l_param_rango-atributo1 = l_par-atributo1.
+        l_param_rango-atributo2 = l_par-atributo2.
+        l_param_rango-atributo3 = l_par-atributo3.
+        APPEND l_param_rango TO i_par_rangos.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO" VERSION="1" LANGU="S" DESCRIPT="Mantenimiento de parámetros" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO" SCONAME="ACTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;U&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO" SCONAME="ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ZCL_C=&gt;ZPARAMETROS_ALV"/>
+  <source>METHOD mantenimiento.
+    DATA: l_campo TYPE zparametros-campo,
+          l_valor TYPE zparametros-valor.
+
+    IF campo IS INITIAL.
+      l_campo = me-&gt;campo.
+    ELSE.
+      l_campo = campo.
+    ENDIF.
+
+    l_valor = valor.
+
+    IF alv IS INITIAL.
+
+      SET PARAMETER ID &apos;ZPA&apos; FIELD clave.
+      SET PARAMETER ID &apos;ZP2&apos; FIELD l_campo.
+      SET PARAMETER ID &apos;ZP3&apos; FIELD l_valor.
+
+      IF l_campo IS INITIAL.
+        IF l_valor IS INITIAL.
+          zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                        action = action
+                                        campo_filtro = &apos;CLAVE&apos;
+                                        op_filtro = &apos;EQ&apos;
+                                        valor_filtro = clave ).
+        ELSE.
+          zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                        action = action
+                                        campo_filtro = &apos;CLAVE&apos;
+                                        op_filtro = &apos;EQ&apos;
+                                        valor_filtro = clave
+                                        campo_filtro2 = &apos;VALOR&apos;
+                                        op_filtro2 = &apos;EQ&apos;
+                                        valor_filtro2 = l_valor ).
+        ENDIF.
+      ELSE.
+        IF l_valor IS INITIAL.
+          zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                        action = action
+                                        campo_filtro = &apos;CLAVE&apos;
+                                        op_filtro = &apos;EQ&apos;
+                                        valor_filtro = clave
+                                        campo_filtro2 = &apos;CAMPO&apos;
+                                        op_filtro2 = &apos;EQ&apos;
+                                        valor_filtro2 = l_campo ).
+        ELSE.
+          zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                        action = action
+                                        campo_filtro = &apos;CLAVE&apos;
+                                        op_filtro = &apos;EQ&apos;
+                                        valor_filtro = clave
+                                        campo_filtro2 = &apos;CAMPO&apos;
+                                        op_filtro2 = &apos;EQ&apos;
+                                        valor_filtro2 = l_campo
+                                        campo_filtro3 = &apos;VALOR&apos;
+                                        op_filtro3 = &apos;EQ&apos;
+                                        valor_filtro3 = l_valor ).
+        ENDIF.
+      ENDIF.
+
+      SET PARAMETER ID &apos;ZPA&apos; FIELD &apos;&apos;.
+      SET PARAMETER ID &apos;ZP2&apos; FIELD &apos;&apos;.
+      SET PARAMETER ID &apos;ZP3&apos; FIELD &apos;&apos;.
+      CLEAR sy-ucomm.
+    ELSE.
+      IF action = &apos;U&apos;.
+        SUBMIT zparametros
+          AND RETURN
+               WITH p_clave = clave
+               WITH p_campo = l_campo
+               WITH p_valor = l_valor
+               WITH p_vis = &apos;&apos;.
+      ELSEIF action = &apos;S&apos;.
+        SUBMIT zparametros
+          AND RETURN
+               WITH p_clave = clave
+               WITH p_campo = l_campo
+               WITH p_valor = l_valor
+               WITH p_vis = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" VERSION="1" LANGU="S" DESCRIPT="Mantenimiento de parámetros" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" SCONAME="ACTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;U&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MANTENIMIENTO_ST" SCONAME="ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ZCL_C=&gt;ZPARAMETROS_ALV"/>
+  <source>METHOD mantenimiento_st.
+    IF alv IS INITIAL.
+      SET PARAMETER ID &apos;ZPA&apos; FIELD clave.
+      SET PARAMETER ID &apos;ZP2&apos; FIELD campo.
+      SET PARAMETER ID &apos;ZP3&apos; FIELD valor.
+
+      IF campo IS INITIAL AND valor IS INITIAL.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                      campo_filtro = &apos;CLAVE&apos;
+                                      op_filtro = &apos;EQ&apos;
+                                      valor_filtro = clave
+                                      action = action ).
+      ELSEIF valor IS INITIAL.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                      campo_filtro = &apos;CLAVE&apos;
+                                      op_filtro = &apos;EQ&apos;
+                                      valor_filtro = clave
+                                      campo_filtro2 = &apos;CAMPO&apos;
+                                      op_filtro2 = &apos;EQ&apos;
+                                      valor_filtro2 = campo
+                                      action = action ).
+      ELSEIF campo IS INITIAL.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZV_PARAMETROS&apos;
+                                      campo_filtro = &apos;CLAVE&apos;
+                                      op_filtro = &apos;EQ&apos;
+                                      valor_filtro = clave
+                                      campo_filtro2 = &apos;VALOR&apos;
+                                      op_filtro2 = &apos;EQ&apos;
+                                      valor_filtro2 = valor
+                                      action = action ).
+      ENDIF.
+
+      SET PARAMETER ID &apos;ZPA&apos; FIELD &apos;&apos;.
+      SET PARAMETER ID &apos;ZP2&apos; FIELD &apos;&apos;.
+      SET PARAMETER ID &apos;ZP3&apos; FIELD &apos;&apos;.
+    ELSE.
+      IF action = &apos;U&apos;.
+        SUBMIT zparametros
+          AND RETURN
+               WITH p_clave = clave
+               WITH p_campo = campo
+               WITH p_valor = valor
+               WITH p_vis = &apos;&apos;.
+      ELSEIF action = &apos;S&apos;.
+        SUBMIT zparametros
+          AND RETURN
+               WITH p_clave = clave
+               WITH p_campo = campo
+               WITH p_valor = valor
+               WITH p_vis = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MATCHCODE" VERSION="1" LANGU="S" DESCRIPT="Muestra matchcode" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MATCHCODE" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MATCHCODE" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MATCHCODE" SCONAME="ATRIBUTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="MATCHCODE" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZPARAMETROS-VALOR"/>
+  <source>METHOD matchcode.
+    DATA: o_popup TYPE REF TO zcl_ap_matchcode_z,
+          l_param TYPE zparametros.
+
+    o_popup = NEW #(
+        tabname = &apos;ZPARAMETROS&apos; ).
+
+    o_popup-&gt;add_field( field = &apos;VALOR&apos; selectflag = &apos;X&apos; ).
+    o_popup-&gt;add_field( field = &apos;ATRIBUTO1&apos; ).
+
+    SELECT valor atributo1 atributo2 FROM  zparametros
+      INTO CORRESPONDING FIELDS OF l_param
+     WHERE clave = clave
+       AND campo = campo.
+
+      IF atributo2 = &apos;&apos; OR atributo2 = l_param-atributo2.
+        o_popup-&gt;add_valor( l_param-valor ).
+        o_popup-&gt;add_valor( l_param-atributo1 ).
+      ENDIF.
+    ENDSELECT.
+
+    o_popup-&gt;matchcode( EXPORTING field   = &apos;VALOR&apos;
+                        CHANGING  valor   = valor ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" VERSION="1" LANGU="S" DESCRIPT="Envía mail sencillo a usuarios contenidos en un campo" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="SUBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="URGENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="FORZAR_MAIL_EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="CONFIRMACION_LECTURA" VERSION="1" LANGU="S" DESCRIPT="Status solicitado" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BCS_RQST" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PARAMETROS" CMPNAME="SEND_MAIL" SCONAME="EMISOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD send_mail.
+    DATA: o_mail    TYPE REF TO zcl_ap_envio_mail,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_subject TYPE string,
+          l_ok      TYPE c LENGTH 1.
+
+    IF NOT line_exists( i_par[ campo = campo ] ).
+      RETURN.
+    ENDIF.
+
+    o_mail = NEW #(
+        usar_clases = &apos;X&apos; ).
+
+    IF subject IS INITIAL.
+      l_subject = texto.
+    ELSE.
+      l_subject = subject.
+    ENDIF.
+
+    o_mail-&gt;set_text( texto ).
+
+    LOOP AT i_par INTO par WHERE campo = campo.
+      IF par-atributo1 IS INITIAL.
+        o_mail-&gt;add_destinatario( destinatario = par-valor forzar_mail_externo = forzar_mail_externo ).
+        l_ok = &apos;X&apos;.
+      ELSEIF NOT par-atributo1 IS INITIAL.
+        o_mail-&gt;add_destinatario( destinatario = par-atributo1 forzar_mail_externo = forzar_mail_externo ).
+        l_ok = &apos;X&apos;.
+      ENDIF.
+    ENDLOOP.
+
+    IF l_ok = &apos;X&apos;.
+      o_mail-&gt;envio_mail( subject = subject
+                          urgente = urgente
+                          html    = html
+                          commit  = commit
+                          forzar_mail_externo = forzar_mail_externo
+                          confirmacion_lectura = confirmacion_lectura
+                          emisor  = emisor ).
+    ENDIF.
+
+    o_mail-&gt;free( ).
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

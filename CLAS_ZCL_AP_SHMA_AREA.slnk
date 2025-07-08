@@ -1,0 +1,1027 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SHMA_AREA" VERSION="1" LANGU="S" DESCRIPT="Area AP CACHE" CATEGORY="45" EXPOSURE="0" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" RSTAT="S" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="CL_SHM_AREA">
+ <friends CLSNAME="ZCL_AP_SHMA_AREA" REFCLSNAME="CL_SHM_AREA" FRIENDTYPE="0" VERSION="1" STATE="1"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class
+
+DEFINE mc_set_shm_client.
+
+  if client is supplied.
+    l_client = client.
+    l_client_supplied = abap_true.
+  else.
+    l_client = cl_abap_syst=&gt;get_client( ).
+  endif.
+
+END-OF-DEFINITION.
+
+DEFINE mc_set_shm_client_attach_only.
+
+  l_client = cl_abap_syst=&gt;get_client( ).
+
+END-OF-DEFINITION.</localMacros>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="AREA_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Gebietsklasse" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;ZCL_AP_SHMA_AREA&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SHM_AREA_NAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ROOT" VERSION="1" LANGU="S" DESCRIPT="SHM: Modell einer Datenklasse" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTRDONLY="X" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_SHMA_ROOT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_CLIENT_DEPENDENT" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="5 " ATTDECLTYP="2" ATTVALUE="ABAP_TRUE" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_LIFE_CONTEXT" VERSION="1" LANGU="S" DESCRIPT="Lebensdauer eines Gebiets (Konstanten in CL_SHM_AREA)" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="2" ATTVALUE="CL_SHM_AREA=&gt;LIFE_CONTEXT_APPSERVER" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SHM_LIFE_CONTEXT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_TRACE_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="(intern) Flag: Trace aktiv?" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="1" ATTVALUE="ABAP_FALSE" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_TRACE_SERVICE" VERSION="1" LANGU="S" DESCRIPT="(intern) Referenz auf Trace-Klasse" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="1" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_SHM_TRACE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_TRANSACTIONAL" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="2" ATTVALUE="ABAP_FALSE" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="_VERSION_" VERSION="1" LANGU="S" DESCRIPT="(intern)" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="23" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <inheritance CLSNAME="ZCL_AP_SHMA_AREA" REFCLSNAME="CL_SHM_AREA" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZCL_AP_SHMA_AREA" REFCLSNAME="CL_SHM_AREA" VERSION="1" MTDNAME="GET_ROOT" EXPOSURE="0"/>
+ </inheritance>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" VERSION="1" LANGU="S" DESCRIPT="Anfordern einer Lesesperre" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="SHM: Modell einer Gebietsklasse" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="ZCL_AP_SHMA_AREA"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_INCONSISTENT" VERSION="1" LANGU="S" DESCRIPT="Unterschiedliche Definitionen zwischen Program und Gebiet" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_NO_ACTIVE_VERSION" VERSION="1" LANGU="S" DESCRIPT="Keine aktive Version für ein Attach vorhanden" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_READ_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Anforderung einer 2. Lesesperre" MTDTYPE="0" EDITORDER="3 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_EXCLUSIVE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Instanz ist schon gesperrt" MTDTYPE="0" EDITORDER="4 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Falscher Parameter übergeben" MTDTYPE="0" EDITORDER="5 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_READ" SCONAME="CX_SHM_CHANGE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Eine Änderungssperre ist schon aktiv" MTDTYPE="0" EDITORDER="6 "/>
+  <source>method ATTACH_FOR_READ.
+
+  DATA:
+    l_attributes       TYPE shma_attributes,
+    l_root             TYPE REF TO object,
+    l_cx               TYPE REF TO cx_root,
+    l_client           TYPE shm_client,
+    l_client_supplied  TYPE abap_bool. &quot;#EC NEEDED
+
+* check if tracing should be activated/de-activated
+  IF  ( NOT _trace_service IS INITIAL ).
+    TRY.
+        _trace_active =
+          cl_shm_service=&gt;trace_is_variant_active(
+            _trace_service-&gt;variant-def_name
+          ).
+      CATCH cx_root. &quot;#EC NO_HANDLER
+                     &quot;#EC CATCH_ALL
+    ENDTRY.
+  ENDIF.
+
+  mc_set_shm_client_attach_only.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-attach_for_read = abap_false.
+
+*   &gt;
+
+    CREATE OBJECT handle.
+
+    handle-&gt;client    = l_client.
+    handle-&gt;inst_name = inst_name.
+
+*   try sneak mode first
+    handle-&gt;_attach_read71( EXPORTING area_name    = area_name
+                                      sneak_mode   = abap_true
+                                      life_context = _life_context
+                            IMPORTING root         = l_root ).
+
+    IF l_root IS INITIAL.
+*     no root object returned, sneak mode was not successful.
+*     -&gt; read area properties from database and try again.
+      cl_shm_service=&gt;initialize(
+        EXPORTING area_name       = handle-&gt;area_name
+                  client          = l_client
+        IMPORTING attributes      = l_attributes
+      ).
+
+      handle-&gt;properties = l_attributes-properties.
+      handle-&gt;_attach_read71( EXPORTING area_name    = area_name
+                                        sneak_mode   = abap_false
+                                        life_context = _life_context
+                              IMPORTING root         = l_root ).
+
+    ENDIF.
+
+    handle-&gt;root ?= l_root.
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*       &gt;
+
+        CREATE OBJECT handle.
+
+        handle-&gt;client    = l_client.
+        handle-&gt;inst_name = inst_name.
+
+        handle-&gt;_attach_read71( EXPORTING area_name    = area_name
+                                          sneak_mode   = abap_true
+                                          life_context = _life_context
+                                IMPORTING root         = l_root ).
+
+        IF l_root IS INITIAL.
+*         no root object returned, sneak mode was not successful.
+*         -&gt; read area properties from database and try again.
+          cl_shm_service=&gt;initialize(
+            EXPORTING area_name       = handle-&gt;area_name
+                      client          = l_client
+            IMPORTING attributes      = l_attributes
+          ).
+
+          handle-&gt;properties = l_attributes-properties.
+          handle-&gt;_attach_read71( EXPORTING area_name    = area_name
+                                            sneak_mode   = abap_false
+                                            life_context = _life_context
+                                  IMPORTING root         = l_root ).
+
+        ENDIF.
+        handle-&gt;root ?= l_root.
+
+*       &lt;
+        _trace_service-&gt;trin_attach_for_read(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client ).
+
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_attach_for_read(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client
+          cx        = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  handle-&gt;inst_trace_service = _trace_service.
+  handle-&gt;inst_trace_active  = _trace_active.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" VERSION="1" LANGU="S" DESCRIPT="Anfordern einer Änderungssperre" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="ATTACH_MODE" VERSION="1" LANGU="S" DESCRIPT="Modus des ATTACHS (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_ATTACH_MODE" PARVALUE="CL_SHM_AREA=&gt;ATTACH_MODE_DEFAULT"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="WAIT_TIME" VERSION="1" LANGU="S" DESCRIPT="Maximale Wartezeit (in Millisekunden)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="SHM: Modell einer Gebietsklasse" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="ZCL_AP_SHMA_AREA"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_INCONSISTENT" VERSION="1" LANGU="S" DESCRIPT="Unterschiedliche Definitionen zwischen Program und Gebiet" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_NO_ACTIVE_VERSION" VERSION="1" LANGU="S" DESCRIPT="Keine aktive Version für ein Attach vorhanden" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_EXCLUSIVE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Instanz ist schon gesperrt" MTDTYPE="0" EDITORDER="3 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_VERSION_LIMIT_EXCEEDED" VERSION="1" LANGU="S" DESCRIPT="Keine weiteren Versionen verfügbar" MTDTYPE="0" EDITORDER="4 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_CHANGE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Eine Schreibsperre ist schon aktiv" MTDTYPE="0" EDITORDER="5 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Übergebener Parameter hat falschen Wert" MTDTYPE="0" EDITORDER="6 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_UPDATE" SCONAME="CX_SHM_PENDING_LOCK_REMOVED" VERSION="1" LANGU="S" DESCRIPT="Shared Objects: wartende Sperre wurde gelöscht" MTDTYPE="0" EDITORDER="7 "/>
+  <source>method ATTACH_FOR_UPDATE.
+
+  DATA:
+    l_attributes             TYPE shma_attributes,
+    l_root                   TYPE REF TO object,
+    l_cx                     TYPE REF TO cx_root,
+    l_client                 TYPE shm_client,
+    l_client_supplied        TYPE abap_bool, &quot;#EC NEEDED
+    l_wait_time              TYPE i,
+    l_wait_time_per_loop     TYPE i,
+    l_wait_time_per_loop_sec TYPE f.
+
+  l_wait_time = wait_time.
+
+* check if tracing should be activated/de-activated
+  IF  ( NOT _trace_service IS INITIAL ).
+    TRY.
+        _trace_active =
+          cl_shm_service=&gt;trace_is_variant_active(
+            _trace_service-&gt;variant-def_name
+          ).
+      CATCH cx_root. &quot;#EC NO_HANDLER
+                     &quot;#EC CATCH_ALL
+    ENDTRY.
+  ENDIF.
+
+  mc_set_shm_client_attach_only.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-attach_for_upd = abap_false.
+
+*   &gt;
+
+    CREATE OBJECT handle.
+
+    handle-&gt;client    = l_client.
+    handle-&gt;inst_name = inst_name.
+
+    cl_shm_service=&gt;initialize(
+      EXPORTING area_name    = handle-&gt;area_name
+                client       = l_client
+      IMPORTING attributes   = l_attributes
+    ).
+
+    handle-&gt;properties = l_attributes-properties.
+
+    handle-&gt;_attach_update70(
+      EXPORTING area_name = handle-&gt;area_name
+                mode      = attach_mode
+      IMPORTING root      = l_root
+      CHANGING  wait_time = l_wait_time ).
+
+    IF abap_true = l_attributes-properties-has_versions AND
+       handle-&gt;_lock IS NOT INITIAL.
+* we may need a second try in case of class constructors
+      handle-&gt;_attach_update70(
+        EXPORTING area_name = handle-&gt;area_name
+                  mode      = attach_mode
+        IMPORTING root      = l_root
+        CHANGING  wait_time = l_wait_time ).
+    ENDIF.
+
+    IF attach_mode = cl_shm_area=&gt;attach_mode_wait AND
+       handle-&gt;_lock IS INITIAL.
+
+      l_wait_time_per_loop = l_wait_time / 10.
+* wait_time_per_loop should be at least 2 * SHMATTACHWRITE_MAXACTIVEWAIT
+      IF l_wait_time_per_loop &lt; 2000.
+        l_wait_time_per_loop = 2000.
+      ELSEIF l_wait_time_per_loop &gt; 300000.
+        l_wait_time_per_loop = 300000.
+      ENDIF.
+
+      l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+
+      WHILE handle-&gt;_lock IS INITIAL.
+
+        IF l_wait_time_per_loop &gt; l_wait_time.
+          l_wait_time_per_loop = l_wait_time.
+          l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+        ENDIF.
+
+        WAIT UP TO l_wait_time_per_loop_sec SECONDS.
+        l_wait_time = l_wait_time - l_wait_time_per_loop.
+
+        handle-&gt;_attach_update70(
+          EXPORTING area_name = handle-&gt;area_name
+                    mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+          IMPORTING root      = l_root
+          CHANGING  wait_time = l_wait_time ).
+
+        IF abap_true = l_attributes-properties-has_versions AND
+           handle-&gt;_lock IS NOT INITIAL.
+* we may need a second try in case of class constructors
+          handle-&gt;_attach_update70(
+            EXPORTING area_name = handle-&gt;area_name
+                      mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+            IMPORTING root      = l_root
+            CHANGING  wait_time = l_wait_time ).
+        ENDIF.
+
+      ENDWHILE.
+
+    ENDIF.
+
+    handle-&gt;root ?= l_root.
+
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*       &gt;
+
+        CREATE OBJECT handle.
+
+        handle-&gt;client    = l_client.
+        handle-&gt;inst_name = inst_name.
+
+        cl_shm_service=&gt;initialize(
+          EXPORTING area_name    = handle-&gt;area_name
+                    client       = l_client
+          IMPORTING attributes   = l_attributes
+        ).
+
+        handle-&gt;properties = l_attributes-properties.
+
+        handle-&gt;_attach_update70(
+          EXPORTING area_name = handle-&gt;area_name
+                    mode      = attach_mode
+          IMPORTING root      = l_root
+          CHANGING  wait_time = l_wait_time ).
+
+        IF abap_true = l_attributes-properties-has_versions AND
+           handle-&gt;_lock IS NOT INITIAL.
+* we may need a second try in case of class constructors
+          handle-&gt;_attach_update70(
+            EXPORTING area_name = handle-&gt;area_name
+                      mode      = attach_mode
+            IMPORTING root      = l_root
+            CHANGING  wait_time = l_wait_time ).
+        ENDIF.
+
+        IF attach_mode = cl_shm_area=&gt;attach_mode_wait AND
+           handle-&gt;_lock IS INITIAL.
+
+          l_wait_time_per_loop = l_wait_time / 10.
+* wait_time_per_loop should be at least 2 * SHMATTACHWRITE_MAXACTIVEWAIT
+          IF l_wait_time_per_loop &lt; 2000.
+            l_wait_time_per_loop = 2000.
+          ELSEIF l_wait_time_per_loop &gt; 300000.
+            l_wait_time_per_loop = 300000.
+          ENDIF.
+
+          l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+
+          WHILE handle-&gt;_lock IS INITIAL.
+
+            IF l_wait_time_per_loop &gt; l_wait_time.
+              l_wait_time_per_loop = l_wait_time.
+              l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+            ENDIF.
+
+            WAIT UP TO l_wait_time_per_loop_sec SECONDS.
+            l_wait_time = l_wait_time - l_wait_time_per_loop.
+
+            handle-&gt;_attach_update70(
+              EXPORTING
+                area_name = handle-&gt;area_name
+                mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+              IMPORTING
+                root      = l_root
+              CHANGING
+                wait_time = l_wait_time ).
+
+            IF abap_true = l_attributes-properties-has_versions AND
+               handle-&gt;_lock IS NOT INITIAL.
+* we may need a second try in case of class constructors
+              handle-&gt;_attach_update70(
+                EXPORTING
+                  area_name = handle-&gt;area_name
+                  mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+                IMPORTING
+                  root      = l_root
+                CHANGING
+                  wait_time = l_wait_time ).
+            ENDIF.
+
+          ENDWHILE.
+
+        ENDIF.
+
+        handle-&gt;root ?= l_root.
+
+*       &lt;
+        _trace_service-&gt;trin_attach_for_update(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client
+          mode      = attach_mode
+          wait_time = wait_time
+        ).
+
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_attach_for_update(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client
+          mode      = attach_mode
+          wait_time = wait_time
+          cx        = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  handle-&gt;inst_trace_service = _trace_service.
+  handle-&gt;inst_trace_active  = _trace_active.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" VERSION="1" LANGU="S" DESCRIPT="Anfordern einer Schreibsperre" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="ATTACH_MODE" VERSION="1" LANGU="S" DESCRIPT="Modus des ATTACHS (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_ATTACH_MODE" PARVALUE="CL_SHM_AREA=&gt;ATTACH_MODE_DEFAULT"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="WAIT_TIME" VERSION="1" LANGU="S" DESCRIPT="Maximale Wartezeit (in Millisekunden)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="SHM: Modell einer Gebietsklasse" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="ZCL_AP_SHMA_AREA"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="CX_SHM_EXCLUSIVE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Instanz ist schon gesperrt" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="CX_SHM_VERSION_LIMIT_EXCEEDED" VERSION="1" LANGU="S" DESCRIPT="Keine weiteren Versionen verfügbar" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="CX_SHM_CHANGE_LOCK_ACTIVE" VERSION="1" LANGU="S" DESCRIPT="Eine Schreibsperre ist schon aktiv" MTDTYPE="0" EDITORDER="3 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Übergebener Parameter hat falschen Wert" MTDTYPE="0" EDITORDER="4 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="ATTACH_FOR_WRITE" SCONAME="CX_SHM_PENDING_LOCK_REMOVED" VERSION="1" LANGU="S" DESCRIPT="Shared Objects: wartende Sperre wurde gelöscht" MTDTYPE="0" EDITORDER="5 "/>
+  <source>method ATTACH_FOR_WRITE.
+
+  DATA:
+    l_attributes             TYPE shma_attributes,
+    l_cx                     TYPE REF TO cx_root,
+    l_client                 TYPE shm_client,
+    l_client_supplied        TYPE abap_bool, &quot;#EC NEEDED
+    l_wait_time              TYPE i,
+    l_wait_time_per_loop     TYPE i,
+    l_wait_time_per_loop_sec TYPE f.
+
+  l_wait_time = wait_time.
+
+* check if tracing should be activated/de-activated
+  IF  ( NOT _trace_service IS INITIAL ).
+    TRY.
+        _trace_active =
+          cl_shm_service=&gt;trace_is_variant_active(
+            _trace_service-&gt;variant-def_name
+          ).
+      CATCH cx_root. &quot;#EC NO_HANDLER
+                     &quot;#EC CATCH_ALL
+    ENDTRY.
+  ENDIF.
+
+  mc_set_shm_client_attach_only.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-attach_for_write = abap_false.
+
+*   &gt;
+
+    CREATE OBJECT handle.
+
+    handle-&gt;client    = l_client.
+    handle-&gt;inst_name = inst_name.
+
+    cl_shm_service=&gt;initialize(
+      EXPORTING area_name    = handle-&gt;area_name
+                client       = l_client
+      IMPORTING attributes   = l_attributes
+    ).
+
+    handle-&gt;properties = l_attributes-properties.
+
+    handle-&gt;_attach_write70(
+      EXPORTING
+        area_name = handle-&gt;area_name
+        mode      = attach_mode
+      CHANGING
+        wait_time = l_wait_time ).
+
+    IF attach_mode = cl_shm_area=&gt;attach_mode_wait AND
+       handle-&gt;_lock IS INITIAL.
+
+      l_wait_time_per_loop = l_wait_time / 10.
+* wait_time_per_loop should be at least 2 * SHMATTACHWRITE_MAXACTIVEWAIT
+      IF l_wait_time_per_loop &lt; 2000.
+        l_wait_time_per_loop = 2000.
+      ELSEIF l_wait_time_per_loop &gt; 300000.
+        l_wait_time_per_loop = 300000.
+      ENDIF.
+
+      l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+
+      WHILE handle-&gt;_lock IS INITIAL.
+
+        IF l_wait_time_per_loop &gt; l_wait_time.
+          l_wait_time_per_loop = l_wait_time.
+          l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+        ENDIF.
+
+        WAIT UP TO l_wait_time_per_loop_sec SECONDS.
+        l_wait_time = l_wait_time - l_wait_time_per_loop.
+
+        handle-&gt;_attach_write70(
+          EXPORTING
+            area_name = handle-&gt;area_name
+            mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+          CHANGING
+            wait_time = l_wait_time ).
+
+      ENDWHILE.
+
+    ENDIF.
+
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*     &gt;
+
+        CREATE OBJECT handle.
+
+        handle-&gt;client    = l_client.
+        handle-&gt;inst_name = inst_name.
+
+        cl_shm_service=&gt;initialize(
+          EXPORTING area_name    = handle-&gt;area_name
+                    client       = l_client
+          IMPORTING attributes   = l_attributes
+        ).
+
+        handle-&gt;properties = l_attributes-properties.
+
+        handle-&gt;_attach_write70(
+          EXPORTING
+            area_name = handle-&gt;area_name
+            mode      = attach_mode
+          CHANGING
+            wait_time = l_wait_time ).
+
+        IF attach_mode = cl_shm_area=&gt;attach_mode_wait AND
+           handle-&gt;_lock IS INITIAL.
+
+          l_wait_time_per_loop = l_wait_time / 10.
+* wait_time_per_loop should be at least 2 * SHMATTACHWRITE_MAXACTIVEWAIT
+          IF l_wait_time_per_loop &lt; 2000.
+            l_wait_time_per_loop = 2000.
+          ELSEIF l_wait_time_per_loop &gt; 300000.
+            l_wait_time_per_loop = 300000.
+          ENDIF.
+
+          l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+
+          WHILE handle-&gt;_lock IS INITIAL.
+
+            IF l_wait_time_per_loop &gt; l_wait_time.
+              l_wait_time_per_loop = l_wait_time.
+              l_wait_time_per_loop_sec = l_wait_time_per_loop / 1000.
+            ENDIF.
+
+            WAIT UP TO l_wait_time_per_loop_sec SECONDS.
+            l_wait_time = l_wait_time - l_wait_time_per_loop.
+
+            handle-&gt;_attach_write70(
+              EXPORTING
+                area_name = handle-&gt;area_name
+                mode      = cl_shm_area=&gt;attach_mode_wait_2nd_try
+              CHANGING
+                wait_time = l_wait_time ).
+
+          ENDWHILE.
+
+        ENDIF.
+
+*     &lt;
+
+        _trace_service-&gt;trin_attach_for_write(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client
+          mode      = attach_mode
+          wait_time = wait_time
+        ).
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_attach_for_write(
+          area_name = area_name
+          inst_name = inst_name
+          client    = l_client
+          mode      = attach_mode
+          wait_time = wait_time
+          cx        = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  handle-&gt;inst_trace_service = _trace_service.
+  handle-&gt;inst_trace_active  = _trace_active.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="BUILD" VERSION="1" LANGU="S" DESCRIPT="Direkter Aufruf des Gebietskonstruktors" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="BUILD" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="BUILD" SCONAME="CX_SHMA_NOT_CONFIGURED" VERSION="1" LANGU="S" DESCRIPT="SHMA: Gebietseigenschaft ist nicht konfiguriert" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="BUILD" SCONAME="CX_SHMA_INCONSISTENT" VERSION="1" LANGU="S" DESCRIPT="SHMA: Inkonsistente Attribut-Kombination" MTDTYPE="0" EDITORDER="2 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="BUILD" SCONAME="CX_SHM_BUILD_FAILED" VERSION="1" LANGU="S" DESCRIPT="Konstruktorlauf ist fehlgeschlagen" MTDTYPE="0" EDITORDER="3 "/>
+  <source>method BUILD.
+
+  DATA:
+    l_cls_name TYPE shm_auto_build_class_name,
+    l_cx TYPE REF TO cx_root.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-build = abap_false.
+
+*   &gt;
+    l_cls_name =
+      cl_shm_service=&gt;get_auto_build_class_name( area_name ).
+
+    CALL METHOD (l_cls_name)=&gt;if_shm_build_instance~build
+      EXPORTING
+        inst_name = inst_name.
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*       &gt;
+        l_cls_name =
+          cl_shm_service=&gt;get_auto_build_class_name( area_name ).
+
+        CALL METHOD (l_cls_name)=&gt;if_shm_build_instance~build
+          EXPORTING
+            inst_name = inst_name.
+*       &lt;
+        _trace_service-&gt;trin_build(
+          area_name         = area_name
+          inst_name         = inst_name
+        ).
+
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_build(
+          area_name         = area_name
+          inst_name         = inst_name
+          cx                = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="CLASS_CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CLASS_CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CLASS_CONSTRUCTOR.
+
+* TRACE { DO NOT REMOVE THIS LINE !
+  _trace_active = abap_false.
+  TRY.
+      _trace_service =
+        cl_shm_service=&gt;trace_get_service( area_name ).
+      IF NOT _trace_service IS INITIAL.
+        _trace_active =
+          cl_shm_service=&gt;trace_is_variant_active(
+            _trace_service-&gt;variant-def_name
+          ).
+      ENDIF.
+    CATCH cx_root. &quot;#EC NO_HANDLER
+                   &quot;#EC CATCH_ALL
+  ENDTRY.
+* TRACE } DO NOT REMOVE THIS LINE !
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="DETACH_AREA" VERSION="1" LANGU="S" DESCRIPT="Aufheben aller Sperren auf alle Instanzen" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="DETACH_AREA" SCONAME="CLIENT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="DETACH_AREA" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Detach-Rückgabewert (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_RC"/>
+  <source>method DETACH_AREA.
+
+  DATA:
+    l_client TYPE shm_client,
+    l_client_supplied TYPE abap_bool VALUE abap_false.
+
+  mc_set_shm_client.
+
+* &gt;
+  rc = _detach_area71( area_name        = area_name
+                       client           = l_client
+                       client_supplied  = l_client_supplied
+                       client_dependent = _client_dependent
+                       life_context     = _life_context
+       ).
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-detach_area = abap_true.
+      _trace_service-&gt;trin_detach_area(
+        area_name = area_name
+        client    = l_client
+        rc        = rc
+      ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_AREA" VERSION="1" LANGU="S" DESCRIPT="Löschen aller Instanzen" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_AREA" SCONAME="CLIENT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_AREA" SCONAME="TERMINATE_CHANGER" VERSION="1" LANGU="S" DESCRIPT="Schreiber werden beendet" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ABAP_TRUE"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_AREA" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Rückgabewert (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_RC"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_AREA" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Falscher Parameter übergeben" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method FREE_AREA.
+
+  DATA:
+    l_client TYPE shm_client,
+    l_client_supplied TYPE abap_bool VALUE abap_false.
+
+  CONSTANTS: affect_server TYPE shm_affect_server
+             VALUE cl_shm_area=&gt;affect_local_server.
+
+  mc_set_shm_client.
+
+* &gt;
+  rc = _free_area71( area_name         = area_name
+                     client            = l_client
+                     client_supplied   = l_client_supplied
+                     client_dependent  = _client_dependent
+                     transactional     = _transactional
+                     terminate_changer = terminate_changer
+                     affect_server     = affect_server
+                     life_context      = _life_context ).
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-free_area = abap_true.
+      _trace_service-&gt;trin_free_area(
+      area_name         = area_name
+      client            = l_client
+      terminate_changer = terminate_changer
+      affect_server     = affect_server
+      rc                = rc
+    ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" VERSION="1" LANGU="S" DESCRIPT="Löschen einer Instanz" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" SCONAME="CLIENT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" SCONAME="TERMINATE_CHANGER" VERSION="1" LANGU="S" DESCRIPT="Schreiber werden beendet" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ABAP_TRUE"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Rückgabewert (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_RC"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="FREE_INSTANCE" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Falscher Parameter übergeben" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method FREE_INSTANCE.
+
+  DATA:
+    l_client TYPE shm_client,
+    l_client_supplied TYPE abap_bool VALUE abap_false.
+
+  CONSTANTS: affect_server TYPE shm_affect_server
+             VALUE cl_shm_area=&gt;affect_local_server.
+
+  mc_set_shm_client.
+
+* &gt;
+  rc = _free_instance71( area_name         = area_name
+                         inst_name         = inst_name
+                         client            = l_client
+                         client_supplied   = l_client_supplied
+                         client_dependent  = _client_dependent
+                         transactional     = _transactional
+                         terminate_changer = terminate_changer
+                         affect_server     = affect_server
+                         life_context      = _life_context ).
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-free_instance = abap_true.
+      _trace_service-&gt;trin_free_instance(
+        area_name         = area_name
+        inst_name         = inst_name
+        client            = l_client
+        terminate_changer = terminate_changer
+        affect_server     = affect_server
+        rc                = rc
+      ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_GENERATOR_VERSION" VERSION="1" LANGU="S" DESCRIPT="Generator-Version abfragen" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_GENERATOR_VERSION" SCONAME="GENERATOR_VERSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>method GET_GENERATOR_VERSION.
+  generator_version = _version_.
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_INSTANCE_INFOS" VERSION="1" LANGU="S" DESCRIPT="Liefert die Namen aller Instanzen" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_INSTANCE_INFOS" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_INSTANCE_INFOS" SCONAME="CLIENT" VERSION="1" LANGU="S" DESCRIPT="Mandant bei Shared Objects-Gebieten" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="GET_INSTANCE_INFOS" SCONAME="INFOS" VERSION="1" LANGU="S" DESCRIPT="Übersicht aller Instanzen eines SHM-Gebiets" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_INST_INFOS"/>
+  <source>method GET_INSTANCE_INFOS.
+
+  DATA:
+    l_client             TYPE shm_client,
+    l_client_supplied    TYPE abap_bool VALUE abap_false,
+    l_inst_name_supplied TYPE abap_bool VALUE abap_false.
+
+  mc_set_shm_client.
+
+  IF inst_name IS SUPPLIED.
+    l_inst_name_supplied = abap_true.
+  ENDIF.
+
+* &gt;
+  TRY.
+      CALL METHOD (&apos;_GET_INSTANCE_INFOS804&apos;)
+        EXPORTING
+          area_name          = area_name
+          client             = l_client
+          client_supplied    = l_client_supplied
+          client_dependent   = _client_dependent
+          life_context       = _life_context
+          inst_name          = inst_name
+          inst_name_supplied = l_inst_name_supplied
+        RECEIVING
+          infos              = infos.
+    CATCH cx_sy_dyn_call_illegal_method.
+*     New kernel and/or new basis SP missing -&gt; use slow fallback
+      infos = _get_instance_infos71(
+                area_name        = area_name
+                client           = l_client
+                client_supplied  = l_client_supplied
+                client_dependent = _client_dependent
+                life_context     = _life_context
+              ).
+      IF abap_true = l_inst_name_supplied.
+        DELETE infos WHERE name &lt;&gt; inst_name.
+      ENDIF.
+  ENDTRY.
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-get_instance_inf = abap_true.
+      _trace_service-&gt;trin_get_instance_infos(
+        area_name         = area_name
+        inst_name         = inst_name
+        client            = l_client
+        infos             = infos
+      ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="CL_SHM_AREA" CMPNAME="GET_ROOT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method GET_ROOT.
+
+  DATA:
+    l_cx        TYPE REF TO cx_root,
+    l_area_name TYPE string,
+    l_inst_name TYPE string,
+    l_client    TYPE string.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-get_root = abap_false.
+
+*   &gt;
+    IF is_valid( ) = abap_false.
+      l_area_name = me-&gt;area_name.
+      l_inst_name = me-&gt;inst_name.
+      l_client    = me-&gt;client.
+      RAISE EXCEPTION TYPE cx_shm_already_detached
+        EXPORTING
+          area_name = l_area_name
+          inst_name = l_inst_name
+          client    = l_client.
+    ENDIF.
+    root = me-&gt;root.
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*       &gt;
+        IF is_valid( ) = abap_false.
+          l_area_name = me-&gt;area_name.
+          l_inst_name = me-&gt;inst_name.
+          l_client    = me-&gt;client.
+          RAISE EXCEPTION TYPE cx_shm_already_detached
+            EXPORTING
+              area_name = l_area_name
+              inst_name = l_inst_name
+              client    = l_client.
+        ENDIF.
+        root = me-&gt;root.
+*       &lt;
+
+        _trace_service-&gt;trin_get_root(
+          area_name = area_name
+        ).
+
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_get_root(
+          area_name = area_name
+          cx        = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_AREA" VERSION="1" LANGU="S" DESCRIPT="Aktive Versionen aller Instanzen werden auf veraltet gesetzt" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_AREA" SCONAME="CLIENT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_AREA" SCONAME="TERMINATE_CHANGER" VERSION="1" LANGU="S" DESCRIPT="Aktive Schreiber werden beendet" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ABAP_TRUE"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_AREA" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Detach-Rückgabewert (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_RC"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_AREA" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Falscher Parameter übergeben" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method INVALIDATE_AREA.
+
+  DATA:
+    l_client TYPE shm_client,
+    l_client_supplied TYPE abap_bool VALUE abap_false.
+
+  CONSTANTS: affect_server TYPE shm_affect_server
+             VALUE cl_shm_area=&gt;affect_local_server.
+
+  mc_set_shm_client.
+
+* &gt;
+  rc = _invalidate_area71( area_name         = area_name
+                           client            = l_client
+                           client_supplied   = l_client_supplied
+                           client_dependent  = _client_dependent
+                           transactional     = _transactional
+                           terminate_changer = terminate_changer
+                           affect_server     = affect_server
+                           life_context      = _life_context ).
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-invalidate_area = abap_true.
+      _trace_service-&gt;trin_invalidate_area(
+        area_name         = area_name
+        client            = l_client
+        terminate_changer = terminate_changer
+        affect_server     = affect_server
+        rc                = rc
+      ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" VERSION="1" LANGU="S" DESCRIPT="Aktive Version einer Instanz wird auf veraltet gesetzt" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" SCONAME="CLIENT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_CLIENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" SCONAME="INST_NAME" VERSION="1" LANGU="S" DESCRIPT="Name einer Shared Object Instanz eines Areas" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SHM_INST_NAME" PARVALUE="CL_SHM_AREA=&gt;DEFAULT_INSTANCE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" SCONAME="TERMINATE_CHANGER" VERSION="1" LANGU="S" DESCRIPT="Aktive Schreiber werden beendet" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="ABAP_TRUE"/>
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Detach-Rückgabewert (Konstanten in CL_SHM_AREA)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SHM_RC"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="INVALIDATE_INSTANCE" SCONAME="CX_SHM_PARAMETER_ERROR" VERSION="1" LANGU="S" DESCRIPT="Falscher Parameter übergeben" MTDTYPE="0" EDITORDER="1 "/>
+  <source>method INVALIDATE_INSTANCE.
+
+  DATA:
+    l_client TYPE shm_client,
+    l_client_supplied TYPE abap_bool value abap_false.
+
+  CONSTANTS: affect_server TYPE shm_affect_server
+             VALUE cl_shm_area=&gt;affect_local_server.
+
+  mc_set_shm_client.
+
+* &gt;
+  rc = _invalidate_instance71(
+    area_name         = area_name
+    inst_name         = inst_name
+    client            = l_client
+    client_supplied   = l_client_supplied
+    client_dependent  = _client_dependent
+    transactional     = _transactional
+    terminate_changer = terminate_changer
+    affect_server     = affect_server
+    life_context      = _life_context
+  ).
+* &lt;
+
+  IF _trace_active = abap_true.
+    IF _trace_service-&gt;variant-invalidate_inst = abap_true.
+      _trace_service-&gt;trin_invalidate_instance(
+        area_name         = area_name
+        inst_name         = inst_name
+        client            = l_client
+        terminate_changer = terminate_changer
+        affect_server     = affect_server
+        rc                = rc
+      ).
+    ENDIF.
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="SET_ROOT" VERSION="1" LANGU="S" DESCRIPT="Setzt Wurzelobjekt" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDNEWEXC="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="SET_ROOT" SCONAME="ROOT" VERSION="1" LANGU="S" DESCRIPT="Wurzelobjekt" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_SHMA_ROOT"/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="SET_ROOT" SCONAME="CX_SHM_INITIAL_REFERENCE" VERSION="1" LANGU="S" DESCRIPT="Initiale Referenz übergeben" MTDTYPE="0" EDITORDER="1 "/>
+  <exception CLSNAME="ZCL_AP_SHMA_AREA" CMPNAME="SET_ROOT" SCONAME="CX_SHM_WRONG_HANDLE" VERSION="1" LANGU="S" DESCRIPT="Falsches Handle" MTDTYPE="0" EDITORDER="2 "/>
+  <source>method SET_ROOT.
+
+  DATA:
+    l_cx TYPE REF TO cx_root.
+
+  IF _trace_active = abap_false OR
+  _trace_service-&gt;variant-set_root = abap_false.
+
+*   &gt;
+    _set_root( root ).
+    me-&gt;root = root.
+*   &lt;
+
+  ELSE.
+
+    TRY.
+
+*       &gt;
+        _set_root( root ).
+        me-&gt;root = root.
+*       &lt;
+        _trace_service-&gt;trin_set_root(
+          area_name         = area_name
+          inst_name         = inst_name
+          root              = root
+        ).
+
+      CLEANUP INTO l_cx.
+        _trace_service-&gt;trcx_set_root(
+          area_name         = area_name
+          inst_name         = inst_name
+          root              = root
+          cx                = l_cx
+        ).
+    ENDTRY.
+
+  ENDIF.
+
+  endmethod.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SGPI" VERSION="1" LANGU="S" DESCRIPT="SAPGUI Process indicator" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_SGPI" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_SGPI" CMPNAME="AUX" VERSION="1" LANGU="S" DESCRIPT="Auxiliar" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SGPI" CMPNAME="BREAK_CONDICIONAL" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTVALUE="&apos;&apos;" ATTEXPVIRT="0" TYPTYPE="4" SRCROW1="5 " SRCCOLUMN1="9 " SRCROW2="5 " SRCCOLUMN2="41 " TYPESRC_LENG="35 " TYPESRC="break_condicional TYPE c LENGTH 1
+"/>
+ <attribute CLSNAME="ZCL_AP_SGPI" CMPNAME="COMMIT_WORK" VERSION="1" LANGU="S" DESCRIPT="Indicador de si hace commit work" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="4" SRCROW1="3 " SRCCOLUMN1="9 " SRCROW2="3 " SRCCOLUMN2="41 " TYPESRC_LENG="35 " TYPESRC="commit_work       TYPE c LENGTH 1
+"/>
+ <attribute CLSNAME="ZCL_AP_SGPI" CMPNAME="CONTADOR" VERSION="1" LANGU="S" DESCRIPT="Contador" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SGPI" CMPNAME="TOTAL" VERSION="1" LANGU="S" DESCRIPT="Total" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="CONSTRUCTOR" SCONAME="COMMIT_WORK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="CONSTRUCTOR" SCONAME="BREAK_CONDICIONAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    me-&gt;commit_work       = commit_work.
+
+    me-&gt;break_condicional = break_condicional.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="GET_FILAS_TABLA" VERSION="1" LANGU="S" DESCRIPT="Recupera filas de la tabla" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="GET_FILAS_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_filas_tabla.
+    CLEAR: contador, aux.
+
+    total = lines( tabla ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="PORCENTAJE" VERSION="1" LANGU="S" DESCRIPT="Muestra porcentaje en función cantidad de registro" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="PORCENTAJE" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="PORCENTAJE" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="PORCENTAJE" SCONAME="I_OUTPUT_IMMEDIATELY" VERSION="1" LANGU="S" DESCRIPT='Elem.datos p.dominio BOOLE: VERDADERO (=&quot;X&quot;) y FALSO (=&quot; &quot;)' CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BOOLE_D" PARVALUE="&apos;&apos;"/>
+  <source>METHOD porcentaje.
+*  DATA l_porc TYPE i.
+
+    IF    sy-uname = &apos;WF-BATCH&apos;
+       OR sy-uname = &apos;SAP_WFRT&apos;.
+      RETURN.
+    ENDIF.
+
+    IF total &lt;= 0.
+      RETURN.
+    ENDIF.
+    contador = contador + 1.
+*  l_porc = ( contador * 100 ) / total.
+    IF contador &lt;= aux.
+      RETURN.
+    ENDIF.
+
+*    IF sy-batch IS INITIAL.
+*      CALL METHOD refresh.
+    text( texto = texto
+          i_total = total
+          i_processed = contador
+          i_output_immediately = i_output_immediately
+          commit = commit_work
+          break_condicional = break_condicional ).
+*      CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+*        EXPORTING
+*          percentage = l_porc
+*          text       = texto
+*        EXCEPTIONS
+*          OTHERS     = 1.
+*    ELSE.
+*      MESSAGE s004(ken_01) WITH texto l_porc &apos;%&apos;.
+    IF sy-batch = &apos;X&apos;.
+      IF commit_work = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+    aux = aux + cantidad.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="REFRESH" VERSION="1" LANGU="S" DESCRIPT="Limpiar contenido barra" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD refresh.
+*    CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;. &quot; EC *
+
+    cl_progress_indicator=&gt;progress_indicate(
+         i_text               = &apos;&apos;
+        i_output_immediately = &apos;&apos; ).
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" VERSION="1" LANGU="S" DESCRIPT="Texto simple statico" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="I_PROCESSED" VERSION="1" LANGU="S" DESCRIPT="Índice de tablas internas" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TABIX" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="I_TOTAL" VERSION="1" LANGU="S" DESCRIPT="Índice de tablas internas" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TABIX" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="I_OUTPUT_IMMEDIATELY" VERSION="1" LANGU="S" DESCRIPT="Si X inmediato, sino solo una vez cada 10 segundos" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BOOLE_D" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXT" SCONAME="BREAK_CONDICIONAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD text.
+    DATA l_texto TYPE string.
+
+    IF    sy-uname = &apos;WF-BATCH&apos;
+       OR sy-uname = &apos;SAP_WFRT&apos;.
+      RETURN.
+    ENDIF.
+
+    CONCATENATE texto texto2 texto3 INTO l_texto SEPARATED BY space.
+
+    cl_progress_indicator=&gt;progress_indicate(
+         i_text               = l_texto
+        i_processed          = i_processed    &quot; Number of Objects Already Processed
+        i_total              = i_total    &quot; Total Number of Objects to Be Processed
+        i_output_immediately = i_output_immediately ). &quot; X = Display Progress Immediately; EC *
+
+    IF i_output_immediately = &apos;X&apos; AND commit = &apos;X&apos;.
+      IF commit = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+      IF sy-batch IS INITIAL.
+        cl_gui_cfw=&gt;flush( ).
+      ENDIF.
+    ENDIF.
+
+    IF break_condicional = &apos;X&apos;.
+      zcl_ap_dev=&gt;break_condicional( texto = l_texto ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="Muestra dos textos" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXTO" SCONAME="TEXTO1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXTO" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXTO" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SGPI" CMPNAME="TEXTO" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD texto.
+    DATA: l_texto1 TYPE string,
+          l_texto2 TYPE string,
+          l_texto3 TYPE string,
+          l_linea  TYPE c LENGTH 100.
+
+    IF    sy-uname = &apos;WF-BATCH&apos;
+       OR sy-uname = &apos;SAP_WFRT&apos;.
+      RETURN.
+    ENDIF.
+
+    l_texto1 = texto1.
+    l_texto2 = texto2.
+    l_texto3 = texto3.
+
+    IF quitar_ceros = &apos;X&apos;.
+      zcl_ap_string=&gt;quitar_ceros_c( CHANGING cadena = l_texto1 ).
+      zcl_ap_string=&gt;quitar_ceros_c( CHANGING cadena = l_texto2 ).
+      zcl_ap_string=&gt;quitar_ceros_c( CHANGING cadena = l_texto3 ).
+    ENDIF.
+    CONCATENATE l_texto1 l_texto2 l_texto3 INTO l_linea SEPARATED BY space.
+
+    IF sy-batch IS INITIAL.
+      IF commit_work = &apos;X&apos; AND sy-batch IS INITIAL.
+        text( texto = l_linea i_output_immediately = &apos;X&apos; break_condicional = break_condicional ).
+      ELSE.
+        text( texto = l_linea i_output_immediately = &apos;&apos; break_condicional = break_condicional ).
+      ENDIF.
+    ELSE.
+      MESSAGE i003(aq) WITH l_linea.
+    ENDIF.
+
+    IF commit_work = &apos;X&apos;.
+      COMMIT WORK AND WAIT.
+      IF sy-batch IS INITIAL.
+        cl_gui_cfw=&gt;flush( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

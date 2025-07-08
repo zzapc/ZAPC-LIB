@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZBCIHR" VARCL="X" SUBC="I" RMAND="012" RLOAD="S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include manejo infotipos HR" LENGTH="27 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp;  Include           ZBCIHR                                           *
+*&amp;---------------------------------------------------------------------*
+************************************************************************
+* TITULO      : Include función manejo infotipos
+* DESCRIPCION : Encapsulamiento de la función que permite realizar
+*               acciones con infotipos.
+*               Ejecuta cada operación con un call transaction.
+*
+* Ejemplo:
+*    rp_provide_from_last p0001 space pn-begda pn-endda.
+*    p0001-bukrs = i_listado-bukrsn.
+*    p0001-werks = i_listado-werksn.
+*    p0001-juper = i_listado-bukrsn.
+*    p0001-btrtl = i_listado-btrtln.
+*    p0001-begda = i_listado-begdan.
+*    operacion_infotipo i_listado-pernr &apos;0001&apos; &apos;&apos; &apos;COP&apos;
+*                       p_begda &apos;99991231&apos;
+*                       p0001.
+*    IF NOT v_hr_bapireturn-id IS INITIAL.
+*      i_listado-error = v_hr_bapireturn-message.
+*      i_listado-infer   = &apos;0001&apos;.
+*    ENDIF.
+* AUTOR       : Andrés Picazo (Altimia)         FECHA: 02/05/04        *
+*
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA            NOMBRE            DESCRIPCION                       *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy       username                                            *
+************************************************************************
+
+DATA: v_hr_error_bloqueo,           &quot;Indica que hay un error en bloqueo
+      v_hr_dialog_mode VALUE &apos;1&apos;,   &quot;Indica el modo de ejecución del
+                                    &quot;call transacion
+                                    &quot;   0 - No visible
+                                    &quot;   1 - Parar en errores
+                                    &quot;   2 - Visible
+      v_hr_nocommit VALUE &apos; &apos;.      &quot;Ejecución commit
+
+* Tabla con las acciones realizadas
+DATA: i_hr_bapipakey  LIKE bapipakey OCCURS 0 WITH HEADER LINE.
+* Mensajes de salida
+DATA: v_hr_bapireturn LIKE bapireturn1,
+      v_hr_bapireturn2 LIKE bapireturn1.
+
+*---------------------------------------------------------------------*
+*       DEFINE operacion_infotipo
+*---------------------------------------------------------------------*
+*       Crear el infotipo seleccionado
+*          &amp;1 - Nº empleado
+*          &amp;2 - Infotipo
+*          &amp;3 - Subtipo
+*          &amp;4 - Operacion (INS, MOD, DEL, COP)
+*          &amp;5 - Fecha inicio
+*          &amp;6 - Fecha fin
+*          &amp;7 - Registro
+*       Devuelve el error en v_bapireturn.
+*---------------------------------------------------------------------*
+DEFINE operacion_infotipo.
+
+  call function &apos;BAPI_EMPLOYEE_ENQUEUE&apos;
+       exporting
+            number = &amp;1
+       importing
+            return = v_hr_bapireturn.
+
+  if not v_hr_bapireturn-id is initial.
+    v_hr_error_bloqueo = &apos;X&apos;.
+  else.
+    clear v_hr_error_bloqueo.
+    call function &apos;HR_INFOTYPE_OPERATION&apos;
+         exporting
+              infty         = &amp;2
+              subtype       = &amp;3
+              number        = &amp;1
+              record        = &amp;7
+              validitybegin = &amp;5
+              validityend   = &amp;6
+              operation     = &amp;4
+              dialog_mode   = v_hr_dialog_mode
+              nocommit      = v_hr_nocommit
+         importing
+              return        = v_hr_bapireturn
+              key           = i_hr_bapipakey.
+
+    if v_hr_error_bloqueo is initial.
+*      commit work and wait.
+      call function &apos;BAPI_EMPLOYEE_DEQUEUE&apos;
+           exporting
+                number = &amp;1
+           importing
+                return = v_hr_bapireturn2.
+    endif.
+  endif.
+
+END-OF-DEFINITION.
+
+DEFINE leer_infotipo.
+
+  call function &apos;HR_INFOTYPE_GETDETAIL&apos;
+       exporting
+            infty         = &amp;2
+            number        = &amp;1
+            subtype       = &amp;3
+            validityend   = &amp;4
+            validitybegin = &amp;5
+       importing
+            return        = v_hr_bapireturn2
+            record        = &amp;6
+       exceptions
+            others        = 0.
+
+END-OF-DEFINITION.</source>
+</PROG>

@@ -1,0 +1,2245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_STRING" VERSION="1" LANGU="S" DESCRIPT="Clase utilidad para manejo caracteres" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="AIM" ENTRY="a importe" LENGTH="19 "/>
+   <textElement ID="I" KEY="CDP" ENTRY="Se han copiado datos desde portapapeles" LENGTH="72 "/>
+   <textElement ID="I" KEY="CIC" ENTRY="Cantidad indeterminado en conversión" LENGTH="72 "/>
+   <textElement ID="I" KEY="CTD" ENTRY="Cantidad" LENGTH="18 "/>
+   <textElement ID="I" KEY="DTS" ENTRY="es demasiado grande para variable de salida" LENGTH="86 "/>
+   <textElement ID="I" KEY="ECN" ENTRY="Error de conexión" LENGTH="27 "/>
+   <textElement ID="I" KEY="ECO" ENTRY="Error de conversión" LENGTH="29 "/>
+   <textElement ID="I" KEY="EDA" ENTRY="Error de datos" LENGTH="24 "/>
+   <textElement ID="I" KEY="EHG" ENTRY="Error llamando a HTTP_GET" LENGTH="50 "/>
+   <textElement ID="I" KEY="EIN" ENTRY="Error interno" LENGTH="23 "/>
+   <textElement ID="I" KEY="ENC" ENTRY="en conversión" LENGTH="23 "/>
+   <textElement ID="I" KEY="ERC" ENTRY="Error reemplazando carácteres" LENGTH="58 "/>
+   <textElement ID="I" KEY="ERR" ENTRY="Error" LENGTH="15 "/>
+   <textElement ID="I" KEY="EUR" ENTRY="URL no existe" LENGTH="23 "/>
+   <textElement ID="I" KEY="EXM" ENTRY="Error XML:" LENGTH="20 "/>
+   <textElement ID="I" KEY="FCO" ENTRY="Fallo de comunicación" LENGTH="42 "/>
+   <textElement ID="I" KEY="FSI" ENTRY="Fallo de sistema" LENGTH="26 "/>
+   <textElement ID="I" KEY="IMC" ENTRY="Imposible convertir" LENGTH="29 "/>
+   <textElement ID="I" KEY="NOT" ENTRY="Nota" LENGTH="14 "/>
+   <textElement ID="I" KEY="SPE" ENTRY="Se ha produccido un error al convertir cantidad" LENGTH="94 "/>
+   <textElement ID="I" KEY="TCP" ENTRY="Error de TCPIP" LENGTH="24 "/>
+   <textElement ID="I" KEY="TDL" ENTRY="Texto a justificar demasiado largo" LENGTH="68 "/>
+   <textElement ID="I" KEY="TMO" ENTRY="TimeOut" LENGTH="17 "/>
+   <textElement ID="I" KEY="USD" ENTRY="Utilize el . como separador de decimales" LENGTH="80 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_STRING" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_STRING" CMPNAME="C_ERROR_FLOAT" VERSION="1" LANGU="S" DESCRIPT="Valor devuelto si error conversión" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;-99999.99999&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="QMITTELWRT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="BASE642XSTRING" VERSION="1" LANGU="S" DESCRIPT="XSTRING a BASE64" EXPOSURE="2" STATE="1" EDITORDER="56 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="BASE642XSTRING" SCONAME="BASE64" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="BASE642XSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD base642xstring.
+    IF base64 IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;SSFC_BASE64_DECODE&apos; &quot;#EC *
+      EXPORTING  b64data                  = base64
+*                 B64LENG                  =
+*                 B_CHECK                  =
+      IMPORTING  bindata                  = xstring
+      EXCEPTIONS ssf_krn_error            = 1
+                 ssf_krn_noop             = 2
+                 ssf_krn_nomemory         = 3
+                 ssf_krn_opinv            = 4
+                 ssf_krn_input_data_error = 5
+                 ssf_krn_invalid_par      = 6
+                 ssf_krn_invalid_parlen   = 7
+                 OTHERS                   = 8.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error decodificando de base 64&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="BUSCA_NUMEROS" VERSION="1" LANGU="S" DESCRIPT="Busca números al comienzo del string" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="BUSCA_NUMEROS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="BUSCA_NUMEROS" SCONAME="CUALQUIERA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="BUSCA_NUMEROS" SCONAME="NUMERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD busca_numeros.
+    DATA: pe_texto TYPE c LENGTH 1000,
+          l_indice TYPE i,
+          l_long   TYPE i,
+          l_letra  TYPE c LENGTH 1.
+
+    pe_texto = string.
+    CLEAR numero.
+    l_indice = 0.
+    l_long   = strlen( pe_texto ).
+    DO.
+      IF l_indice &gt; l_long.
+        EXIT.
+      ENDIF.
+
+      l_letra = pe_texto+l_indice(1).
+      IF l_letra CO &apos;0123456789&apos;.
+        CONCATENATE numero l_letra INTO numero.
+      ELSEIF l_letra CO &apos; .-&apos; AND numero IS INITIAL. &quot;#EC *
+      ELSE.
+        IF cualquiera IS INITIAL.
+          EXIT.
+        ENDIF.
+      ENDIF.
+      l_indice = l_indice + 1.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="COMPRIMIR_STRING" VERSION="1" LANGU="S" DESCRIPT="Comprime string con ZIP. Devuelve Xstring" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="COMPRIMIR_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="COMPRIMIR_STRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD comprimir_string.
+    DATA izip      TYPE REF TO cl_abap_zip.
+    DATA converter TYPE REF TO cl_abap_conv_out_ce.
+
+    izip = NEW #( ).
+
+*-- Convert
+    converter = cl_abap_conv_out_ce=&gt;create( encoding = &apos;DEFAULT&apos; ).
+    converter-&gt;reset( ).
+    converter-&gt;write( data = string ).
+
+    xstring = converter-&gt;get_buffer( ).
+
+    izip-&gt;add( name    = &apos;xstring&apos;
+               content = xstring ).
+
+    xstring = izip-&gt;save( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="CONDENSAR_TABLA" VERSION="1" LANGU="S" DESCRIPT="Condensar tabla" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONDENSAR_TABLA" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONDENSAR_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD condensar_tabla.
+    DATA: l_linea  TYPE text1000,
+          l_long   TYPE i,
+          l_ant    TYPE text1000,
+          t_aux    TYPE TABLE OF text1000,
+          l_aux    TYPE text1000,
+          t_tabla2 TYPE TABLE OF text1000.
+
+    LOOP AT tabla INTO l_linea.
+      l_long = strlen( l_linea ) - 1.
+      CONCATENATE l_ant l_linea INTO l_ant SEPARATED BY space.
+      IF l_long &gt;= 0.
+        IF l_linea+l_long = &apos;.&apos;.
+          IF l_ant(1) = &apos; &apos;. l_ant = l_ant+1. ENDIF.
+          APPEND l_ant TO t_aux.
+          CLEAR l_ant.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+    IF NOT l_ant IS INITIAL.
+      IF l_ant(1) = &apos; &apos;. l_ant = l_ant+1. ENDIF.
+      APPEND l_ant TO t_aux.
+    ENDIF.
+
+    CLEAR tabla.
+    LOOP AT t_aux INTO l_aux.
+      REFRESH t_tabla2.
+      CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
+        EXPORTING  textline            = l_aux
+*                   DELIMITER           = &apos; &apos;
+                   outputlen           = longitud
+* IMPORTING
+*                   OUT_LINE1           =
+*                   OUT_LINE2           =
+*                   OUT_LINE3           =
+        TABLES     out_lines           = t_tabla2
+        EXCEPTIONS outputlen_too_large = 1
+                   OTHERS              = 2.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Texto a justificar demasiado largo&apos;(tdl) TYPE &apos;S&apos;.
+      ENDIF.
+
+      LOOP AT t_tabla2 INTO l_aux.
+        l_aux = l_aux(longitud).
+        APPEND l_aux TO tabla.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="CONVERT_HTML_CHARS" VERSION="1" LANGU="S" DESCRIPT='Convierte valores formateados &quot;raros&quot; a valores con acentos' EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVERT_HTML_CHARS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD convert_html_chars.
+    REPLACE ALL OCCURRENCES OF &apos;\u00e1&apos; IN string WITH &apos;á&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00e9&apos; IN string WITH &apos;é&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00ed&apos; IN string WITH &apos;í&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00f3&apos; IN string WITH &apos;ó&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00fa&apos; IN string WITH &apos;ú&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00f1&apos; IN string WITH &apos;ñ&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u00e0&apos; IN string WITH &apos;á&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00e9&apos; IN string WITH &apos;é&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00ec&apos; IN string WITH &apos;í&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00f2&apos; IN string WITH &apos;ó&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00f9&apos; IN string WITH &apos;ú&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u00fc&apos; IN string WITH &apos;ü&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u00c1&apos; IN string WITH &apos;Á&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00c9&apos; IN string WITH &apos;É&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00cd&apos; IN string WITH &apos;Í&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00d3&apos; IN string WITH &apos;Ó&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00da&apos; IN string WITH &apos;Ú&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00d1&apos; IN string WITH &apos;Ñ&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u00c0&apos; IN string WITH &apos;À&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00c8&apos; IN string WITH &apos;È&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00cc&apos; IN string WITH &apos;Ì&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00d2&apos; IN string WITH &apos;Ò&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u00d9&apos; IN string WITH &apos;Ù&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u00bf&apos; IN string WITH &apos;¿&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\n&apos; IN string WITH &apos; &apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\/&apos; IN string WITH &apos;/&apos;.
+
+    REPLACE ALL OCCURRENCES OF &apos;\u2018&apos; IN string WITH &apos;#&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\u2019&apos; IN string WITH &apos;#&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" VERSION="1" LANGU="S" DESCRIPT="Convierte codificación" EXPOSURE="2" STATE="1" EDITORDER="42 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="INCODE" VERSION="1" LANGU="S" DESCRIPT="UTF-8" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="ZCL_C=&gt;CODEPAGE_HTML"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="OUTCODE" VERSION="1" LANGU="S" DESCRIPT="ISO-8891" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="ZCL_C=&gt;CODEPAGE"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="CONV_CARACT_IN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="CONV_CARACT_OUT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CONVIERTE_CODIFICACION" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD convierte_codificacion.
+    DATA: l_incode  TYPE tcp00-cpcodepage,
+          l_outcode TYPE tcp00-cpcodepage.
+
+    IF incode = outcode.
+      salida = cadena.
+      RETURN.
+    ENDIF.
+
+    l_incode = incode.
+    l_outcode = outcode.
+
+    CALL FUNCTION &apos;SCP_TRANSLATE_CHARS&apos;
+      EXPORTING  inbuff           = cadena
+*                 INBUFFLG         = 0
+                 incode           = l_incode
+*                 OUTBUFFLG        = 0
+                 outcode          = l_outcode
+*                 CSUBST           = &apos;X&apos;
+*                 SUBSTC_HASH      = &apos; &apos;
+*                 SUBSTC_DOT       = &apos; &apos;
+*                 SUBSTC_SPACE     = &apos; &apos;
+*                 SUBSTC           = &apos;00035&apos;
+      IMPORTING
+*                 INUSED           =
+                 outbuff          = salida
+*                 OUTOVERFLOW      =
+*                 OUTUSED          =
+*                 SUBSTED          =
+*                 INPUT_ENDS_IN_CHAR =
+*                 ERRMSG           =
+      EXCEPTIONS invalid_codepage = 1
+                 internal_error   = 2
+                 cannot_convert   = 3
+                 fields_bad_type  = 4
+                 OTHERS           = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE e398(00) WITH &apos;Error&apos;(err) sy-subrc &apos;en conversión&apos;(enc) &apos;&apos;.
+      ELSE.
+        salida = cadena.
+      ENDIF.
+    ELSE.
+      IF NOT conv_caract_in IS INITIAL.
+        REPLACE ALL OCCURRENCES OF conv_caract_in IN salida WITH conv_caract_out.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" VERSION="1" LANGU="S" DESCRIPT="Convierte cantidad en string" EXPOSURE="2" STATE="1" EDITORDER="51 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" SCONAME="CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" SCONAME="QUITAR_DECIMALES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" SCONAME="MAX_DECIMALES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="9999"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" SCONAME="CONDENSAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="CTD2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD ctd2string.
+    CLEAR string.
+    string = ctd.
+    CONDENSE string NO-GAPS.
+    SPLIT string AT &apos;.&apos; INTO DATA(entero) DATA(decimales).
+    IF decimales CO &apos;0 &apos; OR quitar_decimales = &apos;X&apos;.
+      string = entero.
+    ELSE.
+      IF max_decimales &gt; 0.
+        IF strlen( decimales ) &gt; max_decimales.
+          CONCATENATE entero &apos;.&apos; decimales(max_decimales) INTO string.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF condensar = &apos;X&apos;.
+      CONDENSE string NO-GAPS.
+      IF string CS &apos;.&apos;.
+        DO 5 TIMES.
+          DATA(l_long) = strlen( string ) - 1.
+          IF string+l_long(1) = &apos;0&apos;.
+            string = string(l_long).
+          ELSE.
+            EXIT.
+          ENDIF.
+        ENDDO.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="DECRYPT" VERSION="1" LANGU="S" DESCRIPT="Desencripta string" EXPOSURE="2" STATE="1" EDITORDER="53 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="DECRYPT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="DECRYPT" SCONAME="DECRYPT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD decrypt.
+    CLEAR decrypt.
+    TRY.
+        decrypt = NEW cl_hard_wired_encryptor( )-&gt;decrypt_string2string( CONV #( string ) ).
+      CATCH cx_root INTO DATA(o_cx_root). &quot;#EC * &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        MESSAGE &apos;Error desencriptando&apos; TYPE &apos;S&apos;.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="DESCOMPRIMIR_STRING" VERSION="1" LANGU="S" DESCRIPT="Descomprime xstring con ZIP. Devuelve String" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="DESCOMPRIMIR_STRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="DESCOMPRIMIR_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD descomprimir_string.
+    DATA izip      TYPE REF TO cl_abap_zip.
+    DATA l_xstring TYPE xstring.
+    DATA converter TYPE REF TO cl_abap_conv_in_ce.
+
+    izip = NEW #( ).
+
+    izip-&gt;load( xstring ).
+
+    izip-&gt;get( EXPORTING name    = &apos;xstring&apos;
+               IMPORTING content = l_xstring ).
+
+*-- Convert
+    converter = cl_abap_conv_in_ce=&gt;create( encoding = &apos;DEFAULT&apos;
+                                            input    = l_xstring ).
+*  converter-&gt;reset( ).
+*  call method converter-&gt;write
+*    exporting
+*      data = l_xstring.
+
+    string = converter-&gt;get_buffer( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="EDITOR_POPUP_STRING" VERSION="1" LANGU="S" DESCRIPT="Muestra popup que edita variable string 80 posiciones" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="EDITOR_POPUP_STRING" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String de entrada" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="EDITOR_POPUP_STRING" SCONAME="TITULO" VERSION="1" LANGU="S" DESCRIPT="Titulo de la ventana" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="EDITOR_POPUP_STRING" SCONAME="SALIDA" VERSION="1" LANGU="S" DESCRIPT="String de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD editor_popup_string.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_titulo TYPE text80,
+          texto    TYPE swhttext80.
+
+    IF titulo IS INITIAL.
+      l_titulo = &apos;Nota&apos;(not).
+    ELSE.
+      l_titulo = titulo.
+    ENDIF.
+
+    zcl_ap_string=&gt;string2tabla( EXPORTING string   = string
+                                           longitud = 70 ##NUMBER_OK
+                                 CHANGING  tabla    = texto ).
+
+    CALL FUNCTION &apos;TERM_CONTROL_EDIT&apos;
+      EXPORTING  titel          = titulo
+                 langu          = sy-langu
+      TABLES     textlines      = texto
+      EXCEPTIONS user_cancelled = 1
+                 OTHERS         = 2.
+    IF sy-subrc = 0.
+      salida = zcl_ap_string=&gt;tabla2string( tabla = texto ).
+    ELSE.
+      salida = &apos;#!#&apos;. &quot; Error
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ELIMINAR_CARACT_NO_VALIDOS" VERSION="1" LANGU="S" DESCRIPT="Elimina códigos ASCII problematicos" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ELIMINAR_CARACT_NO_VALIDOS" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ELIMINAR_CARACT_NO_VALIDOS" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD eliminar_caract_no_validos.
+    DATA: l_lon   TYPE i,
+          l_pos   TYPE i,
+          l_char  TYPE c LENGTH 1,
+          l_ascii TYPE url_code.
+
+    CLEAR salida.
+    l_lon = strlen( cadena ).
+    DO l_lon TIMES.
+      l_pos = sy-index - 1.
+      l_char = cadena+l_pos(1).
+
+      CALL FUNCTION &apos;URL_ASCII_CODE_GET&apos;
+        EXPORTING trans_char = l_char
+        IMPORTING char_code  = l_ascii.
+
+      IF l_ascii = &apos;01&apos; OR l_ascii = &apos;20&apos; OR l_ascii = &apos;0D&apos;.
+        CONCATENATE salida ` ` INTO salida.
+      ELSE.
+        CONCATENATE salida l_char INTO salida.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ENCRYPT" VERSION="1" LANGU="S" DESCRIPT="Encripta string" EXPOSURE="2" STATE="1" EDITORDER="52 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ENCRYPT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ENCRYPT" SCONAME="ENCRYPT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD encrypt.
+    CLEAR encrypt.
+    TRY.
+        encrypt = NEW cl_hard_wired_encryptor( )-&gt;encrypt_string2string( CONV #( string ) ).
+      CATCH cx_root INTO DATA(o_cx_root). &quot;#EC * &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        MESSAGE &apos;Error encriptando&apos; TYPE &apos;S&apos;. &quot;#EC *
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ESCAPE_URL" VERSION="1" LANGU="S" DESCRIPT="Escape URL" EXPOSURE="2" STATE="1" EDITORDER="54 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ESCAPE_URL" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ESCAPE_URL" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD escape_url.
+    CLEAR url.
+    url = cl_http_utility=&gt;escape_url( CONV #( string ) ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO" VERSION="1" LANGU="S" DESCRIPT="¿La cadena contiene sólo numeros?" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_numero.
+    DATA htype TYPE dd01v-datatype.
+
+    CLEAR si.
+    IF cadena CN &apos;0123456789 &apos;.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;NUMERIC_CHECK&apos;
+      EXPORTING string_in = cadena
+      IMPORTING
+*                STRING_OUT =
+                htype     = htype.
+
+    IF htype = &apos;NUMC&apos;.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMEROP" VERSION="1" LANGU="S" DESCRIPT="¿La cadena contiene sólo numeros (o un único punto)?" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMEROP" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMEROP" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_numerop.
+    DATA l_cadena TYPE c LENGTH 100.
+
+    l_cadena = cadena.
+    CONDENSE l_cadena.
+    CLEAR si.
+    IF l_cadena CO &apos;0123456789. &apos;.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO_COMA" VERSION="1" LANGU="S" DESCRIPT="¿La cadena contiene sólo numeros (o un único coma)?" EXPOSURE="2" STATE="1" EDITORDER="39 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO_COMA" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ES_NUMERO_COMA" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_numero_coma.
+    DATA l_cadena TYPE c LENGTH 100.
+
+    l_cadena = cadena.
+    CONDENSE l_cadena.
+    CLEAR si.
+    IF l_cadena CO &apos;0123456789, &apos;.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="FORMATEAR_TLINE" VERSION="1" LANGU="S" DESCRIPT="Intenta poner los formatos de párrafo en una de texto" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FORMATEAR_TLINE" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Líneas de texto_T" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
+  <source>METHOD formatear_tline.
+    DATA: t_aux2  TYPE tlinetab,
+          t_aux   TYPE tlinetab,
+          l_aux   TYPE tline,
+          l_index TYPE sy-tabix,
+          l_aux2  TYPE tline,
+          l_long  TYPE i,
+          l_long2 TYPE i,
+          l_tot   TYPE i.
+
+    t_aux2 = tabla.
+    t_aux = t_aux2.
+
+    CLEAR tabla.
+
+    LOOP AT t_aux INTO l_aux.
+      l_index = sy-tabix.
+      CLEAR l_aux2.
+      l_index = l_index + 1.
+      READ TABLE t_aux2 INTO l_aux2 INDEX l_index.
+      IF sy-subrc &lt;&gt; 0.
+        APPEND l_aux TO tabla.
+      ELSE.
+        l_long = strlen( l_aux-tdline ).
+        IF    ultimo_caracter( l_aux-tdline )  = &apos;.&apos;
+           OR l_long &gt;= 130 OR (                            ##NUMBER_OK
+                                                          l_aux-tdline &lt;&gt; &apos;*&apos; AND l_aux-tdline &lt;&gt; &apos; &apos; ).
+          APPEND l_aux TO tabla.
+        ELSE.
+          l_long2 = strlen( l_aux2-tdline ).
+          l_tot = l_long + l_long2.
+          IF l_aux2-tdline IS INITIAL AND l_aux2-tdformat = &apos;*&apos;.
+            DELETE t_aux INDEX l_index.
+            DELETE t_aux2 INDEX l_index.
+            APPEND l_aux TO tabla.
+          ELSEIF l_aux2-tdformat = &apos;*&apos; AND l_tot &lt; 130 ##NUMBER_OK.
+            CONCATENATE l_aux-tdline l_aux2-tdline INTO l_aux-tdline
+                        SEPARATED BY space.
+            APPEND l_aux TO tabla.
+            DELETE t_aux INDEX l_index.
+            DELETE t_aux2 INDEX l_index.
+          ELSE.
+            APPEND l_aux TO tabla.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" VERSION="1" LANGU="S" DESCRIPT="String 2 clipboard" EXPOSURE="2" STATE="1" EDITORDER="46 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" SCONAME="SHOW_MSG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" SCONAME="GET_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" SCONAME="GET_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="FROM_CLIPBOARD" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD from_clipboard.
+    &quot; TODO: parameter GET_STRING is never used (ABAP cleaner)
+
+    DATA: i_data TYPE TABLE OF text4096,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_len  TYPE i,
+          i_col  TYPE TABLE OF text4096,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_data TYPE REF TO data,
+          l_col  TYPE text4096.
+
+    FIELD-SYMBOLS: &lt;data&gt;  TYPE text4096,
+                   &lt;linea&gt; TYPE any,
+                   &lt;col&gt;   TYPE any.
+
+    CLEAR: tabla,
+           string.
+
+    cl_gui_frontend_services=&gt;clipboard_import( IMPORTING  data                 = i_data
+                                                           length               = l_len
+                                                EXCEPTIONS cntl_error           = 1
+                                                           error_no_gui         = 2
+                                                           not_supported_by_gui = 3
+                                                           OTHERS               = 4 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      IF get_tabla = &apos;X&apos;.
+        LOOP AT i_data ASSIGNING &lt;data&gt;.
+          SPLIT &lt;data&gt; AT cl_bcs_convert=&gt;gc_tab INTO TABLE i_col.
+
+          CREATE DATA l_data LIKE LINE OF tabla.
+          APPEND INITIAL LINE TO tabla ASSIGNING &lt;linea&gt;.
+          LOOP AT i_col INTO l_col.
+            ASSIGN COMPONENT sy-tabix
+                   OF STRUCTURE &lt;linea&gt; TO &lt;col&gt;.
+            IF sy-subrc = 0.
+              &lt;col&gt; = l_col.
+            ENDIF.
+          ENDLOOP.
+        ENDLOOP.
+      ELSE.
+        string = tabla2string( i_data ).
+      ENDIF.
+
+      IF show_msg = &apos;X&apos;.
+        MESSAGE &apos;Se han copiado datos desde portapapeles&apos;(cdp) TYPE &apos;S&apos;.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="GET_GUID" VERSION="1" LANGU="S" DESCRIPT="Devuelve GUID" EXPOSURE="2" STATE="1" EDITORDER="55 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_GUID" SCONAME="GUID" VERSION="1" LANGU="S" DESCRIPT="eDocument: GUID" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EDOC_GUID"/>
+  <source>METHOD get_guid.
+    DATA time_char TYPE timestampl.
+
+    CLEAR guid.
+    TRY.
+        guid = cl_system_uuid=&gt;if_system_uuid_static~create_uuid_c32( ). &quot; Create UUID
+      CATCH cx_uuid_error INTO DATA(lref_cx_uuid_error). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        GET TIME STAMP FIELD time_char.
+        guid = time_char.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" VERSION="1" LANGU="S" DESCRIPT="Obtiene hash" EXPOSURE="2" STATE="1" EDITORDER="50 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" SCONAME="ALGORITMO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;MD5&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" SCONAME="B64" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_HASH" SCONAME="HASH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_hash.
+    DATA l_string TYPE string.
+
+    CLEAR hash.
+    IF NOT datos IS INITIAL.
+      l_string = datos.
+    ELSEIF NOT tabla IS INITIAL.
+      l_string = /ui2/cl_json=&gt;serialize( data     = tabla
+                                          compress = &apos;X&apos; ).
+    ENDIF.
+
+    IF b64 = &apos;X&apos;.
+      TRY.
+          cl_abap_message_digest=&gt;calculate_hash_for_char( EXPORTING if_algorithm     = algoritmo
+                                                                     if_data          = l_string
+*                                                                     if_length        = 0
+                                                           IMPORTING
+*                                                                     ef_hashstring    =
+*                                                                     ef_hashxstring   =
+                                                                     ef_hashb64string = hash ).
+        CATCH cx_abap_message_digest. &quot;#EC *
+
+      ENDTRY.
+
+    ELSE.
+      TRY.
+          cl_abap_message_digest=&gt;calculate_hash_for_char( EXPORTING if_algorithm  = algoritmo
+                                                                     if_data       = l_string
+*                                                                     if_length     = 0
+                                                           IMPORTING ef_hashstring = hash ).
+        CATCH cx_abap_message_digest. &quot;#EC *
+
+      ENDTRY.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" VERSION="1" LANGU="S" DESCRIPT="Recupera string desde Internet" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="SAP ArchiveLink: Elemento de datos para URI absoluto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="CONVERT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="SIZE" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="CONTENT_BIN_255" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla contenido binario" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIDOCCONTENTAB"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="Objcont y objhead como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_string_from_url.
+    TYPES ole2_parameter TYPE swcbcont-value.
+    TYPES: BEGIN OF cndp_user_info,
+             user          TYPE ole2_parameter, &quot; Username am Server
+             password      TYPE ole2_parameter, &quot; Password am Server
+             proxy         TYPE ole2_parameter, &quot; Proxy (incl. Port)
+             proxyuser     TYPE ole2_parameter, &quot; User am Proxy
+             proxypassword TYPE ole2_parameter, &quot; Password am Proxy
+             scrambled     TYPE c LENGTH 1,     &quot; Flag ob verschlüsselt
+           END OF cndp_user_info.
+
+    DATA: l_url     TYPE saeuri,
+          user_info TYPE cndp_user_info.
+
+    CLEAR content_bin_255.
+
+    l_url = url.
+    CALL FUNCTION &apos;DP_GET_STREAM_FROM_URL&apos;
+      EXPORTING  url            = l_url
+                 userinfo       = user_info
+      IMPORTING  size           = size
+      TABLES     data           = content_bin_255
+      EXCEPTIONS dp_fail        = 1
+                 dp_failed_init = 2
+                 OTHERS         = 3.
+
+    IF sy-subrc &lt;&gt; 0.
+      CALL FUNCTION &apos;AC_FLUSH_CALL&apos;
+        EXPORTING system_flush = &apos;X&apos;.
+
+      IF mostrar_error = &apos;X&apos;.
+        MESSAGE &apos;URL no existe&apos;(eur) TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF content_bin_255 IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;SCMS_BINARY_TO_STRING&apos;
+      EXPORTING input_length = 999999999 ##NUMBER_OK
+      IMPORTING text_buffer  = string
+*                output_length = lv_len_out
+      TABLES    binary_tab   = content_bin_255.
+
+    IF convert = &apos;X&apos;.
+      convert_html_chars( CHANGING string = string ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" VERSION="1" LANGU="S" DESCRIPT="Recupera string desde Internet" EXPOSURE="2" STATE="1" EDITORDER="43 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="SAP ArchiveLink: Elemento de datos para URI absoluto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" SCONAME="CONVERT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_STRING_FROM_URL_FONDO" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="Objcont y objhead como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_string_from_url_fondo.
+    &quot; TODO: parameter CONVERT is never used (ABAP cleaner)
+
+    TYPES: BEGIN OF text,
+             line TYPE c LENGTH 256,
+           END OF text.
+
+    DATA: l_url            TYPE c LENGTH 1024,
+          response         TYPE TABLE OF text,
+          response_headers TYPE TABLE OF text,
+          l_line           TYPE text.
+    DATA dest TYPE rfcdes-rfcdest VALUE &apos;SAPHTTP&apos;.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: status     TYPE c LENGTH 3,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          statustext TYPE c LENGTH 128,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          rlength    TYPE i.
+
+    CLEAR message.
+
+    l_url = url.
+    CALL FUNCTION &apos;HTTP_GET&apos;
+      EXPORTING  absolute_uri                = l_url
+                 rfc_destination             = dest
+                 blankstocrlf                = &apos;Y&apos;
+*                 USER                        = &apos;xxx&apos; - Specify your user here
+*                 Password                    = &apos;yyy&apos; - Specify your password here
+      IMPORTING  status_code                 = status
+                 status_text                 = statustext
+                 response_entity_body_length = rlength
+      TABLES     response_entity_body        = response
+                 response_headers            = response_headers
+      EXCEPTIONS connect_failed              = 1
+                 timeout                     = 2
+                 internal_error              = 3
+                 tcpip_error                 = 4
+                 data_error                  = 5
+                 system_failure              = 6
+                 communication_failure       = 7
+                 OTHERS                      = 8.
+    IF sy-subrc &lt;&gt; 0.
+      CASE sy-subrc.
+        WHEN 1. message = &apos;Error de conexión&apos;(ecn).
+        WHEN 2. message = &apos;TimeOut&apos;(tmo).
+        WHEN 3. message = &apos;Error interno&apos;(ein).
+        WHEN 4. message = &apos;Error de TCPIP&apos;(tcp).
+        WHEN 5. message = &apos;Error de datos&apos;(eda).
+        WHEN 6. message = &apos;Fallo de sistema&apos;(fsi).
+        WHEN 7. message = &apos;Fallo de comunicación&apos;(fco).
+        WHEN OTHERS.
+          message = &apos;Error llamando a HTTP_GET&apos;(ehg).
+      ENDCASE.
+
+      IF NOT message IS INITIAL.
+        IF mostrar_error = &apos;X&apos;.
+          MESSAGE message TYPE &apos;E&apos;.
+        ELSE.
+          SET PARAMETER ID &apos;ZHTTP_GET_ERROR&apos; FIELD message. &quot;#EC *
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT message IS INITIAL.
+      RETURN.
+    ENDIF.
+
+*  LOOP AT response_headers.
+*    WRITE response_headers-line.
+*  ENDLOOP.
+*  SKIP 2.
+    LOOP AT response INTO l_line.
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=&gt;horizontal_tab
+              IN l_line-line WITH &apos; &apos;.
+      CONCATENATE string l_line-line INTO string.
+    ENDLOOP.
+
+    CALL FUNCTION &apos;RFC_CONNECTION_CLOSE&apos;
+      EXPORTING  destination = dest
+      EXCEPTIONS OTHERS      = 0.
+
+    SET PARAMETER ID &apos;ZHTTP_GET_ERROR&apos; FIELD &apos;&apos;.            &quot;#EC *
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="GET_TEXT_FROM_URL" VERSION="1" LANGU="S" DESCRIPT="Recupera tabla texto 255 desde Internet" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_TEXT_FROM_URL" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="SAP ArchiveLink: Elemento de datos para URI absoluto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SAEURI"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_TEXT_FROM_URL" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="GET_TEXT_FROM_URL" SCONAME="I_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Objcont y objhead como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SOLI_TAB"/>
+  <source>METHOD get_text_from_url.
+    DATA lv_string TYPE string.
+
+    lv_string = get_string_from_url( url           = url
+                                     mostrar_error = mostrar_error ).
+
+    CLEAR i_texto.
+    SPLIT lv_string AT cl_abap_char_utilities=&gt;cr_lf INTO TABLE i_texto.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="JUSTIFICAR_STRING2TABLA" VERSION="1" LANGU="S" DESCRIPT="Justificar string" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="JUSTIFICAR_STRING2TABLA" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="JUSTIFICAR_STRING2TABLA" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="JUSTIFICAR_STRING2TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD justificar_string2tabla.
+    DATA: t_tabla  TYPE TABLE OF text1000,
+          l_text   TYPE text1000,
+          t_tabla2 TYPE TABLE OF text1000.
+
+    string2tabla( EXPORTING string   = string
+                            longitud = 1000
+                  CHANGING  tabla    = t_tabla ).
+
+    LOOP AT t_tabla INTO l_text.
+      REFRESH t_tabla2.
+      CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
+        EXPORTING  textline            = l_text
+*                   DELIMITER           = &apos; &apos;
+                   outputlen           = longitud
+* IMPORTING
+*                   OUT_LINE1           =
+*                   OUT_LINE2           =
+*                   OUT_LINE3           =
+        TABLES     out_lines           = t_tabla2
+        EXCEPTIONS outputlen_too_large = 1
+                   OTHERS              = 2.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Texto a justificar demasiado largo&apos;(tdl) TYPE &apos;S&apos;.
+      ENDIF.
+
+      LOOP AT t_tabla2 INTO l_text.
+        l_text = l_text(longitud).
+        APPEND l_text TO tabla.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="LIMPIAR_NOMBRE_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Elimina carácteres extraños del nombre de un fichero" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LIMPIAR_NOMBRE_FICHERO" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD limpiar_nombre_fichero.
+    zcl_ap_string=&gt;quitar_caracteres_extranos( CHANGING string = string ).
+
+    REPLACE ALL OCCURRENCES OF &apos;:&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;.&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;/&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;\&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;&gt;&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;&lt;&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;?&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;¿&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;%&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;$&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;&amp;&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;&quot;&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;*&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;&apos;&apos;&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;{&apos; IN string WITH &apos;&apos;.
+    REPLACE ALL OCCURRENCES OF &apos;}&apos; IN string WITH &apos;&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="LIMPIA_NUMEROS" VERSION="1" LANGU="S" DESCRIPT="Elimina caracteres no numéricos" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LIMPIA_NUMEROS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LIMPIA_NUMEROS" SCONAME="NUMERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD limpia_numeros.
+    DATA: pe_texto  TYPE c LENGTH 1000,
+          l_indice  TYPE i,
+          l_long    TYPE i,
+          l_letra   TYPE c LENGTH 1,
+          l_npuntos TYPE i,
+          l_neg     TYPE c LENGTH 1.
+
+    pe_texto = string.
+    CLEAR numero.
+    l_indice = 0.
+    l_long = strlen( pe_texto ).
+    DO.
+      IF l_indice &gt; l_long.
+        EXIT.
+      ENDIF.
+
+      l_letra = pe_texto+l_indice(1).
+      IF l_letra CO &apos;0123456789&apos;.
+        CONCATENATE numero l_letra INTO numero.
+      ELSEIF l_letra CO &apos; &apos;. &quot;#EC *
+      ELSEIF l_letra CO &apos;.,&apos;.
+        CONCATENATE numero &apos;.&apos; INTO numero.
+        l_npuntos = l_npuntos + 1.
+      ELSEIF l_letra = &apos;-&apos;.
+        l_neg = &apos;&apos;.
+      ENDIF.
+      l_indice = l_indice + 1.
+    ENDDO.
+
+    IF l_neg = &apos;X&apos;.
+      CONCATENATE &apos;-&apos; numero INTO numero.
+    ENDIF.
+
+    IF l_npuntos &gt; 1.
+      l_npuntos = l_npuntos - 1.
+      DO l_npuntos TIMES.
+        REPLACE &apos;.&apos; WITH &apos;&apos; INTO numero.
+        CONDENSE numero NO-GAPS.
+      ENDDO.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" VERSION="1" LANGU="S" DESCRIPT="Devuelve un rango de strings a partir de lista separada" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" SCONAME="SEPARADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;,&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" SCONAME="CONV_ASTERISCO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="LISTA2RANGO" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Range Table for String Fields" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD lista2rango.
+    DATA: i_lista  TYPE TABLE OF string,
+          l_string TYPE string,
+          l_rango  TYPE rstt_s_range_string.
+
+    SPLIT lista AT separador INTO TABLE i_lista.
+
+    LOOP AT i_lista INTO l_string.
+      CLEAR l_rango.
+      l_rango-option = option.
+      l_rango-sign   = &apos;I&apos;.
+      IF option = &apos;CP&apos;.
+        CONCATENATE &apos;*&apos; l_string &apos;*&apos; INTO l_rango-low.
+      ELSEIF option = &apos;LK&apos;.
+        l_rango-option = &apos;CP&apos;.
+        CONCATENATE l_string &apos;*&apos; INTO l_rango-low.
+      ELSE.
+        l_rango-low = l_string.
+      ENDIF.
+
+      IF l_rango-low CS &apos;*&apos;.
+        IF conv_asterisco = &apos;X&apos; AND option = &apos;EQ&apos;.
+          l_rango-option = &apos;CP&apos;.
+        ENDIF.
+      ENDIF.
+
+      APPEND l_rango TO rango.
+    ENDLOOP.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR l_rango.
+      l_rango-option = &apos;EQ&apos;.
+      l_rango-sign   = &apos;I&apos;.
+      l_rango-low    = &apos;¿¿¿¿????&apos;.
+      APPEND l_rango TO rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="NUMERO2STRING" VERSION="1" LANGU="S" DESCRIPT="Nº a string" EXPOSURE="2" STATE="1" EDITORDER="48 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="NUMERO2STRING" SCONAME="NUMERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="NUMERO2STRING" SCONAME="QUITAR_CEROS_DERECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="NUMERO2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD numero2string.
+    DATA: l_aux1 TYPE string,
+          l_aux2 TYPE string.
+
+    string = numero.
+    IF string CS &apos;.&apos;.
+      SPLIT string AT &apos;.&apos; INTO l_aux1 l_aux2.
+      IF l_aux2 CO &apos;0 &apos;.
+        string = l_aux1.
+      ELSEIF quitar_ceros_derecha = &apos;X&apos;.
+        CONDENSE l_aux2 NO-GAPS.
+        DATA(l_long) = strlen( l_aux2 ).
+        WHILE l_long &gt; 1.
+          l_long = l_long - 1.
+          IF l_aux2+l_long(1) = &apos;0&apos; OR l_aux2+l_long(1) = &apos;&apos;.
+            l_aux2 = l_aux2(l_long).
+            CONDENSE l_aux2 NO-GAPS.
+          ELSE.
+            EXIT.
+          ENDIF.
+          l_long = strlen( l_aux2 ).
+        ENDWHILE.
+        CONCATENATE l_aux1 l_aux2 INTO string SEPARATED BY &apos;.&apos;.
+      ENDIF.
+    ENDIF.
+    CONDENSE string NO-GAPS.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="PONER_CEROS" VERSION="1" LANGU="S" DESCRIPT="Poner ceros" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="PONER_CEROS" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="PONER_CEROS" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD poner_ceros.
+    CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_INPUT&apos;
+      EXPORTING input  = cadena
+      IMPORTING output = salida.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="PONER_CEROS_C" VERSION="1" LANGU="S" DESCRIPT="Poner ceros" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="PONER_CEROS_C" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD poner_ceros_c.
+    CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_INPUT&apos;
+      EXPORTING input  = cadena
+      IMPORTING output = cadena.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Popup texto" EXPOSURE="2" STATE="1" EDITORDER="49 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TITULO" VERSION="1" LANGU="S" DESCRIPT="Titulo de la ventana" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="EDITAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="INTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="MAX_COLS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TITULO_TEXTO_CORTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="MODIFICADO" VERSION="1" LANGU="S" DESCRIPT="String de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="CANCELADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="String de entrada" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO_CORTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD popup_texto.
+    DATA: l_titulo  TYPE string,
+          l_display TYPE xfeld,
+          l_string  TYPE string,
+          l_mod     TYPE xfeld,
+          l_canc    TYPE xfeld.
+
+    IF zcl_ap_popup=&gt;popup_permitido( ) = &apos;&apos;.
+      RETURN.
+    ENDIF.
+
+    CLEAR: modificado,
+           cancelado.
+    l_titulo = titulo.
+    IF editar IS INITIAL.
+      l_display = &apos;X&apos;.
+      IF l_titulo IS INITIAL.
+        l_titulo = &apos;Visualizar texto&apos;.
+      ENDIF.
+    ELSE.
+      IF l_titulo IS INITIAL.
+        l_titulo = &apos;Editar texto&apos;.
+      ENDIF.
+    ENDIF.
+
+    l_string = texto.
+    CALL FUNCTION &apos;Z_POPUP_EDIT_TEXT&apos;
+      EXPORTING titulo       = l_titulo
+                texto        = intro
+*                INI_X        = 5
+*                INI_Y        = 3
+*                FIN_X        = 140
+*                FIN_Y        = 24
+                max_cols     = max_cols
+                display_mode = l_display
+                titulo_texto_corto = titulo_texto_corto
+      IMPORTING modificado   = l_mod
+                cancelado    = l_canc
+      CHANGING  string       = l_string
+                texto_corto  = texto_corto.
+
+    modificado = l_mod.
+    cancelado = l_canc.
+
+    IF modificado = &apos;X&apos;.
+      texto = l_string.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CARACTERES_EXTRANOS" VERSION="1" LANGU="S" DESCRIPT="Elimina carácteres extraños" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CARACTERES_EXTRANOS" SCONAME="REPLACEMENT" VERSION="1" LANGU="S" DESCRIPT="Código con el que reemplazar 46 = ." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="46"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CARACTERES_EXTRANOS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD quitar_caracteres_extranos.
+    IF string IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;SCP_REPLACE_STRANGE_CHARS&apos;
+      EXPORTING  intext            = string
+*                 INTEXT_LG         = 0
+*                 INTER_CP          = &apos;0000&apos;
+*                 INTER_BASE_CP     = &apos;0000&apos;
+*                 IN_CP             = &apos;0000&apos;
+                 replacement       = replacement
+      IMPORTING  outtext           = string
+*                 OUTUSED           =
+*                 OUTOVERFLOW       =
+      EXCEPTIONS invalid_codepage  = 1
+                 codepage_mismatch = 2
+                 internal_error    = 3
+                 cannot_convert    = 4
+                 fields_not_type_c = 5
+                 OTHERS            = 6.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error reemplazando carácteres&apos;(erc) TYPE &apos;S&apos;.
+    ELSE.
+      IF string CS &apos;€&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;€&apos; IN string WITH &apos;EUR&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CEROS" VERSION="1" LANGU="S" DESCRIPT="Quitar ceros" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CEROS" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CEROS" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD quitar_ceros.
+    CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_OUTPUT&apos;
+      EXPORTING input  = cadena
+      IMPORTING output = salida.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CEROS_C" VERSION="1" LANGU="S" DESCRIPT="Quitar ceros" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="QUITAR_CEROS_C" SCONAME="CADENA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD quitar_ceros_c.
+    CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_OUTPUT&apos;
+      EXPORTING input  = cadena
+      IMPORTING output = cadena.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="RIGHT" VERSION="1" LANGU="S" DESCRIPT="Devuelve los X últimos carácteres" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="RIGHT" SCONAME="ENTRADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="RIGHT" SCONAME="LONG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="RIGHT" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD right.
+    DATA: l_long TYPE i,
+          l_char TYPE c LENGTH 1000.
+
+    l_long = strlen( entrada ).
+    IF long &gt; l_long.
+      salida = entrada.
+    ELSE.
+      l_char = entrada.
+      l_long = l_long - long.
+      salida = l_char+l_long(long).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="SIGUIENTE_LETRA" VERSION="1" LANGU="S" DESCRIPT="Devuelve la siguiente letra a una dada" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SIGUIENTE_LETRA" SCONAME="LETRA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SIGUIENTE_LETRA" SCONAME="SIGUIENTE" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR1"/>
+  <source>METHOD siguiente_letra.
+    DATA l_ascii TYPE i.
+
+    l_ascii = cl_abap_conv_out_ce=&gt;uccpi( letra ).
+    l_ascii = l_ascii + 1.
+    siguiente = cl_abap_conv_in_ce=&gt;uccpi( l_ascii ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="SPLIT_LEFT" VERSION="1" LANGU="S" DESCRIPT="Parte string empezando desde la derecha" EXPOSURE="2" STATE="1" EDITORDER="41 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SPLIT_LEFT" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String de entrada" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SPLIT_LEFT" SCONAME="SEPARADOR" VERSION="1" LANGU="S" DESCRIPT="Separador" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SPLIT_LEFT" SCONAME="IZQUIERDA" VERSION="1" LANGU="S" DESCRIPT="Parte izquierda" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="SPLIT_LEFT" SCONAME="DERECHA" VERSION="1" LANGU="S" DESCRIPT="Parte derecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD split_left.
+    DATA: l_long    TYPE i,
+          i_strings TYPE TABLE OF string.
+
+    CLEAR izquierda.
+    IF string CS separador.
+      l_long = strlen( separador ).
+      SPLIT string AT separador(l_long) INTO TABLE i_strings.
+      DESCRIBE TABLE i_strings LINES sy-tfill.
+      IF sy-tfill = 2.
+        READ TABLE i_strings INDEX 1 INTO izquierda.
+        READ TABLE i_strings INDEX 2 INTO derecha.
+      ELSE.
+        READ TABLE i_strings INDEX sy-tfill INTO derecha.
+        l_long = strlen( string ) - ( strlen( derecha ) + strlen( separador ) ).
+        izquierda = string(l_long).
+      ENDIF.
+    ELSE.
+      derecha = string.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Convierte String a Importe" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CANTIDAD" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CANTIDAD" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BBBTR"/>
+  <source>METHOD string2cantidad.
+    DATA: l_string   TYPE string,
+          l_potencia TYPE n LENGTH 2.
+
+    TRY.
+        l_string = string.
+        REPLACE &apos;.&apos; WITH &apos;&apos; INTO l_string.
+        REPLACE &apos;.&apos; WITH &apos;&apos; INTO l_string.
+        REPLACE &apos;,&apos; WITH &apos;.&apos; INTO l_string.
+        CONDENSE l_string NO-GAPS.
+
+        l_string = to_upper( l_string ).
+        IF l_string CS &apos;E+&apos;.
+          SPLIT l_string AT &apos;E+&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string * ( 10 ** l_potencia ).
+          ENDIF.
+        ELSEIF l_string CS &apos;E-&apos;.
+          SPLIT l_string AT &apos;E-&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string / ( 10 ** l_potencia ).
+          ENDIF.
+        ELSE.
+          importe = l_string.
+        ENDIF.
+      CATCH cx_sy_conversion_no_number.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+      CATCH cx_sy_conversion_overflow.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CTD" VERSION="1" LANGU="S" DESCRIPT="String a cantidad" EXPOSURE="2" STATE="1" EDITORDER="40 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CTD" SCONAME="CTD_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CTD" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Cantidad con signo +/-" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2CTD" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD string2ctd.
+    DATA: l_string    TYPE string,
+          l_ctd_texto TYPE c LENGTH 20,
+          l_error     TYPE c LENGTH 1,
+          l_cantidad  TYPE c LENGTH 20,
+          l_message   TYPE message,
+          l_decimales TYPE c LENGTH 20.
+
+    DATA: lv_value      TYPE char100,
+          lv_tabfield   TYPE tabfield,
+          lv_cell_value TYPE pgpl-absat.
+
+    CLEAR: mensaje,
+           cantidad.
+
+* Busco si
+
+    l_string = ctd_texto.
+    quitar_caracteres_extranos( EXPORTING replacement = 32
+                                CHANGING  string      = l_string ).
+    lv_value = l_string.
+
+    lv_value = to_upper( lv_value ).
+    IF lv_value CS &apos;E&apos;.
+
+      lv_tabfield-tabname   = &apos;PGPL&apos;.
+      lv_tabfield-fieldname = &apos;ABSAT&apos;.
+      REPLACE &apos;.&apos; WITH &apos;,&apos; INTO lv_value.
+      CALL FUNCTION &apos;RS_CONV_EX_2_IN&apos;
+        EXPORTING  input_external               = lv_value
+                   table_field                  = lv_tabfield
+        IMPORTING  output_internal              = lv_cell_value
+        EXCEPTIONS input_not_numerical          = 1
+                   too_many_decimals            = 2
+                   more_than_one_sign           = 3
+                   ill_thousand_separator_dist  = 4
+                   too_many_digits              = 5
+                   sign_for_unsigned            = 6
+                   too_large                    = 7
+                   too_small                    = 8
+                   invalid_date_format          = 9
+                   invalid_date                 = 10  ##NUMBER_OK
+                   invalid_time_format          = 11  ##NUMBER_OK
+                   invalid_time                 = 12  ##NUMBER_OK
+                   invalid_hex_digit            = 13  ##NUMBER_OK
+                   unexpected_error             = 14  ##NUMBER_OK
+                   invalid_fieldname            = 15  ##NUMBER_OK
+                   field_and_descr_incompatible = 16  ##NUMBER_OK
+                   input_too_long               = 17  ##NUMBER_OK
+                   no_decimals                  = 18  ##NUMBER_OK
+                   invalid_float                = 19  ##NUMBER_OK
+                   conversion_exit_error        = 20  ##NUMBER_OK
+                   OTHERS                       = 21 ##NUMBER_OK.
+
+      IF sy-subrc = 0.
+        TRY.
+            cantidad = lv_cell_value.
+          CATCH cx_sy_conversion_no_number.
+            lv_value = lv_cell_value.
+            CONCATENATE &apos;Error de conversión&apos;(eco) lv_value INTO mensaje SEPARATED BY space.
+          CATCH cx_sy_conversion_overflow.
+            lv_value = lv_cell_value.
+            CONCATENATE &apos;Cantidad&apos;(ctd) lv_value &apos;es demasiado grande para variable de salida&apos;(dts) INTO mensaje SEPARATED BY space.
+          CATCH cx_root. &quot;#EC *
+            lv_value = lv_cell_value.
+            CONCATENATE &apos;Cantidad indeterminado en conversión&apos;(cic) lv_value INTO mensaje SEPARATED BY space.
+        ENDTRY.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    l_ctd_texto = l_string.
+    IF l_ctd_texto CS &apos;,&apos;.
+      IF l_ctd_texto CS &apos;.&apos;.
+        mensaje = &apos;Utilize el . como separador de decimales&apos;(usd).
+      ELSE.
+        REPLACE &apos;,&apos; WITH &apos;.&apos; INTO l_ctd_texto.
+      ENDIF.
+    ENDIF.
+
+    IF NOT mensaje IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;CHECK_AND_CONVERT_NUMERICS&apos;
+      EXPORTING
+*                DFELD        = &apos; &apos;
+                dmzei        = &apos;.&apos;
+                dtype        = &apos;QUAN&apos;
+*                DYPNO        = &apos; &apos;
+                efeld        = l_ctd_texto
+*                FNAME        = &apos; &apos;
+*                PROGR        = &apos; &apos;
+                imp_decimals = &apos;3&apos;
+      IMPORTING error        = l_error
+                ifeld        = l_cantidad
+                messg        = l_message.
+*                MSGLN        = MSGLN
+    IF l_message-msgty = &apos;E&apos; AND l_message-msgid = &apos;CH&apos; AND l_message-msgno = &apos;142&apos;. &quot; Sólo se permiten &apos;3 &apos; decimales
+      CLEAR: l_error,
+             l_message.
+      SPLIT l_ctd_texto AT &apos;.&apos; INTO l_cantidad l_decimales.
+      CONCATENATE l_cantidad &apos;.&apos; l_decimales(3) INTO l_ctd_texto.
+      CALL FUNCTION &apos;CHECK_AND_CONVERT_NUMERICS&apos;
+        EXPORTING
+*                  DFELD        = &apos; &apos;
+                  dmzei        = &apos;.&apos;
+                  dtype        = &apos;QUAN&apos;
+*                  DYPNO        = &apos; &apos;
+                  efeld        = l_ctd_texto
+*                  FNAME        = &apos; &apos;
+*                  PROGR        = &apos; &apos;
+                  imp_decimals = &apos;3&apos;
+        IMPORTING error        = l_error
+                  ifeld        = l_cantidad
+                  messg        = l_message.
+    ENDIF.
+    IF l_error = &apos;X&apos;.
+      IF l_message-msgtx IS INITIAL.
+        mensaje = &apos;Se ha produccido un error al convertir cantidad&apos;(spe).
+      ELSE.
+        mensaje = l_message-msgtx.
+      ENDIF.
+      CLEAR cantidad.
+    ELSE.
+      CLEAR mensaje.
+      TRY.
+          cantidad = l_cantidad.
+        CATCH cx_sy_conversion_no_number.
+          lv_value = lv_cell_value.
+          CONCATENATE &apos;Error de conversión&apos;(eco) lv_value INTO mensaje SEPARATED BY space.
+        CATCH cx_sy_conversion_overflow.
+          lv_value = lv_cell_value.
+          CONCATENATE &apos;Cantidad&apos;(ctd) lv_value &apos;es demasiado grande para variable de salida&apos;(dts) INTO mensaje SEPARATED BY space.
+        CATCH cx_root. &quot;#EC *
+          lv_value = lv_cell_value.
+          CONCATENATE &apos;Cantidad indeterminado en conversión&apos;(cic) lv_value INTO mensaje SEPARATED BY space.
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2FLOAT" VERSION="1" LANGU="S" DESCRIPT="Convirte char a float" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2FLOAT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2FLOAT" SCONAME="FLOAT" VERSION="1" LANGU="S" DESCRIPT="Media aritmética de los valores medidos válidos" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="QMITTELWRT"/>
+  <source>METHOD string2float.
+    CALL FUNCTION &apos;CHAR_FLTP_CONVERSION&apos;
+      EXPORTING
+*                 DYFLD              = &apos; &apos;
+*                 MASKN              = &apos; &apos;
+*                 MAXDEC             = &apos;16&apos;
+*                 MAXEXP             = &apos;59+&apos;
+*                 MINEXP             = &apos;60-&apos;
+                 string             = string
+*                 MSGTYP_DECIM       = &apos;W&apos;
+      IMPORTING
+*                 DECIM              =
+*                 EXPON              =
+                 flstr              = float
+*                 IVALU              =
+      EXCEPTIONS exponent_too_big   = 1
+                 exponent_too_small = 2
+                 string_not_fltp    = 3
+                 too_many_decim     = 4
+                 OTHERS             = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      float = c_error_float.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Convierte String a Importe" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2IMPORTE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2IMPORTE" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="AWKGR"/>
+  <source>METHOD string2importe.
+    DATA: l_punto    TYPE c LENGTH 1,
+          l_coma     TYPE c LENGTH 1,
+          l_string   TYPE string,
+          l_potencia TYPE n LENGTH 2.
+
+    IF string CS &apos;.&apos;.
+      l_punto = &apos;X&apos;.
+    ENDIF.
+    IF string CS &apos;,&apos;.
+      l_coma = &apos;X&apos;.
+    ENDIF.
+
+    TRY.
+        l_string = string.
+        IF NOT ( l_punto = &apos;X&apos; AND l_coma = &apos;&apos; ).
+          REPLACE &apos;.&apos; WITH &apos;&apos; INTO l_string.
+          REPLACE &apos;.&apos; WITH &apos;&apos; INTO l_string.
+          REPLACE &apos;,&apos; WITH &apos;.&apos; INTO l_string.
+        ENDIF.
+        CONDENSE l_string NO-GAPS.
+
+        IF l_string CS &apos;E+&apos;.
+          SPLIT l_string AT &apos;E+&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;&apos;.
+            importe = l_string * 10.
+          ELSEIF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string * ( 10 ** l_potencia ).
+          ENDIF.
+        ELSEIF l_string CS &apos;E-&apos;.
+          SPLIT l_string AT &apos;E-&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string / ( 10 ** l_potencia ).
+          ENDIF.
+        ELSE.
+          importe = l_string.
+        ENDIF.
+      CATCH cx_sy_conversion_no_number.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+      CATCH cx_sy_conversion_overflow.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" VERSION="1" LANGU="S" DESCRIPT="Convierta string a tabla texto plano (80 posiciones)" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" SCONAME="LONGITUD" VERSION="1" LANGU="S" DESCRIPT="Longitud teórica de la tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" SCONAME="FORZAR_ENTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" SCONAME="PARTIR_SOLO_EN_BLANCO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD string2tabla.
+* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+************************************************************************
+
+    DATA: l_long   TYPE i,
+          l_veces  TYPE i,
+          l_inicio TYPE i,
+          l_cont   TYPE i,
+          l_aux    TYPE i.
+    DATA l_lin TYPE c LENGTH 65535.
+    DATA c_aux TYPE c LENGTH 1.
+    DATA: l_enter1    TYPE c LENGTH 1,
+          l_fin_linea TYPE c LENGTH 1.
+    DATA l_linea TYPE c LENGTH 65535.
+
+* Los XML no tienen saltos y nos los parte bien.
+    IF NOT string CS cl_abap_char_utilities=&gt;cr_lf AND string CS &apos;/&gt;&lt;&apos;.
+      tabla = zcl_ap_ws=&gt;xml_str2table( string ).
+      RETURN.
+    ENDIF.
+
+    l_long = strlen( string ).
+    l_veces = 1 + floor( l_long / 65535 ) ##NUMBER_OK.
+    IF l_veces &gt; 1.
+      SPLIT string AT cl_abap_char_utilities=&gt;cr_lf INTO TABLE tabla.
+    ELSE.
+      DO l_veces TIMES.
+        l_inicio = ( sy-index - 1 ) * 65535 ##NUMBER_OK.
+        IF l_inicio &gt;= l_long.
+          EXIT.
+        ENDIF.
+        l_lin = string+l_inicio.
+        CLEAR l_cont.
+        DO.
+          l_cont = l_cont + 1.
+          c_aux = l_lin(1).
+
+          IF c_aux = cl_abap_char_utilities=&gt;cr_lf+1(1).
+            IF l_enter1 = &apos;X&apos; OR forzar_enter = &apos;X&apos;.
+              IF l_fin_linea = &apos;X&apos; AND l_linea IS INITIAL.
+                CLEAR l_fin_linea.
+              ELSE.
+                APPEND l_linea TO tabla.
+              ENDIF.
+              CLEAR l_linea.
+              CLEAR l_cont.
+            ENDIF.
+          ENDIF.
+
+          IF c_aux = cl_abap_char_utilities=&gt;cr_lf(1).
+            l_enter1 = &apos;X&apos;.
+          ELSE.
+            CLEAR l_enter1.
+          ENDIF.
+
+          IF     c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf(1)
+             AND c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf+1(1).
+            l_aux = l_cont - 1.
+            l_linea+l_aux(1) = c_aux.
+          ENDIF.
+
+          SHIFT l_lin LEFT.
+          IF l_lin IS INITIAL.
+            IF NOT l_linea IS INITIAL.
+              APPEND l_linea TO tabla.
+              CLEAR l_cont.
+              CLEAR l_fin_linea.
+            ENDIF.
+            EXIT.
+          ENDIF.
+
+          IF l_cont &gt;= longitud.
+            IF partir_solo_en_blanco = &apos;X&apos; AND c_aux &lt;&gt; &apos;&apos;.
+              CONTINUE.
+            ENDIF.
+            APPEND l_linea TO tabla.
+            CLEAR l_linea.
+            CLEAR l_cont.
+            l_fin_linea = &apos;X&apos;.
+          ENDIF.
+
+        ENDDO.
+      ENDDO.
+    ENDIF.
+
+*  CALL FUNCTION &apos;SWA_STRING_TO_TABLE&apos;
+*    EXPORTING
+*      character_string                 = string
+*    IMPORTING
+*      CHARACTER_TABLE                  = tabla
+*   EXCEPTIONS
+*      NO_FLAT_CHARLIKE_STRUCTURE       = 1
+*      OTHERS                           = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLASTRING" VERSION="1" LANGU="S" DESCRIPT="Convierta string a tabla texto plano (80 posiciones)" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLASTRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLASTRING" SCONAME="LONGITUD" VERSION="1" LANGU="S" DESCRIPT="Longitud teórica de la tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TABLASTRING" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD string2tablastring.
+*Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que
+*puede
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+************************************************************************
+
+    DATA l_lin TYPE c LENGTH 10000.
+    DATA: l_cont   TYPE i,
+          l_string TYPE zlinea_string,
+          l_aux    TYPE i.
+    DATA c_aux TYPE c LENGTH 1.
+    DATA: l_enter1    TYPE c LENGTH 1,
+          l_fin_linea TYPE c LENGTH 1.
+    DATA l_linea TYPE c LENGTH 10000.
+
+    REFRESH tabla.
+    l_lin = string.
+    CLEAR l_cont.
+    DO.
+      l_cont = l_cont + 1.
+      c_aux = l_lin(1).
+
+      IF c_aux = cl_abap_char_utilities=&gt;cr_lf+1(1).
+        IF l_enter1 = &apos;X&apos;.
+          IF l_fin_linea = &apos;X&apos; AND l_linea IS INITIAL.
+            CLEAR l_fin_linea.
+          ELSE.
+            IF longitud &lt; 9999 ##NUMBER_OK.
+              APPEND l_linea TO tabla.
+            ELSE.
+              l_string-linea = l_linea.
+              APPEND l_string TO tabla.
+            ENDIF.
+          ENDIF.
+          CLEAR l_linea.
+          CLEAR l_cont.
+        ENDIF.
+      ENDIF.
+
+      IF c_aux = cl_abap_char_utilities=&gt;cr_lf(1).
+        l_enter1 = &apos;X&apos;.
+      ELSE.
+        CLEAR l_enter1.
+      ENDIF.
+
+      IF     c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf(1)
+         AND c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf+1(1).
+        l_aux = l_cont - 1.
+        l_linea+l_aux(1) = c_aux.
+      ENDIF.
+
+      SHIFT l_lin LEFT.
+      IF l_lin IS INITIAL.
+        IF NOT l_linea IS INITIAL.
+          IF longitud &lt; 9999 ##NUMBER_OK.
+            APPEND l_linea TO tabla.
+          ELSE.
+            l_string-linea = l_linea.
+            APPEND l_string TO tabla.
+          ENDIF.
+          CLEAR l_cont.
+          CLEAR l_fin_linea.
+        ENDIF.
+        EXIT.
+      ENDIF.
+
+      IF l_cont = longitud.
+        IF longitud &lt; 9999 ##NUMBER_OK.
+          APPEND l_linea TO tabla.
+        ELSE.
+          l_string-linea = l_linea.
+          APPEND l_string TO tabla.
+        ENDIF.
+        CLEAR l_linea.
+        CLEAR l_cont.
+        l_fin_linea = &apos;X&apos;.
+      ENDIF.
+
+    ENDDO.
+
+*  CALL FUNCTION &apos;SWA_STRING_TO_TABLE&apos;
+*    EXPORTING
+*      character_string                 = string
+*    IMPORTING
+*      CHARACTER_TABLE                  = tabla
+*   EXCEPTIONS
+*      NO_FLAT_CHARLIKE_STRUCTURE       = 1
+*      OTHERS                           = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TLINE" VERSION="1" LANGU="S" DESCRIPT="Convierta string a tabla texto plano (80 posiciones)" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TLINE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2TLINE" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Líneas de texto_T" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
+  <source>METHOD string2tline.
+* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+************************************************************************
+
+    DATA l_lin TYPE c LENGTH 10000.
+    DATA: l_cont  TYPE i,
+          l_tline TYPE tline,
+          l_aux   TYPE i.
+    DATA c_aux TYPE c LENGTH 1.
+    DATA: l_enter1    TYPE c LENGTH 1,
+          l_fin_linea TYPE c LENGTH 1.
+
+    CLEAR tabla.
+
+    l_lin = string.
+    CLEAR l_cont.
+    DO.
+      l_cont = l_cont + 1.
+      c_aux = l_lin(1).
+
+      IF c_aux = cl_abap_char_utilities=&gt;cr_lf+1(1).
+        IF l_enter1 = &apos;X&apos;.
+          IF l_fin_linea = &apos;X&apos; AND l_tline-tdline IS INITIAL.
+            CLEAR l_fin_linea.
+          ELSE.
+            APPEND l_tline TO tabla.
+          ENDIF.
+          CLEAR l_tline.
+          l_tline-tdformat = &apos;*&apos;.
+          CLEAR l_cont.
+        ENDIF.
+      ENDIF.
+
+      IF c_aux = cl_abap_char_utilities=&gt;cr_lf(1).
+        l_enter1 = &apos;X&apos;.
+      ELSE.
+        CLEAR l_enter1.
+      ENDIF.
+
+      IF     c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf(1)
+         AND c_aux &lt;&gt; cl_abap_char_utilities=&gt;cr_lf+1(1).
+        l_aux = l_cont - 1.
+        l_tline-tdline+l_aux(1) = c_aux.
+      ENDIF.
+
+      SHIFT l_lin LEFT.
+      IF l_lin IS INITIAL.
+        IF NOT l_tline-tdline IS INITIAL.
+          APPEND l_tline TO tabla.
+          CLEAR l_cont.
+          CLEAR l_fin_linea.
+        ENDIF.
+        EXIT.
+      ENDIF.
+
+      IF l_cont = 132 ##NUMBER_OK.
+        APPEND l_tline TO tabla.
+        CLEAR l_tline.
+        l_tline-tdformat = &apos;=&apos;.
+        CLEAR l_cont.
+        l_fin_linea = &apos;X&apos;.
+      ENDIF.
+
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2XSTRING" VERSION="1" LANGU="S" DESCRIPT="Convierte string a xstring" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2XSTRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2XSTRING" SCONAME="COMPRIMIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2XSTRING" SCONAME="ENCODING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;DEFAULT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING2XSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD string2xstring.
+    DATA: l_encoding TYPE abap_encoding,
+          converter  TYPE REF TO cl_abap_conv_out_ce.
+
+    l_encoding = encoding.
+    converter = cl_abap_conv_out_ce=&gt;create( encoding = l_encoding ).
+    converter-&gt;reset( ).
+    TRY.
+        converter-&gt;write( data = string ).
+
+        xstring = converter-&gt;get_buffer( ).
+      CATCH cx_root. &quot;#EC *
+        RETURN.
+    ENDTRY.
+
+    IF NOT xstring IS INITIAL AND comprimir = &apos;X&apos;.
+      TRY.
+          cl_abap_gzip=&gt;compress_binary( EXPORTING raw_in   = xstring
+                                         IMPORTING gzip_out = xstring ).
+        CATCH cx_parameter_invalid_range. &quot;#EC *
+        CATCH cx_sy_buffer_overflow. &quot;#EC *
+        CATCH cx_sy_compression_error. &quot;#EC *
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_ESTANDAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_ESTANDAR" SCONAME="ENTRADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_ESTANDAR" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD string_estandar.
+    salida = entrada.
+    limpiar_nombre_fichero( CHANGING string = salida ).
+    salida = to_upper( salida ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_POT_2IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Convierte String a Importe" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_POT_2IMPORTE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_POT_2IMPORTE" SCONAME="IMPORTE" VERSION="1" LANGU="S" DESCRIPT="Importe" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DEC_16_05_S"/>
+  <source>METHOD string_pot_2importe.
+    DATA: l_string   TYPE string,
+          l_potencia TYPE n LENGTH 2.
+
+    TRY.
+        l_string = string.
+        IF l_string CS &apos;E+&apos;.
+          SPLIT l_string AT &apos;E+&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string * ( 10 ** l_potencia ).
+          ENDIF.
+        ELSEIF l_string CS &apos;E-&apos;.
+          SPLIT l_string AT &apos;E-&apos; INTO l_string l_potencia.
+          IF l_potencia = &apos;00&apos;.
+            importe = l_string.
+          ELSE.
+            importe = l_string / ( 10 ** l_potencia ).
+          ENDIF.
+        ELSE.
+          importe = l_string.
+        ENDIF.
+      CATCH cx_sy_conversion_no_number.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+      CATCH cx_sy_conversion_overflow.
+        MESSAGE e398(00) WITH &apos;Imposible convertir&apos;(imc) string &apos;a importe&apos;(aim) &apos;&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_TO_BINARY_TAB" VERSION="1" LANGU="S" DESCRIPT="Convierte string a tabla binaria" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_TO_BINARY_TAB" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="STRING_TO_BINARY_TAB" SCONAME="ITAB" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SOLIX_TAB"/>
+  <source>METHOD string_to_binary_tab.
+    DATA lv_xstring TYPE xstring.
+
+* Convert the string into xstring
+    CALL FUNCTION &apos;SCMS_STRING_TO_XSTRING&apos;
+      EXPORTING  text   = string
+      IMPORTING  buffer = lv_xstring
+      EXCEPTIONS failed = 1
+                 OTHERS = 2.
+
+    IF sy-subrc = 0.
+* Convert the string into binary table
+      CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+        EXPORTING buffer     = lv_xstring
+        TABLES    binary_tab = itab.
+    ELSE.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="TABLA2STRING" VERSION="1" LANGU="S" DESCRIPT="Convierte tabla de texto plano a variable string" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TABLA2STRING" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TABLA2STRING" SCONAME="SEPARAR_CON_ESPACIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TABLA2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD tabla2string.
+    DATA: l_linea TYPE string,
+          l_first TYPE c LENGTH 1.
+
+    CLEAR string.
+    LOOP AT tabla INTO l_linea.
+      CLEAR l_first.
+      AT FIRST.
+        l_first = &apos;X&apos;.
+      ENDAT.
+
+      IF l_first = &apos;X&apos;.
+        string = l_linea.
+      ELSE.
+        IF separar_con_espacio IS INITIAL.
+          CONCATENATE string cl_abap_char_utilities=&gt;cr_lf l_linea
+                      INTO string.
+        ELSE.
+          CONCATENATE string l_linea INTO string SEPARATED BY space.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+*  CALL FUNCTION &apos;SWA_STRING_FROM_TABLE&apos;
+*    EXPORTING
+*      character_table                  = tabla
+**     NUMBER_OF_CHARACTERS             =
+**     LINE_SIZE                        =
+**     KEEP_TRAILING_SPACES             = &apos; &apos;
+**     CHECK_TABLE_TYPE                 = &apos; &apos;
+*    IMPORTING
+*      CHARACTER_STRING                 = string
+*    EXCEPTIONS
+*      NO_FLAT_CHARLIKE_STRUCTURE       = 1
+*      OTHERS                           = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="TLINE2STRING" VERSION="1" LANGU="S" DESCRIPT="Convierte tabla de texto plano a variable string" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TLINE2STRING" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Línea de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TLINE2STRING" SCONAME="BLANCOS_SON_SALTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TLINE2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD tline2string.
+    DATA tline TYPE tline.
+
+    CLEAR string.
+    LOOP AT tabla INTO tline.
+      IF string IS INITIAL.
+        string = tline-tdline.
+      ELSE.
+        IF tline-tdformat = &apos;=&apos; OR tline-tdformat = &apos;&apos;.
+
+          IF tline-tdformat = &apos;&apos; AND blancos_son_saltos = &apos;X&apos;.
+            CONCATENATE string cl_abap_char_utilities=&gt;cr_lf tline-tdline INTO string.
+          ELSE.
+            CONCATENATE string tline-tdline INTO string.
+          ENDIF.
+        ELSE.
+          CONCATENATE string cl_abap_char_utilities=&gt;cr_lf tline-tdline INTO string.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="TO_CLIPBOARD" VERSION="1" LANGU="S" DESCRIPT="String 2 clipboard" EXPOSURE="2" STATE="1" EDITORDER="45 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TO_CLIPBOARD" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TO_CLIPBOARD" SCONAME="SHOW_MSG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TO_CLIPBOARD" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <source>METHOD to_clipboard.
+    DATA: i_data TYPE TABLE OF text4096,
+          l_data TYPE text4096,
+          l_rc   TYPE i.
+
+    FIELD-SYMBOLS: &lt;linea&gt; TYPE any,
+                   &lt;campo&gt; TYPE any.
+
+    IF NOT string IS INITIAL.
+      string2tabla( EXPORTING string   = string
+                              longitud = 4096
+                    CHANGING  tabla    = i_data ).
+    ELSEIF NOT tabla IS INITIAL.
+      LOOP AT tabla ASSIGNING &lt;linea&gt;.
+        CLEAR: l_data,
+               sy-subrc.
+        WHILE sy-subrc = 0.
+          ASSIGN COMPONENT sy-index OF STRUCTURE &lt;linea&gt; TO &lt;campo&gt;.
+          IF sy-subrc = 0.
+            IF l_data IS INITIAL.
+              l_data = &lt;campo&gt;.
+            ELSE.
+              CONCATENATE l_data cl_bcs_convert=&gt;gc_tab &lt;campo&gt; INTO l_data.
+            ENDIF.
+          ENDIF.
+        ENDWHILE.
+        APPEND l_data TO i_data.
+      ENDLOOP.
+    ENDIF.
+
+    cl_gui_frontend_services=&gt;clipboard_export( EXPORTING  no_auth_check        = &apos;X&apos;
+                                                IMPORTING  data                 = i_data
+                                                CHANGING   rc                   = l_rc
+                                                EXCEPTIONS cntl_error           = 1
+                                                           error_no_gui         = 2
+                                                           not_supported_by_gui = 3
+                                                           no_authority         = 4
+                                                           OTHERS               = 5 ).
+
+    IF sy-subrc &lt;&gt; 0.
+      IF sy-msgty IS INITIAL.
+        MESSAGE &apos;Error copiando datos al portapapeles&apos; TYPE &apos;E&apos;.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ENDIF.
+    ELSE.
+      IF show_msg = &apos;X&apos;.
+        MESSAGE &apos;Se han copiado datos al portapapeles&apos;(cdp) TYPE &apos;S&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" VERSION="1" LANGU="S" DESCRIPT="Transforma objetto to XSTRING" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Serializable Object" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_SERIALIZABLE_OBJECT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="COMPRIMIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="VARIABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <exception CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_OBJECT_TO_RAWSTRING" SCONAME="TRANSFORMATION_FAILED" VERSION="1" LANGU="S" DESCRIPT="TRANSFORMATION_FAILED ." MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD transform_object_to_rawstring.
+    TYPES line_t  TYPE x LENGTH 4096.
+    TYPES table_t TYPE STANDARD TABLE OF line_t.
+
+    DATA lt_restab TYPE table_t.
+
+    FIELD-SYMBOLS &lt;lfs_restab&gt; LIKE LINE OF lt_restab.
+
+    IF NOT objeto IS INITIAL.
+      CALL TRANSFORMATION id_indent
+           SOURCE obj = objeto
+           RESULT XML lt_restab.
+    ELSEIF NOT tabla IS INITIAL.
+      IF json IS INITIAL.
+        CALL TRANSFORMATION id_indent
+             SOURCE obj = tabla
+             RESULT XML lt_restab.
+      ELSE.
+        DATA(json_data) = /ui2/cl_json=&gt;serialize( data     = tabla
+                                                   compress = &apos;X&apos; ).
+      ENDIF.
+    ELSEIF NOT variable IS INITIAL.
+      IF json IS INITIAL.
+        CALL TRANSFORMATION id_indent
+             SOURCE obj = variable
+             RESULT XML lt_restab.
+      ELSE.
+        json_data = /ui2/cl_json=&gt;serialize( data     = variable
+                                             compress = &apos;X&apos; ).
+      ENDIF.
+    ELSE.
+* No hay datos de entrada, salimos
+      RETURN.
+    ENDIF.
+
+    IF lt_restab IS NOT INITIAL OR NOT json IS INITIAL.
+      IF NOT json_data IS INITIAL.
+        xstring = string2xstring( json_data ).
+      ELSE.
+        LOOP AT lt_restab ASSIGNING &lt;lfs_restab&gt;.
+          CONCATENATE xstring &lt;lfs_restab&gt;
+                      INTO xstring IN BYTE MODE.
+        ENDLOOP.
+      ENDIF.
+
+**compresss here
+      IF comprimir = &apos;X&apos;.
+        TRY.
+            cl_abap_gzip=&gt;compress_binary( EXPORTING raw_in   = xstring
+                                           IMPORTING gzip_out = xstring ).
+          CATCH cx_parameter_invalid_range. &quot;#EC *
+          CATCH cx_sy_buffer_overflow. &quot;#EC *
+          CATCH cx_sy_compression_error. &quot;#EC *
+        ENDTRY.
+      ENDIF.
+    ELSE.
+      RAISE transformation_failed.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" VERSION="1" LANGU="S" DESCRIPT="Transforma XSTRING a objeto" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="DESCOMPRIMIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="GET_OBJETO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="GET_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="GET_VARIABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;1100&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="VISUALIZAR_XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="XSTRING_DECOMPRESSED" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Serializable Object" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_SERIALIZABLE_OBJECT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="VARIABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <exception CLSNAME="ZCL_AP_STRING" CMPNAME="TRANSFORM_RAWSTRING_TO_OBJECT" SCONAME="TRANSFORMATION_FAILED" VERSION="1" LANGU="S" DESCRIPT="transformation_failed" MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD transform_rawstring_to_object.
+    DATA: l_string   TYPE string,
+          l_xstring  TYPE xstring,
+          l_encoding TYPE abap_encoding,
+          l_err_root TYPE REF TO cx_root.
+
+    CLEAR xstring_decompressed.
+    IF xstring IS INITIAL AND string IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF xstring IS INITIAL AND NOT string IS INITIAL.
+      l_string = string.
+      l_xstring = zcl_ap_string=&gt;string2xstring( l_string ).
+    ELSE.
+      l_xstring = xstring.
+    ENDIF.
+
+***Restore the object here
+****first decompress the object
+*now decompress
+    IF descomprimir IS INITIAL.
+      xstring_decompressed = l_xstring.
+    ELSE.
+      TRY.
+          cl_abap_gzip=&gt;decompress_binary( EXPORTING gzip_in = l_xstring
+*                                                     gzip_in_len = -1
+                                           IMPORTING raw_out = xstring_decompressed
+*                                                     raw_out_len =
+            ).
+        CATCH cx_parameter_invalid_range. &quot;#EC *
+        CATCH cx_sy_buffer_overflow. &quot;#EC *
+        CATCH cx_sy_compression_error. &quot;#EC *
+          IF NOT string IS INITIAL AND NOT codepage IS INITIAL.
+            l_encoding = codepage.
+            l_xstring = string2xstring( string   = string
+                                        encoding = l_encoding ).
+            TRY.
+                cl_abap_gzip=&gt;decompress_binary( EXPORTING gzip_in = l_xstring
+*                                                           gzip_in_len = -1
+                                                 IMPORTING raw_out = xstring_decompressed
+*                                                           raw_out_len =
+                  ).
+              CATCH cx_parameter_invalid_range. &quot;#EC *
+              CATCH cx_sy_buffer_overflow. &quot;#EC *
+              CATCH cx_sy_compression_error. &quot;#EC *
+                l_xstring = string2xstring( string   = string
+                                            encoding = &apos;4103&apos; ).
+                TRY.
+                    cl_abap_gzip=&gt;decompress_binary( EXPORTING gzip_in = l_xstring
+                                                     IMPORTING raw_out = xstring_decompressed  ).
+                  CATCH cx_parameter_invalid_range. &quot;#EC *
+                  CATCH cx_sy_buffer_overflow. &quot;#EC *
+                  CATCH cx_sy_compression_error. &quot;#EC *
+                ENDTRY.
+            ENDTRY.
+          ENDIF.
+        CATCH cx_root. &quot;#EC *
+      ENDTRY.
+    ENDIF.
+
+    IF visualizar_xml = &apos;X&apos;.
+      zcl_ap_ws=&gt;ver_xml( x_xml = xstring_decompressed ).
+      RETURN.
+    ENDIF.
+
+    &quot; revert TRANSFORMATION
+
+    TRY.
+        IF json = &apos;X&apos;.
+          DATA(json_data) = xstring2string( xstring_decompressed ).
+        ENDIF.
+
+        IF get_objeto = &apos;X&apos;.
+          CALL TRANSFORMATION id_indent
+               SOURCE XML xstring_decompressed
+               RESULT obj = objeto.
+
+          IF NOT objeto IS BOUND.
+            RAISE transformation_failed.
+          ENDIF.
+        ELSEIF get_tabla = &apos;X&apos;.
+          IF json IS INITIAL.
+            CALL TRANSFORMATION id_indent
+                 SOURCE XML xstring_decompressed
+                 RESULT obj = tabla.
+          ELSE.
+            /ui2/cl_json=&gt;deserialize( EXPORTING json = json_data
+                                       CHANGING  data = tabla ).
+
+          ENDIF.
+        ELSEIF get_variable = &apos;X&apos;.
+          IF json IS INITIAL.
+            CALL TRANSFORMATION id_indent
+                 SOURCE XML xstring_decompressed
+                 RESULT obj = variable.
+          ELSE.
+            /ui2/cl_json=&gt;deserialize( EXPORTING json = json_data
+                                       CHANGING  data = tabla ).
+
+          ENDIF.
+        ENDIF.
+      CATCH cx_root INTO l_err_root. &quot;#EC *
+        l_string = l_err_root-&gt;get_text( ).
+        CONCATENATE &apos;Error XML:&apos;(exm) l_string INTO l_string SEPARATED BY space.
+        MESSAGE l_string TYPE &apos;S&apos;.
+        RAISE transformation_failed.
+    ENDTRY.
+
+*METHOD TEST_TRANSFORM.
+*   DATA: LO_OBJECT TYPE REF TO ZCL_TEST,
+*         LO_OBJECT_RECOVERED TYPE REF TO ZCL_TEST,
+*         LO_OBJECT_SERILIAZABLE TYPE REF TO IF_SERIALIZABLE_OBJECT,
+*         LV_XSTRING_COMPRESSED TYPE XSTRING
+*        .
+*
+*
+*
+*   CREATE OBJECT LO_OBJECT.
+*
+*   LV_XSTRING_COMPRESSED =
+*   ZCL_AKSA_GENERAL=&gt;TRANSFORM_OBJECT_TO_RAWSTRING(
+*   IO_OBJECT = LO_OBJECT
+*     ).
+*
+*
+*   ZCL_AKSA_GENERAL=&gt;TRANSFORM_RAWSTRING_TO_OBJECT(
+*      EXPORTING
+*        IV_XSTRING            = LV_XSTRING_COMPRESSED
+*      IMPORTING
+*        EO_OBJECT  =   LO_OBJECT_SERILIAZABLE
+*     EXCEPTIONS
+*       TRANSFORMATION_FAILED = 1
+*          ).
+*   IF SY-SUBRC &lt;&gt; 0.
+** MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+**            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+*   ENDIF.
+*
+*
+****type cast
+*   LO_OBJECT_RECOVERED ?= LO_OBJECT_SERILIAZABLE.
+*
+*
+**  CL_AUNIT_ASSERT=&gt;ASSERT_EQUALS(
+**      EXP                  = LO_OBJECT
+**      ACT                  = LO_OBJECT_RECOVERED
+***    MSG                  = MSG
+***      LEVEL                = CRITICAL
+***    TOL                  = TOL
+***    QUIT                 = METHOD
+***    IGNORE_HASH_SEQUENCE = ABAP_FALSE
+**         ).
+*
+*
+*
+*ENDMETHOD.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="ULTIMO_CARACTER" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último caracter de un texto" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ULTIMO_CARACTER" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ULTIMO_CARACTER" SCONAME="NUM_CAR" VERSION="1" LANGU="S" DESCRIPT="Número de caracteres a considerar" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="ULTIMO_CARACTER" SCONAME="CHAR" VERSION="1" LANGU="S" DESCRIPT="Carácter" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD ultimo_caracter.
+    DATA l_long TYPE i.
+
+    l_long = strlen( texto ) - num_car.
+    IF l_long &gt;= 0.
+      char = texto+l_long(num_car).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2BASE64" VERSION="1" LANGU="S" DESCRIPT="XSTRING a BASE64" EXPOSURE="2" STATE="1" EDITORDER="47 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2BASE64" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2BASE64" SCONAME="BASE64" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD xstring2base64.
+    DATA l_long TYPE i.
+
+    IF xstring IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_long = xstrlen( xstring ).
+    CALL FUNCTION &apos;SSFC_BASE64_ENCODE&apos;
+      EXPORTING  bindata                  = xstring
+                 binleng                  = l_long
+      IMPORTING  b64data                  = base64
+      EXCEPTIONS ssf_krn_error            = 1
+                 ssf_krn_noop             = 2
+                 ssf_krn_nomemory         = 3
+                 ssf_krn_opinv            = 4
+                 ssf_krn_input_data_error = 5
+                 ssf_krn_invalid_par      = 6
+                 ssf_krn_invalid_parlen   = 7
+                 OTHERS                   = 8.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error codificando a base 64&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2STRING" VERSION="1" LANGU="S" DESCRIPT="Convierte xstring a sstring" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2STRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2STRING" SCONAME="ENCODING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;DEFAULT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2STRING" SCONAME="DESCOMPRIMIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="XSTRING2STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD xstring2string.
+    DATA: l_xstring TYPE xstring,
+          loc_conv  TYPE REF TO cl_abap_conv_in_ce.
+
+    IF NOT xstring IS INITIAL AND descomprimir = &apos;X&apos;.
+      TRY.
+          cl_abap_gzip=&gt;decompress_binary( EXPORTING gzip_in = xstring
+                                           IMPORTING raw_out = l_xstring ).
+        CATCH cx_parameter_invalid_range. &quot;#EC *
+        CATCH cx_sy_buffer_overflow. &quot;#EC *
+      ENDTRY.
+    ELSE.
+      l_xstring = xstring.
+    ENDIF.
+
+    loc_conv = cl_abap_conv_in_ce=&gt;create( input       = l_xstring
+                                           encoding    = encoding
+                                           replacement = &apos;?&apos;
+                                           ignore_cerr = abap_true ).
+
+    TRY.
+        loc_conv-&gt;read( IMPORTING data = string ).
+      CATCH cx_sy_conversion_codepage. &quot;#EC *
+*-- Should ignore errors in code conversions
+      CATCH cx_sy_codepage_converter_init. &quot;#EC *
+*-- Should ignore errors in code conversions
+      CATCH cx_parameter_invalid_type. &quot;#EC *
+      CATCH cx_parameter_invalid_range. &quot;#EC *
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

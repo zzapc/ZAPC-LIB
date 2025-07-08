@@ -1,0 +1,296 @@
+==================================================
+ZCL_AP_USER_PAR===============CCDEF
+==================================================
+*"* use this source file for any type of declarations (class
+*"* definitions, interfaces or type declarations) you need for
+*"* components in the private section
+
+==================================================
+ZCL_AP_USER_PAR===============CCIMP
+==================================================
+*"* use this source file for the definition and implementation of
+*"* local helper classes, interface definitions and type
+*"* declarations
+
+==================================================
+ZCL_AP_USER_PAR===============CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+
+==================================================
+ZCL_AP_USER_PAR===============CI
+==================================================
+private section.
+==================================================
+ZCL_AP_USER_PAR===============CO
+==================================================
+protected section.
+==================================================
+ZCL_AP_USER_PAR===============CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_AP_USER_PAR
+
+*"* local type definitions
+include ZCL_AP_USER_PAR===============ccdef.
+
+*"* class ZCL_AP_USER_PAR definition
+*"* public declarations
+  include ZCL_AP_USER_PAR===============cu.
+*"* protected declarations
+  include ZCL_AP_USER_PAR===============co.
+*"* private declarations
+  include ZCL_AP_USER_PAR===============ci.
+endclass. "ZCL_AP_USER_PAR definition
+
+*"* macro definitions
+include ZCL_AP_USER_PAR===============ccmac.
+*"* local class implementation
+include ZCL_AP_USER_PAR===============ccimp.
+
+class ZCL_AP_USER_PAR implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_AP_USER_PAR implementation
+
+==================================================
+ZCL_AP_USER_PAR===============CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_AP_USER_PAR and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_AP_USER_PAR===============CU
+==================================================
+class ZCL_AP_USER_PAR definition
+  public
+  final
+  create public .
+
+public section.
+
+  data O_PAR type ref to ZCL_AP_PARAMETROS .
+  data O_LOG type ref to ZCL_AP_LOG .
+  data VALIDACION type STRING .
+  data GUARDAR_LOG type ABAP_BOOL .
+
+  methods CONSTRUCTOR
+    importing
+      !VALIDACION type ANY
+      !INCLUDE type ANY default ''
+      !VBELN type VBELN_VA default ''
+      !FORM type ANY default '' .
+  methods ACTIVA
+    returning
+      value(ACTIVA) type ABAP_BOOL .
+  class-methods ES_PROGRAMA_CARGA_INDIRECTOS
+    returning
+      value(SI) type ABAP_BOOL .
+  methods CUMPLE_CONDICIONES
+    importing
+      !VBAK type VBAK optional
+    returning
+      value(SI) type ABAP_BOOL .
+  class-methods VERIF_REF_ABONOS
+    importing
+      !INCLUDE type ANY default ''
+      !FORM type ANY default ''
+    changing
+      !VBAP type VBAP
+      !VBAK type VBAK .
+  methods MATERIAL_TIENE_PED_EN_X_DIAS
+    importing
+      !MATNR type MATNR
+      !KUNNR type KUNNR
+      !DIAS type INT4
+    returning
+      value(KWMENG) type VBAP-KWMENG .
+==================================================
+ZCL_AP_USER_PAR=ACTIVA
+==================================================
+  METHOD ACTIVA.
+    DATA l_atributo1 TYPE zparametros-atributo1.
+
+    l_atributo1 = o_par->get_atr1( campo = me->validacion valor = 'EXIT ACTIVA' ).
+    TRANSLATE l_atributo1 TO UPPER CASE.
+    IF l_atributo1 = 'X' OR l_atributo1 = 'S'.
+      activa = 'X'.
+    ELSE.
+      if guardar_log = 'X'.
+        o_log->log( p1 = 'Exit' p2 = me->validacion p3 = 'inactiva' msgty = 'W' ).
+      endif.
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_USER_PAR=CONSTRUCTOR
+==================================================
+  METHOD CONSTRUCTOR.
+    DATA l_report TYPE sy-cprog.
+
+    CREATE OBJECT o_par
+      EXPORTING
+        clave = 'USER_VA0X'
+        campo = validacion.
+
+    me->validacion = validacion.
+    me->guardar_log = o_par->get_atr1( campo = me->validacion valor = 'GUARDAR LOG' ).
+
+    l_report = validacion.
+
+    IF NOT include IS INITIAL.
+      CONCATENATE l_report include INTO l_report SEPARATED BY `INC `.
+    ENDIF.
+
+    IF NOT form IS INITIAL.
+      CONCATENATE l_report form INTO l_report SEPARATED BY `FORM `.
+    ENDIF.
+
+    CREATE OBJECT o_log
+      EXPORTING
+        object                = 'USER_VA0X'
+        report                = l_report
+        clave                 = vbeln
+        guardar_tabla_interna = 'X'.
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_USER_PAR=CUMPLE_CONDICIONES
+==================================================
+  METHOD CUMPLE_CONDICIONES.
+    DATA: i_cond       TYPE TABLE OF string,
+          l_cond       TYPE string,
+          l_cumple,
+          l_no_cumple,
+          l_valor      TYPE zparametros-atributo1,
+          l_valor_cond TYPE string.
+
+    LOOP AT o_par->i_par INTO o_par->par WHERE valor(7) = 'COND - '.
+      l_cond = o_par->par-valor+7.
+      COLLECT l_cond INTO i_cond.
+    ENDLOOP.
+    IF sy-subrc NE 0.
+      si = 'X'.
+    ELSE.
+      LOOP AT i_cond INTO l_cond.
+        l_valor = 'COND - '.
+        l_valor+7 = l_cond.
+        CASE l_cond.
+          WHEN 'CLASE PEDIDO'.
+            l_valor_cond = vbak-auart.
+            READ TABLE o_par->i_par INTO o_par->par WITH KEY valor = l_valor valor2 = vbak-auart.
+            IF sy-subrc = 0.
+              l_cumple = 'X'.
+            ENDIF.
+        ENDCASE.
+        IF l_cumple IS INITIAL.
+          l_no_cumple = 'X'.
+          IF guardar_log = 'X'.
+            READ TABLE o_par->i_par INTO o_par->par WITH KEY valor = l_valor.
+            o_log->log( p1 = 'Pedido no cumple condición' p2 = l_cond p3 = o_par->par-valor2 p4 = 'Valor pedido' p5 = l_valor_cond ).
+          ENDIF.
+        ELSE.
+          IF guardar_log = 'X'.
+            o_log->log( p1 = 'Pedido cumple condición' p2 = l_cond p3 = l_valor_cond ).
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      IF l_cumple = 'X' AND l_no_cumple = ''.
+        si = 'X'.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_USER_PAR=ES_PROGRAMA_CARGA_INDIRE
+==================================================
+  METHOD ES_PROGRAMA_CARGA_INDIRECTOS.
+    DATA l_cprog TYPE sy-cprog.
+
+    IF sy-binpt = 'X' OR sy-tcode = ''.
+      GET PARAMETER ID 'ZPROG_CARGA' FIELD l_cprog.
+      IF l_cprog = 'Z01_SD_BI_CARGA_PEDIDOS_GRED_2'.
+        si = 'X'.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_USER_PAR=MATERIAL_TIENE_PED_EN_X_
+==================================================
+  METHOD MATERIAL_TIENE_PED_EN_X_DIAS.
+    DATA: l_fecha TYPE dats,
+          l_type  TYPE msgty.
+
+    l_fecha = sy-datum - dias.
+
+    SELECT SUM( kwmeng ) FROM vbak JOIN vbap ON vbak~vbeln  = vbap~vbeln
+      INTO kwmeng
+     WHERE kunnr = kunnr
+       AND vbak~erdat >= l_fecha
+       AND matnr = matnr.
+
+    IF guardar_log = 'X'.
+      IF kwmeng = 0.
+        l_type = 'E'.
+      ELSE.
+        l_type = 'I'.
+      ENDIF.
+
+      o_log->log( p1 = 'Cliente' p2 = kunnr p3 = 'Material' p4 = matnr p5 = 'Cantidad pedida' p6 = kwmeng p7 = 'desde fecha' p8 = l_fecha msgty = l_type ).
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_USER_PAR=VERIF_REF_ABONOS
+==================================================
+  METHOD VERIF_REF_ABONOS.
+* *APC20180310 Id.11788 - ZGY2 / ZG22 verificacion refernecias en abonos
+* http://servicedesk.grefusa.com/WorkOrder.do?woMode=viewWO&woID=11788&&fromListView=true
+*    DATA: o_exit       TYPE REF TO zcl_gsd_user_pedido,
+*          l_dias       TYPE i,
+*          l_validacion TYPE zparametros-campo VALUE 'VERIF_REF_ABONOS',
+*          l_prog_carga,
+*          l_abgru      TYPE abgru,
+*          l_message    TYPE bapi_msg.
+*
+*    CREATE OBJECT o_exit
+*      EXPORTING
+*        id         = 'VERIF_REF_ABONOS'
+*        include    = include
+*        form       = form
+*        vbeln      = vbak-vbeln.
+*
+*    CHECK o_exit->activa( ) = 'X'.
+*    CHECK o_exit->cumple_condiciones( vbak = vbak ) = 'X'.
+*
+*    l_dias = o_exit->o_par->get_atr1( campo = l_validacion valor = 'DIAS VENTA' ctd = 'X' ).
+*    IF l_dias = 0.
+*      o_exit->o_log->log( p1 = 'Parámetro DIAS VENTA = 0' msgty = 'W' ).
+*      EXIT.
+*    ENDIF.
+*
+*    l_abgru = o_exit->o_par->get_atr1( campo = l_validacion valor = 'BLOQUEO POSICION'  ).
+*    IF l_abgru IS INITIAL.
+*      o_exit->o_log->log( p1 = 'Parámetro BLOQUEO POSICION sin informar' msgty = 'W' ).
+*    ENDIF.
+*
+*    l_prog_carga = es_programa_carga_indirectos( ).
+*    IF NOT vbap IS INITIAL.
+*      IF o_exit->material_tiene_ped_en_x_dias( matnr = vbap-matnr kunnr = vbak-kunnr dias = l_dias ) > 0.
+*        IF l_prog_carga = 'X'.
+*          o_exit->o_log->log( p1 = 'Se cambia el bloqueo de la posición' p2 = vbap-posnr p3 = 'a' p4 = l_abgru p5 = 'valor anterior' p6 = vbap-abgru p7 = 'material' p8 = vbap-matnr
+*                              p9 = 'El material no ha tenido ventas del cliente' p10 = vbak-kunnr p11 = 'en los últimos' p12 = l_dias p13 = 'y se carga desde el programa de indirectos' ).
+*          vbap-abgru = l_abgru.
+*        ELSE.
+*          o_exit->o_log->log( p1 = 'Error en posición' p2 = vbap-posnr
+*                              p3 = 'El material no ha tenido ventas del cliente' p4 = vbak-kunnr p5 = 'en los últimos' p6 = l_dias ).
+*
+*          l_message =  zcl_ap_utils=>concat( p1 = 'El distribuidor no ha comprado la ref.' p2 = vbap-matnr p3 = 'en los últimos' p4 = l_dias p5 = 'días' ).
+*          MESSAGE l_message TYPE 'E'.
+*        ENDIF.
+*      ENDIF.
+*    ENDIF.
+
+  ENDMETHOD.

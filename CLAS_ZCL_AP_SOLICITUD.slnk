@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SOLICITUD" VERSION="1" LANGU="S" DESCRIPT="Solicitud de pedido" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class*&quot;* use this source file for the implementation part of*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class*&quot;* definitions, interfaces or data types) you need for method*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_SOLICITUD" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="C_OBJECTCLAS" VERSION="1" LANGU="S" DESCRIPT="Clase de objeto" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;EINKBELEG&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CDHDR-OBJECTCLAS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="C_OBJETO" VERSION="1" LANGU="S" DESCRIPT="Tipo de objeto" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="&apos;BUS2105&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SRGBTBREL-TYPEID_A" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ATTA_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de URLs de GOS" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ATTA_GOS_ST" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ATTA_GOS_ST" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_URL_GOS"/>
+  <source>method ATTA_GOS_ST.
+ DATA l_clave TYPE srgbtbrel-instid_a.
+
+ l_clave = banfn.
+ tabla = zcl_gos=&gt;atta_gos_st( tipo = c_objeto clave = l_clave ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="BORRAR_POSICION" VERSION="1" LANGU="S" DESCRIPT="Borra posición de la solicitud" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="BORRAR_POSICION" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="BORRAR_POSICION" SCONAME="BNFPO" VERSION="1" LANGU="S" DESCRIPT="Número de posición de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BNFPO"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="BORRAR_POSICION" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="BORRAR_POSICION" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD borrar_posicion.
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+
+  CREATE OBJECT o_bi.
+
+  o_bi-&gt;inicio( ).
+
+* Pantalla de llamada modificar/visualizar/liberar SolPed
+  o_bi-&gt;dynpro( program = &apos;SAPMM06B&apos; dynpro = &apos;0105&apos;).
+  o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos;).
+  o_bi-&gt;campos( campo = &apos;EBAN-BANFN&apos; valor = banfn ). &quot; Número de la solicitud de pedido
+
+* Resumen de posición una línea
+  o_bi-&gt;dynpro( program = &apos;SAPMM06B&apos; dynpro = &apos;0106&apos;).
+  o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos;).
+  o_bi-&gt;campos( campo = &apos;RM06B-BNFPO&apos; valor = bnfpo ). &quot; Campo para posicionamiento en pantalla de resumen
+
+* Resumen de posición una línea
+  o_bi-&gt;dynpro( program = &apos;SAPMM06B&apos; dynpro = &apos;0106&apos;).
+  o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=DL&apos;).
+  o_bi-&gt;campos( campo = &apos;RM06B-TCSELFLAG(01)&apos; valor = &apos;X&apos;). &quot; Casilla selec.ctrl.tablas
+
+* Resumen de posición una línea
+  o_bi-&gt;dynpro( program = &apos;SAPMM06B&apos; dynpro = &apos;0106&apos;).
+  o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BU&apos;).
+
+  mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;ME52&apos; modo = &apos;E&apos;).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_LIBERADO_COD" VERSION="1" LANGU="S" DESCRIPT="Pedido está liberado" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_LIBERADO_COD" SCONAME="T_COD" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla estructura codigos" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZTAB_COD"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_LIBERADO_COD" SCONAME="LIBERADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>method ES_LIBERADO_COD.
+data l_cod type zest_cod.
+
+  clear liberado.
+  describe table t_cod lines sy-tfill.
+  check sy-tfill &gt; 0.
+
+  read table t_cod into l_cod index sy-tfill.
+  liberado = l_cod-liberada.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_SIGUIENTE_ESTRATEGIA" VERSION="1" LANGU="S" DESCRIPT="La estrategia es la siguiente a liberar" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_SIGUIENTE_ESTRATEGIA" SCONAME="BANFN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_SIGUIENTE_ESTRATEGIA" SCONAME="BNFPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BNFPO"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_SIGUIENTE_ESTRATEGIA" SCONAME="FRGCO" VERSION="1" LANGU="S" DESCRIPT="Código de liberación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="FRGCO"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="ES_SIGUIENTE_ESTRATEGIA" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_siguiente_estrategia.
+  DATA: l_frgco TYPE frgco.
+
+  l_frgco = siguiente_estrategia( banfn = banfn bnfpo = bnfpo ).
+
+  IF frgco = l_frgco.
+    si = &apos;X&apos;.
+  ELSE.
+    CLEAR si.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_ESTRATEGIAS" VERSION="1" LANGU="S" DESCRIPT="Devuelve las estrategias" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_ESTRATEGIAS" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_ESTRATEGIAS" SCONAME="BNFPO" VERSION="1" LANGU="S" DESCRIPT="Número de posición de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BNFPO" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_ESTRATEGIAS" SCONAME="INFO_USUARIOS" VERSION="1" LANGU="S" DESCRIPT="Información usuarios de liberación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_ESTRATEGIAS" SCONAME="T_COD" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla estrategias ficticas" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_COD"/>
+  <source>method GET_ESTRATEGIAS.
+  data: i_rel type table of BAPIRLCORQ,
+        l_rel type BAPIRLCORQ,
+        i_relp type table of BAPIRLCORQ,
+        l_relp type BAPIRLCORQ,
+        l_cod  type zest_cod.
+
+  CALL FUNCTION &apos;BAPI_REQUISITION_GETRELINFO&apos;
+    EXPORTING
+      NUMBER                       = banfn
+      ITEM                         = bnfpo
+*   REL_CODE                     =
+    TABLES
+*   GENERAL_RELEASE_INFO         =
+*   RELEASE_PREREQUISITES        =
+      RELEASE_ALREADY_POSTED       = i_relp
+      RELEASE_FINAL                = i_rel
+*   RETURN                       =
+            .
+
+
+  define get_rel.
+    clear l_cod.
+    if not l_rel-rel_code&amp;1 is initial.
+      l_cod-frgco = l_rel-rel_code&amp;1.
+      if l_relp-rel_code1 = l_rel-rel_code&amp;1 or l_relp-rel_code2 = l_rel-rel_code&amp;1 or l_relp-rel_code3 = l_rel-rel_code&amp;1 or
+         l_relp-rel_code4 = l_rel-rel_code&amp;1 or l_relp-rel_code5 = l_rel-rel_code&amp;1 or l_relp-rel_code6 = l_rel-rel_code&amp;1 or
+         l_relp-rel_code7 = l_rel-rel_code&amp;1 or l_relp-rel_code8 = l_rel-rel_code&amp;1.
+        l_cod-liberada = &apos;X&apos;.
+      endif.
+      append l_cod to t_cod.
+    endif.
+  end-of-definition.
+
+read table i_relp into l_relp index 1.
+  loop at i_rel into l_rel.
+    get_rel: 1, 2, 3, 4, 5, 6, 7, 8.
+  endloop.
+
+  if info_usuarios = &apos;X&apos;.
+    data: i_cdpos type iscdpos_tab,
+          l_cdpos type iscdpos,
+          l_ind type i,
+          l_lib(10),
+          l_key(16).
+
+    CONCATENATE banfn bnfpo into l_key.
+    i_cdpos =
+     zcl_ap_control_cambios=&gt;get_cdpos( objectclas = c_objectclas
+                                        objectid   = l_key
+                                        tabname    = &apos;EBAN&apos;
+                                        fname      = &apos;FRGZU&apos; ).
+    clear l_cdpos.
+    loop at t_cod into l_cod where liberada = &apos;X&apos;.
+      l_ind = sy-tabix.
+      clear l_lib.
+      do l_ind times.
+        concatenate &apos;X&apos; l_lib into l_lib.
+      enddo.
+      read table i_cdpos into l_cdpos with key value_new = l_lib.
+      if sy-subrc = 0.
+        l_cod-liberado_por = l_cdpos-username.
+        l_cod-liberado_el  = l_cdpos-udate.
+        l_cod-liberado_a   = l_cdpos-utime.
+        modify t_cod from l_cod.
+      endif.
+    endloop.
+
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_URL_POR_TITULO_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve URL por tipo adjunto" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="Documentos URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method GET_URL_POR_TITULO_ST.
+ DATA: l_clave TYPE srgbtbrel-instid_a.
+
+ l_clave = banfn  .
+ url = zcl_gos=&gt;get_url_por_titulo_st( tipo   = C_OBJETO
+                                       clave  = l_clave
+                                       titulo = titulo ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="INSERTAR_URL_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Insertar URL en proveedor" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD insertar_url_gos_st.
+  DATA: l_clave  TYPE srgbtbrel-instid_a,
+        l_titulo TYPE string,
+        l_url    TYPE string.
+
+  l_clave  = banfn.
+  l_titulo = titulo.
+  l_url    = url.
+  zcl_gos=&gt;insertar_url_gos_st( tipo   = c_objeto
+                                clave  = l_clave
+                                titulo = l_titulo
+                                url    = l_url ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="SIGUIENTE_ESTRATEGIA" VERSION="1" LANGU="S" DESCRIPT="Siguiente estrategia para liberar" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="SIGUIENTE_ESTRATEGIA" SCONAME="BANFN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="SIGUIENTE_ESTRATEGIA" SCONAME="BNFPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BNFPO"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="SIGUIENTE_ESTRATEGIA" SCONAME="FRGCO" VERSION="1" LANGU="S" DESCRIPT="Código de liberación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="FRGCO"/>
+  <source>method SIGUIENTE_ESTRATEGIA.
+  data: i_cod type ZTAB_COD,
+        l_cod type zest_cod.
+
+  i_cod = GET_ESTRATEGIAS( banfn = banfn bnfpo = bnfpo ).
+
+  read table i_cod into l_cod with key LIBERADA = &apos;&apos;.
+  if sy-subrc = 0.
+    FRGCO = l_cod-FRGCO.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="URLS_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de URLs de GOS" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="URLS_GOS_ST" SCONAME="BANFN" VERSION="1" LANGU="S" DESCRIPT="Número de la solicitud de pedido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="URLS_GOS_ST" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_URL_GOS"/>
+  <source>method URLS_GOS_ST.
+ DATA l_clave TYPE srgbtbrel-instid_a.
+
+ l_clave = banfn.
+ tabla = zcl_gos=&gt;urls_gos_st( tipo = C_OBJETO clave = l_clave ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="VISUALIZAR_SOLICITUD_ST" VERSION="1" LANGU="S" DESCRIPT="Visualizar solicitud" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="VISUALIZAR_SOLICITUD_ST" SCONAME="BANFN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BANFN"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="VISUALIZAR_SOLICITUD_ST" SCONAME="BNFPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EBAN-BNFPO" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SOLICITUD" CMPNAME="VISUALIZAR_SOLICITUD_ST" SCONAME="EDIT" VERSION="1" LANGU="S" DESCRIPT="Edición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XFELD" PARVALUE="&apos;&apos;"/>
+  <source>METHOD VISUALIZAR_SOLICITUD_ST.
+  DATA l_display_only.
+
+*  SET PARAMETER ID &apos;BAN&apos; FIELD banfn.
+*
+*  IF edit IS INITIAL.
+*    CALL TRANSACTION &apos;ME53N&apos; AND SKIP FIRST SCREEN.
+*  ELSE.
+*    CALL TRANSACTION &apos;ME52N&apos; AND SKIP FIRST SCREEN.
+*  ENDIF.
+
+  IF edit IS INITIAL.
+    l_display_only = &apos;X&apos;.
+  ELSE.
+    CLEAR l_display_only.
+  ENDIF.
+
+  CALL FUNCTION &apos;MMPUR_REQUISITION_DISPLAY&apos;
+    EXPORTING
+      im_banfn        = banfn
+      im_bnfpo        = bnfpo
+      im_change       = edit
+      im_display_only = l_display_only
+    EXCEPTIONS
+      no_authority    = 1
+      OTHERS          = 2.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

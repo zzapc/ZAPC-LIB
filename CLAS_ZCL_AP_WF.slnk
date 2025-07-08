@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_WF" VERSION="1" LANGU="S" DESCRIPT="Workflow" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk">
+ <types CLSNAME="ZCL_AP_WF" CMPNAME="SWC_OBJECT" VERSION="1" LANGU="S" DESCRIPT="Estructura para ID objeto" EXPOSURE="2" STATE="1" EDITORDER="0 " TYPTYPE="1" TYPE="SWOTOBJID" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+TYPE-POOLS: swlc.
+
+include: CNTN01_SWC.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class
+
+*INCLUDE &lt;cntain&gt;.
+
+*************************** Macros *************************************
+* Types
+*TYPES:
+*  swc_object type swotobjid.
+*
+*DATA swo_%handle type obj_record.
+*DATA swo_%ret type swotreturn.
+
+*DATA BEGIN OF swo_%return.
+*  INCLUDE STRUCTURE swotreturn.
+*DATA END OF swo_%return.
+
+* DATA Container
+DEFINE swc_container.
+data begin of &amp;1 occurs 0.
+  include structure swcont.
+data end of &amp;1.
+END-OF-DEFINITION.
+************************* Container Macros *****************************
+* Create Container
+DEFINE swc_create_container.
+  clear &amp;1.
+  refresh &amp;1.
+END-OF-DEFINITION.
+
+* Release Container
+DEFINE swc_release_container.
+  clear &amp;1.
+  refresh &amp;1.
+END-OF-DEFINITION.
+
+* Clear Container
+DEFINE swc_clear_container.
+  refresh &amp;1.
+  clear &amp;1.
+END-OF-DEFINITION.
+
+* Container Create Element
+DEFINE swc_create_element.
+  call function &apos;SWC_ELEMENT_CREATE&apos;
+       exporting
+            element   = &amp;2
+       tables
+            container = &amp;1
+       exceptions already_exists = 4
+                  others = 1.
+END-OF-DEFINITION.
+
+* Container Set Element
+DEFINE swc_set_element.
+  call function &apos;SWC_ELEMENT_SET&apos;
+       exporting
+            element       = &amp;2
+            field         = &amp;3
+       tables
+            container     = &amp;1
+       exceptions others = 1.
+END-OF-DEFINITION.
+
+* Container Set Table
+DEFINE swc_set_table.
+  call function &apos;SWC_TABLE_SET&apos;
+       exporting
+            element       = &amp;2
+       tables
+            container     = &amp;1
+            table         = &amp;3
+       exceptions others = 1.
+END-OF-DEFINITION.
+
+* Container Get Element
+DEFINE swc_get_element.
+  call function &apos;SWC_ELEMENT_GET&apos;
+       exporting
+            element       = &amp;2
+       importing
+            field         = &amp;3
+       tables
+            container     = &amp;1
+       exceptions not_found = 8
+                  is_null   = 4
+                  others = 1.
+END-OF-DEFINITION.
+
+* Container Get Table
+DEFINE swc_get_table.
+  call function &apos;SWC_TABLE_GET&apos;
+       exporting
+            element       = &amp;2
+       tables
+            container     = &amp;1
+            table         = &amp;3
+       exceptions not_found = 8
+                  is_null   = 4
+                  others = 1.
+END-OF-DEFINITION.
+
+* Container Löschen Element
+DEFINE swc_delete_element.
+  call function &apos;SWC_ELEMENT_DELETE&apos;
+       exporting
+            element   = &amp;2
+       tables
+            container = &amp;1
+       exceptions others = 1.
+END-OF-DEFINITION.
+
+* Kopieren Container1/Element1 -&gt; Container2/Element2
+* Parameters:  P1  Quellcontainer
+*              P2  Quellelement
+*              P3  Zielcontainer
+*              P4  Zielelement
+DEFINE swc_copy_element.
+  call function &apos;SWC_ELEMENT_COPY&apos;
+       exporting
+            source_element   = &amp;2
+            target_element   = &amp;4
+       tables
+            source_container = &amp;1
+            target_container = &amp;3
+       exceptions
+            not_found        = 1
+            is_null          = 2
+            others           = 3.
+END-OF-DEFINITION.
+
+
+*************** Container Object Macros ********************************
+DEFINE swc_create_object.
+  call function &apos;SWC_OBJECT_CREATE&apos;
+       exporting
+            objtype           =  &amp;2
+            objkey            =  &amp;3
+       importing
+            object            =  &amp;1
+       exceptions
+            objtype_not_found    = 04
+            logsys_not_found     = 08
+            objtype_not_released = 12.
+END-OF-DEFINITION.
+
+DEFINE swc_get_object_type.
+   &amp;2 = &amp;1-objtype.
+END-OF-DEFINITION.
+
+DEFINE swc_get_object_key.
+   &amp;2 = &amp;1-objkey.
+END-OF-DEFINITION.
+
+* Get Property
+DEFINE swc_get_property.
+  call function &apos;SWO_PROPERTY_GET&apos;
+       exporting
+            object          = &amp;1
+            attribute       = &amp;2
+       changing
+            value           = &amp;3
+       exceptions
+            error_create    = 01
+            error_invoke    = 02
+            error_container = 03.
+END-OF-DEFINITION.
+
+* Get Table Property
+DEFINE swc_get_table_property.
+  call function &apos;SWO_TABLE_PROPERTY_GET&apos;
+       exporting
+            object          = &amp;1
+            attribute       = &amp;2
+       tables
+            value           = &amp;3
+       exceptions
+            error_create    = 01
+            error_invoke    = 02
+            error_container = 03.
+END-OF-DEFINITION.
+
+* Refresh Object Properties
+*DATA: swo_%obj LIKE obj_record.
+DEFINE swc_refresh_object.
+  call function &apos;SWO_CREATE&apos;
+       exporting
+            objtype = &amp;1-objtype
+            objkey  = &amp;1-objkey
+       importing
+            object  = swo_%handle
+            return  = swo_%return.
+  if swo_%return = 0.
+    swo_%obj-handle = swo_%handle.
+    call function &apos;SWO_OBJECT_REFRESH&apos;
+         exporting
+              object       = swo_%obj
+         exceptions
+              error_create = 02.
+  else.
+    sy-subrc = 02.
+  endif.
+END-OF-DEFINITION.
+
+* Compress container
+* Parameters:   P   container,     Changing
+DEFINE swc_container_compress.
+  call function &apos;SWC_CONT_COMPRESS&apos;
+    tables
+      container       = &amp;1.
+END-OF-DEFINITION.</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_WF" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <typeUsage CLSNAME="ZCL_AP_WF" TYPEGROUP="SWLC" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <forwardDeclaration>SWLC</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="FINALIZAR_ID" VERSION="1" LANGU="S" DESCRIPT="Marca WF como COMPLETED Borrado" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="FINALIZAR_ID" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <source>METHOD finalizar_id.
+  TRY.
+      CALL FUNCTION &apos;SWW_WI_ADMIN_COMPLETE&apos;
+        EXPORTING
+          wi_id                 = id
+          do_commit             = &apos;X&apos;
+          authorization_checked = &apos;&apos;
+          return_code           = &apos;0000&apos;
+*          importing
+*         new_status            = i_listado-wi_stat
+        EXCEPTIONS
+          update_failed         = 01
+          no_authorization      = 02.
+    CATCH cx_root INTO DATA(o_root).
+  ENDTRY.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="GET_AGENTES" VERSION="1" LANGU="S" DESCRIPT="Recupera agentes" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_AGENTES" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_AGENTES" SCONAME="I_AGENTES" VERSION="1" LANGU="S" DESCRIPT="Tabla con objetos org." CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TSWHACTOR"/>
+  <source>method GET_AGENTES.
+
+  CLEAR i_agentes.
+  CALL FUNCTION &apos;RH_WI_AGENTS_GET&apos;
+    EXPORTING
+      act_wi_id       = id
+    TABLES
+      wi_agent_list   = i_agentes
+    EXCEPTIONS
+      no_active_plvar = 1
+      no_agent_found  = 2
+      general_task    = 3
+      background_task = 4
+      OTHERS          = 5.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="GET_ID" VERSION="1" LANGU="S" DESCRIPT="Recupera ID del Workflow" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_ID" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_ID" SCONAME="TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_ID" SCONAME="TASK2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_ID" SCONAME="WI_ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <source>METHOD get_id.
+  DATA: r_task     TYPE RANGE OF sww_wi2obj-wi_rh_task,
+        lr_task    LIKE LINE OF r_task,
+        l_crea_tmp TYPE sww_wi2obj-crea_tmp.
+
+  CLEAR lr_task.
+  lr_task-option = &apos;EQ&apos;.
+  lr_task-sign = &apos;I&apos;.
+  lr_task-low = task.
+  APPEND lr_task TO r_task.
+
+  IF NOT task2 IS INITIAL.
+    lr_task-low = task2.
+    APPEND lr_task TO r_task.
+  ENDIF.
+  IF clave CS &apos;%&apos;.
+    SELECT wi_id crea_tmp FROM sww_wi2obj               &quot;#EC CI_NOFIRST
+      INTO (wi_id, l_crea_tmp)
+     WHERE wi_rh_task IN r_task
+       AND instid LIKE clave
+     ORDER BY crea_tmp.
+    ENDSELECT.
+  ELSE.
+    SELECT wi_id crea_tmp FROM sww_wi2obj               &quot;#EC CI_NOFIRST
+      INTO (wi_id, l_crea_tmp)
+     WHERE wi_rh_task IN r_task
+       AND instid = clave
+     ORDER BY crea_tmp.
+    ENDSELECT.
+  ENDIF.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTES_USUARIOS" VERSION="1" LANGU="S" DESCRIPT="Recupera el siguiente usuario" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTES_USUARIOS" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTES_USUARIOS" SCONAME="USUARIOS" VERSION="1" LANGU="S" DESCRIPT="ID de usuar.responsable en la gestión de organización" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HRASR00SYUNAME_TAB"/>
+  <source>METHOD get_siguientes_usuarios.
+  DATA: l_swpsteplog TYPE swpsteplog,
+        l_id         TYPE sww_wi2obj-wi_id,
+        i_agentes    TYPE tswhactor,
+        l_agente     TYPE swhactor.
+
+  CLEAR usuarios.
+
+  CLEAR l_swpsteplog.
+  SELECT wi_id FROM swpsteplog
+    INTO l_swpsteplog-wi_id
+   WHERE wf_id = id
+     AND wi_agent = &apos;&apos;
+   ORDER BY wi_id.
+  ENDSELECT.
+  IF sy-subrc NE 0.
+    SELECT wf_id FROM swpsteplog                        &quot;#EC CI_NOFIELD
+      INTO l_id
+      UP TO 1 ROWS
+     WHERE wi_id = id
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      CLEAR l_swpsteplog.
+      SELECT wi_id FROM swpsteplog
+        INTO l_swpsteplog-wi_id
+       WHERE wf_id = l_id
+         AND wi_agent = &apos;&apos;
+       ORDER BY wi_id.
+      ENDSELECT.
+    ENDIF.
+  ENDIF.
+  IF NOT l_swpsteplog-wi_id IS INITIAL.
+    i_agentes = get_agentes( l_swpsteplog-wi_id ).
+    IF sy-subrc = 0.
+      LOOP AT i_agentes INTO l_agente WHERE otype = &apos;US&apos;.
+        APPEND l_agente-objid TO usuarios.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTE_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Recupera el siguiente usuario" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTE_USUARIO" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_SIGUIENTE_USUARIO" SCONAME="USUARIO" VERSION="1" LANGU="S" DESCRIPT="ID de usuar.responsable en la gestión de organización" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SY-UNAME"/>
+  <source>method GET_SIGUIENTE_USUARIO.
+  DATA: i_usuarios TYPE hrtb_objid.
+
+  i_usuarios = get_siguientes_usuarios( id ).
+
+  CLEAR usuario.
+  READ TABLE i_usuarios INTO usuario INDEX 1.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="GET_STATUS" VERSION="1" LANGU="S" DESCRIPT="Recupera status" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_STATUS" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="GET_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SWLC_WORKITEM-WI_STAT"/>
+  <source>method GET_STATUS.
+data l_wf_workitem type  swlc_workitem.
+
+  call function &apos;SWL_WI_HEADER_READ&apos;
+    exporting
+      wi_id    = id
+    changing
+      workitem = l_wf_workitem
+    exceptions
+      others   = 1.
+  if sy-subrc = 0.
+    status = l_wf_workitem-wi_stat.
+  endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" VERSION="1" LANGU="S" DESCRIPT="Iniciar WF" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="TASK" VERSION="1" LANGU="S" DESCRIPT="Identificación tarea" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWR_STRUCT-TASK"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="Tipo de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWOTOBJID-OBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="I_AGENTES" VERSION="1" LANGU="S" DESCRIPT="Resultado de desglose de roles (tipo de tabla)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWRTAGENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="USUARIO" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="ELEMENTO_CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="I_CONTAINER" VERSION="1" LANGU="S" DESCRIPT="Tabla container" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWRTCONT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="I_MSG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SAPI_MSG_LINES"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="WORKITEM_ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SWR_STRUCT-WORKITEMID"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="RC" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Valor de retorno sentencias ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-SUBRC"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="INICIAR_WF" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD iniciar_wf.
+    DATA: objeto         TYPE swc_object,
+          wf_cont        TYPE TABLE OF swr_cont,
+          agents         TYPE TABLE OF swragent,
+          message_struct TYPE TABLE OF swr_mstruc,
+          key(255).
+
+    wf_cont = i_container.
+
+    IF NOT elemento_clave IS INITIAL.
+      key = clave.
+      swc_create_object objeto tipo key.
+      APPEND VALUE #( element = elemento_clave value = objeto ) TO wf_cont.
+    ENDIF.
+
+
+    agents = i_agentes.
+
+    IF NOT usuario IS INITIAL.
+      APPEND VALUE #( otype = &apos;US&apos; objid = usuario ) TO agents.
+    ENDIF.
+
+    CALL FUNCTION &apos;SAP_WAPI_START_WORKFLOW&apos;
+      EXPORTING
+        task            = task
+*       LANGUAGE        = SY-LANGU
+      IMPORTING
+        return_code     = rc
+        workitem_id     = workitem_id
+      TABLES
+        input_container = wf_cont
+        agents          = agents
+        message_lines   = i_msg
+        message_struct  = message_struct.
+
+    LOOP AT i_msg ASSIGNING FIELD-SYMBOL(&lt;msl&gt;) WHERE msg_type = &apos;E&apos;.
+      CONCATENATE message &lt;msl&gt;-line INTO message SEPARATED BY space.
+    ENDLOOP.
+    CONDENSE message.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" VERSION="1" LANGU="S" DESCRIPT="Lanzar evento" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="OBJETO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="EVENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="DELAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="LANZAR_EVENTO" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD lanzar_evento.
+  DATA: objtype         TYPE swetypecou-objtype,
+        event           TYPE swetypecou-event,
+        creator         TYPE swhactor,
+        objkey          TYPE sweinstcou-objkey,
+        eventid         TYPE swedumevid-evtid,
+        i_container     TYPE TABLE OF swcont,
+        l_container     TYPE swcont,
+        event_container TYPE TABLE OF swcont,
+        l_utask         TYPE tfdir-utask.
+
+  objtype = objeto.
+  objkey = clave.
+  event   = evento.
+
+  creator-otype = &apos;US&apos;.
+  creator-objid = sy-uname.
+
+
+  IF update_task IS INITIAL.
+    CALL FUNCTION &apos;SWE_EVENT_CREATE&apos;
+      EXPORTING
+        objtype           = objtype
+        objkey            = objkey
+        event             = event
+        creator           = creator
+        start_with_delay  = delay
+      IMPORTING
+        event_id          = eventid
+      TABLES
+        event_container   = i_container
+      EXCEPTIONS
+        objtype_not_found = 01.
+  ELSE.
+    SELECT SINGLE utask FROM tfdir
+      INTO l_utask
+     WHERE funcname = &apos;SWE_EVENT_CREATE_FOR_UPD_TASK&apos;.
+    IF l_utask IS INITIAL.
+      CALL FUNCTION &apos;SWE_EVENT_CREATE_FOR_UPD_TASK&apos;
+        EXPORTING
+          objtype           = objtype
+          objkey            = objkey
+          event             = event
+*         CREATOR           = &apos; &apos;
+          start_with_delay  = delay
+*         TAKE_WORKITEM_REQUESTER       = &apos; &apos;
+        TABLES
+          event_container   = event_container
+        EXCEPTIONS
+          objtype_not_found = 1.
+    ELSE.
+      CALL FUNCTION &apos;SWE_EVENT_CREATE_FOR_UPD_TASK&apos; IN UPDATE TASK
+        EXPORTING
+          objtype           = objtype
+          objkey            = objkey
+          event             = event
+          creator           = creator
+*         TAKE_WORKITEM_REQUESTER = &apos; &apos;
+          start_with_delay  = delay
+*         START_RECFB_SYNCHRON    = &apos; &apos;
+*         DEBUG_FLAG        = &apos; &apos;
+*    IMPORTING
+*         EVENT_ID          =
+        TABLES
+          event_container   = event_container
+        EXCEPTIONS
+          objtype_not_found = 1
+          OTHERS            = 2.
+    ENDIF.
+  ENDIF.
+  IF sy-subrc NE 0.
+    error = &apos;X&apos;.
+  ELSE.
+    IF commit = &apos;X&apos; AND update_task = &apos;&apos;.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WF" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar workflow" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WF" CMPNAME="VISUALIZAR" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="Identificación work item" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SWW_WI2OBJ-WI_ID"/>
+  <source>method VISUALIZAR.
+  IF NOT id IS INITIAL.
+    CALL FUNCTION &apos;SWL_WI_DISPLAY&apos;
+      EXPORTING
+        wi_id       = id
+      EXCEPTIONS
+        read_failed = 1
+        OTHERS      = 2.
+  ENDIF.
+endmethod.</source>
+ </method>
+</CLAS>

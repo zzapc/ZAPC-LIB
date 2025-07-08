@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SFP" VERSION="1" LANGU="S" DESCRIPT="Manejo Adobe forms" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S"/>
+ </textPool>
+ <classDocumentation OBJECT="ZCL_AP_SFP">
+  <language SPRAS="S">
+   <textLine TDFORMAT="U1" TDLINE="&amp;FUNCTIONALITY&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;RELATIONS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;EXAMPLE&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="AS" TDLINE="DATA o_sfp TYPE REF TO zcl_ap_sfp."/>
+   <textLine TDFORMAT="/" TDLINE="DATA: zetiqueta TYPE zswm_reprocesado_1."/>
+   <textLine TDFORMAT="/"/>
+   <textLine TDFORMAT="/" TDLINE="START-OF-SELECTION."/>
+   <textLine TDFORMAT="/"/>
+   <textLine TDFORMAT="/" TDLINE="CREATE OBJECT o_sfp"/>
+   <textLine TDFORMAT="/" TDLINE="EXPORTING"/>
+   <textLine TDFORMAT="/" TDLINE="form = &apos;ZWM_REPROCESADO_1&apos;"/>
+   <textLine TDFORMAT="/" TDLINE="nodialog = &apos;X&apos;"/>
+   <textLine TDFORMAT="/" TDLINE="preview  = &apos;X&apos;."/>
+   <textLine TDFORMAT="/"/>
+   <textLine TDFORMAT="/" TDLINE="CALL FUNCTION o_sfp-&gt;funcion"/>
+   <textLine TDFORMAT="/" TDLINE="EXPORTING"/>
+   <textLine TDFORMAT="/" TDLINE="/1bcdwb/docparams = o_sfp-&gt;docparams"/>
+   <textLine TDFORMAT="/" TDLINE="items             = zetiqueta"/>
+   <textLine TDFORMAT="/" TDLINE="EXCEPTIONS"/>
+   <textLine TDFORMAT="/" TDLINE="usage_error       = 1"/>
+   <textLine TDFORMAT="/" TDLINE="system_error      = 2"/>
+   <textLine TDFORMAT="/" TDLINE="internal_error    = 3"/>
+   <textLine TDFORMAT="/" TDLINE="OTHERS            = 4."/>
+   <textLine TDFORMAT="/"/>
+   <textLine TDFORMAT="/" TDLINE="o_sfp-&gt;cerrar_job( )."/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;HINTS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;FURTHER_SOURCES_OF_INF&amp;"/>
+   <textLine TDFORMAT="AS"/>
+  </language>
+ </classDocumentation>
+ <typeUsage CLSNAME="ZCL_AP_SFP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <typeClasDef CLSNAME="ZCL_AP_SFP" TYPEGROUP="ZCL_AP_GOS" VERSION="1" TPUTYPE="1" IMPLICIT="X"/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="CANCELADO" VERSION="1" LANGU="S" DESCRIPT="Form cancelado" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTVALUE="&apos;&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="C_DEST" VERSION="1" LANGU="S" DESCRIPT="Destino lógico (será indicado al llamar la función)" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="2" ATTVALUE="&apos;ADS&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RFCDEST" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="DOCPARAMS" VERSION="1" LANGU="S" DESCRIPT="Procesamiento de formulario parámetro de formulario" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SFPDOCPARAMS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Error en form" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTVALUE="&apos;&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="FORMNAME" VERSION="1" LANGU="S" DESCRIPT="Smart Forms: Nombre formulario" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TDSFNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="FUNCION" VERSION="1" LANGU="S" DESCRIPT="Nombre de la función" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="FUNCNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="OUTPUT" VERSION="1" LANGU="S" DESCRIPT="Salida de formulario (PDF, PDL)" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="FPFORMOUTPUT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="OUTPUTPARAMS" VERSION="1" LANGU="S" DESCRIPT="Procesamiento de formulario parámetro de salida" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SFPOUTPUTPARAMS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_SFP" CMPNAME="USER_DEFAULTS" VERSION="1" LANGU="S" DESCRIPT="Usuario: Estr.transferencia val.fijos" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIDEFAUL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="ABRIR_JOB" VERSION="1" LANGU="S" DESCRIPT="Abre el job inicial" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD abrir_job.
+    CHECK sy-tcode &lt;&gt; &apos;SE37&apos;. &quot; Si probamos desde SE37, la apertura del job es automática!
+
+* Abrimos el JOB inicial
+    CLEAR: cancelado,
+           error.
+    CALL FUNCTION &apos;FP_JOB_OPEN&apos;
+      CHANGING   ie_outputparams = outputparams
+      EXCEPTIONS cancel          = 1
+                 usage_error     = 2
+                 system_error    = 3
+                 internal_error  = 4
+                 OTHERS          = 5.
+
+    IF sy-subrc = 1.
+      cancelado = &apos;X&apos;.
+    ELSEIF sy-subrc &lt;&gt; 0.
+      error = &apos;X&apos;.
+      MESSAGE ID sy-msgid TYPE &apos;I&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" VERSION="1" LANGU="S" DESCRIPT="Archivar PDF" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPCONTENT"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="SAP_OBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="AR_OBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="DESCRIPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="OBJECTID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ARCHIVAR_PDF" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD archivar_pdf.
+    DATA: l_toaom     TYPE toaom,
+          l_long      TYPE i,
+          i_pdf       TYPE TABLE OF tbl1024,
+          l_ar_doc_id TYPE saeardoid,
+          l_objectid  TYPE sapb-sapobjid,
+          l_descr     TYPE c LENGTH 60.
+
+    SELECT * FROM toaom
+      INTO l_toaom
+      UP TO 1 ROWS
+     WHERE sap_object = sap_object
+       AND ar_object  =  ar_object
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      CONCATENATE &apos;No existe entrada&apos;(nee) sap_object ar_object &apos;en TOAOM&apos;(toa) INTO mensaje SEPARATED BY space.
+      EXIT.
+    ENDIF.
+
+    CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+      EXPORTING buffer        = pdf
+      IMPORTING output_length = l_long
+      TABLES    binary_tab    = i_pdf.
+
+    CALL FUNCTION &apos;SCMS_AO_TABLE_CREATE&apos;
+      EXPORTING  arc_id       = l_toaom-archiv_id
+                 doc_type     = &apos;PDF&apos;
+                 length       = l_long
+      IMPORTING  doc_id       = l_ar_doc_id
+      TABLES     data         = i_pdf
+      EXCEPTIONS error_http   = 1
+                 error_archiv = 2
+                 error_kernel = 3
+                 error_config = 4.
+
+    l_objectid = objectid.
+    l_descr = descripcion.
+    CALL FUNCTION &apos;ARCHIV_CONNECTION_INSERT&apos;
+      EXPORTING  archiv_id             = l_toaom-archiv_id
+                 arc_doc_id            = l_ar_doc_id
+                 ar_date               = sy-datum
+                 ar_object             = l_toaom-ar_object
+                 object_id             = l_objectid
+                 sap_object            = l_toaom-sap_object
+                 doc_type              = &apos;PDF&apos;
+                 descr                 = l_descr
+      EXCEPTIONS error_connectiontable = 1
+                 OTHERS                = 2.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="CERRAR_JOB" VERSION="1" LANGU="S" DESCRIPT="Cerrar job" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD cerrar_job.
+    CALL FUNCTION &apos;FP_JOB_CLOSE&apos;
+      EXCEPTIONS usage_error    = 1
+                 system_error   = 2
+                 internal_error = 3
+                 OTHERS         = 4.
+
+*  IF sy-subrc &lt;&gt; 0.
+*    MESSAGE ID sy-msgid TYPE &apos;I&apos; NUMBER sy-msgno
+*            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+*  ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="NODIALOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPNODIALOG" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="PREVIEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPPREVIEW" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="DEST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSPOPNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="COPIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="GETPDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPGETPDF" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="OUTPARAMS_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SFPOUTPUTPARAMS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="ABRIR_JOB" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="REQIMM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPRIMM" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="COVTITLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="REQNEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPRNEW" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="REQDEL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SYPRREL" PARVALUE="&apos;?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONSTRUCTOR" SCONAME="LANGU" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <source>METHOD constructor.
+    formname = form.
+    funcion = get_funcion( me-&gt;formname ).
+
+    user_defaults = zcl_ap_usuario=&gt;get_defaults( ).
+
+    IF NOT langu IS INITIAL.
+      docparams-langu = langu.
+    ENDIF.
+
+    IF outparams_ini IS INITIAL.
+      CLEAR outputparams.
+      outputparams-copies = copias.
+
+      IF dest IS INITIAL.
+        outputparams-dest = user_defaults-spld.
+      ELSE.
+        outputparams-dest = dest.
+      ENDIF.
+
+      IF getpdf IS INITIAL.
+        outputparams-nodialog = nodialog. &quot; Suprimir diálogo usuario
+        outputparams-preview  = preview.
+        outputparams-covtitle = covtitle.
+        IF outputparams-dest IS NOT INITIAL.
+          outputparams-reqnew = &apos;X&apos;. &quot; Orden SPOOL nueva (parámetros de impresión)
+          outputparams-reqimm = reqimm.   &quot; Salidas inmediatas (parámetros de impresión)
+*    ls_outputparams-REQDEL = &apos;X&apos;.   &quot;Borrar tras salida (parámetros de impresión)
+          IF user_defaults-spda = &apos;D&apos;.
+            outputparams-reqdel = &apos;X&apos;.
+          ENDIF.
+        ELSE.
+          CLEAR outputparams-nodialog.
+        ENDIF.
+
+        IF reqnew &lt;&gt; &apos;?&apos;.
+          outputparams-reqnew = reqnew.
+        ENDIF.
+        IF reqdel &lt;&gt; &apos;?&apos;.
+          outputparams-reqdel = reqdel.
+        ENDIF.
+      ELSE.
+        outputparams-getpdf   = &apos;X&apos;.
+        outputparams-nodialog = &apos;X&apos;.
+        outputparams-preview  = &apos;&apos;.
+      ENDIF.
+    ELSE.
+      outputparams = outparams_ini.
+      outputparams-nodialog = &apos;X&apos;.
+    ENDIF.
+
+    IF abrir_job = &apos;X&apos;.
+      abrir_job( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="CONVERTIR_PDF_A_PS" VERSION="1" LANGU="S" DESCRIPT="Convertir PDF a PostScript" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONVERTIR_PDF_A_PS" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONVERTIR_PDF_A_PS" SCONAME="PS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="CONVERTIR_PDF_A_PS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD convertir_pdf_a_ps.
+    DATA: l_fp     TYPE REF TO if_fp,
+          l_pdfobj TYPE REF TO if_fp_pdf_object,
+          l_fpex   TYPE REF TO cx_fp_runtime.
+
+    CLASS cl_fp DEFINITION LOAD.
+
+* get FP reference
+    l_fp = cl_fp=&gt;get_reference( ).
+
+    TRY.
+*   create PDF Object
+        l_pdfobj = l_fp-&gt;create_pdf_object( connection = c_dest ).
+
+*   set document
+        l_pdfobj-&gt;set_document( pdfdata = pdf ).
+
+        l_pdfobj-&gt;set_task_convertpdf2pdl( pdltype = &apos;ps&apos; ).
+
+*   execute, call ADS
+        l_pdfobj-&gt;execute( ).
+
+*   get result
+        l_pdfobj-&gt;get_pdl( IMPORTING pdldata = ps ).
+
+      CATCH cx_fp_runtime_internal INTO l_fpex.
+        message = l_fpex-&gt;get_text( ).
+      CATCH cx_fp_runtime_system INTO l_fpex.
+        message = l_fpex-&gt;get_text( ).
+      CATCH cx_fp_runtime_usage INTO l_fpex.
+        message = l_fpex-&gt;get_text( ).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" VERSION="1" LANGU="S" DESCRIPT="Envia PDF a spool" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="DEST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TSP01-RQDEST"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TSP01-RQ0NAME" PARVALUE="&apos;PBFORM&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="IMMEDIATE_PRINT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="TITLELINE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;pdf&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="PRIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TSP01-RQPRIO" PARVALUE="5"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="SUFFIX2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TSP01-RQ2NAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="ENVIAR_PDF_A_SPOOL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD enviar_pdf_a_spool.
+    DATA: l_tsp01        TYPE tsp01,
+          l_handle       TYPE sy-tabix,
+          l_spoolid      TYPE tsp01-rqident ##NEEDED,
+          l_partname     TYPE adspart ##NEEDED,
+          l_subrc        TYPE c LENGTH 2,
+          l_filename     TYPE c LENGTH 128,
+          l_paginas      TYPE i,
+          l_new_partname TYPE adspart ##NEEDED.
+
+    l_tsp01-rqtitle = titleline.
+    CALL FUNCTION &apos;ADS_SR_OPEN&apos;
+      EXPORTING  dest             = dest
+                 immediate_print  = immediate_print
+                 name             = name
+                 doctype          = &apos;ADSP&apos;
+                 titleline        = l_tsp01-rqtitle
+                 prio             = prio
+                 suffix2          = suffix2
+      IMPORTING  handle           = l_handle
+                 spoolid          = l_spoolid
+                 partname         = l_partname
+      EXCEPTIONS device_missing   = 1
+                 no_such_device   = 2
+                 operation_failed = 3
+                 wrong_doctype    = 4
+                 wrong_devicetype = 5
+                 OTHERS           = 6.
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CONCATENATE &apos;Error&apos;(err) l_subrc &apos;abriendo spool&apos;(abs) INTO message SEPARATED BY space.
+      EXIT.
+    ENDIF.
+
+    CONCATENATE l_partname &apos;.&apos; extension INTO l_filename.
+
+    CALL FUNCTION &apos;ADS_WRITE_TO_FILE&apos;
+      EXPORTING  filename                     = l_filename
+                 buffer                       = pdf
+*                 APPEND                       = &apos; &apos;
+                 useglobaldir                 = &apos;X&apos;
+      EXCEPTIONS cannot_open_file             = 1
+                 open_dataset_no_authority    = 2
+                 open_dataset_internal_error  = 3
+                 open_dataset_too_many_files  = 4
+                 dataset_cant_close           = 5
+                 close_dataset_internal_error = 6
+                 cannot_close_file            = 7
+                 cannot_transfer_data         = 8
+                 transfer_internal_error      = 9
+                 dataset_write_error          = 10
+                 OTHERS                       = 11.
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CONCATENATE &apos;Error&apos;(err) l_subrc &apos;escribiendo fichero&apos;(esf) l_filename INTO message SEPARATED BY space.
+      EXIT.
+    ENDIF.
+
+    l_paginas = get_pdf_pages( pdf ).
+    CALL FUNCTION &apos;ADS_SR_CONFIRM&apos;
+      EXPORTING  handle           = l_handle
+                 partname         = l_partname
+                 size             = 0
+                 pages            = l_paginas
+*                 NO_PDF           = &apos; &apos;
+      IMPORTING  new_partname     = l_new_partname
+      EXCEPTIONS handle_not_valid = 1
+                 operation_failed = 2
+                 OTHERS           = 3.
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CONCATENATE &apos;Error&apos;(err) l_subrc &apos;confirmando spool&apos;(cop) INTO message SEPARATED BY space.
+      EXIT.
+    ENDIF.
+
+    CALL FUNCTION &apos;ADS_SR_CLOSE&apos;
+      EXPORTING  handle           = l_handle
+                 final            = abap_true
+      EXCEPTIONS handle_not_valid = 1
+                 operation_failed = 2
+                 OTHERS           = 3.
+
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CONCATENATE &apos;Error&apos;(err) l_subrc &apos;cerrando spool&apos;(cer) INTO message SEPARATED BY space.
+      EXIT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="FORMAT_HTML_TEXT" VERSION="1" LANGU="S" DESCRIPT="Formatea código HTML para Adobe forms" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="FORMAT_HTML_TEXT" SCONAME="REPLACE_TAGS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&lt;H&gt;|&lt;b&gt;,&lt;C&gt;|&lt;i&gt;|&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="FORMAT_HTML_TEXT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD format_html_text.
+*https://blogs.sap.com/2017/02/13/displaying-rich-formatted-text-in-sap-adobe-form/
+*1. Definir campo texto como Rich Text
+*2. En evento initialize poner esté código JavaScript
+*var htmldata = this.rawValue;
+*var envel = &apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;exData contentType=&quot;text/html&quot; xmlns=&quot;http://www.xfa.org/schema/xfa-template/2.8/&quot;&gt;
+*&lt;body xmlns=&quot;http://www.w3.org/1999/xhtml&quot; xmlns:xfa=&quot;http://www.xfa.org/schema/xfa-data/1.0/&quot; xfa:APIVersion=&quot;Acroform:2.7.0.0&quot; xfa:spec=&quot;2.1&quot;&gt;&lt;p&gt;PLACEHOLDER&lt;/p&gt;&lt;/body&gt;&lt;/exData&gt;&apos;;
+*var newStr = envel.replace(&quot;PLACEHOLDER&quot;,htmldata);
+*this.value.exData.loadXML(newStr, 1, 1);
+
+*Sólo soporta estos tags Sección 27 de Adobe XML forms specification https://reference.pdfa.org/iso/32000/wp-content/uploads/2017/04/XFA-3_3.pdf#page=1187&amp;zoom=100,0,86
+*a “Hyperlink Support” on page 1189
+*b “Bold” on page 1199
+*br “Line Break” on page 1191
+*body “Body Element” on page 1189
+*html “HTML Element” on page 1189
+*i “Italic” on page 1203
+*p “Paragraph” on page 1194
+*span “Span” on page 1204
+*sub “Subscript” on page 1204
+*sup “Superscript” on page 1205
+*color “Color” on page 1200
+*font “Font” on page 1200
+*font-family
+*font-size
+*font-stretch
+*font-style
+*font-weight
+*margin “Set Margins” on page 1195
+*margin-bottom “Space After Paragraph” on page 1196
+*margin-left “Left Margin” on page 1191
+*margin-right “Right Margin” on page 1194
+*margin-top “Space Before Paragraph” on page 1196
+*letter-spacing “Letter Spacing” on page 1204
+*line-height “Line Spacing” on page 1191
+*orphans “Orphan Control” on page 1192
+*page-break-after “Page Break Control” on page 1193
+*page-break-before
+*page-break-inside
+*tab-interval “Tab Stops” on page 1205
+*tab-stop
+*text-decoration “Underline and Strikethrough” on page 1208
+*text-indent “First Line Indent” on page 1190
+*vertical-align “Vertical Alignment” on page 1197
+*widows “Orphan Control” on page 1192
+*kerning-mode “Kerning” on page 1203
+*xfa-font-horizontal-scale “Font Scale” on page 1202
+*xfa-font-vertical-scale
+*xfa-tab-stops “
+
+*Ejemplo TABS
+*lv_summary = &apos;&lt;p style=&quot;tab-interval:0.5in&quot;&gt;A&apos; &amp;&amp;
+*             &apos;&lt;span style=&quot;xfa-tab-count:2&quot; /&gt;B&apos; &amp;&amp;
+*             &apos;&lt;span style=&quot;xfa-tab-count:1&quot; /&gt;C&lt;/p&gt;&apos;.
+
+    DATA: i_tags TYPE TABLE OF string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_orig TYPE string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_dest TYPE string.
+
+    IF NOT replace_tags IS INITIAL.
+      SPLIT replace_tags AT &apos;,&apos; INTO TABLE i_tags.
+      LOOP AT i_tags ASSIGNING FIELD-SYMBOL(&lt;tag&gt;).
+        SPLIT &lt;tag&gt; AT &apos;|&apos; INTO l_orig l_dest.
+
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="GET_FUNCION" VERSION="1" LANGU="S" DESCRIPT="Recupera el nombre de la función" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_FUNCION" SCONAME="FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TDSFNAME"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_FUNCION" SCONAME="FUNCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="FUNCNAME"/>
+  <source>METHOD get_funcion.
+    DATA: gx_exc_api    TYPE REF TO cx_fp_api,
+          gv_err_string TYPE string.
+
+    CLEAR funcion.
+    TRY.
+        CALL FUNCTION &apos;FP_FUNCTION_MODULE_NAME&apos;
+          EXPORTING i_name     = form
+          IMPORTING e_funcname = funcion.
+      CATCH cx_fp_api INTO gx_exc_api.
+        gv_err_string = gx_exc_api-&gt;get_text( ).
+        MESSAGE gv_err_string TYPE &apos;E&apos;.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" VERSION="1" LANGU="S" DESCRIPT="Recupera logo" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" SCONAME="GRAFICO" VERSION="1" LANGU="S" DESCRIPT="Nombre" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" SCONAME="AS_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" SCONAME="LOGO_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" SCONAME="LOGO_XSTRING" VERSION="1" LANGU="S" DESCRIPT="XSTRING para transferencia de un formulario PDF" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="PTRV_WEB_XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_LOGO_XSTRING" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_logo_xstring.
+    DATA l_long TYPE i.
+
+    CLEAR: logo_xstring,
+           logo_string,
+           message.
+
+    SELECT SINGLE * FROM stxbitmaps
+      INTO @DATA(stxbitmaps)
+     WHERE tdobject = &apos;GRAPHICS&apos;
+       AND tdname = @grafico.
+
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No existe el gráfico&apos;.
+      RETURN.
+    ENDIF.
+
+    cl_ssf_xsf_utilities=&gt;get_bds_graphic_as_bmp( EXPORTING  p_object       = stxbitmaps-tdobject
+                                                             p_name         = stxbitmaps-tdname
+                                                             p_id           = stxbitmaps-tdid
+                                                             p_btype        = stxbitmaps-tdbtype
+                                                  RECEIVING  p_bmp          = logo_xstring
+                                                  EXCEPTIONS not_found      = 1
+                                                             internal_error = 2
+                                                             OTHERS         = 3 ).
+
+    CASE sy-subrc.
+      WHEN 0.
+        IF as_string = &apos;X&apos;.
+          IF NOT logo_xstring IS INITIAL.
+            l_long = xstrlen( logo_xstring ).
+            CALL FUNCTION &apos;SSFC_BASE64_ENCODE&apos;
+              EXPORTING  bindata                  = logo_xstring
+                         binleng                  = l_long
+              IMPORTING  b64data                  = logo_string
+              EXCEPTIONS ssf_krn_error            = 1
+                         ssf_krn_noop             = 2
+                         ssf_krn_nomemory         = 3
+                         ssf_krn_opinv            = 4
+                         ssf_krn_input_data_error = 5
+                         ssf_krn_invalid_par      = 6
+                         ssf_krn_invalid_parlen   = 7
+                         OTHERS                   = 8.
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error convirtiendo logo a string&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      WHEN 1.
+        message = &apos;No existe el gráfico&apos;.
+      WHEN 2.
+        message = &apos;Error interno&apos;.
+      WHEN OTHERS.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="GET_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el mensaje de error" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_MENSAJE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_mensaje.
+    CALL FUNCTION &apos;FP_GET_LAST_ADS_ERRSTR&apos;
+      IMPORTING e_adserrstr = message.
+
+    IF sy-tcode = &apos;SE37&apos;.
+      IF message CS &apos;Job&apos;.
+        message = &apos;No se pueden ejecutar Adobe forms desde SE37&apos;(s37). &quot; https://launchpad.support.sap.com/#/notes/858325
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="GET_PDF_PAGES" VERSION="1" LANGU="S" DESCRIPT="Busca el nº de paginas de un PDF" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_PDF_PAGES" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GET_PDF_PAGES" SCONAME="PAGINAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>METHOD get_pdf_pages.
+    DATA lt_result TYPE match_result_tab.
+    DATA: lv_cont  TYPE string,
+          lv_lines TYPE i,
+          lv_temp  TYPE string,
+          lv_pages TYPE numc5.
+
+    FIELD-SYMBOLS: &lt;fs_result&gt; LIKE LINE OF lt_result,
+                   &lt;fs_subm&gt;   LIKE LINE OF &lt;fs_result&gt;-submatches.
+
+    paginas = 0.
+
+*  lv_cont = zcl_ap_string=&gt;xstring2string( xstring = pdf ENCODING = zcl_c=&gt;CODEPAGE_UNICODE ).
+    CALL &apos;ICT_DISPATCH&apos; ID &apos;did&apos; FIELD &apos;append_xstring_to_string&apos; &quot;#EC CI_CCALL
+         ID &apos;source&apos; FIELD pdf
+         ID &apos;dest&apos;   FIELD lv_cont.
+
+    FIND REGEX `/N (.{1,5})/` IN lv_cont IGNORING CASE RESULTS lt_result.
+    IF sy-subrc &lt;&gt; 0.
+      FIND ALL OCCURRENCES OF REGEX `/count (.{1,4})/` IN lv_cont IGNORING CASE RESULTS lt_result.
+    ENDIF.
+    lv_lines = lines( lt_result ).
+    IF lv_lines IS NOT INITIAL.
+      READ TABLE lt_result ASSIGNING &lt;fs_result&gt; INDEX lv_lines.
+      IF sy-subrc = 0.
+        READ TABLE &lt;fs_result&gt;-submatches ASSIGNING &lt;fs_subm&gt; INDEX 1.
+        IF sy-subrc = 0.
+          lv_temp = lv_cont+&lt;fs_subm&gt;-offset(&lt;fs_subm&gt;-length).
+          CONDENSE lv_temp NO-GAPS.
+          CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_OUTPUT&apos;
+            EXPORTING input  = lv_temp
+            IMPORTING output = lv_pages.
+          paginas = lv_pages.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF paginas = 0 AND NOT lv_cont IS INITIAL.
+      paginas = 1.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" VERSION="1" LANGU="S" DESCRIPT="Grabar PDF" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPCONTENT"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="GRABAR_PDF" SCONAME="FICHERO_DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD grabar_pdf.
+    DATA: l_long TYPE i,
+          i_pdf  TYPE TABLE OF hrb2a_raw255.
+
+    CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+      EXPORTING buffer        = pdf
+      IMPORTING output_length = l_long
+      TABLES    binary_tab    = i_pdf.
+
+    zcl_ap_ficheros=&gt;grabar( EXPORTING fichero         = fichero
+                                       tipo            = &apos;BIN&apos;
+                                       bin_filesize    = l_long
+                                       mostrar_error   = mostrar_error
+                                       dialogo         = dialogo
+                             CHANGING  tabla           = i_pdf
+                                       fichero_dialogo = fichero_dialogo ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="PREVIEW_PDF" VERSION="1" LANGU="S" DESCRIPT="Previsualiza PDF" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="PREVIEW_PDF" SCONAME="PDF" VERSION="1" LANGU="S" DESCRIPT="Procesamiento formulario: Contenido de XFT, XFD, PDF, etc." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPCONTENT"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="PREVIEW_PDF" SCONAME="NOMBRE_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="PREVIEW_PDF" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD preview_pdf.
+    DATA l_fichero TYPE string.
+
+    IF pdf IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF NOT nombre_fichero IS INITIAL.
+      l_fichero = nombre_fichero.
+    ELSE.
+      l_fichero = &apos;fichero&apos;.
+    ENDIF.
+
+    IF NOT ( l_fichero CS &apos;.pdf&apos; OR l_fichero CS &apos;.PDF&apos; ).
+      CONCATENATE l_fichero &apos;.pdf&apos; INTO l_fichero.
+    ENDIF.
+
+    IF directorio IS INITIAL.
+      l_fichero = zcl_ap_ficheros=&gt;get_directorio_temporal( fichero = l_fichero ).
+    ELSE.
+      l_fichero = zcl_ap_ficheros=&gt;concat_ruta( directorio = directorio fichero = l_fichero ).
+    ENDIF.
+
+    zcl_ap_ficheros=&gt;visualizar( fichero = l_fichero xstring = pdf ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Recupera FORM OUTPUT desde un mensaje" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="NAST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="KAPPL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="OBJKY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="KSCHL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="SORT1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST-SORT1" PARVALUE="&apos;ZPDF&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="PREVISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="MEMORY_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ZFORM_OUTPUT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="LDEST" VERSION="1" LANGU="S" DESCRIPT="SPOOL: Dispositivo de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSPOPNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="COPIAS" VERSION="1" LANGU="S" DESCRIPT="Cantidad de mensajes (original + copias)" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NA_ANZAL" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="IMPRESION_INMEDIATA" VERSION="1" LANGU="S" DESCRIPT="Dar salida inmediatamente" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST-DIMME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="MEMORY_ID_OTF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ZMENSAJE_OTFDATA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_FORM_FROM_MENSAJE" SCONAME="FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="FPFORMOUTPUT"/>
+  <source>METHOD recupera_form_from_mensaje.
+    DATA: l_tabla   TYPE tabname VALUE &apos;NAST&apos;,
+          l_nast    TYPE nast,
+          l_pos     TYPE i,
+          l_objky   TYPE nast-objky,
+          l_erdat   TYPE dats,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_code    TYPE sy-subrc,
+          i_otfdata TYPE tsfotf.
+
+    IF nast IS INITIAL.
+      SELECT * FROM (l_tabla)
+        INTO l_nast
+        UP TO 1 ROWS
+        WHERE kappl = kappl
+          AND objky = objky
+          AND kschl = kschl.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        l_pos = strlen( objky ).
+        IF l_pos &gt; 1.
+          l_objky = objky.
+          l_pos = l_pos - 2.
+          l_objky+l_pos(2) = &apos;% &apos;.
+          SELECT * FROM (l_tabla)
+            INTO l_nast
+            UP TO 1 ROWS
+           WHERE kappl = kappl
+             AND objky LIKE l_objky
+             AND kschl = kschl.
+          ENDSELECT.
+        ENDIF.
+
+        IF l_nast IS INITIAL.
+          l_erdat = sy-datum - 15.
+          SELECT * FROM (l_tabla)
+            INTO l_nast
+            UP TO 1 ROWS
+           WHERE kappl = kappl
+             AND kschl = kschl
+             AND erdat &gt;= l_erdat.
+          ENDSELECT.
+          IF sy-subrc &lt;&gt; 0.
+            SELECT * FROM (l_tabla)
+              INTO l_nast
+              UP TO 1 ROWS
+              WHERE kappl = kappl
+                AND kschl = kschl
+            ORDER BY erdat DESCENDING.
+            ENDSELECT.
+          ENDIF.
+        ENDIF.
+        IF NOT l_nast IS INITIAL.
+          l_nast-objky = objky.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      l_nast = nast.
+    ENDIF.
+
+    IF l_nast IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF previsualizar = &apos;X&apos;.
+      CLEAR l_nast-sort1.
+    ELSE.
+      l_nast-sort1 = sort1.
+    ENDIF.
+    l_nast-nacha = &apos;1&apos;. &quot; Envio por impresora
+
+    IF NOT ldest IS INITIAL.
+      l_nast-ldest = ldest.
+    ENDIF.
+    l_nast-anzal = copias.
+    l_nast-dimme = impresion_inmediata.
+
+* Verificamos si existe el dispositivo, y si no cojo una que si lo haga
+    SELECT SINGLE padest FROM tsp03
+      INTO l_nast-ldest
+     WHERE padest = l_nast-ldest.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT padest FROM tsp03                            &quot;#EC CI_GENBUFF
+        INTO l_nast-ldest
+       UP TO 1 ROWS.
+      ENDSELECT.
+    ENDIF.
+    SET PARAMETER ID sort1 FIELD &apos;X&apos;.
+
+    FREE MEMORY ID memory_id.
+
+    IF NOT memory_id_otf IS INITIAL.
+      FREE MEMORY ID memory_id_otf.
+    ENDIF.
+
+    IF previsualizar = &apos;X&apos;.
+      CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_SCREEN&apos;
+        EXPORTING pi_nast  = l_nast                                &quot;#EC *
+        IMPORTING pe_rcode = l_code.
+    ELSEIF previsualizar = &apos;I&apos;.
+      CLEAR l_nast-dimme. &quot; Sin impresión inmediata
+      CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_NO_UPDATE&apos;
+        EXPORTING pi_nast  = l_nast                                &quot;#EC *
+        IMPORTING pe_rcode = l_code.
+    ELSE.
+      CLEAR l_nast-tdarmod.
+      CALL FUNCTION &apos;WFMC_MESSAGE_SINGLE_SCREEN&apos;
+        EXPORTING pi_nast = l_nast.                                &quot;#EC *
+    ENDIF.
+
+    IMPORT form_output TO form FROM MEMORY ID memory_id.
+    IF sy-subrc = 0 AND form IS INITIAL AND memory_id = &apos;PDF_FILE&apos;. &quot; Pedidos de compras exportación WebDynpro
+      TRY.
+          IMPORT lv_pdf_file TO form-pdf FROM MEMORY ID memory_id.
+        CATCH cx_root.
+      ENDTRY.
+    ENDIF.
+
+    IF form-pdf IS INITIAL AND NOT memory_id_otf IS INITIAL.
+      IMPORT form_output TO form FROM MEMORY ID memory_id_otf.
+    ENDIF.
+
+    FREE MEMORY ID memory_id.
+
+    SET PARAMETER ID &apos;ZGET_PDF&apos; FIELD &apos;&apos;.                     &quot;#EC *
+
+    IF form-pdf IS INITIAL.
+      IMPORT l_output_info-otfdata TO i_otfdata FROM MEMORY ID memory_id.
+      IF i_otfdata[] IS INITIAL.
+        IMPORT i_otfdata TO i_otfdata FROM MEMORY ID memory_id_otf.
+      ENDIF.
+      IF NOT i_otfdata IS INITIAL.
+        zcl_ap_smartforms=&gt;get_pdf_xstring_from_otfdata( EXPORTING i_otfdata = i_otfdata IMPORTING pdf = form-pdf ).
+      ENDIF.
+    ENDIF.
+
+    IF form-pdf IS INITIAL.
+      IF NOT memory_id_otf IS INITIAL.
+        IMPORT l_output_info-otfdata TO i_otfdata FROM MEMORY ID memory_id_otf.
+        IF i_otfdata[] IS INITIAL.
+          IMPORT i_otfdata TO i_otfdata FROM MEMORY ID memory_id_otf.
+        ENDIF.
+        IF NOT i_otfdata IS INITIAL.
+          zcl_ap_smartforms=&gt;get_pdf_xstring_from_otfdata( EXPORTING i_otfdata = i_otfdata IMPORTING pdf = form-pdf ).
+        ENDIF.
+        FREE MEMORY ID memory_id_otf.
+      ENDIF.
+    ENDIF.
+
+    FREE MEMORY ID memory_id.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Recupera PDF desde un mensaje" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="NAST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="KAPPL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="OBJKY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="KSCHL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="SORT1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAST-SORT1" PARVALUE="&apos;ZPDF&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="PREVISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="MEMORY_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;ZMENSAJE_OTFDATA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="LDEST" VERSION="1" LANGU="S" DESCRIPT="SPOOL: Dispositivo de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSPOPNAME" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="RECUPERA_PDF_FROM_MENSAJE" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="FPCONTENT"/>
+  <source>METHOD recupera_pdf_from_mensaje.
+    DATA l_form TYPE fpformoutput.
+
+    l_form = recupera_form_from_mensaje( nast          = nast
+                                         kappl         = kappl
+                                         objky         = objky
+                                         kschl         = kschl
+                                         sort1         = sort1
+                                         ldest         = ldest
+                                         memory_id     = memory_id
+                                         previsualizar = previsualizar ).
+
+    pdf = l_form-pdf.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" VERSION="1" LANGU="S" DESCRIPT="Unir PDFs" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" SCONAME="I_ADJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCL_AP_GOS=&gt;TT_ADJ"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" SCONAME="LIMITE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="999999999"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;PDF&apos;"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" SCONAME="I_PDFS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="ZCL_AP_GOS=&gt;TT_ADJ"/>
+  <parameter CLSNAME="ZCL_AP_SFP" CMPNAME="UNIR_PDFS" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD unir_pdfs.
+    DATA: l_resto          TYPE int4,
+          l_cont           TYPE int4,
+          l_long           TYPE int4,
+          l_last           TYPE xfeld,
+          l_ficheros_error TYPE string,
+          l_xleng          TYPE int4,
+          l_nfile          TYPE i,
+          l_adj            TYPE zcl_ap_gos=&gt;t_adj,
+          l_rc             TYPE i.
+
+    IF lines( i_adj ) = 0.
+      RETURN.
+    ELSEIF lines( i_adj ) = 1.
+      i_pdfs = i_adj.
+      i_pdfs[ 1 ]-fichero = |{ fichero }.pdf|.
+    ELSE.
+
+      TRY.
+          DATA(o_pdf_merger) = NEW cl_rspo_pdf_merge( ).
+        CATCH cx_root INTO DATA(o_root).
+          message = o_root-&gt;get_text( ).
+          RETURN.
+      ENDTRY.
+
+      l_resto = limite.
+      CLEAR: l_cont,
+             l_long.
+      LOOP AT i_adj ASSIGNING FIELD-SYMBOL(&lt;adj&gt;).
+        AT LAST.
+          l_last = &apos;X&apos;.
+        ENDAT.
+        __add_lista l_ficheros_error &lt;adj&gt;-fichero.
+        l_xleng = xstrlen( &lt;adj&gt;-xstring ).
+        IF l_xleng &gt; 0.
+          IF xstrlen( &lt;adj&gt;-xstring ) &lt; l_resto OR l_cont = 0.
+            o_pdf_merger-&gt;add_document( &lt;adj&gt;-xstring ).
+            l_long = l_long + l_xleng.
+            l_resto = l_resto - l_xleng.
+            l_cont = l_cont + 1.
+          ELSE.
+            IF l_nfile = 0.
+              l_adj-fichero = |{ fichero }.pdf|.
+            ELSE.
+              l_adj-fichero = |{ fichero } ({ l_nfile }).pdf|.
+            ENDIF.
+            o_pdf_merger-&gt;merge_documents( IMPORTING merged_document = l_adj-xstring rc = l_rc ).
+            IF l_rc &lt;&gt; 0 AND l_adj-xstring = 0.
+              message = &apos;Error generando fichero. Revise ficheros:&apos; &amp;&amp; l_ficheros_error.
+            ENDIF.
+            APPEND l_adj TO i_pdfs.
+            CLEAR l_ficheros_error.
+
+            l_nfile = l_nfile + 1.
+            CLEAR: o_pdf_merger,
+                   l_cont,
+                   l_long.
+            l_resto = limite.
+            o_pdf_merger = NEW cl_rspo_pdf_merge( ).
+            o_pdf_merger-&gt;add_document( &lt;adj&gt;-xstring ).
+            l_long = l_long + l_xleng.
+            l_resto = l_resto - l_xleng.
+          ENDIF.
+        ENDIF.
+        IF l_last = &apos;X&apos;.
+          IF l_nfile = 0.
+            l_adj-fichero = |{ fichero }.pdf|.
+          ELSE.
+            l_adj-fichero = |{ fichero } ({ l_nfile }).pdf|.
+          ENDIF.
+          o_pdf_merger-&gt;merge_documents( IMPORTING merged_document = l_adj-xstring rc = l_rc ).
+          IF l_rc &lt;&gt; 0 AND l_adj-xstring = 0.
+            message = &apos;Error generando fichero. Revise ficheros:&apos; &amp;&amp; l_ficheros_error.
+          ENDIF.
+          APPEND l_adj TO i_pdfs.
+          CLEAR l_ficheros_error.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

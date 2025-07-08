@@ -1,0 +1,2652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FUGR AREA="ZAP_POPUP" SPRAS="S" AREAT="Popups ZAPC">
+ <functionGroupDocumentation/>
+ <mainprogram NAME="SAPLZAP_POPUP" VARCL="X" DBAPL="S" DBNA="D$" SUBC="F" APPL="S" RMAND="600" RLOAD="S" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+  <textPool>
+   <language SPRAS="S">
+    <textElement ID="I" KEY="001" ENTRY="&amp;" LENGTH="3 "/>
+   </language>
+  </textPool>
+  <dynpros>
+   <dynpro PROG="SAPLZAP_POPUP" DNUM="0100" TYPE="M" FNUM="0100" BZMX="27 " BZBR="255 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="255 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Popup confirm ALV">
+    <dynprofield FNAM="V_TEXTO" DIDX="0000" FLG1="81" FLG2="00" FLG3="80" FMB1="31" FMB2="00" LENG="99" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="V_TEXTO2" DIDX="0000" FLG1="81" FLG2="00" FLG3="80" FMB1="31" FMB2="00" LENG="99" LINE="02" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="SVALD1-KEYTEXT" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="31" FMB2="00" LENG="14" LINE="03" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="14" ADEZ="00" STXT="____________________" RES1="                                                                                                                                                                                                                                                        X"/>
+    <dynprofield FNAM="SVALD1-VALUE" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="30" FMB2="08" LENG="84" LINE="03" COLN="17" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="84" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="SVALD2-KEYTEXT" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="31" FMB2="00" LENG="14" LINE="04" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="14" ADEZ="00" STXT="____________________" RES1="                                                                                                                                                                                                                                                        X"/>
+    <dynprofield FNAM="SVALD2-VALUE" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="30" FMB2="08" LENG="84" LINE="04" COLN="17" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="0D" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="SVALD3-KEYTEXT" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="31" FMB2="00" LENG="14" LINE="05" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="14" ADEZ="00" STXT="____________________" RES1="                                                                                                                                                                                                                                                        X"/>
+    <dynprofield FNAM="SVALD3-VALUE" DIDX="0000" FLG1="80" FLG2="02" FLG3="80" FMB1="30" FMB2="08" LENG="84" LINE="05" COLN="17" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="0D" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________"/>
+    <dynprofield FNAM="CALV" DIDX="0016" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="FF" LINE="06" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="02" ADEZ="46"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+  MODULE status_0100.
+
+PROCESS AFTER INPUT.
+  MODULE user_command_0100.
+
+PROCESS ON VALUE-REQUEST.
+  FIELD svald1-value   MODULE p100_value1.
+  FIELD svald2-value   MODULE p100_value2.
+  FIELD svald3-value   MODULE p100_value3.
+
+PROCESS ON HELP-REQUEST.
+  FIELD svald1-value   MODULE p100_help1.
+  FIELD svald1-keytext MODULE p100_help1.
+
+  FIELD svald2-value   MODULE p100_help2.
+  FIELD svald2-keytext MODULE p100_help2.
+
+  FIELD svald3-value   MODULE p100_help3.
+  FIELD svald3-keytext MODULE p100_help3.</dynproflowsource>
+   </dynpro>
+  </dynpros>
+  <pfstatus>
+   <pfstatus_tit CODE="001" TEXT="&amp;"/>
+  </pfstatus>
+  <source>*******************************************************************
+*   System-defined Include-files.                                 *
+*******************************************************************
+  INCLUDE LZAP_POPUPTOP.                     &quot; Global Data
+  INCLUDE LZAP_POPUPUXX.                     &quot; Function Modules
+
+*******************************************************************
+*   User-defined Include-files (if necessary).                    *
+*******************************************************************
+* INCLUDE LZAP_POPUPF...                     &quot; Subprograms
+* INCLUDE LZAP_POPUPO...                     &quot; PBO-Modules
+* INCLUDE LZAP_POPUPI...                     &quot; PAI-Modules
+
+INCLUDE LZAP_POPUPO01.
+
+INCLUDE LZAP_POPUPI01.
+
+INCLUDE lzap_popupf01.</source>
+ </mainprogram>
+ <includeprograms>
+  <include NAME="LZAP_POPUPF01" VARCL="X" SUBC="I" APPL="S" RMAND="012" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZAP_POPUPF01.
+*----------------------------------------------------------------------*
+
+
+
+FORM prepare_and_check TABLES fields STRUCTURE sval.
+* Die Routine bestimmt zu den übergebenen Feldern die DDIC-Informationen
+* und bestimmt die Ausgabelänge des längsten Feldes für die spätere
+* Bestimmung der Größe des Popups.
+* Außerdem werden die übergebenen Felder geprüft und bei Fehlern die
+* Ausnahme ERROR_IN_FIELDS mit MESSAGE E... RAISING ... erzeugt.
+* Die Prüfung kann aus Performancegründen nicht von der Übernahme der
+* Schnittstellenfelder und dem Lesen der DDIC-Information getrennt
+* werden.
+*
+* INPUT  FIELDS                   Schnittstellenfelder
+* OUTPUT SVALI                    Steploopzeilen und zus. Infos
+*        SVAL_NOT                 nicht anzuzeigende Felder
+*        DIFF_TAB                 unterschiedliche Tabellen in Fields
+*        QUAN_ENTRIES_100         Anz. Zeilen in SVALI
+
+  DATA:
+    tabname_old LIKE dfies-tabname,
+    h_intlen    TYPE i,
+    h_offset    TYPE i,
+    h_i         TYPE i.
+
+* Interne Tabelle mit den unterschiedlichen Tabellennamen, für
+* die Werte erfragt werden sollen
+  DATA: BEGIN OF diff_tab OCCURS 10,
+          tabname LIKE dfies-tabname,
+          ref     TYPE c,
+          length  TYPE i,
+        END OF diff_tab,
+        BEGIN OF key_all_fields,
+          tabname   LIKE dfies-tabname,
+          fieldname LIKE dfies-fieldname,
+        END OF key_all_fields,
+        BEGIN OF all_fields OCCURS 300.
+      INCLUDE STRUCTURE dfies.
+  DATA: END OF all_fields,
+* Tabellen für NAMETAB-Informationen
+  BEGIN OF fieldtab OCCURS 100.
+      INCLUDE STRUCTURE dfies.
+  DATA: END OF fieldtab,
+
+  max_field_length TYPE i,
+    h_tabname        LIKE dfies-tabname.
+
+  REFRESH diff_tab.
+  REFRESH svali.
+  tabname_old = space.
+
+  IF NOT v_campo_usuario1 IS INITIAL.
+    SPLIT v_campo_usuario1 AT &apos;-&apos; INTO fields-tabname fields-fieldname.
+    APPEND fields.
+  ENDIF.
+  IF NOT v_campo_usuario2 IS INITIAL.
+    SPLIT v_campo_usuario2 AT &apos;-&apos; INTO fields-tabname fields-fieldname.
+    APPEND fields.
+  ENDIF.
+  IF NOT v_campo_usuario3 IS INITIAL.
+    SPLIT v_campo_usuario3 AT &apos;-&apos; INTO fields-tabname fields-fieldname.
+    APPEND fields.
+  ENDIF.
+
+  LOOP AT fields.
+    IF fields-tabname &lt;&gt; tabname_old.
+      tabname_old = fields-tabname.
+      READ TABLE diff_tab WITH KEY fields-tabname.
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR diff_tab.
+        diff_tab-tabname = fields-tabname.
+        IF fields-comp_tab &lt;&gt; space AND
+           ( fields-comp_code = space OR fields-comp_code = &apos;EQ&apos; ).
+          diff_tab-ref = &apos;X&apos;.
+        ENDIF.
+        APPEND diff_tab.
+      ENDIF.
+    ENDIF.
+
+*   prüfen, ob Feld mehrfach angegeben wurde
+    key_all_fields-tabname     = fields-tabname.
+    key_all_fields-fieldname   = fields-fieldname.
+    READ TABLE svali WITH KEY key_all_fields.
+    IF sy-subrc = 0.
+      MESSAGE e108(s4) WITH fields-fieldname fields-tabname.
+    ENDIF.
+
+    CLEAR svali.
+    svali-tabname      =  fields-tabname.
+    svali-fieldname    =  fields-fieldname.
+    svali-value        =  fields-value.
+    IF fields-fieldtext &lt;&gt; space.
+      svali-scrtext_m    =  fields-fieldtext.
+    ENDIF.
+
+    svali-field_attr   =  fields-field_attr.
+    IF fields-field_obl &lt;&gt; space.
+      svali-field_obl = &apos;X&apos;.
+    ELSE.
+      svali-field_obl = space.
+    ENDIF.
+    svali-comp_code    =  fields-comp_code.
+    svali-comp_tab     =  fields-comp_tab.
+    svali-comp_field   =  fields-comp_field.
+    svali-novaluehlp   =  fields-novaluehlp.
+    APPEND svali.
+  ENDLOOP.
+
+  LOOP AT diff_tab.
+    IF diff_tab-tabname(1) = &apos;*&apos;.
+      h_tabname = diff_tab-tabname+1.
+    ELSE.
+      h_tabname = diff_tab-tabname.
+    ENDIF.
+    READ TABLE all_fields WITH KEY h_tabname BINARY SEARCH.
+    IF sy-subrc NE 0.
+*     NAMETAB für Felder wurde noch nicht gelesen
+      DATA: l_tabname TYPE ddobjname.
+      MOVE h_tabname TO l_tabname.
+      CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+        EXPORTING
+          tabname        = l_tabname
+*         FIELDNAME      = &apos; &apos;
+*         LANGU          = SY-LANGU
+*         LFIELDNAME     = &apos; &apos;
+*         ALL_TYPES      = &apos; &apos;
+*       IMPORTING
+*         X030L_WA       =
+*         DDOBJTYPE      =
+*         DFIES_WA       =
+*         LINES_DESCR    =
+        TABLES
+          dfies_tab      = fieldtab
+*         FIXED_VALUES   =
+        EXCEPTIONS
+          not_found      = 1
+          internal_error = 2
+          OTHERS         = 3.
+      IF sy-subrc = 0.
+* 012+ cpl
+* offset must be specified in characters but dfies returns bytes
+* causes problems in UNICODE environment
+        h_offset = 0.
+        SORT fieldtab BY position.
+        LOOP AT fieldtab.
+          fieldtab-offset = h_offset.
+          ADD fieldtab-leng TO h_offset.
+          MODIFY fieldtab.
+        ENDLOOP.
+* 012- cpl
+        h_offset = 0.
+        LOOP AT fieldtab.
+          all_fields = fieldtab.
+          APPEND all_fields.
+        ENDLOOP.
+      ELSE.
+        EXIT.
+      ENDIF.
+    ELSE.
+    ENDIF.
+  ENDLOOP.
+  CASE sy-subrc.
+    WHEN 6.
+      MESSAGE e100(s4) WITH diff_tab-tabname RAISING error_in_fields.
+    WHEN 8.
+      MESSAGE e102(s4) WITH diff_tab-tabname RAISING error_in_fields.
+    WHEN 9.
+      MESSAGE e103(s4) WITH diff_tab-tabname RAISING error_in_fields.
+  ENDCASE.
+
+  SORT all_fields BY tabname fieldname.
+  max_field_length = 0.
+  REFRESH sval_not.
+
+  LOOP AT svali.
+*   SVALI-Zeilen vervollständigen
+    IF svali-tabname(1) = &apos;*&apos;.
+      h_tabname = svali-tabname+1.
+    ELSE.
+      h_tabname = svali-tabname.
+    ENDIF.
+    key_all_fields-tabname     = h_tabname.
+    key_all_fields-fieldname   = svali-fieldname.
+    READ TABLE all_fields WITH KEY key_all_fields BINARY SEARCH.
+    IF sy-subrc NE 0.
+*      Feld gehört nicht zur Tabelle
+      MESSAGE e104(s4) WITH svali-fieldname svali-tabname
+                   RAISING error_in_fields.
+    ENDIF.
+
+*   if all_fields-inttype cn &apos;CNTD&apos;.                              &quot;mk
+*   Typ F ist zwar im Prinzip unterstützt, wird aber abgeklemmt,
+*   weil nur 15 Nachkommastellen unterstützt werden,
+*   der ABAP aber inzwischen bis zu 17 Stellen unterstützt
+*   (je nach Bedarf...)
+    IF all_fields-inttype CN &apos;CNTDIXPbs8&apos;
+    OR all_fields-datatype = &apos;RAW&apos;.
+*      ungültiger Typ
+      MESSAGE e105(s4) WITH all_fields-inttype
+                        svali-fieldname svali-tabname
+                   RAISING error_in_fields.
+    ENDIF.
+
+    svali-outputlen  = all_fields-outputlen.
+
+*   Länge des längsten anzuzeigenden Feldes bestimmen
+    IF max_field_length &lt; all_fields-outputlen AND
+       svali-field_attr &lt;&gt; &apos;04&apos;.
+      max_field_length = all_fields-outputlen.
+    ENDIF.
+
+    svali-position   = all_fields-position.
+    svali-offset     = all_fields-offset.
+    svali-keyflag    = all_fields-keyflag.
+    svali-checktable = all_fields-checktable.
+    svali-inttype    = all_fields-inttype.
+*   Unter UNICODE enthält &apos;intlen&apos; die Länge in bytes
+*   benötigt wird aber (z.B. für Konvertierungsexit) die interne Länge *
+*   in Zeichen
+*   if all_fields-datatype = &apos;CHAR&apos;.                        &quot;*012d
+*012i+
+    svali-leng       = all_fields-leng.
+*012i-
+    svali-intlen     = all_fields-intlen.
+    svali-scrlen1    = all_fields-scrlen1.
+    svali-scrlen2    = all_fields-scrlen2.
+    svali-scrlen3    = all_fields-scrlen3.
+    svali-datatype   = all_fields-datatype.
+    svali-leng       = all_fields-leng.
+*   svali-outputlen  = all_fields-outputlen.               &quot;*016d
+    svali-lowercase  = all_fields-lowercase.
+    svali-convexit   = all_fields-convexit.
+    svali-scrtext_s  = all_fields-scrtext_s.
+    svali-domname    = all_fields-domname.
+    svali-valexi     = all_fields-valexi.
+    svali-sign       = all_fields-sign.                     &quot;mk
+    svali-decimals   = all_fields-decimals.                 &quot;mk
+    svali-reftable   = all_fields-reftable.                 &quot;B20K058473
+    svali-reffield   = all_fields-reffield.                 &quot;B20K058473
+    svali-f4availabl = all_fields-f4availabl.               &quot;B20K081005
+    IF svali-scrtext_m = space.
+      IF all_fields-scrtext_m &lt;&gt; space.
+        svali-scrtext_m  = all_fields-scrtext_m.
+      ELSEIF all_fields-scrtext_s &lt;&gt; space.
+        svali-scrtext_m  = all_fields-scrtext_s.
+      ELSEIF all_fields-scrtext_l &lt;&gt; space.
+        svali-scrtext_m  = all_fields-scrtext_l.
+      ELSE.
+        svali-scrtext_m  = all_fields-fieldname.
+      ENDIF.
+    ENDIF.
+    svali-scrtext_l  = all_fields-scrtext_l.
+*   ggf. SVAL_NOT ergänzen und Feld aus SVALI entfernen
+    IF svali-field_attr = &apos;04&apos;.
+      CLEAR sval_not.
+      sval_not = svali.
+      APPEND sval_not.
+      DELETE svali.
+    ELSE.
+      MODIFY svali.
+    ENDIF.
+  ENDLOOP.
+
+* prüfen, ob die Vergleichsfelder angegeben wurden
+  LOOP AT sval_not WHERE comp_tab &lt;&gt; space.
+    key_all_fields-tabname     = sval_not-comp_tab.
+    key_all_fields-fieldname   = sval_not-comp_field.
+    READ TABLE svali WITH KEY key_all_fields.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE e113(s4) WITH sval_not-comp_tab sval_not-comp_field
+                        fields-tabname fields-fieldname
+                        RAISING error_in_fields.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.                    &quot;prepare_and_check
+
+FORM campo_usuario USING pe_index
+                CHANGING ps_svald TYPE svald.
+  DATA: h_date           TYPE d,
+        h_date_c(8)      TYPE c,                            &quot;B20K052439
+        h_time           TYPE t,
+        h_time_c(6)      TYPE c,                            &quot;B20K052439
+        h_formname(30)   TYPE c,
+        h_keyword        LIKE help_info-keyword,
+        h_value1         LIKE sval-value,
+        h_value2         LIKE sval-value,
+        h_flag           TYPE c,
+        h_client_dep     TYPE c,
+        h_cur_line       TYPE i VALUE 0,
+        h_tabname        LIKE dfies-tabname,
+        h_returncode     TYPE c,
+        h_domvalue       LIKE dd07l-domvalue_l,
+        h_no_value_check TYPE c,
+        index_100        TYPE i,
+        c_true           TYPE xfeld VALUE &apos;X&apos;,              &quot;049i
+        yes              TYPE c     VALUE &apos;1&apos;,
+        no               TYPE c     VALUE &apos;0&apos;,
+        norm_inp(02)     TYPE c VALUE &apos; &apos;,   &quot;Normal, eingabebereit
+        bright_inp(02)   TYPE c VALUE &apos;01&apos;,  &quot;Hell, eingabebereit
+        norm_noinp(02)   TYPE c VALUE &apos;02&apos;,  &quot;Normal, nicht eingabeber.
+        bright_noinp(02) TYPE c VALUE &apos;03&apos;,  &quot;Hell, nicht eingabeber.
+        do_not_show(02)  TYPE c VALUE &apos;04&apos;,  &quot;nicht anzeigen
+        show_2_dim(02)   TYPE c VALUE &apos;05&apos;,  &quot;normal, nicht eingabeber.
+        &quot;2-dimensional
+        cur_field(20)    TYPE c VALUE &apos; &apos;,
+        cur_line         TYPE i VALUE 0,
+        cur_offset       TYPE i VALUE 0,
+        error_tab        LIKE sval-tabname,
+        error_field      LIKE sval-fieldname.
+
+  DATA:   BEGIN OF wa_svali.                                &quot;B20K058473
+      INCLUDE STRUCTURE svali.                              &quot;B20K058473
+  DATA:   END OF wa_svali.                                  &quot;B20K058473
+
+
+  DATA: f TYPE f.
+  DATA: p(16) TYPE p.
+  FIELD-SYMBOLS &lt;p&gt;.
+  FIELD-SYMBOLS: &lt;h1&gt;, &lt;h2&gt;.
+
+  READ TABLE svali INDEX pe_index.
+  CHECK sy-subrc = 0.
+
+  DATA(l_value) = |SVALD{ pe_index }-VALUE|.
+  DATA(l_keytext) = |SVALD{ pe_index }-KEYTEXT|.
+  ASSIGN (l_keytext) TO &lt;p&gt;.
+  IF sy-subrc = 0.
+    &lt;p&gt; = svali-scrtext_m.
+  ENDIF.
+
+  CLEAR svald-value.
+  IF svali-convexit &lt;&gt; space.
+*      Konvertierungsexit zieht immer
+    h_formname = &apos;CONVERSION_EXIT_XYZ_OUTPUT&apos;.
+    REPLACE &apos;XYZ&apos; WITH svali-convexit INTO h_formname.
+    CONDENSE h_formname NO-GAPS.
+*      falls der Name des Exits nicht 5-stellig ist
+    CASE svali-inttype.                                     &quot;B20K8A0A60
+      WHEN &apos;P&apos;.                                             &quot;B20K8A0A60
+        ASSIGN p TO &lt;h1&gt; TYPE &apos;P&apos; DECIMALS svali-decimals.  &quot;B20K8A0A60
+        &lt;h1&gt; = svali-value.                                 &quot;B20K8A0A60
+      WHEN OTHERS.                                          &quot;B20K8A0A60
+* 012+ cpl
+*           assign svali-value(svali-intlen) to &lt;h1&gt;.
+        DATA len TYPE i.                                    &quot;*067i+
+        DESCRIBE FIELD svali-value LENGTH len IN CHARACTER MODE.
+        IF svali-leng &gt; len.
+          svali-leng = len.
+        ENDIF.                                              &quot;*067i-
+        ASSIGN svali-value(svali-leng) TO &lt;h1&gt;.
+* 012- cpl
+    ENDCASE.                                                &quot;B20K8A0A60
+    ASSIGN svald-value(svali-outputlen) TO &lt;h2&gt;.
+    CALL FUNCTION h_formname
+      EXPORTING
+        input  = &lt;h1&gt;
+      IMPORTING
+        output = &lt;h2&gt;.
+  ELSEIF svali-value &lt;&gt; space.                      &quot;*028d&quot;*035i
+*   ELSE.                                             &quot;*028i&quot;*035d
+    CASE svali-inttype.
+      WHEN &apos;D&apos;.
+        CASE h_no_value_check.                              &quot;B20K052439
+          WHEN &apos;X&apos;.                                         &quot;B20K052439
+            h_date_c = svali-value.                         &quot;B20K052439
+            WRITE h_date_c TO svald-value.                  &quot;B20K052439
+          WHEN OTHERS.                                      &quot;B20K052439
+            h_date = svali-value.
+            WRITE h_date TO svald-value DD/MM/YYYY.
+        ENDCASE.                                            &quot;B20K052439
+      WHEN &apos;T&apos;.
+        CASE h_no_value_check.                              &quot;B20K052439
+          WHEN &apos;X&apos;.                                         &quot;B20K052439
+            h_time_c = svali-value.                         &quot;B20K052439
+            WRITE h_time_c TO svald-value.                  &quot;B20K052439
+          WHEN OTHERS.                                      &quot;B20K052439
+            WRITE svali-value TO svald-value USING EDIT MASK &apos;__:__:__&apos;.
+        ENDCASE.                                            &quot;B20K052439
+      WHEN &apos;F&apos;.
+        f = svali-value.
+        WRITE f TO svald-value(svali-outputlen) DECIMALS 15.
+      WHEN &apos;P&apos;.
+
+* cpl. Korrekte Anzahl von Nachkommastellen für
+*      Währungs- und Mengenfelder
+* Korrektur &quot;B20K058473
+
+        ASSIGN p TO &lt;p&gt; TYPE &apos;P&apos; DECIMALS svali-decimals.
+        &lt;p&gt; = svali-value.
+
+        CASE svali-datatype.
+          WHEN &apos;CURR&apos;.
+            CLEAR wa_svali.
+            READ TABLE svali WITH KEY
+                  tabname   = svali-reftable
+                  fieldname = svali-reffield
+                  INTO wa_svali.
+            IF sy-subrc = 0.
+              WRITE &lt;p&gt; TO svald-value(svali-outputlen)
+                           CURRENCY wa_svali-value.
+*017d+
+* Mittlerweile ist bei Währungen eine Rückkonvertierung möglich.
+** Wenn Währungskonvertierung, dann nicht eingabebereit!
+** Währungskonvertierung rückwärts nicht möglich!
+** Funktionsbausteine und Tabellen im Basissystem nicht vorhanden!
+*                svali-field_attr = norm_noinp.              &quot;B20K064644
+*017d-
+*               modify svali index index_100.    &quot;B20K064644 &quot;*001d
+            ELSE.
+              CLEAR wa_svali.
+              READ TABLE sval_not WITH KEY
+                    tabname   = svali-reftable
+                    fieldname = svali-reffield
+                    INTO wa_svali.
+              IF sy-subrc = 0.
+                WRITE &lt;p&gt; TO svald-value(svali-outputlen)
+                             CURRENCY wa_svali-value.
+*                 svali-field_attr = norm_noinp. &quot;B20K064644&quot;*017d
+*                 modify svali index index_100.  &quot;B20K064644&quot;*001d
+              ELSE.
+                svali-field_attr = &apos;02&apos;.
+                MODIFY svali INDEX index_100.       &quot;*028i&quot;*053u
+                WRITE &lt;p&gt; TO svald-value(svali-outputlen).
+              ENDIF.
+            ENDIF.
+
+          WHEN &apos;QUAN&apos;.
+            CLEAR wa_svali.
+            READ TABLE svali WITH KEY
+                  tabname   = svali-reftable
+                  fieldname = svali-reffield
+                  INTO wa_svali.
+            IF sy-subrc = 0.
+              WRITE &lt;p&gt; TO svald-value(svali-outputlen)
+                           UNIT wa_svali-value.
+            ELSE.
+              CLEAR wa_svali.
+              READ TABLE sval_not WITH KEY
+                    tabname   = svali-reftable
+                    fieldname = svali-reffield
+                    INTO wa_svali.
+              IF sy-subrc = 0.
+                WRITE &lt;p&gt; TO svald-value(svali-outputlen)
+                             UNIT wa_svali-value.
+              ELSE.
+                WRITE &lt;p&gt; TO svald-value(svali-outputlen).
+              ENDIF.
+            ENDIF.
+
+* Einschub Ende
+
+          WHEN OTHERS.                                      &quot;B20K058473
+*           assign p to &lt;p&gt; type &apos;P&apos; decimals svali-decimals.
+*           &lt;p&gt; = svali-value.
+            WRITE &lt;p&gt; TO svald-value(svali-outputlen).
+        ENDCASE.                                            &quot;B20K058473
+      WHEN OTHERS.
+        svald-value = svali-value.
+        IF svali-inttype CA &apos;XIbs8&apos;.                       &quot;Integer
+          CONDENSE svald-value.
+        ENDIF.
+    ENDCASE.
+  ELSEIF svali-inttype  = &apos;P&apos;                               &quot;*035i
+  AND    svali-datatype = &apos;CURR&apos;.                           &quot;*035i
+* Wenn zu einem (auch leeren) Währungsfeld kein             &quot;*035i
+* Währungsschlüssel angegeben wird, darf dieses             &quot;*035i
+* Feld nicht eingabebereit sein, da dann keine              &quot;*035i
+* Rückkonvertierung möglich ist.                            &quot;*035i
+    READ TABLE svali WITH KEY                               &quot;*035i
+         tabname   = svali-reftable                         &quot;*035i
+         fieldname = svali-reffield                         &quot;*035i
+         TRANSPORTING NO FIELDS.                            &quot;*035i
+    IF sy-subrc &lt;&gt; 0.                                       &quot;*035i
+      READ TABLE sval_not WITH KEY                          &quot;*035i
+           tabname   = svali-reftable                       &quot;*035i
+           fieldname = svali-reffield                       &quot;*035i
+           TRANSPORTING NO FIELDS.                          &quot;*035i
+      IF sy-subrc &lt;&gt; 0.                                     &quot;*035i
+        svali-field_attr = &apos;02&apos;.                      &quot;*035i
+        MODIFY svali INDEX index_100.                 &quot;*035i&quot;*053u
+      ENDIF.                                                &quot;*035i
+    ENDIF.                                                  &quot;*035i
+  ENDIF.
+
+*    Mußfelder berücksichtigen
+  IF svali-field_obl = &apos;X&apos; AND svald-value = space.
+    svald-value(1) = &apos;?&apos;.
+  ENDIF.
+*    Cursorposition bestimmen
+  IF error_tab = svali-tabname AND cur_line = 0 AND
+     ( error_field = svali-fieldname OR error_field = space ).
+    IF ( svali-field_attr &lt;&gt; norm_noinp   AND
+         svali-field_attr &lt;&gt; bright_noinp AND
+         svali-field_attr &lt;&gt; show_2_dim  ) OR error_field &lt;&gt; space.
+      cur_field   = &apos;SVALD-VALUE&apos;.
+      cur_line    = sy-stepl.
+      error_tab   = space.
+      error_field = space.
+    ENDIF.
+  ENDIF.
+*   index_100     = index_100 + 1.                          &quot;*053d
+* ELSE.                                                     &quot;*053d
+*   EXIT FROM STEP-LOOP.                                    &quot;*053d
+* ENDIF.                                                    &quot;*053d
+
+
+  LOOP AT SCREEN.
+    CASE screen-name.
+      WHEN l_value.
+        IF h_no_value_check = &apos;X&apos;                           &quot;B20K052439
+           AND svali-inttype = &apos;D&apos;.                         &quot;B20K052439
+          screen-length = 8.                                &quot;B20K052439
+          screen-value_help = no.                           &quot;B20K052439
+        ELSEIF h_no_value_check = &apos;X&apos;                       &quot;B20K052439
+           AND svali-inttype = &apos;T&apos;.                         &quot;B20K052439
+          screen-length = 6.                                &quot;B20K052439
+          screen-value_help = no.                           &quot;B20K052439
+        ELSE.                                               &quot;B20K052439
+          screen-length = svali-outputlen.
+        ENDIF.                                              &quot;B20K052439
+        CASE svali-field_attr.
+          WHEN norm_inp.
+          WHEN bright_inp.
+            screen-intensified = yes.
+          WHEN norm_noinp.
+            screen-input       = no.
+          WHEN bright_noinp.
+            screen-intensified = yes.
+            screen-input       = no.
+          WHEN show_2_dim.
+            screen-input       = no.
+            screen-display_3d  = no.
+            screen-value_help  = no.
+        ENDCASE.
+        IF svali-field_obl = &apos;X&apos;.
+          screen-required = yes.
+        ENDIF.
+        IF svali-novaluehlp = &apos;X&apos;.
+          screen-value_help = no.
+        ELSEIF svali-f4availabl IS INITIAL.                 &quot;B20K081005
+*          IF     (   kind_of_popup    = user_help           &quot;B20K081005
+*                 AND f4_program_name &lt;&gt; space )             &quot;B20K081005
+*              OR (   kind_of_popup    = user_buttons        &quot;B20K081005
+*                 AND f4_program_name &lt;&gt; space ).            &quot;B20K081005
+*          ELSE.                                             &quot;B20K081005
+*            screen-value_help = no.                         &quot;B20K081005
+*          ENDIF.
+        ENDIF.
+      WHEN l_keytext.
+        IF svali-field_attr  = bright_inp   OR
+           svali-field_attr  = bright_noinp.
+          screen-intensified = yes.
+        ENDIF.
+    ENDCASE.
+    MODIFY SCREEN.
+  ENDLOOP.
+
+ENDFORM.
+
+FORM p100_help  USING    pe_index
+                CHANGING svald.
+
+  DATA: h_i1      TYPE i,
+        h_tabname LIKE dfies-tabname,
+        h_title   LIKE dsyst-doktitle.                      &quot;B20K043473
+  DATA: BEGIN OF help_infos.                                &quot;B20K014551
+      INCLUDE STRUCTURE help_info.                          &quot;B20K014551
+  DATA: END OF help_infos.                                  &quot;B20K014551
+  DATA: batch_input LIKE help_info-dynprofld                &quot;B20K043473
+                    VALUE &apos;SVALD-VALUE&apos;,                    &quot;B20K043473
+        BEGIN OF links OCCURS 0.                            &quot;B20K043473
+      INCLUDE STRUCTURE tline.                              &quot;B20K043473
+  DATA: END OF links.                                       &quot;B20K043473
+
+
+  READ TABLE svali INDEX pe_index.
+  IF sy-subrc = 0.
+*       F1-Hilfe für ein Datenbankfeld
+    IF svali-tabname(1) = &apos;*&apos;.
+      h_tabname = svali-tabname+1.
+    ELSE.
+      h_tabname = svali-tabname.
+    ENDIF.
+
+    CLEAR help_infos.
+*            HELP_INFOS-CALL      = &apos;D&apos;.                     &quot;B20K014551
+*            HELP_INFOS-SPRAS     = SY-LANGU.                &quot;B20K014551
+*            HELP_INFOS-DOCUID    = &apos;FE&apos;.                    &quot;B20K014551
+*            help_infos-title     = sy-title.                &quot;B20K014551
+    help_infos-tabname   = h_tabname.                       &quot;B20K014551
+    help_infos-fieldname = svali-fieldname.                 &quot;B20K014551
+    help_infos-program   = sy-repid.                        &quot;B20K014551
+    help_infos-dynpro    = sy-dynnr.                        &quot;B20K014551
+*            HELP_INFOS-REPORT    = SY-REPID.                &quot;B20K014551
+*            HELP_INFOS-DYNPPROG  = SY-REPID.                &quot;B20K014551
+*            CALL FUNCTION &apos;HELP_START&apos;                      &quot;B20K014551
+*                 EXPORTING                                  &quot;B20K014551
+*                      HELP_INFOS   = HELP_INFOS             &quot;B20K014551
+*                 TABLES                                     &quot;B20K014551
+*                      DYNPSELECT   = DYNPSELECT             &quot;B20K014551
+*                      DYNPVALUETAB = DYNPVALUETAB.          &quot;B20K014551
+    h_title     = sy-title.
+    help_infos-pfkey = sy-pfkey.
+    CALL FUNCTION &apos;HELP_OBJECT_SHOW_FOR_FIELD&apos;
+      EXPORTING
+*       doklangu                      = sy-langu
+        doktitle                      = h_title
+        called_by_program             = help_infos-program
+        called_by_dynp                = help_infos-dynpro
+        called_for_tab                = help_infos-tabname
+        called_for_field              = help_infos-fieldname
+        called_for_tab_fld_btch_input = batch_input
+        called_by_cuaprog             = help_infos-program
+        called_by_cuastat             = help_infos-pfkey
+*       merge_dz_if_available         =
+      TABLES
+        links                         = links
+      EXCEPTIONS
+        object_not_found              = 1
+        sapscript_error               = 2
+        OTHERS                        = 3.
+
+
+  ENDIF.
+
+
+ENDFORM.
+
+DATA: campo_valor_f4 TYPE help_info-dynprofld.
+FORM p100_value  USING    pe_index
+                 CHANGING svald.
+* Parameter fuer DYNP_VALUES_UPDATE
+  DATA: dyname    LIKE d020s-prog  VALUE &apos;SAPLSPO4&apos;,
+        dynpro_no LIKE d020s-dnum,
+        BEGIN OF  dynpfields  OCCURS 1.
+      INCLUDE STRUCTURE dynpread.
+  DATA: END OF dynpfields.
+
+* Deklarieren und Initialisieren
+  DATA: returntab LIKE ddshretval OCCURS 0 WITH HEADER LINE.
+  DATA: lv_shlp_descr TYPE shlp_descr.                      &quot;*005i
+
+  DATA: sy_repid         LIKE sy-repid,
+        sy_dynnr         LIKE sy-dynnr,
+        h_tabname        LIKE dfies-tabname,
+        h_returncode     TYPE c,
+        h_domvalue       LIKE dd07l-domvalue_l,
+        h_value_found    TYPE c,
+        h_no_value_check TYPE c,
+        h_show_popup     TYPE c.
+  DATA: help_fieldname   LIKE help_info-fieldname,          &quot;B20K069688
+        help_field_star  TYPE c,
+        help_type_single TYPE c.
+
+
+  DATA: h_i1     TYPE i.                                    &quot;*059i
+
+  FIELD-SYMBOLS &lt;fs&gt;.
+
+  MOVE sy-repid TO sy_repid.
+  MOVE sy-dynnr TO sy_dynnr.
+
+
+
+  campo_valor_f4 = |SVALD{ pe_index }-VALUE|.
+  DATA(l_keytext) = |SVALD{ pe_index }-KEYTEXT|.
+  DATA(campo_usuario) = |V_CAMPO_USUARIO{ pe_index }|.
+  ASSIGN (campo_usuario) TO &lt;fs&gt;.
+  IF sy-subrc = 0.
+    campo_usuario = &lt;fs&gt;.
+  ENDIF.
+
+
+  REFRESH dynpfields.
+
+  dynpro_no = sy-dynnr.
+
+  READ TABLE svali INDEX pe_index.
+  IF sy-subrc = 0.
+    IF svali-tabname(1) = &apos;*&apos;.
+      h_tabname = svali-tabname+1.
+      help_field_star = &apos;X&apos;.
+    ELSE.
+      h_tabname = svali-tabname.
+      CLEAR help_field_star.
+    ENDIF.
+*       Programmdefinierte F4-Hilfe
+    IF h_no_value_check = &apos;X&apos;                               &quot;B20K052439
+      AND svali-inttype = &apos;D&apos;.                              &quot;B20K052439
+      MESSAGE i781(s4).                                     &quot;B20K052439
+    ELSEIF h_no_value_check = &apos;X&apos;                           &quot;B20K052439
+      AND svali-inttype = &apos;T&apos;.                              &quot;B20K052439
+      MESSAGE i781(s4).                                     &quot;B20K052439
+    ELSE.                                                   &quot;B20K052439
+
+      help_fieldname = svali-fieldname.                     &quot;B20K069688
+
+*         Neue F4-Hilfe zu Release 4.0C -------------------------------*
+      DATA: value LIKE help_info-fldvalue.
+
+      ASSIGN (campo_valor_f4) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        value = &lt;fs&gt;.
+      ENDIF.
+
+      REFRESH dynpfields.
+*         in nicht eingabebereiten Feldern nur Anzeige
+      DATA: display TYPE ddbool_d.
+      IF   svali-field_attr = &apos;02&apos;
+        OR svali-field_attr = &apos;03&apos;
+        OR svali-field_attr = &apos;05&apos;.
+        MOVE &apos;X&apos; TO display.
+      ELSE.
+        CLEAR display.
+      ENDIF.
+
+*005i+
+* Zunächst müssen die Eigenschaften der Suchhilfe gelesen werden,
+* damit später bestimmt werden kann was die Export-Parameter sind.
+      CALL FUNCTION &apos;F4IF_DETERMINE_SEARCHHELP&apos;
+        EXPORTING
+          tabname           = h_tabname
+          fieldname         = help_fieldname
+*         SELECTION_SCREEN  = &apos; &apos;
+        IMPORTING
+          shlp              = lv_shlp_descr
+        EXCEPTIONS
+          field_not_found   = 1
+          no_help_for_field = 2
+          inconsistent_help = 3
+          OTHERS            = 4.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ENDIF.
+*005i-
+
+      CALL FUNCTION &apos;F4IF_FIELD_VALUE_REQUEST&apos;
+        EXPORTING
+          tabname           = h_tabname
+          fieldname         = help_fieldname
+*         SEARCHHELP        = &apos; &apos;
+*         SHLPPARAM         = &apos; &apos;
+*         dynpprog          = sy_repid
+*         dynpnr            = sy_dynnr
+          dynprofield       = campo_valor_f4
+          value             = value
+*         multiple_choice   = &apos; &apos;
+          display           = display
+          callback_program  = sy_repid
+          callback_form     = &apos;VALUE_HELP_CALLBACK&apos;
+        TABLES
+          return_tab        = returntab
+        EXCEPTIONS
+          field_not_found   = 1
+          no_help_for_field = 2
+          inconsistent_help = 3
+          no_values_found   = 4
+          OTHERS            = 5.
+      IF sy-subrc = 0.
+        IF NOT returntab[] IS INITIAL AND display IS INITIAL.
+          ASSIGN (campo_valor_f4) TO &lt;fs&gt;.
+          IF sy-subrc = 0.
+            READ TABLE returntab WITH KEY retfield = campo_usuario.
+            IF sy-subrc = 0.
+              &lt;fs&gt; = returntab-fieldval.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+        WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ENDIF.                                                &quot;B20K052439
+    ENDIF.
+  ENDIF.
+
+
+
+ENDFORM.
+
+FORM value_help_callback  TABLES   record_tab  STRUCTURE seahlpres
+                          CHANGING shlp        TYPE shlp_descr_t
+                                   callcontrol LIKE ddshf4ctrl.
+
+  DATA: p_sy_repid        LIKE sy-repid,
+        p_sy_dynnr        LIKE sy-dynnr,
+        tab_index_1       TYPE i,
+        tab_index_2       TYPE i,
+        p_dynpfields      LIKE dynpread OCCURS 0 WITH HEADER LINE,
+        shlp_interface_wa LIKE ddshiface,
+        char_uline        TYPE c VALUE &apos;_&apos;,
+        char_space        TYPE c VALUE &apos; &apos;,
+        tabname           LIKE svali-tabname.
+
+* Hilfsfelder, werden benötigt für F4-Hilfe nach Namensraumverlängerung
+  DATA: help_fieldname   LIKE help_info-fieldname,          &quot;B20K069688
+        help_field_star  TYPE c,
+        help_type_single TYPE c.
+
+  MOVE sy-repid TO p_sy_repid.
+  MOVE sy-dynnr TO p_sy_dynnr.
+
+* Hilfetyp ermitteln  ------------------------------------------------ *
+* Es gibt Suchhilfen, die hängen an der Domäne und liefern nur ein Feld
+* zurück. Dann gibt es Suchhilfen, die hängen am Feld und können mehrere
+* Felder zurückgeben. Da in der komplexen Struktur momentan in der
+* &apos;returntab&apos; die Suchhilfefelder und nicht die Tabellenfelder zurück-
+* gegeben werden, entstehen Probleme bei der Zuordnung.
+  CASE shlp-shlptype.
+*   Kalender
+    WHEN &apos;CA&apos;.
+      help_type_single = &apos;X&apos;.
+*   Uhrzeit
+    WHEN &apos;CL&apos;.
+      help_type_single = &apos;X&apos;.
+*   Andere
+    WHEN OTHERS.
+      CLEAR help_type_single.
+  ENDCASE.
+
+* Alle relevanten Spalten zurückgeben -------------------------------- *
+  MOVE &apos;X&apos; TO callcontrol-retallflds.
+
+* Vorbelegung von Suchhilfefeldern vornehmen ------------------------- *
+  LOOP AT shlp-interface INTO shlp_interface_wa.
+    MOVE sy-tabix TO tab_index_1.
+
+*   Tabname enthielt keinen &apos;*&apos;
+    IF help_field_star IS INITIAL.
+*     007d+ CPL
+*      read table svali with key
+*     007d- CPL
+*     007i+ CPL
+      READ TABLE svali TRANSPORTING NO FIELDS WITH KEY
+*     007i- CPL
+                             tabname   = shlp_interface_wa-valtabname
+                             fieldname = shlp_interface_wa-valfield.
+      CHECK sy-subrc = 0.
+*   Tabname enthielt &apos;*&apos;
+    ELSE.
+*     Zunächst nach anderen Felder suchen, wo Tabname auch &apos;*&apos; enthält
+      CONCATENATE  &apos;*&apos;
+                   shlp_interface_wa-valtabname
+                   INTO tabname.
+*     007d+ CPL
+*      read table svali with key
+*     007d- CPL
+*     007i+ CPL
+      READ TABLE svali TRANSPORTING NO FIELDS WITH KEY
+*     007i- CPL
+                             tabname   = tabname
+                             fieldname = shlp_interface_wa-valfield.
+*     Wenn nicht, dann noch mal nach Tabname ohne &apos;*&apos; suchen
+      IF sy-subrc NE 0.
+*     007d+ CPL
+*      read table svali with key
+*     007d- CPL
+*     007i+ CPL
+        READ TABLE svali TRANSPORTING NO FIELDS WITH KEY
+*     007i- CPL
+                               tabname   = shlp_interface_wa-valtabname
+                               fieldname = shlp_interface_wa-valfield.
+        CHECK sy-subrc = 0.
+      ENDIF.
+    ENDIF.
+    MOVE sy-tabix TO tab_index_2.
+    REFRESH p_dynpfields.
+    p_dynpfields-fieldname  = campo_valor_f4.
+    APPEND p_dynpfields.
+    CALL FUNCTION &apos;DYNP_VALUES_READ&apos;
+      EXPORTING
+        dyname               = p_sy_repid
+        dynumb               = p_sy_dynnr
+*       TRANSLATE_TO_UPPER   = &apos; &apos;
+*       REQUEST              = &apos; &apos;
+*       PERFORM_CONVERSION_EXITS = &apos; &apos;
+*       PERFORM_INPUT_CONVERSION = &apos; &apos;
+      TABLES
+        dynpfields           = p_dynpfields
+      EXCEPTIONS
+        invalid_abapworkarea = 1
+        invalid_dynprofield  = 2
+        invalid_dynproname   = 3
+        invalid_dynpronummer = 4
+        invalid_request      = 5
+        no_fielddescription  = 6
+        invalid_parameter    = 7
+        undefind_error       = 8
+        double_conversion    = 9
+        OTHERS               = 10.
+    IF sy-subrc = 0.
+      READ TABLE p_dynpfields INDEX 1.
+*       Der Dynp gibt für alle nicht dargestellten Zeichen Unterstriche
+*       zurück! Die müssen entfernt werden.
+*      WHILE p_dynpfields-fieldvalue CA char_uline.              &quot;976020&gt;&gt;
+*        REPLACE char_uline WITH char_space
+*                          INTO p_dynpfields-fieldvalue.
+*      ENDWHILE.                                                 &quot;976020&lt;&lt;
+      IF    NOT p_dynpfields-fieldvalue EQ space
+         OR NOT p_dynpfields-fieldvalue IS INITIAL.
+        MOVE p_dynpfields-fieldvalue TO shlp_interface_wa-value.
+        MODIFY shlp-interface FROM shlp_interface_wa INDEX tab_index_1.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.                               &quot; VALUE_HELP_CALLBACK</include_source>
+  </include>
+  <include NAME="LZAP_POPUPI01" VARCL="X" SUBC="I" APPL="S" RMAND="600" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZAP_POPUPI01 .
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+  DATA: l_hay_sel,
+        l_error.
+
+  IF sy-ucomm = &apos;CANC&apos;.
+    v_ucomm = v_comando = sy-ucomm.
+    CLEAR v_ok.
+    LEAVE TO SCREEN 0.
+  ENDIF.
+
+  v_ucomm = sy-ucomm.
+
+  IF sy-ucomm = &apos;ENTER&apos;.
+    IF v_comando_enter NE &apos;&apos;.
+      v_ucomm = v_comando_enter.
+    ELSEIF v_botones = &apos;OK!&apos;.
+      v_ucomm = &apos;F01&apos;.
+    ENDIF.
+  ENDIF.
+
+  IF v_grid = &apos;X&apos;.
+    o_grid_popup-&gt;comprobar_cambios( ).
+  ENDIF.
+
+  CLEAR: l_error, l_hay_sel.
+  IF v_ucomm(1) = &apos;F&apos;.
+    IF v_controlar_cambios = &apos;X&apos;.
+      IF NOT o_grid_popup IS INITIAL.
+        o_grid_popup-&gt;comprobar_cambios( ).
+      ENDIF.
+    ENDIF.
+
+    IF v_check = &apos;X&apos;.
+      IF v_grid IS INITIAL.
+        o_alv_popup-&gt;get_seleccion( IMPORTING hay_sel = l_hay_sel CHANGING t_tabla = &lt;tabla&gt; ).
+      ELSE.
+        o_grid_popup-&gt;set_marca_filas_sel( EXPORTING fila_activa = &apos;X&apos; CHANGING t_tabla = &lt;tabla&gt; hay_sel = l_hay_sel ).
+      ENDIF.
+
+      IF l_hay_sel IS INITIAL.
+        IF NOT v_validar_seleccion IS INITIAL.
+          IF v_validar_seleccion CS v_ucomm.
+            MESSAGE &apos;Seleccione algun registro&apos; TYPE &apos;I&apos;.
+            l_error = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF l_error IS INITIAL.
+      IF v_grid IS INITIAL.
+        v_comando = o_alv_popup-&gt;get_boton_text( v_ucomm ).
+
+        IF v_comando = &apos;Excel&apos; AND NOT v_fichero_excel IS INITIAL.
+          zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alv_popup-&gt;o_alv tabla = &lt;tabla&gt; abrir = &apos;X&apos; nombre_fichero = v_fichero_excel ).
+        ENDIF.
+
+        o_alv_popup-&gt;free( ).
+        CLEAR o_alv_popup.
+
+
+      ELSE.
+        v_comando = o_grid_popup-&gt;get_boton_text( v_ucomm ).
+
+        o_grid_popup-&gt;free( ).
+        CLEAR o_grid_popup.
+      ENDIF.
+
+      IF v_comando = &apos;Aceptar&apos;.
+        v_ok = &apos;X&apos;.
+      ENDIF.
+
+      LEAVE TO SCREEN 0.
+    ENDIF.
+  ENDIF.
+
+
+ENDMODULE.                 &quot; USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  P100_HELP  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE p100_help1 INPUT.
+
+  PERFORM p100_help USING 1 CHANGING svald1.
+
+ENDMODULE.
+
+MODULE p100_help2 INPUT.
+
+  PERFORM p100_help USING 2 CHANGING svald2.
+
+ENDMODULE.
+
+MODULE p100_help3 INPUT.
+
+  PERFORM p100_help USING 3 CHANGING svald3.
+
+ENDMODULE.
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  P100_VALUE  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE p100_value1 INPUT.
+
+  PERFORM p100_value  USING 1 CHANGING svald1.
+
+ENDMODULE.
+
+MODULE p100_value2 INPUT.
+
+  PERFORM p100_value  USING 2 CHANGING svald2.
+
+ENDMODULE.
+
+MODULE p100_value3 INPUT.
+
+  PERFORM p100_value  USING 3 CHANGING svald3.
+
+ENDMODULE.</include_source>
+  </include>
+  <include NAME="LZAP_POPUPO01" VARCL="X" SUBC="I" APPL="S" RMAND="600" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZAP_POPUPO01 .
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+
+  DATA: i_bot TYPE TABLE OF string WITH HEADER LINE,
+        i_opc TYPE TABLE OF string WITH HEADER LINE,
+        l_o   TYPE string,
+        l_v   TYPE string,
+        BEGIN OF i_bot_par OCCURS 0,
+          b TYPE sy-ucomm,
+          t TYPE smp_dyntxt-text,
+          i TYPE smp_dyntxt-icon_id,
+          q TYPE smp_dyntxt-quickinfo,
+        END OF i_bot_par,
+        BEGIN OF i_opciones OCCURS 0,
+          opcion TYPE string,
+          valor  TYPE string,
+        END OF i_opciones,
+        l_ancho_optimizado        TYPE abap_bool,
+        l_botones_estandard       TYPE abap_bool,
+        l_check_editable          TYPE abap_bool,
+        l_campos_checkbox         TYPE string,
+        l_campos_input_no_cero    TYPE abap_bool,
+        l_ocultar_columnas_vacias TYPE abap_bool,
+        l_campo_color             TYPE lvc_fname,
+        l_handle                  TYPE slis_handl,
+        l_campos_no_cero          TYPE string.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  SET TITLEBAR &apos;001&apos; WITH v_titulo.
+
+  PERFORM campo_usuario USING 1 CHANGING svald1.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD1-KEYTEXT&apos; variable = v_campo_usuario1 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD1-VALUE&apos; variable = v_campo_usuario1 input = &apos;1&apos; ).
+
+  PERFORM campo_usuario USING 2 CHANGING svald2.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD2-KEYTEXT&apos; variable = v_campo_usuario2 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD2-VALUE&apos; variable = v_campo_usuario2 input = &apos;1&apos; ).
+
+  PERFORM campo_usuario USING 3 CHANGING svald3.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD3-KEYTEXT&apos; variable = v_campo_usuario3 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD3-VALUE&apos; variable = v_campo_usuario3 input = &apos;1&apos; ).
+
+  IF v_inicio IS INITIAL.
+    l_ancho_optimizado = &apos;X&apos;.
+    SPLIT v_opciones AT &apos;,&apos; INTO TABLE i_opc.
+    LOOP AT i_opc.
+      SPLIT i_opc AT &apos;=&apos; INTO i_opciones-opcion i_opciones-valor.
+      APPEND i_opciones.
+
+      CASE i_opciones-opcion.
+        WHEN &apos;ANCHO_OPTIMIZADO&apos;.
+          l_ancho_optimizado = i_opciones-valor.
+        WHEN &apos;BOTONES_ESTANDARD&apos;.
+          l_botones_estandard = i_opciones-valor.
+        WHEN &apos;CHECK_EDITABLE&apos;.
+          l_check_editable = i_opciones-valor.
+        WHEN &apos;CHECKBOX&apos;.
+          __add_lista l_campos_checkbox i_opciones-valor.
+        WHEN &apos;CAMPOS_INPUT_NO_CERO&apos;.
+          l_campos_input_no_cero = &apos;X&apos;.
+        WHEN &apos;OCULTAR_COLUMNAS_VACIAS&apos;.
+          l_ocultar_columnas_vacias = &apos;X&apos;.
+        WHEN &apos;CAMPO_COLOR&apos;.
+          l_campo_color = i_opciones-valor.
+        WHEN &apos;HANDLE&apos;.
+          l_handle = i_opciones-valor.
+        WHEN &apos;CAMPOS_NO_CERO&apos;.
+          l_campos_no_cero = i_opciones-valor.
+        WHEN &apos;FICHERO_EXCEL&apos;.
+          v_fichero_excel = i_opciones-valor.
+      ENDCASE.
+    ENDLOOP.
+    REFRESH i_opc.
+
+    IF l_check_editable = &apos;X&apos;.
+      v_controlar_cambios = &apos;X&apos;.
+    ENDIF.
+
+    v_inicio = &apos;X&apos;.
+    LOOP AT SCREEN.
+      IF screen-name = &apos;V_TEXTO&apos; OR screen-name = &apos;V_TEXTO2&apos;.
+        screen-length = v_max_ancho_txt.
+        MODIFY SCREEN.
+      ENDIF.
+    ENDLOOP.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_TEXTO&apos; variable = v_texto input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_TEXTO2&apos; variable = v_texto2 input = &apos;0&apos; ).
+
+
+    DATA l_aux3(3).
+    l_aux3 = v_texto2.
+    IF l_aux3 = &apos;!#!&apos;.
+      v_texto2 = v_texto2+3.
+      LOOP AT SCREEN.
+        IF screen-name = &apos;V_TEXTO2&apos;.
+          screen-intensified = 1.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF v_botones(1) = &apos;$&apos;.
+      REFRESH i_bot_par.
+* Ejemplo &apos;$B=F01&amp;&amp;T=Aceptar&amp;&amp;I=@0V@||B=F02&amp;&amp;T=Borrar&amp;&amp;I=@11@&apos;
+      SPLIT v_botones+1 AT &apos;||&apos; INTO TABLE i_bot.
+      LOOP AT i_bot.
+        SPLIT i_bot AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+        CLEAR: i_bot_par.
+        LOOP AT i_opc.
+          SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+          IF NOT l_o IS INITIAL.
+            TRANSLATE l_o TO UPPER CASE.
+            CASE l_o(1).
+              WHEN &apos;B&apos;. i_bot_par-b = l_v.
+              WHEN &apos;T&apos;. i_bot_par-t = l_v.
+              WHEN &apos;I&apos;. i_bot_par-i = l_v.
+              WHEN &apos;Q&apos;. i_bot_par-q = l_v.
+              WHEN &apos;S&apos;. IF l_v = &apos;X&apos;. __add_lista v_validar_seleccion i_bot_par-b. ENDIF.
+            ENDCASE.
+          ENDIF.
+        ENDLOOP.
+        APPEND i_bot_par.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+  IF v_grid IS INITIAL.
+    IF o_alv_popup IS INITIAL.
+      CREATE OBJECT o_alv_popup
+        EXPORTING
+          tabla = &apos;&apos;.
+
+      IF v_botones(1) = &apos;$&apos;.
+        LOOP AT i_bot_par.
+          o_alv_popup-&gt;add_button( button = i_bot_par-b text = i_bot_par-t icon = i_bot_par-i qinfo = i_bot_par-q ).
+        ENDLOOP.
+      ELSE.
+        IF v_botones CS &apos;OK&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos; icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;PRINT&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F02&apos; text = &apos;Imprimir&apos; icon = &apos;@0X@&apos; qinfo = &apos;Imprimir&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;CANCEL&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Cancelar&apos; icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+        ENDIF.
+      ENDIF.
+
+
+      DATA(l_no_layout) = SWITCH xfeld( l_handle WHEN &apos;&apos; THEN &apos;X&apos; ELSE &apos;&apos; ).
+      IF v_check = &apos;X&apos;.
+        IF l_handle IS INITIAL.
+          l_handle = sy-cprog.
+        ENDIF.
+
+        o_alv_popup-&gt;constructor_tabla( EXPORTING campo_check        = &apos;CHECK&apos;
+                                                  sel                = &apos;M&apos;
+                                                  no_layout          = l_no_layout
+                                                  cprog              = &apos;SAPZAP_POPUP&apos;
+*            status           = &apos;ST_DYN&apos;
+*            status_prog      = &apos;ZAP_STATUS&apos;
+                                                  container_name     = &apos;CALV&apos;
+                                                  color              = l_campo_color
+                                                  botones_standard   = l_botones_estandard
+                                                  restriccion_layout = if_salv_c_layout=&gt;restrict_user_dependant
+                                                  handle             = l_handle
+                                        CHANGING  t_tabla            = &lt;tabla&gt; ).
+
+        o_alv_popup-&gt;set_field_noout( &apos;CHECK&apos; ).
+        o_alv_popup-&gt;set_seleccion( CHANGING t_tabla = &lt;tabla&gt; ).
+      ELSE.
+        o_alv_popup-&gt;constructor_tabla( EXPORTING no_layout          = l_no_layout
+                                                  cprog              = &apos;SAPZAP_POPUP&apos;
+*            status           = &apos;ST_DYN&apos;
+*            status_prog      = &apos;ZAP_STATUS&apos;
+                                                  container_name     = &apos;CALV&apos;
+                                                  color              = l_campo_color
+                                                  botones_standard   = l_botones_estandard
+                                                  restriccion_layout = if_salv_c_layout=&gt;restrict_user_dependant
+                                                  handle             = l_handle
+                                        CHANGING  t_tabla            = &lt;tabla&gt; ).
+      ENDIF.
+      IF NOT v_campos_noout IS INITIAL.
+        o_alv_popup-&gt;set_field_noout( v_campos_noout ).
+      ENDIF.
+
+      IF NOT v_campos_sum IS INITIAL.
+        o_alv_popup-&gt;set_agregacion( v_campos_sum ).
+      ENDIF.
+
+      SPLIT v_campos_texto AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+      LOOP AT i_opc.
+        SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+        IF NOT l_v IS INITIAL.
+          o_alv_popup-&gt;set_field_text( campo = l_o valor = l_v ).
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT v_campos_hotspot IS INITIAL.
+        o_alv_popup-&gt;set_field_hotspot( campo = v_campos_hotspot auto = &apos;X&apos; ).
+      ENDIF.
+
+      IF NOT v_alv_helper IS INITIAL.
+        o_alv_popup-&gt;o_alv_helper = v_alv_helper.
+      ENDIF.
+
+      IF NOT v_campos_orden IS INITIAL.
+        o_alv_popup-&gt;set_orden( v_campos_orden ).
+      ENDIF.
+
+      IF NOT l_campos_no_cero IS INITIAL.
+        o_alv_popup-&gt;set_field( campo = l_campos_no_cero op = &apos;NO_CERO&apos; ).
+      ENDIF.
+
+      IF l_ocultar_columnas_vacias = &apos;X&apos;.
+        o_alv_popup-&gt;ocultar_columnas_vacias( t_tabla = &lt;tabla&gt; ).
+      ENDIF.
+
+      o_alv_popup-&gt;show( ).
+
+    ELSE.
+      o_alv_popup-&gt;refresh( ).
+    ENDIF.
+  ELSE.
+    IF o_grid_popup IS INITIAL.
+      CREATE OBJECT o_event_popup.
+
+      CREATE OBJECT o_grid_popup
+        EXPORTING
+          estructura     = &apos;&apos;
+          o_event        = o_event_popup
+          obj_contenedor = &apos;CALV&apos;
+          nombre_layout  = &apos;Z_POPUP_ALV_AP&apos;.
+
+      IF v_botones(1) = &apos;$&apos;.
+        LOOP AT i_bot_par.
+          o_grid_popup-&gt;add_button( button = i_bot_par-b text = i_bot_par-t icon = i_bot_par-i qinfo = i_bot_par-q ).
+        ENDLOOP.
+      ELSE.
+        IF v_botones CS &apos;OK&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos; icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;PRINT&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F02&apos; text = &apos;Imprimir&apos; icon = &apos;@0X@&apos; qinfo = &apos;Imprimir&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;CANCEL&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Cancelar&apos; icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+        ENDIF.
+      ENDIF.
+
+      o_grid_popup-&gt;set_campos_tabint( &lt;tabla&gt; ).
+
+      DATA(l_input) = &apos;&apos;.
+      IF l_check_editable = &apos;X&apos;.
+        CLEAR v_check.
+        l_input = &apos;X&apos;.
+        o_grid_popup-&gt;set_field_input( &apos;CHECK&apos; ).
+        o_grid_popup-&gt;set_field( campo = &apos;CHECK&apos; op = &apos;CHECKBOX&apos; ).
+      ENDIF.
+
+      IF NOT l_campos_checkbox IS INITIAL.
+        o_grid_popup-&gt;set_field( campo = l_campos_checkbox op = &apos;CHECKBOX&apos; ).
+      ENDIF.
+
+      IF NOT v_campos_noout IS INITIAL.
+        o_grid_popup-&gt;set_field_noout( v_campos_noout ).
+      ENDIF.
+
+      IF NOT v_campos_sum IS INITIAL.
+        o_grid_popup-&gt;set_field( campo = v_campos_sum op = &apos;SUM&apos; ).
+      ENDIF.
+
+      IF NOT v_campos_hotspot IS INITIAL.
+        o_grid_popup-&gt;set_field_hotspot( campo = v_campos_hotspot auto = &apos;X&apos; ).
+      ENDIF.
+
+      SPLIT v_campos_texto AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+      LOOP AT i_opc.
+        SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+        IF NOT l_v IS INITIAL.
+          o_grid_popup-&gt;set_field_text( campo = l_o valor = l_v ).
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT v_campos_input IS INITIAL.
+        l_input = &apos;X&apos;.
+        o_grid_popup-&gt;set_field_input( v_campos_input ).
+        IF l_campos_input_no_cero = &apos;X&apos;.
+          o_grid_popup-&gt;set_field( campo = v_campos_input op = &apos;NO_CERO&apos; ).
+        ENDIF.
+      ENDIF.
+
+      IF NOT v_alv_helper IS INITIAL.
+        o_grid_popup-&gt;o_alv_helper = v_alv_helper.
+      ENDIF.
+
+      IF NOT v_campos_orden IS INITIAL.
+        o_grid_popup-&gt;set_orden( v_campos_orden ).
+      ENDIF.
+
+      IF v_check IS INITIAL.
+        DATA l_sel_mode .
+        l_sel_mode = &apos;N&apos;.
+      ELSE.
+        l_sel_mode = &apos;D&apos;.
+      ENDIF.
+      IF l_botones_estandard IS INITIAL.
+        o_grid_popup-&gt;set_layout( no_toolbar = &apos;X&apos; sel_mode = l_sel_mode ancho_optimizado = l_ancho_optimizado input = l_input ).
+      ELSE.
+        o_grid_popup-&gt;set_layout( no_toolbar = &apos;&apos; sel_mode = l_sel_mode ancho_optimizado = l_ancho_optimizado input = l_input ).
+        o_grid_popup-&gt;quitar_botones_insercion( ).
+      ENDIF.
+
+      o_grid_popup-&gt;show( CHANGING tabla = &lt;tabla&gt; ).
+
+      o_grid_popup-&gt;actualiza_campos_grid( campos_no_opt = v_campos_input ).
+
+    ELSE.
+      o_grid_popup-&gt;refrescar_grid( ).
+    ENDIF.
+  ENDIF.
+
+
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT</include_source>
+  </include>
+  <include NAME="LZAP_POPUPO01" VARCL="X" SUBC="I" APPL="S" RMAND="600" RLOAD="S" UCCHECK="X">
+   <include_source>*----------------------------------------------------------------------*
+***INCLUDE LZAP_POPUPO01 .
+*----------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0100 OUTPUT.
+
+  DATA: i_bot TYPE TABLE OF string WITH HEADER LINE,
+        i_opc TYPE TABLE OF string WITH HEADER LINE,
+        l_o   TYPE string,
+        l_v   TYPE string,
+        BEGIN OF i_bot_par OCCURS 0,
+          b TYPE sy-ucomm,
+          t TYPE smp_dyntxt-text,
+          i TYPE smp_dyntxt-icon_id,
+          q TYPE smp_dyntxt-quickinfo,
+        END OF i_bot_par,
+        BEGIN OF i_opciones OCCURS 0,
+          opcion TYPE string,
+          valor  TYPE string,
+        END OF i_opciones,
+        l_ancho_optimizado        TYPE abap_bool,
+        l_botones_estandard       TYPE abap_bool,
+        l_check_editable          TYPE abap_bool,
+        l_campos_checkbox         TYPE string,
+        l_campos_input_no_cero    TYPE abap_bool,
+        l_ocultar_columnas_vacias TYPE abap_bool,
+        l_campo_color             TYPE lvc_fname,
+        l_handle                  TYPE slis_handl,
+        l_campos_no_cero          TYPE string.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  SET TITLEBAR &apos;001&apos; WITH v_titulo.
+
+  PERFORM campo_usuario USING 1 CHANGING svald1.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD1-KEYTEXT&apos; variable = v_campo_usuario1 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD1-VALUE&apos; variable = v_campo_usuario1 input = &apos;1&apos; ).
+
+  PERFORM campo_usuario USING 2 CHANGING svald2.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD2-KEYTEXT&apos; variable = v_campo_usuario2 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD2-VALUE&apos; variable = v_campo_usuario2 input = &apos;1&apos; ).
+
+  PERFORM campo_usuario USING 3 CHANGING svald3.
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD3-KEYTEXT&apos; variable = v_campo_usuario3 input = &apos;0&apos; ).
+  zcl_ap_dynpro=&gt;screen_visible( campo = &apos;SVALD3-VALUE&apos; variable = v_campo_usuario3 input = &apos;1&apos; ).
+
+  IF v_inicio IS INITIAL.
+    l_ancho_optimizado = &apos;X&apos;.
+    SPLIT v_opciones AT &apos;,&apos; INTO TABLE i_opc.
+    LOOP AT i_opc.
+      SPLIT i_opc AT &apos;=&apos; INTO i_opciones-opcion i_opciones-valor.
+      APPEND i_opciones.
+
+      CASE i_opciones-opcion.
+        WHEN &apos;ANCHO_OPTIMIZADO&apos;.
+          l_ancho_optimizado = i_opciones-valor.
+        WHEN &apos;BOTONES_ESTANDARD&apos;.
+          l_botones_estandard = i_opciones-valor.
+        WHEN &apos;CHECK_EDITABLE&apos;.
+          l_check_editable = i_opciones-valor.
+        WHEN &apos;CHECKBOX&apos;.
+          __add_lista l_campos_checkbox i_opciones-valor.
+        WHEN &apos;CAMPOS_INPUT_NO_CERO&apos;.
+          l_campos_input_no_cero = &apos;X&apos;.
+        WHEN &apos;OCULTAR_COLUMNAS_VACIAS&apos;.
+          l_ocultar_columnas_vacias = &apos;X&apos;.
+        WHEN &apos;CAMPO_COLOR&apos;.
+          l_campo_color = i_opciones-valor.
+        WHEN &apos;HANDLE&apos;.
+          l_handle = i_opciones-valor.
+        WHEN &apos;CAMPOS_NO_CERO&apos;.
+          l_campos_no_cero = i_opciones-valor.
+        WHEN &apos;FICHERO_EXCEL&apos;.
+          v_fichero_excel = i_opciones-valor.
+      ENDCASE.
+    ENDLOOP.
+    REFRESH i_opc.
+
+    IF l_check_editable = &apos;X&apos;.
+      v_controlar_cambios = &apos;X&apos;.
+    ENDIF.
+
+    v_inicio = &apos;X&apos;.
+    LOOP AT SCREEN.
+      IF screen-name = &apos;V_TEXTO&apos; OR screen-name = &apos;V_TEXTO2&apos;.
+        screen-length = v_max_ancho_txt.
+        MODIFY SCREEN.
+      ENDIF.
+    ENDLOOP.
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_TEXTO&apos; variable = v_texto input = &apos;0&apos; ).
+    zcl_ap_dynpro=&gt;screen_visible( campo = &apos;V_TEXTO2&apos; variable = v_texto2 input = &apos;0&apos; ).
+
+
+    DATA l_aux3(3).
+    l_aux3 = v_texto2.
+    IF l_aux3 = &apos;!#!&apos;.
+      v_texto2 = v_texto2+3.
+      LOOP AT SCREEN.
+        IF screen-name = &apos;V_TEXTO2&apos;.
+          screen-intensified = 1.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF v_botones(1) = &apos;$&apos;.
+      REFRESH i_bot_par.
+* Ejemplo &apos;$B=F01&amp;&amp;T=Aceptar&amp;&amp;I=@0V@||B=F02&amp;&amp;T=Borrar&amp;&amp;I=@11@&apos;
+      SPLIT v_botones+1 AT &apos;||&apos; INTO TABLE i_bot.
+      LOOP AT i_bot.
+        SPLIT i_bot AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+        CLEAR: i_bot_par.
+        LOOP AT i_opc.
+          SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+          IF NOT l_o IS INITIAL.
+            TRANSLATE l_o TO UPPER CASE.
+            CASE l_o(1).
+              WHEN &apos;B&apos;. i_bot_par-b = l_v.
+              WHEN &apos;T&apos;. i_bot_par-t = l_v.
+              WHEN &apos;I&apos;. i_bot_par-i = l_v.
+              WHEN &apos;Q&apos;. i_bot_par-q = l_v.
+              WHEN &apos;S&apos;. IF l_v = &apos;X&apos;. __add_lista v_validar_seleccion i_bot_par-b. ENDIF.
+            ENDCASE.
+          ENDIF.
+        ENDLOOP.
+        APPEND i_bot_par.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+  IF v_grid IS INITIAL.
+    IF o_alv_popup IS INITIAL.
+      CREATE OBJECT o_alv_popup
+        EXPORTING
+          tabla = &apos;&apos;.
+
+      IF v_botones(1) = &apos;$&apos;.
+        LOOP AT i_bot_par.
+          o_alv_popup-&gt;add_button( button = i_bot_par-b text = i_bot_par-t icon = i_bot_par-i qinfo = i_bot_par-q ).
+        ENDLOOP.
+      ELSE.
+        IF v_botones CS &apos;OK&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos; icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;PRINT&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F02&apos; text = &apos;Imprimir&apos; icon = &apos;@0X@&apos; qinfo = &apos;Imprimir&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;CANCEL&apos;.
+          o_alv_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Cancelar&apos; icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+        ENDIF.
+      ENDIF.
+
+
+      DATA(l_no_layout) = SWITCH xfeld( l_handle WHEN &apos;&apos; THEN &apos;X&apos; ELSE &apos;&apos; ).
+      IF v_check = &apos;X&apos;.
+        IF l_handle IS INITIAL.
+          l_handle = sy-cprog.
+        ENDIF.
+
+        o_alv_popup-&gt;constructor_tabla( EXPORTING campo_check        = &apos;CHECK&apos;
+                                                  sel                = &apos;M&apos;
+                                                  no_layout          = l_no_layout
+                                                  cprog              = &apos;SAPZAP_POPUP&apos;
+*            status           = &apos;ST_DYN&apos;
+*            status_prog      = &apos;ZAP_STATUS&apos;
+                                                  container_name     = &apos;CALV&apos;
+                                                  color              = l_campo_color
+                                                  botones_standard   = l_botones_estandard
+                                                  restriccion_layout = if_salv_c_layout=&gt;restrict_user_dependant
+                                                  handle             = l_handle
+                                        CHANGING  t_tabla            = &lt;tabla&gt; ).
+
+        o_alv_popup-&gt;set_field_noout( &apos;CHECK&apos; ).
+        o_alv_popup-&gt;set_seleccion( CHANGING t_tabla = &lt;tabla&gt; ).
+      ELSE.
+        o_alv_popup-&gt;constructor_tabla( EXPORTING no_layout          = l_no_layout
+                                                  cprog              = &apos;SAPZAP_POPUP&apos;
+*            status           = &apos;ST_DYN&apos;
+*            status_prog      = &apos;ZAP_STATUS&apos;
+                                                  container_name     = &apos;CALV&apos;
+                                                  color              = l_campo_color
+                                                  botones_standard   = l_botones_estandard
+                                                  restriccion_layout = if_salv_c_layout=&gt;restrict_user_dependant
+                                                  handle             = l_handle
+                                        CHANGING  t_tabla            = &lt;tabla&gt; ).
+      ENDIF.
+      IF NOT v_campos_noout IS INITIAL.
+        o_alv_popup-&gt;set_field_noout( v_campos_noout ).
+      ENDIF.
+
+      IF NOT v_campos_sum IS INITIAL.
+        o_alv_popup-&gt;set_agregacion( v_campos_sum ).
+      ENDIF.
+
+      SPLIT v_campos_texto AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+      LOOP AT i_opc.
+        SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+        IF NOT l_v IS INITIAL.
+          o_alv_popup-&gt;set_field_text( campo = l_o valor = l_v ).
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT v_campos_hotspot IS INITIAL.
+        o_alv_popup-&gt;set_field_hotspot( campo = v_campos_hotspot auto = &apos;X&apos; ).
+      ENDIF.
+
+      IF NOT v_alv_helper IS INITIAL.
+        o_alv_popup-&gt;o_alv_helper = v_alv_helper.
+      ENDIF.
+
+      IF NOT v_campos_orden IS INITIAL.
+        o_alv_popup-&gt;set_orden( v_campos_orden ).
+      ENDIF.
+
+      IF NOT l_campos_no_cero IS INITIAL.
+        o_alv_popup-&gt;set_field( campo = l_campos_no_cero op = &apos;NO_CERO&apos; ).
+      ENDIF.
+
+      IF l_ocultar_columnas_vacias = &apos;X&apos;.
+        o_alv_popup-&gt;ocultar_columnas_vacias( t_tabla = &lt;tabla&gt; ).
+      ENDIF.
+
+      o_alv_popup-&gt;show( ).
+
+    ELSE.
+      o_alv_popup-&gt;refresh( ).
+    ENDIF.
+  ELSE.
+    IF o_grid_popup IS INITIAL.
+      CREATE OBJECT o_event_popup.
+
+      CREATE OBJECT o_grid_popup
+        EXPORTING
+          estructura     = &apos;&apos;
+          o_event        = o_event_popup
+          obj_contenedor = &apos;CALV&apos;
+          nombre_layout  = &apos;Z_POPUP_ALV_AP&apos;.
+
+      IF v_botones(1) = &apos;$&apos;.
+        LOOP AT i_bot_par.
+          o_grid_popup-&gt;add_button( button = i_bot_par-b text = i_bot_par-t icon = i_bot_par-i qinfo = i_bot_par-q ).
+        ENDLOOP.
+      ELSE.
+        IF v_botones CS &apos;OK&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F01&apos; text = &apos;Aceptar&apos; icon = &apos;@0V@&apos; qinfo = &apos;Aceptar&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;PRINT&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F02&apos; text = &apos;Imprimir&apos; icon = &apos;@0X@&apos; qinfo = &apos;Imprimir&apos; ).
+        ENDIF.
+        IF v_botones CS &apos;CANCEL&apos;.
+          o_grid_popup-&gt;add_button( button = &apos;F03&apos; text = &apos;Cancelar&apos; icon = &apos;@0W@&apos; qinfo = &apos;Cancelar&apos; ).
+        ENDIF.
+      ENDIF.
+
+      o_grid_popup-&gt;set_campos_tabint( &lt;tabla&gt; ).
+
+      DATA(l_input) = &apos;&apos;.
+      IF l_check_editable = &apos;X&apos;.
+        CLEAR v_check.
+        l_input = &apos;X&apos;.
+        o_grid_popup-&gt;set_field_input( &apos;CHECK&apos; ).
+        o_grid_popup-&gt;set_field( campo = &apos;CHECK&apos; op = &apos;CHECKBOX&apos; ).
+      ENDIF.
+
+      IF NOT l_campos_checkbox IS INITIAL.
+        o_grid_popup-&gt;set_field( campo = l_campos_checkbox op = &apos;CHECKBOX&apos; ).
+      ENDIF.
+
+      IF NOT v_campos_noout IS INITIAL.
+        o_grid_popup-&gt;set_field_noout( v_campos_noout ).
+      ENDIF.
+
+      IF NOT v_campos_sum IS INITIAL.
+        o_grid_popup-&gt;set_field( campo = v_campos_sum op = &apos;SUM&apos; ).
+      ENDIF.
+
+      IF NOT v_campos_hotspot IS INITIAL.
+        o_grid_popup-&gt;set_field_hotspot( campo = v_campos_hotspot auto = &apos;X&apos; ).
+      ENDIF.
+
+      SPLIT v_campos_texto AT &apos;&amp;&amp;&apos; INTO TABLE i_opc.
+      LOOP AT i_opc.
+        SPLIT i_opc AT &apos;=&apos; INTO l_o l_v.
+        IF NOT l_v IS INITIAL.
+          o_grid_popup-&gt;set_field_text( campo = l_o valor = l_v ).
+        ENDIF.
+      ENDLOOP.
+
+      IF NOT v_campos_input IS INITIAL.
+        l_input = &apos;X&apos;.
+        o_grid_popup-&gt;set_field_input( v_campos_input ).
+        IF l_campos_input_no_cero = &apos;X&apos;.
+          o_grid_popup-&gt;set_field( campo = v_campos_input op = &apos;NO_CERO&apos; ).
+        ENDIF.
+      ENDIF.
+
+      IF NOT v_alv_helper IS INITIAL.
+        o_grid_popup-&gt;o_alv_helper = v_alv_helper.
+      ENDIF.
+
+      IF NOT v_campos_orden IS INITIAL.
+        o_grid_popup-&gt;set_orden( v_campos_orden ).
+      ENDIF.
+
+      IF v_check IS INITIAL.
+        DATA l_sel_mode .
+        l_sel_mode = &apos;N&apos;.
+      ELSE.
+        l_sel_mode = &apos;D&apos;.
+      ENDIF.
+      IF l_botones_estandard IS INITIAL.
+        o_grid_popup-&gt;set_layout( no_toolbar = &apos;X&apos; sel_mode = l_sel_mode ancho_optimizado = l_ancho_optimizado input = l_input ).
+      ELSE.
+        o_grid_popup-&gt;set_layout( no_toolbar = &apos;&apos; sel_mode = l_sel_mode ancho_optimizado = l_ancho_optimizado input = l_input ).
+        o_grid_popup-&gt;quitar_botones_insercion( ).
+      ENDIF.
+
+      o_grid_popup-&gt;show( CHANGING tabla = &lt;tabla&gt; ).
+
+      o_grid_popup-&gt;actualiza_campos_grid( campos_no_opt = v_campos_input ).
+
+    ELSE.
+      o_grid_popup-&gt;refrescar_grid( ).
+    ENDIF.
+  ENDIF.
+
+
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT</include_source>
+  </include>
+  <include NAME="LZAP_POPUPTOP" VARCL="X" DBAPL="S" DBNA="D$" SUBC="I" APPL="S" RMAND="600" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+   <include_source>FUNCTION-POOL zap_popup.                    &quot;MESSAGE-ID ..
+
+TYPES: BEGIN OF t_msg_nast,
+         check,
+         estado  TYPE zico_estado_mensaje,
+         kappl   TYPE nast-kappl,
+         objky   TYPE nast-objky,
+         kschl   TYPE nast-kschl,
+         erdat   TYPE nast-erdat,
+         eruhr   TYPE nast-eruhr,
+         ldest   TYPE nast-ldest,
+         message TYPE bapi_msg,
+       END OF t_msg_nast.
+__data_set_var msg_nast.
+
+CLASS lcl_alv_popup DEFINITION INHERITING FROM zcl_ap_alv.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+      toolbar      REDEFINITION,
+      user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_event_grid DEFINITION
+
+DATA: v_hay_objeto,
+      v_texto_ventana     TYPE string,
+      v_texto             TYPE string,
+      v_texto2            TYPE string,
+      v_string            TYPE string,
+      v_titulo            TYPE string,
+      v_fichero_excel     TYPE string,
+      v_display_mode,
+      v_ok,
+      v_ocultar_col_valor,
+      o_texto             TYPE REF TO zcl_ap_control_texto,
+      v_cancel,
+      v_max_cols          TYPE i,
+      v_inicio,
+      v_check,
+      v_opcion_borrar,
+      v_solo_aceptar,
+      v_seleccionar_fila,
+      v_row               TYPE i,
+      v_max_ancho         TYPE i,
+      v_max_ancho_txt     TYPE i,
+      v_boton_imprimir,
+      v_ucomm             TYPE sy-ucomm,
+      v_campos_noout      TYPE string,
+      v_campos_texto      TYPE string,
+      v_campos_input      TYPE string,
+      v_campos_sum        TYPE string,
+      v_campos_orden      TYPE string,
+      v_campos_hotspot    TYPE string,
+      o_alv_popup         TYPE REF TO lcl_alv_popup,
+      o_grid_popup        TYPE REF TO zcl_ap_alv_grid,
+      o_event_popup       TYPE REF TO lcl_event_grid,
+      v_botones           TYPE string,
+      v_comando           TYPE text40,
+      v_buttons           TYPE zcl_ap_alv=&gt;t_buttons,
+      v_validar_seleccion TYPE string,
+      v_comando_enter     TYPE string,
+      v_opciones          TYPE string,
+      v_alv_helper        TYPE REF TO zcl_ap_alv,
+      v_grid,
+      v_campo_usuario1    TYPE string,
+      v_campo_usuario2    TYPE string,
+      v_campo_usuario3    TYPE string,
+      v_controlar_cambios TYPE string.
+
+FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
+
+CLASS lcl_alv_popup IMPLEMENTATION.
+  METHOD handle_double_click.
+    v_row = row.
+    v_ok = &apos;S&apos;.
+    LEAVE TO SCREEN 0.
+  ENDMETHOD. &quot;handle_double_click
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+CLASS lcl_event_grid IMPLEMENTATION.
+
+  METHOD double_click.
+    v_row = e_row.
+    v_ok = &apos;S&apos;.
+    LEAVE TO SCREEN 0.
+  ENDMETHOD.
+
+  METHOD toolbar.
+
+    super-&gt;toolbar( e_object = e_object e_interactive = e_interactive ).
+
+    IF v_opciones CS &apos;CHECK_EDITABLE&apos; AND v_opciones CS &apos;BOTONES_ESTANDAR&apos;.
+      add_boton( function = &apos;S_ALL&apos; icon = icon_select_all text = &apos;&apos; quickinfo = &apos;Seleccionar todo&apos; e_object = e_object ).
+      add_boton( function = &apos;D_ALL&apos; icon = icon_deselect_all text = &apos;&apos; quickinfo = &apos;Desmarcar todo&apos; e_object = e_object ).
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD user_command.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+    CASE e_ucomm.
+      WHEN &apos;S_ALL&apos;.
+        LOOP AT &lt;tabla&gt; ASSIGNING FIELD-SYMBOL(&lt;linea&gt;).
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;linea&gt; TO &lt;fs&gt;.
+          IF sy-subrc = 0.
+            &lt;fs&gt; = &apos;X&apos;.
+          ENDIF.
+        ENDLOOP.
+        o_grid_popup-&gt;refrescar_grid( ).
+      WHEN &apos;D_ALL&apos;.
+        LOOP AT &lt;tabla&gt; ASSIGNING &lt;linea&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;linea&gt; TO &lt;fs&gt;.
+          IF sy-subrc = 0.
+            &lt;fs&gt; = &apos;&apos;.
+          ENDIF.
+        ENDLOOP.
+        o_grid_popup-&gt;refrescar_grid( ).
+      WHEN OTHERS.
+        super-&gt;user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+
+  ENDMETHOD.                                               &quot;USER_COMMAND
+
+ENDCLASS.
+
+
+TABLES: svald, dd07l.
+
+TYPE-POOLS: shlp.                                           &quot;B40K011463
+
+* Interne Tabelle für Steuerung der Attribute der Dynprofelder
+* und Speicherung der Step-Loop-Daten
+DATA:
+  BEGIN OF svali OCCURS 50,
+    tabname    LIKE dfies-tabname,
+    fieldname  LIKE dfies-fieldname,
+    value      LIKE sval-value,
+    field_attr LIKE sval-field_attr,
+    field_obl  LIKE sval-field_obl,
+    comp_code  LIKE sval-comp_code,
+    comp_tab   LIKE dfies-tabname,
+    comp_field LIKE dfies-fieldname,
+    position   LIKE dfies-position,
+    offset     LIKE dfies-position,
+    keyflag    LIKE dfies-keyflag,
+    checktable LIKE dfies-checktable,
+    inttype    LIKE dfies-inttype,
+    intlen     LIKE dfies-intlen,
+    scrlen1    LIKE dfies-scrlen1,
+    scrlen2    LIKE dfies-scrlen2,
+    scrlen3    LIKE dfies-scrlen3,
+    datatype   LIKE dfies-datatype,
+    leng       LIKE dfies-leng,
+    outputlen  LIKE dfies-outputlen,
+    lowercase  LIKE dfies-lowercase,
+    convexit   LIKE dfies-convexit,
+    scrtext_s  LIKE dfies-scrtext_s,
+    scrtext_m  LIKE dfies-scrtext_m,
+    scrtext_l  LIKE dfies-scrtext_l,
+    domname    LIKE dfies-domname,
+    valexi     LIKE dfies-valexi,
+    sign       LIKE dfies-sign,                             &quot;mk
+    decimals   LIKE dfies-decimals,                         &quot;mk
+    novaluehlp LIKE sval-novaluehlp,                        &quot;mk
+    reftable   LIKE dfies-reftable,                         &quot;B20K058473
+    reffield   LIKE dfies-reffield,                         &quot;B20K058473
+    f4availabl LIKE dfies-f4availabl,                       &quot;B20K081005
+  END OF svali.
+
+DATA: svald1 TYPE svald,
+      svald2 TYPE svald,
+      svald3 TYPE svald,
+
+      BEGIN OF sval_not OCCURS 50.
+        INCLUDE STRUCTURE svali.
+DATA: END OF sval_not.</include_source>
+  </include>
+ </includeprograms>
+ <functionmodules>
+  <functionmodule NAME="Z_POPUP_ALV_AP" STEXT="Popup ALV">
+   <importing PARAMETER="TITULO" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="TEXTO" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="TEXTO2" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CHECK" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="ANCHO" DEFAULT="120" OPTIONAL="X" REFERENCE="X" TYP="I"/>
+   <importing PARAMETER="ALTO" DEFAULT="0" OPTIONAL="X" REFERENCE="X" TYP="I"/>
+   <importing PARAMETER="CAMPOS_NOOUT" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="BOTONES" DEFAULT="&apos;OK_CANCEL&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPOS_TEXTO" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="COMANDO_ENTER" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPOS_INPUT" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="GRID" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="OPCIONES" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPOS_ORDEN" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPOS_SUM" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPOS_HOTSPOT" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="O_ALV_HELPER" OPTIONAL="X" REFERENCE="X" TYP="REF TO ZCL_AP_ALV" REF_CLASS="X"/>
+   <importing PARAMETER="CAMPO_USUARIO1" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPO_USUARIO2" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="CAMPO_USUARIO3" OPTIONAL="X" REFERENCE="X"/>
+   <exporting PARAMETER="COMANDO" REFERENCE="X" TYP="TEXT40"/>
+   <exporting PARAMETER="UCOMM" REFERENCE="X" TYP="SY-UCOMM"/>
+   <exporting PARAMETER="OK" REFERENCE="X" TYP="XFELD"/>
+   <exporting PARAMETER="FILA" REFERENCE="X" TYP="INT4"/>
+   <changing PARAMETER="VALOR_CAMPO_USUARIO1" OPTIONAL="X" REFERENCE="X"/>
+   <changing PARAMETER="VALOR_CAMPO_USUARIO2" OPTIONAL="X" REFERENCE="X"/>
+   <changing PARAMETER="VALOR_CAMPO_USUARIO3" OPTIONAL="X" REFERENCE="X"/>
+   <tables PARAMETER="T_DATOS"/>
+   <documentation PARAMETER="TITULO" KIND="P" INDEX=" 001"/>
+   <documentation PARAMETER="TEXTO" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="TEXTO2" KIND="P" INDEX=" 003"/>
+   <documentation PARAMETER="CHECK" KIND="P" INDEX=" 004"/>
+   <documentation PARAMETER="ANCHO" KIND="P" INDEX=" 005"/>
+   <documentation PARAMETER="ALTO" KIND="P" INDEX=" 006"/>
+   <documentation PARAMETER="CAMPOS_NOOUT" KIND="P" INDEX=" 007"/>
+   <documentation PARAMETER="BOTONES" KIND="P" INDEX=" 008"/>
+   <documentation PARAMETER="CAMPOS_TEXTO" KIND="P" INDEX=" 009"/>
+   <documentation PARAMETER="COMANDO_ENTER" KIND="P" INDEX=" 010"/>
+   <documentation PARAMETER="CAMPOS_INPUT" KIND="P" INDEX=" 011"/>
+   <documentation PARAMETER="GRID" KIND="P" INDEX=" 012"/>
+   <documentation PARAMETER="OPCIONES" KIND="P" INDEX=" 013"/>
+   <documentation PARAMETER="CAMPOS_ORDEN" KIND="P" INDEX=" 014"/>
+   <documentation PARAMETER="CAMPOS_SUM" KIND="P" INDEX=" 015"/>
+   <documentation PARAMETER="CAMPOS_HOTSPOT" KIND="P" INDEX=" 016"/>
+   <documentation PARAMETER="O_ALV_HELPER" KIND="P" STEXT="ALV" INDEX=" 017"/>
+   <documentation PARAMETER="CAMPO_USUARIO1" KIND="P" INDEX=" 018"/>
+   <documentation PARAMETER="CAMPO_USUARIO2" KIND="P" INDEX=" 019"/>
+   <documentation PARAMETER="CAMPO_USUARIO3" KIND="P" INDEX=" 020"/>
+   <documentation PARAMETER="COMANDO" KIND="P" STEXT="Texto de 40 caracteres" INDEX=" 021"/>
+   <documentation PARAMETER="UCOMM" KIND="P" STEXT="Código de función borrado por PAI" INDEX=" 022"/>
+   <documentation PARAMETER="OK" KIND="P" STEXT="Casilla de selección" INDEX=" 023"/>
+   <documentation PARAMETER="FILA" KIND="P" STEXT="Número natural" INDEX=" 024"/>
+   <documentation PARAMETER="T_DATOS" KIND="P" INDEX=" 025"/>
+   <documentation PARAMETER="VALOR_CAMPO_USUARIO1" KIND="P" INDEX=" 026"/>
+   <documentation PARAMETER="VALOR_CAMPO_USUARIO2" KIND="P" INDEX=" 027"/>
+   <documentation PARAMETER="VALOR_CAMPO_USUARIO3" KIND="P" INDEX=" 028"/>
+   <fm_source_new>DATA: l_alto  TYPE i,
+        l_ancho TYPE i.
+
+  CLEAR: v_inicio, ok, fila, comando, ucomm, v_ok, v_row, v_validar_seleccion, v_grid, v_controlar_cambios,
+         v_fichero_excel.
+
+  v_texto = texto.
+  v_titulo = titulo.
+  IF titulo IS INITIAL.
+    v_titulo = texto.
+  ENDIF.
+  v_texto2 = texto2.
+  v_check = check.
+*  v_opcion_borrar = opcion_borrar.
+*  v_solo_aceptar = solo_aceptar.
+*  v_seleccionar_fila = seleccionar_fila.
+*  v_boton_imprimir = boton_imprimir.
+
+
+  IF NOT ancho IS INITIAL.
+    v_max_ancho = ancho.
+  ENDIF.
+  l_ancho = strlen( v_titulo ).
+  IF l_ancho &gt; v_max_ancho.
+    v_max_ancho = l_ancho.
+  ENDIF.
+  l_ancho = strlen( v_texto ).
+  IF l_ancho &gt; v_max_ancho.
+    v_max_ancho = l_ancho.
+  ENDIF.
+  ADD 3 TO v_max_ancho.
+
+  IF v_max_ancho &gt; ancho.
+    v_max_ancho = ancho.
+  ENDIF.
+
+  DESCRIBE TABLE t_datos LINES l_alto.
+  IF l_alto = 0.
+    l_alto = 9.
+  ELSEIF l_alto &lt; 20.
+    ADD 10 TO l_alto.
+  ENDIF.
+  IF NOT texto2 IS INITIAL.
+    ADD 1 TO l_alto.
+  ENDIF.
+  IF l_alto &gt; 27.
+    l_alto = 27.
+  ENDIF.
+
+  IF NOT campos_sum IS INITIAL.
+    IF campos_orden CS &apos;*&apos;.
+      ADD 4 TO l_alto.
+    ELSE.
+      ADD 1 TO l_alto.
+    ENDIF.
+  ENDIF.
+
+  IF NOT campo_usuario1 IS INITIAL.
+    ADD 1 TO l_alto.
+  ENDIF.
+  IF NOT campo_usuario2 IS INITIAL.
+    ADD 1 TO l_alto.
+  ENDIF.
+  IF NOT campo_usuario3 IS INITIAL.
+    ADD 1 TO l_alto.
+  ENDIF.
+
+  v_campos_noout = campos_noout.
+  v_campos_texto = campos_texto.
+  v_comando_enter = comando_enter.
+  v_campos_input = campos_input.
+  v_campos_sum = campos_sum.
+  v_campos_orden = campos_orden.
+  v_campos_hotspot = campos_hotspot.
+  v_opciones = opciones.
+  v_alv_helper = o_alv_helper.
+  v_campo_usuario1 = campo_usuario1.
+  v_campo_usuario2 = campo_usuario2.
+  v_campo_usuario3 = campo_usuario3.
+
+  CLEAR svald1.
+  IF NOT v_campo_usuario1 IS INITIAL AND NOT valor_campo_usuario1 IS INITIAL.
+    svald1-value = valor_campo_usuario1.
+  ENDIF.
+
+  CLEAR svald2.
+  IF NOT v_campo_usuario2 IS INITIAL AND NOT valor_campo_usuario2 IS INITIAL.
+    svald2-value = valor_campo_usuario2.
+  ENDIF.
+
+  CLEAR svald3.
+  IF NOT v_campo_usuario3 IS INITIAL AND NOT valor_campo_usuario3 IS INITIAL.
+    svald3-value = valor_campo_usuario3.
+  ENDIF.
+
+  ASSIGN (&apos;T_DATOS[]&apos;) TO &lt;tabla&gt;.
+
+  v_grid = grid.
+  IF NOT v_campos_input IS INITIAL.
+    v_grid = &apos;X&apos;.
+  ENDIF.
+
+  IF NOT o_alv_popup IS INITIAL.
+    o_alv_popup-&gt;free( ).
+    CLEAR o_alv_popup.
+  ENDIF.
+  IF NOT o_grid_popup IS INITIAL.
+    o_grid_popup-&gt;free( ).
+    CLEAR o_grid_popup.
+  ENDIF.
+
+  v_max_ancho_txt = v_max_ancho - 3.
+  v_botones = botones.
+  CLEAR v_inicio.
+
+  IF v_campo_usuario1 NE &apos;&apos; OR v_campo_usuario2 NE &apos;&apos; OR v_campo_usuario3 NE &apos;&apos;.
+    DATA fields TYPE TABLE OF sval WITH HEADER LINE.
+    PERFORM prepare_and_check TABLES fields.
+  ENDIF.
+
+  PERFORM get_boton IN PROGRAM zap_status CHANGING v_buttons.
+  PERFORM clear_botones IN PROGRAM zap_status.
+  CALL SCREEN 0100 STARTING AT 3 3 ENDING AT v_max_ancho l_alto.
+  PERFORM set_boton IN PROGRAM zap_status USING v_buttons.
+
+  IF NOT campo_usuario1 IS INITIAL.
+    valor_campo_usuario1 = svald1-value.
+  ENDIF.
+  IF NOT campo_usuario2 IS INITIAL.
+    valor_campo_usuario2 = svald2-value.
+  ENDIF.
+  IF NOT campo_usuario3 IS INITIAL.
+    valor_campo_usuario3 = svald3-value.
+  ENDIF.
+
+  ok = v_ok.
+  fila = v_row.
+  ucomm = v_ucomm.
+  comando = v_comando.
+  CLEAR sy-ucomm.
+
+
+
+
+*    DO.
+*      CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+*        EXPORTING
+*          check        = &apos;X&apos;
+*          botones      = &apos;$B=F01&amp;&amp;T=Asociar anexo&amp;&amp;I=@R7@&amp;&amp;S=X||B=F02&amp;&amp;T=Salir&amp;&amp;I=@0V@&apos;.
+*          campos_texto = &apos;ICON=Asociado&amp;&amp;CREATIME=Hora&apos;
+*          campos_noout = &apos;ARC_DOC_ID,ARCHIV_ID,SAP_OBJECT,OBJECT_ID,AR_OBJECT&apos;
+*        IMPORTING
+*          comando      = comando
+**         UCOMM        = UCOMM
+*          ok           = ok
+*          fila         = fila
+*        TABLES
+*          t_datos      = i_docs.
+*
+*      IF ok = &apos;S&apos;.
+*        READ TABLE i_docs ASSIGNING &lt;docs&gt; INDEX fila.
+*        IF sy-subrc = 0.
+*           ACCION DOBLE CLICK
+*        ENDIF.
+*      ELSE.
+*        IF comando = &apos;Asociar anexo&apos;.
+*          HACER ALGO
+*        ELSE.
+*          EXIT.
+*        ENDIF.
+*      ENDIF.
+*    ENDDO.</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_NUEVO_MODO" STEXT="Lanzamiento transacción en nuevo modo">
+   <importing PARAMETER="TCODE" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="REPID" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="PARAMETROS" OPTIONAL="X" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="EJEC" DEFAULT="&apos;X&apos;" OPTIONAL="X" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <importing PARAMETER="MAX_SESIONES" OPTIONAL="X" REFERENCE="X" TYP="I"/>
+   <importing PARAMETER="SKIP_SCREEN" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <documentation PARAMETER="TCODE" KIND="P" INDEX=" 001"/>
+   <documentation PARAMETER="REPID" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="PARAMETROS" KIND="P" INDEX=" 003"/>
+   <documentation PARAMETER="EJEC" KIND="P" INDEX=" 004"/>
+   <documentation PARAMETER="MAX_SESIONES" KIND="P" INDEX=" 005"/>
+   <documentation PARAMETER="SKIP_SCREEN" KIND="P" INDEX=" 006"/>
+   <fm_source>DATA: i_user_info TYPE TABLE OF uinfo2 WITH HEADER LINE.
+  DATA: l_parametros TYPE string,
+        using_tab    TYPE TABLE OF bdcdata WITH HEADER LINE,
+        spagpa_tab   TYPE TABLE OF rfc_spagpa WITH HEADER LINE,
+        mess_tab     TYPE TABLE OF bdcmsgcoll WITH HEADER LINE,
+        l_tcode      TYPE tcode,
+        l_its,
+        l_terminal   TYPE string,
+        l_par        TYPE text40,
+        l_valor      TYPE text40.
+
+  IF max_sesiones &gt; 0.
+    IF sy-batch IS INITIAL AND sy-binpt IS INITIAL.
+      CALL FUNCTION &apos;GUI_IS_ITS&apos;
+        IMPORTING
+          return = l_its.
+      IF l_its IS INITIAL.
+        CALL METHOD cl_gui_frontend_services=&gt;get_computer_name
+          CHANGING
+            computer_name        = l_terminal
+          EXCEPTIONS
+            cntl_error           = 1
+            error_no_gui         = 2
+            not_supported_by_gui = 3
+            OTHERS               = 4.
+        IF sy-subrc = 0.
+          cl_gui_cfw=&gt;flush( ).
+        ENDIF.
+
+        CALL FUNCTION &apos;TH_LONG_USR_INFO&apos;
+          EXPORTING
+            user      = sy-uname
+          TABLES
+            user_info = i_user_info.
+        DELETE i_user_info WHERE terminal &lt;&gt; l_terminal.
+        IF lines(  i_user_info ) &gt; max_sesiones.
+          IF NOT tcode IS INITIAL.
+            IF NOT parametros IS INITIAL.
+              SPLIT parametros AT &apos;=&apos; INTO l_par l_valor.
+              CONDENSE l_par NO-GAPS.
+              DATA(l_long) = strlen( l_par ).
+              IF strlen( l_par ) &lt;= 20.
+                SET PARAMETER ID l_par(l_long) FIELD l_valor.
+              ENDIF.
+              CALL TRANSACTION tcode AND SKIP FIRST SCREEN.
+            ELSE.
+              CALL TRANSACTION tcode.
+            ENDIF.
+          ELSE.
+            spagpa_tab-parid = &apos;RID&apos;.
+            spagpa_tab-parval = repid.
+            APPEND spagpa_tab.
+            CALL FUNCTION &apos;ABAP4_CALL_TRANSACTION&apos;
+              STARTING NEW TASK &apos;test&apos;
+              EXPORTING
+                tcode                   = &apos;SE38&apos;
+                skip_screen             = &apos;X&apos;
+              TABLES
+                spagpa_tab              = spagpa_tab
+              EXCEPTIONS
+                call_transaction_denied = 1
+                tcode_invalid           = 2
+                OTHERS                  = 3.
+            IF sy-subrc NE 0.
+              MESSAGE &apos;Error llamando SE38&apos; TYPE &apos;S&apos;.
+            ENDIF.
+          ENDIF.
+          RETURN.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  IF NOT tcode IS INITIAL.
+    l_tcode = tcode.
+    l_parametros = parametros.
+
+    IF skip_screen IS INITIAL.
+      CALL FUNCTION &apos;TH_CREATE_MODE&apos;
+        EXPORTING
+          transaktion    = l_tcode
+          del_on_eot     = 1
+          parameters     = l_parametros
+*         PROCESS_DARK   = &apos;&apos;
+*         INHERIT_STAT_TRANS_ID       = 0
+*     IMPORTING
+*         MODE           =
+        EXCEPTIONS
+          max_sessions   = 1
+          internal_error = 2
+          no_authority   = 3
+          OTHERS         = 4.
+      IF sy-subrc &lt;&gt; 0.
+* Implement suitable error handling here
+      ENDIF.
+    ELSE.
+      CALL FUNCTION &apos;ABAP4_CALL_TRANSACTION&apos;
+        STARTING NEW TASK &apos;test&apos;
+        EXPORTING
+          tcode                   = l_tcode
+          skip_screen             = &apos;X&apos;
+        EXCEPTIONS
+          call_transaction_denied = 1
+          tcode_invalid           = 2
+          OTHERS                  = 3.
+      IF sy-subrc &lt;&gt; 0.
+* Implement suitable error handling here
+      ENDIF.
+    ENDIF.
+  ELSEIF NOT repid IS INITIAL.
+    spagpa_tab-parid = &apos;RID&apos;.
+    spagpa_tab-parval = repid.
+    APPEND spagpa_tab.
+    CALL FUNCTION &apos;ABAP4_CALL_TRANSACTION&apos;
+      STARTING NEW TASK &apos;test&apos;
+      EXPORTING
+        tcode                   = &apos;SE38&apos;
+        skip_screen             = &apos;X&apos;
+*       MODE_VAL                = &apos;A&apos;
+*       UPDATE_VAL              = &apos;A&apos;
+* IMPORTING
+*       SUBRC                   =
+      TABLES
+*       USING_TAB               =
+        spagpa_tab              = spagpa_tab
+*       MESS_TAB                =
+      EXCEPTIONS
+        call_transaction_denied = 1
+        tcode_invalid           = 2
+        OTHERS                  = 3.
+    IF sy-subrc &lt;&gt; 0.
+* Implement suitable error handling here
+    ENDIF.
+  ELSE.
+
+  ENDIF.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_LANZAR_JOB_AP" STEXT="Lanzar job con retraso">
+   <importing PARAMETER="JOBNAME" TYP="TBTCJOB-JOBNAME"/>
+   <importing PARAMETER="REPORT" TYP="SY-CPROG"/>
+   <importing PARAMETER="VARIANT" OPTIONAL="X" TYP="SY-SLSET"/>
+   <importing PARAMETER="RETRASO" DEFAULT="10" OPTIONAL="X" TYP="INT4"/>
+   <importing PARAMETER="USER" DEFAULT="SY-UNAME" OPTIONAL="X" TYP="SY-UNAME"/>
+   <importing PARAMETER="GRABAR_LOG" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ZPROCESO"/>
+   <importing PARAMETER="ORIGEN" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ANY"/>
+   <importing PARAMETER="MAIL_SI_ERROR" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ANY"/>
+   <importing PARAMETER="PARAMETROS" OPTIONAL="X" TYP="RSPARAMS_TT"/>
+   <importing PARAMETER="ESPERA_SI_JOB_ACTIVO" DEFAULT="10" OPTIONAL="X" TYP="INT4"/>
+   <importing PARAMETER="CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ANY"/>
+   <importing PARAMETER="EXIT" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ANY"/>
+   <importing PARAMETER="NEW_TASK" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <importing PARAMETER="TEST" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <exporting PARAMETER="MESSAGE" TYP="BAPI_MSG"/>
+   <documentation PARAMETER="JOBNAME" KIND="P" STEXT="Nombre de job de fondo" INDEX=" 001"/>
+   <documentation PARAMETER="REPORT" KIND="P" STEXT="Programa del job" INDEX=" 002"/>
+   <documentation PARAMETER="VARIANT" KIND="P" STEXT="Variante" INDEX=" 003"/>
+   <documentation PARAMETER="RETRASO" KIND="P" STEXT="Retraso en segundos" INDEX=" 004"/>
+   <documentation PARAMETER="USER" KIND="P" STEXT="Usuario con el que se lanza el job" INDEX=" 005"/>
+   <documentation PARAMETER="GRABAR_LOG" KIND="P" STEXT="Proceso donde se guardará log" INDEX=" 006"/>
+   <documentation PARAMETER="ORIGEN" KIND="P" STEXT="Origen del lanzamiento" INDEX=" 007"/>
+   <documentation PARAMETER="MAIL_SI_ERROR" KIND="P" STEXT="Email para avisar si hay error" INDEX=" 008"/>
+   <documentation PARAMETER="PARAMETROS" KIND="P" STEXT="Parámetros" INDEX=" 009"/>
+   <documentation PARAMETER="ESPERA_SI_JOB_ACTIVO" KIND="P" STEXT="Segundos de espera si hay otro job activo" INDEX=" 010"/>
+   <documentation PARAMETER="CLAVE" KIND="P" STEXT="Clave" INDEX=" 011"/>
+   <documentation PARAMETER="EXIT" KIND="P" STEXT="Include exit usuario" INDEX=" 012"/>
+   <documentation PARAMETER="NEW_TASK" KIND="P" STEXT="Lanzar nueva tarea" INDEX=" 013"/>
+   <documentation PARAMETER="TEST" KIND="P" STEXT="Ejecuta en interactivo (TEST ONLY)" INDEX=" 014"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 015"/>
+   <fm_source>DATA: l_clave         TYPE objkey,
+        l_exit          TYPE exit_bibl,
+        l_mail_si_error TYPE text255,
+        l_origen        TYPE kedrident.
+
+  l_clave = clave.
+  l_exit  = exit.
+  l_origen = origen.
+  l_mail_si_error = mail_si_error.
+
+  DATA(l_new_task) = new_task.
+  IF l_new_task = &apos;X&apos;.
+    IF zcl_ap_usuario=&gt;get_total_modos_activos( ) &gt; 5.
+      CLEAR l_new_task.
+    ENDIF.
+  ENDIF.
+
+  IF l_new_task IS INITIAL.
+    CALL FUNCTION &apos;Z_LANZAR_JOB_AP_NEW_TASK&apos;
+      EXPORTING
+        jobname              = jobname
+        report               = report
+        variant              = variant
+        retraso              = retraso
+        user                 = user
+        grabar_log           = grabar_log
+        origen               = l_origen
+        mail_si_error        = l_mail_si_error
+        parametros           = parametros
+        espera_si_job_activo = espera_si_job_activo
+        clave                = l_clave
+        exit                 = l_exit
+        test                 = test
+      IMPORTING
+        message              = message.
+  ELSE.
+    CALL FUNCTION &apos;Z_LANZAR_JOB_AP_NEW_TASK&apos;
+      STARTING NEW TASK &apos;UPDATE&apos;
+      DESTINATION &apos;NONE&apos;
+      EXPORTING
+        jobname              = jobname
+        report               = report
+        variant              = variant
+        retraso              = retraso
+        user                 = user
+        grabar_log           = grabar_log
+        origen               = l_origen
+        mail_si_error        = l_mail_si_error
+        parametros           = parametros
+        espera_si_job_activo = espera_si_job_activo
+        clave                = l_clave
+        exit                 = l_exit
+        test                 = test.
+  ENDIF.
+
+
+
+
+**EJEMPLO DE LLAMADA
+*data PARAMETROS TYPE  RSPARAMS_TT.
+*parametros = value #( ( SELNAME = &apos;S_MATNR&apos;
+*                        KIND    = &apos;S&apos;
+*                        SIGN    = &apos;I&apos;
+*                        OPTION  = &apos;EQ&apos;
+*                        LOW     = &apos;COTPNI00000054&apos; ) ).
+*CALL FUNCTION &apos;Z_LANZAR_JOB_AP&apos;
+*  STARTING NEW TASK &apos;UPDATE&apos;
+*  DESTINATION &apos;NONE&apos;
+*  EXPORTING
+*    JOBNAME    = &apos;JOB_PRUEBA&apos;
+*    report     = &apos;ZPRUEBA&apos;
+*    retraso    = 10
+*    parametros = parametros.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_LANZAR_JOB_AP_NEW_TASK" REMOTE="R" STEXT="Lanzar job con retraso y como tarea en paralelo">
+   <importing PARAMETER="JOBNAME" TYP="TBTCJOB-JOBNAME"/>
+   <importing PARAMETER="REPORT" TYP="SY-CPROG"/>
+   <importing PARAMETER="VARIANT" OPTIONAL="X" TYP="SY-SLSET"/>
+   <importing PARAMETER="RETRASO" DEFAULT="10" OPTIONAL="X" TYP="INT4"/>
+   <importing PARAMETER="USER" DEFAULT="SY-UNAME" OPTIONAL="X" TYP="SY-UNAME"/>
+   <importing PARAMETER="GRABAR_LOG" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="ZPROCESO"/>
+   <importing PARAMETER="ORIGEN" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="KEDRIDENT"/>
+   <importing PARAMETER="MAIL_SI_ERROR" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="TEXT255"/>
+   <importing PARAMETER="PARAMETROS" OPTIONAL="X" TYP="RSPARAMS_TT"/>
+   <importing PARAMETER="ESPERA_SI_JOB_ACTIVO" DEFAULT="10" OPTIONAL="X" TYP="INT4"/>
+   <importing PARAMETER="CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="OBJKEY"/>
+   <importing PARAMETER="EXIT" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="EXIT_BIBL"/>
+   <importing PARAMETER="NT" DEFAULT="&apos;X&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <importing PARAMETER="TEST" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <exporting PARAMETER="MESSAGE" TYP="BAPI_MSG"/>
+   <documentation PARAMETER="JOBNAME" KIND="P" STEXT="Nombre de job de fondo" INDEX=" 001"/>
+   <documentation PARAMETER="REPORT" KIND="P" STEXT="Programa del job" INDEX=" 002"/>
+   <documentation PARAMETER="VARIANT" KIND="P" STEXT="Variante" INDEX=" 003"/>
+   <documentation PARAMETER="RETRASO" KIND="P" STEXT="Retraso en segundos" INDEX=" 004"/>
+   <documentation PARAMETER="USER" KIND="P" STEXT="Usuario con el que se lanza el job" INDEX=" 005"/>
+   <documentation PARAMETER="GRABAR_LOG" KIND="P" STEXT="Proceso donde se guardará log" INDEX=" 006"/>
+   <documentation PARAMETER="ORIGEN" KIND="P" STEXT="Origen del lanzamiento" INDEX=" 007"/>
+   <documentation PARAMETER="MAIL_SI_ERROR" KIND="P" STEXT="Email para avisar si hay error" INDEX=" 008"/>
+   <documentation PARAMETER="PARAMETROS" KIND="P" STEXT="Parámetros" INDEX=" 009"/>
+   <documentation PARAMETER="ESPERA_SI_JOB_ACTIVO" KIND="P" STEXT="Segundos de espera si hay otro job activo" INDEX=" 010"/>
+   <documentation PARAMETER="CLAVE" KIND="P" STEXT="Clave" INDEX=" 011"/>
+   <documentation PARAMETER="EXIT" KIND="P" STEXT="Include exit usuario" INDEX=" 012"/>
+   <documentation PARAMETER="NT" KIND="P" STEXT="Lanzar nueva tarea" INDEX=" 013"/>
+   <documentation PARAMETER="TEST" KIND="P" STEXT="Ejecuta en interactivo (SOLO TEST)" INDEX=" 014"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 015"/>
+   <fm_source_new>SELECT SINGLE obj_name FROM tadir
+    INTO @DATA(l_obj_name)
+   WHERE pgmid = &apos;R3TR&apos;
+     AND object = &apos;PROG&apos;
+     AND obj_name = @report.
+  IF sy-subrc NE 0.
+    message = |No existe el report { report }|.
+  ELSE.
+    IF NOT variant IS INITIAL.
+      IF zcl_ap_variante=&gt;existe( report = report
+                                  variant = variant ) = &apos;&apos;.
+        message = |No existe la variante { variant } del report { report }|.
+      ENDIF.
+    ENDIF.
+
+    IF message IS INITIAL.
+
+      IF espera_si_job_activo &gt; 0.
+        DO espera_si_job_activo TIMES.
+          IF zcl_ap_jobs=&gt;esta_job_pendiente( jobname = jobname ) = &apos;X&apos;.
+            EXIT.
+          ENDIF.
+        ENDDO.
+      ENDIF.
+
+      IF test = &apos;X&apos;.
+        SUBMIT (report)
+         USING SELECTION-SET variant
+          WITH SELECTION-TABLE parametros
+           AND RETURN
+           VIA SELECTION-SCREEN.
+        RETURN.
+      ENDIF.
+      DATA(o_job) = NEW zcl_ap_jobs( jobname = jobname ).
+
+      o_job-&gt;abrir( ).
+
+      IF NOT o_job-&gt;jobcount IS INITIAL.
+        TRY.
+            CLEAR o_job-&gt;print_parameters-primm.
+
+            SUBMIT (report)
+            USING SELECTION-SET variant
+                  WITH SELECTION-TABLE parametros
+               AND RETURN
+               VIA JOB o_job-&gt;jobname NUMBER o_job-&gt;jobcount
+               TO SAP-SPOOL SPOOL PARAMETERS o_job-&gt;print_parameters WITHOUT SPOOL DYNPRO
+                USER user.
+
+            IF retraso = 0.
+              DATA(l_inmediato) = &apos;X&apos;.
+            ENDIF.
+
+            o_job-&gt;cerrar( inmediato = l_inmediato retraso = retraso ).
+            IF NOT o_job-&gt;message IS INITIAL.
+              message = o_job-&gt;message.
+            ENDIF.
+          CATCH cx_root INTO DATA(o_root).
+            message = o_root-&gt;get_text( ).
+        ENDTRY.
+      ELSE.
+        message = o_job-&gt;message.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  DATA: l_error  TYPE string,
+        l_msg_ok TYPE string.
+  IF NOT clave IS INITIAL.
+    DATA(l_msg_c) = |clave = { clave }|.
+  ENDIF.
+  IF NOT origen IS INITIAL.
+    DATA(l_msg_o) = |origen = { origen }|.
+  ENDIF.
+
+  l_msg_ok = |Se ha lanzado el job { jobname } report { report } { l_msg_c } { l_msg_o }|.
+
+  IF NOT message IS INITIAL.
+    l_error = |Error { message } lanzando job { jobname } report { report } { l_msg_c } { l_msg_o }|.
+  ENDIF.
+
+  IF NOT exit IS INITIAL.
+    IF message IS INITIAL.
+      zcl_ap_exits=&gt;log_st( exit = exit clave = clave p1 = l_msg_ok msgty = &apos;E&apos; ).
+    ELSE.
+      zcl_ap_exits=&gt;log_st( exit = exit clave = clave p1 = l_error msgty = &apos;E&apos; ).
+    ENDIF.
+  ENDIF.
+
+  IF NOT grabar_log IS INITIAL.
+    IF message IS INITIAL.
+      zcl_ap_log=&gt;set_log( proceso = grabar_log clave = clave p1 = |Se ha lanzado el job { jobname } report { report } origen { origen }| msgty = &apos;S&apos; ).
+    ELSE.
+      zcl_ap_log=&gt;set_log( proceso = grabar_log clave = clave p1 = l_error msgty = &apos;E&apos; ).
+    ENDIF.
+  ENDIF.
+
+  IF NOT mail_si_error IS INITIAL AND NOT message IS INITIAL.
+    zcl_ap_envio_mail=&gt;mail( direccion = mail_si_error
+                             subject = l_error
+                             clave = clave  ).
+  ENDIF.
+
+
+
+
+
+**EJEMPLO DE LLAMADA
+*data PARAMETROS TYPE  RSPARAMS_TT.
+*parametros = value #( ( SELNAME = &apos;S_MATNR&apos;
+*                        KIND    = &apos;S&apos;
+*                        SIGN    = &apos;I&apos;
+*                        OPTION  = &apos;EQ&apos;
+*                        LOW     = &apos;COTPNI00000054&apos; ) ).
+*CALL FUNCTION &apos;Z_LANZAR_JOB_AP&apos;
+*  STARTING NEW TASK &apos;UPDATE&apos;
+*  DESTINATION &apos;NONE&apos;
+*  EXPORTING
+*    JOBNAME    = &apos;JOB_PRUEBA&apos;
+*    report     = &apos;ZPRUEBA&apos;
+*    retraso    = 10
+*    parametros = parametros.</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_RFC_GET_CODIGO" REMOTE="R" STEXT="Recupera código comparable de otro entorno">
+   <importing PARAMETER="OBJECT" TYP="TROBJTYPE"/>
+   <importing PARAMETER="OBJ_NAME" TYP="SOBJ_NAME"/>
+   <importing PARAMETER="MODO" DEFAULT="&apos;&apos;" TYP="CHAR1"/>
+   <exporting PARAMETER="I_CODIGO" TYP="TTTEXT255"/>
+   <exporting PARAMETER="TRDIR" TYP="TRDIR"/>
+   <documentation PARAMETER="OBJECT" KIND="P" STEXT="Tipo de objeto" INDEX=" 001"/>
+   <documentation PARAMETER="OBJ_NAME" KIND="P" STEXT="Nombre de objeto en catálogo de objetos" INDEX=" 002"/>
+   <documentation PARAMETER="MODO" KIND="P" STEXT="Indicador de una posición" INDEX=" 003"/>
+   <documentation PARAMETER="I_CODIGO" KIND="P" STEXT="Texto" INDEX=" 004"/>
+   <documentation PARAMETER="TRDIR" KIND="P" INDEX=" 005"/>
+   <fm_source>i_codigo = zcl_ap_dev=&gt;get_objeto_como_texto( tipo   = object
+                                                nombre = obj_name
+                                                modo   = modo ).
+
+data(l_obj_name) = obj_name.
+  case object.
+    when &apos;PROG&apos; OR &apos;FUGR&apos;.
+      IF OBJECT = &apos;FUGR&apos;.
+  SELECT SINGLE PNAME, INCLUDE FROM tfdir
+    INTO (@DATA(l_pname), @data(l_include))
+   WHERE funcname = @obj_name.
+  CONCATENATE l_pname+3 &apos;U&apos; l_include INTO l_obj_name.
+  endif.
+
+    SELECT SINGLE * FROM TRDIR
+      INTO TRDIR
+     WHERE NAME = l_OBJ_NAME.
+
+     when &apos;CLAS&apos;.
+      CONCATENATE obj_name &apos;%&apos; INTO L_OBJ_NAME.
+      SELECT MAX( udat ) FROM progdir
+        INTO TRDIR-udat
+       WHERE name LIKE L_OBJ_NAME.
+
+      SELECT unam FROM progdir
+        INTO TRDIR-unam
+        UP TO 1 ROWS
+       WHERE name  LIKE L_OBJ_NAME
+         AND state    = &apos;A&apos;
+         AND udat     = TRDIR-udat
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+  ENDCASE.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+ </functionmodules>
+</FUGR>

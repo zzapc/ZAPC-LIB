@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_REPO" VERSION="1" LANGU="S" DESCRIPT="Repositorio desarrollos APC" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="APR" ENTRY="Actualización del programa!" LENGTH="54 "/>
+   <textElement ID="I" KEY="AVR" ENTRY="¿Desea actualizar la versión?" LENGTH="58 "/>
+   <textElement ID="I" KEY="DAF" ENTRY="¿Desea actualizarlo desde el fichero?" LENGTH="74 "/>
+   <textElement ID="I" KEY="ECD" ENTRY="Error al cambiar al directorio REPO" LENGTH="70 "/>
+   <textElement ID="I" KEY="ECO" ENTRY="Error de conexión" LENGTH="27 "/>
+   <textElement ID="I" KEY="EFI" ENTRY="Error al recuperar el fichero indice de repositorio" LENGTH="102 "/>
+   <textElement ID="I" KEY="NER" ENTRY="No existen elementos en el repositorio" LENGTH="76 "/>
+   <textElement ID="I" KEY="NVE" ENTRY="Nueva versión" LENGTH="23 "/>
+   <textElement ID="I" KEY="OYE" ENTRY="Objecto ya existe" LENGTH="27 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_REPO" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_REPO" CMPNAME="I_CODIGO" VERSION="1" LANGU="S" DESCRIPT="Objcont and Objhead as Table Type" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SOLI_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REPO" CMPNAME="I_REPO" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla repositorio desarrollos APC" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_REPO_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REPO" CMPNAME="ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Origen" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REPO" CMPNAME="O_FTP" VERSION="1" LANGU="S" DESCRIPT="Manejo FTP" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_FTP" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_REPO" CMPNAME="RUTA_PC_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Ruta local" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTVALUE="&apos;D:\BC\Reports slnk\LIB&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="ACTIVAR_OBJETO" VERSION="1" LANGU="S" DESCRIPT="Activa objecto de desarrollo" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="ACTIVAR_OBJETO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Object Type" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TROBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="ACTIVAR_OBJETO" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD activar_objeto.
+    DATA: l_object   TYPE e071-object,
+          l_obj_name TYPE e071-obj_name.
+
+    l_object = object.
+    l_obj_name = nombre.
+
+    CALL FUNCTION &apos;RS_WORKING_OBJECT_ACTIVATE&apos;
+      EXPORTING
+        object                           = l_object
+        obj_name                         = l_obj_name
+*   FORCE_ACTIVATION                 = &apos; &apos;
+*   ACTIVATE_ONLY_THIS_OBJECT        =
+*   OBJECT_SAVED                     =
+*   DICTIONARY_ONLY                  = &apos; &apos;
+*   P_WB_MANAGER                     =
+*   P_CALLER_PROGRAM                 =
+*   CWB_MODE                         =
+*   DISPLAY_SYSID                    = &apos; &apos;
+* IMPORTING
+*   BIND_ERROR_WINDOW                =
+* TABLES
+*   OBJECTS                          =
+     EXCEPTIONS
+       object_not_in_working_area       = 1
+       execution_error                  = 2
+       cancelled                        = 3
+       insert_into_corr_error           = 4
+       OTHERS                           = 5.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="ACTUALIZAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Actualiza ficheros en el repositorio" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="ACTUALIZAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD actualizar_fichero.
+    IF origen = &apos;F&apos;.
+      o_ftp-&gt;put( fichero ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="ACTUALIZA_INDICE_REPO" VERSION="1" LANGU="S" DESCRIPT="Actualiza el fichero indice del repositorio" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD actualiza_indice_repo.
+    DATA: l_xml      TYPE string,
+          l_dir_temp TYPE string,
+          l_fichero  TYPE string.
+
+    CALL TRANSFORMATION id
+         SOURCE tabla = i_repo
+         RESULT XML l_xml.
+
+    IF origen = &apos;F&apos;.
+      l_dir_temp = zcl_ap_documentos=&gt;get_directorio_temporal( ).
+    ELSE.
+      l_dir_temp = ruta_pc_local.
+    ENDIF.
+
+    CONCATENATE l_dir_temp &apos;\repo.xml&apos; INTO l_fichero.
+
+    zcl_ap_ficheros=&gt;grabar_xml( fichero = l_fichero string = l_xml ).
+
+    IF origen = &apos;F&apos;.
+      o_ftp-&gt;put( l_fichero ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="BORRAR_REPORT" VERSION="1" LANGU="S" DESCRIPT="Borrar el report" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="BORRAR_REPORT" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD borrar_report.
+    DATA program TYPE sy-repid.
+
+    program = nombre.
+
+    CALL FUNCTION &apos;RS_DELETE_PROGRAM&apos;
+      EXPORTING
+*   CORRNUMBER                       =
+        program                          = program
+*   SUPPRESS_CHECKS                  = &apos; &apos;
+*   SUPPRESS_COMMIT                  = &apos; &apos;
+        suppress_popup                   = &apos;X&apos;
+*   MASS_DELETE_CALL                 = &apos; &apos;
+*   WITH_CUA                         = &apos;X&apos;
+*   WITH_DOCUMENTATION               = &apos;X&apos;
+*   WITH_DYNPRO                      = &apos;X&apos;
+*   WITH_INCLUDES                    = &apos; &apos;
+*   WITH_TEXTPOOL                    = &apos;X&apos;
+*   WITH_VARIANTS                    = &apos;X&apos;
+*   TADIR_DEVCLASS                   =
+*   SKIP_PROGRESS_IND                = &apos; &apos;
+*   FORCE_DELETE_USED_INCLUDES       = &apos; &apos;
+* IMPORTING
+*   CORRNUMBER                       =
+*   PROGRAM                          =
+   EXCEPTIONS
+     enqueue_lock                     = 1
+     object_not_found                 = 2
+     permission_failure               = 3
+     reject_deletion                  = 4
+     OTHERS                           = 5.
+    IF sy-subrc &lt;&gt; 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="CAMBIAR_CLASE_DESARROLLO" VERSION="1" LANGU="S" DESCRIPT="¿Existe el objeto?" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CAMBIAR_CLASE_DESARROLLO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Object Type" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TROBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CAMBIAR_CLASE_DESARROLLO" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CAMBIAR_CLASE_DESARROLLO" SCONAME="DEVCLASS" VERSION="1" LANGU="S" DESCRIPT="Package" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DEVCLASS"/>
+  <source>METHOD cambiar_clase_desarrollo.
+    DATA l_obj_name TYPE e071-obj_name.
+
+    l_obj_name = nombre.
+
+    CALL FUNCTION &apos;TR_TADIR_POPUP_ENTRY_E071&apos;
+      EXPORTING
+        wi_e071_pgmid             = &apos;R3TR&apos;
+        wi_e071_object            = object
+        wi_e071_obj_name          = l_obj_name
+        wi_tadir_devclass         = devclass
+      EXCEPTIONS
+        display_mode              = 1
+        exit                      = 2
+        global_tadir_insert_error = 3
+        no_repair_selected        = 4
+        no_systemname             = 5
+        no_systemtype             = 6
+        no_tadir_type             = 7
+        reserved_name             = 8
+        tadir_enqueue_failed      = 9
+        devclass_not_found        = 10
+        tadir_not_exist           = 11
+        object_exists             = 12
+        internal_error            = 13
+        object_append_error       = 14
+        tadir_modify_error        = 15
+        object_locked             = 16
+        no_object_authority       = 17
+        OTHERS                    = 18.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="CHECK_UPDATE" VERSION="1" LANGU="S" DESCRIPT="Verifica si es necesario actualizar el código fuente" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CHECK_UPDATE" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Calling Program" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CHECK_UPDATE" SCONAME="VERSION" VERSION="1" LANGU="S" DESCRIPT="Character Field Length = 10" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="P" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CHECK_UPDATE" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD check_update.
+    DATA: o_repo    TYPE REF TO zcl_ap_repo,
+          l_url     TYPE saeuri,
+          l_linea   TYPE soli,
+          l_aux1    TYPE soli,
+          l_aux2    TYPE soli,
+          l_version TYPE p LENGTH 8 DECIMALS 0.
+
+    DATA: lv_msg  TYPE string,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          lv_line TYPE n LENGTH 1,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          lv_word TYPE char50.
+
+    o_repo = NEW #( ).
+
+    CONCATENATE &apos;http://sap4.com/repo/&apos; report &apos;.txt&apos; INTO l_url.
+    TRANSLATE l_url TO LOWER CASE.
+    o_repo-&gt;get_codigo( url = l_url mostrar_error = mostrar_error ).
+
+    LOOP AT o_repo-&gt;i_codigo INTO l_linea.
+      TRANSLATE l_linea TO UPPER CASE.
+      IF l_linea CS &apos;C_VERSION&apos;.
+        SPLIT l_linea AT &apos;VALUE&apos; INTO l_aux1 l_aux2.
+        l_version = zcl_ap_string=&gt;limpia_numeros( l_aux2 ).
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+    IF l_version IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF l_version &gt; version.
+      WRITE l_version TO l_aux2(7).
+      CONCATENATE &apos;Nueva versión&apos;(NVE) l_aux2 INTO l_aux1 SEPARATED BY space.
+      IF zcl_ap_popup=&gt;confirmar( titulo = &apos;Actualización del programa!&apos;(APR)
+                                  texto  = l_aux1
+                                  texto2 = &apos;¿Desea actualizar la versión?&apos;(AVR) ) = &apos;X&apos;.
+        SYNTAX-CHECK FOR o_repo-&gt;i_codigo
+                     MESSAGE lv_msg
+                     LINE lv_line
+                     WORD lv_word
+                     PROGRAM sy-repid.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE i398(00) WITH lv_msg &apos;&apos; &apos;&apos; &apos;&apos;.
+        ELSE.
+          INSERT REPORT report FROM o_repo-&gt;i_codigo.         &quot;#EC *
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="CONEXION" VERSION="1" LANGU="S" DESCRIPT="Crea conexión FTP" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CONEXION" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD conexion.
+    DATA: l_fichero_pc TYPE string,
+          l_ok         TYPE c LENGTH 1,
+          l_xml        TYPE string.
+
+    FIELD-SYMBOLS &lt;repo&gt; TYPE zap_repo.
+
+    IF origen = &apos;F&apos;.
+      o_ftp = NEW #( ).
+
+      o_ftp-&gt;connect( user = &apos;sap4abap&apos; password = password host = &apos;sap4.com&apos; ).
+
+      IF NOT o_ftp-&gt;error_conexion IS INITIAL.
+        MESSAGE &apos;Error de conexión&apos;(ECO) TYPE &apos;E&apos;.
+      ELSE.
+        IF o_ftp-&gt;cd( &apos;repo&apos; ) &lt;&gt; &apos;X&apos;.
+          MESSAGE &apos;Error al cambiar al directorio REPO&apos;(ECD) TYPE &apos;E&apos;.
+        ENDIF.
+
+        o_ftp-&gt;get( EXPORTING fichero = &apos;repo.xml&apos;
+                              dir_temp = &apos;X&apos;
+                    IMPORTING fichero_pc = l_fichero_pc
+                              ok = l_ok ).
+
+        IF l_ok IS INITIAL.
+          MESSAGE &apos;Error al recuperar el fichero indice de repositorio&apos;(EFI) TYPE &apos;I&apos;.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CONCATENATE ruta_pc_local &apos;\repo.xml&apos; INTO l_fichero_pc.
+    ENDIF.
+
+    IF NOT l_fichero_pc IS INITIAL.
+      zcl_ap_ficheros=&gt;leer_xml( EXPORTING fichero = l_fichero_pc
+                                        mostrar_error = &apos;&apos;
+                              IMPORTING string = l_xml ).
+
+      IF l_xml IS INITIAL.
+        MESSAGE &apos;No existen elementos en el repositorio&apos;(NER) TYPE &apos;I&apos;.
+      ELSE.
+        CALL TRANSFORMATION id
+             SOURCE XML l_xml
+             RESULT tabla = i_repo.
+
+        LOOP AT i_repo ASSIGNING &lt;repo&gt;.
+          &lt;repo&gt;-devclass = get_clase_desarrollo( object = &lt;repo&gt;-object nombre = &lt;repo&gt;-nombre ).
+          IF &lt;repo&gt;-devclass IS INITIAL.
+            &lt;repo&gt;-lights = zcl_ap_alv_grid=&gt;c_sem_rojo.
+          ELSE.
+            &lt;repo&gt;-lights = zcl_ap_alv_grid=&gt;c_sem_verde.
+
+            SELECT libreria
+              FROM zbc003
+              WHERE name = @&lt;repo&gt;-nombre
+              ORDER BY PRIMARY KEY
+              INTO @&lt;repo&gt;-libreria
+              UP TO 1 ROWS.
+            ENDSELECT.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CONSTRUCTOR" SCONAME="ORIGEN" VERSION="1" LANGU="S" DESCRIPT="&apos;L&apos; - Ficheros locales, &apos;F&apos;-&gt;FTP" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;F&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="CONSTRUCTOR" SCONAME="RUTA_PC_LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    me-&gt;origen = origen.
+    IF NOT ruta_pc_local IS INITIAL.
+      me-&gt;ruta_pc_local = ruta_pc_local.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="DESCONEXION" VERSION="1" LANGU="S" DESCRIPT="Desconexión del FTP" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD desconexion.
+    IF NOT o_ftp IS INITIAL.
+      o_ftp-&gt;disconnect( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="EXISTE_OBJETO" VERSION="1" LANGU="S" DESCRIPT="¿Existe el objeto?" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="EXISTE_OBJETO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Object Type" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TROBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="EXISTE_OBJETO" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="EXISTE_OBJETO" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_objeto.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_tadir TYPE tadir.
+
+    CLEAR existe.
+    SELECT SINGLE * FROM tadir
+      INTO l_tadir
+     WHERE pgmid    = &apos;R3TR&apos;
+       AND object   = object
+       AND obj_name = nombre.
+    IF sy-subrc = 0.
+      existe = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CLASE_DESARROLLO" VERSION="1" LANGU="S" DESCRIPT="Devuelve la clase de desarrollo" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CLASE_DESARROLLO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Object Type" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TROBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CLASE_DESARROLLO" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CLASE_DESARROLLO" SCONAME="DEVCLASS" VERSION="1" LANGU="S" DESCRIPT="Package" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DEVCLASS"/>
+  <source>METHOD get_clase_desarrollo.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_trdir TYPE trdir.
+
+    CLEAR devclass.
+    IF object = &apos;PROG&apos;.
+      SELECT SINGLE name FROM trdir
+       INTO l_trdir-name
+      WHERE name = nombre.
+      IF sy-subrc &lt;&gt; 0.
+        return.
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE devclass FROM tadir
+      INTO devclass
+     WHERE pgmid    = &apos;R3TR&apos;
+       AND object   = object
+       AND obj_name = nombre.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CODIGO" VERSION="1" LANGU="S" DESCRIPT="Recupera el código fuente del programa" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CODIGO" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="SAP ArchiveLink: Data Element for Absolute URI" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SAEURI"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_CODIGO" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD get_codigo.
+    i_codigo = zcl_ap_string=&gt;get_text_from_url( url = url mostrar_error = mostrar_error ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="GET_NOMBRE_SLNK" VERSION="1" LANGU="S" DESCRIPT="Recupera nombre del fichero SLNK" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_NOMBRE_SLNK" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_NOMBRE_SLNK" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Object Type" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TROBJTYPE"/>
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="GET_NOMBRE_SLNK" SCONAME="SLNK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_nombre_slnk.
+    slnk = nombre.
+    slnk = to_upper( slnk ).
+    CONCATENATE object &apos;_&apos; slnk &apos;.slnk&apos; INTO slnk.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="IMPORTAR_SLNK" VERSION="1" LANGU="S" DESCRIPT="Importa fichero SLNK" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="IMPORTAR_SLNK" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD importar_slnk.
+    DATA: isslinkee TYPE c LENGTH 1,
+          l_file    TYPE c LENGTH 300.
+
+    isslinkee = &apos;X&apos;.
+    EXPORT isslinkee = isslinkee TO MEMORY ID &apos;ISSLNK&apos;.
+
+    l_file = fichero.
+    SUBMIT zsaplink                                        &quot;#EC CI_SUBMIT
+     AND RETURN
+           WITH filename = l_file
+           WITH overwr   = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="IMPORTA_SLNK_FROM_FTP" VERSION="1" LANGU="S" DESCRIPT="Recupera fichero desde el FTP" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="IMPORTA_SLNK_FROM_FTP" SCONAME="REPO" VERSION="1" LANGU="S" DESCRIPT="Estructura repositorio desarrollos AP" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZAP_REPO"/>
+  <source>METHOD importa_slnk_from_ftp.
+    DATA: l_ok           TYPE c LENGTH 1,
+          l_devclass     TYPE devclass,
+          l_fichero_slnk TYPE string,
+          l_fichero_pc   TYPE string,
+          l_long         TYPE i.
+    DATA: i_ficheros TYPE TABLE OF file_info,
+          l_fichero  TYPE file_info.
+
+    IF existe_objeto( object = repo-object
+                      nombre = repo-nombre ) = &apos;X&apos;.
+      l_ok = zcl_ap_popup=&gt;confirmar( texto  = &apos;Objecto ya existe&apos;(OYE)
+                                      texto2 = &apos;¿Desea actualizarlo desde el fichero?&apos;(DAF) ).
+      l_devclass = get_clase_desarrollo( object = repo-object
+                                         nombre = repo-nombre ).
+    ELSE.
+      l_ok = &apos;X&apos;.
+    ENDIF.
+
+    IF l_ok &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    l_fichero_slnk = get_nombre_slnk( nombre = repo-nombre
+                                      object = repo-object ).
+
+    IF origen = &apos;F&apos;.
+      o_ftp-&gt;get( EXPORTING fichero = l_fichero_slnk
+                          dir_temp = &apos;X&apos;
+                IMPORTING fichero_pc = l_fichero_pc
+                          ok = l_ok ).
+    ELSE.
+      l_fichero_pc = zcl_ap_ficheros=&gt;concat_ruta( directorio = ruta_pc_local
+                                                   fichero = l_fichero_slnk ).
+
+      IF zcl_ap_ficheros=&gt;existe( l_fichero_pc ) = &apos;&apos;.
+        CLEAR l_fichero_pc.
+        i_ficheros = zcl_ap_ficheros=&gt;lista_ficheros( ruta_pc_local ).
+        l_long = strlen( l_fichero_slnk ) - 5.
+        IF l_long &gt; 4.
+          LOOP AT i_ficheros INTO l_fichero WHERE filename CS l_fichero_slnk(l_long).
+            EXIT.
+          ENDLOOP.
+          IF sy-subrc = 0.
+            l_fichero_pc = l_fichero-filename.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      IF NOT l_fichero_pc IS INITIAL.
+        importar_slnk( l_fichero_pc ).
+
+        cambiar_clase_desarrollo( nombre = repo-nombre
+                                  object = repo-object
+                                  devclass = l_devclass ).
+
+        activar_objeto( object = repo-object nombre = repo-nombre ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REPO" CMPNAME="INSTALAR_REPORT_TEMP" VERSION="1" LANGU="S" DESCRIPT="Instala el report temporalmente" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REPO" CMPNAME="INSTALAR_REPORT_TEMP" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD instalar_report_temp.
+    DATA: l_existe TYPE c LENGTH 1,
+          l_repo   TYPE zap_repo.
+
+    l_existe = existe_objeto( object = &apos;PROG&apos; nombre = nombre ).
+
+    l_repo-object = &apos;PROG&apos;.
+    l_repo-nombre = nombre.
+    importa_slnk_from_ftp( repo = l_repo ).
+
+    IF existe_objeto( object = &apos;PROG&apos; nombre = nombre ) = &apos;X&apos;.
+      SUBMIT (nombre) &quot;#EC CI_SUBMIT
+             VIA SELECTION-SCREEN.
+    ENDIF.
+
+    IF l_existe IS INITIAL.
+      borrar_report( nombre ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

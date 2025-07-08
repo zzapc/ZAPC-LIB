@@ -1,0 +1,124 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZBCIMAIL
+*&---------------------------------------------------------------------*
+
+DATA: v_destinatario_mail(100),
+      v_emisor_mail(100),
+      v_copia_mail(100),
+      v_titulo_mail(100),
+      v_copia_a_responsable_mail,
+      v_copia_a_emisor_mail.
+
+DATA: l_usrid_mail LIKE pa0105-usrid,
+      l_aux_mail(100).
+
+DATA: i_texto_mail LIKE solisti1 OCCURS 0 WITH HEADER LINE.
+
+DEFINE t.
+  clear i_texto_mail.
+  i_texto_mail = &1.
+  append i_texto_mail.
+END-OF-DEFINITION.
+DEFINE t3.
+  clear i_texto_mail.
+  concatenate &1 &2 &3 into i_texto_mail.
+  append i_texto_mail.
+END-OF-DEFINITION.
+
+DEFINE t4.
+  clear i_texto_mail.
+  concatenate &1 &2 &3 &4 into i_texto_mail.
+  append i_texto_mail.
+END-OF-DEFINITION.
+
+DEFINE get_mail_pernr.
+  select single usrid from pa0105
+    into l_usrid_mail
+   where pernr = &1
+     and endda >= sy-datum
+     and begda <= sy-datum
+     and subty = '9003'.
+  if sy-subrc = 0.
+    concatenate l_usrid_mail '@airnostrum.es'
+           into &2.
+  endif.
+END-OF-DEFINITION.
+
+DEFINE inicio_mail_html.
+  refresh i_texto_mail.
+  t '<head>'.
+  concatenate '<title>' &1 '</title>' into l_aux_mail.
+  t l_aux_mail.
+  t '<meta http-equiv="Content-Type" content="text/html;">'.
+  t '<style type="text/css">'.
+  t '<!--'.
+  t
+'n1 {font-family: Arial, Helvetica, sans-serif; font-size: 14px;}'.
+  t '-->'.
+  t '<!--'.
+  t
+'n2 {font-family: Arial, Helvetica, sans-serif; font-size: 10px;}'.
+  t '-->'.
+  t '</style>'.
+  t '</head>'.
+
+  t '<body class="n1">'.
+END-OF-DEFINITION.
+
+DEFINE enviar_mail.
+  call function 'Z_ENVIO_MAIL'
+    exporting
+      subject   = v_titulo_mail
+      direccion = &1
+      urgente   = 'X'
+      html      = 'X'
+      sender    = v_emisor_mail
+    tables
+      texto     = i_texto_mail.
+
+  if not &2 is initial.
+    call function 'Z_ENVIO_MAIL'
+      exporting
+        subject   = v_titulo_mail
+        direccion = &2
+        urgente   = 'X'
+        html      = 'X'
+        sender    = v_emisor_mail
+      tables
+        texto     = i_texto_mail.
+  endif.
+END-OF-DEFINITION.
+
+DATA: v_letra_mail(100) VALUE 'font-size:12px;'.
+
+DEFINE col_mail.
+  concatenate '  <th scope="col" style="' v_letra_mail
+              '">' &1 '</th>' into l_aux_mail.
+  t l_aux_mail.
+END-OF-DEFINITION.
+
+DEFINE celda_mail.
+  describe field &1 type l_aux_mail.
+  if l_aux_mail = 'D'.
+    write &1 to l_aux_mail(10).
+    concatenate '  <td style="' v_letra_mail
+                '"><div align="center">' l_aux_mail(10) '</DIV></td>'
+                into l_aux_mail.
+  else.
+    concatenate '  <td style="' v_letra_mail
+                '">' &1 '</td>' into l_aux_mail.
+  endif.
+  t l_aux_mail.
+END-OF-DEFINITION.
+
+DEFINE pegar_tabla_texto_mail.
+  t '<p>'.
+  loop at &1.
+    if &1 is initial.
+      t '</p><p>'.
+    else.
+      t &1.
+    endif.
+  endloop.
+  t '</p>'.
+END-OF-DEFINITION.

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZMACROS_AP" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Macros APC" LENGTH="10 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  ZMACROS_AP
+*&amp;
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT  zmacros_ap.
+
+TABLES trmac.
+
+START-OF-SELECTION.
+
+  DATA: v_new,
+        v_numm TYPE i.
+
+  DEFINE mac_new.
+    CLEAR: trmac, v_new.
+    CONCATENATE &apos;__&apos; &amp;1 INTO trmac-name.
+    TRANSLATE trmac-name TO UPPER CASE.
+    SELECT SINGLE * FROM trmac
+     WHERE name = trmac-name.
+    IF sy-subrc NE 0.
+      v_new = &apos;X&apos;.
+      CLEAR v_numm.
+    ENDIF.
+  END-OF-DEFINITION.
+
+  DEFINE mac_add.
+    IF v_new = &apos;X&apos;.
+      IF strlen( &amp;1 ) &gt; 40.
+                ROLLBACK WORK.
+        MESSAGE |Línea { &amp;1 } con más de 40 carácteres| TYPE &apos;E&apos;.
+      ENDIF.
+      trmac-numm = v_numm.
+      ADD 1 TO v_numm.
+      IF v_numm = 0.
+        trmac-numm = &apos;000&apos;.
+      ELSE.
+        CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_INPUT&apos;
+          EXPORTING
+            input  = trmac-numm
+          IMPORTING
+            output = trmac-numm.
+
+        trmac-numm = trmac-numm+1.
+      ENDIF.
+      trmac-line = &amp;1.
+      MODIFY trmac.
+    ENDIF.
+  END-OF-DEFINITION.
+
+  mac_new &apos;DATA_SET_VART&apos;.
+  mac_add: &apos;* Definición de variables en base a tipo estructura&apos;,
+           &apos;TYPES T_&amp;1 TYPE &amp;1.&apos;,
+           &apos;TYPES TT_&amp;1 TYPE TABLE OF T_&amp;1.&apos;,
+           &apos;DATA I_&amp;1 TYPE TT_&amp;1.&apos;,
+           &apos;DATA L_&amp;1 TYPE T_&amp;1.&apos;,
+           &apos;FIELD-SYMBOLS &lt;&amp;1&gt; TYPE T_&amp;1.&apos;.
+
+  mac_new &apos;DATA_SET_VAR&apos;.
+  mac_add: &apos;* Definición de variables en base a tipo&apos;,
+           &apos;TYPES TT_&amp;1 TYPE TABLE OF T_&amp;1.&apos;,
+           &apos;DATA I_&amp;1 TYPE TT_&amp;1.&apos;,
+           &apos;DATA L_&amp;1 TYPE T_&amp;1.&apos;,
+           &apos;FIELD-SYMBOLS &lt;&amp;1&gt; TYPE T_&amp;1.&apos;.
+
+  mac_new &apos;PONER_CEROS&apos;.
+  mac_add: &apos;* Rellenar con ceros por la izquierda&apos;,
+           &apos;ZCL_AP_STRING=&gt;PONER_CEROS_C(          *&apos;,
+           &apos; CHANGING  CADENA = &amp;1 )&apos;.
+
+  mac_new &apos;QUITAR_CEROS&apos;.
+  mac_add: &apos;* Quitar ceros de la izquierda&apos;,
+           &apos;ZCL_AP_STRING=&gt;QUITAR_CEROS_C(         *&apos;,
+           &apos; CHANGING  CADENA = &amp;1 )&apos;.
+
+  mac_new &apos;FORMATEAR_MATERIAL&apos;.
+  mac_add: &apos;* Formato interno del material&apos;,
+           &apos;&amp;1 = ZCL_AP_MATERIAL=&gt;FORMATO_INTERNO( *&apos;,
+           &apos;                      MATNR = &amp;1 )&apos;.
+
+
+  mac_new &apos;CONCAT_A&apos;.
+  mac_add: &apos;* Concatenar 1 parámetros sobre variabla actual&apos;,
+           &apos;&amp;1 = ZCL_AP_UTILS=&gt;CONCAT( p1 = &amp;1     *&apos;,
+           &apos;                           p2 = &amp;2 )&apos;.
+
+  mac_new &apos;CONCAT2&apos;.
+  mac_add: &apos;* Concatenar 2 parámetros&apos;,
+           &apos;&amp;1 = ZCL_AP_UTILS=&gt;CONCAT( p1 = &amp;2     *&apos;,
+           &apos;                           p2 = &amp;3 )&apos;.
+
+  mac_new &apos;CONCAT3&apos;.
+  mac_add: &apos;* Concatenar 3 parámetros&apos;,
+           &apos;&amp;1 = ZCL_AP_UTILS=&gt;CONCAT( p1 = &amp;2     *&apos;,
+             &apos;                p2 = &amp;3  p3 = &amp;4 )&apos;.
+
+  mac_new &apos;CONCAT4&apos;.
+  mac_add: &apos;* Concatenar 4 parámetros&apos;,
+           &apos;&amp;1 = ZCL_AP_UTILS=&gt;CONCAT( p1 = &amp;2     *&apos;,
+             &apos;        p2 = &amp;3  p3 = &amp;4 p4 = &amp;5 )&apos;.
+
+  mac_new &apos;BREAK_AP&apos;.
+  mac_add: &apos;* BREAK-POINT usuario AP&apos;,
+           &apos;IF SY-UNAME = zcl_c=&gt;usuario_ap.&apos;,
+           &apos;  BREAK-POINT.&apos;,
+           &apos;ENDIF.&apos;.
+
+  mac_new &apos;BREAK_AP_SE38&apos;.
+  mac_add: &apos;* BREAK-POINT usuario AP/SE38&apos;,
+           &apos;IF SY-UNAME = zcl_c=&gt;usuario_ap AND    *&apos;,
+           &apos;   SY-TCODE = &apos;&apos;SE38&apos;&apos;.&apos;,
+           &apos;  BREAK-POINT.&apos;,
+           &apos;ENDIF.&apos;.
+
+  mac_new &apos;BREAK_AP_SE38_P&apos;.
+  mac_add: &apos;* BREAK-POINT usuario AP/SE38&apos;,
+           &apos;IF SY-UNAME = zcl_c=&gt;usuario_ap AND    *&apos;,
+           &apos;   SY-TCODE = &apos;&apos;SE38&apos;&apos; AND &amp;1 = &amp;2.&apos;,
+           &apos;  BREAK-POINT.&apos;,
+           &apos;ENDIF.&apos;.
+
+  mac_new &apos;BOTONES_PLANTILLA&apos;.
+  mac_add: &apos;* Añade los botones por defecto pant.Sel&apos;,
+           &apos;TABLES SSCRFIELDS.&apos;,
+           &apos;SELECTION-SCREEN FUNCTION KEY 2&apos;,
+           &apos;SELECTION-SCREEN FUNCTION KEY 3&apos;,
+           &apos;SELECTION-SCREEN FUNCTION KEY 4&apos;,
+           &apos;SELECTION-SCREEN FUNCTION KEY 5&apos;.
+
+  mac_new &apos;ADD_LISTA&apos;.
+  mac_add: &apos;* Añade elemento a lista&apos;,
+           &apos;ZCL_AP_LISTA=&gt;ADD(                     *&apos;,
+           &apos;      EXPORTING VALOR = &amp;2             *&apos;,
+           &apos;      CHANGING LISTA = &amp;1 ).&apos;.
+
+  mac_new &apos;ADD_LISTA_NO0&apos;.
+  mac_add: &apos;* Añade elemento sin ceros a lista &apos;,
+           &apos;ZCL_AP_LISTA=&gt;ADD(                     *&apos;,
+           &apos;      EXPORTING VALOR = &amp;2             *&apos;,
+           &apos;                QUITAR_CEROS = &apos;&apos;X&apos;&apos;     *&apos;,
+           &apos;      CHANGING LISTA = &amp;1 ).&apos;.
+
+  mac_new &apos;RANGO_EQ&apos;.
+  mac_add: &apos;* Añade elemento a rango&apos;,
+           &apos;CLEAR &amp;1.&apos;,
+           &apos;&amp;1-OPTION = &apos;&apos;EQ&apos;&apos;&apos;,
+           &apos;&amp;1-SIGN = &apos;&apos;I&apos;&apos;&apos;,
+           &apos;&amp;1-LOW = &amp;2&apos;,
+           &apos;APPEND &amp;1&apos;.
+
+  mac_new &apos;RANGO_NE&apos;.
+  mac_add: &apos;* Añade elemento a rango&apos;,
+           &apos;CLEAR &amp;1.&apos;,
+           &apos;&amp;1-OPTION = &apos;&apos;EQ&apos;&apos;&apos;,
+           &apos;&amp;1-SIGN = &apos;&apos;E&apos;&apos;&apos;,
+           &apos;&amp;1-LOW = &amp;2&apos;,
+           &apos;APPEND &amp;1&apos;.
+
+  mac_new &apos;RANGO_BT&apos;.
+  mac_add: &apos;* Añade elemento a rango&apos;,
+           &apos;CLEAR &amp;1.&apos;,
+           &apos;&amp;1-OPTION = &apos;&apos;BT&apos;&apos;&apos;,
+           &apos;&amp;1-SIGN = &apos;&apos;I&apos;&apos;&apos;,
+           &apos;&amp;1-LOW = &amp;2&apos;,
+           &apos;&amp;1-HIGH = &amp;3&apos;,
+           &apos;APPEND &amp;1&apos;.
+
+  mac_new &apos;DEF_RANGOC&apos;.
+  mac_add: &apos;* Define variable rango OO&apos;,
+           &apos;DATA R_&amp;1 TYPE RANGE OF &amp;1.&apos;,
+           &apos;DATA LR_&amp;1 LIKE LINE OF R_&amp;1&apos;.
+
+  mac_new &apos;RANGOC_EQ&apos;.
+  mac_add: &apos;* Añade elemento a rango&apos;,
+           &apos;CLEAR L&amp;1.&apos;,
+           &apos;L&amp;1-OPTION = &apos;&apos;EQ&apos;&apos;&apos;,
+           &apos;L&amp;1-SIGN = &apos;&apos;I&apos;&apos;&apos;,
+           &apos;L&amp;1-LOW = &amp;2&apos;,
+           &apos;COLLECT L&amp;1 INTO &amp;1&apos;.
+
+  mac_new &apos;RANGOC_NE&apos;.
+  mac_add: &apos;* Añade elemento a rango&apos;,
+           &apos;CLEAR L&amp;1.&apos;,
+           &apos;L&amp;1-OPTION = &apos;&apos;EQ&apos;&apos;&apos;,
+           &apos;L&amp;1-SIGN = &apos;&apos;E&apos;&apos;&apos;,
+           &apos;L&amp;1-LOW = &amp;2&apos;,
+           &apos;COLLECT L&amp;1 INTO &amp;1&apos;.
+
+**https://github.com/ypinc/ypinc           ZAP_INCLUDE_CACHES
+*DELETE FROM trmac WHERE name = &apos;__CLASS_CACHE&apos;.
+*
+*  mac_new &apos;CLASS_CACHE&apos;.
+*  mac_add: &apos;class lcl_cache_&amp;1_by_&amp;2 definition.&apos;,
+*           &apos;public section.&apos;,
+*           &apos;class-methods class_constructor.&apos;,
+*           &apos;class-methods get importing &apos;,
+*           ` iv_&amp;2 type &amp;1-&amp;2 `,
+*           ` returning value(rs_&amp;1) type &amp;1.`,
+*           &apos;class-methods select importing &apos;,
+*           ` iv_&amp;2 type &amp;1-&amp;2 `,
+*           ` returning value(rs_&amp;1) type &amp;1.`,
+*           &apos;class-data:&apos;,
+*           &apos;miss type i,&apos;,
+*           &apos;hits type i.&apos;,
+*           &apos;private section.&apos;,
+*           &apos;class-data:&apos;,
+*           &apos;heap type hashed table of &amp;1 with unique &apos;,
+*           &apos; key &amp;2 initial size &amp;3,&apos;,
+*           &apos;anti type hashed table of &amp;1-&amp;2 with &apos;,
+*           ` unique key table_line,`,
+*           &apos;msize type i.&apos;,
+*           &apos;endclass.&apos;,
+*           &apos;class lcl_cache_&amp;1_by_&amp;2 implementation.&apos;,
+*           &apos;method class_constructor.&apos;,
+*           &apos;msize = &amp;3.&apos;,
+*           &apos;endmethod.&apos;,
+*           &apos;method get.&apos;,
+*           &apos;read table heap into rs_&amp;1 &apos;,
+*           ` with key &amp;2 = iv_&amp;2.`,
+*           &apos;if sy-subrc = 0. &quot; 1. found, not at head&apos;,
+*           &apos;add 1 to hits.&apos;,
+*           &apos;else.&apos;,
+*           &apos;if anti[] is not initial.  &apos;,
+*           &apos;read table anti with table &apos;,
+*           ` key table_line = iv_&amp;2 `,
+*           `  transporting no fields.`,
+*           &apos;if sy-subrc = 0.&apos;,
+*           &apos;add 1 to hits.&apos;,
+*           &apos;clear rs_&amp;1. return.&apos;,
+*           &apos;endif.&apos;,
+*           &apos;endif.&apos;,
+*           &apos;add 1 to miss.&apos;,
+*           &apos;rs_&amp;1 = select( iv_&amp;2 ).&apos;,
+*           &apos;if rs_&amp;1-&amp;2 is initial.&apos;,
+*           &apos;insert iv_&amp;2 into table anti. return.&apos;,
+*           &apos;endif.&apos;,
+*           &apos;if lines( heap ) = msize.&apos;,
+*           &apos;clear heap[].&apos;,
+*           &apos;endif.&apos;,
+*           &apos;insert rs_&amp;1 into table heap.&apos;,
+*           &apos;endif.&apos;,
+*           &apos;endmethod.&apos;,
+*           &apos;method select.&apos;.</source>
+</PROG>

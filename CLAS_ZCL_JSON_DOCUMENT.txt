@@ -1,0 +1,3000 @@
+==================================================
+ZCL_JSON_DOCUMENT=============CCDEF
+==================================================
+*"* use this source file for any type of declarations (class
+*"* definitions, interfaces or type declarations) you need for
+*"* components in the private section
+
+==================================================
+ZCL_JSON_DOCUMENT=============CCIMP
+==================================================
+*"* local class implementation for public class
+*"* use this source file for the implementation part of
+*"* local helper classes
+TYPES: BEGIN OF t_int,
+         i TYPE i,
+       END OF t_int,
+       BEGIN OF t_packed,
+         p TYPE p LENGTH 10 DECIMALS 2,
+       END OF t_packed,
+       BEGIN OF t_numc,
+         nc TYPE n LENGTH 4,
+       END OF t_numc,
+       BEGIN OF t_string,
+         s TYPE string,
+       END OF t_string,
+       BEGIN OF t_struc1,
+         i   TYPE i,
+         nc  TYPE n LENGTH 4,
+         p   TYPE p LENGTH 10 DECIMALS 2,
+         s   TYPE string,
+         c1  TYPE c LENGTH 1,
+         c20 TYPE c LENGTH 20,
+         x   TYPE xstring,
+         dr  TYPE REF TO data,
+       END OF t_struc1,
+       BEGIN OF t_date,
+         d TYPE d,
+       END OF t_date,
+       BEGIN OF t_namespace,
+         /cex/test TYPE string,
+         test      TYPE string,
+       END OF t_namespace.
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_zjson DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_zjson DEFINITION FINAL FOR TESTING "#AU Risk_Level Harmless
+.                                            "#AU Duration   Short
+*  DURATION SHORT          ">= 7.02
+*  RISK LEVEL HARMLESS.    ">= 7.02
+
+  PRIVATE SECTION.
+    DATA: json_doc  TYPE REF TO zcl_json_document,
+          json_doc2 TYPE REF TO zcl_json_document,
+          json_str  TYPE string.
+
+    METHODS: test_number              FOR TESTING
+      RAISING
+        zcx_json_document,
+      test_string_number       FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_string_escape       FOR TESTING,
+      test_string_number_struc FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_xstring             FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_dref                FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_number_struct       FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_append_data         FOR TESTING,
+      test_string_table        FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_stru_table          FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_stru_table_named    FOR TESTING,
+      test_parse_list_strings  FOR TESTING,
+      test_parse_flat_object   FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_date_format         FOR TESTING,
+      test_date_format_reverse FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_namespace           FOR TESTING,
+      test_boolean             FOR TESTING
+        RAISING
+          zcx_json_document,
+      test_transform_simple    FOR TESTING
+        RAISING
+          zcx_json_document
+          cx_xslt_format_error,
+      test_name_values         FOR TESTING
+        RAISING
+          zcx_json_document.
+
+ENDCLASS.                    "lcl_zjson DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_zjson IMPLEMENTATION
+*----------------------------------------------------------------------*
+CLASS lcl_zjson IMPLEMENTATION.
+
+  METHOD test_number.
+    DATA: tpacked  TYPE p LENGTH 10 DECIMALS 2,
+          tpacked2 TYPE p LENGTH 10 DECIMALS 2,
+          tfloat   TYPE f,
+          tint     TYPE i,
+          tint2    TYPE i,
+          tnumc    TYPE n LENGTH 4,
+          tnumc2   TYPE n LENGTH 4.
+
+*   packed number
+    tfloat = '10.5'.
+    tpacked = tfloat.  "conversion to packed
+    json_doc = zcl_json_document=>create_with_data( tpacked ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '10.50'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = tpacked2 ).
+    cl_aunit_assert=>assert_equals( exp = tpacked
+                                    act = tpacked2 ).
+
+*   packed negative
+    tfloat = '-999.55'.
+    tpacked = tfloat.  "conversion to packed
+    json_doc = zcl_json_document=>create_with_data( tpacked ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '-999.55'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = tpacked2 ).
+    cl_aunit_assert=>assert_equals( exp = tpacked
+                                    act = tpacked2 ).
+
+
+*   integer
+    tint = 10.
+    json_doc = zcl_json_document=>create_with_data( tint ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '10'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = tint2 ).
+    cl_aunit_assert=>assert_equals( exp = tint
+                                    act = tint2 ).
+
+*   numc
+    tnumc = '00010'.
+    json_doc = zcl_json_document=>create_with_data( tnumc ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '"0010"'
+                                    act = json_str ).
+
+    json_doc = zcl_json_document=>create_with_data(
+               data             = tnumc
+               numc_as_numeric  = abap_true
+           ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '10'
+                                    act = json_str ).
+
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = tnumc2 ).
+    cl_aunit_assert=>assert_equals( exp = tnumc
+                                    act = tnumc2 ).
+
+*   numc with just zeros
+    tnumc = '00000'.
+    json_doc = zcl_json_document=>create_with_data( tnumc ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '"0000"'
+                                    act = json_str ).
+
+    json_doc = zcl_json_document=>create_with_data(
+               data             = tnumc
+               numc_as_numeric  = abap_true
+           ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '0'
+                                    act = json_str ).
+
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = tnumc2 ).
+    cl_aunit_assert=>assert_equals( exp = tnumc
+                                    act = tnumc2 ).
+
+  ENDMETHOD.                    "test_number
+
+
+  METHOD test_string_number.
+    DATA: t_str  TYPE string,
+          t_str2 TYPE string.
+
+    t_str = '0010'.
+    json_doc = zcl_json_document=>create_with_data( t_str ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '"0010"'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = t_str2 ).
+    cl_aunit_assert=>assert_equals( exp = t_str
+                                    act = t_str2 ).
+
+  ENDMETHOD.                    "test_string_number
+
+  METHOD test_string_escape.
+
+    DATA: BEGIN OF t_struc,
+            abc TYPE string VALUE 'def:"123}',
+          END OF t_struc.
+    DATA t_str TYPE string.
+
+    json_doc = zcl_json_document=>create_with_data( t_struc ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"abc" :"def:\"123}"}'
+                                    act = json_str ).
+
+    json_doc = zcl_json_document=>create_with_json( json_str ).
+    t_str = json_doc->get_value( 'abc' ).
+
+    cl_aunit_assert=>assert_equals( exp = 'def:\"123}'
+                                    act = t_str ).
+
+  ENDMETHOD.                    "test_string_number
+
+
+  METHOD test_string_number_struc.
+    DATA: s_str  TYPE t_string,
+          s_str2 TYPE t_string.
+
+    s_str-s = '0010'.
+    json_doc = zcl_json_document=>create_with_data( s_str ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"s" :"0010"}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_str2 ).
+    cl_aunit_assert=>assert_equals( exp = s_str
+                                    act = s_str2 ).
+  ENDMETHOD.                    "test_string_number_struc
+
+
+  METHOD test_string_table.
+    DATA: str     TYPE string,
+          strtab  TYPE TABLE OF string,
+          strtab2 TYPE TABLE OF string.
+
+    str = '0010'. APPEND str TO strtab.
+    str = '0020'. APPEND str TO strtab.
+    str = '0030'. APPEND str TO strtab.
+
+    json_doc = zcl_json_document=>create_with_data( data = strtab suppress_itab = 'X' ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '["0010","0020","0030"]'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = strtab2 ).
+    cl_aunit_assert=>assert_equals( exp = strtab
+                                    act = strtab2 ).
+
+  ENDMETHOD.                    "test_string_table
+
+
+  METHOD test_number_struct.
+    DATA: tfloat    TYPE f,
+          s_int     TYPE t_int,
+          s_int2    TYPE t_int,
+          s_packed  TYPE t_packed,
+          s_packed2 TYPE t_packed,
+          s_numc    TYPE t_numc,
+          s_numc2   TYPE t_numc.
+
+*   Integer
+    s_int-i = 10.
+    json_doc = zcl_json_document=>create_with_data( s_int ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"i" :10}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_int2 ).
+    cl_aunit_assert=>assert_equals( exp = s_int
+                                    act = s_int2 ).
+
+*   Packed number
+    tfloat = '10.5'.
+    s_packed-p = tfloat.  "conversion
+    json_doc = zcl_json_document=>create_with_data( s_packed ).
+    json_str = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"p" :10.50}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_packed2 ).
+    cl_aunit_assert=>assert_equals( exp = s_packed
+                                    act = s_packed2 ).
+
+*   NUMC without leading zeros
+    s_numc-nc = '10'.
+    json_doc = zcl_json_document=>create_with_data( s_numc ).
+    json_str = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"nc" :"0010"}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_numc2 ).
+    cl_aunit_assert=>assert_equals( exp = s_numc
+                                    act = s_numc2 ).
+
+    json_doc = zcl_json_document=>create_with_data(
+               data             = s_numc
+               numc_as_numeric  = abap_true
+           ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"nc" :10}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_numc2 ).
+    cl_aunit_assert=>assert_equals( exp = s_numc
+                                    act = s_numc2 ).
+
+*   NUMC with leading zeros
+    s_numc-nc = '0010'.
+    json_doc = zcl_json_document=>create_with_data( s_numc ).
+    json_str = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"nc" :"0010"}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_numc2 ).
+    cl_aunit_assert=>assert_equals( exp = s_numc
+                                    act = s_numc2 ).
+
+    json_doc = zcl_json_document=>create_with_data(
+               data             = s_numc
+               numc_as_numeric  = abap_true
+           ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"nc" :10}'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = s_numc2 ).
+    cl_aunit_assert=>assert_equals( exp = s_numc
+                                    act = s_numc2 ).
+
+  ENDMETHOD.                    "test_number_struct
+
+
+  METHOD test_append_data.
+    DATA: s_int    TYPE t_int,
+          s_string TYPE t_string.
+
+    s_int-i = 10.
+    s_string-s = 'abc'.
+
+    json_doc = zcl_json_document=>create( ).
+    json_doc->append_data( data = s_int iv_name = 's_int' ).
+    json_doc->append_data( data = s_string iv_name = 's_string' ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals(
+        exp = '{"s_int":{"i" :10}, "s_string":{"s" :"abc"}}'
+        act = json_str ).
+
+  ENDMETHOD.                    "test_append_data
+
+  METHOD test_stru_table.
+
+    DATA: str     TYPE t_string,
+          strtab  TYPE TABLE OF t_string,
+          strtab2 TYPE TABLE OF t_string.
+
+    str-s = '0010'. APPEND str TO strtab.
+    str-s = '00xx'. APPEND str TO strtab.
+    str-s = '0030'. APPEND str TO strtab.
+
+    json_doc = zcl_json_document=>create_with_data( data = strtab suppress_itab = 'X' ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '[{"s" :"0010"},{"s" :"00xx"},{"s" :"0030"}]'
+                                    act = json_str ).
+    json_doc2 = zcl_json_document=>create_with_json( json_str ).
+    json_doc2->get_data( IMPORTING data = strtab2 ).
+    cl_aunit_assert=>assert_equals( exp = strtab
+                                    act = strtab2 ).
+
+  ENDMETHOD.                    "test_stru_table
+
+  METHOD test_stru_table_named.
+
+    DATA: str     TYPE t_string,
+          strtab  TYPE TABLE OF t_string,
+          strtab2 TYPE TABLE OF t_string.
+
+    str-s = '0010'. APPEND str TO strtab.
+    str-s = '00xx'. APPEND str TO strtab.
+    str-s = '0030'. APPEND str TO strtab.
+
+    json_doc = zcl_json_document=>create( ).
+    json_doc->append_data( data = strtab
+                           iv_name = 'dataname' ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"dataname": [{"s" :"0010"},{"s" :"00xx"},{"s" :"0030"}]}'
+                                    act = json_str ).
+
+  ENDMETHOD.                    "test_stru_table_named
+
+  METHOD test_parse_list_strings.
+    DATA: json_input TYPE string,
+          has_next   TYPE boolean.
+
+    json_input = '["value1","value2","value3"]'.
+    json_doc = zcl_json_document=>create_with_json( json_input ).
+    json_doc->get_next( ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = 'value1'
+                                    act = json_str ).
+    json_doc->get_next( ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = 'value2'
+                                    act = json_str ).
+    json_doc->get_next( ).
+    json_str = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = 'value3'
+                                    act = json_str ).
+    has_next = json_doc->get_next( ).
+    cl_aunit_assert=>assert_equals( exp = ''
+                                    act = has_next ).
+  ENDMETHOD.                    "test_parse_list_strings
+
+  METHOD test_parse_flat_object.
+    DATA: json_input TYPE string,
+          input_stru TYPE t_struc1,
+          ref_stru   TYPE t_struc1.
+
+    json_input = '{"i":22,"nc":20,"c1":"X","c20":"test","s":"string test","p":20.5}'.
+    ref_stru-i = 22.
+    ref_stru-nc = 20.
+    ref_stru-c1 = 'X'.
+    ref_stru-c20 = 'test'.
+    ref_stru-s = 'string test'.
+    ref_stru-p = '20.5'.
+
+    json_doc = zcl_json_document=>create_with_json( json_input ).
+    json_doc->get_data( IMPORTING data = input_stru ).
+
+    cl_aunit_assert=>assert_equals( exp = ref_stru
+                                    act = input_stru ).
+
+    "test starting from a structure and getting the structure in the end
+    CLEAR input_stru.
+    json_doc = zcl_json_document=>create_with_data( ref_stru ).
+    json_doc->get_data( IMPORTING data = input_stru ).
+
+    cl_aunit_assert=>assert_equals( exp = ref_stru
+                                    act = input_stru ).
+
+  ENDMETHOD.                    "test_parse_flat_object
+
+  METHOD test_date_format.
+
+    DATA input_stru TYPE t_date.
+    DATA ref_stru   TYPE t_date.
+    DATA json       TYPE string.
+
+    input_stru-d = '20120927'.
+    json_doc = zcl_json_document=>create( ).
+
+    "*--- test standard JSON date format ---*
+    json_doc->set_data( input_stru ).
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"d" :"20120927"}'
+                                    act = json ).
+
+    "*--- test SUP date format ---*
+    json_doc->set_data(
+        data          = input_stru
+        date_format   = 'YYYY-MM-DD'
+    ).
+
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"d" :"2012-09-27"}'
+                                    act = json ).
+
+    "*--- test world date format ---*
+    json_doc->set_data(
+        data          = input_stru
+        date_format   = 'DD.MM.YYYY'
+    ).
+
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"d" :"27.09.2012"}'
+                                    act = json ).
+
+    "*--- test US date format ---*
+    json_doc->set_data(
+        data          = input_stru
+        date_format   = 'MM/DD/YYYY'
+    ).
+
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"d" :"09/27/2012"}'
+                                    act = json ).
+
+    "*--- test short date format ---*
+    json_doc->set_data(
+        data          = input_stru
+        date_format   = 'DDMMYY'
+    ).
+
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"d" :"270912"}'
+                                    act = json ).
+
+  ENDMETHOD.                    "test_date_format
+
+  METHOD test_date_format_reverse.
+
+    DATA input_stru TYPE t_date.
+    DATA ref_stru   TYPE t_date.
+    DATA json       TYPE string.
+
+    input_stru-d = '20120927'.
+    json_doc = zcl_json_document=>create( ).
+
+    "*--- test standard JSON date format ---*
+    json = '{"d" :"20120927"}'.
+    json_doc->set_json( json ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = input_stru
+                                    act = ref_stru ).
+
+    "*--- test SUP date format ---*
+    json = '{"d" :"2012-09-27"}'.
+    json_doc->set_json(
+      EXPORTING
+        json        = json
+        date_format = 'YYYY-MM-DD'
+    ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = input_stru
+                                    act = ref_stru ).
+
+    "*--- test world date format ---*
+    json = '{"d" :"27.09.2012"}'.
+    json_doc->set_json(
+      EXPORTING
+        json        = json
+        date_format = 'DD.MM.YYYY'
+    ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = input_stru
+                                    act = ref_stru ).
+
+    "*--- test US date format ---*
+    json = '{"d" :"09/27/2012"}'.
+    json_doc->set_json(
+      EXPORTING
+        json        = json
+        date_format = 'MM/DD/YYYY'
+    ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = input_stru
+                                    act = ref_stru ).
+
+
+  ENDMETHOD.                    "test_date_format_reverse
+
+  METHOD test_namespace.
+
+    DATA input_stru TYPE t_namespace.
+    DATA json       TYPE string.
+
+    input_stru-/cex/test = 'with namespace'.
+    input_stru-test = 'without namespace'.
+
+    json_doc = zcl_json_document=>create( ).
+
+    "*--- regular namespace ---*
+    json_doc->set_data( input_stru ).
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"/cex/test" :"with namespace","test" :"without namespace"}'
+                                    act = json ).
+
+    "*--- replace namespace ---*
+    json_doc->set_namespace_conversion(
+      EXPORTING
+        namespace_1_slash_replace = ''
+        namespace_2_slash_replace = '_'
+    ).
+
+    json_doc->set_data( input_stru ).
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"cex_test" :"with namespace","test" :"without namespace"}'
+                                    act = json ).
+
+  ENDMETHOD.                    "test_namespace
+
+
+  METHOD test_xstring.
+
+    DATA input_stru TYPE t_struc1.
+    DATA ref_stru   TYPE t_struc1.
+    DATA json       TYPE string.
+
+    input_stru-x = '00AABB'.
+    json_doc = zcl_json_document=>create_with_data( input_stru ).
+
+    json = json_doc->get_json( ).
+
+    json_doc->set_json( json ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = input_stru
+                                    act = ref_stru ).
+
+  ENDMETHOD.                    "test_xstring
+
+  METHOD test_dref.
+
+    DATA input_stru TYPE t_struc1.
+    DATA ref_stru   TYPE t_struc1.
+    DATA json       TYPE string.
+
+    FIELD-SYMBOLS <inp> TYPE string.
+    FIELD-SYMBOLS <ref> TYPE string.
+
+    CREATE DATA input_stru-dr TYPE string.
+    ASSIGN input_stru-dr->* TO <inp>.
+    <inp> = 'Dref string'.
+
+    json_doc = zcl_json_document=>create_with_data( input_stru ).
+
+    json = json_doc->get_json( ).
+
+    json_doc->set_json( json ).
+
+    json_doc->get_data(
+      IMPORTING
+        data = ref_stru
+    ).
+
+    ASSIGN ref_stru-dr->* TO <ref>.
+
+    cl_aunit_assert=>assert_equals( exp = <inp>
+                                    act = <ref> ).
+
+  ENDMETHOD.                    "test_dref
+
+  METHOD test_boolean.
+
+    DATA: BEGIN OF ls_test,
+            yyy TYPE boolean,
+            xxx TYPE boolean,
+          END OF ls_test.
+
+    DATA: ls_test_ref LIKE ls_test.
+    DATA: json TYPE string.
+
+    ls_test-xxx = abap_true.
+
+    json_doc = zcl_json_document=>create_with_data( ls_test ).
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"yyy" :false,"xxx" :true}'
+                                    act = json ).
+
+    json_doc->get_data(
+      EXPORTING
+        json              = json
+      IMPORTING
+        data              = ls_test_ref
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = ls_test
+                                    act = ls_test_ref ).
+
+    json_doc = zcl_json_document=>create_with_data(
+                     data             = ls_test
+                     ignore_boolean   = abap_true
+                 ).
+
+    json = json_doc->get_json( ).
+    cl_aunit_assert=>assert_equals( exp = '{"yyy" :"","xxx" :"X"}'
+                                    act = json ).
+
+  ENDMETHOD.
+
+
+  METHOD test_transform_simple.
+
+    DATA: BEGIN OF ls_test,
+            yyy TYPE string,
+            xxx TYPE n LENGTH 3,
+          END OF ls_test.
+
+    DATA: ls_test_ref LIKE ls_test.
+    DATA: json TYPE string.
+
+    ls_test-yyy = 'Field 1'.
+    ls_test-xxx = '123'.
+
+    zcl_json_document=>transform_simple(
+      EXPORTING
+        data_in              = ls_test
+      IMPORTING
+        json_out             = json
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"RESULT":{"YYY":"Field 1","XXX":"123"}}'
+                                    act = json ).
+
+    zcl_json_document=>transform_simple(
+      EXPORTING
+        json_in              = json
+      IMPORTING
+        data_out             = ls_test_ref
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = ls_test
+                                    act = ls_test_ref ).
+
+    zcl_json_document=>transform_simple(
+      EXPORTING
+        data_in              = ls_test
+        lower_case           = abap_true
+      IMPORTING
+        json_out             = json
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"result":{"yyy":"Field 1","xxx":"123"}}'
+                                    act = json ).
+
+    CLEAR ls_test_ref.
+
+    zcl_json_document=>transform_simple(
+      EXPORTING
+        json_in              = json
+        lower_case           = abap_true
+      IMPORTING
+        data_out             = ls_test_ref
+    ).
+
+    cl_aunit_assert=>assert_equals( exp = ls_test
+                                    act = ls_test_ref ).
+
+  ENDMETHOD.
+
+  METHOD test_name_values.
+
+    DATA json TYPE string.
+    DATA name_values TYPE wdy_key_value_list .
+    FIELD-SYMBOLS: <name_value> TYPE wdy_key_value .
+
+    json_doc = zcl_json_document=>create_with_json( '{ "foo":"bar", "foo2":"bar2" }' ).
+    json_doc->get_name_value_pairs(
+      IMPORTING
+        name_values = name_values
+    ).
+
+    READ TABLE name_values WITH KEY key = 'foo' ASSIGNING <name_value>.
+    cl_aunit_assert=>assert_equals( exp = 'bar'
+                                    act = <name_value>-value ).
+
+    READ TABLE name_values WITH KEY key = 'foo2' ASSIGNING <name_value>.
+    cl_aunit_assert=>assert_equals( exp = 'bar2'
+                                    act = <name_value>-value ).
+
+    json_doc->set_name_value_pairs( name_values ).
+    json = json_doc->get_json( ).
+
+    cl_aunit_assert=>assert_equals( exp = '{"foo" :"bar","foo2" :"bar2" }'
+                                    act = json ).
+
+  ENDMETHOD.
+
+ENDCLASS.                    "lcl_zjson IMPLEMENTATION
+==================================================
+ZCL_JSON_DOCUMENT=============CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+
+==================================================
+ZCL_JSON_DOCUMENT=============CI
+==================================================
+  PRIVATE SECTION.
+
+    CONSTANTS co_version TYPE string VALUE '2.33' ##NO_TEXT.
+    DATA json TYPE string .
+    DATA data TYPE zjson_key_value_t .
+    DATA data_t TYPE string_table .
+    DATA array_cursor TYPE i .
+    DATA suppress_itab TYPE boolean .
+    DATA ignore_boolean TYPE boolean .
+    DATA dont_escape_ltgt TYPE boolean .
+    DATA numc_as_numeric TYPE boolean .
+    DATA dont_replace_linebreaks TYPE boolean .
+    DATA replace_underscore TYPE boolean.
+    DATA replace_double_underscore TYPE boolean.
+    DATA date_format TYPE char10 .
+    DATA namespace_replace_pattern TYPE string .
+    DATA escape_not_needed TYPE boolean VALUE abap_undefined ##NO_TEXT.
+
+    METHODS add_data
+      IMPORTING
+        !data TYPE any .
+    METHODS add_date
+      IMPORTING
+        !date TYPE d .
+    METHODS add_number
+      IMPORTING
+        !number TYPE any .
+    METHODS add_string
+      IMPORTING
+        !string TYPE any .
+    METHODS add_boolean
+      IMPORTING
+        !string TYPE any .
+    METHODS add_stru
+      IMPORTING
+        !line TYPE any .
+    METHODS add_table
+      IMPORTING
+        !table TYPE ANY TABLE .
+    METHODS add_time
+      IMPORTING
+        !time TYPE t .
+    METHODS add_xstring
+      IMPORTING
+        !xstring TYPE any .
+    CLASS-METHODS copyright .
+    METHODS escapechar
+      IMPORTING
+        !json         TYPE string
+        !offset       TYPE i
+      CHANGING
+        !match_result TYPE match_result_tab .
+    METHODS format_date
+      IMPORTING
+        !date                 TYPE d
+      RETURNING
+        VALUE(date_formatted) TYPE char10 .
+    CLASS-METHODS get_kernel_info
+      EXPORTING
+        !release TYPE i
+        !patch   TYPE i .
+    METHODS get_offset_close
+      IMPORTING
+        !json               TYPE string
+        !offset_open        TYPE i DEFAULT 0
+      RETURNING
+        VALUE(offset_close) TYPE i .
+    METHODS get_stru
+      CHANGING
+        !line TYPE any
+      RAISING
+        zcx_json_document .
+    METHODS get_table
+      CHANGING
+        !table TYPE ANY TABLE
+      RAISING
+        zcx_json_document .
+    METHODS parse
+      IMPORTING
+        !json TYPE string OPTIONAL .
+    METHODS parse_array .
+    METHODS parse_object .
+    METHODS replace_namespace
+      CHANGING
+        !key TYPE abap_compname .
+==================================================
+ZCL_JSON_DOCUMENT=============CO
+==================================================
+  PROTECTED SECTION.
+==================================================
+ZCL_JSON_DOCUMENT=============CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_JSON_DOCUMENT
+
+*"* local type definitions
+include ZCL_JSON_DOCUMENT=============ccdef.
+
+*"* class ZCL_JSON_DOCUMENT definition
+*"* public declarations
+  include ZCL_JSON_DOCUMENT=============cu.
+*"* protected declarations
+  include ZCL_JSON_DOCUMENT=============co.
+*"* private declarations
+  include ZCL_JSON_DOCUMENT=============ci.
+endclass. "ZCL_JSON_DOCUMENT definition
+
+*"* macro definitions
+include ZCL_JSON_DOCUMENT=============ccmac.
+*"* local class implementation
+include ZCL_JSON_DOCUMENT=============ccimp.
+
+class ZCL_JSON_DOCUMENT implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_JSON_DOCUMENT implementation
+
+==================================================
+ZCL_JSON_DOCUMENT=============CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_JSON_DOCUMENT and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_JSON_DOCUMENT=============CU
+==================================================
+CLASS zcl_json_document DEFINITION
+  PUBLIC
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    TYPE-POOLS abap .
+
+    METHODS append_data
+      IMPORTING
+        !data    TYPE any
+        !iv_name TYPE string .
+    CLASS-METHODS create
+      RETURNING
+        VALUE(json_document) TYPE REF TO zcl_json_document .
+    "! Create a JSON Document with an ABAP data object
+    "! @parameter data | ABAP data object
+    "! @parameter suppress_itab | Suppress the ITAB prefix if data is a table
+    "! @parameter replace_underscore | replace underscore with hyphen
+    "! @parameter replace_double_underscore | replace double underscore with CamelCase
+    CLASS-METHODS create_with_data
+      IMPORTING
+        data                      TYPE any
+        suppress_itab             TYPE boolean OPTIONAL
+        ignore_boolean            TYPE boolean OPTIONAL
+        dont_escape_ltgt          TYPE boolean OPTIONAL
+        numc_as_numeric           TYPE boolean OPTIONAL
+        date_format               TYPE char10 OPTIONAL
+        replace_underscore        TYPE boolean OPTIONAL
+        replace_double_underscore TYPE boolean OPTIONAL
+      RETURNING
+        VALUE(json_document)      TYPE REF TO zcl_json_document .
+    CLASS-METHODS create_with_json
+      IMPORTING
+        !json                TYPE string
+        !date_format         TYPE char10 OPTIONAL
+      RETURNING
+        VALUE(json_document) TYPE REF TO zcl_json_document .
+    METHODS dumps
+      IMPORTING
+        !json           TYPE string OPTIONAL
+        !current_intend TYPE i OPTIONAL
+      EXPORTING
+        !result         TYPE string_table .
+    METHODS get_data
+      IMPORTING
+        !json TYPE string OPTIONAL
+      EXPORTING
+        !data TYPE any
+      RAISING
+        zcx_json_document .
+    METHODS get_name_value_pairs
+      IMPORTING
+        !json                    TYPE string OPTIONAL
+        !date_format             TYPE char10 OPTIONAL
+        !dont_replace_linebreaks TYPE boolean OPTIONAL
+      EXPORTING
+        !name_values             TYPE wdy_key_value_list
+      RAISING
+        zcx_json_document .
+    METHODS set_name_value_pairs
+      IMPORTING
+        !name_values TYPE wdy_key_value_list .
+    METHODS get_json
+      RETURNING
+        VALUE(json) TYPE string .
+    METHODS get_json_large
+      EXPORTING
+        !json TYPE string .
+    METHODS get_next
+      RETURNING
+        VALUE(data_found) TYPE boolean .
+    METHODS get_value
+      IMPORTING
+        !key         TYPE string
+      RETURNING
+        VALUE(value) TYPE string .
+    METHODS get_value_int
+      IMPORTING
+        !key         TYPE string
+      RETURNING
+        VALUE(value) TYPE i .
+    CLASS-METHODS get_version
+      RETURNING
+        VALUE(version) TYPE string .
+    METHODS reset_cursor .
+    METHODS set_data
+      IMPORTING
+        !data                     TYPE any
+        !suppress_itab            TYPE boolean OPTIONAL
+        !ignore_boolean           TYPE boolean OPTIONAL
+        !dont_escape_ltgt         TYPE boolean OPTIONAL
+        !numc_as_numeric          TYPE boolean OPTIONAL
+        !date_format              TYPE char10 OPTIONAL
+        replace_underscore        TYPE boolean OPTIONAL
+        replace_double_underscore TYPE boolean OPTIONAL.
+    METHODS clear .
+    METHODS set_date_format
+      IMPORTING
+        !date_format TYPE char10 .
+    METHODS set_numc_as_numeric
+      IMPORTING
+        !numc_as_numeric TYPE boolean .
+    METHODS set_dont_replace_linebreaks
+      IMPORTING
+        !dont_replace_linebreaks TYPE boolean .
+    METHODS set_dont_escape_ltgt
+      IMPORTING
+        !dont_escape_ltgt TYPE boolean .
+    METHODS set_json
+      IMPORTING
+        !json                    TYPE string
+        !date_format             TYPE char10 OPTIONAL
+        !dont_replace_linebreaks TYPE boolean OPTIONAL .
+    METHODS set_namespace_conversion
+      IMPORTING
+        !namespace_1_slash_replace TYPE c
+        !namespace_2_slash_replace TYPE c .
+    METHODS set_suppress_itab
+      IMPORTING
+        !suppress_itab TYPE boolean .
+    METHODS set_ignore_boolean
+      IMPORTING
+        !ignore_boolean TYPE boolean .
+    METHODS set_replace_underscore
+      IMPORTING
+        replace_underscore TYPE boolean.
+    METHODS set_replace_double_underscore
+      IMPORTING
+        replace_double_underscore TYPE boolean.
+    CLASS-METHODS transform_simple
+      IMPORTING
+        !root_name  TYPE string DEFAULT 'RESULT'
+        !json_in    TYPE string OPTIONAL
+        !data_in    TYPE any OPTIONAL
+        !lower_case TYPE boolean OPTIONAL
+      EXPORTING
+        !json_out   TYPE string
+        !data_out   TYPE any
+      RAISING
+        zcx_json_document
+        cx_xslt_format_error .
+==================================================
+ZCL_JSON_DOCUMENT=ADD_BOOLEAN
+==================================================
+  METHOD add_boolean.
+
+    IF string = abap_true.
+      CONCATENATE
+        json
+        'true'
+      INTO json.
+    ELSE.
+      CONCATENATE
+        json
+        'false'
+      INTO json.
+    ENDIF.
+
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=ADD_DATA
+==================================================
+  METHOD add_data.
+
+    DATA: data_descr TYPE REF TO cl_abap_datadescr.
+
+    data_descr ?= cl_abap_typedescr=>describe_by_data( data ).
+
+    CASE data_descr->type_kind.
+      WHEN data_descr->typekind_table.       "table
+
+        add_table( data ).
+
+      WHEN data_descr->typekind_struct1     "flat strcuture
+      OR   data_descr->typekind_struct2.     "deep strcuture
+
+        add_stru( data ).
+
+      WHEN data_descr->typekind_char
+      OR   data_descr->typekind_string
+      OR   data_descr->typekind_clike
+      OR   data_descr->typekind_csequence.
+
+        IF data_descr->absolute_name = '\TYPE=BOOLEAN'
+        AND me->ignore_boolean IS INITIAL.
+          add_boolean( data ).
+        ELSE.
+          add_string( data ).
+        ENDIF.
+
+      WHEN data_descr->typekind_num.          "charlike incl. NUMC.
+
+        IF me->numc_as_numeric IS INITIAL.
+          add_string( data ).
+        ELSE.
+          add_number( data ).
+        ENDIF.
+
+      WHEN data_descr->typekind_int
+      OR   data_descr->typekind_int1
+      OR   data_descr->typekind_int2
+      OR   data_descr->typekind_packed.
+
+        add_number( data ).
+
+      WHEN data_descr->typekind_date.
+
+        add_date( data ).
+
+      WHEN data_descr->typekind_time.
+
+        add_time( data ).
+
+      WHEN data_descr->typekind_xstring.
+
+        add_xstring( data ).
+
+      WHEN data_descr->typekind_dref.
+        FIELD-SYMBOLS <any> TYPE data.
+
+        IF data IS BOUND.
+          ASSIGN data->* TO <any>.
+          add_data( <any> ).
+        ELSE.
+          add_string( `` ).
+        ENDIF.
+
+      WHEN data_descr->typekind_hex.      "RAW (ie. GUID)
+
+        DATA: str_data TYPE char512.
+        TRY.
+            WRITE data TO str_data.
+            add_string( str_data ).
+          CATCH cx_root.
+            add_string( `` ).
+        ENDTRY.
+
+*    WHEN data_descr->typekind_float.
+*    WHEN data_descr->typekind_w.
+*    WHEN data_descr->typekind_oref.
+*    WHEN data_descr->typekind_class.
+*    WHEN data_descr->typekind_intf.
+*    WHEN data_descr->typekind_any.
+*    WHEN data_descr->typekind_data.
+*    WHEN data_descr->typekind_simple.
+*    WHEN data_descr->typekind_xsequence.
+*    WHEN data_descr->typekind_numeric.
+*    WHEN data_descr->typekind_table.
+*    WHEN data_descr->typekind_iref.
+
+*    WHEN OTHERS.
+
+    ENDCASE.
+
+  ENDMETHOD.                    "ADD_DATA
+==================================================
+ZCL_JSON_DOCUMENT=ADD_DATE
+==================================================
+  METHOD add_date.
+
+    DATA: lv_date_c TYPE c LENGTH 10.
+
+    lv_date_c = format_date( date ).
+
+    CONCATENATE
+      json
+      '"'
+      lv_date_c
+      '"'
+    INTO json.
+
+  ENDMETHOD.                    "ADD_DATE
+==================================================
+ZCL_JSON_DOCUMENT=ADD_NUMBER
+==================================================
+  METHOD add_number.
+
+    DATA: lv_num_c TYPE c LENGTH 30.
+
+    lv_num_c = number.
+
+    "*--- sign on the left ---*
+    IF lv_num_c CS '-'.
+      SHIFT lv_num_c RIGHT UP TO '-'.
+      SHIFT lv_num_c CIRCULAR RIGHT.
+    ENDIF.
+
+    "*--- store NUMC without leading zero (sapcodexch #issue 17) ---*
+    SHIFT lv_num_c LEFT DELETING LEADING '0'.
+
+    "*--- if all numbers are deleted, set lv_num_c to zero
+    IF lv_num_c IS INITIAL.
+      lv_num_c = '0'.
+    ENDIF.
+
+    CONDENSE lv_num_c NO-GAPS.
+
+    CONCATENATE
+      json
+      lv_num_c
+    INTO json.
+
+  ENDMETHOD.                    "ADD_NUMBER
+==================================================
+ZCL_JSON_DOCUMENT=ADD_STRING
+==================================================
+  METHOD add_string.
+
+    DATA: lv_string TYPE string.
+
+    "*--- JSON conform conversion ---*
+    "*--- sapcodexch issue #4 ---*
+    lv_string = string.   "convert to string
+    lv_string = cl_http_utility=>if_http_utility~escape_javascript( lv_string ).
+
+    "*--- don't escape single quotes ---*
+    "*--- sapcodexch issue #11 ---*
+    REPLACE ALL OCCURRENCES OF '\''' IN lv_string WITH ''''.
+
+    "*--- don't escape LT / GT ? ---*
+    IF me->dont_escape_ltgt = abap_true.
+      REPLACE ALL OCCURRENCES OF '\x3c' IN lv_string WITH '<'.
+      REPLACE ALL OCCURRENCES OF '\x3e' IN lv_string WITH '>'.
+    ENDIF.
+
+    CONCATENATE
+      json
+      '"'
+      lv_string
+      '"'
+    INTO json.
+
+  ENDMETHOD.                    "ADD_STRING
+==================================================
+ZCL_JSON_DOCUMENT=ADD_STRU
+==================================================
+  METHOD add_stru.
+
+    DATA: stru_descr       TYPE REF TO cl_abap_structdescr
+        , lv_tabix         TYPE sy-tabix
+        , comp_name        TYPE abap_compname
+        , use_parameter_id TYPE boolean
+        .
+
+    FIELD-SYMBOLS: <value> TYPE any
+                 , <component> TYPE abap_compdescr
+                 .
+
+    DATA lv_parameter_id TYPE string.
+
+    stru_descr ?= cl_abap_typedescr=>describe_by_data( line ).
+
+    CONCATENATE
+      json
+      '{'
+    INTO json.
+
+    LOOP AT stru_descr->components
+      ASSIGNING <component>.
+
+      lv_tabix = sy-tabix.
+
+      ASSIGN COMPONENT <component>-name OF STRUCTURE line TO <value>.
+
+      comp_name = <component>-name.
+
+      TRANSLATE comp_name TO LOWER CASE.
+
+      IF me->replace_double_underscore = abap_true.
+        DATA l_offset TYPE i.
+        FIND FIRST OCCURRENCE OF '__' IN comp_name MATCH OFFSET l_offset.
+        WHILE sy-subrc = 0.
+
+          REPLACE '__' IN comp_name WITH ``.
+
+          IF strlen( comp_name ) > l_offset.
+            TRANSLATE comp_name+l_offset(1) TO UPPER CASE.
+          ENDIF.
+
+          CLEAR l_offset.
+          FIND FIRST OCCURRENCE OF '__' IN comp_name MATCH OFFSET l_offset.
+        ENDWHILE.
+      ENDIF.
+
+      IF me->replace_underscore = abap_true.
+        REPLACE '_' IN comp_name WITH '-'.
+      ENDIF.
+
+      replace_namespace( CHANGING key = comp_name ).
+
+      IF comp_name = 'parameter_id'.
+*      lv_parameter_id = |{ <value> }|.   ">= 7.02
+        lv_parameter_id = <value>.                            "<= 7.01
+        use_parameter_id = abap_true.
+        CONTINUE.
+      ELSEIF comp_name = 'data'.
+        IF use_parameter_id IS NOT INITIAL.
+          comp_name = lv_parameter_id.
+          CLEAR use_parameter_id.
+        ENDIF.
+      ENDIF.
+
+      CONCATENATE
+        json
+        '"'
+        comp_name
+        '" :'
+      INTO json.
+
+      add_data( <value> ).
+
+      IF lv_tabix <> lines( stru_descr->components ).
+        CONCATENATE
+          json
+          ','
+        INTO json.
+      ENDIF.
+
+    ENDLOOP.
+
+    CONCATENATE
+      json
+      '}'
+    INTO json.
+
+  ENDMETHOD.                    "ADD_STRU
+==================================================
+ZCL_JSON_DOCUMENT=ADD_TABLE
+==================================================
+  METHOD add_table.
+
+    DATA: lv_tabix TYPE sytabix.
+    FIELD-SYMBOLS: <line> TYPE any.
+
+    DATA lv_end TYPE boolean.
+
+    IF strlen( json ) > 3
+    OR suppress_itab = abap_true. "sapcodexch issue #13
+      CONCATENATE
+        json
+        ' ['
+      INTO json.
+    ELSE.
+      lv_end = abap_true.
+      CONCATENATE
+        json
+        '{ "itab" : ['
+      INTO json.
+    ENDIF.
+
+    LOOP AT table
+      ASSIGNING <line>.
+
+      lv_tabix = sy-tabix.
+
+      add_data( <line> ).
+
+      IF lv_tabix <> lines( table ).
+        CONCATENATE
+          json
+          ','
+        INTO json.
+      ENDIF.
+
+    ENDLOOP.
+
+    IF lv_end = abap_true.
+      CONCATENATE
+        json
+        '] }'
+      INTO json.
+    ELSE.
+      CONCATENATE
+        json
+        ']'
+      INTO json.
+    ENDIF.
+  ENDMETHOD.                    "ADD_TABLE
+==================================================
+ZCL_JSON_DOCUMENT=ADD_TIME
+==================================================
+  METHOD add_time.
+
+    DATA: lv_time_c TYPE c LENGTH 8.
+
+    CONCATENATE
+      time(2)
+      ':'
+      time+2(2)
+      ':'
+      time+4(2)
+    INTO lv_time_c.
+
+    CONCATENATE
+      json
+      '"'
+      lv_time_c
+      '"'
+    INTO json.
+
+  ENDMETHOD.                    "ADD_TIME
+==================================================
+ZCL_JSON_DOCUMENT=ADD_XSTRING
+==================================================
+  METHOD add_xstring.
+
+    DATA: lv_string TYPE string.
+
+*  lv_string = cl_http_utility=>encode_x_base64( xstring ) .  ">= 7.02
+
+    "*--- <= 7.01 ---*
+    DATA: c_last_error TYPE i.
+    DATA: ihttp_scid_base64_escape_x TYPE i VALUE 86.
+
+    SYSTEM-CALL ict
+      DID
+        ihttp_scid_base64_escape_x
+      PARAMETERS
+        xstring                            " >
+        lv_string                          " <
+        c_last_error.                      " < return code
+
+    CONCATENATE
+      json
+      '"'
+      lv_string
+      '"'
+    INTO json.
+
+  ENDMETHOD.                    "ADD_XSTRING
+==================================================
+ZCL_JSON_DOCUMENT=APPEND_DATA
+==================================================
+  METHOD append_data.
+
+    DATA object_found TYPE boolean.
+
+    IF json IS INITIAL.
+
+      CONCATENATE                                             "<= 7.01
+        '"'
+        iv_name
+        '":'
+      INTO json.
+
+    ELSE.
+
+      "*--- JSON already an object? ---*
+      IF json(1) = '{'.
+        object_found = abap_true.
+        FIND REGEX '(.{0,})\}$' IN json SUBMATCHES json.  "JSON without the closing bracket
+      ENDIF.
+
+      CONCATENATE                                             "<= 7.01
+        json
+        ', "'
+        iv_name
+        '":'
+      INTO json.
+
+    ENDIF.
+
+    add_data( data ).
+
+    "*--- close the object again ---*
+    IF object_found = abap_true.
+      CONCATENATE
+        json
+        '}'
+      INTO json.
+    ENDIF.
+
+  ENDMETHOD.                    "APPEND_DATA
+==================================================
+ZCL_JSON_DOCUMENT=CLEAR
+==================================================
+  METHOD clear.
+
+    CLEAR me->json.
+    CLEAR me->data.
+    CLEAR me->data_t.
+
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=COPYRIGHT
+==================================================
+  METHOD copyright.
+
+*--------------------------------------------------------------------*
+*
+* The JSON document class
+* Copyright (C) 2010 Uwe Fetzer
+*
+* Project home: https://github.com/se38/zJSON
+*
+* Published under Apache License, Version 2.0
+* http://www.apache.org/licenses/LICENSE-2.0.html
+*
+*--------------------------------------------------------------------*
+
+  ENDMETHOD.                    "COPYRIGHT
+==================================================
+ZCL_JSON_DOCUMENT=CREATE
+==================================================
+  METHOD create.
+
+    CREATE OBJECT json_document.
+
+  ENDMETHOD.                    "CREATE
+==================================================
+ZCL_JSON_DOCUMENT=CREATE_WITH_DATA
+==================================================
+  METHOD create_with_data.
+
+    CREATE OBJECT json_document.
+    json_document->set_data(
+      data             = data
+      suppress_itab    = suppress_itab
+      ignore_boolean   = ignore_boolean
+      dont_escape_ltgt = dont_escape_ltgt
+      numc_as_numeric  = numc_as_numeric
+      date_format      = date_format
+      replace_underscore = replace_underscore
+      replace_double_underscore = replace_double_underscore
+      ).
+
+  ENDMETHOD.                    "CREATE_WITH_DATA
+==================================================
+ZCL_JSON_DOCUMENT=CREATE_WITH_JSON
+==================================================
+  METHOD create_with_json.
+
+    CREATE OBJECT json_document.
+    json_document->set_json(
+      EXPORTING
+        json        = json
+        date_format = date_format
+    ).
+
+  ENDMETHOD.                    "CREATE_WITH_JSON
+==================================================
+ZCL_JSON_DOCUMENT=DUMPS
+==================================================
+  METHOD dumps.
+
+    DATA: json_doc   TYPE REF TO zcl_json_document
+        , json_tmp   TYPE string
+        , data_tmp   TYPE zjson_key_value_t
+        , data_t_tmp TYPE string_table
+        , intend     TYPE i
+        , tabix      TYPE sytabix
+        , dump       TYPE string_table
+        , lines      TYPE i
+        .
+
+    FIELD-SYMBOLS: <data_line>   TYPE zjson_key_value
+                 , <data_t_line> TYPE string
+                 , <result_line> TYPE string
+                 .
+
+    IF json IS NOT INITIAL.
+      json_tmp = json.
+    ELSE.
+      json_tmp = me->json.
+    ENDIF.
+
+    SHIFT json_tmp LEFT DELETING LEADING space.
+    me->json = json_tmp.
+
+    intend = current_intend.
+
+    CASE json_tmp(1).
+      WHEN '{'.
+        parse_object( ).
+
+        INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+        DO intend TIMES.
+*          <result_line> = <result_line> && ` `.
+          CONCATENATE
+            <result_line>
+            ` `
+          INTO <result_line> RESPECTING BLANKS.
+        ENDDO.
+*        <result_line> = <result_line> && `{`.
+        CONCATENATE
+          <result_line>
+          `{`
+        INTO <result_line>.
+        ADD 4 TO intend.
+
+        CLEAR tabix.
+
+        data_tmp = me->data.
+
+        LOOP AT data_tmp
+          ASSIGNING <data_line>.
+
+          ADD 1 TO tabix.          "sy-tabix doesn't work here
+
+          INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+          DO intend TIMES.
+*            <result_line> = <result_line> && ` `.
+            CONCATENATE
+              <result_line>
+              ` `
+            INTO <result_line> RESPECTING BLANKS.
+          ENDDO.
+
+*          <result_line> = |{ <result_line> }"{ <data_line>-key }" : |.
+          CONCATENATE
+            <result_line>
+            `"`
+            <data_line>-key
+            `" :`
+          INTO <result_line>.
+
+          IF <data_line>-value IS INITIAL.
+
+*            <result_line> = |{ <result_line> }""|.
+            CONCATENATE
+              <result_line>
+              `""`
+            INTO <result_line>.
+
+          ELSEIF <data_line>-value(1) CN '{['.
+
+            IF <data_line>-value CO '0123456789.'
+            AND <data_line>-value(1) <> '0'.        "no leading zero (else asume a string)
+*              <result_line> = |{ <result_line> }{ <data_line>-value }|.
+              CONCATENATE
+                <result_line>
+                <data_line>-value
+              INTO <result_line>.
+            ELSE.
+*              <result_line> = |{ <result_line> }"{ <data_line>-value }"|.
+              CONCATENATE
+                <result_line>
+                `"`
+                <data_line>-value
+                `"`
+              INTO <result_line>.
+            ENDIF.
+
+          ELSE.
+            CLEAR dump.
+            json_doc = zcl_json_document=>create_with_json( <data_line>-value ).
+            json_doc->dumps( EXPORTING current_intend = intend
+                             IMPORTING result = dump ).
+            INSERT LINES OF dump INTO TABLE result.
+            lines = lines( result ).
+            READ TABLE result INDEX lines ASSIGNING <result_line>.
+
+          ENDIF.
+
+          IF tabix < lines( data_tmp ).
+*            <result_line> = <result_line> && `,`.
+            CONCATENATE
+              <result_line>
+              `,`
+            INTO <result_line>.
+          ENDIF.
+
+        ENDLOOP.
+
+        SUBTRACT 4 FROM intend.
+        INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+        DO intend TIMES.
+*          <result_line> = <result_line> && ` `.
+          CONCATENATE
+            <result_line>
+            ` `
+          INTO <result_line> RESPECTING BLANKS.
+        ENDDO.
+*        <result_line> = <result_line> && `}`.
+        CONCATENATE
+          <result_line>
+          `}`
+        INTO <result_line>.
+
+      WHEN '['.
+        parse_array( ).
+
+        INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+        DO intend TIMES.
+*          <result_line> = <result_line> && ` `.
+          CONCATENATE
+            <result_line>
+            ` `
+          INTO <result_line> RESPECTING BLANKS.
+        ENDDO.
+*        <result_line> = <result_line> && `[`.
+        CONCATENATE
+          <result_line>
+          `[`
+        INTO <result_line>.
+        ADD 4 TO intend.
+
+        CLEAR tabix.
+
+        data_t_tmp = me->data_t.
+
+        LOOP AT data_t_tmp
+          ASSIGNING <data_t_line>.
+
+          ADD 1 TO tabix.          "sy-tabix doesn't work here
+
+          IF <data_t_line>(1) CN '{['.
+            INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+            DO intend TIMES.
+*              <result_line> = <result_line> && ` `.
+              CONCATENATE
+                <result_line>
+                ` `
+              INTO <result_line> RESPECTING BLANKS.
+            ENDDO.
+
+*            <result_line> = |{ <result_line> }"{ <data_t_line> }"|.
+            CONCATENATE
+              <result_line>
+              `"`
+              <data_t_line>
+              `"`
+            INTO <result_line>.
+          ELSE.
+            CLEAR dump.
+            json_doc = zcl_json_document=>create_with_json( <data_t_line> ).
+            json_doc->dumps( EXPORTING current_intend = intend
+                             IMPORTING result = dump ).
+            INSERT LINES OF dump INTO TABLE result.
+            lines = lines( result ).
+            READ TABLE result INDEX lines ASSIGNING <result_line>.
+          ENDIF.
+          IF tabix < lines( data_t_tmp ).
+*            <result_line> = <result_line> && `,`.
+            CONCATENATE
+              <result_line>
+              `,`
+            INTO <result_line>.
+          ENDIF.
+
+        ENDLOOP.
+
+        SUBTRACT 4 FROM intend.
+        INSERT INITIAL LINE INTO TABLE result ASSIGNING <result_line>.
+        DO intend TIMES.
+*          <result_line> = <result_line> && ` `.
+          CONCATENATE
+            <result_line>
+            ` `
+          INTO <result_line> RESPECTING BLANKS.
+        ENDDO.
+*        <result_line> = <result_line> && `]`.
+        CONCATENATE
+          <result_line>
+          `]`
+        INTO <result_line>.
+
+    ENDCASE.
+
+  ENDMETHOD.                    "DUMPS
+==================================================
+ZCL_JSON_DOCUMENT=ESCAPECHAR
+==================================================
+  METHOD escapechar.
+
+    DATA lv_tab TYPE LINE OF match_result_tab.
+    DATA lv_len TYPE i.
+    DATA lt_result_tabguillemet TYPE match_result_tab.
+    DATA lv_result_tabguillemet TYPE LINE OF match_result_tab.
+    DATA lv_pos_echap TYPE i.
+    DATA lv_count TYPE i.
+    DATA lv_parite TYPE p DECIMALS 1.
+
+    CONSTANTS : c_echap TYPE c VALUE '\'.
+
+    IF escape_not_needed = abap_true.
+      RETURN.
+    ENDIF.
+
+    IF escape_not_needed = abap_undefined.
+      IF json CS c_echap.       "escape needed
+        escape_not_needed = abap_false.
+      ELSE.
+        escape_not_needed = abap_true.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    LOOP AT match_result INTO lv_tab.
+      FIND ALL OCCURRENCES OF '"' IN json+offset(lv_tab-offset) RESULTS lt_result_tabguillemet.
+      CLEAR lv_count.
+      LOOP AT lt_result_tabguillemet INTO lv_result_tabguillemet WHERE offset LT lv_tab-offset.
+        lv_pos_echap = offset + lv_result_tabguillemet-offset - 1.
+        CHECK json+lv_pos_echap(1) NE c_echap.
+        lv_count = lv_count + 1.
+      ENDLOOP.
+      lv_parite = frac( lv_count / 2 ).
+      CHECK lv_parite IS NOT INITIAL.
+      DELETE match_result.
+    ENDLOOP.
+
+  ENDMETHOD.                    "ESCAPECHAR
+==================================================
+ZCL_JSON_DOCUMENT=FORMAT_DATE
+==================================================
+  METHOD format_date.
+
+    DATA: i   TYPE i,
+          fmt TYPE c LENGTH 10.
+
+    IF date_format IS INITIAL.
+      date_formatted = date.
+
+    ELSE.
+
+      fmt = date_format.
+
+      IF fmt CS 'YYYY'.
+        WRITE date(4) TO date_formatted+sy-fdpos(4).
+      ELSEIF fmt CS 'YY'.
+        WRITE date+2(2) TO date_formatted+sy-fdpos(2).
+      ENDIF.
+      IF fmt CS 'MM'.
+        WRITE date+4(2) TO date_formatted+sy-fdpos(2).
+      ENDIF.
+      IF fmt CS 'DD'.
+        WRITE date+6(2) TO date_formatted+sy-fdpos(2).
+      ENDIF.
+
+* delimiter
+      i = 0.
+      WHILE NOT fmt IS INITIAL.
+        IF fmt(1) NA 'YMD'.
+          WRITE fmt(1) TO date_formatted+i(1).
+        ENDIF.
+        SHIFT fmt LEFT.
+        i = i + 1.
+      ENDWHILE.
+
+    ENDIF.
+
+  ENDMETHOD.                    "FORMAT_DATE
+==================================================
+ZCL_JSON_DOCUMENT=GET_DATA
+==================================================
+  METHOD get_data.
+
+    DATA: data_descr TYPE REF TO cl_abap_datadescr.
+    DATA: lr_json_doc TYPE REF TO zcl_json_document.
+    DATA: lv_json TYPE string.
+    DATA: tmp TYPE c LENGTH 10.
+    DATA: tmp_s TYPE string.
+    DATA: lv_submatch TYPE string.
+    DATA: lv_len TYPE i.
+
+    DATA: lr_cx_root TYPE REF TO cx_root.
+    DATA: lv_error_text TYPE string.
+    DATA: lv_type_kind TYPE string.
+
+    IF json IS NOT INITIAL.
+      lv_json = json.
+    ELSE.
+      lv_json = me->json.
+    ENDIF.
+
+    CLEAR data.
+
+    "*--- create new JSON document (recursive!) ---*
+    lr_json_doc = zcl_json_document=>create_with_json(
+        json          = lv_json
+        date_format   = me->date_format
+    ).
+
+    data_descr ?= cl_abap_typedescr=>describe_by_data( data ).
+
+    CASE data_descr->type_kind.
+
+      WHEN data_descr->typekind_char         "charlike
+      OR   data_descr->typekind_string
+      OR   data_descr->typekind_clike
+      OR   data_descr->typekind_csequence.
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = tmp_s
+        ).
+
+        lv_len = data_descr->length / cl_abap_char_utilities=>charsize.  "length of field (unicode/non-unicode)
+
+        IF  data_descr->type_kind = data_descr->typekind_char   "character
+        AND lv_len = 1.                                          "length 1
+
+          IF tmp_s = 'true'.                                     "-> boolean
+            data = abap_true.
+          ELSEIF tmp_s = 'false'.
+            data = abap_false.
+          ELSE.
+            data = tmp_s.
+          ENDIF.
+
+        ELSE.
+          data = tmp_s.
+        ENDIF.
+
+        "*--- eliminate surrounding " ---*
+        FIND REGEX '^"(.{1,})"' IN data     "get 1-n chars surrounded by quot.marks (sapcodexch issue #22)
+          SUBMATCHES lv_submatch.
+
+        IF sy-subrc = 0.
+          data = lv_submatch.
+        ENDIF.
+
+        "*--- unescape control character ---*
+        REPLACE ALL OCCURRENCES OF '\"' IN data WITH '"'.
+        REPLACE ALL OCCURRENCES OF '\\' IN data WITH '\'.
+        REPLACE ALL OCCURRENCES OF '\/' IN data WITH '/'.
+        REPLACE ALL OCCURRENCES OF '\x3c' IN data WITH '<'.
+        REPLACE ALL OCCURRENCES OF '\x3e' IN data WITH '>'.
+
+      WHEN data_descr->typekind_num          "NUM + integer + packed (auto conversion)
+      OR   data_descr->typekind_int
+      OR   data_descr->typekind_int1
+      OR   data_descr->typekind_int2
+      OR   data_descr->typekind_packed
+      OR   data_descr->typekind_hex.        "RAW (ie. GUID)
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = tmp_s
+        ).
+
+        TRY.
+
+            IF data_descr->type_kind <> data_descr->typekind_hex
+            AND tmp_s CS 'E'.      "saved as float in JSON string?
+              DATA float TYPE f.
+              float = tmp_s.
+              data = float.
+            ELSE.
+              data = tmp_s.
+            ENDIF.
+
+          CATCH cx_root INTO lr_cx_root.
+            lv_error_text = lr_cx_root->get_text( ).
+            lv_type_kind = data_descr->type_kind.
+
+            RAISE EXCEPTION TYPE zcx_json_document
+              EXPORTING
+                textid       = zcx_json_document=>conversation_error
+                error_text   = lv_error_text
+                type_kind    = lv_type_kind
+                actual_value = lv_json.
+
+        ENDTRY.
+
+      WHEN data_descr->typekind_xstring.
+
+        DATA lv_xstring TYPE xstring.
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = tmp_s
+        ).
+
+*        data = cl_http_utility=>decode_x_base64( tmp_s ) .  ">= 7.02
+
+        "*--- <= 7.01 ---*
+        DATA: c_last_error TYPE i.
+        DATA: ihttp_scid_base64_unescape_x TYPE i VALUE 87.
+
+        SYSTEM-CALL ict
+          DID
+            ihttp_scid_base64_unescape_x
+          PARAMETERS
+            tmp_s                            " >
+            data                            " <
+            c_last_error.                      " < return code
+
+      WHEN data_descr->typekind_time.
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = tmp_s
+        ).
+
+        REPLACE ALL OCCURRENCES OF ':' IN tmp_s WITH ``.
+        data = tmp_s.
+
+      WHEN data_descr->typekind_struct1     "flat strcuture
+      OR   data_descr->typekind_struct2.     "deep strcuture
+
+        lr_json_doc->get_stru( CHANGING line = data ).
+
+      WHEN data_descr->typekind_table.       "table
+
+        lr_json_doc->get_table( CHANGING table = data ).
+
+      WHEN data_descr->typekind_date.
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = tmp_s
+        ).
+
+        tmp = tmp_s.
+
+        IF date_format IS INITIAL.
+          data = tmp.
+        ELSE.
+          IF date_format CS 'YYYY'.
+            DATA(4) = tmp+sy-fdpos(4).
+          ELSE.
+            FIND 'YY' IN date_format.
+            CONCATENATE
+              '20'
+              tmp+sy-fdpos(2)
+            INTO DATA(4).
+          ENDIF.
+
+          IF date_format CS 'MM'.
+            data+4(2) = tmp+sy-fdpos(2).
+          ENDIF.
+
+          IF date_format CS 'DD'.
+            data+6(2) = tmp+sy-fdpos(2).
+          ENDIF.
+
+        ENDIF.
+
+      WHEN data_descr->typekind_dref.
+
+        "*--- as we don't know the original data type, ---*
+        "*--- we always pass back a string dref        ---*
+        "*--- (function not really useful)             ---*
+        FIELD-SYMBOLS <f> TYPE string.
+        CREATE DATA data TYPE string.
+
+        ASSIGN data->* TO <f>.
+
+        lr_json_doc->get_json_large(
+          IMPORTING
+            json = <f>
+        ).
+
+        GET REFERENCE OF <f> INTO data.
+
+*    WHEN data_descr->typekind_float.
+*    WHEN data_descr->typekind_w.
+*    WHEN data_descr->typekind_oref.
+*    WHEN data_descr->typekind_class.
+*    WHEN data_descr->typekind_intf.
+*    WHEN data_descr->typekind_any.
+*    WHEN data_descr->typekind_data.
+*    WHEN data_descr->typekind_simple.
+*    WHEN data_descr->typekind_xsequence.
+*    WHEN data_descr->typekind_numeric.
+*    WHEN data_descr->typekind_iref.
+
+*    WHEN OTHERS.
+
+    ENDCASE.
+
+  ENDMETHOD.                    "GET_DATA
+==================================================
+ZCL_JSON_DOCUMENT=GET_JSON
+==================================================
+  METHOD get_json.
+
+    get_json_large(
+      IMPORTING
+        json = json
+    ).
+
+  ENDMETHOD.                    "GET_JSON
+==================================================
+ZCL_JSON_DOCUMENT=GET_JSON_LARGE
+==================================================
+  METHOD get_json_large.
+
+    IF me->json IS NOT INITIAL.
+
+      IF  me->json+0(1) NE `{`
+      AND me->json+0(1) NE `[`.    "sapcodexch issue #7
+
+        "*--- key/value pair only (sapcodexch issue #3) ---*
+        FIND REGEX '"*":' IN me->json.
+        IF sy-subrc = 0.
+*        me->json = `{` && `}` && me->json .            ">= 7.02
+          CONCATENATE '{' me->json '}' INTO me->json.             "<= 7.01
+        ENDIF.
+      ENDIF.
+
+    ENDIF.
+
+    json = me->json.
+
+    SHIFT json LEFT DELETING LEADING space.
+
+  ENDMETHOD.                    "GET_JSON_LARGE
+==================================================
+ZCL_JSON_DOCUMENT=GET_KERNEL_INFO
+==================================================
+  METHOD get_kernel_info.
+
+    TYPES: BEGIN OF ts_kernel_version,
+             key(21)  TYPE c,
+             data(69) TYPE c,
+           END OF ts_kernel_version.
+
+    DATA kernel_version TYPE STANDARD TABLE OF ts_kernel_version.
+    FIELD-SYMBOLS <ls_kernel_version> TYPE ts_kernel_version.
+
+    CALL 'SAPCORE' ID 'ID' FIELD 'VERSION'
+                   ID 'TABLE' FIELD kernel_version.
+
+    "*--- get kernel release ---*
+    READ TABLE kernel_version
+      ASSIGNING <ls_kernel_version>
+      INDEX 12.
+
+    CHECK sy-subrc = 0.
+
+    release = <ls_kernel_version>-data.
+
+    "*--- get patch level ---*
+    READ TABLE kernel_version
+      ASSIGNING <ls_kernel_version>
+      INDEX 15.
+
+    CHECK sy-subrc = 0.
+
+    patch = <ls_kernel_version>-data.
+
+  ENDMETHOD.                    "get_kernel_info
+==================================================
+ZCL_JSON_DOCUMENT=GET_NAME_VALUE_PAIRS
+==================================================
+  METHOD get_name_value_pairs.
+
+    IF date_format IS SUPPLIED.
+      set_date_format( date_format ).
+    ENDIF.
+
+    IF dont_replace_linebreaks IS SUPPLIED.
+      set_dont_replace_linebreaks( dont_replace_linebreaks ).
+    ENDIF.
+
+    me->json = json.
+
+    IF me->dont_replace_linebreaks <> abap_true.
+      "*--- esp. for CouchDB ---*
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf IN me->json WITH ``.
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN me->json WITH ``.
+    ENDIF.
+
+    SHIFT me->json LEFT DELETING LEADING space.
+
+    parse( ).
+
+    name_values = data.
+
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=GET_NEXT
+==================================================
+  METHOD get_next.
+
+    DATA lv_json TYPE string.
+    DATA lt_data LIKE me->data_t.
+    DATA lv_cursor LIKE me->array_cursor.
+
+    ADD 1 TO me->array_cursor.
+
+    "*--- get next entry ---*
+    READ TABLE me->data_t INDEX me->array_cursor INTO lv_json.
+
+    IF sy-subrc = 0.
+      lt_data = me->data_t.    "save data_t (nasted for tables)    codexch issue #20
+      lv_cursor = me->array_cursor.
+
+      set_json( lv_json ).
+
+      me->data_t = lt_data.    "restore data_t (nasted for tables) codexch issue #20
+      me->array_cursor = lv_cursor.
+
+      data_found = abap_true.
+    ENDIF.
+
+  ENDMETHOD.                    "GET_NEXT
+==================================================
+ZCL_JSON_DOCUMENT=GET_OFFSET_CLOSE
+==================================================
+  METHOD get_offset_close.
+
+    DATA: lv_offset          TYPE i
+        , lv_copen           TYPE c
+        , lv_cclose          TYPE c
+        , lv_pos_echap       TYPE i
+        , lt_result_tabopen  TYPE match_result_tab
+        , lt_result_tabclose TYPE match_result_tab
+        , lv_offsetclose_old TYPE i
+        .
+
+    FIELD-SYMBOLS <lv_result_tabclose> TYPE LINE OF match_result_tab.
+    FIELD-SYMBOLS <lv_result_tabopen> TYPE LINE OF match_result_tab.
+
+    CONSTANTS : c_echap TYPE c VALUE '\'.
+
+    lv_copen = json+offset_open(1).
+    CASE lv_copen.
+      WHEN '"'. lv_cclose = '"'.
+      WHEN '{'. lv_cclose = '}'.
+      WHEN '['. lv_cclose = ']'.
+    ENDCASE.
+    lv_offset = offset_open + 1.
+    IF lv_copen EQ '"'.
+      FIND ALL OCCURRENCES OF lv_cclose IN json+lv_offset RESULTS lt_result_tabclose.
+
+      LOOP AT lt_result_tabclose ASSIGNING <lv_result_tabclose>.
+        lv_pos_echap = lv_offset + <lv_result_tabclose>-offset - 1.
+        CHECK json+lv_pos_echap(1) NE c_echap.
+        EXIT.
+      ENDLOOP.
+      offset_close = lv_offset + <lv_result_tabclose>-offset + 1. "CBO due to change in the else statement
+    ELSE.
+
+      FIND ALL OCCURRENCES OF lv_copen IN json+lv_offset RESULTS lt_result_tabopen.
+
+      escapechar(
+        EXPORTING
+          json = json
+          offset = lv_offset
+        CHANGING
+          match_result = lt_result_tabopen
+        ).
+
+      FIND ALL OCCURRENCES OF lv_cclose IN json+lv_offset RESULTS lt_result_tabclose.
+
+      escapechar(
+        EXPORTING
+          json = json
+          offset = lv_offset
+        CHANGING
+          match_result = lt_result_tabclose
+        ).
+
+*   CHANGING CBO : We look to the first close where no open is set before
+*                by removing each open corresponding of each close
+      DATA lv_last_idx LIKE sy-tabix.
+      LOOP AT lt_result_tabclose ASSIGNING <lv_result_tabclose>.
+        lv_last_idx = -1.
+        LOOP AT lt_result_tabopen ASSIGNING <lv_result_tabopen>
+          WHERE offset BETWEEN 0 AND <lv_result_tabclose>-offset.
+          lv_last_idx = sy-tabix.
+        ENDLOOP.
+        IF NOT lv_last_idx = -1 .
+          DELETE lt_result_tabopen INDEX lv_last_idx.
+        ELSE.
+          offset_close = lv_offset + <lv_result_tabclose>-offset + 1.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+
+    ENDIF.
+
+  ENDMETHOD.                    "GET_OFFSET_CLOSE
+==================================================
+ZCL_JSON_DOCUMENT=GET_STRU
+==================================================
+  METHOD get_stru.
+
+    DATA: stru_descr   TYPE REF TO cl_abap_structdescr
+        , comp_name    TYPE string
+        , lv_json      TYPE string
+        .
+
+    FIELD-SYMBOLS: <value> TYPE any
+                 , <component> TYPE abap_compdescr
+                 .
+
+    stru_descr ?= cl_abap_typedescr=>describe_by_data( line ).
+
+    LOOP AT stru_descr->components
+      ASSIGNING <component>.
+
+      ASSIGN COMPONENT <component>-name OF STRUCTURE line TO <value>.
+
+      comp_name = <component>-name.
+      TRANSLATE comp_name TO LOWER CASE.
+      lv_json = me->get_value( comp_name ).
+
+      CHECK lv_json IS NOT INITIAL.    "value found?  "sapcodexch issue #6
+
+      "*--- and again -> recursive! ---*
+      me->get_data(
+        EXPORTING json = lv_json
+        IMPORTING data = <value>
+        ).
+
+    ENDLOOP.
+
+  ENDMETHOD.                    "GET_STRU
+==================================================
+ZCL_JSON_DOCUMENT=GET_TABLE
+==================================================
+  METHOD get_table.
+
+    DATA: table_descr  TYPE REF TO cl_abap_tabledescr
+        , data_descr   TYPE REF TO cl_abap_datadescr
+        , stru_descr   TYPE REF TO cl_abap_structdescr
+        , comp_name    TYPE string
+        , lv_json      TYPE string
+        .
+
+    FIELD-SYMBOLS: <value> TYPE any
+                 , <line>  TYPE any
+                 , <component> TYPE abap_compdescr
+                 .
+
+    table_descr ?= cl_abap_typedescr=>describe_by_data( table ).
+
+    "*--- currently only standard tables possible (no hashed/sorted) ---*
+    CHECK table_descr->table_kind = table_descr->tablekind_std.
+
+    data_descr ?= table_descr->get_table_line_type( ).
+
+    "*--- check structure or simple ---*
+    IF data_descr->type_kind = data_descr->typekind_struct1     "flat strcuture
+    OR data_descr->type_kind = data_descr->typekind_struct2.    "deep strcuture
+      stru_descr ?= data_descr.
+    ENDIF.
+
+    WHILE me->get_next( ) IS NOT INITIAL.
+
+      INSERT INITIAL LINE INTO TABLE table ASSIGNING <line>.
+
+      IF stru_descr IS NOT BOUND.    "table line is not a structure
+
+        me->get_data(
+          EXPORTING json = lv_json
+          IMPORTING data = <line>
+          ).
+
+      ELSE.
+
+        LOOP AT stru_descr->components
+          ASSIGNING <component>.
+
+          ASSIGN COMPONENT <component>-name OF STRUCTURE <line> TO <value>.
+
+          comp_name = <component>-name.
+          TRANSLATE comp_name TO LOWER CASE.
+          lv_json = me->get_value( comp_name ).
+
+          CHECK lv_json IS NOT INITIAL.    "value found?  "sapcodexch issue #6
+
+          "*--- and again -> recursive! ---*
+          me->get_data(
+            EXPORTING json = lv_json
+            IMPORTING data = <value>
+            ).
+
+        ENDLOOP.
+
+      ENDIF.
+
+    ENDWHILE.
+
+  ENDMETHOD.                    "GET_TABLE
+==================================================
+ZCL_JSON_DOCUMENT=GET_VALUE
+==================================================
+  METHOD get_value.
+
+    FIELD-SYMBOLS: <data> TYPE zjson_key_value.
+
+    READ TABLE me->data
+      ASSIGNING <data>
+      WITH TABLE KEY
+        key = key.
+
+    IF sy-subrc = 0.
+      value = <data>-value.
+    ENDIF.
+
+  ENDMETHOD.                    "GET_VALUE
+==================================================
+ZCL_JSON_DOCUMENT=GET_VALUE_INT
+==================================================
+  METHOD get_value_int.
+
+    DATA: lv_value_string TYPE string.
+    FIELD-SYMBOLS: <data> TYPE zjson_key_value.
+
+    READ TABLE me->data
+      ASSIGNING <data>
+      WITH TABLE KEY
+      key = key.
+
+    IF sy-subrc = 0.
+      lv_value_string = <data>-value.
+    ENDIF.
+
+    IF lv_value_string CO ' 1234567890-'.
+      value = lv_value_string.
+    ENDIF.
+
+  ENDMETHOD.                    "GET_VALUE_INT
+==================================================
+ZCL_JSON_DOCUMENT=GET_VERSION
+==================================================
+  METHOD get_version.
+
+    version = co_version.
+
+  ENDMETHOD.                    "GET_VERSION
+==================================================
+ZCL_JSON_DOCUMENT=PARSE
+==================================================
+  METHOD parse.
+
+    escape_not_needed = abap_undefined.
+
+    "*--- new data given ---*
+    IF json IS NOT INITIAL.
+
+      set_json( json ).
+
+    ELSE.
+
+      CHECK me->json IS NOT INITIAL.  "Codexch issue #1 CX_SY_RANGE_OUT_OF_BOUNDS
+
+      CASE me->json(1).
+        WHEN '['.
+          parse_array( ).
+        WHEN '{'.
+          parse_object( ).
+        WHEN OTHERS.
+          RETURN.
+      ENDCASE.
+
+    ENDIF.
+
+  ENDMETHOD.                    "PARSE
+==================================================
+ZCL_JSON_DOCUMENT=PARSE_ARRAY
+==================================================
+  METHOD parse_array.
+
+    DATA: lv_json      TYPE string
+        , lv_json_part TYPE string
+        , lv_close     TYPE i
+        , data         TYPE zjson_key_value_t
+        .
+
+    lv_json = me->json.
+
+    CLEAR me->data_t.
+    CLEAR me->array_cursor.
+
+    REPLACE REGEX '^\[' IN lv_json WITH ``.   "codexch issue #20
+    REPLACE REGEX '\]$' IN lv_json WITH ``.   "codexch issue #20
+
+    SHIFT lv_json LEFT DELETING LEADING space. "codexch issue #35
+
+    WHILE NOT lv_json CO space.
+
+      CASE lv_json(1).
+
+        WHEN '{' OR '['.          "object or array
+
+          lv_close = get_offset_close( lv_json ).
+
+          "*--- get object ---*
+          lv_json_part = lv_json(lv_close).
+          INSERT lv_json_part INTO TABLE me->data_t.
+
+          lv_json = lv_json+lv_close.
+
+        WHEN '"'.          "string
+
+          lv_close = get_offset_close( lv_json ) - 2.  "w/o "
+
+          "*--- get object ---*
+          IF lv_close > 0.
+            lv_json_part = lv_json+1(lv_close).
+          ELSE.
+            CLEAR lv_json_part.
+          ENDIF.
+
+          INSERT lv_json_part INTO TABLE me->data_t.
+
+          ADD 2 TO lv_close.
+          lv_json = lv_json+lv_close.
+
+        WHEN OTHERS.       "numbers, boolean, NULL
+
+          SPLIT lv_json AT ',' INTO lv_json_part lv_json.
+          SHIFT lv_json_part LEFT DELETING LEADING space.
+          INSERT lv_json_part INTO TABLE me->data_t.
+
+      ENDCASE.
+
+      SHIFT lv_json LEFT DELETING LEADING space.
+      SHIFT lv_json LEFT DELETING LEADING ','.
+      SHIFT lv_json LEFT DELETING LEADING space.
+
+    ENDWHILE.
+
+  ENDMETHOD.                    "PARSE_ARRAY
+==================================================
+ZCL_JSON_DOCUMENT=PARSE_OBJECT
+==================================================
+  METHOD parse_object.
+
+    DATA: lv_json TYPE string
+        , lv_close TYPE i
+        , ls_key_value TYPE zjson_key_value
+        .
+
+    lv_json = me->json.
+    CLEAR me->data.
+
+    WHILE NOT lv_json CO '{} '.
+
+      "*--- get key ---*
+      SHIFT lv_json LEFT UP TO '"'.
+      lv_close = get_offset_close( lv_json ).
+
+      SUBTRACT 2 FROM lv_close.
+      ls_key_value-key = lv_json+1(lv_close).
+      TRANSLATE ls_key_value-key TO LOWER CASE.   "sapcodexch ticket #5
+
+      "*--- get value ---*
+      SHIFT lv_json LEFT UP TO ':'.
+      SHIFT lv_json LEFT.
+      SHIFT lv_json LEFT DELETING LEADING space.
+
+      CASE lv_json(1).
+        WHEN '"'.
+          lv_close = get_offset_close( lv_json ).
+          SUBTRACT 2 FROM lv_close.
+          ls_key_value-value = lv_json+1(lv_close).
+          ADD 2 TO lv_close.
+          lv_json = lv_json+lv_close.
+        WHEN '{' OR '['.
+          lv_close = get_offset_close( lv_json ).
+          ls_key_value-value = lv_json+0(lv_close).
+          ADD 1 TO lv_close.
+          lv_json = lv_json+lv_close.
+        WHEN OTHERS.     "boolean, numbers
+          SPLIT lv_json AT ',' INTO ls_key_value-value lv_json.
+          REPLACE '}' WITH `` INTO ls_key_value-value.   "last one of the list
+      ENDCASE.
+
+      INSERT ls_key_value INTO TABLE me->data.
+    ENDWHILE.
+
+  ENDMETHOD.                    "PARSE_OBJECT
+==================================================
+ZCL_JSON_DOCUMENT=REPLACE_NAMESPACE
+==================================================
+  METHOD replace_namespace.
+
+    DATA namespace TYPE string.
+
+    CHECK namespace_replace_pattern IS NOT INITIAL.
+
+*    REPLACE REGEX `/(\w+)/` IN cv_key WITH mv_namespace_replace_pattern.  ">= 7.31
+
+    "*--- < 7.31 ---*
+    FIND REGEX `/(\w+)/` IN key SUBMATCHES namespace.
+
+    IF namespace IS NOT INITIAL.
+      REPLACE REGEX `/(\w+)/` IN key WITH namespace_replace_pattern.
+      REPLACE '&1' IN key WITH namespace.
+      CONDENSE key.
+    ENDIF.
+
+  ENDMETHOD.                    "REPLACE_NAMESPACE
+==================================================
+ZCL_JSON_DOCUMENT=RESET_CURSOR
+==================================================
+  METHOD reset_cursor.
+
+    CLEAR me->array_cursor.
+
+  ENDMETHOD.                    "RESET_CURSOR
+==================================================
+ZCL_JSON_DOCUMENT=SET_DATA
+==================================================
+  METHOD set_data.
+
+    IF suppress_itab IS SUPPLIED.
+      set_suppress_itab( suppress_itab ).
+    ENDIF.
+
+    IF ignore_boolean IS SUPPLIED.
+      set_ignore_boolean( ignore_boolean ).
+    ENDIF.
+
+    IF dont_escape_ltgt IS SUPPLIED.
+      set_dont_escape_ltgt( dont_escape_ltgt ).
+    ENDIF.
+
+    IF date_format IS SUPPLIED.
+      set_date_format( date_format ).
+    ENDIF.
+
+    IF numc_as_numeric IS SUPPLIED.
+      set_numc_as_numeric( numc_as_numeric ).
+    ENDIF.
+
+    IF replace_underscore IS SUPPLIED.
+      set_replace_underscore( replace_underscore ).
+    ENDIF.
+
+    IF replace_double_underscore IS SUPPLIED.
+      set_replace_double_underscore( replace_double_underscore ).
+    ENDIF.
+
+    CLEAR json.
+    add_data( data ).
+
+    parse( ).
+
+  ENDMETHOD.                    "SET_DATA
+==================================================
+ZCL_JSON_DOCUMENT=SET_DATE_FORMAT
+==================================================
+  METHOD set_date_format.
+
+    me->date_format = date_format.
+
+  ENDMETHOD.                    "SET_DATE_FORMAT
+==================================================
+ZCL_JSON_DOCUMENT=SET_DONT_ESCAPE_LTGT
+==================================================
+  METHOD set_dont_escape_ltgt.
+
+    me->dont_escape_ltgt = dont_escape_ltgt.
+
+  ENDMETHOD.                    "set_dont_escape_ltgt
+==================================================
+ZCL_JSON_DOCUMENT=SET_DONT_REPLACE_LINEB
+==================================================
+  METHOD set_dont_replace_linebreaks.
+    me->dont_replace_linebreaks = dont_replace_linebreaks.
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=SET_IGNORE_BOOLEAN
+==================================================
+  METHOD set_ignore_boolean.
+
+    me->ignore_boolean = ignore_boolean.
+
+  ENDMETHOD.                    "SET_SUPPRESS_ITAB
+==================================================
+ZCL_JSON_DOCUMENT=SET_JSON
+==================================================
+  METHOD set_json.
+
+    IF date_format IS SUPPLIED.
+      set_date_format( date_format ).
+    ENDIF.
+
+    IF dont_replace_linebreaks IS SUPPLIED.
+      set_dont_replace_linebreaks( dont_replace_linebreaks ).
+    ENDIF.
+
+    me->json = json.
+
+    IF me->dont_replace_linebreaks <> abap_true.
+      "*--- esp. for CouchDB ---*
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf IN me->json WITH ``.
+      REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN me->json WITH ``.
+    ENDIF.
+
+    SHIFT me->json LEFT DELETING LEADING space.
+
+    parse( ).
+
+  ENDMETHOD.                    "SET_JSON
+==================================================
+ZCL_JSON_DOCUMENT=SET_NAMESPACE_CONVERSI
+==================================================
+  METHOD set_namespace_conversion.
+
+    IF  namespace_1_slash_replace IS INITIAL
+    AND namespace_2_slash_replace IS INITIAL.
+      CLEAR namespace_replace_pattern.
+    ELSE.
+      CONCATENATE
+        namespace_1_slash_replace
+        '&1'
+        namespace_2_slash_replace
+      INTO namespace_replace_pattern.
+    ENDIF.
+
+  ENDMETHOD.                    "SET_NAMESPACE_CONVERSION
+==================================================
+ZCL_JSON_DOCUMENT=SET_NAME_VALUE_PAIRS
+==================================================
+  METHOD set_name_value_pairs.
+
+    FIELD-SYMBOLS <name_value> TYPE wdr_simple_name_value.
+
+    json = '{'.
+    LOOP AT name_values ASSIGNING <name_value>.
+
+      "*--- is value itself a JSON string? -> no quotation marks ---*
+      DATA value TYPE string.
+      DATA off TYPE i.
+      DATA is_json TYPE boolean.
+      value = <name_value>-value.
+      IF value IS NOT INITIAL.
+        SHIFT value LEFT DELETING LEADING space.
+        IF value(1) CA '{['.
+          off = strlen( value ) - 1.   "offset of last character
+          IF value+off(1) CA ']}'.
+            is_json = abap_true.    "value is (probably) JSON
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      IF is_json IS INITIAL.
+        CONCATENATE
+          json
+          '"'
+          <name_value>-name
+          '" :"'
+          <name_value>-value
+          '"'
+        INTO json.
+      ELSE.
+        CONCATENATE
+          json
+          '"'
+          <name_value>-name
+          '" :'
+          <name_value>-value
+        INTO json.
+        CLEAR is_json.
+      ENDIF.
+
+      IF sy-tabix <> lines( name_values ).
+        CONCATENATE
+          json
+          ','
+        INTO json.
+      ENDIF.
+
+    ENDLOOP.
+
+    CONCATENATE
+      json
+      ' }'
+    INTO json.
+
+    data = name_values.
+
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=SET_NUMC_AS_NUMERIC
+==================================================
+  METHOD set_numc_as_numeric.
+    me->numc_as_numeric = numc_as_numeric.
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=SET_REPLACE_DOUBLE_UND
+==================================================
+  METHOD set_replace_double_underscore.
+    me->replace_double_underscore = replace_double_underscore.
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=SET_REPLACE_UNDERSCORE
+==================================================
+  METHOD set_replace_underscore.
+    me->replace_underscore = replace_underscore.
+  ENDMETHOD.
+==================================================
+ZCL_JSON_DOCUMENT=SET_SUPPRESS_ITAB
+==================================================
+  METHOD set_suppress_itab.
+
+    me->suppress_itab = suppress_itab.
+
+  ENDMETHOD.                    "SET_SUPPRESS_ITAB
+==================================================
+ZCL_JSON_DOCUMENT=TRANSFORM_SIMPLE
+==================================================
+  METHOD transform_simple.
+
+    "see http://scn.sap.com/people/horst.keller/blog/2013/01/07/abap-and-json
+    "see also SAP note 1648418
+
+    "*--- first check kernel version ---*
+    DATA release TYPE i.
+    DATA patch TYPE i.
+
+    get_kernel_info(
+      IMPORTING
+        release = release
+        patch   = patch
+        ).
+
+    IF release < 720
+    OR release = 720 AND patch < 116.
+      RAISE EXCEPTION TYPE zcx_json_document
+        EXPORTING
+          textid = zcx_json_document=>not_supported.
+    ENDIF.
+
+    "*--- check whether current basis release supports JSON transformation ---*
+    FIELD-SYMBOLS <type> TYPE if_sxml=>xml_stream_type.
+
+    ASSIGN ('if_sxml=>co_xt_json') TO <type>.
+
+    IF <type> IS NOT ASSIGNED.
+      RAISE EXCEPTION TYPE zcx_json_document
+        EXPORTING
+          textid = zcx_json_document=>not_supported.
+    ENDIF.
+
+    "*--- transform ---*
+    DATA writer TYPE REF TO if_sxml_writer.
+    DATA writer_out TYPE REF TO cl_sxml_string_writer.
+    DATA reader TYPE REF TO if_sxml_reader.
+    DATA jsonx TYPE xstring.
+    DATA conv_in TYPE REF TO cl_abap_conv_in_ce.
+    DATA param_t TYPE abap_trans_srcbind_tab.
+    DATA node TYPE REF TO if_sxml_node.
+    DATA node_el TYPE REF TO if_sxml_open_element.
+    DATA att TYPE if_sxml_attribute=>attributes.
+    DATA varname TYPE string.
+
+    FIELD-SYMBOLS <param> LIKE LINE OF param_t.
+    FIELD-SYMBOLS <att> TYPE REF TO if_sxml_attribute.
+
+    IF json_in IS NOT INITIAL.
+
+      INSERT INITIAL LINE INTO TABLE param_t ASSIGNING <param>.
+      <param>-name = root_name.
+      GET REFERENCE OF data_out INTO <param>-value.
+
+      "*--- field names contain lower case character? ---*
+      IF lower_case = abap_true.
+
+        "*--- convert field names to upper case ---*
+        CALL METHOD ('CL_ABAP_CODEPAGE')=>convert_to  "dyn call because of downward compatibility
+          EXPORTING
+            source = json_in    " Source String
+          RECEIVING
+            result = jsonx.
+
+        reader = cl_sxml_string_reader=>create( jsonx ).
+        writer ?= cl_sxml_string_writer=>create( type = <type> ).   "type = if_sxml=>co_xt_json
+
+        node = reader->read_next_node( ).
+
+        WHILE node IS NOT INITIAL.
+
+          IF node->type = if_sxml_node=>co_nt_element_open.
+            node_el ?= node.
+            att = node_el->get_attributes( ).
+
+            LOOP AT att ASSIGNING <att>.
+              CHECK <att>->qname-name = 'name'.
+              varname = <att>->get_value( ).
+              TRANSLATE varname TO UPPER CASE.
+              <att>->set_value( varname ).
+            ENDLOOP.
+
+          ENDIF.
+
+          writer->write_node( node ).
+
+          node = reader->read_next_node( ).
+        ENDWHILE.
+
+        writer_out ?= writer.
+        jsonx = writer_out->get_output( ).
+
+        "*--- JSONX (upper case) -> ABAP ---*
+        CALL TRANSFORMATION id SOURCE XML jsonx
+                               RESULT (param_t).
+
+      ELSE.
+
+        "*--- JSON -> ABAP ---*
+        CALL TRANSFORMATION id SOURCE XML json_in
+                               RESULT (param_t).
+
+      ENDIF.
+
+    ELSE.
+      "*--- ABAP -> JSON ---*
+      INSERT INITIAL LINE INTO TABLE param_t ASSIGNING <param>.
+      <param>-name = root_name.
+      GET REFERENCE OF data_in INTO <param>-value.
+
+      writer_out = cl_sxml_string_writer=>create( type = <type> ).  "type = if_sxml=>co_xt_json
+      CALL TRANSFORMATION id SOURCE (param_t)
+                             RESULT XML writer_out.
+      jsonx = writer_out->get_output( ).
+
+      "*--- field names as lower case characters? ---*
+      IF lower_case = abap_true.
+
+        reader = cl_sxml_string_reader=>create( jsonx ).
+        writer ?= cl_sxml_string_writer=>create( type = <type> ).   "type = if_sxml=>co_xt_json
+
+        node = reader->read_next_node( ).
+
+        WHILE node IS NOT INITIAL.
+
+          IF node->type = if_sxml_node=>co_nt_element_open.
+            node_el ?= node.
+            att = node_el->get_attributes( ).
+
+            LOOP AT att ASSIGNING <att>.
+              CHECK <att>->qname-name = 'name'.
+              varname = <att>->get_value( ).
+              TRANSLATE varname TO LOWER CASE.
+              <att>->set_value( varname ).
+            ENDLOOP.
+
+          ENDIF.
+
+          writer->write_node( node ).
+
+          node = reader->read_next_node( ).
+        ENDWHILE.
+
+        writer_out ?= writer.
+        jsonx = writer_out->get_output( ).
+
+      ENDIF.
+
+      "*--- convert xstring to string ---*
+      TRY.
+          conv_in = cl_abap_conv_in_ce=>create( input = jsonx ).
+          conv_in->read( IMPORTING data = json_out ).
+
+        CATCH cx_root.
+*          ##no_handler     "inactive for 7.01
+      ENDTRY.
+
+    ENDIF.
+
+  ENDMETHOD.                    "TRANSFORM_SIMPLE

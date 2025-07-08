@@ -1,0 +1,2225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_ABAP2XLS" VERSION="1" LANGU="S" DESCRIPT="ABAP2XLSX" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="T_ERROR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="12 " SRCCOLUMN2="19 " TYPESRC_LENG="163 " TYPESRC="BEGIN OF t_error,
+        hoja    TYPE string,
+        row     TYPE et_row,
+        col     TYPE et_col,
+        message TYPE bapi_msg,
+      END OF t_error
+"/>
+ <types CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="TT_ERROR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="13 " SRCCOLUMN1="10 " SRCROW2="13 " SRCCOLUMN2="48 " TYPESRC_LENG="41 " TYPESRC="tt_error TYPE STANDARD TABLE OF t_error
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="005" ENTRY=" Fila:" LENGTH="16 "/>
+   <textElement ID="I" KEY="006" ENTRY="Error convirtiendo valor (Col:" LENGTH="60 "/>
+   <textElement ID="I" KEY="CXL" ENTRY="Contenedor Excel" LENGTH="26 "/>
+   <textElement ID="I" KEY="EAC" ENTRY="Error asignando campo(Col:" LENGTH="52 "/>
+   <textElement ID="I" KEY="EAX" ENTRY="Error asignando campo" LENGTH="42 "/>
+   <textElement ID="I" KEY="ECO" ENTRY="Errores de conversión" LENGTH="42 "/>
+   <textElement ID="I" KEY="ECV" ENTRY="Error convirtiendo valor" LENGTH="48 "/>
+   <textElement ID="I" KEY="EIT" ENTRY="Error insertando nueva entrada en tabla interna" LENGTH="94 "/>
+   <textElement ID="I" KEY="ELC" ENTRY="Error leyendo campo" LENGTH="29 "/>
+   <textElement ID="I" KEY="ELF" ENTRY="Error leyendo fichero" LENGTH="42 "/>
+   <textElement ID="I" KEY="FEC" ENTRY="Fecha" LENGTH="15 "/>
+   <textElement ID="I" KEY="HOR" ENTRY="Hora" LENGTH="14 "/>
+   <textElement ID="I" KEY="NCV" ENTRY="no es una cantidad válida" LENGTH="50 "/>
+   <textElement ID="I" KEY="NEF" ENTRY="No existe el fichero" LENGTH="40 "/>
+   <textElement ID="I" KEY="NEH" ENTRY="No existe la hoja" LENGTH="27 "/>
+   <textElement ID="I" KEY="NEP" ENTRY="No existe plantilla" LENGTH="29 "/>
+   <textElement ID="I" KEY="NFV" ENTRY="no es fecha válida. (Col:" LENGTH="50 "/>
+   <textElement ID="I" KEY="NRF" ENTRY="No se ha podido recuperar el fichero" LENGTH="72 "/>
+   <textElement ID="I" KEY="NVA" ENTRY="no válida" LENGTH="19 "/>
+   <textElement ID="I" KEY="SPE" ENTRY="Se han producido errores en la carga del fichero Excel" LENGTH="108 "/>
+   <textElement ID="I" KEY="TME" ENTRY="Tabla interna tiene menos valores que columnas en Excel" LENGTH="110 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_ABAP2XLS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="HIGHEST_COLUMN" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="HIGHEST_ROW" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="I_ERROR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="13 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_ERROR" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="NOMBRE_HOJA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEXCEL_SHEET_TITLE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_BORDER_M" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_EXCEL_STYLE_BORDER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_BORDER_X" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_EXCEL_STYLE_BORDER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_COLUMN" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_EXCEL_COLUMN" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_EXCEL" VERSION="1" LANGU="S" DESCRIPT="Excel" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_EXCEL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_EXCEL_WRITER" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZIF_EXCEL_WRITER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_STYLE_GUID_RECUADRO" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Style" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEXCEL_CELL_STYLE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_STYLE_GUID_RECUADRO_CENTRADO" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Style" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEXCEL_CELL_STYLE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="O_WORKSHEET" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_EXCEL_WORKSHEET" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ZCX_EXCEL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCX_EXCEL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ADD_ADJ_MAIL" VERSION="1" LANGU="S" DESCRIPT="Añade excel como adjunto en mail" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ADD_ADJ_MAIL" SCONAME="O_MAIL" VERSION="1" LANGU="S" DESCRIPT="Envio mail" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ENVIO_MAIL"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ADD_ADJ_MAIL" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ADD_ADJ_MAIL" SCONAME="ADD_EXT" VERSION="1" LANGU="S" DESCRIPT="Añadir extensión XLSX" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_adj_mail.
+    DATA: l_xstring  TYPE xstring,
+          l_longitud TYPE int4,
+          l_fichero  TYPE string.
+
+    IF o_mail IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    get_xstring( IMPORTING xstring  = l_xstring
+                           longitud = l_longitud ).
+    IF l_xstring IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF add_ext IS INITIAL.
+      l_fichero = fichero.
+    ELSE.
+      l_fichero = zcl_ap_ficheros=&gt;get_extension( fichero ).
+      l_fichero = to_upper( l_fichero ).
+      IF l_fichero = &apos;XLSX&apos;.
+        l_fichero = fichero.
+      ELSE.
+        CONCATENATE fichero &apos;.xlsx&apos; INTO l_fichero.
+      ENDIF.
+    ENDIF.
+
+    o_mail-&gt;add_adjunto( tipo     = &apos;XLS&apos;
+                         titulo   = fichero
+                         xstring  = l_xstring
+                         longitud = l_longitud ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" VERSION="1" LANGU="S" DESCRIPT="Construye excel a partir de un ALV" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="OBJECT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="HUGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="GRABAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="ABRIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="RUTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="NOMBRE_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="NF1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="NF2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="CONVERT_TXT_2_NUMBER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="ELIMINAR_COLUMNAS_OCULTAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="MAIL_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="MAIL_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="MAIL_ASUNTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="REFRESH_METADATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Hoja1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="NOMBRE_COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="IT_FIELD_CATALOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_T_FIELDCATALOG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="QUITAR_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="ALV_2_XLS" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD alv_2_xls.
+    DATA: o_xls     TYPE REF TO zcl_ap_abap2xls,
+          l_aux1    TYPE text255,
+          l_fichero TYPE string,
+          l_message TYPE bapi_msg.
+    DATA: o_alv_local TYPE REF TO cl_salv_table,
+          o_colt      TYPE REF TO cl_salv_columns_table,
+          i_cols      TYPE salv_t_column_ref.
+    DATA: o_grid_local TYPE REF TO cl_gui_alv_grid,
+          t_fcat       TYPE lvc_t_fcat.
+
+    FIELD-SYMBOLS &lt;col&gt; TYPE salv_s_column_ref.
+
+    CLEAR: error,
+           xstring.
+
+    o_xls = NEW #( ).
+    IF alv IS INITIAL.
+      o_xls-&gt;set_tabla( tabla            = tabla
+                        nombre_columna   = nombre_columna
+                        it_field_catalog = it_field_catalog ).
+    ELSE.
+
+      IF eliminar_columnas_ocultas = &apos;X&apos;.
+        l_aux1 = cl_abap_classdescr=&gt;get_class_name( alv ).
+        IF l_aux1 CS &apos;CL_SALV_TABLE&apos;.
+          o_alv_local ?= alv.
+
+          o_colt = o_alv_local-&gt;get_columns( ).
+          i_cols = o_colt-&gt;get( ).
+
+          LOOP AT i_cols ASSIGNING &lt;col&gt;.
+            IF &lt;col&gt;-r_column-&gt;is_visible( ) = &apos;&apos;.
+              &lt;col&gt;-r_column-&gt;set_technical( if_salv_c_bool_sap=&gt;true ).
+            ELSEIF NOT quitar_campos IS INITIAL.
+              IF zcl_ap_lista=&gt;es_elemento( lista    = quitar_campos
+                                            elemento = &lt;col&gt;-columnname ).
+                &lt;col&gt;-r_column-&gt;set_technical( if_salv_c_bool_sap=&gt;true ).
+              ENDIF.
+            ENDIF.
+          ENDLOOP.
+
+          o_xls-&gt;set_alv( alv                  = o_alv_local
+                          tabla                = tabla
+                          refresh_metadata     = refresh_metadata
+                          convert_txt_2_number = convert_txt_2_number  ).
+        ELSEIF l_aux1 CS &apos;CL_GUI_ALV_GRID&apos;.
+          o_grid_local ?= alv.
+          o_grid_local-&gt;get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = t_fcat ).
+          DELETE t_fcat WHERE no_out = &apos;X&apos;.              &quot;#EC CI_STDSEQ
+          IF NOT quitar_campos IS INITIAL.
+            LOOP AT t_fcat ASSIGNING FIELD-SYMBOL(&lt;fcat&gt;).
+              IF zcl_ap_lista=&gt;es_elemento( lista    = quitar_campos
+                                            elemento = &lt;fcat&gt;-fieldname ).
+                DELETE t_fcat.
+              ENDIF.
+            ENDLOOP.
+          ENDIF.
+          o_grid_local-&gt;set_frontend_fieldcatalog( it_fieldcatalog = t_fcat ).
+          o_xls-&gt;set_alv( alv   = o_grid_local
+                          tabla = tabla ).
+        ELSE.
+          o_xls-&gt;set_alv( alv                  = alv
+                          tabla                = tabla
+                          refresh_metadata     = refresh_metadata
+                          convert_txt_2_number = convert_txt_2_number ).
+        ENDIF.
+      ELSE.
+        o_xls-&gt;set_alv( alv                  = alv
+                        tabla                = tabla
+                        refresh_metadata     = refresh_metadata
+                        convert_txt_2_number = convert_txt_2_number ).
+      ENDIF.
+    ENDIF.
+
+    TRY.
+        o_xls-&gt;o_worksheet-&gt;set_title( titulo ).
+      CATCH zcx_excel.
+        error = &apos;Error modificando título&apos;.
+        RETURN.
+    ENDTRY.
+
+    o_xls-&gt;get_xstring( EXPORTING huge    = huge
+                        IMPORTING xstring = xstring ).
+
+    IF nombre_fichero IS INITIAL.
+      __concat3 l_aux1 &apos;fichero&apos; nf1 nf2.
+    ELSE.
+      __concat3 l_aux1 nombre_fichero nf1 nf2.
+    ENDIF.
+    DATA(l_extension) = zcl_ap_ficheros=&gt;get_extension( l_aux1 ).
+    l_extension = to_upper( l_extension ).
+    IF l_extension = &apos;XLX&apos; OR l_extension = &apos;XLSX&apos;.
+      l_fichero = l_aux1.
+    ELSE.
+      CONCATENATE l_aux1 &apos;.xlsx&apos; INTO l_fichero.
+    ENDIF.
+
+    IF grabar = &apos;X&apos; OR abrir = &apos;X&apos;.
+      IF ruta IS INITIAL.
+        l_fichero = zcl_ap_ficheros=&gt;concat_ruta( directorio_temporal = &apos;X&apos;
+                                                  fichero             = l_fichero ).
+      ELSEIF nombre_fichero IS INITIAL AND nf1 IS INITIAL AND nf2 IS INITIAL AND ruta CS &apos;.&apos;.
+        l_fichero = ruta.
+      ELSEIF ruta = &apos;?&apos;.
+        zcl_ap_ficheros=&gt;dialogo_grabar_fichero( EXPORTING fichero_inicial = l_fichero
+                                                           mostrar_error   = &apos;X&apos;
+                                                 IMPORTING ruta            = l_fichero ).
+      ELSE.
+        l_fichero = zcl_ap_ficheros=&gt;concat_ruta( directorio = ruta
+                                                  fichero    = l_fichero ).
+      ENDIF.
+      o_xls-&gt;graba_fichero( EXPORTING fichero  = l_fichero
+                                      huge     = huge
+                                      servidor = servidor
+                                      local    = local
+                            IMPORTING message  = l_message ).
+      IF grabar = &apos;X&apos;.
+        IF l_message IS INITIAL.
+          MESSAGE s106(lx) WITH l_fichero.
+        ELSE.
+          error = |Error grabando fichero { l_fichero }: { l_message }|.
+          MESSAGE l_message TYPE &apos;I&apos;.
+        ENDIF.
+      ENDIF.
+      IF abrir = &apos;X&apos;.
+        zcl_ap_gos=&gt;visualizar_fichero_st( fichero = l_fichero ).
+      ENDIF.
+    ENDIF.
+
+    IF NOT mail_destino IS INITIAL.
+      zcl_ap_envio_mail=&gt;mail( EXPORTING subject              = mail_asunto
+                                         direccion            = mail_destino
+                                         nombre_fichero_tabla = l_fichero
+                                         texto                = mail_texto
+                                         xstring              = xstring
+                               IMPORTING message              = l_message ).
+      IF l_message IS INITIAL.
+        CONCATENATE &apos;Se ha enviado mail a&apos; mail_destino INTO l_message SEPARATED BY space.
+        MESSAGE l_message TYPE &apos;S&apos;.
+      ELSE.
+        MESSAGE l_message TYPE &apos;I&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="CONSTRUCTOR" SCONAME="O_EXCEL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_EXCEL" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    IF o_excel IS INITIAL.
+      me-&gt;o_excel = NEW #( ).
+    ELSE.
+      me-&gt;o_excel = o_excel.
+    ENDIF.
+
+    o_worksheet = me-&gt;o_excel-&gt;get_active_worksheet( ).
+
+    o_border_x = NEW #( ).
+    o_border_x-&gt;border_color-rgb = zcl_excel_style_color=&gt;c_black.
+    o_border_x-&gt;border_style = zcl_excel_style_border=&gt;c_border_thin.
+
+    o_border_m = NEW #( ).
+    o_border_m-&gt;border_color-rgb = zcl_excel_style_color=&gt;c_black.
+    o_border_m-&gt;border_style = zcl_excel_style_border=&gt;c_border_medium.
+
+    o_style_guid_recuadro          = get_style_guid( borders = &apos;DOWN=X,TOP=X,LEFT=X,RIGHT=X&apos;  ).
+    o_style_guid_recuadro_centrado = get_style_guid( centrado = &apos;X&apos;
+                                                     borders  = &apos;DOWN=X,TOP=X,LEFT=X,RIGHT=X&apos; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="COPIAR_FILA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="COPIAR_FILA" SCONAME="FILA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="COPIAR_FILA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD copiar_fila.
+    DATA: i_nueva_fila TYPE zexcel_t_cell_data,
+          l_fila       TYPE int4,
+          i_cambios    TYPE zexcel_t_cell_data.
+
+    CLEAR message.
+
+    LOOP AT o_worksheet-&gt;sheet_content ASSIGNING FIELD-SYMBOL(&lt;cell_data&gt;) WHERE cell_row = fila.
+      APPEND &lt;cell_data&gt; TO i_nueva_fila.
+    ENDLOOP.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No existe la fila a copiar&apos;.
+      RETURN.
+    ENDIF.
+
+    LOOP AT o_worksheet-&gt;sheet_content INTO DATA(l_cambio) WHERE cell_row &gt; fila. &quot;#EC CI_SORTSEQ
+      &quot; TODO: variable is assigned but never used (ABAP cleaner)
+      DATA(l_fila_orig) = l_cambio-cell_row.
+      l_fila = l_cambio-cell_row + 1.
+
+      l_cambio-cell_row    = l_fila.
+      l_cambio-cell_coords = get_cell_coord( fila = l_fila
+                                             col  = l_cambio-cell_column ).
+      APPEND l_cambio TO i_cambios.
+      DELETE o_worksheet-&gt;sheet_content.
+    ENDLOOP.
+
+    LOOP AT i_nueva_fila INTO l_cambio.
+      l_cambio-cell_row    = fila + 1.
+      l_cambio-cell_coords = get_cell_coord( fila = l_cambio-cell_row
+                                             col  = l_cambio-cell_column ).
+      APPEND l_cambio TO o_worksheet-&gt;sheet_content.
+    ENDLOOP.
+
+    LOOP AT i_cambios ASSIGNING &lt;cell_data&gt;.
+      APPEND &lt;cell_data&gt; TO o_worksheet-&gt;sheet_content.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Lee hoja" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="COL_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="FILA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="COLUMNA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="EXISTE_VALOR" SCONAME="SI_EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_valor.
+*--------------------------------------------------------------------*
+* Comment D. Rauchenstein
+* With this method, we get a fully functional Excel Upload, which solves
+* a few issues of the other excel upload tools
+* ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
+* in row-Numbers. Other have Limitations of Lines, or you are not able
+* to ignore filters or choosing the right tab.
+*
+* To get a fully functional XLSX Upload, you can use it e.g. with method
+* CL_EXCEL_READER_2007-&gt;ZIF_EXCEL_READER~LOAD_FILE()
+*--------------------------------------------------------------------*
+
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_nombre_hoja TYPE string,
+          o_error_excel TYPE REF TO zcx_excel.
+    DATA lv_max_col    TYPE zexcel_cell_column.
+    DATA lv_max_row    TYPE int4.
+    DATA lv_actual_row TYPE int4.
+    DATA lv_actual_col TYPE int4.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_delta_col  TYPE int4.
+    DATA lv_value      TYPE zexcel_cell_value.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_rc         TYPE sysubrc.
+
+    CLEAR: message,
+           si_existe.
+
+    l_nombre_hoja = o_worksheet-&gt;get_title( ).
+
+    TRY.
+        lv_max_col = o_worksheet-&gt;get_highest_column( ).
+
+        IF lv_max_col &gt; 16000. &quot; Ha veces hay un error!
+          lv_max_col = 255.
+        ENDIF.
+      CATCH zcx_excel INTO o_error_excel.
+        message = o_error_excel-&gt;get_longtext( ).
+        RETURN.
+    ENDTRY.
+
+    TRY.
+        lv_max_row = o_worksheet-&gt;get_highest_row( ).
+      CATCH zcx_excel INTO o_error_excel.
+        message = o_error_excel-&gt;get_longtext( ).
+        RETURN.
+    ENDTRY.
+
+    IF lv_max_col &lt;= 0.
+      RETURN.
+    ENDIF.
+    WHILE lv_actual_row &lt;= lv_max_row.
+      lv_actual_col = 1.
+
+      WHILE lv_actual_col &lt;= lv_max_col.
+        IF lv_actual_col = col_valor OR col_valor = 0.
+          lv_delta_col = lv_actual_col.
+
+          TRY.
+              o_worksheet-&gt;get_cell( EXPORTING ip_column = lv_actual_col    &quot; Cell Column
+                                               ip_row    = lv_actual_row    &quot; Cell Row
+                                     IMPORTING ep_value  = lv_value    &quot; Cell Value
+                                               ep_rc     = lv_rc ). &quot; Return Value of ABAP Statements
+            CATCH zcx_excel INTO o_error_excel.
+              message = o_error_excel-&gt;get_longtext( ).
+          ENDTRY.
+
+          IF lv_value = valor.
+            si_existe = &apos;X&apos;.
+            fila = lv_actual_row.
+            columna = lv_actual_col.
+            RETURN.
+          ENDIF.
+        ENDIF.
+        lv_actual_col = lv_actual_col + 1.
+      ENDWHILE.
+      lv_actual_row = lv_actual_row + 1.
+    ENDWHILE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_ALV_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Crea ALV simple" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_ALV_SIMPLE" SCONAME="SHOW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_ALV_SIMPLE" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_ALV_SIMPLE" SCONAME="O_ALV" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="ZCL_AP_ALV"/>
+  <source>METHOD get_alv_simple.
+    o_alv = NEW #( tabla = &apos;&apos; ).
+
+    o_alv-&gt;constructor_tabla( CHANGING t_tabla = tabla ).
+
+    IF show = &apos;X&apos;.
+      cl_salv_bs_runtime_info=&gt;set( display  = abap_false
+                                    metadata = abap_false
+                                    data     = abap_true ).
+      o_alv-&gt;show( ).
+      cl_salv_bs_runtime_info=&gt;clear_all( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_CELL_COORD" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_CELL_COORD" SCONAME="FILA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_CELL_COORD" SCONAME="COL" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_CELL_COORD" SCONAME="COORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_cell_coord.
+    DATA: lv_row_alpha TYPE string,
+          lv_col_alpha TYPE zexcel_cell_column_alpha.
+
+    lv_row_alpha = fila.
+    CONDENSE lv_row_alpha NO-GAPS.
+    TRY.
+        lv_col_alpha = zcl_excel_common=&gt;convert_column2alpha( col ).
+      CATCH zcx_excel INTO DATA(zcx_excel).
+        DATA(message) = zcx_excel-&gt;get_longtext( ).
+        MESSAGE message TYPE &apos;E&apos;.
+    ENDTRY.
+    CONCATENATE lv_col_alpha lv_row_alpha INTO coord.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="HUGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="BINARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_FICHERO_DESDE_ZIP" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_fichero_desde_zip.
+    DATA o_reader TYPE REF TO zif_excel_reader.
+
+    IF huge IS INITIAL.
+      o_reader = NEW zcl_excel_reader_2007( ).
+    ELSE.
+      o_reader = NEW zcl_excel_reader_huge_file( ).
+    ENDIF.
+
+    TRY.
+        o_excel = o_reader-&gt;load( i_excel2007 = binario ).
+      CATCH zcx_excel INTO zcx_excel.
+        message = zcx_excel-&gt;get_longtext( ).
+    ENDTRY.
+
+    xstring = o_reader-&gt;get_fichero_desde_zip( fichero ).
+
+    IF mostrar_error = &apos;X&apos; AND NOT message IS INITIAL.
+      MESSAGE message TYPE &apos;E&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_MSG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_MSG" SCONAME="ROW" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_MSG" SCONAME="COL" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_MSG" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_msg.
+    FIELD-SYMBOLS &lt;error&gt; TYPE t_error.
+
+    CLEAR message.
+
+    LOOP AT i_error ASSIGNING &lt;error&gt; WHERE row = row.   &quot;#EC CI_STDSEQ
+      IF &lt;error&gt;-col = col OR col IS INITIAL.
+        __add_lista message &lt;error&gt;-message.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" VERSION="1" LANGU="S" DESCRIPT="Devuelve estilo" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="BORDERS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="BOLD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="CENTRADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="FONT_SIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_STYLE_FONT_SIZE" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="DERECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="COLOR_FONDO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="NUMBER_FORMAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_STYLE_GUID" SCONAME="GUID" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Style" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEXCEL_CELL_STYLE"/>
+  <source>METHOD get_style_guid.
+    DATA: o_style  TYPE REF TO zcl_excel_style,
+          tabla    TYPE TABLE OF string,
+          lado     TYPE string,
+          borde    TYPE string,
+          o_border TYPE REF TO zcl_excel_style_border.
+
+    FIELD-SYMBOLS &lt;tabla&gt; TYPE string.
+
+    o_style = o_excel-&gt;add_new_style( ).
+
+    SPLIT borders AT &apos;,&apos; INTO TABLE tabla.
+    LOOP AT tabla ASSIGNING &lt;tabla&gt;.
+      SPLIT &lt;tabla&gt; AT &apos;=&apos; INTO lado borde.
+      IF borde = &apos;X&apos; OR borde = &apos;&apos;.
+        o_border = o_border_x.
+      ELSEIF borde = &apos;M&apos;.
+        o_border = o_border_m.
+      ENDIF.
+      CASE lado.
+        WHEN &apos;DOWN&apos;. o_style-&gt;borders-&gt;down = o_border.
+        WHEN &apos;TOP&apos;. o_style-&gt;borders-&gt;top = o_border.
+        WHEN &apos;LEFT&apos;. o_style-&gt;borders-&gt;left = o_border.
+        WHEN &apos;RIGHT&apos;. o_style-&gt;borders-&gt;right = o_border.
+        WHEN &apos;ALLBORDERS&apos;. o_style-&gt;borders-&gt;allborders = o_border.
+      ENDCASE.
+    ENDLOOP.
+
+    o_style-&gt;font-&gt;bold = bold.
+
+    IF NOT font_size IS INITIAL.
+      o_style-&gt;font-&gt;size = font_size.
+    ENDIF.
+
+    IF centrado = &apos;X&apos;.
+      o_style-&gt;alignment-&gt;horizontal = &apos;center&apos;.
+    ELSEIF derecha = &apos;X&apos;.
+      o_style-&gt;alignment-&gt;horizontal = &apos;right&apos;.
+    ENDIF.
+
+    IF NOT color_fondo IS INITIAL.
+      o_style-&gt;fill-&gt;filltype = zcl_excel_style_fill=&gt;c_fill_solid.
+      o_style-&gt;fill-&gt;fgcolor-rgb = color_fondo.
+    ENDIF.
+
+    IF NOT number_format IS INITIAL.
+      o_style-&gt;number_format-&gt;format_code = number_format.
+    ENDIF.
+
+    guid = o_style-&gt;get_guid( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" VERSION="1" LANGU="S" DESCRIPT="Leer tabla interna a partir de excel" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="IV_SKIPPED_ROWS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="IV_SKIPPED_COLS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="LINEAS_CABECERA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="CONV_CTD" VERSION="1" LANGU="S" DESCRIPT="Convertir cantidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="MAX_COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="VALIDAR_MAESTROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="OPCIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="ET_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_TABLA" SCONAME="ET_ERRORES" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD get_tabla.
+*--------------------------------------------------------------------*
+* Comment D. Rauchenstein
+* With this method, we get a fully functional Excel Upload, which solves
+* a few issues of the other excel upload tools
+* ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
+* in row-Numbers. Other have Limitations of Lines, or you are not able
+* to ignore filters or choosing the right tab.
+*
+* To get a fully functional XLSX Upload, you can use it e.g. with method
+* CL_EXCEL_READER_2007-&gt;ZIF_EXCEL_READER~LOAD_FILE()
+*--------------------------------------------------------------------*
+
+    DATA: l_nombre_hoja TYPE string,
+          o_error_excel TYPE REF TO zcx_excel,
+          l_msg         TYPE bapi_msg,
+          l_tipo        TYPE c LENGTH 1,
+          l_mask        TYPE string,
+          l_fecha       TYPE d,
+          l_string      TYPE string,
+          l_aux         TYPE string,
+          l_horat       TYPE string,
+          l_long        TYPE i,
+          l_segundos    TYPE int4,
+          l_hora        TYPE uzeit,
+          l_potencia    TYPE string,
+          cx_root       TYPE REF TO cx_root,
+          l_long2       TYPE i,
+          l_error       TYPE t_error.
+    DATA lv_max_col       TYPE zexcel_cell_column.
+    DATA lv_max_row       TYPE int4.
+    DATA lv_actual_row    TYPE int4.
+    DATA lv_actual_col    TYPE int4.
+    DATA lv_errormessage  TYPE string.
+    DATA lv_delta_col     TYPE int4.
+    DATA lv_col_ficticias TYPE int4.
+    DATA lv_value         TYPE zexcel_cell_value.
+    DATA lv_rc            TYPE sysubrc.
+    DATA l_campo_hora     TYPE fieldname.
+
+    FIELD-SYMBOLS &lt;ls_line&gt;  TYPE data.
+    FIELD-SYMBOLS &lt;lv_value&gt; TYPE data.
+
+    FIELD-SYMBOLS &lt;fs&gt;       TYPE any.
+
+    l_nombre_hoja = o_worksheet-&gt;get_title( ).
+    DEFINE add_error.
+      CLEAR l_error.
+      l_error-hoja    = l_nombre_hoja.
+      l_error-row     = lv_actual_row.
+      l_error-col     = lv_actual_col.
+      l_error-message = &amp;1.
+      APPEND l_error TO i_error.
+    END-OF-DEFINITION.
+
+    CLEAR et_errores.
+
+    TRY.
+        lv_max_col = o_worksheet-&gt;get_highest_column( ).
+
+        IF lv_max_col &gt; 16000. &quot; Ha veces hay un error!
+          lv_max_col = 255.
+        ENDIF.
+      CATCH zcx_excel INTO o_error_excel.
+        l_msg = o_error_excel-&gt;get_longtext( ).
+    ENDTRY.
+
+    TRY.
+        lv_max_row = o_worksheet-&gt;get_highest_row( ).
+      CATCH zcx_excel INTO o_error_excel.
+        l_msg = o_error_excel-&gt;get_longtext( ).
+    ENDTRY.
+
+    IF max_col &lt;&gt; 0.
+      DATA(l_max_col) = max_col.
+      IF max_col = -1. &quot; Con esto indicamos que queremos las filas de la tabla interna
+        l_max_col = lines( zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( et_table ) ).
+      ENDIF.
+      IF l_max_col &lt; lv_max_col.
+        lv_max_col = l_max_col.
+      ENDIF.
+    ENDIF.
+
+*--------------------------------------------------------------------*
+* The row counter begins with 1 and should be corrected with the skips
+*--------------------------------------------------------------------*
+    lv_actual_row = iv_skipped_rows + 1.
+    lv_actual_col = iv_skipped_cols + 1.
+
+    TRY.
+        APPEND INITIAL LINE TO et_table ASSIGNING &lt;ls_line&gt;.
+        IF sy-subrc &lt;&gt; 0 OR &lt;ls_line&gt; IS NOT ASSIGNED.
+          lv_errormessage = &apos;Error insertando nueva entrada en tabla interna&apos;(eit).
+          APPEND lv_errormessage TO et_errores.
+          add_error lv_errormessage.
+        ELSE.
+          DATA(it_fieldcat) = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( et_table ).
+          DO 20 TIMES.
+            lv_delta_col = lv_max_col - iv_skipped_cols.
+            ASSIGN COMPONENT lv_delta_col OF STRUCTURE &lt;ls_line&gt; TO &lt;lv_value&gt;.
+            IF sy-subrc &lt;&gt; 0 OR &lt;lv_value&gt; IS NOT ASSIGNED.
+              IF NOT opciones CS &apos;IGNORAR_FICHERO_CON_MAS_COLUMNAS&apos;.
+                lv_errormessage = &apos;Tabla interna tiene menos valores que columnas en Excel&apos;(tme).
+                COLLECT lv_errormessage INTO et_errores.
+                add_error lv_errormessage.
+              ENDIF.
+              lv_max_col = lv_max_col - 1.
+            ELSE.
+              EXIT.
+            ENDIF.
+          ENDDO.
+*           ELSE. &quot;APC20180702
+          IF lv_max_col &gt; 0. &quot; APC20180702
+*--------------------------------------------------------------------*
+*now we are ready for handle the table data
+*--------------------------------------------------------------------*
+            REFRESH et_table.
+*--------------------------------------------------------------------*
+* Handle each Row until end on right side
+*--------------------------------------------------------------------*
+            WHILE lv_actual_row &lt;= lv_max_row.
+              IF lv_actual_row &lt;= lineas_cabecera.
+                lv_actual_row = lv_actual_row + 1.
+                CONTINUE.
+              ENDIF.
+
+              CLEAR lv_col_ficticias.
+*--------------------------------------------------------------------*
+* Handle each Column until end on bottom
+* First step is to step back on first column
+*--------------------------------------------------------------------*
+              lv_actual_col = iv_skipped_cols + 1.
+
+              UNASSIGN &lt;ls_line&gt;.
+              APPEND INITIAL LINE TO et_table ASSIGNING &lt;ls_line&gt;.
+              IF sy-subrc &lt;&gt; 0 OR &lt;ls_line&gt; IS NOT ASSIGNED.
+                lv_errormessage = &apos;Error insertando nueva entrada en tabla interna&apos;(eit).
+*APC
+                APPEND lv_errormessage TO et_errores.
+*           RAISE EXCEPTION TYPE zcx_excel
+*             EXPORTING
+*               error = lv_errormessage.
+
+              ENDIF.
+              WHILE lv_actual_col &lt;= lv_max_col.
+                TRY.
+                    lv_delta_col = lv_actual_col - iv_skipped_cols + lv_col_ficticias.
+
+                    DO 3 TIMES.
+                      ASSIGN COMPONENT lv_delta_col OF STRUCTURE &lt;ls_line&gt; TO &lt;lv_value&gt;.
+                      IF sy-subrc &lt;&gt; 0.
+                        __concat4 lv_errormessage &apos;Error asignando campo(Col:&apos;(eac) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                        APPEND lv_errormessage TO et_errores.
+                        __concat2 l_msg &apos;Error asignando campo&apos;(eax) lv_delta_col.
+                        add_error l_msg.
+                        EXIT.
+                      ELSE.
+                        READ TABLE it_fieldcat INTO DATA(fcat) INDEX lv_delta_col.
+                        IF sy-subrc &lt;&gt; 0.
+                          CLEAR fcat.
+                          EXIT.
+                        ELSE.
+                          IF fcat-fieldname CS &apos;_HORA_NO_F&apos;.
+                            lv_delta_col = lv_delta_col + 1.
+                            lv_col_ficticias = lv_col_ficticias + 1.
+                          ELSE.
+                            EXIT.
+                          ENDIF.
+                        ENDIF.
+                      ENDIF.
+                    ENDDO.
+
+                    TRY.
+                        o_worksheet-&gt;get_cell( EXPORTING ip_column = lv_actual_col    &quot; Cell Column
+                                                         ip_row    = lv_actual_row    &quot; Cell Row
+                                               IMPORTING ep_value  = lv_value    &quot; Cell Value
+                                                         ep_rc     = lv_rc ). &quot; Return Value of ABAP Statements
+                      CATCH zcx_excel INTO o_error_excel.
+                        l_msg = o_error_excel-&gt;get_longtext( ).
+                        add_error l_msg.
+                    ENDTRY.
+
+                    IF     lv_rc &lt;&gt; 0
+                       AND lv_rc &lt;&gt; 4.                                                   &quot; No found error means, zero/no value in cell
+                      IF lv_actual_row &lt;&gt; lv_max_row.
+* En la última fila no están rellenas todas las columnas si están en blanco
+                        __concat4 lv_errormessage &apos;Error leyendo campo&apos;(elc) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                        APPEND lv_errormessage TO et_errores.
+                        add_error &apos;Error leyendo campo&apos;(elc).
+                      ENDIF.
+                    ENDIF.
+
+                    DESCRIBE FIELD &lt;lv_value&gt; TYPE l_tipo EDIT MASK l_mask.
+                    CASE l_tipo.
+                      WHEN &apos;D&apos;.
+                        CLEAR l_fecha.
+                        IF lv_value CO &apos;0123456789./&apos; AND strlen( lv_value ) = 10.
+                          l_fecha = zcl_ap_fechas=&gt;string2fecha( cadena           = lv_value
+                                                                 corregir_errores = &apos;X&apos; ).
+                        ENDIF.
+                        IF l_fecha IS INITIAL.
+                          l_string = lv_value.
+
+                          CLEAR: l_fecha,
+                                 l_aux,
+                                 l_horat.
+                          IF lv_value CS &apos;.&apos;.
+                            IF lv_value CO &apos;0123456789.&apos;.
+                              SPLIT lv_value AT &apos;.&apos; INTO lv_value l_horat.
+                            ENDIF.
+                          ENDIF.
+                          IF lv_value CO &apos;0123456789 &apos;.
+                            l_long = strlen( lv_value ).
+                            IF l_long = 8.
+                              IF lv_value(8) CO &apos;0123456789&apos;.
+                                l_fecha = zcl_ap_fechas=&gt;string2fecha( cadena           = lv_value
+                                                                       corregir_errores = &apos;X&apos; ).
+                              ENDIF.
+                            ENDIF.
+                            IF l_fecha IS INITIAL.
+                              TRY.
+                                  IF lv_value = 0.
+                                    l_fecha = &apos;00000000&apos;.
+                                  ELSEIF lv_value &lt;= 2958465.
+                                    l_fecha = &apos;19000101&apos;.
+                                    l_fecha = l_fecha + lv_value - 2.
+*                      elseif lv_value = &apos;2958465&apos;.
+*                        l_fecha = &apos;99991231&apos;.
+                                  ENDIF.
+                                CATCH cx_root. &quot;#EC *
+                                  MESSAGE &apos;Error convirtiendo fecha&apos; TYPE &apos;S&apos;.
+                              ENDTRY.
+                            ENDIF.
+                          ENDIF.
+
+                          IF l_fecha IS INITIAL.
+                            l_fecha = zcl_ap_fechas=&gt;string2fecha( cadena           = lv_value
+                                                                   corregir_errores = &apos;X&apos; ).
+                          ENDIF.
+                        ENDIF.
+                        IF zcl_ap_fechas=&gt;es_valida( l_fecha ) = &apos;X&apos; OR lv_value = &apos;&apos;.
+                          &lt;lv_value&gt; = l_fecha.
+                        ELSE.
+                          &lt;lv_value&gt; = &apos;88888888&apos;.
+                          lv_errormessage = zcl_ap_utils=&gt;concat( p1 = lv_value
+                                                                  p2 = &apos;no es fecha válida. (Col:&apos;(nfv)
+                                                                  p3 = lv_actual_col
+                                                                  p4 = &apos; Fila:&apos;(005)
+                                                                  p5 = lv_actual_row ).
+                          CONCATENATE &apos;Fecha&apos;(fec) lv_value &apos;no válida&apos;(nva) INTO l_msg SEPARATED BY space.
+                          add_error l_msg.
+                        ENDIF.
+
+                        IF NOT l_horat IS INITIAL.
+                          ASSIGN it_fieldcat[ lv_delta_col ] TO FIELD-SYMBOL(&lt;fcat&gt;).
+                          IF sy-subrc = 0.
+                            l_campo_hora = |{ &lt;fcat&gt;-fieldname }_HORA_NO_F|.
+                            IF line_exists( it_fieldcat[ fieldname = l_campo_hora ] ). &quot;#EC CI_STDSEQ
+                              CONCATENATE &apos;&lt;LS_LINE&gt;-&apos; l_campo_hora INTO l_campo_hora.
+                              ASSIGN (l_campo_hora) TO &lt;fs&gt;.
+                              IF sy-subrc = 0.
+                                TRY.
+                                    CONCATENATE &apos;0.&apos; l_horat INTO l_aux.
+                                    l_segundos = ( 24 * 60 * 60 ) * l_aux.
+                                    CLEAR l_hora.
+                                    l_hora = l_hora + l_segundos.
+                                    &lt;fs&gt; = l_hora.
+                                  CATCH cx_root. &quot;#EC *
+                                    l_aux = &apos;X&apos;.
+                                ENDTRY.
+                              ENDIF.
+                            ENDIF.
+                          ENDIF.
+                        ENDIF.
+                      WHEN &apos;T&apos;.
+*                  if lv_actual_col = 21. BREAK-POINT. endif.
+                        CLEAR: l_hora,
+                               l_aux.
+
+                        IF lv_value CO &apos;0123456789: &apos;.
+                          l_hora = zcl_ap_fechas=&gt;string2hora( lv_value ).
+                          IF l_hora CO &apos;0123456789&apos;.
+                            &lt;lv_value&gt; = l_hora.
+                          ELSE.
+                            l_aux = &apos;X&apos;.
+                          ENDIF.
+                        ELSEIF lv_value CO &apos;0123456789.E+- &apos; AND lv_value CS &apos;.&apos;.
+                          TRY.
+                              IF lv_value CS &apos;E&apos;.
+                                SPLIT lv_value AT &apos;E-&apos; INTO l_string l_potencia.
+                                IF l_potencia = &apos;00&apos;.
+                                  l_segundos = l_string * 86400.
+                                ELSE.
+                                  DATA(l_pot) = 10 ** l_potencia.
+                                  IF l_pot &lt;&gt; 0.
+                                    l_segundos = ( l_string * 86400 ) / l_pot.
+                                  ENDIF.
+                                ENDIF.
+                              ELSE.
+                                l_segundos = lv_value * 86400.
+                              ENDIF.
+                              l_hora = l_hora + l_segundos.
+                            CATCH cx_root. &quot;#EC *
+                              l_aux = &apos;X&apos;.
+                          ENDTRY.
+                        ELSE.
+                          l_aux = &apos;X&apos;.
+                        ENDIF.
+
+                        IF l_aux = &apos;X&apos;.
+                          &lt;lv_value&gt; = &apos;888888&apos;.
+                          lv_errormessage = zcl_ap_utils=&gt;concat( p1 = lv_value
+                                                                  p2 = &apos;no es hora válida. (Col:&apos;(nfv)
+                                                                  p3 = lv_actual_col
+                                                                  p4 = &apos; Fila:&apos;(005)
+                                                                  p5 = lv_actual_row ).
+                          CONCATENATE &apos;Hora&apos;(hor) lv_value &apos;no válida&apos;(nva) INTO l_msg SEPARATED BY space.
+                          add_error l_msg.
+                        ELSE.
+                          &lt;lv_value&gt; = l_hora.
+                        ENDIF.
+
+                      WHEN &apos;P&apos;
+                        OR &apos;b&apos;. &quot; INT1
+                        TRY.
+                            IF conv_ctd = &apos;X&apos;.
+                              zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = lv_value
+                                                         IMPORTING cantidad  = &lt;lv_value&gt;
+                                                                   mensaje   = l_msg ).
+                              IF NOT l_msg IS INITIAL.
+                                CONCATENATE lv_value &apos;no es una cantidad válida&apos;(ncv) INTO l_msg SEPARATED BY space.
+                                add_error l_msg.
+                              ENDIF.
+                            ELSE.
+                              &lt;lv_value&gt; = lv_value.
+                            ENDIF.
+                          CATCH cx_root INTO cx_root. &quot;#EC *
+                            l_msg = cx_root-&gt;get_longtext( ).
+                            add_error l_msg.
+                        ENDTRY.
+                      WHEN OTHERS.
+                        CASE l_mask.
+                          WHEN &apos;==CUNIT&apos;.
+                            CALL FUNCTION &apos;CONVERSION_EXIT_CUNIT_INPUT&apos;
+                              EXPORTING
+                                input          = lv_value
+                                language       = sy-langu
+                              IMPORTING
+                                output         = &lt;lv_value&gt;
+                              EXCEPTIONS
+                                unit_not_found = 1
+                                OTHERS         = 2.
+                            IF sy-subrc &lt;&gt; 0.
+                              __concat3 lv_errormessage &apos;Unidad&apos; lv_value &apos;incorrecta.&apos;.
+                              COLLECT lv_errormessage INTO et_errores.
+                              add_error lv_errormessage.
+                            ENDIF.
+                          WHEN &apos;==ALPHA&apos;.
+                            DESCRIBE FIELD &lt;lv_value&gt; LENGTH l_long IN CHARACTER MODE.
+                            l_long2 = strlen( lv_value ).
+                            IF l_long2 &gt; l_long.
+                              &lt;lv_value&gt; = lv_value.
+                            ELSE.
+                              CALL FUNCTION &apos;CONVERSION_EXIT_ALPHA_INPUT&apos;
+                                EXPORTING
+                                  input  = lv_value
+                                IMPORTING
+                                  output = &lt;lv_value&gt;.
+                            ENDIF.
+                            IF validar_maestros = &apos;X&apos;.
+                              IF NOT &lt;lv_value&gt; IS INITIAL.
+                                CASE fcat-rollname.
+                                  WHEN &apos;KSTAR&apos;.
+                                    SELECT SINGLE kstar FROM cska
+                                      INTO @DATA(l_kstar)
+                                      WHERE ktopl = @zcl_c=&gt;plan_cuentas AND kstar = @&lt;lv_value&gt;.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Clase de coste { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  WHEN &apos;KOSTL&apos;.
+                                    SELECT kostl FROM csks
+                                      INTO @DATA(l_kostl)
+                                      UP TO 1 ROWS
+                                      WHERE kokrs = @zcl_c=&gt;sociedad_co
+                                        AND kostl = @&lt;lv_value&gt;
+                                      ORDER BY PRIMARY KEY.
+                                    ENDSELECT.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Centro de coste { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  WHEN &apos;PERNR&apos;.
+                                    SELECT pernr FROM pa0000 INTO @DATA(l_pernr)
+                                     UP TO 1 ROWS
+                                     WHERE pernr = @&lt;lv_value&gt;
+                                     ORDER BY PRIMARY KEY.
+                                    ENDSELECT.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Empleado { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  WHEN &apos;EBELN&apos; OR &apos;BSTNR&apos;.
+                                    SELECT SINGLE ebeln FROM ekko INTO @DATA(l_ebeln) WHERE ebeln = @&lt;lv_value&gt;.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Pedido { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  WHEN &apos;AUFNR&apos;.
+                                    SELECT SINGLE aufnr FROM aufk INTO @DATA(l_aufnr) WHERE aufnr = @&lt;lv_value&gt;.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Orden { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  when &apos;WERKS&apos;.
+                                    SELECT SINGLE WERKS FROM T001W INTO @DATA(L_WERKS) WHERE WERKS = @&lt;lv_value&gt;.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Centro { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                  when &apos;LGORT&apos;.
+                                    SELECT single lgort FROM T001l INTO @DATA(l_lgort) WHERE lgort = @&lt;lv_value&gt;.
+                                    IF sy-subrc &lt;&gt; 0.
+                                      lv_errormessage = |Almacén { lv_value } no existe|.
+                                      COLLECT lv_errormessage INTO et_errores.
+                                      add_error lv_errormessage.
+                                    ENDIF.
+                                ENDCASE.
+                              ENDIF.
+                            ENDIF.
+                          WHEN &apos;==MATN1&apos;.
+                            CALL FUNCTION &apos;CONVERSION_EXIT_MATN1_INPUT&apos;
+                              EXPORTING
+                                input        = lv_value
+                              IMPORTING
+                                output       = &lt;lv_value&gt;
+                              EXCEPTIONS
+                                length_error = 1
+                                OTHERS       = 2.
+                            IF sy-subrc &lt;&gt; 0.
+                              __concat2 lv_errormessage &apos;Error convirtiendo material&apos; lv_value.
+                              COLLECT lv_errormessage INTO et_errores.
+                              add_error lv_errormessage.
+                            ELSE.
+                              IF validar_maestros = &apos;X&apos;.
+                                IF NOT &lt;lv_value&gt; IS INITIAL.
+                                  SELECT SINGLE matnr FROM mara
+                                    INTO @DATA(l_matnr)
+                                    WHERE matnr = @&lt;lv_value&gt;.
+                                  IF sy-subrc &lt;&gt; 0.
+                                    lv_errormessage = |Material { lv_value } no existe|.
+                                    COLLECT lv_errormessage INTO et_errores.
+                                    add_error lv_errormessage.
+                                  ENDIF.
+                                ENDIF.
+                              ENDIF.
+                            ENDIF.
+                          WHEN OTHERS.
+                            &lt;lv_value&gt; = lv_value.
+                        ENDCASE.
+                    ENDCASE.
+                    lv_actual_col = lv_actual_col + 1.
+
+                  CATCH cx_sy_assign_cast_illegal_cast.
+                    __concat4 lv_errormessage &apos;Error asignando campo(Col:&apos;(eac) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                    APPEND lv_errormessage TO et_errores.
+                    add_error &apos;Error asignando campo&apos;.
+                    lv_actual_col = lv_actual_col + 1.
+                  CATCH cx_sy_assign_cast_unknown_type.
+                    __concat4 lv_errormessage &apos;Error asignando campo(Col:&apos;(eac) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                    APPEND lv_errormessage TO et_errores.
+                    add_error &apos;Error asignando campo&apos;.
+                    lv_actual_col = lv_actual_col + 1.
+                  CATCH cx_sy_assign_out_of_range.
+                    __concat4 lv_errormessage &apos;Tabla interna tiene menos valores que columnas en Excel&apos;(tme) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                    APPEND lv_errormessage TO et_errores.
+                    lv_actual_col = lv_actual_col + 1.
+                    add_error &apos;Tabla interna tiene menos valores que columnas en Excel&apos;(tme).
+                  CATCH cx_sy_conversion_error.
+                    __concat4 lv_errormessage &apos;Error convirtiendo valor&apos;(ecv) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+                    APPEND lv_errormessage TO et_errores.
+                    add_error &apos;Error convirtiendo valor&apos;(ecv).
+                    lv_actual_col = lv_actual_col + 1.
+                ENDTRY.
+
+              ENDWHILE.
+              lv_actual_row = lv_actual_row + 1.
+            ENDWHILE.
+          ENDIF.
+        ENDIF.
+
+      CATCH cx_sy_assign_cast_illegal_cast.
+        __concat4 lv_errormessage &apos;Error asignando campo(Col:&apos;(eac) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+        APPEND lv_errormessage TO et_errores.
+        add_error &apos;Error asignando campo&apos;.
+      CATCH cx_sy_assign_cast_unknown_type.
+        __concat4 lv_errormessage &apos;Error asignando campo(Col:&apos;(eac) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+        APPEND lv_errormessage TO et_errores.
+        add_error &apos;Error asignando campo&apos;.
+      CATCH cx_sy_assign_out_of_range.
+        __concat4 lv_errormessage &apos;Tabla interna tiene menos valores que columnas en Excel&apos;(tme) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+        APPEND lv_errormessage TO et_errores.
+        add_error &apos;Tabla interna tiene menos valores que columnas en Excel&apos;(tme).
+      CATCH cx_sy_conversion_error.
+        __concat4 lv_errormessage &apos;Error convirtiendo valor&apos;(ecv) lv_actual_col &apos; Fila:&apos;(005) lv_actual_row.
+        APPEND lv_errormessage TO et_errores.
+        add_error &apos;Error convirtiendo valor&apos;(ecv).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_XSTRING" VERSION="1" LANGU="S" DESCRIPT="Convierte excel en XSTRING" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_XSTRING" SCONAME="HUGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_XSTRING" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GET_XSTRING" SCONAME="LONGITUD" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD get_xstring.
+    DATA cl_writer TYPE REF TO zif_excel_writer.
+
+    IF huge IS INITIAL.
+      cl_writer = NEW zcl_excel_writer_2007( ).
+    ELSE.
+      cl_writer = NEW zcl_excel_writer_huge_file( ).
+    ENDIF.
+    xstring = cl_writer-&gt;write_file( o_excel ).
+    longitud = xstrlen( xstring ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Graba fichero" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="HUGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="LOCAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="DIALOGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="ABRIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="GRABA_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD graba_fichero.
+    DATA: l_xstring       TYPE xstring,
+          l_fichero_final TYPE string.
+
+    get_xstring( EXPORTING huge    = huge
+                 IMPORTING xstring = l_xstring ).
+
+    zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING xstring       = l_xstring
+                                               fichero       = fichero
+                                               servidor      = servidor
+                                               local         = local
+                                               dialogo       = dialogo
+                                               mostrar_error = &apos;&apos;
+                                     IMPORTING mensaje       = message
+                                               fichero_final = l_fichero_final ).
+
+    IF abrir = &apos;X&apos; AND NOT l_fichero_final IS INITIAL AND message IS INITIAL.
+      zcl_ap_ficheros=&gt;visualizar( fichero = l_fichero_final ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="HOJA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="SERVIDOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="GET_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="LINEAS_CABECERA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="HUGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="MAX_COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="VALIDAR_MAESTROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="POPUP_SELECT_FILE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="RFCDEST" VERSION="1" LANGU="S" DESCRIPT="Destino lógico (será indicado al llamar la función)" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RFCDES-RFCDEST" PARVALUE="&apos;SAPHTTP&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="EXISTE_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="COL_EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="OPCIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="FILA_EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="COLUMNA_EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="ERRORES" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_FICHERO" SCONAME="SI_EXISTE_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD lee_fichero.
+    DATA: o_reader  TYPE REF TO zif_excel_reader,
+          l_xstring TYPE xstring,
+          l_fichero TYPE string.
+
+    IF huge IS INITIAL.
+      o_reader = NEW zcl_excel_reader_2007( ).
+    ELSE.
+      o_reader = NEW zcl_excel_reader_huge_file( ).
+    ENDIF.
+
+    IF url = &apos;X&apos;.
+      zcl_ap_ws=&gt;get_file( EXPORTING url     = fichero
+                                     rfcdest = rfcdest
+                           IMPORTING xstring = l_xstring
+                                     message = message ).
+      IF message IS INITIAL.
+        IF l_xstring IS INITIAL.
+          message = &apos;No se ha podido recuperar el fichero&apos;(nrf).
+        ELSE.
+          TRY.
+              o_excel = o_reader-&gt;load( i_excel2007 = l_xstring ).
+            CATCH zcx_excel INTO zcx_excel.
+              message = zcx_excel-&gt;get_longtext( ).
+          ENDTRY.
+        ENDIF.
+      ENDIF.
+    ELSEIF NOT fichero IS INITIAL OR popup_select_file = &apos;X&apos;.
+      IF NOT fichero IS INITIAL.
+        l_fichero = fichero.
+      ELSEIF popup_select_file = &apos;X&apos;.
+        l_fichero = zcl_ap_ficheros=&gt;popup_select_fichero( file_filter = zcl_ap_ficheros=&gt;c_filtro_xlsx ).
+      ENDIF.
+      IF zcl_ap_ficheros=&gt;existe( fichero  = l_fichero
+                                  servidor = servidor ) = &apos;&apos;.
+        __concat2 message &apos;No existe el fichero&apos;(nef) fichero.
+      ELSE.
+        TRY.
+            o_excel = o_reader-&gt;load_file( i_filename        = l_fichero
+                                            i_from_applserver = servidor ).
+          CATCH zcx_excel INTO zcx_excel.
+            message = zcx_excel-&gt;get_longtext( ).
+        ENDTRY.
+      ENDIF.
+    ELSEIF NOT xstring IS INITIAL.
+      TRY.
+          o_excel = o_reader-&gt;load( i_excel2007 = xstring ).
+        CATCH zcx_excel INTO zcx_excel.
+          message = zcx_excel-&gt;get_longtext( ).
+      ENDTRY.
+    ENDIF.
+    IF message IS INITIAL.
+      IF o_excel IS INITIAL.
+        message = &apos;Error leyendo fichero&apos;(elf).
+      ELSE.
+        o_worksheet = o_excel-&gt;get_active_worksheet( ).
+        IF o_worksheet IS INITIAL.
+          message = &apos;Error leyendo fichero&apos;(elf).
+        ELSE.
+          lee_hoja( EXPORTING hoja                 = hoja
+                              lineas_cabecera      = lineas_cabecera
+                              get_datos            = get_datos
+                              mostrar_error        = mostrar_error
+                              max_col              = max_col
+                              validar_maestros     = validar_maestros
+                              existe_valor         = existe_valor
+                              col_existe_valor     = col_existe_valor
+                              opciones             = opciones
+                    IMPORTING message              = message
+                              datos                = datos
+                              errores              = errores
+                              si_existe_valor      = si_existe_valor
+                              fila_existe_valor    = fila_existe_valor
+                              columna_existe_valor = columna_existe_valor ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF mostrar_error = &apos;X&apos; AND NOT message IS INITIAL.
+      MESSAGE message TYPE &apos;E&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" VERSION="1" LANGU="S" DESCRIPT="Lee hoja" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="HOJA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="LINEAS_CABECERA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="GET_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="MAX_COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="VALIDAR_MAESTROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="EXISTE_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="COL_EXISTE_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="OPCIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="SI_EXISTE_VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="ERRORES" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="FILA_EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_HOJA" SCONAME="COLUMNA_EXISTE_VALOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD lee_hoja.
+    DATA: l_sheet_name  TYPE zexcel_sheet_title,
+          o_error_excel TYPE REF TO zcx_excel,
+          l_msg         TYPE c LENGTH 1.
+
+    nombre_hoja = o_worksheet-&gt;get_title( ).
+
+    IF hoja &lt;&gt; &apos;&apos; AND hoja &lt;&gt; nombre_hoja.
+      l_sheet_name = hoja.
+      o_worksheet = o_excel-&gt;get_worksheet_by_name( l_sheet_name ).
+      IF o_worksheet IS INITIAL.
+        __concat2 message &apos;No existe la hoja&apos;(neh) l_sheet_name.
+      ENDIF.
+    ENDIF.
+
+    IF NOT o_worksheet IS INITIAL.
+      TRY.
+          highest_column = o_worksheet-&gt;get_highest_column( ).
+          highest_row    = o_worksheet-&gt;get_highest_row( ).
+        CATCH zcx_excel INTO o_error_excel.
+          l_msg = o_error_excel-&gt;get_longtext( ).
+      ENDTRY.
+
+      IF existe_valor &lt;&gt; &apos;&apos;.
+        si_existe_valor = existe_valor( EXPORTING valor     = existe_valor
+                                                  col_valor = col_existe_valor
+                                        IMPORTING fila      = fila_existe_valor
+                                                  columna   = columna_existe_valor ).
+      ELSEIF get_datos = &apos;X&apos;.
+        get_tabla( EXPORTING lineas_cabecera  = lineas_cabecera
+                             max_col          = max_col
+                             validar_maestros = validar_maestros
+                             opciones         = opciones
+                   IMPORTING et_table         = datos
+                             et_errores       = errores ).
+      ENDIF.
+    ENDIF.
+
+    IF mostrar_error = &apos;X&apos; AND NOT message IS INITIAL.
+      MESSAGE message TYPE &apos;E&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_PLANTILLA" VERSION="1" LANGU="S" DESCRIPT="Lee plantilla" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_PLANTILLA" SCONAME="TCODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_PLANTILLA" SCONAME="PLANTILLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="LEE_PLANTILLA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD lee_plantilla.
+    DATA l_xstring TYPE xstring.
+
+    SELECT SINGLE xstring FROM zdocumentos
+      INTO l_xstring
+      WHERE tcode  = tcode
+        AND nombre = plantilla.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No existe plantilla&apos;(nep).
+    ELSE.
+      lee_fichero( EXPORTING xstring = l_xstring
+                   IMPORTING message = message ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" VERSION="1" LANGU="S" DESCRIPT="Envío adjuntos por mail" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="DIRECCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="SUBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="O_ALV1" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA_ALV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_TABLA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_TABLA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_TABLA3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_ALV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="I_TEXTOS" VERSION="1" LANGU="S" DESCRIPT="Tablas con texto claro (línea en blanco = párrafo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSPC_T_TEXT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="O_GRID1" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA_GRID1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_GRID1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="O_ALV2" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA_ALV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_ALV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="O_GRID2" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="TABLA_GRID2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="NOMBRE_GRID2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MAIL" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD mail.
+    DATA: o_mail    TYPE REF TO zcl_ap_envio_mail,
+          l_texto   TYPE solisti1,
+          o_xls     TYPE REF TO zcl_ap_abap2xls,
+          l_fichero TYPE string.
+
+    o_mail = NEW #( usar_clases = &apos;X&apos; ).
+
+    IF NOT texto IS INITIAL.
+      o_mail-&gt;set_text( texto ).
+    ENDIF.
+
+    LOOP AT i_textos INTO l_texto.
+      o_mail-&gt;set_text( l_texto ).
+    ENDLOOP.
+
+    DEFINE set_nombre.
+      IF nombre_tabla&amp;1 IS INITIAL.
+        l_fichero = &apos;&amp;2&amp;1.xlsx&apos;.
+      ELSE.
+        IF nombre_tabla&amp;1 CS &apos;.&apos;.
+          l_fichero = nombre_tabla&amp;1.
+        ELSE.
+          CONCATENATE nombre_tabla&amp;1 &apos;.xlsx&apos; INTO l_fichero.
+        ENDIF.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    DEFINE set_nombre_alv.
+      IF nombre_&amp;2&amp;1 IS INITIAL.
+        l_fichero = &apos;&amp;2&amp;1.xlsx&apos;.
+      ELSE.
+        IF nombre_&amp;2&amp;1 CS &apos;.&apos;.
+          l_fichero = nombre_&amp;2&amp;1.
+        ELSE.
+          CONCATENATE nombre_&amp;2&amp;1 &apos;.xlsx&apos; INTO l_fichero.
+        ENDIF.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    IF NOT tabla1 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_tabla( tabla = tabla1 ).
+      set_nombre 1 tabla.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT tabla2 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_tabla( tabla = tabla2 ).
+      set_nombre 2 tabla.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT tabla3 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_tabla( tabla = tabla3 ).
+      set_nombre 3 tabla.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT o_alv1 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_alv( alv              = o_alv1-&gt;o_alv
+                      tabla            = tabla_alv1
+                      refresh_metadata = &apos;X&apos; ).
+      set_nombre_alv 1 alv.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT o_alv2 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_alv( alv              = o_alv2-&gt;o_alv
+                      tabla            = tabla_alv2
+                      refresh_metadata = &apos;X&apos; ).
+      set_nombre_alv 2 alv.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT o_grid1 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_alv( alv              = o_grid1-&gt;o_grid
+                      tabla            = tabla_grid1
+                      refresh_metadata = &apos;X&apos; ).
+      set_nombre_alv 1 grid.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF NOT o_grid2 IS INITIAL.
+      o_xls = NEW #( ).
+      o_xls-&gt;set_alv( alv              = o_grid2-&gt;o_grid
+                      tabla            = tabla_grid2
+                      refresh_metadata = &apos;X&apos; ).
+      set_nombre_alv 2 grid.
+      o_xls-&gt;add_adj_mail( o_mail  = o_mail
+                           fichero = l_fichero ).
+      CLEAR o_xls.
+    ENDIF.
+
+    IF o_mail-&gt;envio_mail( subject        = subject
+                           direccion      = direccion
+                           commit         = commit
+                           parar_en_error = &apos;&apos; ) = &apos;X&apos;.
+      message = o_mail-&gt;message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MOSTRAR_EN_PANTALLA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD mostrar_en_pantalla.
+    DATA: xdata     TYPE xstring,   &quot; Will be used for sending as email
+          bytecount TYPE i,         &quot; Will be used for downloading or open directly
+          t_rawdata TYPE solix_tab. &quot; Will be used for downloading or open directly
+    DATA: cl_control  TYPE REF TO i_oi_container_control, &quot; OIContainerCtrl &quot;#EC DEFAULT_KEY
+          error       TYPE REF TO i_oi_error,
+          cl_document TYPE REF TO i_oi_document_proxy.    &quot; Office Dokument
+
+    get_xstring( IMPORTING xstring  = xdata
+                           longitud = bytecount ).
+    t_rawdata = cl_bcs_convert=&gt;xstring_to_solix( iv_xstring = xdata ).
+
+    c_oi_container_control_creator=&gt;get_container_control( IMPORTING control = cl_control
+                                                                     error   = error ).
+
+
+    cl_control-&gt;init_control( EXPORTING  inplace_enabled     = &apos;X&apos;
+                                         no_flush            = &apos;X&apos;
+                                         r3_application_name = &apos;Contenedor Excel&apos;(cxl)
+                                         parent              = cl_gui_container=&gt;screen0
+                              IMPORTING  error               = error
+                              EXCEPTIONS OTHERS              = 2 ).
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error abriendo Excel&apos; TYPE &apos;E&apos;.
+    ENDIF.
+
+
+    cl_control-&gt;get_document_proxy( EXPORTING document_type  = &apos;Excel.Sheet&apos;                &quot; EXCEL
+                                              no_flush       = &apos; &apos;
+                                    IMPORTING document_proxy = cl_document
+                                              error          = error ).
+
+* Errorhandling should be inserted here
+
+    cl_document-&gt;open_document_from_table( document_size  = bytecount
+                                           document_table = t_rawdata
+                                           open_inplace   = &apos;X&apos; ).
+    WRITE &apos;.&apos;.  &quot; To create an output.  That way screen0 will exist
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="MOSTRAR_ERRORES" VERSION="1" LANGU="S" DESCRIPT="Mostrar errores" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD mostrar_errores.
+    IF i_error IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+      EXPORTING
+        titulo  = &apos;Errores de conversión&apos;(eco)
+        texto   = &apos;Se han producido errores en la carga del fichero Excel&apos;(spe)
+*       TEXTO2  =
+*       CHECK   = &apos;&apos;
+*       ANCHO   = 120
+*       ALTO    = 0
+*       CAMPOS_NOOUT = &apos;&apos;
+        botones = &apos;OK&apos;
+*       CAMPOS_TEXTO = &apos;&apos;
+*       COMANDO_ENTER = &apos;&apos;
+*       CAMPOS_INPUT = &apos;&apos;
+*       GRID    = &apos;&apos;
+*       OPCIONES = &apos;&apos;
+*     IMPORTING
+*       COMANDO =
+*       UCOMM   =
+*       OK      =
+*       FILA    =
+      TABLES
+        t_datos = i_error.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" VERSION="1" LANGU="S" DESCRIPT="Reemplazar valor" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" SCONAME="VAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" SCONAME="CAR_MARCA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&amp;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" SCONAME="PARCIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="REEMPLAZAR_VALOR" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD reemplazar_valor.
+    DATA: l_var   TYPE string,
+          l_marca TYPE string,
+          l_valor TYPE text255.
+
+    FIELD-SYMBOLS &lt;cell_data&gt; TYPE zexcel_s_cell_data.
+
+    IF car_marca IS INITIAL.
+      l_var = var.
+    ELSE.
+*      IF car_marca = &apos;&amp;&apos;.
+*        l_marca = &apos;&amp;amp;&apos;.
+*      ELSE.
+      l_marca = car_marca.
+*      ENDIF.
+
+      l_var = var.
+      CONCATENATE l_marca l_var l_marca INTO l_var.
+    ENDIF.
+
+    WRITE valor TO l_valor LEFT-JUSTIFIED.
+
+    ASSIGN o_worksheet-&gt;sheet_content[ cell_value = l_var ] TO &lt;cell_data&gt;. &quot;#EC CI_SORTSEQ
+    IF sy-subrc = 0.
+      &lt;cell_data&gt;-cell_value = l_valor.
+    ELSE.
+      IF parcial = &apos;X&apos;.
+        LOOP AT o_worksheet-&gt;sheet_content ASSIGNING &lt;cell_data&gt; WHERE cell_value CS l_var. &quot;#EC CI_SORTSEQ
+          REPLACE l_var IN &lt;cell_data&gt;-cell_value WITH l_valor.
+          EXIT.
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          error = &apos;X&apos;.
+        ENDIF.
+      ELSE.
+        error = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_ALV" VERSION="1" LANGU="S" DESCRIPT="Construye excel a partir de un ALV" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_ALV" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_ALV" SCONAME="ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="OBJECT"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_ALV" SCONAME="REFRESH_METADATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_ALV" SCONAME="CONVERT_TXT_2_NUMBER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_alv.
+    DATA lo_converter TYPE REF TO zcl_excel_converter.
+    DATA l_tipo_alv   TYPE string.
+    DATA o_excell     TYPE REF TO zcl_excel.
+
+    FIELD-SYMBOLS &lt;cell_data&gt; TYPE zexcel_s_cell_data.
+
+    lo_converter = NEW #( ).
+
+    IF refresh_metadata = &apos;X&apos;.
+      TRY.
+          cl_salv_bs_runtime_info=&gt;clear_all( ).
+          cl_salv_bs_runtime_info=&gt;set( display  = abap_false
+                                        metadata = abap_true
+                                        data     = abap_true ).
+          l_tipo_alv = cl_abap_classdescr=&gt;get_class_name( alv ).
+          IF l_tipo_alv CS &apos;CL_SALV_TABLE&apos;.
+            CALL METHOD alv-&gt;(&apos;DISPLAY&apos;).
+          ELSE.
+            NEW zcl_excel_converter( )-&gt;set_option( VALUE #(
+                filter           = abap_true
+                subtot           = abap_true
+                hidenc           = abap_true
+                hidehd           = abap_false ) ).
+            o_worksheet-&gt;bind_alv(
+                io_alv   = alv
+                it_table = tabla  ).
+          ENDIF.
+        CATCH cx_root INTO DATA(o_root).  &quot;#EC *
+          MESSAGE |Error refrescando metadatos del ALV {  o_root-&gt;get_text(  ) }|  TYPE &apos;I&apos;.
+      ENDTRY.
+    ENDIF.
+
+    TRY.
+        o_excell ?= o_excel.
+        lo_converter-&gt;convert( EXPORTING io_alv       = alv
+                                         it_table     = tabla
+*                                         i_row_int    = i_top
+*                                         i_column_int = i_left
+*                                         i_table      = i_table
+*                                         i_style_table = table_style
+                                         io_worksheet = o_worksheet
+                               CHANGING  co_excel     = o_excell ).
+
+        o_worksheet-&gt;calculate_column_widths( ).
+      CATCH zcx_excel INTO DATA(o_cx_excel). &quot;#EC * &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    ENDTRY.
+
+    IF convert_txt_2_number = &apos;X&apos;.
+      LOOP AT o_worksheet-&gt;sheet_content ASSIGNING &lt;cell_data&gt; WHERE cell_value CS &apos;,&apos; AND data_type = &apos;s&apos;. &quot;#EC CI_SORTSEQ
+        IF &lt;cell_data&gt;-cell_value CO &apos;0123456789, &apos;.
+          REPLACE &apos;,&apos; WITH &apos;.&apos; INTO &lt;cell_data&gt;-cell_value.
+          CONDENSE &lt;cell_data&gt;-cell_value NO-GAPS.
+          CLEAR &lt;cell_data&gt;-data_type.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF refresh_metadata = &apos;X&apos;.
+      cl_salv_bs_runtime_info=&gt;clear_all( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BGCOLOR_RANGE" SCONAME="BG_COLOR" VERSION="1" LANGU="S" DESCRIPT="Excel Style Color ARGB" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_S_STYLE_COLOR-RGB" PARVALUE="ZCL_EXCEL_STYLE_COLOR=&gt;C_WHITE"/>
+  <source>METHOD set_bgcolor_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_fill      TYPE zexcel_s_cstyle_fill.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+    DATA lv_col_alpha TYPE string.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        lv_fill-filltype = zcl_excel_style_fill=&gt;c_fill_solid.
+        lv_fill-fgcolor-rgb = bg_color.
+
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          lv_col = lv_col_start.
+          WHILE lv_col &lt;= lv_col_end.
+            lv_col_alpha =
+              zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col ).
+            o_worksheet-&gt;change_cell_style( ip_column = lv_col_alpha
+                                            ip_row    = lv_row
+                                            ip_fill   = lv_fill ).
+            lv_col = lv_col + 1.
+          ENDWHILE.
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando color&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="BORDER_STYLE" VERSION="1" LANGU="S" DESCRIPT="Excel Border" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEXCEL_BORDER" PARVALUE="ZCL_EXCEL_STYLE_BORDER=&gt;C_BORDER_THIN"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_OUTLINE_RANGE" SCONAME="BORDER_COLOR" VERSION="1" LANGU="S" DESCRIPT="Excel Style Color ARGB" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEXCEL_S_STYLE_COLOR-RGB" PARVALUE="ZCL_EXCEL_STYLE_COLOR=&gt;C_BLACK"/>
+  <source>METHOD set_border_outline_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_col_txt   TYPE c LENGTH 20.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        &quot;-Left----------------------------------------------------------
+        lv_col_txt = zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col_start ).
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          o_worksheet-&gt;change_cell_style( ip_column                 = lv_col_txt
+                                          ip_row                    = lv_row
+                                          ip_borders_left_style     = border_style
+                                          ip_borders_left_color_rgb = border_color ).
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+        &quot;-Right---------------------------------------------------------
+        lv_col_txt = zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col_end ).
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+
+          o_worksheet-&gt;change_cell_style( ip_column                  = lv_col_txt
+                                          ip_row                     = lv_row
+                                          ip_borders_right_style     = border_style
+                                          ip_borders_right_color_rgb = border_color ).
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+        &quot;-Top-----------------------------------------------------------
+        lv_col = lv_col_start.
+        WHILE lv_col &lt;= lv_col_end.
+          o_worksheet-&gt;change_cell_style( ip_column                = lv_col
+                                          ip_row                   = lv_row_start
+                                          ip_borders_top_style     = border_style
+                                          ip_borders_top_color_rgb = border_color ).
+          lv_col = lv_col + 1.
+        ENDWHILE.
+
+        &quot;-Bottom--------------------------------------------------------
+        lv_col = lv_col_start.
+        WHILE lv_col &lt;= lv_col_end.
+          o_worksheet-&gt;change_cell_style( ip_column                 = lv_col
+                                          ip_row                    = lv_row_end
+                                          ip_borders_down_style     = border_style
+                                          ip_borders_down_color_rgb = border_color ).
+          lv_col = lv_col + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando borde&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="BORDER_STYLE" VERSION="1" LANGU="S" DESCRIPT="Excel Border" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_BORDER" PARVALUE="ZCL_EXCEL_STYLE_BORDER=&gt;C_BORDER_THIN"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_BORDER_RANGE" SCONAME="BORDER_COLOR" VERSION="1" LANGU="S" DESCRIPT="Excel Style Color ARGB" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_S_STYLE_COLOR-RGB" PARVALUE="ZCL_EXCEL_STYLE_COLOR=&gt;C_BLACK"/>
+  <source>METHOD set_border_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_borders   TYPE zexcel_s_cstyle_borders.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+    DATA lv_col_alpha TYPE string.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        lv_borders-left-border_style = border_style.
+        lv_borders-left-border_color-rgb = border_color.
+        lv_borders-right-border_style = border_style.
+        lv_borders-right-border_color-rgb = border_color.
+        lv_borders-top-border_style = border_style.
+        lv_borders-top-border_color-rgb = border_color.
+        lv_borders-down-border_style = border_style.
+        lv_borders-down-border_color-rgb = border_color.
+
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          lv_col = lv_col_start.
+          WHILE lv_col &lt;= lv_col_end.
+            lv_col_alpha =
+              zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col ).
+            o_worksheet-&gt;change_cell_style( ip_column  = lv_col_alpha
+                                            ip_row     = lv_row
+                                            ip_borders = lv_borders ).
+            lv_col = lv_col + 1.
+          ENDWHILE.
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando borde&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SIMPLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="ROW" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="VALUE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SIMPLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="FORMULA" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Formula" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_FORMULA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="STYLE" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Style" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_STYLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="HYPERLINK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_EXCEL_HYPERLINK" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="DATA_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_DATA_TYPE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_CELL" SCONAME="ABAP_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_TYPEKIND" PAROPTIONL="X"/>
+  <source>METHOD set_cell.
+    &quot; TODO: parameter HYPERLINK is never used (ABAP cleaner)
+    &quot; TODO: parameter DATA_TYPE is never used (ABAP cleaner)
+    &quot; TODO: parameter ABAP_TYPE is never used (ABAP cleaner)
+
+    DATA l_error TYPE t_error.
+
+    TRY.
+        IF value IS SUPPLIED.
+          o_worksheet-&gt;set_cell( ip_column  = col
+                                 ip_row     = row
+                                 ip_value   = value
+                                 ip_style   = style
+                                 ip_formula = formula ).
+        ELSE.
+          o_worksheet-&gt;set_cell( ip_column  = col
+                                 ip_row     = row
+                                 ip_style   = style
+                                 ip_formula = formula ).
+        ENDIF.
+      CATCH zcx_excel INTO zcx_excel.
+        CLEAR l_error.
+        l_error-row     = row.
+        l_error-col     = col.
+        l_error-message = zcx_excel-&gt;get_longtext( ).
+        APPEND l_error TO i_error.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" SCONAME="COL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SIMPLE" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" SCONAME="WIDTH" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" SCONAME="VISIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" SCONAME="AUTOSIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_COLUMN" SCONAME="COL_INT" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PAROPTIONL="X"/>
+  <source>METHOD set_column.
+    DATA: l_col_txt TYPE char20,
+          o_column  TYPE REF TO zcl_excel_column.
+    DATA l_error TYPE t_error.
+
+    IF NOT col IS INITIAL.
+      l_col_txt = col.
+    ELSE.
+      TRY.
+          l_col_txt = zcl_excel_common=&gt;convert_column2alpha( ip_column = col_int ).
+        CATCH zcx_excel INTO zcx_excel.
+          CLEAR l_error.
+          l_error-col     = col_int.
+          l_error-message = zcx_excel-&gt;get_longtext( ).
+          APPEND l_error TO i_error.
+      ENDTRY.
+    ENDIF.
+
+    o_column = o_worksheet-&gt;get_column( l_col_txt ).
+    IF o_column IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF NOT width IS INITIAL.
+      TRY.
+          o_column-&gt;set_width( width ).
+        CATCH zcx_excel INTO zcx_excel.
+          CLEAR l_error.
+          l_error-col     = col_int.
+          l_error-message = zcx_excel-&gt;get_longtext( ).
+          APPEND l_error TO i_error.
+      ENDTRY.
+    ENDIF.
+
+    IF NOT visible IS INITIAL.
+      IF visible = &apos;N&apos;.
+        o_column-&gt;set_visible( &apos;&apos; ).
+      ELSE.
+        o_column-&gt;set_visible( visible ).
+      ENDIF.
+    ENDIF.
+
+    IF NOT autosize IS INITIAL.
+      IF autosize = &apos;N&apos;.
+        o_column-&gt;set_auto_size( &apos;&apos; ).
+      ELSE.
+        o_column-&gt;set_auto_size( autosize ).
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTCOLOR_RANGE" SCONAME="TEXT_COLOR" VERSION="1" LANGU="S" DESCRIPT="Excel Style Color ARGB" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_S_STYLE_COLOR-RGB" PARVALUE="ZCL_EXCEL_STYLE_COLOR=&gt;C_BLACK"/>
+  <source>METHOD set_fontcolor_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_fonts     TYPE zexcel_s_cstyle_font.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+    DATA lv_col_alpha TYPE string.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        lv_fonts-color-rgb = text_color.
+
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          lv_col = lv_col_start.
+          WHILE lv_col &lt;= lv_col_end.
+            lv_col_alpha =
+              zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col ).
+            o_worksheet-&gt;change_cell_style( ip_column = lv_col_alpha
+                                            ip_row    = lv_row
+                                            ip_font   = lv_fonts ).
+            lv_col = lv_col + 1.
+          ENDWHILE.
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando fuente&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSIZE_RANGE" SCONAME="TEXT_SIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_STYLE_FONT_SIZE" PARVALUE="11"/>
+  <source>METHOD set_fontsize_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_fonts     TYPE zexcel_s_cstyle_font.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+    DATA lv_col_alpha TYPE string.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        lv_fonts-size = text_size.
+
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          lv_col = lv_col_start.
+          WHILE lv_col &lt;= lv_col_end.
+            lv_col_alpha =
+              zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col ).
+            o_worksheet-&gt;change_cell_style( ip_column = lv_col_alpha
+                                            ip_row    = lv_row
+                                            ip_font   = lv_fonts ).
+            lv_col = lv_col + 1.
+          ENDWHILE.
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando fuente&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSTYLE_BOLD_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSTYLE_BOLD_RANGE" SCONAME="COL_START" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;A&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSTYLE_BOLD_RANGE" SCONAME="ROW_START" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSTYLE_BOLD_RANGE" SCONAME="COL_END" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_FONTSTYLE_BOLD_RANGE" SCONAME="ROW_END" VERSION="1" LANGU="S" DESCRIPT="Excel Cell Row" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_CELL_ROW"/>
+  <source>METHOD set_fontstyle_bold_range.
+    &quot;-Variables---------------------------------------------------------
+
+    DATA lv_col_start TYPE i.
+    DATA lv_row_start TYPE zexcel_cell_row.
+    DATA lv_col_end   TYPE i.
+    DATA lv_row_end   TYPE zexcel_cell_row.
+    DATA lv_fonts     TYPE zexcel_s_cstyle_font.
+    DATA lv_row       TYPE i.
+    DATA lv_col       TYPE i.
+    DATA lv_col_alpha TYPE string.
+
+    &quot;-Main--------------------------------------------------------------
+    TRY.
+
+        lv_col_start =
+          zcl_excel_common=&gt;convert_column2int( col_start ).
+
+        lv_row_start = row_start.
+
+        IF col_end IS INITIAL.
+          lv_col_end = o_worksheet-&gt;get_highest_column( ).
+        ELSE.
+          lv_col_end =
+            zcl_excel_common=&gt;convert_column2int( col_end ).
+        ENDIF.
+
+        IF row_end IS INITIAL.
+          lv_row_end = o_worksheet-&gt;get_highest_row( ).
+        ELSE.
+          lv_row_end = row_end.
+        ENDIF.
+
+        lv_fonts-bold = abap_true.
+
+        lv_row = lv_row_start.
+        WHILE lv_row &lt;= lv_row_end.
+          lv_col = lv_col_start.
+          WHILE lv_col &lt;= lv_col_end.
+            lv_col_alpha =
+              zcl_excel_common=&gt;convert_column2alpha( ip_column = lv_col ).
+            o_worksheet-&gt;change_cell_style( ip_column = lv_col_alpha
+                                            ip_row    = lv_row
+                                            ip_font   = lv_fonts ).
+            lv_col = lv_col + 1.
+          ENDWHILE.
+          lv_row = lv_row + 1.
+        ENDWHILE.
+
+      CATCH cx_root. &quot;#EC *
+        MESSAGE &apos;Error cambiando a negrita&apos; TYPE &apos;S&apos;.
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" VERSION="1" LANGU="S" DESCRIPT="Construye excel a partir de tabla interna" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" SCONAME="AUTOSIZE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" SCONAME="NOMBRE_COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ABAP2XLS" CMPNAME="SET_TABLA" SCONAME="IT_FIELD_CATALOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZEXCEL_T_FIELDCATALOG" PAROPTIONL="X"/>
+  <source>METHOD set_tabla.
+    DATA: table_settings   TYPE zexcel_s_table_settings,
+          lt_field_catalog TYPE zexcel_t_fieldcatalog.
+    DATA l_error    TYPE t_error.
+    &quot;-Variables---------------------------------------------------------
+    DATA lv_col_end TYPE i.
+    DATA lv_col     TYPE i.
+
+    FIELD-SYMBOLS &lt;field_catalog&gt; TYPE zexcel_s_fieldcatalog.
+
+    IF NOT titulo IS INITIAL.
+      table_settings-table_name = titulo.
+    ENDIF.
+
+    table_settings-table_style      = zcl_excel_table=&gt;builtinstyle_medium2.
+    table_settings-show_row_stripes = abap_true.
+*  table_settings-show_column_stripes = abap_true.
+    table_settings-nofilters        = abap_true.
+
+    IF it_field_catalog IS INITIAL.
+      lt_field_catalog = zcl_excel_common=&gt;get_fieldcatalog( ip_table = tabla ).
+      DELETE lt_field_catalog WHERE abap_type = &apos;h&apos;.     &quot;#EC CI_STDSEQ
+
+      IF nombre_columna = &apos;X&apos; OR nombre_columna = &apos;+&apos;.
+        LOOP AT lt_field_catalog ASSIGNING &lt;field_catalog&gt;.
+          IF nombre_columna = &apos;X&apos;.
+            &lt;field_catalog&gt;-scrtext_l = &lt;field_catalog&gt;-fieldname.
+            &lt;field_catalog&gt;-scrtext_m = &lt;field_catalog&gt;-scrtext_l.
+            &lt;field_catalog&gt;-scrtext_s = &lt;field_catalog&gt;-scrtext_m.
+          ELSE.
+            &lt;field_catalog&gt;-scrtext_s = |{ &lt;field_catalog&gt;-fieldname } - { &lt;field_catalog&gt;-scrtext_s }|.
+            &lt;field_catalog&gt;-scrtext_m = |{ &lt;field_catalog&gt;-fieldname } - { &lt;field_catalog&gt;-scrtext_m }|.
+            &lt;field_catalog&gt;-scrtext_l = |{ &lt;field_catalog&gt;-fieldname } - { &lt;field_catalog&gt;-scrtext_l }|.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ELSE.
+      lt_field_catalog = it_field_catalog.
+    ENDIF.
+
+    TRY.
+        o_worksheet-&gt;bind_table( ip_table          = tabla
+                                 is_table_settings = table_settings
+                                 it_field_catalog  = lt_field_catalog ).
+      CATCH zcx_excel INTO zcx_excel.
+        CLEAR l_error.
+        l_error-message = zcx_excel-&gt;get_longtext( ).
+        APPEND l_error TO i_error.
+    ENDTRY.
+
+    TRY.
+        lv_col_end = o_worksheet-&gt;get_highest_column( ).
+      CATCH zcx_excel INTO zcx_excel.
+        MESSAGE &apos;Error obteniendo nº columnas&apos; TYPE &apos;S&apos;.
+    ENDTRY.
+
+    lv_col = 1.
+    WHILE lv_col &lt;= lv_col_end.
+      set_column( col_int  = lv_col
+                  autosize = &apos;X&apos; ).
+      lv_col = lv_col + 1.
+    ENDWHILE.
+
+    &quot;-Right---------------------------------
+
+    TRY.
+        o_worksheet-&gt;calculate_column_widths( ).
+      CATCH zcx_excel INTO zcx_excel.
+        CLEAR l_error.
+        l_error-message = zcx_excel-&gt;get_longtext( ).
+        APPEND l_error TO i_error.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

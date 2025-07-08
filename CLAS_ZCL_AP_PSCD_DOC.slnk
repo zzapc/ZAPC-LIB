@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_PSCD_DOC" VERSION="1" LANGU="E" DESCRIPT="Documents" UUID="E399F2640CB4B0F18C34005056C00008" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <publicSection>class ZCL_AP_PSCD_DOC definition
+  public
+  create public .
+
+*&quot;* public components of class ZCL_AP_PSCD_DOC
+*&quot;* do not include other source files here!!!
+public section.
+
+  class-methods DISPLAY
+    importing
+      !OPBEL type ANY .
+  class-methods DISPLAY_INVOICE
+    importing
+      !VKONT type VKONT_KK default &apos;&apos;
+      !GPART type BU_PARTNER default &apos;&apos;
+      !INVDOCNO type ANY optional
+      !ABWBL type ABWBL_KK default &apos;&apos;
+    preferred parameter INVDOCNO .
+  class-methods DISPLAY_CONTRACT_ACCOUNT
+    importing
+      !CONTRACT type ANY
+      !PARTNER type ANY optional .
+  class-methods DISPLAY_CONTRACT_OBJECT
+    importing
+      !CONTRACT type ANY .
+  class-methods DISPLAY_PAYMENT_LOT
+    importing
+      !KEYZ1 type ANY .</publicSection>
+ <protectedSection>*&quot;* protected components of class ZCL_DOC
+*&quot;* do not include other source files here!!!
+protected section.</protectedSection>
+ <privateSection>*&quot;* private components of class ZCL_DOC
+*&quot;* do not include other source files here!!!
+private section.</privateSection>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <method CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY" VERSION="1" LANGU="E" DESCRIPT="Display document" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY" SCONAME="OPBEL" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD DISPLAY.
+
+  SET PARAMETER ID &apos;80B&apos; FIELD opbel.
+  SET PARAMETER ID &apos;80X&apos; FIELD &apos;&apos;.
+  SET PARAMETER ID &apos;80Z&apos; FIELD &apos;&apos;.
+  SET PARAMETER ID &apos;81Z&apos; FIELD &apos;&apos;.
+  CALL TRANSACTION &apos;FPE3&apos; AND SKIP FIRST SCREEN.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_CONTRACT_ACCOUNT" VERSION="1" LANGU="E" DESCRIPT="Display contract account" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_CONTRACT_ACCOUNT" SCONAME="CONTRACT" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_CONTRACT_ACCOUNT" SCONAME="PARTNER" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>method DISPLAY_CONTRACT_ACCOUNT.
+
+  SET PARAMETER ID &apos;KTO&apos; FIELD contract.
+  SET PARAMETER ID &apos;BPA&apos; FIELD partner.
+  CALL TRANSACTION &apos;CAA3&apos; AND SKIP FIRST SCREEN.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_CONTRACT_OBJECT" VERSION="1" LANGU="E" DESCRIPT="Display contract object" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_CONTRACT_OBJECT" SCONAME="CONTRACT" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method DISPLAY_CONTRACT_OBJECT.
+
+  SET PARAMETER ID &apos;PSOBKEY&apos; FIELD contract.
+  CALL TRANSACTION &apos;PSOBDISPLAY&apos; AND SKIP FIRST SCREEN.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_INVOICE" VERSION="1" LANGU="E" DESCRIPT="Display invoice" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_INVOICE" SCONAME="VKONT" VERSION="1" LANGU="E" DESCRIPT="Contract Account Number" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKONT_KK" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_INVOICE" SCONAME="GPART" VERSION="1" LANGU="E" DESCRIPT="Business Partner Number" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BU_PARTNER" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_INVOICE" SCONAME="INVDOCNO" VERSION="1" LANGU="E" DESCRIPT="Number of Invoicing Document" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_INVOICE" SCONAME="ABWBL" VERSION="1" LANGU="E" DESCRIPT="Number of the substitute FI-CA document" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABWBL_KK" PARVALUE="&apos;&apos;"/>
+  <source>method DISPLAY_INVOICE.
+
+  submit RFKKINV_INVDOC_DISP
+    and return
+   with vkont = vkont
+   with INVDOCNO = INVDOCNO.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_PAYMENT_LOT" VERSION="1" LANGU="E" DESCRIPT="Display payment lot" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PSCD_DOC" CMPNAME="DISPLAY_PAYMENT_LOT" SCONAME="KEYZ1" VERSION="1" LANGU="E" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD display_payment_lot.
+  DATA: l_dfkkzk TYPE dfkkzk,
+        l_tcode TYPE tcode.
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+  DATA l_mensaje TYPE bapireturn1-message.
+
+  SELECT SINGLE * FROM dfkkzk
+    INTO l_dfkkzk
+   WHERE keyz1 = keyz1.
+  IF sy-subrc = 0.
+    CREATE OBJECT o_bi.
+
+    o_bi-&gt;inicio( ).
+
+* Initial Screen: Process Payment Lot
+    o_bi-&gt;dynpro( program = &apos;SAPLFKZ0&apos; dynpro = &apos;0100&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=DISP&apos;).
+    o_bi-&gt;campos( campo = &apos;RFKZ0-KEYZ1&apos; valor = keyz1 ). &quot; Payment Lot
+
+    IF l_dfkkzk-xschs = &apos;X&apos;.
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;FP25&apos; modo = &apos;E&apos;).
+    ELSE.
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;FP05&apos; modo = &apos;E&apos;).
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

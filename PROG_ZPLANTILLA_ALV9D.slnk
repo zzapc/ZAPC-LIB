@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_ALV9D" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Plantilla ALV con documentación" LENGTH="31 "/>
+   <textElement ID="S" KEY="P_DETA" ENTRY="        Detalle" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_LIST" ENTRY="        Resumen" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_VARID" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="P_VARIL" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 03/03/2017
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:http://sap4.com,http://sap4.com/edicion
+**-&gt;PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 03/03/2017 Tarea inicial: http://sap4.com/tareas?&amp;ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_alv9d.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, vbrp, t001.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+
+ENDCLASS. &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check     TYPE xfeld,
+             lights    TYPE zico_estado_mensaje,
+             clave(20),
+
+             message   TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          l_listado TYPE t_listado.
+
+    TYPES: BEGIN OF t_detalle,
+             check     TYPE xfeld,
+             clave(20),
+           END OF t_detalle,
+           tt_detalle TYPE TABLE OF t_detalle.
+    DATA: i_detalle TYPE tt_detalle,
+          l_detalle TYPE t_detalle.
+    DATA: i_detalle_todo TYPE tt_detalle,
+          v_detalle_init.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      listado_detalle IMPORTING clave TYPE any OPTIONAL,
+      agrupar_datos,
+      seleccionar_datos.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv,
+      o_alvd TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE text-sel.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_list RADIOBUTTON GROUP g USER-COMMAND g DEFAULT &apos;X&apos;,
+            p_deta RADIOBUTTON GROUP g.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_varil LIKE disvariant-variant MODIF ID lis,
+            p_varid LIKE disvariant-variant MODIF ID det.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    IF nombre_tabla CS &apos;LISTADO&apos;.
+      READ TABLE o_prog-&gt;i_listado INTO o_prog-&gt;l_listado INDEX row.
+      IF sy-subrc = 0.
+        o_prog-&gt;listado_detalle( o_prog-&gt;l_listado-clave ).
+      ENDIF.
+    ELSE.
+      READ TABLE o_prog-&gt;i_detalle INTO o_prog-&gt;l_detalle INDEX row.
+      IF sy-subrc = 0.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD. &quot;handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    CASE e_salv_function.
+      WHEN &apos;EXCEL&apos;.
+        exportar_xlsx( ).
+*        zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alv tabla = o_prog-&gt;i_listado abrir = &apos;X&apos; nombre_fichero = SY-TITLE  ).
+*        exportar_excel( ).
+      WHEN &apos;CREAR&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;. &quot;#EC CI_STDSEQ
+          &lt;listado&gt;-lights = zcl_ap_alv=&gt;c_ico_rojo.
+        ENDLOOP.
+        IF sy-subrc NE 0.
+          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          refresh( ).
+        ENDIF.
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+
+    seleccionar_datos( ).
+
+    IF p_list = &apos;X&apos;.
+      agrupar_datos( ).
+
+      listado( ).
+    ELSE.
+      listado_detalle( ).
+    ENDIF.
+
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+    FIELD-SYMBOLS &lt;detalle&gt; TYPE t_detalle.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_detalle[] ).
+    LOOP AT i_detalle ASSIGNING &lt;detalle&gt;.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+
+    ENDLOOP.
+
+    i_detalle_todo = i_detalle.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Ejecutar&apos;  icon = &apos;@15@&apos; qinfo = &apos;Ejecutar&apos; ).
+    o_alv-&gt;add_button( button = &apos;M01&apos; text = &apos;LOG&apos;  icon = &apos;@15@&apos; qinfo = &apos;Log&apos; ).
+
+    o_alv-&gt;set_layout( p_varil ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field_noout( &apos;CLAVE,CHECK&apos; ).
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;listado
+
+  METHOD listado_detalle.
+    FIELD-SYMBOLS &lt;detalle&gt; TYPE t_detalle.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    CLEAR i_detalle.
+    IF clave IS INITIAL.
+      i_detalle = i_detalle_todo.
+    ELSE.
+      LOOP AT i_detalle_todo ASSIGNING &lt;detalle&gt; WHERE clave = clave. &quot;#EC CI_STDSEQ
+        APPEND &lt;detalle&gt; TO i_detalle.
+      ENDLOOP.
+    ENDIF.
+
+    IF v_detalle_init IS INITIAL.
+      v_detalle_init = &apos;X&apos;.
+      o_alvd-&gt;set_layout( p_varid ).
+      o_alvd-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_detalle ).
+      o_alvd-&gt;set_top_of_page( ).
+
+      o_alvd-&gt;set_field_noout( &apos;CLAVE,CHECK&apos; ).
+    ENDIF.
+    o_alvd-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+  METHOD agrupar_datos.
+    FIELD-SYMBOLS: &lt;detalle&gt; TYPE t_detalle,
+                   &lt;listado&gt; TYPE t_listado.
+
+    sgpi_texto( &apos;Agrupando datos&apos; ).
+    CLEAR i_listado.
+    LOOP AT i_detalle_todo ASSIGNING &lt;detalle&gt;.
+      CLEAR l_listado.
+      MOVE-CORRESPONDING &lt;detalle&gt; TO l_listado.
+      COLLECT l_listado INTO i_listado.
+    ENDLOOP.
+
+    LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+      set_status_list( EXPORTING message = &lt;listado&gt;-message criterio = &apos;V&apos; CHANGING list = &lt;listado&gt; ).
+    ENDLOOP.
+
+
+  ENDMETHOD.                    &quot;agrupar_datos
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = &apos;INICIO_DYN&apos;
+      get_nombre_pc = &apos;X&apos;
+      no_param      = &apos;X&apos;
+      status_prog   = &apos;ZAP_STATUS&apos;.
+
+*  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos; &apos;&apos; &apos;&apos;.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = &apos;STANDARD_ALV_DYN&apos;
+*     lights             = &apos;LIGHTS&apos;
+      top_of_page_auto   = &apos;X&apos;
+      top_of_page_titulo = &apos;X&apos;.
+
+  p_varil = o_alv-&gt;get_default_layout( ).
+
+  CREATE OBJECT o_alvd
+    EXPORTING
+      status             = &apos;STANDARD_ALV_DYN&apos;
+      tabla              = &apos;I_DETALLE&apos;
+      top_of_page_auto   = &apos;X&apos;
+      top_of_page_titulo = &apos;X&apos;.
+
+  p_varid = o_alvd-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+  zcl_ap_dynpro=&gt;set_primer_radiobutton( campos = &apos;P_LIST,P_DETA&apos; ).
+
+AT SELECTION-SCREEN OUTPUT.
+
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;LIS&apos; variable = p_list ).
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;DET&apos; variable = p_deta ).
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_varil.
+  p_varil = o_alv-&gt;get_f4_layout( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_varid.
+  p_varid = o_alvd-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

@@ -1,0 +1,1185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FTP" VERSION="1" LANGU="S" DESCRIPT="Manejo FTP" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="DFT" ENTRY="descargando fichero de FTP" LENGTH="52 "/>
+   <textElement ID="I" KEY="ERR" ENTRY="Error" LENGTH="15 "/>
+   <textElement ID="I" KEY="FNC" ENTRY="FTP no conectado" LENGTH="26 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_FTP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="DESTINO_RFC" VERSION="1" LANGU="E" DESCRIPT="Logical Destination (Specified in Function Call)" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RFCDEST" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="DIRECTORIO" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="DIR_TEMP" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="ERROR_COMANDO" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="ERROR_CONEXION" VERSION="1" LANGU="E" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="HANDLE" VERSION="1" LANGU="E" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="HOST" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="I_LINEAS" VERSION="1" LANGU="E" DESCRIPT="Table Type for TPSTDOUT" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TPSTDOUTS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="LINEA" VERSION="1" LANGU="E" DESCRIPT="tp StdOut" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TPSTDOUT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="MENSAJE_ERROR" VERSION="1" LANGU="E" DESCRIPT="tp StdOut" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TPSTDOUT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="PASSWORD" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="SALIDA_SIN_LOG" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="SCRAMBLE_KEY" VERSION="1" LANGU="E" DESCRIPT="Password Scramble Key" EXPOSURE="0" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTVALUE="26101957" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FTP" CMPNAME="USER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="CD" VERSION="1" LANGU="S" DESCRIPT="Cambia directorio" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CD" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CD" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD cd.
+    DATA l_string TYPE string.
+
+    CLEAR: mensaje_error, error_comando.
+
+    IF handle IS INITIAL.
+      IF NOT me-&gt;user IS INITIAL.
+        CLEAR me-&gt;directorio.
+        mensaje_error-line = reconectar( ).
+        IF NOT mensaje_error-line IS INITIAL.
+          error_comando = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    me-&gt;directorio = directorio.
+
+    CONCATENATE &apos;cd&apos; directorio INTO l_string SEPARATED BY space.
+
+    DATA(salida) = command( l_string ).
+
+    CASE salida.
+      WHEN &apos;250&apos;.
+        ok = &apos;X&apos;.
+      WHEN &apos;550&apos;.
+        error_comando = &apos;X&apos;.
+        mensaje_error-line = |No se encuentra el directorio { directorio }|.
+      WHEN OTHERS.
+        mensaje_error-line = linea+4.
+        error_comando = &apos;X&apos;.
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="COMMAND" VERSION="1" LANGU="S" DESCRIPT="Commando FTP" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="COMMAND" SCONAME="COMANDO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="COMMAND" SCONAME="INDEX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="COMMAND" SCONAME="CONTROL" VERSION="1" LANGU="S" DESCRIPT="3-Byte field" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR3"/>
+  <source>METHOD command.
+    DATA l_comando TYPE c LENGTH 255.
+
+    IF handle IS INITIAL OR error_conexion = &apos;X&apos;.
+      error_comando = &apos;X&apos;.
+      mensaje_error = &apos;FTP no conectado&apos;.
+      RETURN.
+    ENDIF.
+
+    l_comando = comando.
+
+    CLEAR: i_lineas, salida_sin_log.
+    CALL FUNCTION &apos;FTP_COMMAND&apos;
+      EXPORTING
+        handle        = handle
+        command       = l_comando
+      TABLES
+        data          = i_lineas
+      EXCEPTIONS
+        tcpip_error   = 1
+        command_error = 2
+        data_error    = 3
+        OTHERS        = 4.
+    IF sy-subrc &lt;&gt; 0.
+      DATA(l_subrc) = sy-subrc.
+      error_comando = &apos;X&apos;.
+      CASE l_subrc.
+        WHEN 1. mensaje_error = &apos;TCPIP ERROR&apos;.
+        WHEN 2. mensaje_error = &apos;COMMAND ERROR&apos;.
+        WHEN 3. mensaje_error = &apos;DATA ERROR&apos;.
+      ENDCASE.
+      mensaje_error-line = |Error { l_subrc } { mensaje_error-line } en comando { l_comando }|.
+    ENDIF.
+
+* En S4 no se devuelven lineas con la salida del comando, en ese caso simulamos los códigos de error
+    READ TABLE i_lineas INTO DATA(l_primera_linea) INDEX 1.
+    IF l_comando &lt;&gt; l_primera_linea.
+      salida_sin_log = &apos;X&apos;.
+      IF error_comando IS INITIAL.
+        IF l_comando = &apos;pwd&apos;.
+          control = &apos;257&apos;.
+        ELSEIF l_comando(3) = `get` OR l_comando(3) = `put ` OR l_comando(2) = `ls`.
+          control = &apos;226&apos;.
+        ELSEIF l_comando(2) = `mv`.
+          control = &apos;350&apos;.
+        ELSE.
+          control = &apos;250&apos;.
+        ENDIF.
+      ELSEIF l_subrc = 2.
+        IF l_comando(2) = `cd` OR l_comando(3) = `lcd`.
+          control = &apos;550 Error cambiando de directorio&apos;.
+        ELSE.
+          control = mensaje_error-line.
+        ENDIF.
+      ELSE.
+        control = mensaje_error-line.
+      ENDIF.
+    ELSE.
+      control = control_comando( index ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" VERSION="1" LANGU="S" DESCRIPT="Conecta a un FTP" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="USER" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="PASSWORD" VERSION="1" LANGU="S" DESCRIPT="Password" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="HOST" VERSION="1" LANGU="S" DESCRIPT="Host" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="DESTINO_RFC" VERSION="1" LANGU="S" DESCRIPT="Servidor FTP (SAPFTP local, SAPFTPA servidor)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;SAPFTPA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS-CLAVE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONNECT" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD connect.
+    DATA: l_user     TYPE c LENGTH 100,
+          l_password TYPE c LENGTH 100,
+          l_host     TYPE c LENGTH 255.
+
+    CLEAR message.
+
+* El sitio FTP tiene que estar permitido en la tabla SAPFTP_SERVERS
+* Ejemplo de uso de funciones en RSFTP007
+* Webs de test https://dlptest.com/ftp-test/
+
+    l_user = user.
+    l_password = password.
+    l_host = host.
+
+    IF NOT parametros IS INITIAL.
+      DATA: i_p      TYPE TABLE OF string,
+            l_campo  TYPE zparametros-campo,
+            l_valor  TYPE zparametros-valor,
+            l_valor2 TYPE zparametros-valor2,
+            l_c      TYPE string,
+            l_v      TYPE string.
+      FIELD-SYMBOLS &lt;p&gt; TYPE string.
+
+      DEFINE get_valor_par.
+        CLEAR: l_campo, l_valor, l_valor2.
+        SPLIT l_&amp;1 AT &apos;|&apos; INTO TABLE i_p.
+        LOOP AT i_p ASSIGNING &lt;p&gt;.
+          IF &lt;p&gt; CS &apos;=&apos;.
+            SPLIT &lt;p&gt; AT &apos;=&apos; INTO l_c l_v.
+            CASE l_c.
+              WHEN &apos;C1&apos;. l_campo = l_v.
+              WHEN &apos;C2&apos;. l_valor = l_v.
+              WHEN &apos;C3&apos;. l_valor2 = l_v.
+            ENDCASE.
+          ENDIF.
+        ENDLOOP.
+        IF NOT l_campo IS INITIAL.
+          SELECT SINGLE atributo1 FROM zparametros
+            INTO l_&amp;1
+           WHERE clave  = parametros
+             AND campo  = l_campo
+             AND valor  = l_valor
+             AND valor2 = l_valor2.
+          IF sy-subrc &lt;&gt; 0.
+            message = |No definido parámetro { parametros } { l_campo } { l_valor } { l_valor2 }|.
+            error_conexion = &apos;X&apos;.
+            RETURN.
+          ENDIF.
+        ENDIF.
+      END-OF-DEFINITION.
+      get_valor_par: user, password, host.
+    ENDIF.
+
+    IF encriptar_password = &apos;X&apos;.
+      encriptar_password( CHANGING password = l_password ).
+    ENDIF.
+
+    IF destino_rfc IS INITIAL.
+      IF sy-batch IS INITIAL.
+        me-&gt;destino_rfc = &apos;SAPFTPA&apos;.
+      ELSE.
+        me-&gt;destino_rfc = &apos;SAPFTP&apos;.
+      ENDIF.
+    ELSE.
+      me-&gt;destino_rfc = destino_rfc.
+    ENDIF.
+
+    me-&gt;user     = l_user.
+    me-&gt;password = l_password.
+    me-&gt;host     = l_host.
+
+    CALL FUNCTION &apos;FTP_CONNECT&apos;
+      EXPORTING
+*-- Your SAP-UNIX FTP user name (case sensitive)
+        user            = l_user
+        password        = l_password
+*-- Your SAP-UNIX server host name (case sensitive)
+        host            = l_host
+        rfc_destination = me-&gt;destino_rfc
+      IMPORTING
+        handle          = handle
+      EXCEPTIONS
+        not_connected   = 1
+        OTHERS          = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      IF me-&gt;destino_rfc = &apos;SAPFTP&apos;.
+        me-&gt;destino_rfc = &apos;SAPFTPA&apos;.
+      ELSE.
+        me-&gt;destino_rfc = &apos;SAPFTP&apos;.
+      ENDIF.
+      CALL FUNCTION &apos;FTP_CONNECT&apos;
+        EXPORTING
+*-- Your SAP-UNIX FTP user name (case sensitive)
+          user            = l_user
+          password        = l_password
+*-- Your SAP-UNIX server host name (case sensitive)
+          host            = l_host
+          rfc_destination = me-&gt;destino_rfc
+        IMPORTING
+          handle          = handle
+        EXCEPTIONS
+          not_connected   = 1
+          OTHERS          = 2.
+
+      IF sy-subrc &lt;&gt; 0.
+        error_conexion = &apos;X&apos;.
+        mensaje_error = &apos;Error conectando al FTP&apos;.
+        message = mensaje_error.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="USER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="DESTINO_RFC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;SAPFTPA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONSTRUCTOR" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS-CLAVE" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    IF NOT host IS INITIAL.
+      connect( user               = user
+                password           = password
+                host               = host
+                encriptar_password = encriptar_password
+                destino_rfc        = destino_rfc
+                parametros         = parametros ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="CONTROL_COMANDO" VERSION="1" LANGU="S" DESCRIPT="Controlar resultados comando" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONTROL_COMANDO" SCONAME="INDEX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="CONTROL_COMANDO" SCONAME="CODIGO" VERSION="1" LANGU="S" DESCRIPT="Resultado ejecución" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR3"/>
+  <source>METHOD control_comando.
+    DATA l_lin TYPE i.
+
+    l_lin = lines( i_lineas ).
+
+    l_lin = l_lin + index.
+
+    READ TABLE i_lineas INTO linea INDEX l_lin.
+
+    codigo = linea(3).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="DELETE" VERSION="1" LANGU="S" DESCRIPT="Borra fichero del FTP" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DELETE" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DELETE" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD delete.
+    DATA l_string TYPE string.
+
+    IF handle IS INITIAL AND NOT me-&gt;user IS INITIAL.
+      mensaje_error = reconectar( ).
+      IF NOT mensaje_error IS INITIAL.
+        error_comando = &apos;X&apos;.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    CONCATENATE &apos;delete &apos; fichero INTO l_string SEPARATED BY space.
+
+    IF command( l_string ) = &apos;250&apos;.
+      ok = &apos;X&apos;.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      IF NOT ( mensaje_error CS &apos;Error&apos; AND mensaje_error CS &apos;comando&apos; ).
+        mensaje_error = linea+4.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="DIR_ACTUAL" VERSION="1" LANGU="S" DESCRIPT="Devuelve el directorio actual" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DIR_ACTUAL" SCONAME="DIRECTORIO_ACTUAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD dir_actual.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_s1 TYPE tpstdout,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_s2 TYPE tpstdout.
+
+    IF command( &apos;pwd&apos; ) = &apos;257&apos;.
+      SPLIT linea AT &apos;&quot;&apos; INTO l_s1 directorio_actual l_s2.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="DISCONNECT" VERSION="1" LANGU="S" DESCRIPT="Desconcta de un FTP" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD disconnect.
+    CALL FUNCTION &apos;FTP_DISCONNECT&apos;
+      EXPORTING
+        handle = handle
+      EXCEPTIONS
+        OTHERS = 1.
+    IF sy-subrc &lt;&gt; 0. &quot;#EC EMPTY_IF_BRANCH
+*     message &apos;Error desconectando&apos; type &apos;S&apos;.
+    ENDIF.
+
+* Close the associated RFC connection:
+    CALL FUNCTION &apos;RFC_CONNECTION_CLOSE&apos;
+      EXPORTING
+        destination = destino_rfc
+      EXCEPTIONS
+        OTHERS      = 1.
+    IF sy-subrc &lt;&gt; 0. &quot;#EC EMPTY_IF_BRANCH
+*     message &apos;Error cerrando conexión RFC&apos; type &apos;S&apos;.
+    ENDIF.
+* Reset the internally managed session handle:
+    CLEAR handle.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" VERSION="1" LANGU="S" DESCRIPT="Downloads a Binary File from the FTP Host" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Target File Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="FILE_LENGTH" VERSION="1" LANGU="S" DESCRIPT="File Length (in Bytes)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Binary File Payload" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_BINARY_FILE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD download_binary_file.
+    DATA: l_fichero      TYPE c LENGTH 1024,
+          l_subrc        TYPE sy-subrc,
+          lv_ftp_command TYPE string.
+
+    IF handle IS INITIAL OR error_conexion = &apos;X&apos;.
+      mensaje_error = &apos;FTP no conectado&apos;.
+      message = mensaje_error.
+      RETURN.
+    ENDIF.
+
+    l_fichero = zcl_ap_ficheros=&gt;get_fichero_var( fichero = CONV #( fichero ) ).
+
+    IF NOT directorio IS INITIAL.
+      CONCATENATE &apos;/&apos; directorio &apos;/&apos; l_fichero INTO l_fichero.
+      REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_fichero WITH &apos;/&apos;.
+    ENDIF.
+
+*    SET the passive MODE - AS necessary:
+    IF passive_mode = abap_true.
+      command( &apos;set passive on&apos; ).
+    ENDIF.
+
+* Download the selected text file from the FTP host:
+    CALL FUNCTION &apos;FTP_SERVER_TO_R3&apos;
+      EXPORTING
+        handle        = handle
+        fname         = l_fichero
+      IMPORTING
+        blob_length   = file_length
+      TABLES
+        blob          = i_tabla
+      EXCEPTIONS
+        tcpip_error   = 1
+        command_error = 2
+        data_error    = 3
+        OTHERS        = 4.
+
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      error_comando = &apos;X&apos;.
+      CASE l_subrc.
+        WHEN 1. mensaje_error = &apos;TCPIP ERROR&apos;.
+        WHEN 2. mensaje_error = &apos;COMMAND ERROR&apos;.
+        WHEN 3. mensaje_error = &apos;DATA ERROR&apos;.
+      ENDCASE.
+      __concat4 mensaje_error &apos;Error&apos; l_subrc mensaje_error &apos;descargando fichero de FTP&apos;.
+      message = mensaje_error.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" VERSION="1" LANGU="S" DESCRIPT="Downloads a Plain Text File from the FTP Host" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Target File Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Text File Payload" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="DOWNLOAD_TEXT_FILE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD download_text_file.
+    DATA: l_fichero      TYPE c LENGTH 1024,
+          l_subrc        TYPE i,
+          lv_ftp_command TYPE string.
+
+    CLEAR: i_tabla, message.
+
+    IF handle IS INITIAL OR error_conexion = &apos;X&apos;.
+      mensaje_error = &apos;FTP no conectado&apos;(fnc).
+      message = mensaje_error.
+      RETURN.
+    ENDIF.
+
+* Ejemplo en RSFTP007
+
+    l_fichero = zcl_ap_ficheros=&gt;get_fichero_var( fichero = CONV #( fichero ) ).
+
+    IF NOT directorio IS INITIAL.
+      CONCATENATE &apos;/&apos; directorio &apos;/&apos; l_fichero INTO l_fichero.
+      REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_fichero WITH &apos;/&apos;.
+    ENDIF.
+
+* Set the passive mode - as necessary:
+    IF passive_mode = abap_true.
+      command( &apos;set passive on&apos; ).
+    ENDIF.
+
+    command( &apos;ascii&apos; ).
+
+* Download the selected text file from the FTP host:
+    CALL FUNCTION &apos;FTP_SERVER_TO_R3&apos;
+      EXPORTING
+        handle         = handle
+        fname          = l_fichero
+        character_mode = &apos;X&apos;
+      TABLES
+        text           = i_tabla
+      EXCEPTIONS
+        tcpip_error    = 1
+        command_error  = 2
+        data_error     = 3
+        OTHERS         = 4.
+
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      error_comando = &apos;X&apos;.
+      CASE l_subrc.
+        WHEN 1. mensaje_error = &apos;TCPIP ERROR&apos;.
+        WHEN 2. mensaje_error = &apos;COMMAND ERROR&apos;.
+        WHEN 3. mensaje_error = &apos;DATA ERROR&apos;.
+      ENDCASE.
+      __concat4 mensaje_error &apos;Error&apos;(err) l_subrc mensaje_error &apos;descargando fichero de FTP&apos;(dft).
+      message = mensaje_error.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" DESCRIPT="Scramble the Provided Password" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="ENCRIPTAR_PASSWORD" SCONAME="PASSWORD" VERSION="1" LANGU="S" DESCRIPT="Password to be Scrambled" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="CSEQUENCE"/>
+  <source>METHOD encriptar_password.
+* Method-Local Data Declarations:
+
+    DATA lv_password_length TYPE i.
+
+* Calculate the length of the provided password:
+    lv_password_length = strlen( password ).
+
+* Scramble the password using the standard HTTP_SCRAMBLE module:
+    CALL FUNCTION &apos;HTTP_SCRAMBLE&apos;
+      EXPORTING
+        source      = password
+        sourcelen   = lv_password_length
+        key         = scramble_key
+      IMPORTING
+        destination = password.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="ENCRIPTAR_PASSWORD_VIEJO" VERSION="1" LANGU="S" DESCRIPT="Encripta el password" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="ENCRIPTAR_PASSWORD_VIEJO" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD encriptar_password_viejo.
+    DATA l_pass TYPE c LENGTH 100.
+
+    l_pass = password.
+    CALL FUNCTION &apos;SCRAMBLE_STRING&apos;
+      EXPORTING
+        source = password
+      IMPORTING
+        target = l_pass.
+    password = l_pass.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="GET" VERSION="1" LANGU="S" DESCRIPT="Recupera fichero del FTP al PC" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="DIRECTORIO_PC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="DIR_TEMP" VERSION="1" LANGU="S" DESCRIPT="Recupera el fichero en el directorio temporal" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="FICHERO_PC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD get.
+    DATA: l_fichero_ftp TYPE string,
+          l_fichero_pc  TYPE string,
+          l_string      TYPE string.
+
+    IF directorio IS INITIAL.
+      CONCATENATE &apos;&quot;&apos; fichero &apos;&quot;&apos; INTO l_fichero_ftp.
+    ELSE.
+      CONCATENATE &apos;&quot;/&apos; directorio &apos;/&apos; fichero &apos;&quot;&apos; INTO l_fichero_ftp.
+      REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_fichero_ftp WITH &apos;/&apos;.
+    ENDIF.
+
+    IF dir_temp IS INITIAL.
+      CONCATENATE &apos;&quot;&apos; directorio_pc &apos;\&apos; fichero &apos;&quot;&apos; INTO l_fichero_pc.
+    ELSE.
+      IF me-&gt;dir_temp = &apos;X&apos;.
+        me-&gt;dir_temp = zcl_ap_documentos=&gt;get_directorio_temporal( ).
+      ELSEIF dir_temp &lt;&gt; &apos;&apos;.
+        me-&gt;dir_temp = dir_temp.
+      ENDIF.
+      fichero_pc = zcl_ap_ficheros=&gt;concat_ruta( directorio = me-&gt;dir_temp fichero = fichero ).
+      CONCATENATE &apos;&quot;&apos; fichero_pc &apos;&quot;&apos; INTO l_fichero_pc.
+    ENDIF.
+
+    IF passive_mode = abap_true.
+      command( &apos;set passive on&apos; ).
+    ENDIF.
+
+    CONCATENATE &apos;get &apos; l_fichero_ftp l_fichero_pc INTO l_string SEPARATED BY space.
+
+    IF command( comando = l_string index = -1 ) = &apos;226&apos;.
+      ok = &apos;X&apos;.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="GET_LISTA_FICHEROS" VERSION="1" LANGU="S" DESCRIPT="Devuelve listado de ficheros" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET_LISTA_FICHEROS" SCONAME="MASCARA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GET_LISTA_FICHEROS" SCONAME="I_FICHEROS" VERSION="1" LANGU="S" DESCRIPT="File Table" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_FILES"/>
+  <source>METHOD get_lista_ficheros.
+    DATA: l_comando            TYPE string,
+          l_line_fin           TYPE i,
+          l_line_ini           TYPE i,
+          l_file               TYPE file_info,
+          l_ini                TYPE i,
+          l_inim               TYPE i,
+          l_aux1               TYPE c LENGTH 255,
+          l_aux2               TYPE c LENGTH 255,
+          l_desp               TYPE i,
+          l_fecha_al_principio TYPE c LENGTH 1,
+          l_desp2              TYPE i.
+
+    IF mascara IS INITIAL.
+      l_comando = &apos;ls&apos;.
+    ELSE.
+      CONCATENATE &apos;ls&apos; mascara INTO l_comando SEPARATED BY space.
+    ENDIF.
+
+    IF command( l_comando ) = &apos;226&apos;.
+      CLEAR error_comando.
+
+      l_line_fin = lines( i_lineas ).
+      l_line_fin = l_line_fin - 1.
+      l_line_ini = l_line_fin.
+      LOOP AT i_lineas INTO linea.
+        IF salida_sin_log IS INITIAL.
+          IF    linea+4(7)  = &apos;Opening&apos; OR linea CS &apos;Connecting to port&apos; OR linea CS &apos;Data connection already open&apos; OR linea(5) = &apos;total&apos;
+             OR linea      CS &apos;200 PORT command successful.&apos; OR linea CS &apos;150 Here comes the directory listing.&apos;.
+            l_line_ini = sy-tabix + 1.
+          ENDIF.
+
+          IF sy-tabix &lt; l_line_ini OR sy-tabix &gt; l_line_fin.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+
+        CLEAR l_file.
+        IF linea(1) = &apos;d&apos; OR linea CS &apos;&lt;dir&gt;&apos; OR linea CS &apos;&lt;DIR&gt;&apos;.
+          l_file-isdir = 1.
+        ENDIF.
+
+        CLEAR: l_ini,
+               l_inim.
+        IF mascara CS &apos;*&apos;.
+          SPLIT mascara AT &apos;*&apos; INTO l_aux1 l_aux2.
+          IF linea+21 CS l_aux1 AND linea CS l_aux2.
+            SEARCH linea+21 FOR l_aux1 IN CHARACTER MODE.
+            IF sy-fdpos &gt; 0.
+              l_inim = sy-fdpos.
+              l_desp = l_inim + 21.
+              l_file-filename = linea+l_desp.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+        IF linea+58(1) = &apos;:&apos;.
+          l_ini = 41.
+        ELSEIF linea+13(3) = &apos;ftp&apos;.
+          l_ini = 28.
+        ELSEIF linea+13(10) = &apos;user group&apos;.
+          l_ini = 31.
+        ELSEIF linea+2(1) = &apos;-&apos; AND linea+16(1) = &apos;M&apos;.
+          l_ini = 30.
+          l_fecha_al_principio = &apos;X&apos;.
+        ELSEIF    linea+30(5) = &apos; Jan &apos; OR linea+30(5) = &apos; Feb &apos; OR linea+30(5) = &apos; Mar &apos;
+               OR linea+30(5) = &apos; Apr &apos; OR linea+30(5) = &apos; Mai &apos; OR linea+30(5) = &apos; May &apos; OR linea+30(5) = &apos; Jun &apos;
+               OR linea+30(5) = &apos; Jul &apos; OR linea+30(5) = &apos; Aug &apos; OR linea+30(5) = &apos; Sep &apos;
+               OR linea+30(5) = &apos; Oct &apos; OR linea+30(5) = &apos; Nov &apos; OR linea+30(5) = &apos; Dec &apos;.
+          l_ini = 23.
+        ELSEIF    linea+31(5) = &apos; Jan &apos; OR linea+31(5) = &apos; Feb &apos; OR linea+31(5) = &apos; Mar &apos;
+               OR linea+31(5) = &apos; Apr &apos; OR linea+31(5) = &apos; Mai &apos; OR linea+31(5) = &apos; May &apos; OR linea+31(5) = &apos; Jun &apos;
+               OR linea+31(5) = &apos; Jul &apos; OR linea+31(5) = &apos; Aug &apos; OR linea+31(5) = &apos; Sep &apos;
+               OR linea+31(5) = &apos; Oct &apos; OR linea+31(5) = &apos; Nov &apos; OR linea+31(5) = &apos; Dec &apos;.
+          l_ini = 24.
+        ELSEIF    linea+32(5) = &apos; Jan &apos; OR linea+32(5) = &apos; Feb &apos; OR linea+32(5) = &apos; Mar &apos;
+               OR linea+32(5) = &apos; Apr &apos; OR linea+32(5) = &apos; Mai &apos; OR linea+32(5) = &apos; May &apos; OR linea+32(5) = &apos; Jun &apos;
+               OR linea+32(5) = &apos; Jul &apos; OR linea+32(5) = &apos; Aug &apos; OR linea+32(5) = &apos; Sep &apos;
+               OR linea+32(5) = &apos; Oct &apos; OR linea+32(5) = &apos; Nov &apos; OR linea+32(5) = &apos; Dec &apos;.
+          l_ini = 25.
+        ELSEIF NOT l_inim IS INITIAL.
+          l_ini = l_inim.
+        ELSE.
+          l_ini = 34.
+        ENDIF.
+
+        l_file-filelength = zcl_ap_string=&gt;busca_numeros( linea+l_ini(8) ).
+        IF l_fecha_al_principio = &apos;X&apos;.
+          IF linea+2(1) = &apos;-&apos; AND linea+5(1) = &apos;-&apos;.
+            DATA(l_dia) = linea+3(2).
+            linea+3(2) = linea(2).
+            linea(2) = l_dia.
+          ENDIF.
+          l_file-createdate = zcl_ap_fechas=&gt;string2fecha( linea(8) ).
+
+          IF linea+16(1) = &apos;M&apos;.
+            l_file-createtime = zcl_ap_fechas=&gt;string2hora( linea+10(5) ).
+            IF linea+15(2) = &apos;PM&apos;.
+              TRY.
+                  l_file-createtime(2) = l_file-createtime(2) + 12.
+                CATCH cx_root INTO DATA(o_root).            &quot;#EC *
+                  MESSAGE |Error recuperando hora { o_root-&gt;get_text( ) }| TYPE &apos;S&apos;.
+              ENDTRY.
+            ENDIF.
+          ELSE.
+            l_file-createtime = zcl_ap_fechas=&gt;string2hora( linea+10(7) ).
+          ENDIF.
+
+          l_desp = 39.
+        ELSE.
+          l_file-createdate(4) = sy-datum(4).
+          l_desp = l_ini + 8.
+          CASE linea+l_desp(3).
+            WHEN &apos;Jan&apos;. l_file-createdate+4(2) = &apos;01&apos;.
+            WHEN &apos;Feb&apos;. l_file-createdate+4(2) = &apos;02&apos;.
+            WHEN &apos;Mar&apos;. l_file-createdate+4(2) = &apos;03&apos;.
+            WHEN &apos;Apr&apos;. l_file-createdate+4(2) = &apos;04&apos;.
+            WHEN &apos;Mai&apos; OR &apos;May&apos;. l_file-createdate+4(2) = &apos;05&apos;.
+            WHEN &apos;Jun&apos;. l_file-createdate+4(2) = &apos;06&apos;.
+            WHEN &apos;Jul&apos;. l_file-createdate+4(2) = &apos;07&apos;.
+            WHEN &apos;Aug&apos;. l_file-createdate+4(2) = &apos;08&apos;.
+            WHEN &apos;Sep&apos;. l_file-createdate+4(2) = &apos;09&apos;.
+            WHEN &apos;Oct&apos;. l_file-createdate+4(2) = &apos;10&apos;.
+            WHEN &apos;Nov&apos;. l_file-createdate+4(2) = &apos;11&apos;.
+            WHEN &apos;Dec&apos;. l_file-createdate+4(2) = &apos;12&apos;.
+          ENDCASE.
+          l_desp = l_ini + 12.
+          l_file-createdate+6(2) = linea+l_desp(2).
+          l_desp = l_ini + 15.
+          l_desp2 = l_ini + 18.
+          CONCATENATE linea+l_desp(2) linea+l_desp2(2) &apos;00&apos; INTO l_file-createtime.
+          l_desp = l_ini + 21.
+        ENDIF.
+
+        IF l_file-filename IS INITIAL.
+          l_file-filename = linea+l_desp.
+
+          DO 5 TIMES.
+            IF l_file-filename(1) = &apos;&apos;.
+              l_file-filename = l_file-filename+1.
+            ELSE.
+              EXIT.
+            ENDIF.
+          ENDDO.
+        ENDIF.
+
+        APPEND l_file TO i_ficheros.
+      ENDLOOP.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Graba fichero en un sólo paso" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="USER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="DESTINO_RFC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;SAPFTPA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="I_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="BINARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS-CLAVE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="NO_DESCONECTAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="GRABAR_FICHERO" SCONAME="FICHERO_FINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD grabar_fichero.
+    CLEAR message.
+    IF handle IS INITIAL.
+      IF user IS INITIAL AND NOT me-&gt;user IS INITIAL.
+        message = reconectar( ).
+      ELSE.
+        message = connect( user               = user
+                 password           = password
+                 host               = host
+                 encriptar_password = encriptar_password
+                 destino_rfc        = destino_rfc
+                 parametros         = parametros ).
+      ENDIF.
+    ENDIF.
+
+    IF NOT message IS INITIAL.
+      disconnect( ).
+    ELSE.
+      IF xstring IS INITIAL AND binario IS INITIAL.
+        message = upload_text_file( EXPORTING fichero    = fichero
+                                              directorio = directorio
+                                              i_tabla    = i_tabla
+                                              passive_mode  = passive_mode
+                                    IMPORTING fichero_final = fichero_final ).
+      ELSE.
+        IF NOT i_tabla IS INITIAL AND xstring IS INITIAL.
+          DATA(l_string) = zcl_ap_string=&gt;tabla2string( i_tabla ).
+        ENDIF.
+        message = upload_binary_file( EXPORTING fichero    = fichero
+                                                directorio = directorio
+                                                xstring    = xstring
+                                                string     = l_string
+                                                i_tabla    = i_tabla
+                                                passive_mode  = passive_mode
+                                      IMPORTING fichero_final = fichero_final ).
+      ENDIF.
+
+      IF no_desconectar IS INITIAL OR NOT message IS INITIAL.
+        disconnect( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="LCD" VERSION="1" LANGU="S" DESCRIPT="Lista ficheros" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LCD" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LCD" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD lcd.
+    DATA l_string TYPE string.
+
+    CONCATENATE &apos;lcd&apos; directorio INTO l_string SEPARATED BY space.
+
+    IF command( l_string ) = &apos;250&apos;.
+      ok = &apos;X&apos;.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Leer fichero en un sólo paso" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="USER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="DESTINO_RFC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;SAPFTPA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="BINARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS-CLAVE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="NO_DESCONECTAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="I_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LEER_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD leer_fichero.
+    DATA: i_blob   TYPE solix_tab,
+          l_length TYPE i.
+
+    CLEAR message.
+    IF handle IS INITIAL.
+      IF user IS INITIAL AND NOT me-&gt;user IS INITIAL.
+        message = reconectar( ).
+      ELSE.
+        message = connect( user               = user
+                 password           = password
+                 host               = host
+                 encriptar_password = encriptar_password
+                 destino_rfc        = destino_rfc
+                 parametros         = parametros ).
+      ENDIF.
+    ENDIF.
+    IF NOT message IS INITIAL.
+      disconnect( ).
+    ELSE.
+      IF binario = &apos;X&apos;.
+        message = download_binary_file( EXPORTING fichero    = fichero
+                                                  directorio = directorio
+                                                 passive_mode = passive_mode
+                                       IMPORTING i_tabla    = i_blob
+                                                 file_length = l_length ).
+        IF NOT i_blob IS INITIAL.
+*          CALL METHOD cl_bcs_convert=&gt;raw_to_xstring
+*            EXPORTING
+*              it_soli    = i_blob
+*            RECEIVING
+*              ev_xstring = xstring.
+
+          xstring = cl_bcs_convert=&gt;solix_to_xstring( it_solix = i_blob iv_size = l_length ).
+
+          &quot; NB: we assume that file has UTF-8 encoding
+*  e_string = cl_abap_codepage=&gt;convert_from( xstring ). &quot; UTF-8 by default
+        ENDIF.
+      ELSE.
+        message = download_text_file( EXPORTING fichero    = fichero
+                                                 directorio = directorio
+                                                 passive_mode = passive_mode
+                                       IMPORTING i_tabla    = i_tabla ).
+      ENDIF.
+
+      IF no_desconectar IS INITIAL OR NOT message IS INITIAL.
+        disconnect( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" VERSION="1" LANGU="S" DESCRIPT="Lista ficheros en un sólo paso" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="USER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="ENCRIPTAR_PASSWORD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="DESTINO_RFC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;SAPFTPA&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZPARAMETROS-CLAVE" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="MASCARA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="NO_DESCONECTAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="LISTA_FICHEROS" SCONAME="I_FICHEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="RSTT_T_FILES"/>
+  <source>METHOD lista_ficheros.
+    IF handle IS INITIAL.
+      message = connect( user               = user
+                         password           = password
+                         host               = host
+                         encriptar_password = encriptar_password
+                         destino_rfc        = destino_rfc
+                         parametros         = parametros ).
+    ENDIF.
+    IF NOT message IS INITIAL.
+      disconnect( ).
+    ELSE.
+      IF NOT directorio IS INITIAL.
+        cd( directorio ).
+        IF error_comando = &apos;X&apos;.
+          message = |Error cambiando a directorio { directorio } { mensaje_error-line }|.
+          RETURN.
+        ENDIF.
+      ENDIF.
+
+      i_ficheros = get_lista_ficheros( mascara = mascara ).
+      IF error_comando = &apos;X&apos;.
+        message = |Error recuperando lista de ficheros  { mensaje_error-line }|.
+        RETURN.
+      ENDIF.
+
+      IF no_desconectar IS INITIAL.
+        disconnect( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="MATAR_SESIONES_RFC" VERSION="1" LANGU="S" DESCRIPT="Mata sesiones FTP" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD matar_sesiones_rfc.
+    DATA:
+      lt_servers TYPE TABLE OF msxxlist,
+      lt_uinfo   TYPE TABLE OF uinfo,
+      lt_usrlist TYPE TABLE OF usrinfo.
+
+    FIELD-SYMBOLS: &lt;ls_server&gt; TYPE msxxlist,
+                   &lt;ls_user&gt;   TYPE usrinfo.
+
+    CALL FUNCTION &apos;TH_SERVER_LIST&apos;
+      TABLES
+        list           = lt_servers
+      EXCEPTIONS
+        no_server_list = 1
+        OTHERS         = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;TH_USER_LIST&apos;
+      TABLES
+        list          = lt_uinfo
+        usrlist       = lt_usrlist
+      EXCEPTIONS
+        auth_misssing = 1
+        OTHERS        = 2.
+    IF sy-subrc = 0.
+      LOOP AT lt_servers ASSIGNING &lt;ls_server&gt;.
+        LOOP AT lt_usrlist
+             ASSIGNING &lt;ls_user&gt; WHERE     bname     = sy-uname
+                                       AND rfc_type  = &apos;E&apos;
+                                       AND hostaddr  = &apos;0.0.0.0&apos;
+                                       AND type      = &apos;32&apos;
+                                       AND protocol  = -1
+                                       AND tcode     = &apos;&apos;
+                                       AND term     CS &apos;.&apos;.
+          CALL &apos;ThSndDelUser&apos; &quot;#EC CI_CCALL
+               ID &apos;MANDT&apos;  FIELD sy-mandt
+               ID &apos;BNAME&apos;  FIELD &lt;ls_user&gt;-bname
+               ID &apos;SERVER&apos; FIELD &lt;ls_server&gt;-name
+               ID &apos;TID&apos;    FIELD &lt;ls_user&gt;-tid.
+        ENDLOOP.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="MV" VERSION="1" LANGU="S" DESCRIPT="Mover fichero" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="MV" SCONAME="FICHERO_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="MV" SCONAME="FICHERO_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="MV" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD mv.
+    DATA: l_fichero_pc  TYPE string,
+          l_fichero_ftp TYPE string,
+          l_string      TYPE string.
+
+    CONCATENATE &apos;&quot;&apos; fichero_origen &apos;&quot;&apos; INTO l_fichero_pc.
+    CONCATENATE &apos;&quot;&apos; fichero_destino &apos;&quot;&apos; INTO l_fichero_ftp.
+    CONCATENATE &apos;rename &apos; l_fichero_pc l_fichero_ftp INTO l_string SEPARATED BY space.
+
+    IF command( comando = l_string index = -1 ) = &apos;350&apos;.
+      ok = &apos;X&apos;.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="PUT" VERSION="1" LANGU="S" DESCRIPT="Copia fichero del PC al servidor" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="PUT" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="PUT" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD put.
+    DATA: l_nombrefichero TYPE string,
+          l_fichero_pc    TYPE string,
+          l_fichero_ftp   TYPE string,
+          l_string        TYPE string.
+
+    CALL FUNCTION &apos;SO_SPLIT_FILE_AND_PATH&apos;
+      EXPORTING
+        full_name     = fichero
+      IMPORTING
+        stripped_name = l_nombrefichero
+      EXCEPTIONS
+        x_error       = 1
+        OTHERS        = 2.
+    IF sy-subrc &lt;&gt; 0. &quot;#EC EMPTY_IF_BRANCH
+*    message &apos;Error obteniendo nombre de fichero&apos; type &apos;S&apos;.
+    ENDIF.
+
+    CONCATENATE &apos;&quot;&apos; fichero &apos;&quot;&apos; INTO l_fichero_pc.
+    CONCATENATE &apos;&quot;&apos; l_nombrefichero &apos;&quot;&apos; INTO l_fichero_ftp.
+    CONCATENATE &apos;put &apos; l_fichero_pc l_fichero_ftp INTO l_string SEPARATED BY space.
+
+    IF command( comando = l_string index = -1 ) = &apos;226&apos;.
+      ok = &apos;X&apos;.
+      CLEAR error_comando.
+    ELSE.
+      error_comando = &apos;X&apos;.
+      mensaje_error = linea+4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="RECONECTAR" VERSION="1" LANGU="S" DESCRIPT="Reconecta sesión" EXPOSURE="0" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="RECONECTAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD reconectar.
+    message = connect( user               = user
+                       password           = password
+                       host               = host
+                       encriptar_password = &apos;&apos;
+                       destino_rfc        = destino_rfc ).
+
+    IF message IS INITIAL AND NOT me-&gt;directorio IS INITIAL.
+      cd( me-&gt;directorio ).
+      IF error_comando = &apos;X&apos;.
+        message = |Error cambiando a directorio { me-&gt;directorio } { mensaje_error-line }|.
+        RETURN.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" VERSION="1" LANGU="S" DESCRIPT="Uploads a Binary File to the FTP Host" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Target File Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Binary File Payload" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" DESCRIPT="Execute the Command in Passive Mode?" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="FICHERO_FINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_BINARY_FILE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD upload_binary_file.
+    TYPES t_linea TYPE c LENGTH 65000.
+
+    DATA: l_xstring      TYPE xstring,
+          lv_file_size   TYPE i,
+          i_tabla_lineas TYPE TABLE OF t_linea,
+          l_linea        TYPE t_linea,
+          l_long         TYPE i,
+          l_fichero      TYPE text1024,
+          l_subrc        TYPE c LENGTH 4,
+          lv_ftp_command TYPE string.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    IF handle IS INITIAL OR error_conexion = &apos;X&apos;.
+      mensaje_error = &apos;FTP no conectado&apos;.
+      message = mensaje_error.
+      RETURN.
+    ENDIF.
+
+    IF NOT xstring IS INITIAL.
+      l_xstring = xstring.
+    ELSEIF NOT string IS INITIAL.
+      l_xstring = zcl_ap_string=&gt;string2xstring( string ).
+    ENDIF.
+
+    IF NOT l_xstring IS INITIAL.
+      CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+        EXPORTING
+          buffer        = l_xstring
+        IMPORTING
+          output_length = lv_file_size
+        TABLES
+          binary_tab    = i_tabla_lineas.
+    ELSE.
+      LOOP AT i_tabla ASSIGNING &lt;fs&gt;.
+        l_linea = &lt;fs&gt;.
+        l_long = strlen( l_linea ).
+        lv_file_size = lv_file_size + l_long.
+        APPEND l_linea TO i_tabla_lineas.
+      ENDLOOP.
+    ENDIF.
+
+* Set the passive mode - as necessary:
+    IF passive_mode = abap_true.
+      command( &apos;set passive on&apos; ).
+    ENDIF.
+
+* Upload the file to the FTP host:
+    l_fichero = zcl_ap_ficheros=&gt;get_fichero_var( fichero = CONV #( fichero ) ).
+    fichero_final = l_fichero.
+
+    IF NOT directorio IS INITIAL.
+      IF zcl_ap_ficheros=&gt;ultima_letra_ruta( CONV #( directorio ) ) = &apos;/&apos;.
+        CONCATENATE directorio fichero INTO l_fichero.
+      ELSE.
+        CONCATENATE directorio &apos;/&apos; fichero INTO l_fichero.
+      ENDIF.
+    ENDIF.
+
+    CALL FUNCTION &apos;FTP_R3_TO_SERVER&apos;
+      EXPORTING
+        handle        = handle
+        fname         = l_fichero
+        blob_length   = lv_file_size
+      TABLES
+        blob          = i_tabla_lineas
+      EXCEPTIONS
+        tcpip_error   = 1
+        command_error = 2
+        data_error    = 3
+        OTHERS        = 4.
+
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CASE l_subrc.
+        WHEN 1. message = &apos;TCPIP ERROR&apos;.
+        WHEN 2.
+          message = &apos;COMMAND ERROR&apos;.
+          IF NOT directorio IS INITIAL.
+* Intentamos acotar si el error es por el directorio
+            IF cd( directorio ) = &apos;&apos;.
+              message = |Error accediendo a directorio { directorio }|.
+              RETURN.
+            ENDIF.
+          ENDIF.
+        WHEN 3. message = &apos;DATA ERROR&apos;.
+      ENDCASE.
+      __concat4 message &apos;Error&apos; l_subrc message &apos;subiendo fichero a FTP&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" VERSION="1" LANGU="S" DESCRIPT="Uploads a Plain Text File to the FTP Host" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="FICHERO" VERSION="1" LANGU="S" DESCRIPT="Target File Name" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CSEQUENCE"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="I_TABLA" VERSION="1" LANGU="S" DESCRIPT="Text File Payload" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="PASSIVE_MODE" VERSION="1" LANGU="S" DESCRIPT="Execute the Command in Passive Mode?" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="DIRECTORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="FICHERO_FINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FTP" CMPNAME="UPLOAD_TEXT_FILE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD upload_text_file.
+    DATA: l_fichero      TYPE text1024,
+          l_subrc        TYPE c LENGTH 4,
+          lv_ftp_command TYPE string.
+
+    IF handle IS INITIAL OR error_conexion = &apos;X&apos;.
+      mensaje_error = &apos;FTP no conectado&apos;.
+      message = mensaje_error.
+      RETURN.
+    ENDIF.
+
+* Set the passive mode - as necessary:
+    IF passive_mode = abap_true.
+      command( &apos;set passive on&apos; ).
+    ENDIF.
+
+* Turn on the ASCII transfer mode:
+    command( &apos;ascii&apos; ).
+
+* Try to upload the file:
+    l_fichero = zcl_ap_ficheros=&gt;get_fichero_var( fichero = CONV #( fichero ) ).
+    fichero_final = l_fichero.
+
+    IF NOT directorio IS INITIAL.
+      CONCATENATE &apos;/&apos; directorio &apos;/&apos; l_fichero INTO l_fichero.
+      REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_fichero WITH &apos;/&apos;.
+    ENDIF.
+
+    CALL FUNCTION &apos;FTP_R3_TO_SERVER&apos;
+      EXPORTING
+        handle         = handle
+        fname          = l_fichero
+        character_mode = &apos;X&apos;
+      TABLES
+        text           = i_tabla
+      EXCEPTIONS
+        tcpip_error    = 1
+        command_error  = 2
+        data_error     = 3
+        OTHERS         = 4.
+
+    IF sy-subrc &lt;&gt; 0.
+      l_subrc = sy-subrc.
+      CASE l_subrc.
+        WHEN 1. message = &apos;TCPIP ERROR&apos;.
+        WHEN 2. message = &apos;COMMAND ERROR&apos;.
+        WHEN 3. message = &apos;DATA ERROR&apos;.
+      ENDCASE.
+      __concat4 message &apos;Error&apos; l_subrc message &apos;subiendo fichero a FTP&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

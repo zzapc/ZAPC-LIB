@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZRSTPDA_SCRIPT_AP_WATCHPOINT" VARCL="X" DBAPL="S" SUBC="S" APPL="X" RMAND="100" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Debugger Skript: Default Template" LENGTH="33 "/>
+  </language>
+ </textPool>
+ <source>*&lt;SCRIPT:PERSISTENT&gt;
+REPORT  rstpda_script_template.
+
+*&lt;SCRIPT:HEADER&gt;
+*&lt;SCRIPTNAME&gt;ZRSTPDA_SCRIPT_AP_WATCHPOINT&lt;/SCRIPTNAME&gt;
+*&lt;SCRIPT_CLASS&gt;LCL_DEBUGGER_SCRIPT&lt;/SCRIPT_CLASS&gt;
+*&lt;SCRIPT_COMMENT&gt;Debugger Skript: Default Template&lt;/SCRIPT_COMMENT&gt;
+*&lt;SINGLE_STEP&gt;X&lt;/SINGLE_STEP&gt;
+
+*&lt;/SCRIPT:HEADER&gt;
+
+*&lt;SCRIPT:PRESETTINGS&gt;
+
+*&lt;/SCRIPT:PRESETTINGS&gt;
+
+*&lt;SCRIPT:SCRIPT_CLASS&gt;
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script DEFINITION INHERITING FROM  cl_tpda_script_class_super  .
+
+  PUBLIC SECTION.
+    METHODS: prologue  REDEFINITION,
+      init    REDEFINITION,
+      script  REDEFINITION,
+      end     REDEFINITION.
+    DATA: zparametros TYPE zparametros.
+ENDCLASS.                    &quot;lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script IMPLEMENTATION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script IMPLEMENTATION.
+  METHOD prologue.
+*** generate abap_source (source handler for ABAP)
+    super-&gt;prologue( ).
+  ENDMETHOD.                    &quot;prolog
+
+  METHOD init.
+    DATA l_return TYPE char1.
+    zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;ZPARAMETROS-CAMPO&apos;
+                                           campo2 = &apos;ZPARAMETROS-ATRIBUTO1&apos;
+                                           titulo = &apos;Indique variable y valor a buscar&apos;
+                                 IMPORTING return = l_return
+                                 CHANGING  valor1 = zparametros-campo
+                                           valor2 = zparametros-atributo1 ).
+
+  ENDMETHOD.                    &quot;init
+  METHOD script.
+
+    TRY.
+        CALL METHOD cl_tpda_script_data_descr=&gt;get_simple_value
+          EXPORTING
+            p_var_name  = CONV #( zparametros-campo )
+          RECEIVING
+            p_var_value = DATA(valor).
+      CATCH cx_tpda_varname .
+      CATCH cx_tpda_script_no_simple_type .
+    ENDTRY.
+    IF zparametros-atributo1 = valor OR ( zparametros-atributo1 = &apos;*&apos; and zparametros-atributo2 ne valor ).
+      me-&gt;break( ).
+    ENDIF.
+    zparametros-atributo2 = valor.
+
+  ENDMETHOD.                    &quot;script
+  METHOD end.
+*** insert your code which shall be executed at the end of the scripting (before trace is saved)
+*** here
+
+  ENDMETHOD.                    &quot;end
+ENDCLASS.                    &quot;lcl_debugger_script IMPLEMENTATION
+*&lt;/SCRIPT:SCRIPT_CLASS&gt;
+
+*&lt;/SCRIPT:PERSISTENT&gt;</source>
+</PROG>

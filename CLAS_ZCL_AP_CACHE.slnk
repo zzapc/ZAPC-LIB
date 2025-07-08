@@ -1,0 +1,1097 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_CACHE" VERSION="1" LANGU="S" DESCRIPT="Cache" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_CACHE" CMPNAME="T_CACHE_MEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="18 " SRCCOLUMN2="23 " TYPESRC_LENG="351 " TYPESRC="BEGIN OF t_cache_mem,
+        tabla   TYPE tabname,
+        clave   TYPE string,
+        clave2  TYPE string,
+        clave3  TYPE string,
+        clave4  TYPE string,
+        clave5  TYPE string,
+        valor   TYPE string,
+        valor2  TYPE string,
+        valor3  TYPE string,
+        xstring TYPE xstring,
+      END OF t_cache_mem
+"/>
+ <types CLSNAME="ZCL_AP_CACHE" CMPNAME="TT_CACHE_MEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="19 " SRCCOLUMN1="10 " SRCROW2="19 " SRCCOLUMN2="114 " TYPESRC_LENG="107 " TYPESRC="tt_cache_mem TYPE SORTED TABLE OF t_cache_mem WITH NON-UNIQUE KEY tabla clave clave2 clave3 clave4 clave5
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_CACHE" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_CACHE" CMPNAME="ENC" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_CACHE" CMPNAME="INHABILITAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_CACHE" CMPNAME="I_CACHE_MEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_CACHE_MEM" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="BORRAR" SCONAME="SOLO_CADUCADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD borrar.
+    DEFINE add_rango.
+      DATA o_&amp;1 TYPE REF TO zcl_ap_rango.
+      o_&amp;1 = NEW #( ).
+      IF NOT &amp;1 IS INITIAL.
+        o_&amp;1-&gt;set_eq( &amp;1 ).
+      ENDIF.
+    END-OF-DEFINITION.
+
+    DEFINE add_rango_vacio.
+      DATA o_&amp;1 TYPE REF TO zcl_ap_rango.
+      o_&amp;1 = NEW #( ).
+      IF &amp;1 = &apos;_VACIO_&apos;.
+        o_&amp;1-&gt;set_eq( &apos;&apos; ).
+      ELSEIF NOT &amp;1 IS INITIAL.
+        o_&amp;1-&gt;set_eq( &amp;1 ).
+      ENDIF.
+    END-OF-DEFINITION.
+
+    add_rango: clave, uname, fecha, hora.
+    add_rango_vacio: subclave, report.
+
+    IF solo_caducados IS INITIAL.
+      DELETE FROM zcache
+       WHERE clave    IN o_clave-&gt;rango
+         AND subclave IN o_subclave-&gt;rango
+         AND report   IN o_report-&gt;rango
+         AND fecha    IN o_fecha-&gt;rango
+         AND ernam    IN o_uname-&gt;rango
+         AND hora     IN o_hora-&gt;rango.
+    ELSE.
+      DELETE FROM zcache
+       WHERE clave        IN o_clave-&gt;rango
+         AND subclave     IN o_subclave-&gt;rango
+         AND report       IN o_report-&gt;rango
+         AND fecha        IN o_fecha-&gt;rango
+         AND ernam        IN o_uname-&gt;rango
+         AND hora         IN o_hora-&gt;rango
+         AND fecha_limite &lt;&gt; &apos;00000000&apos;
+         AND fecha_limite  &lt; sy-datum.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="F4_SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Muestra matchcode para recuperar subclave" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="F4_SUBCLAVE" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Nombre de programa ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCACHE-REPORT" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="F4_SUBCLAVE" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCACHE-CLAVE"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="F4_SUBCLAVE" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" DESCRIPT="Texto, longitud 80" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZCACHE-SUBCLAVE"/>
+  <source>METHOD f4_subclave.
+    DATA: o_popup TYPE REF TO zcl_ap_matchcode_z,
+          zcache  TYPE zcache.
+
+    o_popup = NEW #( tabname = &apos;ZCACHE&apos; ).
+
+    o_popup-&gt;add_field( field = &apos;SUBCLAVE&apos; selectflag = &apos;X&apos; ).
+    o_popup-&gt;add_field( &apos;FECHA,HORA,ERNAM&apos; ).
+
+    SELECT subclave fecha hora ernam FROM zcache        &quot;#EC CI_GENBUFF
+      INTO CORRESPONDING FIELDS OF zcache
+     WHERE report = report
+       AND clave  = clave.
+      o_popup-&gt;add_valor( zcache-subclave ).
+      o_popup-&gt;add_valor( zcache-fecha ).
+      o_popup-&gt;add_valor( zcache-hora ).
+      o_popup-&gt;add_valor( zcache-ernam ).
+    ENDSELECT.
+
+    o_popup-&gt;matchcode( EXPORTING field = &apos;SUBCLAVE&apos;
+                        CHANGING  valor = subclave ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" VERSION="1" LANGU="S" DESCRIPT="Recupera un valor simple" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CLAVE4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CLAVE5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="NOMBRE_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="NOMBRE_CAMPO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="IDIOMA" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CAMPO_CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="CAMPO_IDIOMA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get.
+    get_cache_mem( EXPORTING tabla         = tabla
+                             clave         = clave
+                             clave2        = clave2
+                             clave3        = clave3
+                             clave4        = clave4
+                             clave5        = clave5
+                             buscar_auto   = &apos;X&apos;
+                             nombre_campo  = nombre_campo
+                             nombre_campo2 = nombre_campo2
+                             idioma        = idioma
+                             campo_clave   = campo_clave
+                             campo_idioma  = campo_idioma
+                   IMPORTING valor         = valor ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="SELECCION_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="MAX_DURACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VISUALIZAR_XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="CAMPOS_VISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="AUX1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="AUX2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="AUX3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Serializable Object" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_SERIALIZABLE_OBJECT"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VALORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VARIABLES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VALORES2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VARIABLES2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="VALORES3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_cache.
+    DATA: l_fecha       TYPE d,
+          l_subclave    TYPE zcache-subclave,
+          l_string      TYPE string,
+          i_cache       TYPE TABLE OF zcache,
+          l_seleccion   TYPE xstring,
+          cache         TYPE zcache,
+          lx_valores    TYPE xstring,
+          lx_valores2   TYPE xstring,
+          lx_valores3   TYPE xstring,
+          lx_variables  TYPE xstring,
+          lx_variables2 TYPE xstring.
+
+    l_fecha = fecha - max_duracion.
+
+    IF zcl_ap_string=&gt;es_numero( subclave ) = &apos;X&apos;.
+      l_subclave = subclave.
+    ELSEIF subclave = &apos;_VACIO_&apos;.
+      CLEAR l_subclave.
+    ELSE.
+      l_subclave = subclave.
+    ENDIF.
+
+    LOOP AT seleccion_rango INTO l_string.
+      CONCATENATE l_subclave l_string INTO l_subclave.
+      CONDENSE l_subclave NO-GAPS.
+    ENDLOOP.
+
+    IF l_subclave IS INITIAL AND subclave &lt;&gt; &apos;_VACIO_&apos;.
+      IF max_duracion &lt;&gt; 99999.
+        DELETE FROM zcache
+         WHERE report  = report
+           AND clave   = clave
+           AND fecha  &lt;= l_fecha.
+      ENDIF.
+
+      SELECT * FROM zcache                              &quot;#EC CI_GENBUFF
+        INTO TABLE i_cache
+       WHERE report = report
+         AND clave  = clave.
+      IF sy-subrc = 0. &quot;#EC *
+        existe = &apos;X&apos;.
+      ENDIF.
+    ELSE.
+      IF max_duracion &lt;&gt; 99999.
+        DELETE FROM zcache
+         WHERE report    = report
+           AND clave     = clave
+           AND subclave  = l_subclave
+           AND fecha    &lt;= l_fecha.
+      ENDIF.
+
+      SELECT * FROM zcache
+        INTO TABLE i_cache
+       WHERE report   = report
+         AND clave    = clave
+         AND subclave = l_subclave.
+      IF sy-subrc = 0.
+        existe = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF existe IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF i_cache IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF NOT seleccion_rango IS INITIAL.
+      l_seleccion = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = seleccion_rango json = cache-json ).
+    ENDIF.
+    LOOP AT i_cache INTO cache.
+      IF l_seleccion = cache-seleccion.
+        IF NOT cache-valores IS INITIAL.
+          IF visualizar_xml = &apos;X&apos; AND NOT zcl_ap_lista=&gt;es_elemento( lista = campos_visualizar elemento = &apos;VALORES&apos; ).
+
+          ELSEIF valores IS SUPPLIED.
+            zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-valores
+                                                                     get_tabla             = &apos;X&apos;
+                                                                     json                  = cache-json
+                                                                     visualizar_xml        = visualizar_xml
+                                                          IMPORTING  xstring_decompressed  = lx_valores
+                                                          CHANGING   tabla                 = valores
+                                                          EXCEPTIONS transformation_failed = 1
+                                                                     OTHERS                = 2 ).
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error recuperando objeto VALORES&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT cache-valores2 IS INITIAL.
+          IF visualizar_xml = &apos;X&apos; AND NOT zcl_ap_lista=&gt;es_elemento( lista = campos_visualizar elemento = &apos;VALORES2&apos; ).
+
+          ELSEIF valores2 IS SUPPLIED.
+            zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-valores2
+                                                                     get_tabla             = &apos;X&apos;
+                                                                     json                  = cache-json
+                                                                     visualizar_xml        = visualizar_xml
+                                                          IMPORTING  xstring_decompressed  = lx_valores2
+                                                          CHANGING   tabla                 = valores2
+                                                          EXCEPTIONS transformation_failed = 1
+                                                                     OTHERS                = 2 ).
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error recuperando objeto VALORES2&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT cache-valores3 IS INITIAL.
+          IF visualizar_xml = &apos;X&apos; AND NOT zcl_ap_lista=&gt;es_elemento( lista = campos_visualizar elemento = &apos;VALORES3&apos; ).
+
+          ELSEIF valores3 IS SUPPLIED.
+            zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-valores3
+                                                                     get_tabla             = &apos;X&apos;
+                                                                     json                  = cache-json
+                                                                     visualizar_xml        = visualizar_xml
+                                                          IMPORTING  xstring_decompressed  = lx_valores3
+                                                          CHANGING   tabla                 = valores3
+                                                          EXCEPTIONS transformation_failed = 1
+                                                                     OTHERS                = 2 ).
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error recuperando objeto VALORES3&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT cache-variables IS INITIAL.
+          IF visualizar_xml = &apos;X&apos; AND NOT zcl_ap_lista=&gt;es_elemento( lista = campos_visualizar elemento = &apos;VARIABLES&apos; ).
+
+          ELSEIF variables IS SUPPLIED.
+            zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-variables
+                                                                     get_variable          = &apos;X&apos;
+                                                                     json                  = cache-json
+                                                                     visualizar_xml        = visualizar_xml
+                                                          IMPORTING  xstring_decompressed  = lx_variables
+                                                          CHANGING   variable              = variables
+                                                          EXCEPTIONS transformation_failed = 1
+                                                                     OTHERS                = 2 ).
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error recuperando objeto VARIABLES&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT cache-variables2 IS INITIAL.
+          IF visualizar_xml = &apos;X&apos; AND NOT zcl_ap_lista=&gt;es_elemento( lista = campos_visualizar elemento = &apos;VARIABLES2&apos; ).
+
+          ELSEIF variables2 IS SUPPLIED.
+            zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-variables2
+                                                                     get_variable          = &apos;X&apos;
+                                                                     json                  = cache-json
+                                                                     visualizar_xml        = visualizar_xml
+                                                          IMPORTING  xstring_decompressed  = lx_variables2
+                                                          CHANGING   variable              = variables2
+                                                          EXCEPTIONS transformation_failed = 1
+                                                                     OTHERS                = 2 ).
+            IF sy-subrc &lt;&gt; 0.
+              message = &apos;Error recuperando objeto VARIABLES2&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT cache-objeto IS INITIAL AND objeto IS SUPPLIED.
+          zcl_ap_string=&gt;transform_rawstring_to_object( EXPORTING  xstring               = cache-objeto
+                                                                   get_variable          = &apos;X&apos;
+                                                                   json                  = cache-json
+                                                                   visualizar_xml        = visualizar_xml
+                                                        CHANGING   objeto                = objeto
+                                                        EXCEPTIONS transformation_failed = 1
+                                                                   OTHERS                = 2 ).
+          IF sy-subrc &lt;&gt; 0.
+            message = &apos;Error recuperando OBJETO&apos;.
+          ENDIF.
+        ENDIF.
+
+        string = cache-string.
+        aux1 = cache-aux1.
+        aux2 = cache-aux2.
+        aux3 = cache-aux3.
+
+        EXIT.                                           &quot;#EC CI_NOORDER
+      ENDIF.
+    ENDLOOP.
+
+    IF visualizar_xml = &apos;Y&apos;.
+      IF NOT valores IS INITIAL AND valores IS SUPPLIED.
+        DATA(l_output) = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores&apos; ).
+        cl_demo_output=&gt;write_data( valores ).
+        cl_demo_output=&gt;end_section( ).
+      ELSEIF NOT lx_valores IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores XML&apos; ).
+        cl_demo_output=&gt;write_xml( lx_valores ).
+        cl_demo_output=&gt;end_section( ).
+      ENDIF.
+      IF NOT valores2 IS INITIAL AND valores2 IS SUPPLIED.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores2&apos; ).
+        cl_demo_output=&gt;write_data( valores2 ).
+        cl_demo_output=&gt;end_section( ).
+      ELSEIF NOT lx_valores2 IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores 2 XML&apos; ).
+        cl_demo_output=&gt;write_xml( lx_valores2 ).
+        cl_demo_output=&gt;end_section( ).
+      ENDIF.
+      IF NOT valores3 IS INITIAL AND valores3 IS SUPPLIED.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores3&apos; ).
+        cl_demo_output=&gt;write_data( valores3 ).
+        cl_demo_output=&gt;end_section( ).
+      ELSEIF NOT lx_valores3 IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Valores 3 XML&apos; ).
+        cl_demo_output=&gt;write_xml( lx_valores3 ).
+        cl_demo_output=&gt;end_section( ).
+      ENDIF.
+      IF NOT variables IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Variables&apos; ).
+        cl_demo_output=&gt;write_data( variables ).
+        cl_demo_output=&gt;end_section( ).
+      ELSEIF NOT lx_variables IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Variables XML&apos; ).
+        cl_demo_output=&gt;write_xml( lx_variables ).
+        cl_demo_output=&gt;end_section( ).
+      ENDIF.
+      IF NOT variables2 IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Variables2&apos; ).
+        cl_demo_output=&gt;write_data( variables2 ).
+        cl_demo_output=&gt;end_section( ).
+      ELSEIF NOT lx_variables2 IS INITIAL.
+        l_output = &apos;X&apos;.
+        cl_demo_output=&gt;begin_section( &apos;Variables2 XML&apos; ).
+        cl_demo_output=&gt;write_xml( lx_variables2 ).
+        cl_demo_output=&gt;end_section( ).
+      ENDIF.
+      IF l_output = &apos;X&apos;.
+        cl_demo_output=&gt;display( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CLAVE4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CLAVE5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="BUSCAR_AUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="NOMBRE_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="NOMBRE_CAMPO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="IDIOMA" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CAMPO_CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="CAMPO_IDIOMA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_CACHE_MEM" SCONAME="ENCONTRADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD get_cache_mem.
+    DATA: l_clave3 TYPE string,
+          l_cache  TYPE t_cache_mem,
+          l_tabla  TYPE c LENGTH 20,
+          l_aux1   TYPE c LENGTH 40,
+          l_aux2   TYPE c LENGTH 20,
+          l_endda  TYPE endda,
+          l_fecha  TYPE dats,
+          l_matnr  TYPE matnr,
+          l_m1     TYPE meins,
+          l_m2     TYPE meins.
+    DATA: i_campos TYPE ddfields,
+          l_campo  TYPE dfies,
+          l_where  TYPE string.
+
+    IF NOT inhabilitar IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_clave3 = clave3.
+
+    READ TABLE i_cache_mem INTO l_cache WITH KEY tabla = tabla clave = clave clave2 = clave2 clave3 = l_clave3 clave4 = clave4 clave5 = clave5.
+    IF sy-subrc = 0.
+      encontrado = &apos;X&apos;.
+
+      l_tabla = tabla.
+      IF l_tabla(3) = &apos;CUM&apos;.
+        IF l_cache-valor = &apos;?&apos;.
+          valor = campo_clave.
+        ELSE.
+          valor = l_cache-valor * campo_clave / 10000.
+        ENDIF.
+      ELSE.
+        valor = l_cache-valor.
+      ENDIF.
+
+      valor2 = l_cache-valor2.
+      valor3 = l_cache-valor3.
+
+      IF NOT l_cache-xstring IS INITIAL.
+        cl_enh_utilities_xstring=&gt;get_data( EXPORTING pi_xstring = l_cache-xstring IMPORTING pe_output = xstring ).
+      ENDIF.
+    ELSE.
+      CLEAR encontrado.
+
+      IF buscar_auto = &apos;X&apos;.
+        CLEAR l_cache.
+        l_cache-tabla  = tabla.
+        l_cache-clave  = clave.
+        l_cache-clave2 = clave2.
+        l_cache-clave3 = clave3.
+        l_cache-clave4 = clave4.
+        l_cache-clave5 = clave5.
+        CASE tabla.
+          WHEN &apos;MATNR&apos; OR &apos;MAKT&apos;.
+            IF NOT clave2 IS INITIAL.
+              l_cache-valor = zcl_ap_material=&gt;get_descripcion( matnr = clave spras = clave2 ).
+            ELSE.
+              l_cache-valor = zcl_ap_material=&gt;get_descripcion( matnr = clave spras = idioma ).
+            ENDIF.
+          WHEN &apos;MEINS&apos;.
+            SELECT SINGLE meins FROM mara INTO l_cache-valor WHERE matnr = clave.
+          WHEN &apos;MTART&apos;.
+            SELECT SINGLE mtart FROM mara INTO l_cache-valor WHERE matnr = clave.
+          WHEN &apos;KNA1&apos;.
+            SELECT SINGLE name1 FROM kna1 INTO l_cache-valor WHERE kunnr = clave.
+          WHEN &apos;LFA1&apos;.
+            SELECT SINGLE name1 FROM lfa1 INTO l_cache-valor WHERE lifnr = clave.
+          WHEN &apos;T024&apos;.
+            SELECT SINGLE eknam FROM t024 INTO l_cache-valor WHERE ekgrp = clave.
+          WHEN &apos;T024D&apos;.
+            SELECT SINGLE dsnam FROM t024d INTO l_cache-valor WHERE werks = clave AND dispo = clave2.
+          WHEN &apos;TC24&apos;.
+            SELECT SINGLE ktext FROM tc24 INTO l_cache-valor WHERE werks = clave AND veran = clave2.
+          WHEN &apos;T005T&apos; OR &apos;LANDX&apos; or &apos;PAIS&apos;.
+            SELECT SINGLE landx FROM t005t INTO l_cache-valor WHERE spras = idioma AND land1 = clave.
+          WHEN &apos;T005U&apos; OR &apos;PROVINCIA&apos;.
+            SELECT SINGLE bezei FROM t005u INTO l_cache-valor WHERE spras = idioma AND land1 = clave and bland = clave2.
+          WHEN &apos;T512T&apos; OR &apos;LGART&apos;.
+            IF clave2 IS INITIAL. l_aux1 = idioma. ELSE. l_aux1 = clave2. ENDIF.
+            IF clave3 IS INITIAL. l_aux2 = &apos;04&apos;. ELSE. l_aux2 = clave3. ENDIF.
+            SELECT SINGLE lgtxt FROM  t512t INTO l_cache-valor WHERE sprsl = l_aux1 AND molga = l_aux2 AND lgart = clave.
+          WHEN &apos;ENAME&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE ename FROM pa0001 INTO l_cache-valor WHERE pernr = clave AND endda &gt;= sy-datum AND begda &lt;= sy-datum.
+            ELSE.
+              SELECT SINGLE ename FROM pa0001 INTO l_cache-valor WHERE pernr = clave AND endda &gt;= clave2 AND begda &lt;= clave2.
+            ENDIF.
+          WHEN &apos;T554T&apos; OR &apos;AWART&apos;.
+            IF clave2 IS INITIAL. l_aux1 = idioma. ELSE. l_aux1 = clave2. ENDIF.
+            IF clave3 IS INITIAL. l_aux2 = &apos;04&apos;. ELSE. l_aux2 = clave3. ENDIF.
+            SELECT SINGLE atext FROM t554t INTO l_cache-valor WHERE sprsl = l_aux1 AND moabw = l_aux2 AND awart = clave.
+          WHEN &apos;NIF&apos;.
+            IF clave2 IS INITIAL.
+              SELECT perid FROM pa0002 INTO l_aux1 UP TO 1 ROWS WHERE pernr = clave AND endda &gt;= sy-datum AND begda &lt;= sy-datum  ORDER BY PRIMARY KEY. ENDSELECT.
+            ELSE.
+              SELECT perid FROM pa0002 INTO l_aux1 UP TO 1 ROWS WHERE pernr = clave AND endda &gt;= clave2 AND begda &lt;= clave2 ORDER BY PRIMARY KEY. ENDSELECT.
+            ENDIF.
+            IF NOT l_aux1 IS INITIAL.
+              IF l_aux1 = &apos;ES&apos;.
+                l_cache-valor = l_aux1+2(13).
+              ELSE.
+                l_cache-valor = l_aux1(13).
+              ENDIF.
+            ENDIF.
+
+          WHEN &apos;CSKT&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE ktext FROM cskt INTO l_cache-valor WHERE spras = idioma AND kokrs = zcl_c=&gt;sociedad_co AND kostl = clave AND datbi = &apos;99991231&apos;.
+            ELSE.
+              SELECT SINGLE ktext FROM cskt INTO l_cache-valor WHERE spras = idioma AND kokrs = clave2 AND kostl = clave AND datbi = &apos;99991231&apos;.
+            ENDIF.
+          WHEN &apos;SKAT&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE txt20 FROM skat INTO l_cache-valor WHERE spras = idioma AND ktopl = zcl_c=&gt;plan_cuentas AND saknr = clave.
+            ELSE.
+              SELECT SINGLE txt20 FROM skat INTO l_cache-valor WHERE spras = idioma AND ktopl = clave2 AND saknr = clave.
+            ENDIF.
+          WHEN &apos;SKAT5&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE txt50 FROM skat INTO l_cache-valor WHERE spras = idioma AND ktopl = zcl_c=&gt;plan_cuentas AND saknr = clave.
+            ELSE.
+              SELECT SINGLE txt50 FROM skat INTO l_cache-valor WHERE spras = idioma AND ktopl = clave2 AND saknr = clave.
+            ENDIF.
+          WHEN &apos;CSLT&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE ktext FROM cslt INTO l_cache-valor WHERE spras = idioma AND kokrs = zcl_c=&gt;sociedad_co AND lstar = clave.
+            ELSE.
+              SELECT SINGLE ktext FROM cslt INTO l_cache-valor WHERE spras = idioma AND kokrs = clave2 AND lstar = clave.
+            ENDIF.
+          WHEN &apos;CSKU&apos;. &quot; Descripciones clases de coste
+            IF clave2 IS INITIAL.
+              SELECT SINGLE ktext FROM csku INTO l_cache-valor WHERE spras = idioma AND ktopl = zcl_c=&gt;plan_cuentas AND kstar = clave.
+            ELSE.
+              SELECT SINGLE ktext FROM csku INTO l_cache-valor WHERE spras = idioma AND ktopl = clave2 AND kstar = clave.
+            ENDIF.
+          WHEN &apos;T685T&apos;.
+            IF clave2 IS INITIAL.
+              SELECT SINGLE vtext FROM t685t INTO l_cache-valor WHERE spras = idioma AND kvewe = &apos;A&apos; AND kappl = &apos;V&apos; AND kschl = clave.
+            ELSE.
+              SELECT SINGLE vtext FROM t685t INTO l_cache-valor WHERE spras = idioma AND kvewe = clave2 AND kappl = clave3 AND kschl = clave.
+            ENDIF.
+          WHEN &apos;QPCT&apos;.
+            IF clave4 IS INITIAL.
+              l_aux1 = idioma.
+            ELSE.
+              l_aux1 = clave4.
+            ENDIF.
+            IF clave5 IS INITIAL.
+              SELECT SINGLE kurztext FROM qpct INTO l_cache-valor WHERE katalogart = clave AND codegruppe = clave2 AND code = clave3 AND sprache = l_aux1.
+            ELSE.
+              SELECT SINGLE kurztext FROM qpct INTO l_cache-valor WHERE katalogart = clave AND codegruppe = clave2 AND code = clave3 AND sprache = l_aux1 AND version = clave5.
+            ENDIF.
+          WHEN &apos;HRP1000&apos; OR &apos;HRP1001&apos;.
+            SELECT SINGLE stext FROM hrp1000 INTO l_cache-valor WHERE plvar = &apos;01&apos; AND otype = clave2 AND objid = clave AND begda &lt;= clave3 AND endda &gt;= clave3.
+          WHEN &apos;PLANS_T&apos;.
+            l_endda = clave2.
+            l_fecha = l_endda.
+            IF clave3 IS INITIAL.
+              l_endda = clave3.
+            ENDIF.
+            SELECT plstx FROM  t528t
+              INTO l_cache-valor
+              UP TO 1 ROWS
+             WHERE sprsl  = idioma
+               AND otype  = &apos;S&apos;
+               AND plans  = clave
+               AND endda &gt;= l_fecha
+               AND begda &lt;= l_endda
+              ORDER BY PRIMARY KEY.
+            ENDSELECT.
+          WHEN &apos;ORGEH_T&apos;.
+            l_endda = clave2.
+            l_fecha = l_endda.
+            IF clave3 IS INITIAL.
+              l_endda = clave3.
+            ENDIF.
+            SELECT orgtx FROM  t527x
+              INTO l_cache-valor
+              UP TO 1 ROWS
+             WHERE sprsl  = sy-langu
+               AND orgeh  = clave
+               AND endda &gt;= l_fecha
+               AND begda &lt;= l_endda
+             ORDER BY PRIMARY KEY.
+            ENDSELECT.
+          WHEN &apos;UMB&apos;.
+            l_matnr = clave.
+            l_cache-valor = zcl_ap_material=&gt;get_unidad_base( matnr = l_matnr ).
+          WHEN &apos;UMB_WM&apos;.
+            SELECT SINGLE lhme1 FROM  mlgn INTO l_cache-valor WHERE matnr = clave AND lgnum = clave2.
+          WHEN &apos;CUM&apos; OR &apos;CUM_WM&apos; OR &apos;CUM_KG&apos;. &quot; Convertir unidad material
+            &quot; En clave = material, clave2 = un.origen clave3 = un.destino. En campo_clave = cantidad
+            l_matnr = clave.
+            l_m1 = clave2.
+            IF tabla = &apos;CUM_WM&apos;.
+              l_m2 = get( tabla = &apos;UMB_WM&apos; clave = clave clave2 = clave3 ).
+            ELSEIF tabla = &apos;CUM_KG&apos;.
+              l_m2 = &apos;KG&apos;.
+            ELSE.
+              IF clave3 IS INITIAL.
+                l_m2 = get( tabla = &apos;UMB&apos; clave = clave ).
+              ELSE.
+                l_m2 = clave3.
+              ENDIF.
+            ENDIF.
+
+            IF l_m1 = l_m2.
+              l_cache-valor  = 10000.
+              l_cache-valor2 = l_m2.
+            ELSE.
+              IF tabla = &apos;CUM_KG&apos;.
+                l_cache-valor = zcl_ap_material=&gt;get_kg( matnr = l_matnr cantidad = 10000 unidad = l_m1 ).
+              ELSE.
+                l_cache-valor = zcl_ap_material=&gt;convertir_unidad( matnr = l_matnr cantidad = 10000 unidad_origen = l_m1 unidad_destino = l_m2 ).
+              ENDIF.
+              IF l_cache-valor CO &apos;0. &apos;.
+                l_cache-valor  = &apos;?&apos;.
+                l_cache-valor2 = l_m1.
+              ELSE.
+                l_cache-valor2 = l_m2.
+              ENDIF.
+            ENDIF.
+          WHEN &apos;SEMANA&apos;.
+            l_fecha = clave.
+            l_cache-valor = zcl_ap_fechas=&gt;get_semana( l_fecha ).
+          WHEN &apos;CLASS_MAT&apos;.
+            l_matnr = clave.
+            l_cache-valor = zcl_ap_material=&gt;get_valor_clas_c( matnr = l_matnr caract = clave2 descripcion = clave3 spras = idioma ).
+          WHEN &apos;PAIS&apos;.
+            l_cache-valor = zcl_ap_direcciones=&gt;get_nombre_pais( land1 = clave spras = idioma ).
+          WHEN &apos;PROVINCIA&apos;.
+            l_cache-valor = zcl_ap_direcciones=&gt;get_nombre_provincia( land1 = clave regio = clave2 spras = idioma ).
+          WHEN &apos;NOMBRE_USUARIO&apos;.
+            l_cache-valor = zcl_ap_usuario=&gt;get_nombre( uname = clave ).
+          WHEN &apos;EMAIL_USUARIO&apos;.
+            l_cache-valor = zcl_ap_usuario=&gt;get_email( uname = clave ).
+          WHEN &apos;ATINN&apos;.
+            l_cache-valor = zcl_ap_clasificacion=&gt;get_caract_interno( clave ).
+          WHEN &apos;ATINN_EXT&apos;.
+            l_cache-valor = zcl_ap_clasificacion=&gt;get_caract_externo( CONV #( clave ) ).
+          WHEN OTHERS.
+            IF tabla(1) = &apos;*&apos;.
+              i_campos = zcl_ap_dev=&gt;get_fieldcatalog_tabla( tabla+1 ).
+              DELETE i_campos WHERE fieldname = &apos;MANDT&apos;.
+              READ TABLE i_campos INTO l_campo INDEX 1.
+              IF sy-subrc = 0.
+                l_where = clave.
+                CONCATENATE l_campo-fieldname ` = ` &apos;&apos;&apos;&apos; l_where &apos;&apos;&apos;&apos; INTO l_where.
+
+                SELECT SINGLE * FROM (tabla+1)
+                  INTO xstring
+                 WHERE (l_where).
+
+                IF NOT xstring IS INITIAL.
+                  TRY.
+                      cl_enh_utilities_xstring=&gt;store_data( EXPORTING pi_input = xstring CHANGING pe_xstring = l_cache-xstring ).
+                    CATCH cx_enh_no_valid_input_type.
+                      RETURN.
+                  ENDTRY.
+                ENDIF.
+              ENDIF.
+            ELSEIF tabla(2) = &apos;D &apos;.
+              l_cache-valor = zcl_ap_utils=&gt;get_texto_dominio( dominio = tabla+2 valor = clave idioma = idioma ).
+            ELSEIF tabla(3) = &apos;CL &apos;.
+              l_cache-valor = zcl_ap_clasificacion=&gt;get_valor_caract_text( caract = tabla+3 valor = clave spras = idioma ).
+            ELSE.
+              l_cache-valor = zcl_ap_dev=&gt;get_descripcion( tabla         = tabla
+                                                           valor         = clave
+                                                           valor2        = clave2
+                                                           nombre_campo  = nombre_campo
+                                                           nombre_campo2 = nombre_campo2
+                                                           campo_clave   = campo_clave
+                                                           campo_idioma  = campo_idioma
+                                                           idioma        = idioma ).
+            ENDIF.
+        ENDCASE.
+        INSERT l_cache INTO TABLE i_cache_mem.
+
+        encontrado = &apos;X&apos;.
+
+        IF tabla(3) = &apos;CUM&apos;.
+          IF l_cache-valor = &apos;?&apos;.
+            valor = campo_clave.
+          ELSE.
+            valor = l_cache-valor * campo_clave / 10000.
+          ENDIF.
+        ELSE.
+          valor = l_cache-valor.
+        ENDIF.
+        valor2 = l_cache-valor2.
+        valor3 = l_cache-valor3.
+      ENDIF.
+    ENDIF.
+
+    enc = encontrado.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" VERSION="1" LANGU="S" DESCRIPT="Get datos material" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="MATNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="CANTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="UNIDAD_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="UNIDAD_DESTINO" VERSION="1" LANGU="S" DESCRIPT="Si no informado, tomamos UMB" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="CONVERSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;CUM&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_MAT" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_mat.
+    DATA l_conversion TYPE tabname.
+
+    l_conversion = conversion.
+    valor = get( tabla       = l_conversion
+                 clave       = matnr
+                 clave2      = unidad_origen
+                 clave3      = unidad_destino
+                 campo_clave = cantidad ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMA" VERSION="1" LANGU="S" DESCRIPT="Recupera SHMA" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMA" SCONAME="CPROG" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMA" SCONAME="USERS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMA" SCONAME="TCODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMA" SCONAME="SOLO_EN_INICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>METHOD get_shma.
+    DATA: l_area  TYPE REF TO zcl_ap_shma_area,
+          i_cache TYPE tt_cache_mem.
+
+    FIELD-SYMBOLS: &lt;cache&gt;  TYPE t_cache_mem,
+                   &lt;cachem&gt; TYPE t_cache_mem.
+
+    IF solo_en_inicio = &apos;X&apos;.
+      IF NOT i_cache_mem IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    IF NOT users IS INITIAL.
+      IF NOT users CS sy-uname.
+        RETURN.
+      ENDIF.
+    ENDIF.
+    IF NOT tcode IS INITIAL.
+      IF NOT tcode CS sy-tcode.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    l_area = get_shmm( ).
+    IF NOT l_area IS INITIAL.
+      l_area-&gt;root-&gt;get_cache( EXPORTING cprog = cprog IMPORTING i_cache = i_cache ).
+
+      LOOP AT i_cache ASSIGNING &lt;cache&gt;.
+        ASSIGN i_cache_mem[ tabla  = &lt;cache&gt;-tabla
+                            clave  = &lt;cache&gt;-clave
+                            clave2 = &lt;cache&gt;-clave2
+                            clave3 = &lt;cache&gt;-clave3
+                            clave4 = &lt;cache&gt;-clave4
+                            clave5 = &lt;cache&gt;-clave5 ] TO &lt;cachem&gt;.
+        IF sy-subrc = 0.
+          IF &lt;cache&gt; = &lt;cachem&gt;.
+            CONTINUE.
+          ELSE.
+            DELETE i_cache_mem INDEX sy-tabix.
+          ENDIF.
+        ENDIF.
+
+        INSERT &lt;cache&gt; INTO TABLE i_cache_mem.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMM" SCONAME="UPDATE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMM" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="GET_SHMM" SCONAME="AREA" VERSION="1" LANGU="S" DESCRIPT="Area AP CACHE" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="3" TYPE="ZCL_AP_SHMA_AREA"/>
+  <source>METHOD get_shmm.
+    TRY.
+        IF update IS INITIAL.
+          area = zcl_ap_shma_area=&gt;attach_for_read( ).
+        ELSE.
+          area = zcl_ap_shma_area=&gt;attach_for_update( ).
+        ENDIF.
+      CATCH cx_shm_no_active_version.
+        WAIT UP TO 1 SECONDS.
+        TRY.
+            zcl_ap_shma_area=&gt;build( ).
+            IF update IS INITIAL.
+              area = zcl_ap_shma_area=&gt;attach_for_read( ).
+            ELSE.
+              area = zcl_ap_shma_area=&gt;attach_for_update( ).
+            ENDIF.
+          CATCH cx_root INTO DATA(o_root).
+            message = o_root-&gt;get_text( ).
+        ENDTRY.
+      CATCH cx_root INTO o_root.
+        message = o_root-&gt;get_text( ).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="SUBCLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="SELECCION_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="VALORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="VARIABLES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="VALORES2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Serializable Object" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="IF_SERIALIZABLE_OBJECT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="AUX1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="AUX2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="AUX3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="VARIABLES2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="MAX_DURACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="NO_DUP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="VALORES3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_cache.
+    DATA: cache    TYPE zcache,
+          l_string TYPE string.
+
+    cache-report = report.
+    cache-clave  = clave.
+    IF NOT subclave IS INITIAL.
+      cache-subclave = subclave.
+    ENDIF.
+
+    cache-fecha = fecha.
+    IF NOT max_duracion IS INITIAL.
+      cache-fecha_limite = sy-datum + max_duracion.
+    ENDIF.
+
+    cache-hora  = hora.
+    cache-ernam = uname.
+    cache-ok    = ok.
+
+    IF NOT seleccion_rango IS INITIAL.
+      cache-seleccion = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = seleccion_rango json = json ).
+      LOOP AT seleccion_rango INTO l_string.
+        CONCATENATE cache-subclave l_string INTO cache-subclave.
+        CONDENSE cache-subclave NO-GAPS.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT valores IS INITIAL.
+      cache-valores = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = valores json = json ).
+    ENDIF.
+
+    IF NOT valores2 IS INITIAL.
+      cache-valores2 = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = valores2 json = json ).
+    ENDIF.
+    IF NOT valores3 IS INITIAL.
+      cache-valores3 = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = valores3 json = json ).
+    ENDIF.
+
+    IF NOT variables IS INITIAL.
+      zcl_ap_string=&gt;transform_object_to_rawstring( EXPORTING  variable              = variables
+                                                               json                  = json
+                                                    RECEIVING  xstring               = cache-variables
+                                                    EXCEPTIONS transformation_failed = 1
+                                                               OTHERS                = 2 ).
+      IF sy-subrc &lt;&gt; 0.
+        message = &apos;Error convirtiendo VARIABLES a XSTRING&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF NOT variables2 IS INITIAL.
+      zcl_ap_string=&gt;transform_object_to_rawstring( EXPORTING  variable              = variables2
+                                                               json                  = json
+                                                    RECEIVING  xstring               = cache-variables2
+                                                    EXCEPTIONS transformation_failed = 1
+                                                               OTHERS                = 2 ).
+      IF sy-subrc &lt;&gt; 0.
+        message = &apos;Error convirtiendo VARIABLES2 a XSTRING&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF NOT objeto IS INITIAL.
+      cache-objeto = zcl_ap_string=&gt;transform_object_to_rawstring( objeto = objeto json = json ).
+    ENDIF.
+
+    IF NOT string IS INITIAL.
+      cache-string = string.
+    ENDIF.
+
+    cache-aux1 = aux1.
+    cache-aux2 = aux2.
+    cache-aux3 = aux3.
+
+    IF no_dup = &apos;X&apos;.
+      SELECT * FROM zcache
+        INTO TABLE @DATA(i_cache)
+       WHERE clave  = @cache-clave
+         AND report = @cache-report.
+      LOOP AT i_cache TRANSPORTING NO FIELDS WHERE     valores    = cache-valores
+                                                   AND valores2   = cache-valores2
+                                                   AND variables  = cache-variables
+                                                   AND variables2 = cache-variables2
+                                                   AND objeto     = cache-objeto.
+        RETURN. &quot; Salidmos sin grabar
+      ENDLOOP.
+    ENDIF.
+
+    cache-json = json.
+    MODIFY zcache FROM cache.
+
+    IF commit = &apos;X&apos;.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="CLAVE4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="CLAVE5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_CACHE_MEM" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD set_cache_mem.
+    DATA l_cache TYPE t_cache_mem.
+
+    CLEAR l_cache.
+    l_cache-tabla  = tabla.
+    l_cache-clave  = clave.
+    l_cache-clave2 = clave2.
+    l_cache-clave3 = clave3.
+    l_cache-clave4 = clave4.
+    l_cache-clave5 = clave5.
+    l_cache-valor  = valor.
+    l_cache-valor2 = valor2.
+    l_cache-valor3 = valor3.
+    IF NOT xstring IS INITIAL.
+      TRY.
+          cl_enh_utilities_xstring=&gt;store_data( EXPORTING pi_input = xstring CHANGING pe_xstring = l_cache-xstring ).
+        CATCH cx_enh_no_valid_input_type.
+          RETURN.
+      ENDTRY.
+    ENDIF.
+    INSERT l_cache INTO TABLE i_cache_mem.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_SHMA" VERSION="1" LANGU="S" DESCRIPT="Graba SHMA" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_SHMA" SCONAME="CPROG" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_SHMA" SCONAME="USERS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_SHMA" SCONAME="TCODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="SET_SHMA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_shma.
+    DATA: l_area  TYPE REF TO zcl_ap_shma_area,
+          i_cache TYPE tt_cache_mem.
+
+    CHECK NOT i_cache_mem IS INITIAL.
+    IF NOT users IS INITIAL.
+      IF NOT users CS sy-uname.
+        RETURN.
+      ENDIF.
+    ENDIF.
+    IF NOT tcode IS INITIAL.
+      IF NOT tcode CS sy-tcode.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    l_area = get_shmm( update = &apos;X&apos; ).
+    IF NOT l_area IS INITIAL.
+      TRY.
+          l_area-&gt;root-&gt;set_cache( cprog = cprog i_cache = i_cache_mem ).
+          l_area-&gt;detach_commit( ).
+        CATCH cx_root INTO DATA(o_root).
+          message = o_root-&gt;get_text( ).
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CACHE" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="VISUALIZAR" SCONAME="CACHE" VERSION="1" LANGU="S" DESCRIPT="Caché de datos" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCACHE"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="VISUALIZAR" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Nombre campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FIELDNAME"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="VISUALIZAR" SCONAME="TIPO_VISUALIZACION" VERSION="1" LANGU="S" DESCRIPT="&apos;P&apos;opup/&apos;X&apos;ml/&apos;C&apos;onsulta" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;P&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CACHE" CMPNAME="VISUALIZAR" SCONAME="VISUALIZABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD visualizar.
+    DATA: l_estructura TYPE zatrib_param,
+          l_tipo       TYPE zatrib_param,
+          tabla        TYPE REF TO data,
+          var          TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;fs&gt;    TYPE any,
+                   &lt;tabla&gt; TYPE STANDARD TABLE.
+
+    IF cache IS INITIAL.
+      RETURN.
+    ELSEIF NOT campo IS INITIAL.
+      ASSIGN COMPONENT campo OF STRUCTURE cache TO &lt;fs&gt;.
+      IF sy-subrc &lt;&gt; 0.
+        RETURN.
+      ELSEIF &lt;fs&gt; IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE atributo1 atributo2 FROM (zcl_c=&gt;tabla_zparametros)
+      INTO (l_estructura, l_tipo)
+     WHERE clave  = &apos;CACHE&apos;
+       AND campo  = cache-report
+       AND valor  = cache-clave
+       AND valor2 = campo.
+    IF sy-subrc = 0.
+      visualizable = &apos;X&apos;.
+      IF tipo_visualizacion = &apos;C&apos;.
+        RETURN.
+      ENDIF.
+
+      zcl_ap_fs=&gt;create_it_from_struc( EXPORTING i_struc    = l_estructura
+                                       IMPORTING e_table    = tabla
+                                                 e_workarea = var ).
+
+      ASSIGN tabla-&gt;* TO &lt;tabla&gt;.
+      ASSIGN var-&gt;* TO &lt;fs&gt;.
+
+      IF l_tipo = &apos;E&apos;.
+        CASE campo.
+          WHEN &apos;VARIABLES&apos;.
+            zcl_ap_cache=&gt;get_cache( EXPORTING report       = cache-report
+                                               clave        = cache-clave
+                                               subclave     = cache-subclave
+                                               max_duracion = 99999
+                                     IMPORTING variables    = &lt;fs&gt;
+                                               &quot; TODO: variable is assigned but never used (ABAP cleaner)
+                                               existe       = DATA(l_existe) ).
+            APPEND &lt;fs&gt; TO &lt;tabla&gt;.
+        ENDCASE.
+      ENDIF.
+
+      IF tipo_visualizacion = &apos;P&apos;.
+        IF &lt;tabla&gt; IS ASSIGNED.
+          DATA(o_alv) = NEW zcl_ap_alv( tabla = &apos;&apos; ).
+
+          o_alv-&gt;constructor_tabla( CHANGING t_tabla = &lt;tabla&gt; ).
+
+          o_alv-&gt;show_popup( titulo = l_estructura ).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      IF tipo_visualizacion = &apos;C&apos;.
+        RETURN.
+      ENDIF.
+
+      IF campo(2) = &apos;VA&apos;.
+        zcl_ap_cache=&gt;get_cache( report            = cache-report
+                                 clave             = cache-clave
+                                 subclave          = cache-subclave
+                                 max_duracion      = 99999
+                                 visualizar_xml    = &apos;X&apos;
+                                 campos_visualizar = CONV #( campo ) ).
+      ELSE.
+        zcl_ap_cache=&gt;get_cache( report            = cache-report
+                                 clave             = cache-clave
+                                 subclave          = cache-subclave
+                                 max_duracion      = 99999
+                                 visualizar_xml    = &apos;Y&apos;
+                                 campos_visualizar = CONV #( campo ) ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

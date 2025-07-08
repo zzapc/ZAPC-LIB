@@ -1,0 +1,1964 @@
+==================================================
+ZCL_AP_CURSO==================CCDEF
+==================================================
+*"* use this source file for any type declarations (class
+*"* definitions, interfaces or data types) you need for method
+*"* implementation or private method's signature
+==================================================
+ZCL_AP_CURSO==================CCIMP
+==================================================
+*"* local class implementation for public class
+*"* use this source file for the implementation part of
+*"* local helper classes
+==================================================
+ZCL_AP_CURSO==================CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+==================================================
+ZCL_AP_CURSO==================CI
+==================================================
+*"* private components of class ZCL_AP_CURSO
+*"* do not include other source files here!!!
+private section.
+
+  data EST_REL_FORMACION type ZEST_REL_FORMACION .
+  data TAB_REL_FORMACION type ZTAB_REL_FORMACION .
+==================================================
+ZCL_AP_CURSO==================CO
+==================================================
+*"* protected components of class ZCL_CURSO
+*"* do not include other source files here!!!
+protected section.
+==================================================
+ZCL_AP_CURSO==================CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_AP_CURSO
+
+*"* local type definitions
+include ZCL_AP_CURSO==================ccdef.
+
+*"* class ZCL_AP_CURSO definition
+*"* public declarations
+  include ZCL_AP_CURSO==================cu.
+*"* protected declarations
+  include ZCL_AP_CURSO==================co.
+*"* private declarations
+  include ZCL_AP_CURSO==================ci.
+endclass. "ZCL_AP_CURSO definition
+
+*"* macro definitions
+include ZCL_AP_CURSO==================ccmac.
+*"* local class implementation
+include ZCL_AP_CURSO==================ccimp.
+
+class ZCL_AP_CURSO implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_AP_CURSO implementation
+
+==================================================
+ZCL_AP_CURSO==================CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_AP_CURSO and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_AP_CURSO==================CU
+==================================================
+class ZCL_AP_CURSO definition
+  public
+  inheriting from ZCL_AP_OBJETO_PD
+  create public .
+
+*"* public components of class ZCL_AP_CURSO
+*"* do not include other source files here!!!
+public section.
+
+  constants C_COD_CALIFICACION type HRP1000-OTYPE value 'BA' ##NO_TEXT.
+  constants C_COD_MODELO_CALIF type HRP1000-OTYPE value 'BS' ##NO_TEXT.
+  constants C_COD_CURSO type HRP1000-OTYPE value 'E' ##NO_TEXT.
+  constants C_COD_TIPO_ACTO type HRP1000-OTYPE value 'D' ##NO_TEXT.
+  constants C_COD_GRUPO_ACTO type HRP1000-OTYPE value 'L' ##NO_TEXT.
+  constants C_COD_CUALIFICACION type HRP1000-OTYPE value 'Q' ##NO_TEXT.
+  constants C_COD_SEDE type HRP1000-OTYPE value 'F' ##NO_TEXT.
+  constants C_COD_TIPO_RECURSO type HRP1000-OTYPE value 'R' ##NO_TEXT.
+  constants C_CALID type P1027-CALID value 'ES' ##NO_TEXT.
+  constants C_COD_EMPRESA type HRP1000-OTYPE value 'U' ##NO_TEXT.
+  constants C_COD_PROVEEDOR type HRP1000-OTYPE value '91' ##NO_TEXT.
+  constants C_COD_UO type HRP1000-OTYPE value 'O' ##NO_TEXT.
+  constants C_COD_CLIENTE type HRP1000-OTYPE value 'KU' ##NO_TEXT.
+
+  class-methods CREAR
+    importing
+      !MODOBI type CHAR1 default 'N'
+    changing
+      !CURSO type ZFOR_CURSOS .
+  class-methods EDITAR
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO .
+  class-methods GET_SEDE
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+    preferred parameter CURSO
+    returning
+      value(SEDE) type ZFOR_CURSOS-SEDE .
+  class-methods GET_DATOS_CURSO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !TACTO type ZFOR_CURSOS-TACTO optional
+      !SOLO_EMPLEADOS type ABAP_BOOL default ''
+    preferred parameter CURSO
+    returning
+      value(FOR_CURSO) type ZFOR_CURSOS .
+  class-methods GET_ASISTENTES
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !SOLO_EMPLEADOS type ABAP_BOOL default ''
+    returning
+      value(PARTICIPANTES) type ZFORT_PARTICIPANTES .
+  class-methods INSCRIBIR_PART
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !PARTICIPANTE type ZFOR_PARTICIPANTES-PERNR
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !MODOBI type CHAR1 default 'N'
+    preferred parameter CURSO
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+  class-methods VER_INFOTIPO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !INFTY type INFTY
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !ACCION type SY-UCOMM default 'DISP'
+    preferred parameter CURSO .
+  class-methods GET_RECURSOS
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !CALCULAR_COSTES type ABAP_BOOL default 'X'
+    returning
+      value(RECURSOS) type ZFORT_RECURSOS .
+  class-methods SET_RECURSOS
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !MODOBI type CHAR1 default 'E'
+    changing
+      !RECURSOS type ZFORT_RECURSOS .
+  class-methods SET_HORARIO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !HORARIO type PIQHRVSCHED_T
+      !MODOBI type CHAR1 default 'E' .
+  class-methods GET_HORARIO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+    returning
+      value(HORARIO) type PIQHRVSCHED_T .
+  class-methods VALIDAR_RECURSO
+    importing
+      !PERNR type PA0001-PERNR
+      !BEGDA type BEGDA
+      !ENDDA type ENDDA
+      !BEGUZ type BEGUZ optional
+      !ENDUZ type ENDUZ optional
+      !CURSO type ZFOR_CURSOS-CURSO optional
+      !REMUL type ZFOR_RECURSOS-REMUL default ''
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+  class-methods VER_TACTO
+    importing
+      !TACTO type ZFOR_CURSOS-TACTO
+      !INFTY type INFTY
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !ACCION type SY-UCOMM default 'DISP' .
+  class-methods FIJAR_CURSO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !MODOBI type CHAR1 default 'N'
+    preferred parameter CURSO
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+  class-methods GET_NPART
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !SOLO_EMPLEADOS type ABAP_BOOL default ''
+    preferred parameter CURSO
+    returning
+      value(NPART) type ZFOR_CURSOS-NPART .
+  class-methods COPIAR_HORARIO
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+      !MODOBI type CHAR1 default 'E'
+      !CURSO_ORIGEN type ZFOR_CURSOS-CURSO_ORIGEN
+    preferred parameter CURSO
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+  class-methods VISUALIZAR
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO .
+  class-methods EVALUAR_CURSO
+    importing
+      !FOR_CURSO type ZFOR_CURSOS .
+  class-methods GET_CURSOS_EMPLEADO
+    importing
+      !PERNR type PERSNO
+      !OTYPE type OTYPE default 'P'
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+    returning
+      value(I_CURSOS) type ZFORT_CURSOS .
+  class-methods GET_CALIF_CURSO_EMP
+    importing
+      !CURSO type ZCURSO
+      !PERNR type PERSNO
+    returning
+      value(CALIFICACION) type HRPE_PROFA .
+  class-methods GET_CURSOS_EMPL_UNIF
+    importing
+      !PERNR type PERSNO optional
+      !APLNO type APLNO optional
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+      !DATOS_CALIFICACION type ABAP_BOOL default 'X'
+      !SOLO_PRIMER_INSTRUCTOR type ABAP_BOOL default 'X'
+      !OTYPE type OTYPE optional
+    returning
+      value(I_CURSOS_UNIF) type ZTAB_EXP_CURSOS .
+  class-methods GET_CURSOS_INSTRUCTOR
+    importing
+      !PERNR type PERSNO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+    returning
+      value(I_CURSOS) type ZFORT_CURSOS .
+  class-methods POPUP_ASISTENTES
+    importing
+      !CURSO type ZCURSO .
+  class-methods POPUP_RECURSOS
+    importing
+      !CURSO type ZCURSO .
+  class-methods VER_EVALUACION
+    importing
+      !EVALUACION type HROBJID .
+  class-methods GET_CURSO_CON_ASISTENTES
+    importing
+      !CURSO type ZCURSO
+      !DATOS_CALIFICACION type ABAP_BOOL default 'X'
+    returning
+      value(I_CURSO_EMP) type ZTAB_EXP_CURSOS_EMP .
+  class-methods GET_CURSOS_INSTR_ASIST
+    importing
+      !PERNR type PERSNO
+      !BEGDA type HRP1000-BEGDA default '00000000'
+      !ENDDA type HRP1000-ENDDA default '99991231'
+    returning
+      value(I_CURSOS_EMP) type ZTAB_EXP_CURSOS_EMP .
+  class-methods GET_CUALIFICACIONES
+    importing
+      !CURSO type ZFOR_CURSOS-CURSO
+    preferred parameter CURSO
+    returning
+      value(I_CUALIFICACIONES) type OBJEC_T .
+  class-methods GET_CURSOS_DISPONIBLES
+    importing
+      !P_PERNR type PERSNO
+      !P_BEGDA type HRP1000-BEGDA default SY-DATUM
+    returning
+      value(I_CURSOS) type ZFORT_CURSOS .
+==================================================
+ZCL_AP_CURSO=COPIAR_HORARIO
+==================================================
+method COPIAR_HORARIO.
+  DATA: o_bi TYPE REF TO zcl_batch_input,
+        l_hrp1001 TYPE hrp1001,
+        i_horario TYPE piqhrvsched_t.
+
+  IF curso_origen IS INITIAL.
+    CREATE OBJECT o_bi.
+
+    DO 3 TIMES.
+      COMMIT WORK AND WAIT.
+      SELECT SINGLE objid FROM hrp1001
+        INTO l_hrp1001-objid
+       WHERE otype = zcl_hr_formacion=>c_cod_curso
+         AND objid = curso
+         AND plvar = zcl_hr_formacion=>c_plvar
+         AND sclas = zcl_hr_formacion=>c_cod_tipo_acto.
+      IF sy-subrc = 0.
+        EXIT.
+      ELSE.
+        WAIT UP TO 1 SECONDS.
+      ENDIF.
+    ENDDO.
+
+
+    o_bi->inicio( ).
+
+* SEL_SCREEN 1000 INFO:170000010000000000000000000000074318244
+    o_bi->dynpro( program = 'ZHRB025B' dynpro = '1000').
+    o_bi->campos( campo = 'BDC_OKCODE' valor = '=ONLI').
+    o_bi->campos( campo = 'P_OBJID' valor = curso ).
+
+* Modificar acto: Pantalla de datos
+    o_bi->dynpro( program = 'SAPLRHVA' dynpro = '3100').
+    o_bi->campos( campo = 'BDC_OKCODE' valor = '=ABCO').
+
+* Visual.listado transcursos dispositivos de un tipo de acto
+    o_bi->dynpro( program = 'SAPLRHV2' dynpro = '3000').
+    o_bi->campos( campo = 'BDC_OKCODE'
+                  valor = '=FPIC').
+
+    o_bi->dynpro( program = 'SAPLRHVA' dynpro = '3100').
+    o_bi->campos( campo = 'BDC_OKCODE'
+                  valor = '=UPDA').
+
+    mensaje = o_bi->llamar_transaccion( tcode = 'ZHRB025B' modo = modobi ).
+
+  ELSE.
+    i_horario = get_horario( curso_origen ).
+
+    set_horario( curso = curso
+                 horario = i_horario
+                 modobi = modobi ).
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=CREAR
+==================================================
+METHOD crear.
+  DATA: l_hrp1000 TYPE hrp1000,
+        l_hrp1001 TYPE hrp1001,
+        l_hrp1024 TYPE hrp1024,
+        l_hrp1021 TYPE hrp1021,
+        l_hrp1026 TYPE hrp1026.
+
+  CLEAR curso-mensaje.
+  IF curso-tacto IS INITIAL.
+    curso-mensaje = 'Debe indicar tipo de acto'.
+  ELSEIF curso-begda IS INITIAL.
+    curso-mensaje = 'Debe indicar fecha inicio'.
+  ELSEIF curso-endda IS INITIAL.
+    curso-mensaje = 'Debe indicar fecha fin'.
+  ELSEIF curso-cursot IS INITIAL.
+    curso-mensaje = 'Debe indicar descripción del curso'.
+  ENDIF.
+
+  IF NOT curso-mensaje IS INITIAL.
+    curso-lights = zcl_alv_grid=>c_sem_rojo.
+    EXIT.
+  ENDIF.
+
+  IF curso-curso IS INITIAL.
+    DATA l_anyo(4) TYPE n.
+    l_anyo = sy-datum(4) + 1.
+    IF curso-endda(4) > l_anyo.
+      curso-mensaje = 'Cambie la fecha del curso'.
+      curso-lights = zcl_alv_grid=>c_sem_rojo.
+      EXIT.
+    ENDIF.
+
+    crea_infotipo( EXPORTING infty = '1000'
+                             otype = c_cod_curso
+                             begda = curso-begda
+                             endda = curso-endda
+                             stext = curso-cursot
+                             istat = curso-istat
+                             modobi = modobi
+                   IMPORTING mensaje = curso-mensaje
+                             new_objid = curso-curso
+                  ).
+    IF curso-mensaje = 'Registro creado'.
+      CLEAR curso-mensaje.
+    ELSEIF curso-curso IS INITIAL.
+      curso-lights = zcl_alv_grid=>c_sem_rojo.
+      EXIT.
+    ENDIF.
+  ELSE.
+    SELECT begda endda FROM hrp1000
+      INTO CORRESPONDING FIELDS OF l_hrp1000
+      UP TO 1 ROWS
+     WHERE plvar = c_plvar
+       AND otype = c_cod_curso
+       AND objid = curso-curso
+    ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc NE 0.
+      CONCATENATE 'Curso' curso-curso 'no existe!' INTO curso-mensaje
+         SEPARATED BY space.
+      curso-lights = zcl_alv_grid=>c_sem_rojo.
+      EXIT.
+    ELSE.
+      IF l_hrp1000-begda NE curso-begda OR
+         l_hrp1000-endda NE curso-endda.
+        curso-mensaje = 'No es posible cambiar las fechas del curso'.
+        curso-lights = zcl_alv_grid=>c_sem_rojo.
+        EXIT.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  IF NOT curso-curso IS INITIAL.
+* Creamos relación con tipo de acto
+    SELECT SINGLE objid FROM hrp1001
+      INTO l_hrp1001-objid
+     WHERE plvar = c_plvar
+       AND otype = c_cod_curso
+       AND objid = curso-curso
+       AND sclas = c_cod_tipo_acto
+       AND sobid = curso-tacto.
+    IF sy-subrc NE 0.
+      crea_infotipo( EXPORTING infty = '1001'
+                               subty = 'A020'
+                               otype = c_cod_curso
+                               objid = curso-curso
+                               istat = curso-istat
+                               sclas = c_cod_tipo_acto
+                               sobid = curso-tacto
+                               begda = curso-begda
+                               endda = curso-endda
+                               modobi = modobi
+                     IMPORTING mensaje = curso-mensaje
+                               new_objid = curso-curso
+                   ).
+      IF curso-mensaje = 'Registro creado'.
+        CLEAR curso-mensaje.
+      ELSEIF curso-curso IS INITIAL.
+        curso-lights = zcl_alv_grid=>c_sem_rojo.
+        EXIT.
+      ENDIF.
+    ENDIF.
+
+* Creamos capacidad
+    IF curso-kapz1 NE 0 OR curso-kapz2 NE 0 OR curso-kapz3 NE 0.
+      SELECT SINGLE objid FROM hrp1024
+        INTO l_hrp1024-objid
+       WHERE plvar = c_plvar
+         AND otype = c_cod_curso
+         AND objid = curso-curso.
+      IF sy-subrc NE 0.
+        crea_infotipo( EXPORTING infty = '1024'
+                                 otype = c_cod_curso
+                                 objid = curso-curso
+                                 begda = curso-begda
+                                 endda = curso-endda
+                                 istat = curso-istat
+                                 kapz1 = curso-kapz1
+                                 kapz2 = curso-kapz2
+                                 kapz3 = curso-kapz3
+                                 modobi = modobi
+                       IMPORTING mensaje = curso-mensaje
+                                 new_objid = curso-curso
+                        ).
+        IF curso-mensaje = 'Registro creado'.
+          CLEAR curso-mensaje.
+        ELSEIF curso-curso IS INITIAL.
+          curso-lights = zcl_alv_grid=>c_sem_rojo.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+* Sede
+    IF NOT curso-sede IS INITIAL.
+      SELECT SINGLE objid FROM hrp1001
+        INTO l_hrp1001-objid
+       WHERE plvar = c_plvar
+         AND otype = c_cod_curso
+         AND objid = curso-curso
+         AND sclas = c_cod_sede
+         AND sobid = curso-sede.
+      IF sy-subrc NE 0.
+        crea_infotipo( EXPORTING infty = '1001'
+                                 subty = 'A024'
+                                 otype = c_cod_curso
+                                 objid = curso-curso
+                                 istat = curso-istat
+                                 sclas = c_cod_sede
+                                 sobid = curso-sede
+                                 begda = curso-begda
+                                 endda = curso-endda
+                                 modobi = modobi
+                       IMPORTING mensaje = curso-mensaje
+                                 new_objid = curso-curso
+                      ).
+        IF curso-mensaje = 'Registro creado'.
+          CLEAR curso-mensaje.
+        ELSEIF curso-curso IS INITIAL.
+          curso-lights = zcl_alv_grid=>c_sem_rojo.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+* Creamos it 21
+    SELECT SINGLE objid FROM hrp1021
+      INTO l_hrp1021-objid
+     WHERE plvar = c_plvar
+       AND otype = c_cod_curso
+       AND objid = curso-curso.
+    IF sy-subrc NE 0.
+      crea_infotipo( EXPORTING infty = '1021'
+                               otype = c_cod_curso
+                               objid = curso-curso
+                               begda = curso-begda
+                               endda = curso-endda
+                               istat = curso-istat
+                               modobi = modobi
+                     IMPORTING mensaje = curso-mensaje
+                               new_objid = curso-curso
+                      ).
+      IF curso-mensaje = 'Registro creado'.
+        CLEAR curso-mensaje.
+      ELSEIF curso-curso IS INITIAL.
+        curso-lights = zcl_alv_grid=>c_sem_rojo.
+        EXIT.
+      ENDIF.
+    ENDIF.
+
+* Creamos it 26
+    SELECT SINGLE objid FROM hrp1026
+      INTO l_hrp1026-objid
+     WHERE plvar = c_plvar
+       AND otype = c_cod_curso
+       AND objid = curso-curso.
+    IF sy-subrc NE 0.
+      crea_infotipo( EXPORTING infty = '1026'
+                               otype = c_cod_curso
+                               objid = curso-curso
+                               begda = curso-begda
+                               endda = curso-endda
+                               istat = curso-istat
+                               modobi = modobi
+                     IMPORTING mensaje = curso-mensaje
+                               new_objid = curso-curso
+                      ).
+      IF curso-mensaje = 'Registro creado'.
+        CLEAR curso-mensaje.
+      ELSEIF curso-curso IS INITIAL.
+        curso-lights = zcl_alv_grid=>c_sem_rojo.
+        EXIT.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+* Copiamos horario teórico (no damos error si falla).
+  copiar_horario( EXPORTING curso = curso-curso
+                            curso_origen = curso-curso_origen
+                            modobi = modobi ).
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=EDITAR
+==================================================
+method EDITAR.
+  DATA: l_etyid TYPE  hrvpva-etyid,
+        l_evtid TYPE  hrvpva-evtid. "Acto
+
+*                l_etyid = i_cursos-convo.
+  l_evtid = curso.
+  CALL FUNCTION 'RH_EVENT_MODIFY'
+    EXPORTING
+      plvar            = c_plvar
+*      etyid            = l_etyid
+      evtid            = l_evtid
+    EXCEPTIONS
+      res_not_free     = 1
+      mat_alr_ordered  = 2
+      034_alr_existing = 3
+      no_authority     = 4
+      OTHERS           = 5.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=EVALUAR_CURSO
+==================================================
+METHOD evaluar_curso.
+  DATA: i_appraisees       TYPE TABLE OF hrpe_appraisees,
+        l_appraisees       TYPE hrpe_appraisees,
+        i_appraisors       TYPE TABLE OF hrpe_appraisors,
+        l_appraisors       TYPE hrpe_appraisors,
+        l_new_appscheme_id TYPE p1000-objid,
+        l_sobid            TYPE hrp1001-sobid.
+
+  SELECT sobid FROM hrp1001
+    INTO l_sobid
+    UP TO 1 ROWS
+   WHERE otype = 'D'
+     AND objid = for_curso-tacto
+     AND sclas = 'BS'
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+  IF sy-subrc = 0.
+    l_new_appscheme_id = l_sobid.
+    l_appraisors-plvar = '01'.
+    l_appraisors-otype = 'E'.
+    l_appraisors-sobid = for_curso-curso.
+    l_appraisors-stext = for_curso-cursot.
+    APPEND l_appraisors TO i_appraisors.
+  ELSE.
+    l_appraisees-plvar = '01'.
+    l_appraisees-otype = 'E'.
+    l_appraisees-sobid = for_curso-curso.
+    l_appraisees-stext = for_curso-cursot.
+    APPEND l_appraisees TO i_appraisees.
+  ENDIF.
+
+  CALL FUNCTION 'RH_CALL_APPRAISAL'
+    EXPORTING
+      plvar            = '01'
+      new_appscheme_id = l_new_appscheme_id
+      new_appform_id   = '00000002'
+      new_app_begda    = for_curso-begda
+      new_app_endda    = for_curso-endda
+      fcode            = 'INSE'
+*     ESS_FLAG         =
+    TABLES
+      appraisors       = i_appraisors
+      appraisees       = i_appraisees
+    EXCEPTIONS
+      no_authority     = 1
+      nothing_found    = 2
+      definition_error = 3
+      no_appraisal     = 4
+      transfer         = 5
+      OTHERS           = 6.
+  IF sy-subrc <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=FIJAR_CURSO
+==================================================
+METHOD fijar_curso.
+  DATA: o_bi    TYPE REF TO zcl_batch_input,
+        l_istat TYPE hrp1000-istat,
+        l_curso TYPE zfor_cursos.
+
+  l_curso = get_datos_curso( curso ).
+
+  IF l_curso-npart < l_curso-kapz1.
+    mensaje = 'Nº participantes < capacidad mínima'.
+    EXIT.
+  ELSEIF l_curso-npart > l_curso-kapz3.
+    mensaje = 'Nº participantes > capacidad mínima'.
+    EXIT.
+  ENDIF.
+
+  CREATE OBJECT o_bi.
+
+  o_bi->inicio( ).
+
+* Fijar/anular acto: Acceso
+  o_bi->dynpro( program = 'SAPLRHV5' dynpro = '2000').
+  o_bi->campos( campo = 'BDC_OKCODE'
+                valor = '=PROP').
+  o_bi->campos( campo = 'HRVPVF-EV_SRK'
+                valor = curso ). " Evento (entrada con criterio de
+  o_bi->campos( campo = 'HRVPVF-FIXOPT'
+                valor = 'X'). " Fijar evento (capacidad óptima)
+*   o_bi->campos( campo = 'HRVPVF-EV_UMBDAT'
+*                 valor = sy-datum ). " Fecha inicio para cambios de i
+
+* Fijar acto: Propuesta participantes definitivos
+  o_bi->dynpro( program = 'SAPLRHV5' dynpro = '2100').
+  o_bi->campos( campo = 'BDC_OKCODE'
+                valor = '=TSVM').
+  o_bi->campos( campo = 'HRVPVF-FIXIDX'
+                valor = '1'). " Primera entrada de la página visualizad
+
+  mensaje = o_bi->llamar_transaccion( tcode = 'PV12' modo = modobi ).
+  SELECT istat FROM hrp1000
+    INTO l_istat
+    UP TO 1 ROWS
+   WHERE plvar = c_plvar
+     AND otype = c_cod_curso
+     AND objid = curso
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+  IF l_istat = 1.
+    CLEAR mensaje.
+  ENDIF.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=GET_ASISTENTES
+==================================================
+method GET_ASISTENTES.
+  DATA: l_sobid TYPE hrp1001-sobid,
+        l_sclas TYPE hrp1001-sclas,
+        l_part TYPE zfor_participantes.
+
+  CLEAR participantes.
+  SELECT sclas sobid FROM hrp1001
+    INTO (l_sclas, l_sobid)
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = c_plvar
+     AND rsign = 'A'
+     AND relat = '025'
+     AND begda <= endda
+     AND endda >= begda.
+
+    l_part-otype = l_sclas.
+    l_part-pernr = l_sobid.
+
+    IF l_sclas = 'P'.
+      l_part-ename = zcl_ap_empleado=>get_nombre( l_part-pernr ).
+      APPEND l_part TO participantes.
+    ELSEIF solo_empleados = '' AND l_sclas NE 'P'.
+      IF l_sclas = 'AP'.
+        l_part-ename = zcl_ap_candidato=>get_nombre( l_part-pernr ).
+      ELSE.
+        SELECT stext FROM hrp1000
+          INTO l_part-ename
+          UP TO 1 rows
+         WHERE plvar = c_plvar
+           and otype = l_sclas
+           AND objid = l_sobid
+    ORDER BY PRIMARY KEY.
+   endselect.
+      ENDIF.
+      APPEND l_part TO participantes.
+    ENDIF.
+  ENDSELECT.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CALIF_CURSO_EMP
+==================================================
+method GET_CALIF_CURSO_EMP.
+  DATA: i_cal TYPE zt_calificaciones,
+        r_ba TYPE RANGE OF hrobjid,
+        l_ba LIKE LINE OF r_ba,
+        i_hrp1001 TYPE TABLE OF hrp1001.
+
+  DATA: i_rel TYPE ztab_rel_pd,
+        l_rel TYPE zest_rel_pd.
+
+  CLEAR calificacion.
+
+  CALL METHOD zcl_ap_rel_pd=>get_rel_pd
+    EXPORTING
+      tipo_origen  = c_cod_curso
+      objid        = curso
+      tipo_destino = c_cod_calificacion
+    RECEIVING
+      t_rel        = i_rel.
+
+  IF NOT i_rel[] IS INITIAL.
+    LOOP AT i_rel INTO l_rel.
+      l_ba-option = 'EQ'.
+      l_ba-sign   = 'I'.
+      l_ba-low    = l_rel-sobid.
+      APPEND l_ba TO r_ba.
+    ENDLOOP.
+
+    i_cal = zcl_ap_empleado=>get_calificaciones( pernr = pernr ).
+
+    LOOP AT i_cal INTO calificacion WHERE ttype = c_cod_calificacion
+                                      AND tobid IN r_ba.
+    ENDLOOP.
+
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CUALIFICACIONES
+==================================================
+METHOD get_cualificaciones.
+
+  CALL FUNCTION 'RH_GET_EVENT_DATA'
+    EXPORTING
+      planversion               = c_plvar
+      eventid                   = curso
+     with_text                 = ' '
+     with_capacity             = ' '
+     with_occupation           = ' '
+     with_description          = ' '
+     with_price                = ' '
+     with_extras               = ' '
+     with_schedule             = ' '
+     with_url                  = ' '
+     with_knowledge            = ' '
+     with_resources            = ' '
+     with_participants         = ' '
+     with_organizer            = ' '
+     with_eventtype            = ' '
+     with_location             = ' '
+     with_cancellation         = ' '
+     with_qualifications       = 'X'
+     with_requirements         = ' '
+     with_targetgroup          = ' '
+     with_other_inftys         = ' '
+* IMPORTING
+*   EVENTTYPE                 = EVENTTYPE
+*   LOCATION                  = LOCATION
+*   ORGANIZER                 = ORGANIZER
+    TABLES
+*   TEXT                      = TEXT
+*   CAPACITY                  = CAPACITY
+*   OCCUPATION                = OCCUPATION
+*   DESCRIPTION               = DESCRIPTION
+*   PRICE                     = PRICE
+*   EXTRA                     = EXTRA
+*   SCHEDULE                  = SCHEDULE
+*   URL                       = URL
+*   KNOWLEDGE                 = KNOWLEDGE
+      qualification             = i_cualificaciones
+*   REQUIREMENTS              = REQUIREMENTS
+*   RESOURCES                 = RESOURCES
+*   PARTICIPANTS              = PARTICIPANTS
+*   TARGETGROUP               = TARGETGROUP
+*   CANCELLATION              = CANCELLATION
+*   OTHER_INFTYS              = OTHER_INFTYS
+   EXCEPTIONS
+     no_infty_found            = 1
+            .
+
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=GET_CURSOS_DISPONIBLES
+==================================================
+  METHOD get_cursos_disponibles.
+
+    DATA: l_sobid  TYPE hrp1001-sobid,
+          l_sclas  TYPE hrp1001-sclas,
+          l_curso  TYPE zfor_cursos,
+          l_cursoc TYPE zcurso.
+
+
+***  SELECT sclas sobid FROM hrp1001
+***    INTO (l_sclas, l_sobid)
+***   WHERE otype = otype
+***     AND objid = pernr
+***     AND plvar = c_plvar
+***     AND rsign = 'B'
+***     AND relat = '025'
+***     AND begda <= endda
+***     AND endda >= begda
+***     AND sclas = c_cod_curso.
+***
+***    l_cursoc = l_sobid.
+***    l_curso = get_datos_curso( l_cursoc ).
+***    APPEND l_curso TO i_cursos.
+***  ENDSELECT.
+
+    DATA: i_hrp9005 TYPE TABLE OF hrp9005,
+          l_hrp9005 TYPE hrp9005,
+          l_hrp1001 TYPE hrp1001,
+          l_varyf   TYPE varyf.
+
+    SELECT *
+      FROM hrp9005 INTO CORRESPONDING FIELDS OF TABLE i_hrp9005
+      WHERE zfini_portal LE p_begda
+        AND zffin_portal GE p_begda.
+
+
+    l_varyf = |P { p_pernr }|.
+    LOOP AT i_hrp9005 INTO l_hrp9005.
+*     si el empleado está inscrito en el curso no lo tenemos en cuenta como disponible.
+      SELECT SINGLE * INTO l_hrp1001
+        FROM hrp1001
+        WHERE otype EQ 'E' AND objid EQ l_hrp9005-objid
+          AND plvar EQ l_hrp9005-plvar AND rsign EQ 'A' AND relat EQ '025'
+          AND begda EQ l_hrp9005-begda AND endda EQ l_hrp9005-endda
+          AND varyf EQ l_varyf.
+      IF sy-subrc EQ 0.
+        CONTINUE.
+      ENDIF.
+
+      CLEAR: l_cursoc, l_curso.
+      l_cursoc = l_hrp9005-objid.
+      l_curso = get_datos_curso( l_cursoc ).
+      APPEND l_curso TO i_cursos.
+    ENDLOOP.
+
+
+  ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=GET_CURSOS_EMPLEADO
+==================================================
+method GET_CURSOS_EMPLEADO.
+  DATA: l_sobid TYPE hrp1001-sobid,
+        l_sclas TYPE hrp1001-sclas,
+        l_curso TYPE zfor_cursos,
+        l_cursoc TYPE zcurso.
+
+  CLEAR i_cursos.
+  SELECT sclas sobid FROM hrp1001
+    INTO (l_sclas, l_sobid)
+   WHERE otype = otype
+     AND objid = pernr
+     AND plvar = c_plvar
+     AND rsign = 'B'
+     AND relat = '025'
+     AND begda <= endda
+     AND endda >= begda
+     AND sclas = c_cod_curso.
+
+    l_cursoc = l_sobid.
+    l_curso = get_datos_curso( l_cursoc ).
+    APPEND l_curso TO i_cursos.
+  ENDSELECT.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CURSOS_EMPL_UNIF
+==================================================
+method GET_CURSOS_EMPL_UNIF.
+  DATA: i_cursos TYPE zfort_cursos,
+        i_cursos_ap TYPE zfort_cursos,
+        l_curso TYPE zfor_cursos,
+        l_curso_unif TYPE zest_exp_cursos,
+        i_recursos TYPE zfort_recursos,
+        l_recurso TYPE zfor_recursos,
+        i_horario TYPE piqhrvsched_t,
+        l_horario TYPE hrvsched,
+        l_calificacion TYPE hrpe_profa,
+        l_cambio,
+        l_first.
+
+  IF NOT pernr IS INITIAL.
+    i_cursos = get_cursos_empleado( pernr = pernr
+                                    begda = begda
+                                    endda = endda ).
+  ENDIF.
+
+  IF NOT aplno IS INITIAL.
+    i_cursos_ap = get_cursos_empleado( pernr = aplno
+                                       otype = 'AP'
+                                       begda = begda
+                                       endda = endda ).
+
+    LOOP AT i_cursos_ap INTO l_curso.
+      l_curso-otype = 'AP'.
+      APPEND l_curso TO i_cursos.
+    ENDLOOP.
+  ENDIF.
+
+
+  LOOP AT i_cursos INTO l_curso.
+    CLEAR l_curso_unif.
+    MOVE-CORRESPONDING l_curso TO l_curso_unif.
+    IF l_curso_unif-otype IS INITIAL.
+      l_curso_unif-otype = 'P'.
+    ENDIF.
+
+    IF datos_calificacion = 'X'.
+      l_calificacion = get_calif_curso_emp( pernr = pernr
+                                            curso = l_curso-curso ).
+      l_curso_unif-appraisal_id = l_calificacion-tobid.
+      l_curso_unif-appraisal_result = l_calificacion-appraisal_result.
+      l_curso_unif-appraisal_result_text =
+                      l_calificacion-appraisal_result_text.
+    ENDIF.
+
+    i_recursos = get_recursos( l_curso-curso ).
+    IF i_recursos IS INITIAL.
+      i_horario = get_horario( l_curso-curso ).
+      READ TABLE i_horario INTO l_horario INDEX 1.
+      IF sy-subrc = 0.
+        l_curso_unif-beguz = l_horario-beguz.
+        l_curso_unif-enduz = l_horario-enduz.
+      ENDIF.
+      APPEND l_curso_unif TO i_cursos_unif.
+    ELSE.
+      SORT i_recursos BY pernr.
+      LOOP AT i_recursos INTO l_recurso.
+        AT NEW pernr.
+          ADD 1 TO l_curso_unif-ninstructores.
+        ENDAT.
+      ENDLOOP.
+      CLEAR l_first.
+      LOOP AT i_recursos INTO l_recurso.
+        CLEAR l_cambio.
+        AT NEW pernr.
+          l_cambio = 'X'.
+        ENDAT.
+        IF l_cambio = 'X'.
+          l_curso_unif-instructor  = l_recurso-pernr.
+          l_curso_unif-instructort = l_recurso-ename.
+          l_curso_unif-beguz       = l_recurso-beguz..
+          l_curso_unif-enduz       = l_recurso-enduz.
+
+          IF solo_primer_instructor IS INITIAL OR l_first IS INITIAL.
+            APPEND l_curso_unif TO i_cursos_unif.
+          ENDIF.
+        ENDIF.
+
+        l_first = 'X'.
+      ENDLOOP.
+    ENDIF.
+  ENDLOOP.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CURSOS_INSTRUCTOR
+==================================================
+method GET_CURSOS_INSTRUCTOR.
+  DATA: l_sobid TYPE hrp1001-sobid,
+        l_sclas TYPE hrp1001-sclas,
+        l_curso TYPE zfor_cursos,
+        l_cursoc TYPE zcurso.
+
+  CLEAR i_cursos.
+  SELECT sclas sobid FROM hrp1001
+    INTO (l_sclas, l_sobid)
+   WHERE otype = 'P'
+     AND objid = pernr
+     AND plvar = c_plvar
+     AND rsign = 'B'
+     AND relat = '023'
+     AND begda <= endda
+     AND endda >= begda
+     AND sclas = c_cod_curso.
+
+    l_curso-curso = l_sobid.
+    COLLECT l_curso INTO i_cursos.
+  ENDSELECT.
+
+  LOOP AT i_cursos INTO l_curso.
+    l_curso = get_datos_curso( l_curso-curso ).
+    MODIFY i_cursos FROM l_curso.
+  ENDLOOP.
+
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CURSOS_INSTR_ASIST
+==================================================
+method GET_CURSOS_INSTR_ASIST.
+  DATA: i_emp TYPE ztab_exp_cursos_emp,
+        l_emp TYPE zest_exp_cursos_emp,
+        i_cursos TYPE zfort_cursos,
+        l_curso TYPE zfor_cursos.
+
+  i_cursos = get_cursos_instructor( pernr = pernr
+                                    begda = begda
+                                    endda = endda ).
+  LOOP AT i_cursos INTO l_curso.
+    i_emp = get_curso_con_asistentes( l_curso-curso ).
+    LOOP AT i_emp INTO l_emp.
+      APPEND l_emp TO i_cursos_emp.
+    ENDLOOP.
+  ENDLOOP.
+
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_CURSO_CON_ASISTENTES
+==================================================
+method GET_CURSO_CON_ASISTENTES.
+  DATA: l_curso TYPE zfor_cursos,
+        i_asistentes TYPE zfort_participantes,
+        l_asistente TYPE zfor_participantes,
+        l_curso_emp TYPE zest_exp_cursos_emp,
+        l_calificacion TYPE hrpe_profa.
+
+  l_curso = get_datos_curso( curso ).
+  IF NOT l_curso IS INITIAL.
+    CLEAR l_curso_emp.
+    MOVE-CORRESPONDING l_curso TO l_curso_emp.
+    i_asistentes = get_asistentes( curso ).
+
+    LOOP AT i_asistentes INTO l_asistente.
+      l_curso_emp-pernr = l_asistente-pernr.
+      l_curso_emp-ename = l_asistente-ename.
+      IF datos_calificacion = 'X'.
+        l_calificacion = get_calif_curso_emp( pernr = l_asistente-pernr
+                                              curso = curso ).
+        l_curso_emp-appraisal_id = l_calificacion-tobid.
+        l_curso_emp-appraisal_result = l_calificacion-appraisal_result.
+        l_curso_emp-appraisal_result_text =
+                        l_calificacion-appraisal_result_text.
+      ENDIF.
+      APPEND l_curso_emp TO i_curso_emp.
+    ENDLOOP.
+    IF sy-subrc NE 0.
+      APPEND l_curso_emp TO i_curso_emp.
+    ENDIF.
+  ENDIF.
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_DATOS_CURSO
+==================================================
+METHOD get_datos_curso.
+  DATA: l_sobid TYPE hrp1001-sobid,
+        l_sclas TYPE hrp1001-sclas,
+        l_begda TYPE d,
+        l_endda TYPE d.
+
+  SELECT SINGLE begda endda FROM hrp1000
+    INTO (l_begda, l_endda)
+   WHERE plvar = zcl_hr_formacion=>c_plvar
+     AND otype = zcl_hr_formacion=>c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda.
+  IF begda > l_begda.
+    l_begda = begda.
+  ENDIF.
+  IF endda < l_endda.
+    l_endda = endda.
+  ENDIF.
+
+  CLEAR for_curso.
+  for_curso-curso = curso.
+  IF tacto IS INITIAL.
+    SELECT sobid FROM hrp1001
+      INTO l_sobid
+      UP TO 1 ROWS
+     WHERE otype = zcl_hr_formacion=>c_cod_curso
+       AND objid = curso
+       AND plvar = zcl_hr_formacion=>c_plvar
+       AND begda <= l_endda
+       AND endda >= l_begda
+       AND sclas = zcl_hr_formacion=>c_cod_tipo_acto
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      for_curso-tacto = l_sobid.
+    ENDIF.
+  ELSE.
+    for_curso-tacto = tacto.
+  ENDIF.
+
+  IF NOT for_curso-tacto IS INITIAL.
+    SELECT sobid FROM hrp1001
+      INTO l_sobid
+      UP TO 1 ROWS
+     WHERE otype = c_cod_tipo_acto
+       AND objid = for_curso-tacto
+       AND plvar = zcl_hr_formacion=>c_plvar
+       AND begda <= l_endda
+       AND endda >= l_begda
+       AND sclas = c_cod_tipo_recurso
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      for_curso-retid = l_sobid.
+    ENDIF.
+
+* Buscamos grupo de acto
+    for_curso-gacto = zcl_ap_rel_pd=>get_obj_rel(
+                              tipo_origen  = c_cod_tipo_acto
+                              objid        = for_curso-tacto
+                              tipo_destino = c_cod_grupo_acto
+                              begda        = l_begda
+                              endda        = l_endda ).
+    IF NOT for_curso-gacto IS INITIAL.
+      for_curso-gacto2 = zcl_ap_rel_pd=>get_obj_rel(
+                                tipo_origen  = c_cod_grupo_acto
+                                objid        = for_curso-gacto
+                                tipo_destino = c_cod_grupo_acto
+                                begda        = l_begda
+                                endda        = l_endda ).
+    ENDIF.
+    IF NOT for_curso-gacto2 IS INITIAL.
+      for_curso-gacto3 = zcl_ap_rel_pd=>get_obj_rel(
+                                tipo_origen  = c_cod_grupo_acto
+                                objid        = for_curso-gacto2
+                                tipo_destino = c_cod_grupo_acto
+                                begda        = l_begda
+                                endda        = l_endda ).
+    ENDIF.
+    IF NOT for_curso-gacto3 IS INITIAL.
+      for_curso-gacto4 = zcl_ap_rel_pd=>get_obj_rel(
+                                tipo_origen  = c_cod_grupo_acto
+                                objid        = for_curso-gacto4
+                                tipo_destino = c_cod_grupo_acto
+                                begda        = l_begda
+                                endda        = l_endda ).
+    ENDIF.
+  ENDIF.
+
+  SELECT stext FROM hrp1000
+    INTO (for_curso-tactot)
+    UP TO 1 ROWS
+   WHERE plvar = zcl_hr_formacion=>c_plvar
+     AND otype = zcl_hr_formacion=>c_cod_tipo_acto
+     AND objid = for_curso-tacto
+       AND begda <= endda
+       AND endda >= begda
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+
+
+  SELECT begda endda stext istat FROM hrp1000
+    INTO (for_curso-begda, for_curso-endda,
+          for_curso-cursot,
+          for_curso-istat)
+    UP TO 1 ROWS
+   WHERE plvar = zcl_hr_formacion=>c_plvar
+     AND otype = zcl_hr_formacion=>c_cod_curso
+     AND objid = curso
+       AND begda <= endda
+       AND endda >= begda
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+
+  IF for_curso-istat = '2'.
+    for_curso-planificado = 'X'.
+  ELSE.
+    CLEAR for_curso-planificado.
+  ENDIF.
+
+  SELECT SINGLE kapz1 kapz2 kapz3 FROM hrp1024
+    INTO (for_curso-kapz1, for_curso-kapz2, for_curso-kapz3)
+   WHERE plvar = zcl_hr_formacion=>c_plvar
+     AND otype = zcl_hr_formacion=>c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda.
+  IF sy-subrc NE 0.
+    SELECT SINGLE kapz1 kapz2 kapz3 FROM hrp1024
+      INTO (for_curso-kapz1, for_curso-kapz2, for_curso-kapz3)
+     WHERE plvar = zcl_hr_formacion=>c_plvar
+       AND otype = zcl_hr_formacion=>c_cod_tipo_acto
+       AND objid = for_curso-tacto
+       AND begda <= endda
+       AND endda >= begda.
+  ENDIF.
+
+  for_curso-sede = zcl_ap_curso=>get_sede( curso ).
+  IF NOT for_curso-sede IS INITIAL.
+    SELECT stext FROM hrp1000
+      INTO (for_curso-sedet)
+      up to 1 rows
+     WHERE plvar = zcl_hr_formacion=>c_plvar
+       AND otype = zcl_hr_formacion=>c_cod_sede
+       AND objid = for_curso-sede
+    ORDER BY PRIMARY KEY.
+   endselect.
+  ENDIF.
+
+  for_curso-npart = get_npart( curso = for_curso-curso
+                               solo_empleados = solo_empleados ).
+
+  SELECT SINGLE ikost iwaer ekost ewaer FROM hrp1021
+    INTO (for_curso-ikost, for_curso-iwaer, for_curso-ekost, for_curso-ewaer)
+   WHERE plvar = c_plvar
+     AND otype = c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda.
+
+  SELECT SINGLE ndays nhours FROM hrp1035
+    INTO (for_curso-ndays, for_curso-nhours)
+   WHERE plvar = c_plvar
+     AND otype = c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda.
+
+  SELECT SINGLE delet lockm FROM hrp1026
+    INTO (for_curso-delet, for_curso-lockm)
+   WHERE plvar = zcl_hr_formacion=>c_plvar
+     AND otype = zcl_hr_formacion=>c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda.
+
+  IF for_curso-delet = 'X'.
+    for_curso-lights = zcl_alv_grid=>c_sem_rojo.
+    for_curso-mensaje = 'Curso cancelado'.
+  ELSEIF for_curso-lockm = 'X'.
+    for_curso-lights = zcl_alv_grid=>c_sem_rojo.
+    for_curso-mensaje = 'Curso bloqueado'.
+  ELSE.
+    for_curso-lights = zcl_alv_grid=>c_sem_verde.
+  ENDIF.
+
+  SELECT SINGLE sobid sclas FROM hrp1001
+    INTO ( l_sobid, l_sclas )
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = zcl_hr_formacion=>c_plvar
+     AND begda <= l_endda
+     AND endda >= l_begda
+     AND rsign = 'A'
+     AND relat = '036'.
+  IF sy-subrc = 0.
+    for_curso-empresa = l_sobid.
+    IF l_sclas = c_cod_proveedor.
+      SELECT SINGLE name1 FROM lfa1
+        INTO (for_curso-empresat)
+       WHERE lifnr = l_sobid.
+    ELSEIF l_sclas = c_cod_uo.
+      SELECT SINGLE stext FROM hrp1000
+        INTO (for_curso-empresat)
+       WHERE plvar = zcl_hr_formacion=>c_plvar
+         AND otype = c_cod_uo
+         AND objid = l_sobid
+         AND begda <= l_endda
+         AND endda >= l_begda.
+    ELSEIF l_sclas = c_cod_empresa.
+      SELECT SINGLE stext FROM hrp1000
+        INTO (for_curso-empresat)
+       WHERE plvar = zcl_hr_formacion=>c_plvar
+         AND otype = c_cod_empresa
+         AND objid = l_sobid
+         AND begda <= l_endda
+         AND endda >= l_begda.
+    ELSEIF l_sclas = c_cod_cliente.
+      SELECT SINGLE name1 FROM kna1
+        INTO (for_curso-empresat)
+       WHERE kunnr = l_sobid.
+    ELSE.
+      CLEAR for_curso-empresat.
+    ENDIF.
+  ENDIF.
+
+  SELECT sobid FROM hrp1001
+    INTO l_sobid
+    UP TO 1 rows
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND sclas = 'G'
+    ORDER BY PRIMARY KEY.
+   endselect.
+  IF sy-subrc = 0.
+    for_curso-sala = l_sobid.
+    SELECT stext FROM hrp1000
+      INTO for_curso-salat
+      UP TO 1 rows
+     WHERE plvar = c_plvar
+       AND otype = 'G'
+       AND objid = for_curso-sala
+       AND begda <= l_endda
+       AND endda >= l_begda
+    ORDER BY PRIMARY KEY.
+   endselect.
+  ENDIF.
+
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=GET_HORARIO
+==================================================
+method GET_HORARIO.
+
+  CALL FUNCTION 'RH_GET_SCHEDULE'
+   EXPORTING
+     plvar                   = c_plvar
+     otype                   = c_cod_curso
+     objid                   = curso
+     calid                   = c_calid
+    TABLES
+*   EVENTLIST               =
+      schedule_out            = horario
+   EXCEPTIONS
+     no_schedule_found       = 1
+     calid_error             = 2
+     OTHERS                  = 3.
+  sort horario.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_NPART
+==================================================
+method GET_NPART.
+
+  IF solo_empleados IS INITIAL.
+    SELECT COUNT( * ) FROM hrp1001
+      INTO npart
+     WHERE otype = c_cod_curso
+       AND objid = curso
+       AND plvar = c_plvar
+       AND rsign = 'A'
+       AND relat = '025'.
+  ELSE.
+    SELECT COUNT( * ) FROM hrp1001
+      INTO npart
+     WHERE otype = c_cod_curso
+       AND objid = curso
+       AND plvar = c_plvar
+       AND rsign = 'A'
+       AND relat = '025'
+       AND sclas = 'P'.
+  ENDIF.
+endmethod.
+==================================================
+ZCL_AP_CURSO=GET_RECURSOS
+==================================================
+METHOD get_recursos.
+  DATA: l_hrvpad23 TYPE hrvpad23,
+        l_res      TYPE zfor_recursos,
+        l_dias     TYPE i.
+
+  CLEAR recursos.
+  SELECT begda endda beguz robjid sclas sobid FROM hrvpad23
+    INTO CORRESPONDING FIELDS OF l_hrvpad23
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = c_plvar
+     AND rsign = 'A'
+     AND relat = '023'
+     AND begda <= endda
+     AND endda >= begda.
+    CLEAR l_res.
+    l_res-restp = l_hrvpad23-sclas.
+
+    l_res-retid = l_hrvpad23-robjid.
+    l_res-begda = l_hrvpad23-begda.
+    l_res-endda = l_hrvpad23-endda.
+    l_res-beguz = l_hrvpad23-beguz.
+    l_res-enduz = l_hrvpad23-enduz.
+
+    IF NOT l_res-endda IS INITIAL.
+      l_dias = l_res-endda - l_res-begda + 1.
+    ELSE.
+      l_dias = 1.
+    ENDIF.
+    IF l_dias > 1000.
+      l_dias = 1.
+    ENDIF.
+    l_res-horas = l_dias * ( l_res-enduz - l_res-beguz ) / 3600.
+
+    SELECT SINGLE short stext FROM hrp1000
+      INTO (l_res-retsh, l_res-retyt)
+     WHERE otype = c_cod_tipo_recurso
+       AND objid = l_hrvpad23-robjid
+       AND plvar = c_plvar
+       AND begda <= l_res-endda
+       AND endda >= l_res-begda.
+
+
+    IF l_res-restp = 'P'.
+      l_res-pernr = l_hrvpad23-sobid.
+      l_res-ename = zcl_ap_empleado=>get_nombre( l_res-pernr ).
+    ELSE.
+      l_res-pernr = l_hrvpad23-sobid.
+      SELECT stext FROM hrp1000
+        INTO l_res-ename
+        UP TO 1 ROWS
+       WHERE plvar = c_plvar
+         AND otype = l_res-restp
+         AND objid = l_res-pernr
+      ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+
+    APPEND l_res TO recursos.
+  ENDSELECT.
+  SORT recursos.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=GET_SEDE
+==================================================
+method GET_SEDE.
+  DATA l_sobid TYPE sobid.
+
+  CLEAR sede.
+  SELECT sobid FROM hrp1001
+    INTO l_sobid
+    UP TO 1 rows
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = c_plvar
+     AND begda <= endda
+     AND endda >= begda
+     AND sclas = c_cod_sede
+    ORDER BY PRIMARY KEY.
+   endselect.
+
+  IF sy-subrc = 0.
+    sede = l_sobid.
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=INSCRIBIR_PART
+==================================================
+method INSCRIBIR_PART.
+  DATA: l_begda TYPE hrp1000-begda,
+        l_endda TYPE hrp1000-endda,
+        l_istat type hrp1000-istat.
+
+  IF begda = '00000000'.
+    SELECT SINGLE begda endda istat FROM hrp1000
+      INTO (l_begda, l_endda, l_istat)
+     WHERE otype = c_cod_curso
+       AND objid = curso
+       AND plvar = c_plvar.
+    IF sy-subrc NE 0.
+      mensaje = 'Curso no existe'.
+      EXIT.
+    ENDIF.
+  ELSE.
+    l_begda = begda.
+    l_endda = endda.
+  ENDIF.
+
+  crea_infotipo( EXPORTING infty = '1001'
+                           subty = 'A025'
+                           otype = c_cod_curso
+                           objid = curso
+                           begda = l_begda
+                           endda = l_endda
+                           istat = l_istat
+                           sclas = 'P'
+                           sobid = participante
+                           modobi = modobi
+                 IMPORTING mensaje = mensaje ).
+  IF mensaje = 'Registro creado' or mensaje = 'Se ha añadido el registro'.
+    clear mensaje.
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=POPUP_ASISTENTES
+==================================================
+method POPUP_ASISTENTES.
+
+  CALL FUNCTION 'RH_POPUP_PARTICIPANTS'
+    EXPORTING
+      plvar                    = c_plvar
+      eveid                    = curso
+*             SHORT                    = ' '
+*             STEXT                    = ' '
+*             BEGDA                    = '19000101'
+*             ENDDA                    = '99991231'
+*             ISTAT                    = ' '
+*             READ_EV_DATA             = 'X'
+*             FCODE                    = 'DISP'
+*             WINSTART_COL             = '10'
+*             WINSTART_ROW             = '10'
+*             REMOVAL_COUNT            =
+*             MOVEUP_COUNT             =
+*             WITH_PRICE               = ' '
+*             INSERT_PRICE             = 'X'
+*             CANCEL_PARTIC            = 'X'
+*             CHECK_1031               = ' '
+*             PARTEVENT                = ' '
+*             MAXMU                    = 'X'
+*             NPRIO                    = 'X'
+*             MINWL                    = 'X'
+*           TABLES
+*             PARTIC_TAB               =
+   EXCEPTIONS
+     no_event_found           = 1
+     show_partic_failed       = 2
+     wrong_condition          = 3
+     OTHERS                   = 4.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=POPUP_RECURSOS
+==================================================
+method POPUP_RECURSOS.
+
+  CALL FUNCTION 'RH_POPUP_RESOURCE'
+    EXPORTING
+      plvar                = c_plvar
+      evtyp                = c_cod_curso
+      eveid                = curso
+*             BEGDA                = '19000101'
+*             ENDDA                = '99991231'
+*             ISTAT                = ' '
+*             SHORT                = ' '
+*             STEXT                = ' '
+*           TABLES^
+*             RESSOURCE_TAB        =
+   EXCEPTIONS
+     no_event_found       = 1
+     OTHERS               = 2.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=SET_HORARIO
+==================================================
+METHOD set_horario.
+  DATA: i_horario  TYPE piqhrvsched_t,
+        l_horario  TYPE hrvsched,
+        l_horario2 TYPE hrvsched,
+        l_mensaje  TYPE bapireturn1-message,
+        l_istat    TYPE hrp1000-istat,
+        i_hrp1035  TYPE TABLE OF hrp1035,
+        l_hrp1035  TYPE hrp1035,
+        l_begda    TYPE hrp1000-begda,
+        l_endda    TYPE hrp1000-endda.
+
+  SELECT SINGLE begda endda istat FROM hrp1000
+    INTO (l_begda, l_endda, l_istat)
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = c_plvar.
+  IF sy-subrc NE 0.
+    l_mensaje = 'Curso no existe'.
+    EXIT.
+  ENDIF.
+
+  i_horario = get_horario( curso ).
+  IF i_horario NE horario.
+
+* Borramos el horario existentes antes de crear el nuevo.
+    SELECT begda endda istat FROM hrp1035
+      INTO CORRESPONDING FIELDS OF TABLE i_hrp1035
+     WHERE plvar = c_plvar
+       AND otype = c_cod_curso
+       AND objid = curso
+       AND istat = l_istat.
+    LOOP AT i_hrp1035 INTO l_hrp1035.
+      borra_infotipo( EXPORTING infty = '1035'
+                               otype = c_cod_curso
+                               objid = curso
+                               istat = l_hrp1035-istat
+                               begda = l_hrp1035-begda
+                               endda = l_hrp1035-endda
+                               modobi = modobi
+                     IMPORTING mensaje = l_mensaje ).
+    ENDLOOP.
+
+    crea_infotipo( EXPORTING infty = '1035'
+                             otype = c_cod_curso
+                             objid = curso
+                             istat = l_istat
+                             begda = l_begda
+                             endda = l_endda
+                             horario = horario
+                             modobi = modobi
+                   IMPORTING mensaje = l_mensaje ).
+  ENDIF.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=SET_RECURSOS
+==================================================
+method SET_RECURSOS.
+  DATA: l_res TYPE zfor_recursos,
+        l_res2 TYPE zfor_recursos,
+        i_res TYPE zfort_recursos,
+        l_begda TYPE d,
+        l_endda TYPE d,
+        i_horario TYPE piqhrvsched_t,
+        i_horario2 TYPE piqhrvsched_t,
+        l_horario TYPE hrvsched,
+        l_horario2 TYPE hrvsched,
+        l_fecha TYPE d,
+        l_istat TYPE hrp1000-istat,
+        l_tabix TYPE sy-tabix,
+        l_tabix2 TYPE sy-tabix.
+
+* Comprobamos que el curso exista.
+  SELECT SINGLE begda endda istat FROM hrp1000
+    INTO (l_begda, l_endda, l_istat)
+   WHERE otype = c_cod_curso
+     AND objid = curso
+     AND plvar = c_plvar.
+  IF sy-subrc NE 0.
+    LOOP AT recursos INTO l_res.
+      l_res-lights  = zcl_alv_grid=>c_sem_rojo.
+      l_res-mensaje = 'Curso no existe'.
+      MODIFY recursos FROM l_res.
+    ENDLOOP.
+    EXIT.
+  ENDIF.
+
+* Defimos el horario.
+  CLEAR i_horario.
+  LOOP AT recursos INTO l_res WHERE NOT pernr IS INITIAL.
+    MOVE-CORRESPONDING l_res TO l_horario.
+    IF NOT l_res-beguz IS INITIAL AND
+       l_res-endda > l_res-begda.
+      l_fecha = l_res-begda.
+      WHILE l_fecha < l_res-endda.
+        l_horario-begda = l_horario-endda = l_fecha.
+        COLLECT l_horario INTO i_horario.
+        ADD 1 TO l_fecha.
+      ENDWHILE.
+    ELSE.
+      COLLECT l_horario INTO i_horario.
+    ENDIF.
+  ENDLOOP.
+  SORT i_horario.
+* Buscamos intersecciones.
+  i_horario2 = i_horario.
+  LOOP AT i_horario INTO l_horario.
+    l_tabix  = sy-tabix.
+    l_tabix2 = sy-tabix + 1.
+    READ TABLE i_horario2 INTO l_horario2 INDEX l_tabix2.
+    IF sy-subrc = 0.
+      IF l_horario-begda = l_horario2-endda AND
+         l_horario-enduz = l_horario2-beguz.
+        l_horario2-beguz = l_horario2-beguz + 1.
+        MODIFY i_horario2 FROM l_horario2 INDEX l_tabix2.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+
+  set_horario( curso = curso
+               horario = i_horario2 ).
+
+
+* Grabamos los recurso
+  i_res = get_recursos( curso = curso
+                        begda = l_begda
+                        endda = l_endda ).
+
+  LOOP AT recursos INTO l_res WHERE NOT pernr IS INITIAL.
+    CLEAR l_res2.
+    READ TABLE i_res INTO l_res2 WITH KEY pernr = l_res-pernr
+                                          begda = l_res-begda
+                                          endda = l_res-endda
+                                          beguz = l_res-beguz
+                                          enduz = l_res-enduz.
+    IF sy-subrc = 0.
+      DELETE i_res INDEX sy-tabix.
+      l_res-lights = zcl_alv_grid=>c_sem_verde.
+    ELSE.
+      READ TABLE i_res INTO l_res2 WITH KEY pernr = l_res-pernr
+                                            begda = l_res-begda
+                                            endda = l_res-endda.
+      IF sy-subrc = 0.
+        DELETE i_res INDEX sy-tabix.
+        borra_infotipo( EXPORTING infty = '1001'
+                                 subty = 'A023'
+                                 otype = c_cod_curso
+                                 objid = curso
+                                 begda = l_res2-begda
+                                 endda = l_res2-endda
+                                 istat = l_istat
+                                 modobi = modobi
+                                 sclas = 'P'
+                                 sobid = l_res2-pernr
+                       IMPORTING mensaje = l_res2-mensaje ).
+      ENDIF.
+
+      FREE MEMORY ID 'ZRECURSO'.
+      IF l_res-remul = 'X'.
+        EXPORT curso FROM curso l_res FROM l_res TO MEMORY ID 'ZRECURSO'.
+      ENDIF.
+
+      crea_infotipo( EXPORTING infty = '1001'
+                               subty = 'A023'
+                               otype = c_cod_curso
+                               objid = curso
+                               begda = l_res-begda
+                               endda = l_res-endda
+                               istat = l_istat
+                               sclas = 'P'
+                               sobid = l_res-pernr
+                               beguz = l_res-beguz
+                               enduz = l_res-enduz
+                               retid = l_res-retid
+                               modobi = modobi
+                     IMPORTING mensaje = l_res-mensaje ).
+
+      IF l_res-mensaje = 'Registro creado'.
+        l_res-lights  = zcl_alv_grid=>c_sem_verde.
+        CLEAR l_res-mensaje.
+      ELSE.
+        l_res-lights  = zcl_alv_grid=>c_sem_rojo.
+      ENDIF.
+      FREE MEMORY ID 'ZRECURSO'.
+    ENDIF.
+    MODIFY recursos FROM l_res.
+  ENDLOOP.
+
+  LOOP AT i_res INTO l_res2.
+    borra_infotipo( EXPORTING infty = '1001'
+                             subty = 'A023'
+                             otype = c_cod_curso
+                             objid = curso
+                             begda = l_res2-begda
+                             endda = l_res2-endda
+                             istat = l_istat
+                             sclas = 'P'
+                                 sobid = l_res2-pernr
+                             modobi = modobi
+                   IMPORTING mensaje = l_res2-mensaje ).
+  ENDLOOP.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=VALIDAR_RECURSO
+==================================================
+method VALIDAR_RECURSO.
+  DATA: l_subrc TYPE sy-subrc,
+       l_occupy_subrc TYPE sy-subrc,
+* Campos de apartado de tablas Infotipo 1035
+       schedule_tab TYPE TABLE OF pt1035,
+       l_pt1035 TYPE pt1035,
+       l_objid TYPE hrp1000-objid,
+      i_exclude_tab TYPE TABLE OF hrobject,
+      l_hrobject TYPE hrobject.
+
+  l_pt1035-evdat = begda.
+  l_pt1035-beguz = beguz.
+  l_pt1035-enduz = enduz.
+  APPEND l_pt1035 TO schedule_tab.
+
+  IF NOT curso IS INITIAL.
+    l_hrobject-plvar = c_plvar.
+    l_hrobject-otype = c_cod_curso.
+    l_hrobject-objid = curso.
+    APPEND l_hrobject TO i_exclude_tab.
+  ENDIF.
+
+  l_objid = pernr.
+  IF remul = ''.
+    CALL FUNCTION 'RH_RESOURCE_FREE'
+      EXPORTING
+        plvar = c_plvar
+        otype = 'P'
+        objid = l_objid
+        begda = begda
+        endda = endda
+*       ISTAT                    = ' '
+*       EVEID                    = ' '
+*       EVTID                    = ' '
+*       FILL_OCCUPY              = 'X'
+*       TEILN_CHECK              = ' '
+*       ZEIT_CHECK               = ' '
+    IMPORTING
+      subrc                    = l_subrc
+      occupy_subrc             = l_occupy_subrc
+*       TEILN_SUBRC              =
+*       ZEIT_SUBRC               =
+     TABLES
+       schedule_tab             = schedule_tab
+*       RESOURCE_TAB             =
+       exclude_tab              = i_exclude_tab
+*       OCCUPY_TAB               =
+*       OCCUPYER_TAB             =
+*       OCCUPYER_SCHED_TAB       =
+    EXCEPTIONS
+      schedule_tab_empty       = 1
+      no_time_data             = 2
+      OTHERS                   = 3.
+    IF l_subrc NE 0 OR l_occupy_subrc NE 0.
+      mensaje = 'Recurso ocupado en periodo'.
+    ENDIF.
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=VER_EVALUACION
+==================================================
+method VER_EVALUACION.
+
+  CALL FUNCTION 'RHPA_SHOW_APPRAISAL'
+    EXPORTING
+      plvar                       = c_plvar
+      appraisal_id                = evaluacion
+*             MAINTAIN                    = ' '
+*             NEW_APPSCHEME_ID            =
+*             NEW_APPFORM_ID              =
+*             NEW_INDIVID_APP_ONLY        = ' '
+*             NEW_APP_BEGDA               =
+*             NEW_APP_ENDDA               =
+*             NEW_APP_DATE                = SY-DATUM
+*             NEW_APP_STEXT               =
+*             SUPPRESS_FIRST_SCREEN       = ' '
+*             INP_OFF_APP_TEXT            = ' '
+*             INP_OFF_APPRAISOR           = ' '
+*             INP_OFF_APPRAISEE           = ' '
+*             INP_OFF_APPDATE             = ' '
+*             CREATE_WORKLOAD             = 'X'
+*             CLASSIC                     = 'X'
+*           IMPORTING
+*             NEW_APPRAISAL_ID            =
+*             F15                         =
+*             F12                         =
+*           TABLES
+*             APPRAISORS                  =
+*             APPRAISEES                  =
+*             APPRAISAL                   =
+   EXCEPTIONS
+     no_authority                = 1
+     nothing_found               = 2
+     workload_not_found          = 3
+     definition_error            = 4
+     OTHERS                      = 5.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=VER_INFOTIPO
+==================================================
+method VER_INFOTIPO.
+  DATA l_hrp1000 TYPE hrp1000.
+
+  SELECT * FROM hrp1000
+    INTO l_hrp1000
+    up to 1 rows
+   WHERE plvar = c_plvar
+     and otype = c_cod_curso
+     AND objid = curso
+     AND begda <= endda
+     AND endda >= begda
+    ORDER BY PRIMARY KEY.
+   endselect.
+  IF sy-subrc = 0.
+    l_hrp1000-infty = infty.
+
+    pantalla( accion  = accion
+              hrp1000 = l_hrp1000 ).
+  ENDIF.
+
+endmethod.
+==================================================
+ZCL_AP_CURSO=VER_TACTO
+==================================================
+METHOD ver_tacto.
+  DATA l_hrp1000 TYPE hrp1000.
+
+  SELECT * FROM hrp1000
+    INTO l_hrp1000
+    up to 1 rows
+   WHERE plvar = c_plvar
+     and otype = c_cod_tipo_acto
+     AND objid = tacto
+     AND begda <= endda
+     AND endda >= begda
+    ORDER BY PRIMARY KEY.
+   endselect.
+  IF sy-subrc = 0.
+    l_hrp1000-infty = infty.
+
+    pantalla( accion  = accion
+              hrp1000 = l_hrp1000 ).
+  ENDIF.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_CURSO=VISUALIZAR
+==================================================
+METHOD visualizar.
+  DATA: l_etyid TYPE  hrvpva-etyid,
+        l_evtid TYPE  hrvpva-evtid. "Acto
+
+*                l_etyid = i_cursos-convo.
+  l_evtid = curso.
+  CALL FUNCTION 'RH_EVENT_DISPLAY'
+    EXPORTING
+      plvar           = c_plvar
+*     etyid           = l_etyid
+      evtid           = l_evtid
+    EXCEPTIONS
+      no_authority    = 1
+      room_management = 2
+      OTHERS          = 999.
+  IF sy-subrc NE 0.
+*
+  ENDIF.
+
+
+ENDMETHOD.

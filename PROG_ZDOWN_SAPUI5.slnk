@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZDOWN_SAPUI5" VARCL="X" SUBC="1" RMAND="012" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Descarga aplicaciones SAPUI5" LENGTH="28 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report ZDOWN_SAPUI5
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT zdown_sapui5.
+
+TABLES o2appl.
+
+SELECT-OPTIONS: s_name FOR o2appl-applname.
+PARAMETERS: p_dir TYPE string.
+
+INITIALIZATION.
+  p_dir = &apos;C:\Users\andres\Google Drive\CODIGO\Reports slnk\&apos;.
+
+START-OF-SELECTION.
+
+  DATA i_bsp TYPE TABLE OF o2appl WITH HEADER LINE.
+
+  SELECT * FROM o2appl
+    INTO TABLE i_bsp
+    WHERE applname  IN s_name
+      AND applname LIKE &apos;Z%&apos;
+      AND applclas LIKE &apos;%UI5%&apos;.
+
+  DATA: l_dir    TYPE text255, l_rc TYPE i, l_string TYPE string.
+
+  LOOP AT i_bsp.
+    SET PARAMETER ID &apos;ZDIR_UI5&apos; FIELD &apos;&apos;.
+    IF NOT p_dir IS INITIAL.
+      l_dir = zcl_ap_ficheros=&gt;concat_ruta( directorio = p_dir fichero = i_bsp-applname ).
+      CLEAR l_rc.
+      IF zcl_ap_ficheros=&gt;existe_dir( l_dir ) = &apos;&apos;.
+        l_string = l_dir.
+        cl_gui_frontend_services=&gt;directory_create( EXPORTING directory = l_string CHANGING rc = l_rc ).
+      ENDIF.
+      IF l_rc = 0.
+        SET PARAMETER ID &apos;ZDIR_UI5&apos; FIELD l_dir.
+      ENDIF.
+    ENDIF.
+    SUBMIT /ui5/ui5_repository_load
+      AND RETURN
+      WITH ui5rep = i_bsp-applname
+      WITH upload = &apos;&apos;
+      WITH download = &apos;X&apos;.
+
+*  METHOD select_directory.
+*  DATA L_DIR TYPE TEXT255.
+*    GET PARAMETER ID &apos;ZDIR_UI5&apos; FIELD L_DIR.
+*    IF NOT L_DIR IS INITIAL.
+*    rv_directory = L_DIR.
+*    EXIT.
+*    ENDIF.
+    SET PARAMETER ID &apos;ZDIR_UI5&apos; FIELD &apos;&apos;.
+  ENDLOOP.</source>
+</PROG>

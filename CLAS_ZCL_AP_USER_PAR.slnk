@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_USER_PAR" VERSION="1" LANGU="S" DESCRIPT="Userexits creación de pedidos" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_USER_PAR" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_USER_PAR" CMPNAME="GUARDAR_LOG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_USER_PAR" CMPNAME="O_LOG" VERSION="1" LANGU="S" DESCRIPT="Log" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_LOG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_USER_PAR" CMPNAME="O_PAR" VERSION="1" LANGU="S" DESCRIPT="Parámetros" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_PARAMETROS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VALIDACION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="ACTIVA" VERSION="1" LANGU="S" DESCRIPT="¿Validación activa?" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="ACTIVA" SCONAME="ACTIVA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD ACTIVA.
+    DATA l_atributo1 TYPE zparametros-atributo1.
+
+    l_atributo1 = o_par-&gt;get_atr1( campo = me-&gt;validacion valor = &apos;EXIT ACTIVA&apos; ).
+    TRANSLATE l_atributo1 TO UPPER CASE.
+    IF l_atributo1 = &apos;X&apos; OR l_atributo1 = &apos;S&apos;.
+      activa = &apos;X&apos;.
+    ELSE.
+      if guardar_log = &apos;X&apos;.
+        o_log-&gt;log( p1 = &apos;Exit&apos; p2 = me-&gt;validacion p3 = &apos;inactiva&apos; msgty = &apos;W&apos; ).
+      endif.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CONSTRUCTOR" SCONAME="VALIDACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CONSTRUCTOR" SCONAME="INCLUDE" VERSION="1" LANGU="S" DESCRIPT="Include" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CONSTRUCTOR" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VA" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CONSTRUCTOR" SCONAME="FORM" VERSION="1" LANGU="S" DESCRIPT="Form" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD CONSTRUCTOR.
+    DATA l_report TYPE sy-cprog.
+
+    CREATE OBJECT o_par
+      EXPORTING
+        clave = &apos;USER_VA0X&apos;
+        campo = validacion.
+
+    me-&gt;validacion = validacion.
+    me-&gt;guardar_log = o_par-&gt;get_atr1( campo = me-&gt;validacion valor = &apos;GUARDAR LOG&apos; ).
+
+    l_report = validacion.
+
+    IF NOT include IS INITIAL.
+      CONCATENATE l_report include INTO l_report SEPARATED BY `INC `.
+    ENDIF.
+
+    IF NOT form IS INITIAL.
+      CONCATENATE l_report form INTO l_report SEPARATED BY `FORM `.
+    ENDIF.
+
+    CREATE OBJECT o_log
+      EXPORTING
+        object                = &apos;USER_VA0X&apos;
+        report                = l_report
+        clave                 = vbeln
+        guardar_tabla_interna = &apos;X&apos;.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CUMPLE_CONDICIONES" VERSION="1" LANGU="S" DESCRIPT="¿Cumple condiciones?" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CUMPLE_CONDICIONES" SCONAME="VBAK" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas: Datos de cabecera" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAK" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="CUMPLE_CONDICIONES" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD CUMPLE_CONDICIONES.
+    DATA: i_cond       TYPE TABLE OF string,
+          l_cond       TYPE string,
+          l_cumple,
+          l_no_cumple,
+          l_valor      TYPE zparametros-atributo1,
+          l_valor_cond TYPE string.
+
+    LOOP AT o_par-&gt;i_par INTO o_par-&gt;par WHERE valor(7) = &apos;COND - &apos;.
+      l_cond = o_par-&gt;par-valor+7.
+      COLLECT l_cond INTO i_cond.
+    ENDLOOP.
+    IF sy-subrc NE 0.
+      si = &apos;X&apos;.
+    ELSE.
+      LOOP AT i_cond INTO l_cond.
+        l_valor = &apos;COND - &apos;.
+        l_valor+7 = l_cond.
+        CASE l_cond.
+          WHEN &apos;CLASE PEDIDO&apos;.
+            l_valor_cond = vbak-auart.
+            READ TABLE o_par-&gt;i_par INTO o_par-&gt;par WITH KEY valor = l_valor valor2 = vbak-auart.
+            IF sy-subrc = 0.
+              l_cumple = &apos;X&apos;.
+            ENDIF.
+        ENDCASE.
+        IF l_cumple IS INITIAL.
+          l_no_cumple = &apos;X&apos;.
+          IF guardar_log = &apos;X&apos;.
+            READ TABLE o_par-&gt;i_par INTO o_par-&gt;par WITH KEY valor = l_valor.
+            o_log-&gt;log( p1 = &apos;Pedido no cumple condición&apos; p2 = l_cond p3 = o_par-&gt;par-valor2 p4 = &apos;Valor pedido&apos; p5 = l_valor_cond ).
+          ENDIF.
+        ELSE.
+          IF guardar_log = &apos;X&apos;.
+            o_log-&gt;log( p1 = &apos;Pedido cumple condición&apos; p2 = l_cond p3 = l_valor_cond ).
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      IF l_cumple = &apos;X&apos; AND l_no_cumple = &apos;&apos;.
+        si = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="ES_PROGRAMA_CARGA_INDIRECTOS" VERSION="1" LANGU="S" DESCRIPT="¿Viene del programa de carga de indirectos?" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="ES_PROGRAMA_CARGA_INDIRECTOS" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD ES_PROGRAMA_CARGA_INDIRECTOS.
+    DATA l_cprog TYPE sy-cprog.
+
+    IF sy-binpt = &apos;X&apos; OR sy-tcode = &apos;&apos;.
+      GET PARAMETER ID &apos;ZPROG_CARGA&apos; FIELD l_cprog.
+      IF l_cprog = &apos;Z01_SD_BI_CARGA_PEDIDOS_GRED_2&apos;.
+        si = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="MATERIAL_TIENE_PED_EN_X_DIAS" VERSION="1" LANGU="S" DESCRIPT="¿Verfica si el cliente ha hecho ped en los últimos X días?" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="MATERIAL_TIENE_PED_EN_X_DIAS" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="MATERIAL_TIENE_PED_EN_X_DIAS" SCONAME="KUNNR" VERSION="1" LANGU="S" DESCRIPT="Número de deudor" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="MATERIAL_TIENE_PED_EN_X_DIAS" SCONAME="DIAS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="MATERIAL_TIENE_PED_EN_X_DIAS" SCONAME="KWMENG" VERSION="1" LANGU="S" DESCRIPT="Cantidad de pedido acumulada (en unidades de venta)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="VBAP-KWMENG"/>
+  <source>METHOD MATERIAL_TIENE_PED_EN_X_DIAS.
+    DATA: l_fecha TYPE dats,
+          l_type  TYPE msgty.
+
+    l_fecha = sy-datum - dias.
+
+    SELECT SUM( kwmeng ) FROM vbak JOIN vbap ON vbak~vbeln  = vbap~vbeln
+      INTO kwmeng
+     WHERE kunnr = kunnr
+       AND vbak~erdat &gt;= l_fecha
+       AND matnr = matnr.
+
+    IF guardar_log = &apos;X&apos;.
+      IF kwmeng = 0.
+        l_type = &apos;E&apos;.
+      ELSE.
+        l_type = &apos;I&apos;.
+      ENDIF.
+
+      o_log-&gt;log( p1 = &apos;Cliente&apos; p2 = kunnr p3 = &apos;Material&apos; p4 = matnr p5 = &apos;Cantidad pedida&apos; p6 = kwmeng p7 = &apos;desde fecha&apos; p8 = l_fecha msgty = l_type ).
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VERIF_REF_ABONOS" VERSION="1" LANGU="S" DESCRIPT="Verifica referencia abonos" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VERIF_REF_ABONOS" SCONAME="INCLUDE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VERIF_REF_ABONOS" SCONAME="FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VERIF_REF_ABONOS" SCONAME="VBAP" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas: Datos de posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAP"/>
+  <parameter CLSNAME="ZCL_AP_USER_PAR" CMPNAME="VERIF_REF_ABONOS" SCONAME="VBAK" VERSION="1" LANGU="S" DESCRIPT="Documento de ventas: Datos de cabecera" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="VBAK"/>
+  <source>METHOD VERIF_REF_ABONOS.
+* *APC20180310 Id.11788 - ZGY2 / ZG22 verificacion refernecias en abonos
+* http://servicedesk.grefusa.com/WorkOrder.do?woMode=viewWO&amp;woID=11788&amp;&amp;fromListView=true
+*    DATA: o_exit       TYPE REF TO zcl_gsd_user_pedido,
+*          l_dias       TYPE i,
+*          l_validacion TYPE zparametros-campo VALUE &apos;VERIF_REF_ABONOS&apos;,
+*          l_prog_carga,
+*          l_abgru      TYPE abgru,
+*          l_message    TYPE bapi_msg.
+*
+*    CREATE OBJECT o_exit
+*      EXPORTING
+*        id         = &apos;VERIF_REF_ABONOS&apos;
+*        include    = include
+*        form       = form
+*        vbeln      = vbak-vbeln.
+*
+*    CHECK o_exit-&gt;activa( ) = &apos;X&apos;.
+*    CHECK o_exit-&gt;cumple_condiciones( vbak = vbak ) = &apos;X&apos;.
+*
+*    l_dias = o_exit-&gt;o_par-&gt;get_atr1( campo = l_validacion valor = &apos;DIAS VENTA&apos; ctd = &apos;X&apos; ).
+*    IF l_dias = 0.
+*      o_exit-&gt;o_log-&gt;log( p1 = &apos;Parámetro DIAS VENTA = 0&apos; msgty = &apos;W&apos; ).
+*      EXIT.
+*    ENDIF.
+*
+*    l_abgru = o_exit-&gt;o_par-&gt;get_atr1( campo = l_validacion valor = &apos;BLOQUEO POSICION&apos;  ).
+*    IF l_abgru IS INITIAL.
+*      o_exit-&gt;o_log-&gt;log( p1 = &apos;Parámetro BLOQUEO POSICION sin informar&apos; msgty = &apos;W&apos; ).
+*    ENDIF.
+*
+*    l_prog_carga = es_programa_carga_indirectos( ).
+*    IF NOT vbap IS INITIAL.
+*      IF o_exit-&gt;material_tiene_ped_en_x_dias( matnr = vbap-matnr kunnr = vbak-kunnr dias = l_dias ) &gt; 0.
+*        IF l_prog_carga = &apos;X&apos;.
+*          o_exit-&gt;o_log-&gt;log( p1 = &apos;Se cambia el bloqueo de la posición&apos; p2 = vbap-posnr p3 = &apos;a&apos; p4 = l_abgru p5 = &apos;valor anterior&apos; p6 = vbap-abgru p7 = &apos;material&apos; p8 = vbap-matnr
+*                              p9 = &apos;El material no ha tenido ventas del cliente&apos; p10 = vbak-kunnr p11 = &apos;en los últimos&apos; p12 = l_dias p13 = &apos;y se carga desde el programa de indirectos&apos; ).
+*          vbap-abgru = l_abgru.
+*        ELSE.
+*          o_exit-&gt;o_log-&gt;log( p1 = &apos;Error en posición&apos; p2 = vbap-posnr
+*                              p3 = &apos;El material no ha tenido ventas del cliente&apos; p4 = vbak-kunnr p5 = &apos;en los últimos&apos; p6 = l_dias ).
+*
+*          l_message =  zcl_ap_utils=&gt;concat( p1 = &apos;El distribuidor no ha comprado la ref.&apos; p2 = vbap-matnr p3 = &apos;en los últimos&apos; p4 = l_dias p5 = &apos;días&apos; ).
+*          MESSAGE l_message TYPE &apos;E&apos;.
+*        ENDIF.
+*      ENDIF.
+*    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

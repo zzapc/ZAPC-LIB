@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-16"?>
+<PROG NAME="ZCOPIA_TEXTOS" VARCL="X" SUBC="1" CNAM="ZAPC" CDAT="20110321" UNAM="ZAPC" UDAT="20110321" VERN="000003" RMAND="100" RLOAD="S" FIXPT="X" SDATE="20110321" STIME="085822" IDATE="20110321" ITIME="085822" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Copia textos entre idiomas" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_IDEST" ENTRY="        Idioma destino" LENGTH="22 "/>
+   <textElement ID="S" KEY="P_IORIG" ENTRY="        Idioma origen" LENGTH="21 "/>
+   <textElement ID="S" KEY="S_NAME" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  ZCOPIA_TEXTOS
+*&amp;
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;
+*&amp;---------------------------------------------------------------------*
+
+REPORT  zcopia_textos.
+
+TABLES: trdir.
+DATA: i_textos TYPE TABLE OF textpool WITH HEADER LINE,
+      i_trdir TYPE TABLE OF trdir WITH HEADER LINE.
+
+SELECT-OPTIONS s_name FOR trdir-name.
+
+PARAMETERS: p_iorig LIKE sy-langu DEFAULT &apos;E&apos; OBLIGATORY,
+            p_idest LIKE sy-langu OBLIGATORY.
+
+START-OF-SELECTION.
+
+
+  SELECT * FROM trdir
+    INTO TABLE i_trdir
+   WHERE name IN s_name.
+
+  LOOP AT i_trdir.
+    REFRESH i_textos.
+    READ TEXTPOOL i_trdir-name INTO i_textos LANGUAGE p_iorig.
+    IF sy-subrc = 0 AND NOT i_textos[] IS INITIAL.
+      INSERT textpool i_trdir-name FROM i_textos LANGUAGE p_idest.
+    ENDIF.
+  ENDLOOP.</source>
+</PROG>

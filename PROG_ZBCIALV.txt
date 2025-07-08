@@ -1,0 +1,1358 @@
+************************************************************************
+* TITULO      : Include rutinas comunes listados ALV
+* DESCRIPCION : Este es un conjunto de rutinas y variables comunes
+*               para listados básicos ALV
+*               Un report muy simple debe declarar este include y
+*               llamar a las rutinas en el siguiente orden
+*                  report z_alv_simple.
+*                  include zbcvk003.
+*                  data: i_listado.... (declarar los campos de salida)
+*                  INITIALIZATION.
+*                    alv_repname = sy-repid.
+*                    PERFORM initialize_fieldcat USING alv_fieldtab[].
+*                    PERFORM alv_build_eventtab USING alv_events[].
+*                    PERFORM alv_initialize_variant.
+*                  START-OF-SELECTION.
+*                    (seleccionar_datos en table i_listado)
+*                    PERFORM alv_build_layout USING alv_layout.
+*                    PERFORM alv_write_output TABLES i_listado
+*                                             USING v_alv_tabla.
+*
+*    Más simplicado
+*                     v_alv_pf_status = ''.
+*                     PERFORM listado_tabla_alv TABLES i_listado
+*                                                USING 'I_LISTADO'
+*                                                      alv_fieldtab.
+* Tratamiento de bloques:
+*    alv_repname = sy-repid.
+*
+*    PERFORM alv_build_eventtab USING alv_events[].
+*    PERFORM alv_build_layout USING alv_layout.
+*
+*    perform alv_block_init.
+*
+*    PERFORM alv_write_output_append TABLES i_zesd126_vieja
+*                       USING 'I_ZESD126_VIEJA'
+*                             'Listado tabla ZESD126 anterior'
+*                              alv_fieldtab ALV_SORT alv_events.
+*
+*    PERFORM alv_write_output_append TABLES i_zesd125_vieja
+*                       USING 'I_ZESD125_VIEJA'
+*                             'Listado tabla ZESD125 anterior'
+
+*                              alv_fieldtab2 ALV_SORT2 alv_Events.
+*
+*    perform alv_block_display.
+*
+* AUTOR       : Andrés Picazo (Altimia)         FECHA: 13/02/03        *
+*
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA            NOMBRE            DESCRIPCION                       *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy       username                                            *
+************************************************************************
+
+*------TABLAS INTERNAS-------------------------------------------------*
+  TYPE-POOLS:   slis.
+
+* Tabla interna con los campos del listado y sus atributos de salida
+  DATA: alv_fieldtab TYPE slis_t_fieldcat_alv,
+* Tabla con los datos de cabecera de página
+          alv_heading TYPE slis_t_listheader,               "#EC NEEDED
+* Estructura con los parámetros generales del listado
+          alv_layout TYPE slis_layout_alv,
+* Tabla interna con los forms de usuario que manejarán los eventos
+          alv_events TYPE slis_t_event,
+* Tabla con datos de ordenación
+          alv_sort TYPE slis_t_sortinfo_alv,
+* Tabla parametros de filtro de datos
+          alv_filter TYPE slis_t_filter_alv,
+* Tabla opciones de impresion
+          alv_print TYPE slis_print_alv,
+          alv_repname LIKE sy-repid VALUE sy-repid,
+          alv_tabla(20) TYPE c,                             "#EC NEEDED
+          alv_f2code LIKE sy-ucomm VALUE  'DISP',
+          alv_g_save(1) TYPE c,
+          alv_g_exit(1) TYPE c,
+          alv_g_variant LIKE disvariant,
+          alv_gx_variant LIKE disvariant,
+          alv_key TYPE slis_keyinfo_alv,
+          alv_use_grid TYPE c.
+
+  DATA: alv_fieldtab2 TYPE slis_t_fieldcat_alv,             "#EC NEEDED
+          alv_heading2 TYPE slis_t_listheader,              "#EC NEEDED
+          alv_layout2 TYPE slis_layout_alv,                 "#EC NEEDED
+          alv_sort2 TYPE slis_t_sortinfo_alv,               "#EC NEEDED
+          alv_filter2 TYPE slis_t_filter_alv,               "#EC NEEDED
+          alv_events2 TYPE slis_t_event,                    "#EC NEEDED
+          alv_key2 TYPE slis_keyinfo_alv.                   "#EC NEEDED
+
+  DATA: alv_fieldtab3 TYPE slis_t_fieldcat_alv,             "#EC NEEDED
+          alv_heading3 TYPE slis_t_listheader,              "#EC NEEDED
+          alv_layout3 TYPE slis_layout_alv,                 "#EC NEEDED
+          alv_sort3 TYPE slis_t_sortinfo_alv,               "#EC NEEDED
+          alv_filter3 TYPE slis_t_filter_alv,               "#EC NEEDED
+          alv_events3 TYPE slis_t_event,                    "#EC NEEDED
+          alv_key3 TYPE slis_keyinfo_alv.                   "#EC NEEDED
+
+  DATA: alv_fieldcat TYPE slis_fieldcat_alv.
+
+*------VARIABLES-------------------------------------------------------*
+* Variante de visualización seleccionada
+  DATA v_alv_vari LIKE disvariant-variant.                  "#EC NEEDED
+* Nombre de la tabla interna a visualizar
+  DATA: v_alv_tabla TYPE slis_tabname VALUE 'I_LISTADO',
+* Tabla en listados jerárquicos
+          v_alv_tabla_cab TYPE slis_tabname VALUE 'I_LIST_CAB',
+          v_alv_tabla_pos TYPE slis_tabname VALUE 'I_LIST_POS',
+* Nombre del form que controla el encabezado de página
+          v_alv_top_of_page TYPE slis_formname,
+* Nombre del form que controla el pie de página
+          v_alv_end_of_page TYPE slis_formname,
+          v_alv_top_of_list TYPE slis_formname,
+          v_alv_end_of_list TYPE slis_formname,
+* Nombre del form que controla el tratamiento de acciones de usuario
+          v_alv_user_command TYPE slis_formname VALUE 'USER_COMMAND',
+* Nombre del form que define el status del report
+          v_alv_pf_status TYPE slis_formname VALUE 'PF_STATUS_SET',
+          v_alv_status(20) VALUE 'STANDARD',
+* Nombre del form que controla el cambio de línea
+          v_alv_before_line_output TYPE slis_formname,
+          v_alv_after_line_output TYPE slis_formname,
+* Texto en la linea de totales
+          v_totals_text(60) TYPE c,
+* Texto en la linea de subtotales
+          v_subtotals_text(60) TYPE c,
+* Optimizar ancho columnas
+          v_colwidth_optimize TYPE c,
+          v_alv_zebra VALUE 'X',
+* Variable para gestionar colores
+          v_alv_color TYPE slis_specialcol_alv,             "#EC NEEDED
+* Nombre del campo que indica el color
+          v_alv_campo_color(20) TYPE c,
+* Nombre del campo con el color de la línea
+          v_alv_line_color(30) type c,
+* Nombre del campo checkbox
+          v_alv_checkbox LIKE alv_layout-box_fieldname,
+* Nombre del campo semaforo ('1' Rojo, '2' Ambar, '3' Verde)
+          v_alv_lights LIKE alv_layout-lights_fieldname,
+* Botón con las opciones de selección
+          v_get_selinfos LIKE alv_layout-get_selinfos VALUE 'X',
+* No imprimir información de listado.
+          v_alv_no_print_listinfos LIKE alv_print-no_print_listinfos
+                                      VALUE 'X',
+* No fija columnas clave
+          v_alv_no_keyfix LIKE alv_layout-no_keyfix VALUE 'X',
+* Permite desplazamiento columnas clave.
+          v_alv_flexible_key LIKE alv_layout-flexible_key VALUE 'X',
+          v_totals_before_items LIKE alv_layout-totals_before_items.
+
+
+*------CONSTANTES------------------------------------------------------*
+
+  CONSTANTS: c_alv_no_color VALUE '0',                      "#EC NEEDED
+             c_alv_color_azul VALUE '1',                    "#EC NEEDED
+             c_alv_color_blanco VALUE '2',                  "#EC NEEDED
+             c_alv_color_amarillo VALUE '3',                "#EC NEEDED
+             c_alv_azul_claro VALUE '4',                    "#EC NEEDED
+             c_alv_color_verde VALUE '5',                   "#EC NEEDED
+             c_alv_color_rojo VALUE '6',                    "#EC NEEDED
+             c_alv_color_naranja VALUE '7',                 "#EC NEEDED
+             c_alv_color_blancoi VALUE '8'.                 "#EC NEEDED
+
+  CONSTANTS: c_alv_luz_verde(4)            VALUE '@08@',    "#EC NEEDED
+             c_alv_luz_roja(4)             VALUE '@0A@',    "#EC NEEDED
+             c_alv_luz_ambar(4)            VALUE '@09@',    "#EC NEEDED
+             c_alv_sem_rojo            VALUE '1',           "#EC NEEDED
+             c_alv_sem_ambar           VALUE '2',           "#EC NEEDED
+             c_alv_sem_verde           VALUE '3'.           "#EC NEEDED
+
+  CONSTANTS: c_alv_icono_papelera(4)    VALUE '@11@'.       "#EC NEEDED
+
+
+
+
+*------INCLUDES--------------------------------------------------------*
+
+* Formateo campos
+  DEFINE field_no_out.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-no_out = 'X'.
+    alv_fieldcat-key_sel = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_no_out.
+    field_no_out v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+  DEFINE field_no_key.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-key = 'N'.
+    alv_fieldcat-key_sel = 'X'.
+    alv_fieldcat-fix_column = ''.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_no_key.
+    field_no_key v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+  DEFINE field_key.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-key = 'X'.
+    alv_fieldcat-fix_column = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_key.
+    field_key v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+
+  DEFINE field_text_simple.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-reptext_ddic = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simple.
+    field_text_simple v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple_input.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-reptext_ddic = &3.
+    alv_fieldcat-input = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple_long_input.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-reptext_ddic = &3.
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-outputlen = &4.
+*  alv_fieldcat-ddic_outputlen = &4.
+    alv_fieldcat-input = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simple_input.
+    field_text_simple_input v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple2.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-seltext_l =
+    alv_fieldcat-seltext_m =
+    alv_fieldcat-reptext_ddic = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simple2.
+    field_text_simple v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple_noout.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-seltext_l =
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s =
+    alv_fieldcat-reptext_ddic = &3.
+    alv_fieldcat-no_out = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simple_noout.
+    field_text_simple_noout v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_long.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-outputlen = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_long.
+    field_long v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple_long.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-outputlen = &4.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simple_long.
+    field_text_simple_long v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+  DEFINE field_text_simple_long_no_out.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l =
+    alv_fieldcat-seltext_m = &3.
+*  alv_fieldcat-seltext_s    = &3.
+    alv_fieldcat-outputlen = &4.
+    alv_fieldcat-no_out = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_text_simp_long_no_out.
+    field_text_simple_long_no_out v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+
+  DEFINE field_input.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-input = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_input.
+    field_input v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+  DEFINE field_checkbox.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-checkbox = 'X'.
+    alv_fieldcat-input = 'X'.
+    alv_fieldcat-seltext_s = 'S'.
+    alv_fieldcat-outputlen = 1.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_checkbox.
+    field_checkbox v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum.
+    field_do_sum v_alv_tabla &1.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum_text.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-outputlen = &4.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_text.
+    field_do_sum_text v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum_texts.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    alv_fieldcat-reptext_ddic = &3.
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_texts.
+    field_do_sum_texts v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum_texts_input.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    alv_fieldcat-reptext_ddic = &3.
+    alv_fieldcat-seltext_l = &3.
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-input = 'X'.
+    alv_fieldcat-no_zero = 'X'.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_texts_input.
+    field_do_sum_texts_input v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum_text2.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l =
+    alv_fieldcat-seltext_m = &3.
+    alv_fieldcat-outputlen = &4.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_text2.
+    field_do_sum_text v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+
+  DEFINE field_do_sum_text_noout.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-do_sum = 'X'.
+    alv_fieldcat-no_out = 'X'.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l =
+    alv_fieldcat-seltext_m =
+    alv_fieldcat-seltext_s = &3.
+    alv_fieldcat-outputlen = &4.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_text_noout.
+    field_do_sum_text_noout v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+  DEFINE field_do_sum_texts_noout.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname      = &1.
+    alv_fieldcat-fieldname    = &2.
+    alv_fieldcat-do_sum       = 'X'.
+    alv_fieldcat-no_out       = 'X'.
+    alv_fieldcat-reptext_ddic =
+    alv_fieldcat-seltext_l    =
+    alv_fieldcat-seltext_m    =
+    alv_fieldcat-seltext_s    = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_do_sum_texts_noout.
+    field_do_sum_texts_noout v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+  DEFINE field_alv.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-&3 = &4.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_alv.
+    field_alv v_alv_tabla &1 &2 &3.
+  END-OF-DEFINITION.
+
+  DEFINE field_linea.
+    clear alv_fieldcat.
+    alv_fieldcat-tabname = &1.
+    alv_fieldcat-fieldname = &2.
+    alv_fieldcat-row_pos = &3.
+    append alv_fieldcat to p_fieldtab.
+  END-OF-DEFINITION.
+
+  DEFINE fieldcat_linea.
+    field_linea v_alv_tabla &1 &2.
+  END-OF-DEFINITION.
+
+* Ordenación
+  DEFINE alv_sort_up.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-up = 'X'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE alv_sort_down.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-down = 'X'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE alv_sort_up_subtot.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-up = 'X'.
+    sortinfo_alv-subtot = 'X'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE alv_sort_up_group_new_page.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-up = 'X'.
+    sortinfo_alv-group = '*'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE alv_sort_up_group_subrayado.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-up = 'X'.
+    sortinfo_alv-group = 'UL'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE alv_sort_up_group_subraya_tot.
+    clear sortinfo_alv.
+    sortinfo_alv-fieldname = &1.
+    sortinfo_alv-spos = &2.
+    sortinfo_alv-tabname = v_alv_tabla.
+    sortinfo_alv-up = 'X'.
+    sortinfo_alv-group = 'UL'.
+    sortinfo_alv-subtot = 'X'.
+    append sortinfo_alv to p_alv_sort.
+  END-OF-DEFINITION.
+
+  DEFINE refrescar_listado.
+    call function 'REUSE_ALV_LIST_LAYOUT_INFO_SET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+    call function 'REUSE_ALV_LIST_WIDTH_GET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+
+    pu_selfield-refresh = 'X'.
+    pu_selfield-col_stable = 'X'.
+    pu_selfield-row_stable = 'X'.
+  END-OF-DEFINITION.
+
+  DEFINE refrescar_listado_list.
+    call function 'REUSE_ALV_LIST_LAYOUT_INFO_SET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+    pu_selfield-refresh = 'X'.
+    pu_selfield-col_stable = 'X'.
+    pu_selfield-row_stable = 'X'.
+  END-OF-DEFINITION.
+
+  DEFINE refrescar_grid.
+    call function 'REUSE_ALV_GRID_LAYOUT_INFO_SET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+
+    pu_selfield-refresh = 'X'.
+    pu_selfield-col_stable = 'X'.
+    pu_selfield-row_stable = 'X'.
+  END-OF-DEFINITION.
+
+  DEFINE refrescar_listado_grid.
+    call function 'REUSE_ALV_GRID_LAYOUT_INFO_SET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+    call function 'REUSE_ALV_GRID_WIDTH_GET'
+      exporting
+        it_fieldcat = alv_fieldtab.
+
+    pu_selfield-refresh = 'X'.
+    pu_selfield-col_stable = 'X'.
+    pu_selfield-row_stable = 'X'.
+  END-OF-DEFINITION.
+
+
+
+
+** Color
+* Añadir el siguiente campo en la tabla interna
+*     color    TYPE slis_t_specialcol_alv,
+  DEFINE alv_color.
+    clear v_alv_color.
+    v_alv_color-fieldname = &2.
+    v_alv_color-color-col = &3.
+    append v_alv_color to &1.
+  END-OF-DEFINITION.
+
+*------FORMS-----------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_BUILD_EVENTTAB
+*&---------------------------------------------------------------------*
+*       Permite definir al usuario los forms que realizaran determinados
+*       eventos
+*----------------------------------------------------------------------*
+  FORM alv_build_eventtab USING p_events TYPE slis_t_event.
+    DATA: ls_event TYPE slis_alv_event.
+
+*    REFRESH alv_events.
+    REFRESH p_events.
+    CALL FUNCTION 'REUSE_ALV_EVENTS_GET'                    "#EC *
+         EXPORTING
+                i_list_type = 0
+         IMPORTING
+                et_events = p_events.
+
+    IF NOT v_alv_pf_status IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_pf_status_set
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_pf_status TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_top_of_page IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_top_of_page
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_top_of_page TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_end_of_page IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_end_of_page
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_end_of_page TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_end_of_list IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_end_of_list
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_end_of_list TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_top_of_list IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_top_of_list
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_top_of_list TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_user_command IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_user_command
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE slis_ev_user_command TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_before_line_output IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_before_line_output
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_before_line_output TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF NOT v_alv_after_line_output IS INITIAL.
+      READ TABLE p_events WITH KEY name = slis_ev_after_line_output
+                               INTO ls_event.
+      IF sy-subrc = 0.
+        MOVE v_alv_after_line_output TO ls_event-form.
+        MODIFY p_events FROM ls_event INDEX sy-tabix.
+      ENDIF.
+    ENDIF.
+
+  ENDFORM.                               " BUILD_EVENTTAB
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_BUILD_LAYOUT
+*&---------------------------------------------------------------------*
+*       Parametros globales del listado
+*&---------------------------------------------------------------------*
+  FORM alv_build_layout USING p_layout TYPE slis_layout_alv.
+
+    p_layout-f2code = alv_f2code.
+    p_layout-zebra = v_alv_zebra.
+    p_layout-detail_popup = 'X'.
+    p_layout-colwidth_optimize = v_colwidth_optimize.
+    p_layout-totals_text = v_totals_text.
+    p_layout-subtotals_text = v_subtotals_text.
+    p_layout-coltab_fieldname = v_alv_campo_color.
+    p_layout-box_fieldname = v_alv_checkbox.
+    p_layout-lights_fieldname = v_alv_lights.
+    p_layout-get_selinfos = v_get_selinfos.
+    p_layout-no_keyfix = v_alv_no_keyfix.
+    p_layout-cell_merge = 'X'.
+    p_layout-flexible_key = v_alv_flexible_key.
+    p_layout-totals_before_items = v_totals_before_items.
+    p_layout-info_fieldname    = v_alv_line_color.
+
+  ENDFORM.                               " BUILD_LAYOUT
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_PRINT_OPTIONS
+*&---------------------------------------------------------------------*
+*       Parametros de impresion
+*&---------------------------------------------------------------------*
+  FORM alv_print_options USING p_print TYPE slis_print_alv.
+
+    p_print-no_coverpage = 'X'.
+    p_print-no_print_listinfos = v_alv_no_print_listinfos.
+
+
+  ENDFORM.                               " BUILD_LAYOUT
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_WRITE_OUTPUT
+*&---------------------------------------------------------------------*
+*       Muestra el listado
+*----------------------------------------------------------------------*
+  FORM alv_write_output TABLES pi_tabla
+                         USING p_fieldtab
+                                  TYPE slis_t_fieldcat_alv.
+
+    call function 'REUSE_ALV_FIELDCATALOG_MERGE'
+      exporting
+        i_program_name         = alv_repname
+        i_internal_tabname     = v_alv_tabla
+        i_inclname             = alv_repname
+        i_bypassing_buffer     = 'X'
+      changing
+        ct_fieldcat            = p_fieldtab
+      exceptions
+        inconsistent_interface
+        program_error.
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_FIELDCATALOG_MERGE'.
+    ENDIF.
+
+    IF alv_use_grid IS INITIAL.
+      CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
+           EXPORTING
+                  i_callback_program = alv_repname
+                  i_structure_name = v_alv_tabla
+                  is_layout = alv_layout
+                  it_fieldcat = p_fieldtab
+                  i_default = 'A'
+                  i_save = 'A'
+                  is_variant = alv_g_variant
+                  it_events = alv_events[]
+                  is_print = alv_print
+                  it_sort = alv_sort
+                  it_filter = alv_filter
+           TABLES
+                  t_outtab = pi_tabla
+           EXCEPTIONS
+                  program_error.
+      IF sy-subrc <> 0.
+        WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_LIST_DISPLAY'.
+      ENDIF.
+    ELSE.
+      CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+           EXPORTING
+*          I_BYPASSING_BUFFER          =
+*          I_BUFFER_ACTIVE             =
+*          I_INTERFACE_CHECK           = ' '
+                 i_callback_program = alv_repname
+*          I_CALLBACK_PF_STATUS_SET    = ' '
+*          I_CALLBACK_USER_COMMAND     = ' '
+*          I_CALLBACK_TOP_OF_PAGE      = ' '
+*          I_CALLBACK_HTML_TOP_OF_PAGE = ' '
+*          I_CALLBACK_HTML_END_OF_LIST = ' '
+                  i_structure_name = v_alv_tabla
+*          I_BACKGROUND_ID             = ' '
+*          I_GRID_TITLE                =
+*          I_GRID_SETTINGS             =
+                  is_layout = alv_layout
+                  it_fieldcat = p_fieldtab
+*          IT_EXCLUDING                =
+*          IT_SPECIAL_GROUPS           =
+                  it_sort = alv_sort
+                  it_filter = alv_filter
+*          IS_SEL_HIDE                 =
+                  i_default = 'A'
+                  i_save = 'A'
+                  is_variant             = alv_g_variant
+                  it_events = alv_events
+*          IT_EVENT_EXIT               =
+                  is_print = alv_print
+*          IS_REPREP_ID                =
+*          I_SCREEN_START_COLUMN       = 0
+*          I_SCREEN_START_LINE         = 0
+*          I_SCREEN_END_COLUMN         = 0
+*          I_SCREEN_END_LINE           = 0
+*          I_HTML_HEIGHT_TOP           =
+*          I_HTML_HEIGHT_END           =
+*     IMPORTING
+*          E_EXIT_CAUSED_BY_CALLER     =
+*          ES_EXIT_CAUSED_BY_USER      =
+           TABLES
+                  t_outtab = pi_tabla
+           EXCEPTIONS
+                  program_error = 1
+                  OTHERS = 2.
+      IF sy-subrc <> 0.
+        WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_GRID_DISPLAY'.
+      ENDIF.
+    ENDIF.
+
+  ENDFORM.                               " WRITE_OUTPUT
+
+*---------------------------------------------------------------------*
+*       FORM alv_block_init                                           *
+*---------------------------------------------------------------------*
+*       Inicia gestión de bloques ALV
+*---------------------------------------------------------------------*
+  FORM alv_block_init.                                      "#EC CALLED
+    CALL FUNCTION 'REUSE_ALV_BLOCK_LIST_INIT'
+      EXPORTING
+        i_callback_program       = alv_repname
+        i_callback_pf_status_set = v_alv_pf_status
+        i_callback_user_command  = v_alv_user_command.
+
+  ENDFORM.                    "alv_block_init
+
+*---------------------------------------------------------------------*
+*       FORM alv_block_display                                        *
+*---------------------------------------------------------------------*
+*       Muestra en pantalla todos los bloques ALV                     *
+*---------------------------------------------------------------------*
+  FORM alv_block_display.                                   "#EC CALLED
+
+    alv_print-reserve_lines = 2.
+    CALL FUNCTION 'REUSE_ALV_BLOCK_LIST_DISPLAY'
+      EXPORTING
+        is_print = alv_print.
+  ENDFORM.                    "alv_block_display
+
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_WRITE_OUTPUT_APPEND
+*&---------------------------------------------------------------------*
+*       Añade un nuevo bloque al listado
+*----------------------------------------------------------------------*
+  FORM alv_write_output_append TABLES pi_tabla              "#EC CALLED
+                               USING  pe_tabla  TYPE any
+                                        pe_text TYPE  slis_text40
+                                     pe_alv_layout TYPE slis_layout_alv
+                                    pi_fieldtab TYPE slis_t_fieldcat_alv
+                                       pi_sort TYPE slis_t_sortinfo_alv
+                                        pi_events TYPE  slis_t_event.
+
+    alv_tabla = pe_tabla.
+    CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+      EXPORTING
+        i_program_name         = alv_repname
+        i_internal_tabname     = pe_tabla
+        i_inclname             = alv_repname
+      CHANGING
+        ct_fieldcat            = pi_fieldtab
+      EXCEPTIONS
+        inconsistent_interface
+        program_error.
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_FIELDCATALOG_MERGE'.
+    ENDIF.
+
+    CALL FUNCTION 'REUSE_ALV_BLOCK_LIST_APPEND'
+      EXPORTING
+        is_layout                 = pe_alv_layout
+        i_tabname                 = pe_tabla
+        it_fieldcat               = pi_fieldtab
+        it_events                 = pi_events
+        it_sort                   = pi_sort
+        i_text                    = pe_text
+      TABLES
+        t_outtab                  = pi_tabla
+      EXCEPTIONS
+        program_error
+        maximum_of_appends_reached.
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_BLOCK_LIST_APPEND'.
+    ENDIF.
+
+  ENDFORM.                               " ALV_WRITE_OUTPUT_APPEND
+
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_WRITE_OUTPUT_JERARQUICO
+*&---------------------------------------------------------------------*
+*       Muestra el listado
+*----------------------------------------------------------------------*
+  FORM alv_write_output_jerarquico TABLES pi_tabla_cab
+                                            pi_tabla_pos.
+
+    CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+      EXPORTING
+        i_program_name         = alv_repname
+        i_internal_tabname     = v_alv_tabla_cab
+        i_inclname             = alv_repname
+      CHANGING
+        ct_fieldcat            = alv_fieldtab
+      EXCEPTIONS
+        inconsistent_interface
+        program_error.
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_FIELDCATALOG_MERGE'.
+    ENDIF.
+
+    CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+      EXPORTING
+        i_program_name         = alv_repname
+        i_internal_tabname     = v_alv_tabla_pos
+        i_inclname             = alv_repname
+      CHANGING
+        ct_fieldcat            = alv_fieldtab
+      EXCEPTIONS
+        inconsistent_interface
+        program_error.
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_FIELDCATALOG_MERGE'.
+    ENDIF.
+
+    CALL FUNCTION 'REUSE_ALV_HIERSEQ_LIST_DISPLAY'
+      EXPORTING
+          i_callback_program = alv_repname
+          is_layout = alv_layout
+          it_fieldcat = alv_fieldtab[]
+*   IT_EXCLUDING                   =
+*   IT_SPECIAL_GROUPS              =
+       it_sort = alv_sort
+       it_filter = alv_filter
+*   IS_SEL_HIDE                    =
+*   I_SCREEN_START_COLUMN          = 0
+*   I_SCREEN_START_LINE            = 0
+*   I_SCREEN_END_COLUMN            = 0
+*   I_SCREEN_END_LINE              = 0
+*   I_DEFAULT                      = 'A'
+        i_save = alv_g_save
+        is_variant =  alv_g_variant
+         it_events = alv_events[]
+*   IT_EVENT_EXIT                  =
+          i_tabname_header = v_alv_tabla_cab
+          i_tabname_item = v_alv_tabla_pos
+*   I_STRUCTURE_NAME_HEADER        =
+*   I_STRUCTURE_NAME_ITEM          =
+          is_keyinfo = alv_key
+*   IS_PRINT                       =
+*   IS_REPREP_ID                   =
+*   I_BUFFER_ACTIVE                =
+*   I_BYPASSING_BUFFER             =
+* IMPORTING
+*   E_EXIT_CAUSED_BY_CALLER        =
+*   ES_EXIT_CAUSED_BY_USER         =
+      TABLES
+          t_outtab_header = pi_tabla_cab
+          t_outtab_item = pi_tabla_pos
+   EXCEPTIONS
+       program_error = 1
+       OTHERS = 2
+              .
+    IF sy-subrc <> 0.
+      WRITE:: 'SY-SUBRC: ', sy-subrc,
+               'REUSE_ALV_HIERSEQ_LIST_DISPLAY'.
+    ENDIF.
+
+  ENDFORM.                               " ALV_WRITE_OUTPUT_JERARQUICO
+
+*---------------------------------------------------------------------*
+*       FORM ALV_INITIALIZA_VARIANT                                   *
+*---------------------------------------------------------------------*
+*       Inicializa la variante inicial.
+*---------------------------------------------------------------------*
+  FORM alv_initialize_variant.                              "#EC CALLED
+
+    alv_g_save = 'A'.
+    CLEAR alv_g_variant.
+    alv_repname = sy-repid.
+    alv_g_variant-report = alv_repname.
+    alv_gx_variant = alv_g_variant.
+    CALL FUNCTION 'REUSE_ALV_VARIANT_DEFAULT_GET'
+      EXPORTING
+        i_save     = alv_g_save
+      CHANGING
+        cs_variant = alv_gx_variant
+      EXCEPTIONS
+        not_found  = 2.
+    IF sy-subrc = 0.
+      v_alv_vari = alv_gx_variant-variant.
+    ENDIF.
+
+  ENDFORM.                               " INITIALIZE_VARIANT
+
+
+*---------------------------------------------------------------------*
+*       FORM ALV_SET_PF_STATUS                                        *
+*---------------------------------------------------------------------*
+*       Fija estatus inicial (copiar status de SAPLKKBL)
+*---------------------------------------------------------------------*
+  FORM pf_status_set                                        "#EC CALLED
+     USING pu_tab_excl_okcode TYPE slis_t_extab.
+
+* delete pu_tab_excl_okcode where fcode = '&REFRESH'.
+* set pf-status 'STANDARD' of program 'SAPLKKBL' excluding it_extab.
+
+    SET PF-STATUS v_alv_status EXCLUDING pu_tab_excl_okcode.
+
+  ENDFORM.                    "pf_status_set
+
+*---------------------------------------------------------------------*
+*       FORM LISTADO_TABLA_ALV                                        *
+*---------------------------------------------------------------------*
+*       Mostramos el contenido de una tabla interna en formato ALV
+*---------------------------------------------------------------------*
+  FORM listado_tabla_alv TABLES i_tabla
+                         USING pe_tabla TYPE any
+                                 p_fieldtab
+                                  TYPE slis_t_fieldcat_alv. "#EC NEEDED
+
+    alv_repname = sy-repid.
+    v_alv_tabla = pe_tabla.
+
+    PERFORM alv_build_eventtab USING alv_events[].
+    PERFORM alv_build_layout USING alv_layout.
+    PERFORM alv_print_options USING alv_print.
+    PERFORM alv_write_output TABLES i_tabla
+                             USING p_fieldtab.
+
+  ENDFORM.                    "listado_tabla_alv
+
+*---------------------------------------------------------------------*
+*       FORM LISTADO_TABLA_ALV_JERARQUICO                             *
+*---------------------------------------------------------------------*
+*       Mostramos el contenido de una tabla interna en formato ALV
+*---------------------------------------------------------------------*
+  FORM listado_tabla_alv_jerarquico                         "#EC CALLED
+                        TABLES i_tabla_cab i_tabla_pos
+                         USING pe_tabla_cab TYPE any
+                               pe_tabla_pos TYPE any
+                               p_fieldtab
+                                 TYPE slis_t_fieldcat_alv.  "#EC NEEDED
+
+    alv_repname = sy-repid.
+    v_alv_tabla_cab = pe_tabla_cab.
+    v_alv_tabla_pos = pe_tabla_pos.
+
+    PERFORM alv_build_eventtab USING alv_events[].
+    PERFORM alv_build_layout USING alv_layout.
+    PERFORM alv_print_options USING alv_print.
+    PERFORM alv_write_output_jerarquico TABLES i_tabla_cab i_tabla_pos.
+
+  ENDFORM.                    "listado_tabla_alv_jerarquico
+
+*&---------------------------------------------------------------------*
+*&      Form  F4_FOR_VARIANT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+  FORM f4_for_variant CHANGING pe_vari TYPE any.            "#EC CALLED
+    CALL FUNCTION 'REUSE_ALV_VARIANT_F4'
+      EXPORTING
+        is_variant = alv_g_variant
+        i_save     = alv_g_save
+      IMPORTING
+        e_exit     = alv_g_exit
+        es_variant = alv_gx_variant
+      EXCEPTIONS
+        not_found  = 2.
+    IF sy-subrc = 2.
+      MESSAGE ID sy-msgid TYPE 'S'      NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      IF alv_g_exit = space.
+        pe_vari = alv_gx_variant-variant.
+      ENDIF.
+    ENDIF.
+  ENDFORM.                               " F4_FOR_VARIANT
+
+*&---------------------------------------------------------------------*
+*&      Form  INITIALIZE_VARIANT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+  FORM initialize_variant CHANGING pe_vari TYPE any.        "#EC CALLED
+    alv_g_save = 'A'.
+    CLEAR alv_g_variant.
+    alv_g_variant-report = alv_repname.
+    alv_gx_variant = alv_g_variant.
+    CALL FUNCTION 'REUSE_ALV_VARIANT_DEFAULT_GET'
+      EXPORTING
+        i_save     = alv_g_save
+      CHANGING
+        cs_variant = alv_gx_variant
+      EXCEPTIONS
+        not_found  = 2.
+    IF sy-subrc = 0.
+      pe_vari = alv_gx_variant-variant.
+    ENDIF.
+  ENDFORM.                    "INITIALIZE_VARIANT
+*&---------------------------------------------------------------------*
+*&      Form  PAI_OF_SELECTION_SCREEN
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+  FORM pai_of_selection_screen USING pe_vari TYPE any
+                               CHANGING ps_vari TYPE any.   "#EC CALLED
+*
+    IF NOT pe_vari IS INITIAL.
+      MOVE alv_g_variant TO alv_gx_variant.
+      MOVE pe_vari TO alv_gx_variant-variant.
+      CALL FUNCTION 'REUSE_ALV_VARIANT_EXISTENCE'
+        EXPORTING
+          i_save     = alv_g_save
+        CHANGING
+          cs_variant = alv_gx_variant.
+      alv_g_variant = alv_gx_variant.
+    ELSE.
+      PERFORM initialize_variant CHANGING ps_vari.
+    ENDIF.
+  ENDFORM.                               " PAI_OF_SELECTION_SCREEN
+
+
+
+*-------- RUTINAS DE EJEMPLO A COPIAR EN EL PROGRAMA ORIGEN ----------*
+**---------------------------------------------------------------------*
+**       FORM INITIALIZE_FIELDCAT                                      *
+**---------------------------------------------------------------------*
+**       Informa descripciones de los campos y su tamaño
+**---------------------------------------------------------------------*
+*FORM INITIALIZE_FIELDCAT USING P_FIELDTAB TYPE SLIS_T_FIELDCAT_ALV.
+*
+*  REFRESH P_FIELDTAB.
+*
+*  FIELDCAT_TEXT_SIMPLE_LONG: 'STATUS' 'Status orden' 20,
+*                             'BLOQUEO' 'Bloqueo' 20',
+*                             'BORRADO' 'Borrado' 20'.
+*
+*ENDFORM.
+
+
+**-------------------------------------------------------------------**
+** FORM TOP_OF_PAGE
+***-------------------------------------------------------------------*
+*FORM TOP_OF_PAGE.
+*  DATA: lt_commentary TYPE slis_t_listheader WITH HEADER LINE.
+*
+*** Header
+*  CLEAR LT_COMMENTARY.
+*  LT_COMMENTARY-TYP = 'H'.
+*  LT_COMMENTARY-INFO = 'Cuadre para documentos'.
+*  APPEND LT_COMMENTARY.
+*
+*
+*  CALL FUNCTION 'REUSE_ALV_COMMENTARY_WRITE'
+*    EXPORTING
+*      IT_LIST_COMMENTARY = LT_COMMENTARY[]
+**     I_LOGO =
+*      I_END_OF_LIST_GRID = 'X'.
+*
+*ENDFORM.
+*
+**---------------------------------------------------------------------*
+**       FORM alv_sortinfo                                             *
+**---------------------------------------------------------------------*
+**       Opciones de ordenación                                        *
+**---------------------------------------------------------------------*
+*FORM ALV_SORTINFO TABLES P_ALV_SORT TYPE SLIS_T_SORTINFO_ALV.
+*
+*  DATA sortinfo_alv TYPE slis_sortinfo_alv.
+*
+*  alv_sort_up 'CAMPO1'  1.
+*  alv_sort_up_group_subrayado 'CAMPO2' 2.
+*
+*ENDFORM.                               " ALV_SORTINFO
+*
+**---------------------------------------------------------------------*
+**       FORM ANTES_ESCRIBIR_LINEA                                     *
+**---------------------------------------------------------------------*
+**       Rutina a llamar antes de escribir una nueva linea
+**---------------------------------------------------------------------*
+**  -->  P_C                                                           *
+**---------------------------------------------------------------------*
+*FORM antes_escribir_linea USING p_c TYPE slis_lineinfo.
+*
+*  CHECK p_c-subtot IS INITIAL.
+*
+*  IF NOT L_LISTADO_ANT IS INITIAL.
+*    IF L_LISTADO_ANT-BELNR NE I_LISTADO-BELNR.
+**       WRITE: / 'doc'.
+*    ENDIF.
+*  ENDIF.
+*  l_listado_ant = i_listado.
+*
+*ENDFORM.
+**---------------------------------------------------------------------*
+**       FORM user_command                                             *
+**---------------------------------------------------------------------*
+**       Procesa las acciones de usuario
+**---------------------------------------------------------------------*
+*FORM user_command
+*  USING PU_OKCODE
+*        pu_selfield TYPE slis_selfield.
+*
+*  CASE pu_okcode.
+** Cuando se haga doble click sobre una fila, se muestra el desglose
+*    WHEN ALV_F2CODE.
+*      READ TABLE i_listado INDEX pu_selfield-tabindex.
+*      IF sy-subrc = 0.
+*        PERFORM LISTAR_DETALLE.
+*      ENDIF.
+*  ENDCASE.
+*ENDFORM.
+
+**---------------------------------------------------------------------*
+**       FORM AFTER_LINE_OUTPUT
+**---------------------------------------------------------------------*
+**       Rutina a llamar después de escribir una nueva linea
+**---------------------------------------------------------------------*
+*FORM AFTER_LINE_OUTPUT USING P_C TYPE SLIS_LINEINFO.
+*  DATA: L_INDEX LIKE SY-TABIX,
+*        L_LISTADO LIKE I_LISTADO.
+*
+*  CHECK P_C-SUBTOT IS INITIAL.
+*  L_INDEX = P_C-TABINDEX + 1.
+*  IF L_INDEX > 0.
+*    READ TABLE I_LISTADO INDEX L_INDEX INTO L_LISTADO.
+*    IF I_LISTADO-NIVEL5 NE L_LISTADO-NIVEL5.
+*      ULINE.
+*      NEW-LINE.
+*      FORMAT COLOR COL_TOTAL INTENSIFIED OFF.
+*      WRITE: / SY-VLINE,
+*              'Nivel 5:', I_LISTADO-NIVEL5,
+*               AT P_C-LINSZ SY-VLINE.
+*      ULINE.
+*    ENDIF.
+*  ENDIF.
+*
+*ENDFORM.
+
+*&---------------------------------------------------------------------*
+*&      Form  ALV_WRITE_OUTPUT
+*&---------------------------------------------------------------------*
+*       Muestra el listado
+*----------------------------------------------------------------------*
+  FORM alv_write_output_modi TABLES pi_tabla.               "#EC CALLED
+
+
+    IF alv_use_grid IS INITIAL.
+      CALL FUNCTION 'REUSE_ALV_LIST_DISPLAY'
+           EXPORTING
+                 i_callback_program = alv_repname
+                 i_structure_name = v_alv_tabla
+                 is_layout = alv_layout
+                 it_fieldcat = alv_fieldtab
+                 i_default = 'A'
+                 i_save = 'A'
+                 is_variant = alv_g_variant
+                 it_events = alv_events[]
+                 is_print = alv_print
+                 it_sort = alv_sort
+                 it_filter = alv_filter
+           TABLES
+                 t_outtab = pi_tabla
+           EXCEPTIONS
+                 program_error.
+      IF sy-subrc <> 0.
+        WRITE:: 'SY-SUBRC: ',  sy-subrc, 'REUSE_ALV_LIST_DISPLAY'.
+      ENDIF.
+    ELSE.
+      CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+           EXPORTING
+*          I_BYPASSING_BUFFER          =
+*          I_BUFFER_ACTIVE             =
+*          I_INTERFACE_CHECK           = ' '
+                i_callback_program = alv_repname
+*          I_CALLBACK_PF_STATUS_SET    = ' '
+*          I_CALLBACK_USER_COMMAND     = ' '
+*          I_CALLBACK_TOP_OF_PAGE      = ' '
+*          I_CALLBACK_HTML_TOP_OF_PAGE = ' '
+*          I_CALLBACK_HTML_END_OF_LIST = ' '
+                 i_structure_name = v_alv_tabla
+*          I_BACKGROUND_ID             = ' '
+*          I_GRID_TITLE                =
+*          I_GRID_SETTINGS             =
+                 is_layout = alv_layout
+                 it_fieldcat = alv_fieldtab
+*          IT_EXCLUDING                =
+*          IT_SPECIAL_GROUPS           =
+                 it_sort = alv_sort
+                 it_filter = alv_filter
+*          IS_SEL_HIDE                 =
+*          I_DEFAULT                   = 'X'
+*          I_SAVE                      = ' '
+*          IS_VARIANT                  =
+                 it_events = alv_events
+*          IT_EVENT_EXIT               =
+                 is_print = alv_print
+*          IS_REPREP_ID                =
+*          I_SCREEN_START_COLUMN       = 0
+*          I_SCREEN_START_LINE         = 0
+*          I_SCREEN_END_COLUMN         = 0
+*          I_SCREEN_END_LINE           = 0
+*          I_HTML_HEIGHT_TOP           =
+*          I_HTML_HEIGHT_END           =
+*     IMPORTING
+*          E_EXIT_CAUSED_BY_CALLER     =
+*          ES_EXIT_CAUSED_BY_USER      =
+           TABLES
+                 t_outtab = pi_tabla
+           EXCEPTIONS
+                 program_error = 1
+                 OTHERS = 2.
+      IF sy-subrc <> 0.
+        WRITE:: 'SY-SUBRC: ', sy-subrc, 'REUSE_ALV_GRID_DISPLAY'.
+      ENDIF.
+    ENDIF.
+
+  ENDFORM.                               " WRITE_OUTPUT

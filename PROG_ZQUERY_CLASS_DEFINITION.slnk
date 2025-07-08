@@ -1,0 +1,1396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZQUERY_CLASS_DEFINITION" VARCL="X" SUBC="I" RSTAT="P" RMAND="810" RLOAD="P" UCCHECK="X">
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Include ZQUERY_CLASS_DEFINITION
+*&amp;---------------------------------------------------------------------*
+
+CLASS lcl_message DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: report_message IMPORTING i_msg     TYPE string
+                                            i_type    TYPE char1
+                                            i_disp_as TYPE char1 OPTIONAL,
+
+                   user_choice IMPORTING i_title       TYPE string OPTIONAL
+                                         i_question    TYPE string
+                                         i_option_1    TYPE c
+                                         i_option_2    TYPE c
+                                         i_icon        TYPE iconname OPTIONAL
+                               RETURNING value(return) TYPE char1.
+ENDCLASS.                    &quot;lcl_message DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_no_query DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_no_query DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_no_query DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_query_overflow DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_query_overflow DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_query_overflow DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_error_query_check DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_error_query_check DEFINITION INHERITING FROM cx_dynamic_check.
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_message TYPE string OPTIONAL,
+             get_message RETURNING value(return) TYPE string.
+  PRIVATE SECTION.
+    DATA: v_message TYPE string.
+ENDCLASS.                    &quot;lcx_error_query_check DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_no_fieldcat DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_no_fieldcat DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_no_fieldcat DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_table_not_found DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_table_not_found DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_table_not_found DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_table_alias DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_table_alias DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_table_alias DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_cancel DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_cancel DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_cancel DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_existent_object DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_existent_object DEFINITION INHERITING FROM cx_dynamic_check.
+  PUBLIC SECTION.
+    METHODS: continue_process IMPORTING i_question TYPE string
+                              RETURNING value(return) TYPE boolean.
+ENDCLASS.                    &quot;lcx_existent_object DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_fields_overflow DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcx_fields_overflow DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_fields_overflow DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_no_fields_selected DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcx_no_fields_selected DEFINITION INHERITING FROM cx_dynamic_check.
+ENDCLASS.                    &quot;lcx_no_fields_selected DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_query_element_not_found DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcx_query_element_not_found DEFINITION INHERITING FROM cx_dynamic_check.
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_text TYPE string,
+             get_message RETURNING value(return) TYPE string.
+
+  PRIVATE SECTION.
+    DATA: v_text TYPE string.
+ENDCLASS.                    &quot;lcx_query_element_not_found DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcx_join_error DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcx_join_error DEFINITION INHERITING FROM cx_dynamic_check.
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_index   TYPE i
+                                   i_field   TYPE string
+                                   i_message TYPE string,
+             get_index RETURNING value(return) TYPE i,
+             get_field RETURNING value(return) TYPE string,
+             get_message RETURNING value(return) TYPE string.
+
+  PRIVATE SECTION.
+    DATA: v_index TYPE i,
+          v_field TYPE string,
+          v_message TYPE string.
+ENDCLASS.                    &quot;lcx_join_error DEFINITION
+
+*----------------------------------------------------------------------*
+*       INTERFACE lif_screen DEFINITION
+*----------------------------------------------------------------------*
+INTERFACE lif_screen.
+  METHODS: user_command IMPORTING i_ucomm TYPE sy-ucomm ,
+           exit_command IMPORTING i_ucomm TYPE sy-ucomm,
+           screen_status,
+           initialize_screen,
+           show IMPORTING i_first_col TYPE i OPTIONAL
+                          i_first_row TYPE i OPTIONAL
+                          i_last_col  TYPE i OPTIONAL
+                          i_last_row  TYPE i OPTIONAL.
+
+  DATA v_screen TYPE i.
+
+ENDINTERFACE. &quot;lif_screen
+
+*----------------------------------------------------------------------*
+* CLASS lcl_screen DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lif_screen.
+    ALIASES: user_command      FOR lif_screen~user_command,
+             exit_command      FOR lif_screen~exit_command,
+             screen_status     FOR lif_screen~screen_status,
+             initialize_screen FOR lif_screen~initialize_screen,
+             show              FOR lif_screen~show.
+
+    METHODS: constructor IMPORTING i_screen TYPE i,
+             set_screen IMPORTING i_screen TYPE i,
+             get_screen RETURNING value(return) TYPE i,
+
+             set_exit_command IMPORTING i_exit_command TYPE boolean,
+             get_exit_command RETURNING value(return) TYPE boolean.
+
+    CLASS-METHODS: get_instance IMPORTING i_screen TYPE i
+                                RETURNING value(return) TYPE REF TO lcl_screen.
+
+  PROTECTED SECTION.
+    CONSTANTS: c_ok     TYPE sy-ucomm VALUE &apos;OK&apos;,
+               c_back   TYPE sy-ucomm VALUE &apos;BACK&apos;,
+               c_exit   TYPE sy-ucomm VALUE &apos;EXIT&apos;,
+               c_cancel TYPE sy-ucomm VALUE &apos;CANCEL&apos;,
+               c_enter  TYPE sy-ucomm VALUE &apos;ENTER&apos;,
+               c_save   TYPE sy-ucomm VALUE &apos;SAVE&apos;.
+
+    DATA: o_call_screen  TYPE REF TO lcl_screen,
+          o_cust_cont    TYPE REF TO cl_gui_custom_container,
+          v_exit_command TYPE boolean.
+
+ENDCLASS. &quot;lcl_screen DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_selection_screen DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_selection_screen DEFINITION ABSTRACT INHERITING FROM lcl_screen.
+
+  PUBLIC SECTION.
+    METHODS: lif_screen~show REDEFINITION.
+
+ENDCLASS.                    &quot;lcl_selection_screen DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_screen_100 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_100 DEFINITION INHERITING FROM lcl_screen.
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command REDEFINITION,
+             lif_screen~screen_status REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+             show_results,
+
+             initialize_editor IMPORTING i_container TYPE REF TO cl_gui_container,
+             initialize_splitter IMPORTING i_container TYPE REF TO cl_gui_custom_container
+                                           i_rows TYPE i
+                                           i_cols TYPE i,
+
+             get_container_from_splitter IMPORTING i_row TYPE i
+                                                   i_col TYPE i
+                                         RETURNING value(return) TYPE REF TO cl_gui_container,
+
+             get_container_from_result IMPORTING i_row TYPE i
+                                                 i_col TYPE i
+                                       RETURNING value(return) TYPE REF TO cl_gui_container,
+
+             get_texted_query IMPORTING i_selected TYPE boolean OPTIONAL
+                                        i_blank    TYPE boolean OPTIONAL
+                                        PREFERRED PARAMETER i_selected
+                              RETURNING value(return) TYPE salv_wd_t_string RAISING lcx_no_query,
+             set_texted_query IMPORTING i_query TYPE salv_wd_t_string,
+             get_editor RETURNING value(return) TYPE REF TO cl_gui_abapedit,
+
+             save_query RAISING lcx_cancel,
+
+             open_query RAISING lcx_cancel,
+             open_my_queries RAISING lcx_cancel lcx_table_not_found,
+
+             generate_select RAISING lcx_cancel lcx_no_query lcx_error_query_check lcx_fields_overflow lcx_no_fields_selected lcx_query_element_not_found,
+             generate_from RAISING lcx_cancel lcx_no_query lcx_error_query_check lcx_fields_overflow lcx_no_fields_selected lcx_query_element_not_found,
+             generate_where RAISING lcx_cancel lcx_no_query lcx_error_query_check lcx_fields_overflow lcx_no_fields_selected lcx_query_element_not_found,
+
+             add_query_agent IMPORTING i_query_agent TYPE REF TO lcl_query_agent,
+             get_query_agents_lines RETURNING value(return) TYPE i,
+
+             execute_query IMPORTING i_no_conversion TYPE boolean OPTIONAL
+                           RAISING lcx_no_query lcx_error_query_check lcx_query_element_not_found lcx_query_overflow.
+
+  PRIVATE SECTION.
+    CONSTANTS: c_exec    TYPE sy-ucomm VALUE &apos;EXEC&apos;,
+               c_exec_no TYPE sy-ucomm VALUE &apos;EXEC_NO&apos;,
+               c_check   TYPE sy-ucomm VALUE &apos;CHECK&apos;,
+               c_open    TYPE sy-ucomm VALUE &apos;OPEN&apos;,
+               c_mine    TYPE sy-ucomm VALUE &apos;MINE&apos;,
+               c_select  TYPE sy-ucomm VALUE &apos;SELECT&apos;,
+               c_from    TYPE sy-ucomm VALUE &apos;FROM&apos;,
+               c_where   TYPE sy-ucomm VALUE &apos;WHERE&apos;.
+
+
+    DATA: o_cont_query      TYPE REF TO cl_gui_container,
+          o_cont_alv        TYPE REF TO cl_gui_container,
+          o_splitter        TYPE REF TO cl_gui_splitter_container,
+          o_result_splitter TYPE REF TO cl_gui_splitter_container,
+          o_editor          TYPE REF TO cl_gui_abapedit,
+          t_query_agents    TYPE yt_t_query_agent.
+
+    METHODS: check_query_syntax RAISING lcx_no_query lcx_error_query_check lcx_query_element_not_found,
+             split_queries IMPORTING i_text TYPE salv_wd_t_string
+                           EXPORTING e_queries TYPE yt_t_query
+                           RAISING lcx_query_overflow,
+
+             flush.
+
+ENDCLASS. &quot;lcl_screen_100 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_report DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_report DEFINITION.
+
+  PUBLIC SECTION.
+    CLASS-METHODS: delete_comments CHANGING i_text TYPE salv_wd_t_string,
+                   compute_apostrophes IMPORTING i_text TYPE string
+                                       RETURNING value(return) TYPE string.
+
+    METHODS: constructor IMPORTING i_report_name TYPE string,
+
+             set_report_name IMPORTING i_report_name TYPE string,
+             get_report_name RETURNING value(return) TYPE string,
+
+             add_source      IMPORTING i_line TYPE string OPTIONAL,
+             add_report_name,
+
+             get_source      RETURNING value(return) TYPE salv_wd_t_string,
+
+             check_syntax    IMPORTING i_source TYPE salv_wd_t_string OPTIONAL
+                             RAISING lcx_error_query_check,
+
+             generate_report RETURNING value(return) TYPE string
+                               RAISING lcx_error_query_check,
+
+             execute_report IMPORTING i_form_name TYPE string
+                                      i_report_name TYPE string,
+
+             delete_report IMPORTING i_report_name TYPE string.
+
+  PRIVATE SECTION.
+    DATA: v_report_name TYPE string,
+          t_source      TYPE salv_wd_t_string.
+
+ENDCLASS.                    &quot;lcl_report DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_commands DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_commands DEFINITION .
+
+  PUBLIC SECTION.
+    CONSTANTS: select             TYPE string VALUE &apos;SELECT&apos;,
+               from               TYPE string VALUE &apos;FROM&apos;,
+               from_check         TYPE string VALUE &apos; FROM &apos;,
+               join               TYPE string VALUE &apos;JOIN&apos;,
+               inner              TYPE string VALUE &apos;INNER&apos;,
+               outer              TYPE string VALUE &apos;OUTER&apos;,
+               left               TYPE string VALUE &apos;LEFT&apos;,
+               right              TYPE string VALUE &apos;RIGHT&apos;,
+               where              TYPE string VALUE &apos;WHERE&apos;,
+               having             TYPE string VALUE &apos;HAVING&apos;,
+               group              TYPE string VALUE &apos;GROUP&apos;,
+               by                 TYPE string VALUE &apos;BY&apos;,
+               up                 TYPE string VALUE &apos;UP&apos;,
+               order              TYPE string VALUE &apos;ORDER&apos;,
+               distinct           TYPE string VALUE &apos;DISTINCT&apos;,
+               asterisk           TYPE string VALUE &apos;*&apos;,
+               single             TYPE string VALUE &apos;SINGLE&apos;,
+               single_check       TYPE string VALUE &apos; SINGLE &apos;,
+               as                 TYPE string VALUE &apos;AS&apos;,
+               primary            TYPE string VALUE &apos;PRIMARY&apos;,
+               sum                TYPE string VALUE &apos;SUM&apos;,
+               sum_check          TYPE string VALUE &apos;SUM(&apos;,
+               avg                TYPE string VALUE &apos;AVG&apos;,
+               avg_check          TYPE string VALUE &apos;AVG(&apos;,
+               max                TYPE string VALUE &apos;MAX&apos;,
+               max_check          TYPE string VALUE &apos;MAX(&apos;,
+               min                TYPE string VALUE &apos;MIN&apos;,
+               min_check          TYPE string VALUE &apos;MIN(&apos;,
+               count              TYPE string VALUE &apos;COUNT&apos;,
+               count_command      TYPE string VALUE &apos;COUNT( * )&apos;,
+               count_check        TYPE string VALUE &apos;COUNT(&apos;,
+               dot                TYPE string VALUE &apos;.&apos;,
+               inner_join_command TYPE string VALUE &apos;INNER JOIN&apos;,
+               outer_join_command TYPE string VALUE &apos;OUTER JOIN&apos;,
+               left_join_command  TYPE string VALUE &apos;LEFT JOIN&apos;,
+               right_join_command TYPE string VALUE &apos;RIGHT JOIN&apos;,
+               on                 TYPE string VALUE &apos;ON&apos;,
+               and                TYPE string VALUE &apos;AND&apos;,
+               equal              TYPE string VALUE &apos;=&apos;,
+               eq                 TYPE string VALUE &apos;EQ&apos;,
+               lt                 TYPE string VALUE &apos;LT&apos;,
+               le                 TYPE string VALUE &apos;LE&apos;,
+               gt                 TYPE string VALUE &apos;GT&apos;,
+               ge                 TYPE string VALUE &apos;GE&apos;.
+
+    CLASS-METHODS: class_constructor,
+                   get_command_list RETURNING value(return) TYPE salv_wd_t_string,
+                   get_identify_commands_list RETURNING value(return) TYPE salv_wd_t_string.
+
+    CLASS-DATA: t_commands TYPE salv_wd_t_string,
+                t_identify_commands TYPE salv_wd_t_string.
+
+  PRIVATE SECTION.
+    CLASS-METHODS: initialize_command_list,
+                   initialize_identify_commands.
+
+ENDCLASS. &quot;lcl_commands DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_field DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_field DEFINITION .
+
+  PUBLIC SECTION.
+    METHODS: constructor     IMPORTING i_field_name  TYPE string
+                                       i_table_name  TYPE string OPTIONAL
+                                       i_field_alias TYPE string OPTIONAL,
+
+             set_field_alias IMPORTING i_field_alias TYPE string,
+             get_field_alias RETURNING value(return) TYPE string,
+
+             set_field_name  IMPORTING i_field_name TYPE string,
+             get_field_name  RETURNING value(return) TYPE string,
+
+             set_table_name  IMPORTING i_table_name TYPE string,
+             get_table_name  RETURNING value(return) TYPE string,
+
+             set_count_field IMPORTING i_count TYPE boolean,
+             get_count_field RETURNING value(return) TYPE boolean,
+
+             set_sql_function IMPORTING i_sql_function TYPE string,
+             get_sql_function RETURNING value(return) TYPE string.
+
+  PRIVATE SECTION.
+    DATA: v_field_alias  TYPE string,
+          v_field_name   TYPE string,
+          v_table_name   TYPE string,
+          v_count_field  TYPE boolean,
+          v_sql_function TYPE string.
+
+ENDCLASS. &quot;lcl_field DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_join_fields DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_join_fields DEFINITION.
+
+  PUBLIC SECTION.
+    METHODS: set_fortable IMPORTING i_fortable TYPE fortable,
+             get_fortable RETURNING value(return) TYPE fortable,
+
+             set_forkey IMPORTING i_forkey TYPE forkey,
+             get_forkey RETURNING value(return) TYPE forkey,
+
+             set_checktable IMPORTING i_checktable TYPE checktable,
+             get_checktable RETURNING value(return) TYPE checktable,
+
+             set_checkfield IMPORTING i_checkfield TYPE fieldname,
+             get_checkfield RETURNING value(return) TYPE fieldname,
+
+             add_join_field IMPORTING i_fortable   TYPE fortable
+                                      i_forkey     TYPE forkey
+                                      i_checktable TYPE checktable
+                                      i_checkfield TYPE fieldname,
+             set_join_fields IMPORTING i_join_fields TYPE tyt_join_fields,
+             get_join_fields EXPORTING e_join_fields TYPE tyt_join_fields,
+
+             get_join_fields_count RETURNING value(return) TYPE i.
+
+  PRIVATE SECTION.
+    DATA: v_fortable    TYPE fortable,
+          v_forkey      TYPE forkey,
+          v_checktable  TYPE checktable,
+          v_checkfield  TYPE fieldname,
+          v_signal      TYPE string,
+          t_join_fields TYPE tyt_join_fields.
+
+ENDCLASS.                    &quot;lcl_join_fields DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_table DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_table DEFINITION.
+
+  PUBLIC SECTION.
+    CLASS-METHODS: check_table_name IMPORTING i_tabname TYPE any
+                                    RETURNING value(return) TYPE boolean.
+    METHODS: set_name IMPORTING i_name TYPE string,
+             get_name RETURNING value(return) TYPE string,
+
+             set_alias IMPORTING i_alias TYPE string,
+             get_alias RETURNING value(return) TYPE string,
+
+             set_join_kind IMPORTING i_join_kind TYPE string,
+             get_join_kind RETURNING value(return) TYPE string,
+
+             set_outer_join IMPORTING i_outer_join TYPE boolean,
+             get_outer_join RETURNING value(return) TYPE boolean,
+
+             set_join_fields IMPORTING i_join_fields TYPE tyt_join_fields,
+             get_join_fields EXPORTING e_join_fields TYPE tyt_join_fields,
+
+             get_table_fields EXPORTING e_fields TYPE tyt_table_fields,
+
+             get_description_from_ddic RETURNING value(return) TYPE string,
+
+             constructor IMPORTING i_name  TYPE string
+                                   i_alias TYPE string OPTIONAL.
+
+  PRIVATE SECTION.
+    DATA: v_name        TYPE string,
+          v_alias       TYPE string,
+          v_outer_join  TYPE boolean,
+          v_join_kind   TYPE string,
+          t_join_fields TYPE tyt_join_fields.
+
+ENDCLASS. &quot;lcl_table DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_query_element DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_query_element DEFINITION ABSTRACT.
+
+  PUBLIC SECTION.
+    DATA: v_element TYPE string.
+
+    METHODS: set_command_contents ABSTRACT IMPORTING i_query   TYPE salv_wd_t_string
+                                                     i_command TYPE string,
+             get_command_contents RETURNING value(return) TYPE salv_wd_t_string,
+             to_string RETURNING value(return) TYPE string.
+
+
+  PROTECTED SECTION.
+    DATA: t_command_contents TYPE salv_wd_t_string,
+          v_command          TYPE string.
+    METHODS: check_alias IMPORTING i_query TYPE salv_wd_t_string
+                                   i_index TYPE i
+                         RETURNING value(return) TYPE string.
+
+ENDCLASS. &quot;lcl_query_element DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_select DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_select DEFINITION INHERITING FROM lcl_query_element.
+
+  PUBLIC SECTION.
+    CONSTANTS: c_max_fields TYPE i VALUE 20.
+
+    METHODS: set_select_type IMPORTING i_select_type TYPE string ,
+             get_select_type RETURNING value(return) TYPE string,
+
+             add_field       IMPORTING i_field TYPE REF TO lcl_field,
+             get_fields      EXPORTING return TYPE yt_t_fields,
+
+             get_fields_count RETURNING value(return) TYPE i,
+
+             set_command_contents REDEFINITION.
+
+  PRIVATE SECTION.
+    DATA: select_type TYPE string,
+          t_fields    TYPE TABLE OF REF TO lcl_field.
+
+    METHODS: split_field_name IMPORTING i_field   TYPE string
+                              EXPORTING e_name    TYPE string
+                                        e_tabname TYPE string,
+
+             check_alias_existence IMPORTING i_query TYPE salv_wd_t_string
+                                             i_index TYPE i
+                                             i_field TYPE REF TO lcl_field
+                                   RETURNING value(return) TYPE i.
+
+ENDCLASS. &quot;lcl_select DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_from DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_from DEFINITION INHERITING FROM lcl_query_element.
+
+  PUBLIC SECTION.
+    METHODS: set_command_contents REDEFINITION,
+
+             add_table IMPORTING i_table TYPE REF TO lcl_table,
+
+             get_table IMPORTING i_table TYPE string OPTIONAL
+                                 i_index TYPE i      OPTIONAL
+                                 PREFERRED PARAMETER i_index
+                       RETURNING value(return) TYPE REF TO lcl_table
+                       RAISING lcx_table_not_found,
+
+             get_tables EXPORTING e_tables TYPE yt_t_table.
+
+
+  PRIVATE SECTION.
+    DATA: t_tables TYPE TABLE OF REF TO lcl_table.
+
+    METHODS: check_outer_join IMPORTING i_query       TYPE salv_wd_t_string
+                                        i_index       TYPE i
+                              RETURNING value(return) TYPE boolean,
+
+             check_join_fields IMPORTING i_table TYPE REF TO lcl_table
+                                         i_query TYPE salv_wd_t_string
+                                         i_index TYPE i.
+
+ENDCLASS. &quot;lcl_from DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_fieldcat DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_fieldcat DEFINITION.
+
+  PUBLIC SECTION.
+    METHODS: set_fieldcat IMPORTING i_fieldcat TYPE lvc_t_fcat,
+             get_fieldcat RETURNING value(return) TYPE lvc_t_fcat,
+
+             constructor IMPORTING i_fieldcat TYPE lvc_t_fcat OPTIONAL,
+
+             add_field_to_fcat IMPORTING i_fieldcat     TYPE lvc_s_fcat OPTIONAL
+                                         i_fieldcat_tab TYPE lvc_t_fcat OPTIONAL
+                                         i_fieldname    TYPE string     OPTIONAL
+                                         i_edit         TYPE boolean    OPTIONAL
+                                         i_scrtext      TYPE string     OPTIONAL
+                                         i_descr        TYPE string     OPTIONAL
+                                         i_outputlen    TYPE i          OPTIONAL
+                                         i_inttype      TYPE inttype    OPTIONAL
+                                         i_intlen       TYPE intlen     OPTIONAL
+                                         i_checkbox     TYPE lvc_checkb OPTIONAL
+                                         i_drop_down    TYPE i          OPTIONAL
+                                         i_drop_alias   TYPE c          OPTIONAL
+                                         i_drdn_field   TYPE string     OPTIONAL
+                                         i_icon         TYPE boolean    OPTIONAL
+                                         i_hotspot      TYPE boolean    OPTIONAL
+                                         i_just         TYPE lvc_just   OPTIONAL
+                                         i_f4_avaliable TYPE boolean    OPTIONAL
+                                         i_checktable   TYPE tabname    OPTIONAL
+                                         PREFERRED PARAMETER i_fieldcat_tab,
+
+             merge_fieldcat IMPORTING i_table TYPE REF TO lcl_table OPTIONAL
+                                      i_no_conversion TYPE boolean OPTIONAL
+                                      PREFERRED PARAMETER i_table
+                            RETURNING value(return) TYPE lvc_t_fcat,
+
+             inverse_fieldcat_names IMPORTING i_alv TYPE REF TO cl_gui_alv_grid
+                                    RETURNING value(return) TYPE lvc_t_fcat,
+
+             no_routine_conversion IMPORTING i_alv TYPE REF TO cl_gui_alv_grid
+                                   RETURNING value(return) TYPE lvc_t_fcat,
+
+             compute_fieldcat_to_fields IMPORTING i_select TYPE REF TO lcl_select
+                                                  i_from   TYPE REF TO lcl_from,
+
+             get_fieldcat_count_fields RETURNING value(return) TYPE i.
+
+  PRIVATE SECTION.
+    DATA: t_fieldcat TYPE lvc_t_fcat.
+
+    METHODS: get_fieldcat_struct IMPORTING i_field_name TYPE string
+                                           i_table_name TYPE string
+                                           i_from       TYPE REF TO lcl_from
+                                           i_fieldcat   TYPE lvc_t_fcat
+                                 RETURNING value(return) TYPE lvc_s_fcat
+                                 RAISING lcx_table_not_found,
+
+             adjust_column_positions.
+
+ENDCLASS.                    &quot; DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_where DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_where DEFINITION INHERITING FROM lcl_query_element.
+  PUBLIC SECTION.
+    METHODS set_command_contents REDEFINITION.
+ENDCLASS. &quot;lcl_where DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_query_element_factory DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_query_element_factory DEFINITION .
+  PUBLIC SECTION.
+    CLASS-METHODS: factory_query_element IMPORTING i_element TYPE string
+                                         RETURNING value(return) TYPE REF TO lcl_query_element .
+ENDCLASS. &quot;lcl_query_element_factory DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_factory DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_factory DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: factory_screen IMPORTING i_screen TYPE i RETURNING value(return) TYPE REF TO lcl_screen,
+                   get_screen IMPORTING i_screen TYPE i
+                              RETURNING value(return) TYPE REF TO lcl_screen.
+  PRIVATE SECTION.
+    CLASS-DATA t_screens TYPE yt_screen.
+ENDCLASS.                    &quot;lcl_screen_factory DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_query DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_query DEFINITION .
+
+  PUBLIC SECTION.
+    CLASS-METHODS: split_text IMPORTING i_text TYPE string
+                                        i_outputlen TYPE i
+                              RETURNING value(return) TYPE salv_wd_t_string.
+
+    METHODS: constructor IMPORTING i_query TYPE salv_wd_t_string,
+
+             add_query_element IMPORTING i_query_element TYPE REF TO lcl_query_element,
+             get_query_elements EXPORTING e_elements TYPE yt_query_elements,
+             get_query_element IMPORTING i_element TYPE string
+                               RETURNING value(return) TYPE REF TO lcl_query_element,
+
+             set_query IMPORTING i_query TYPE salv_wd_t_string,
+             get_query RETURNING value(return) TYPE salv_wd_t_string,
+
+             set_query_string IMPORTING i_query TYPE string,
+             get_query_string RETURNING value(return) TYPE string,
+
+             set_data IMPORTING i_data TYPE REF TO data,
+             get_data RETURNING value(return) TYPE REF TO data,
+
+             execute RAISING lcx_error_query_check,
+
+             check_query_syntax RETURNING value(return) TYPE boolean
+                                RAISING lcx_error_query_check lcx_query_element_not_found,
+             identify_query_elements IMPORTING i_element TYPE string OPTIONAL
+                                     RETURNING value(return) TYPE REF TO lcl_query_element,
+
+             compute_query,
+
+             get_fields_count RETURNING value(return) TYPE i.
+
+  PRIVATE SECTION.
+    DATA:    t_query_elements TYPE TABLE OF REF TO lcl_query_element,
+             t_query TYPE salv_wd_t_string,
+             v_query TYPE string,
+             o_data TYPE REF TO data.
+
+    METHODS: build_to_syntax_check IMPORTING i_query       TYPE string &quot;salv_wd_t_string
+                                             i_report      TYPE REF TO lcl_report
+                                   RAISING lcx_query_element_not_found.
+
+ENDCLASS. &quot;lcl_query DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_event_handler DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_event_handler DEFINITION.
+
+  PUBLIC SECTION.
+    CONSTANTS: c_tech   TYPE ui_func VALUE &apos;TECH&apos;, &quot;Inverse names
+               c_type   TYPE ui_func VALUE &apos;TYPE&apos;, &quot;Type generator
+               c_perf   TYPE ui_func VALUE &apos;PERF&apos;, &quot;Performance
+               c_no_conv TYPE ui_func VALUE &apos;NO_CONV&apos;,
+               c_del    TYPE ui_func VALUE &apos;DEL&apos;,  &quot;Delete query
+               c_sall   TYPE ui_func VALUE &apos;SALL&apos;, &quot;Select All
+               c_dall   TYPE ui_func VALUE &apos;DALL&apos;, &quot;Deselect All
+               c_add    TYPE ui_func VALUE &apos;ADD&apos;, &quot;Add line
+               c_sugest TYPE ui_func VALUE &apos;SUGEST&apos;. &quot;Sugest join
+
+    METHODS: constructor IMPORTING i_query_agent TYPE REF TO lcl_query_agent OPTIONAL,
+
+             &quot;Query Resut
+             handle_toolbar      FOR EVENT toolbar      OF cl_gui_alv_grid IMPORTING e_object,
+             handle_user_command FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+             handle_menu_button  FOR EVENT menu_button  OF cl_gui_alv_grid IMPORTING e_object e_ucomm,
+
+             &quot;Select Generator
+             handle_toolbar_select_gen FOR EVENT toolbar OF cl_gui_alv_grid IMPORTING e_object,
+             handle_user_command_select_gen FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+             handle_row_drag FOR EVENT ondrag OF cl_gui_alv_grid IMPORTING e_row e_dragdropobj,
+             handle_row_drop FOR EVENT ondrop OF cl_gui_alv_grid IMPORTING e_row e_dragdropobj,
+
+             &quot;From Generator
+             handle_toolbar_from_gen      FOR EVENT toolbar OF cl_gui_alv_grid IMPORTING e_object,
+             handle_user_command_from_gen FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+             handle_hotspot_from_gen      FOR EVENT hotspot_click OF cl_gui_alv_grid IMPORTING e_row_id e_column_id,
+             handle_f4_from_gen           FOR EVENT onf4 OF cl_gui_alv_grid IMPORTING e_fieldname e_fieldvalue es_row_no,
+
+             &quot;Join fields
+             handle_toolbar_join      FOR EVENT toolbar OF cl_gui_alv_grid IMPORTING e_object,
+             handle_user_command_join FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+             handle_data_change_join  FOR EVENT data_changed OF cl_gui_alv_grid IMPORTING er_data_changed,
+
+             &quot;My queries - SALV_TABLE
+             handle_added_function FOR EVENT added_function OF cl_salv_events IMPORTING e_salv_function.
+
+  PRIVATE SECTION.
+    DATA: o_query_agent TYPE REF TO lcl_query_agent.
+
+    METHODS: add_button IMPORTING i_function  TYPE ui_func   OPTIONAL
+                                  i_icon      TYPE iconname  OPTIONAL
+                                  i_quickinfo TYPE iconquick OPTIONAL
+                                  i_butn_type TYPE tb_btype
+                                  i_disabled  TYPE boolean   OPTIONAL
+                                  i_text      TYPE text40    OPTIONAL
+                         CHANGING t_toolbar   TYPE ttb_button.
+
+ENDCLASS.                    &quot;lcl_event_handler DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_drag_drop DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_drag_drop DEFINITION.
+  PUBLIC SECTION.
+    METHODS: set_index IMPORTING i_index TYPE i,
+             get_index RETURNING value(return) TYPE i,
+
+             set_data IMPORTING i_data TYPE ty_table_fields,
+             get_data RETURNING value(return) TYPE ty_table_fields.
+
+  PRIVATE SECTION.
+    DATA: v_index TYPE i,
+          o_data TYPE ty_table_fields.
+
+ENDCLASS.                    &quot;lcl_drag_drop DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_performance_analyzer DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_performance_analyzer DEFINITION.
+
+  PUBLIC SECTION.
+    CONSTANTS: abap                    TYPE i VALUE 1,
+               sql                     TYPE i VALUE 2,
+               check_syntax            TYPE i VALUE 3,
+               identify_query_elements TYPE i VALUE 4,
+               fieldcat_creation       TYPE i VALUE 5,
+               build_dynamic_structure TYPE i VALUE 6.
+
+    CLASS-METHODS: class_constructor,
+                   get_analyzer_description IMPORTING i_id TYPE i
+                                            RETURNING value(return) TYPE string.
+
+    METHODS: start_runtime_analyzer IMPORTING i_analyzer_id TYPE i,
+             stop_runtime_analyzer IMPORTING i_analyzer_id TYPE i,
+
+             get_analyzer IMPORTING i_id TYPE i
+                          RETURNING value(return) TYPE yt_analyzer,
+
+             get_analyzer_table EXPORTING t_analyzer TYPE tyt_analyzer,
+
+             calculate_runtime IMPORTING i_id    TYPE i OPTIONAL
+                                         i_start TYPE i OPTIONAL
+                                         i_end   TYPE i OPTIONAL
+                               RETURNING value(return) TYPE dec_16_02_s.
+
+  PRIVATE SECTION.
+    CLASS-DATA: t_analyzer_ids TYPE TABLE OF yt_analyzer_ids.
+    DATA: t_analyzer TYPE TABLE OF yt_analyzer.
+
+    CLASS-METHODS: add_analyzer_id IMPORTING i_id    TYPE i
+                                             i_descr TYPE char100.
+
+    METHODS: add_analyzer IMPORTING i_id TYPE i,
+             get_runtime_field RETURNING value(return) TYPE i.
+
+ENDCLASS.                    &quot;lcl_performance_analyzer DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_query_save DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_query_save DEFINITION.
+
+  PUBLIC SECTION.
+    CONSTANTS: c_buffer_prefix TYPE string VALUE &apos;YZBUFFERQUERY_&apos;,
+               c_zquery_prefix TYPE string VALUE &apos;YZQUERY_&apos;.
+
+    METHODS: set_selected_query IMPORTING i_query TYPE tyt_query,
+             get_selected_query EXPORTING e_query TYPE tyt_query,
+
+             set_refresh IMPORTING i_refresh TYPE boolean,
+
+             buffer_query_texted IMPORTING i_query TYPE salv_wd_t_string,
+             get_buffered_query RETURNING value(return) TYPE salv_wd_t_string,
+             get_query_name RETURNING value(return) TYPE string RAISING lcx_cancel,
+
+             read_query IMPORTING i_query_name TYPE string
+                                  i_check      TYPE boolean OPTIONAL
+                        RETURNING value(return) TYPE salv_wd_t_string
+                          RAISING lcx_existent_object,
+
+             save_query IMPORTING i_name TYPE string
+                                  i_query TYPE salv_wd_t_string
+                        RAISING lcx_cancel,
+
+             delete_query IMPORTING i_query_name TYPE string,
+
+             check_existent_query IMPORTING i_name TYPE string
+                                    RAISING lcx_existent_object,
+
+             get_queries IMPORTING i_user TYPE tyt_user_range
+                                   i_query_name TYPE string
+                         EXPORTING e_queries TYPE tyt_query
+                           RAISING lcx_table_not_found,
+
+             search_queries IMPORTING i_user       TYPE tyt_user_range
+                                      i_query_name TYPE string
+                            EXPORTING e_queries TYPE tyt_query
+                              RAISING lcx_table_not_found,
+
+             display_queries IMPORTING i_queries TYPE tyt_query
+                                       i_mine    TYPE boolean OPTIONAL
+                             EXPORTING e_selected TYPE tyt_query
+                               RAISING lcx_cancel,
+
+             compute_selected_queries IMPORTING i_queries TYPE tyt_query
+                                      RETURNING value(return) TYPE salv_wd_t_string,
+
+             delete_selected_query,
+
+             is_refresh RETURNING value(return) TYPE boolean.
+
+    CLASS-METHODS: get_instance RETURNING value(return) TYPE REF TO lcl_query_save.
+
+  PRIVATE SECTION.
+    CLASS-DATA: o_instance TYPE REF TO lcl_query_save.
+    DATA: o_table TYPE REF TO cl_salv_table,
+          t_selected_query TYPE tyt_query,
+          v_refresh TYPE boolean.
+
+    METHODS: compute_query IMPORTING i_query TYPE salv_wd_t_string
+                           EXPORTING e_lines TYPE yt_lines,
+
+             get_selected_queries_by_rows IMPORTING i_rows TYPE salv_t_row
+                                          EXPORTING e_query TYPE tyt_query,
+
+             process_delete_query IMPORTING i_query TYPE tyt_query.
+
+ENDCLASS.                    &quot;lcl_query_save DEFINITION
+
+*----------------------------------------------------------------------*
+* CLASS lcl_query_agent DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_query_agent DEFINITION .
+
+  PUBLIC SECTION.
+    METHODS: get_alv RETURNING value(return) TYPE REF TO cl_gui_alv_grid,
+             initialize_alv IMPORTING i_container TYPE REF TO cl_gui_container,
+
+             execute_query IMPORTING i_query TYPE salv_wd_t_string RAISING lcx_error_query_check lcx_query_element_not_found,
+
+             generate_where IMPORTING i_query TYPE salv_wd_t_string
+                            RETURNING value(return) TYPE salv_wd_t_string
+                            RAISING lcx_error_query_check lcx_fields_overflow lcx_cancel lcx_no_fields_selected lcx_query_element_not_found,
+             generate_select IMPORTING i_query TYPE salv_wd_t_string
+                             RETURNING value(return) TYPE salv_wd_t_string
+                             RAISING lcx_error_query_check lcx_fields_overflow lcx_cancel lcx_no_fields_selected lcx_query_element_not_found,
+
+             check_query_syntax IMPORTING i_query TYPE salv_wd_t_string
+                                RAISING lcx_error_query_check lcx_query_element_not_found,
+
+             build_dyn_struct IMPORTING i_fieldcat    TYPE lvc_t_fcat
+                              RETURNING value(return) TYPE REF TO data,
+
+             create_fcat RETURNING value(return) TYPE lvc_t_fcat,
+
+             set_fieldcat IMPORTING i_fieldcat TYPE lvc_t_fcat,
+             get_fieldcat RETURNING value(return) TYPE lvc_t_fcat,
+
+             set_no_conversion IMPORTING i_no_conversion TYPE boolean,
+             get_no_conversion RETURNING value(return) TYPE boolean,
+
+             get_query_results RETURNING value(return) TYPE REF TO data,
+
+             show_results IMPORTING i_container TYPE REF TO cl_gui_container,
+             inverse_fieldcat_names,
+             no_routine_conversion,
+             flush_alv,
+             generate_types RAISING lcx_cancel,
+             show_performance_analyzer.
+
+    CLASS-METHODS: get_query_agent RETURNING value(return) TYPE REF TO lcl_query_agent.
+
+  PRIVATE SECTION.
+    CLASS-DATA: o_query_agent TYPE REF TO lcl_query_agent.
+    DATA: v_no_conversion TYPE boolean,
+          o_query         TYPE REF TO lcl_query,
+          &quot;o_editor        TYPE REF TO cl_gui_abapedit,
+          o_alv           TYPE REF TO cl_gui_alv_grid,
+          o_event_handler TYPE REF TO lcl_event_handler,
+          o_analyzer      TYPE REF TO lcl_performance_analyzer,
+          t_fieldcat      TYPE lvc_t_fcat.
+
+    METHODS: get_layout RETURNING value(return) TYPE lvc_s_layo,
+             check_fields_to_select.
+
+ENDCLASS. &quot;lcl_query_agent DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_type_generator DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_type_generator DEFINITION.
+
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_type_name TYPE string OPTIONAL,
+
+             set_type_name IMPORTING i_type_name TYPE string,
+             get_type_name RETURNING value(return) TYPE string,
+
+             get_command_line RETURNING value(return) TYPE salv_wd_t_string,
+
+             generate_type_by_fcat IMPORTING i_fieldcat TYPE lvc_t_fcat,
+             generate_generic_type IMPORTING i_table_name TYPE string.
+
+    CLASS-METHODS: get_type_name_by_user RETURNING value(return) TYPE string RAISING lcx_cancel.
+
+  PRIVATE SECTION.
+    DATA: v_type_name TYPE string,
+          t_command_line TYPE TABLE OF string.
+
+    METHODS: add_command_line IMPORTING i_line TYPE string OPTIONAL.
+
+ENDCLASS.                    &quot;lcl_type_generator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_200 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_200 DEFINITION INHERITING FROM lcl_screen.
+
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command REDEFINITION,
+             lif_screen~screen_status REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+
+             set_type_gen_instance IMPORTING i_type_gen TYPE REF TO lcl_type_generator,
+             get_type_gen_instance RETURNING value(return) TYPE REF TO lcl_type_generator,
+
+             set_editor IMPORTING i_editor TYPE REF TO cl_gui_abapedit,
+             get_editor RETURNING value(return) TYPE REF TO cl_gui_abapedit.
+
+  PRIVATE SECTION.
+    DATA: o_type_generator TYPE REF TO lcl_type_generator,
+          o_editor         TYPE REF TO cl_gui_abapedit.
+
+ENDCLASS.                    &quot;lcl_screen_200 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_300 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_300 DEFINITION INHERITING FROM lcl_screen.
+
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command REDEFINITION,
+             lif_screen~screen_status REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+
+             set_analyzer IMPORTING i_analyzer TYPE REF TO lcl_performance_analyzer,
+             get_analyzer RETURNING value(return) TYPE REF TO lcl_performance_analyzer.
+
+  PRIVATE SECTION.
+    DATA: o_analyzer TYPE REF TO lcl_performance_analyzer,
+          t_values TYPE TABLE OF gprval,
+          t_texts  TYPE TABLE OF gprtxt.
+
+    METHODS: add_text IMPORTING i_text TYPE string,
+             add_value IMPORTING i_rowtxt TYPE string
+                                 i_val    TYPE any
+                                 i_id     TYPE i,
+
+             display_graphic,
+
+             generate_graphic_data IMPORTING i_analyzer TYPE REF TO lcl_performance_analyzer.
+
+ENDCLASS.                    &quot;lcl_screen_300 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_400 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_400 DEFINITION INHERITING FROM lcl_selection_screen.
+
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command REDEFINITION,
+             execute IMPORTING i_user TYPE sy-uname OPTIONAL
+                       RAISING lcx_table_not_found lcx_cancel,
+
+             compute_user_range IMPORTING i_user TYPE sy-uname OPTIONAL
+                                EXPORTING e_user_range TYPE tyt_user_range,
+             compute_query_name RETURNING value(return) TYPE string.
+
+  PRIVATE SECTION.
+    CONSTANTS c_exec TYPE sy-ucomm VALUE &apos;CRET&apos;.
+
+ENDCLASS.                    &quot;lcl_screen_400 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_query_element_generator DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_query_element_generator DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    METHODS: constructor IMPORTING i_element TYPE REF TO lcl_query_element,
+             generate ABSTRACT
+                      RETURNING value(return) TYPE salv_wd_t_string
+                      RAISING lcx_fields_overflow lcx_cancel lcx_no_fields_selected lcx_query_element_not_found,
+
+             generate_new_query_text ABSTRACT
+                                     IMPORTING i_query        TYPE salv_wd_t_string OPTIONAL
+                                               i_query_string TYPE string           OPTIONAL
+                                               i_command_text TYPE salv_wd_t_string
+                                     RETURNING value(return)  TYPE salv_wd_t_string,
+
+             find_command IMPORTING i_command TYPE string
+                                    i_text TYPE string
+                          RETURNING value(return) TYPE sy-subrc,
+
+             set_query_element IMPORTING i_element TYPE REF TO lcl_query_element,
+             get_query_element RETURNING value(return) TYPE REF TO lcl_query_element.
+
+
+  PRIVATE SECTION.
+    DATA: o_query_element TYPE REF TO lcl_query_element.
+
+ENDCLASS.                    &quot;lcl_query_element_generator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_where_generator DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_where_generator DEFINITION INHERITING FROM lcl_query_element_generator.
+  PUBLIC SECTION.
+    METHODS: generate REDEFINITION,
+             generate_new_query_text REDEFINITION.
+
+  PRIVATE SECTION.
+    METHODS: get_fields IMPORTING i_from TYPE REF TO lcl_from
+                        EXPORTING e_fields TYPE tyt_where_fields,
+
+             select_fields CHANGING c_fields TYPE tyt_where_fields RAISING lcx_fields_overflow lcx_no_fields_selected,
+
+             get_dynamic_selections IMPORTING i_fields TYPE tyt_where_fields
+                                              i_tables TYPE yt_t_table
+                                    RETURNING value(return) TYPE salv_wd_t_string
+                                    RAISING lcx_cancel lcx_query_element_not_found,
+
+             build_fields_to_selection IMPORTING i_fields TYPE tyt_where_fields
+                                                 i_tables TYPE yt_t_table
+                                       EXPORTING e_tables_tab TYPE yt_rsdstabs
+                                                 e_fields_tab TYPE yt_rsdsfields,
+
+             init_free_selection CHANGING c_tables_tab TYPE yt_rsdstabs
+                                          c_fields_tab TYPE yt_rsdsfields
+                                          c_selid      TYPE rsdynsel-selid,
+
+             call_select_dialog CHANGING c_selid TYPE rsdynsel-selid
+                                         c_fields_tab TYPE yt_rsdsfields
+                                         c_twhere TYPE rsds_twhere
+                                RAISING lcx_cancel,
+
+             get_dynamic_where IMPORTING i_tables TYPE yt_t_table
+                                         i_fields TYPE tyt_where_fields
+                                         i_twhere TYPE rsds_twhere
+                               RETURNING value(return) TYPE salv_wd_t_string
+                               RAISING lcx_query_element_not_found.
+
+ENDCLASS.                    &quot;lcl_where_generator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_select_generator DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_select_generator DEFINITION INHERITING FROM lcl_query_element_generator.
+  PUBLIC SECTION.
+    METHODS: generate REDEFINITION,
+             generate_new_query_text REDEFINITION,
+
+             generate_by_fieldcat IMPORTING i_fieldcat TYPE REF TO lcl_fieldcat
+                                  RETURNING value(return) TYPE salv_wd_t_string,
+
+             set_select_type IMPORTING i_select_type TYPE string,
+             get_select_type RETURNING value(return) TYPE string,
+
+             set_select IMPORTING i_select TYPE REF TO lcl_select,
+             get_select RETURNING value(return) TYPE REF TO lcl_select,
+
+             set_aggregation IMPORTING i_aggregation TYPE boolean,
+             get_aggregation RETURNING value(return) TYPE boolean,
+
+             check_aggregation IMPORTING i_fields TYPE tyt_table_fields,
+
+             compute_aggregation_clause RETURNING value(return) TYPE salv_wd_t_string.
+
+  PRIVATE SECTION.
+    DATA: o_select      TYPE REF TO lcl_select,
+          v_select_type TYPE string,
+          t_fields      TYPE tyt_table_fields,
+          v_aggregation TYPE boolean.
+
+    METHODS: get_fields IMPORTING i_tables TYPE yt_t_table
+                        EXPORTING e_fields TYPE tyt_table_fields,
+
+             select_fields CHANGING e_fields TYPE tyt_table_fields RAISING lcx_cancel,
+             mark_fields CHANGING e_fields TYPE tyt_table_fields,
+             compute_fields IMPORTING i_fields TYPE tyt_table_fields RETURNING value(return) TYPE salv_wd_t_string.
+
+ENDCLASS.                    &quot;lcl_select_generator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_from_generator DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_from_generator DEFINITION INHERITING FROM lcl_query_element_generator.
+
+  PUBLIC SECTION.
+    METHODS: generate REDEFINITION,
+             generate_new_query_text REDEFINITION.
+
+  PRIVATE SECTION.
+    DATA: v_gen_select TYPE boolean,
+          v_gen_where  TYPE boolean.
+    METHODS: select_join_tables EXPORTING e_join_tables TYPE tyt_join_table
+                                  RAISING lcx_cancel,
+
+             compute_join_tables IMPORTING i_join_tables TYPE tyt_join_table
+                                 RETURNING value(return) TYPE salv_wd_t_string.
+
+ENDCLASS.                    &quot;lcl_from_generator DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_500 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_500 DEFINITION INHERITING FROM lcl_screen.
+
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command REDEFINITION,
+             lif_screen~screen_status REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+
+             set_fields IMPORTING i_fields TYPE tyt_table_fields,
+             get_fields EXPORTING e_fields TYPE tyt_table_fields,
+
+             get_select_type RETURNING value(return) TYPE string,
+             set_select_type IMPORTING i_select_type TYPE string,
+
+             check_changed_data,
+             refresh_alv IMPORTING i_stable	      TYPE lvc_s_stbl OPTIONAL
+                                   i_soft_refresh TYPE char01 OPTIONAL,
+             flush,
+
+             lock_drop_down IMPORTING i_all TYPE boolean OPTIONAL,
+
+             mark_fields,
+             unmark_fields.
+
+  PRIVATE SECTION.
+    DATA: o_grid          TYPE REF TO cl_gui_alv_grid,
+          o_container     TYPE REF TO cl_gui_custom_container,
+          o_select_type   TYPE REF TO data,
+          o_event_handler TYPE REF TO lcl_event_handler,
+          o_behaviour_alv TYPE REF TO cl_dragdrop,
+          t_fields        TYPE tyt_table_fields.
+
+    METHODS: create_fcat RETURNING value(return) TYPE lvc_t_fcat,
+             create_layout RETURNING value(return) TYPE lvc_s_layo,
+             add_field_to_fcat IMPORTING i_fieldname  TYPE string
+                                         i_edit       TYPE boolean
+                                         i_descr      TYPE string
+                                         i_outputlen  TYPE i
+                                         i_checkbox   TYPE lvc_checkb OPTIONAL
+                                         i_drop_down  TYPE i OPTIONAL
+                                         i_drop_alias TYPE c OPTIONAL
+                                CHANGING e_fieldcat TYPE lvc_t_fcat,
+
+             exclude_functions RETURNING value(return) TYPE ui_functions,
+
+             get_sql_functions_drop_down RETURNING value(return) TYPE lvc_t_dral,
+
+             add_option_to_drop_down IMPORTING i_handle    TYPE	int4
+                                               i_value     TYPE string
+                                               i_int_value TYPE	string
+                                      CHANGING e_drop_down TYPE lvc_t_dral,
+
+             initialize_alv,
+             initialize_select_type,
+
+             create_vrm_values RETURNING value(return) TYPE vrm_values,
+
+             add_vrm_value IMPORTING i_key  TYPE string
+                                     i_text TYPE string
+                            CHANGING e_values TYPE vrm_values,
+
+             verify_selected_fields RETURNING value(return) TYPE boolean.
+
+ENDCLASS.                    &quot;lcl_screen_500 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_600 DEFINITION
+*----------------------------------------------------------------------*
+CLASS lcl_screen_600 DEFINITION INHERITING FROM lcl_screen.
+
+  PUBLIC SECTION.
+    CONSTANTS: c_tabname  TYPE sy-ucomm VALUE &apos;TABNAME&apos;,
+               c_tabalias TYPE sy-ucomm VALUE &apos;TABALIAS&apos;.
+
+    METHODS: lif_screen~user_command      REDEFINITION,
+             lif_screen~screen_status     REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+
+             set_tabname IMPORTING i_tabname TYPE string,
+             get_tabname RETURNING value(return) TYPE string,
+
+             set_tabalias IMPORTING i_tabalias TYPE string,
+             get_tabalias RETURNING VALUE(return) TYPE string,
+
+             set_tabdescr IMPORTING i_descr TYPE string,
+             get_tabdescr RETURNING value(return) TYPE string,
+
+             set_join_tables IMPORTING i_join_tables TYPE tyt_join_table,
+             get_join_tables EXPORTING e_join_tables TYPE tyt_join_table,
+
+             get_create_select RETURNING value(return) TYPE boolean,
+             get_create_where RETURNING value(return) TYPE boolean,
+
+             set_block_flags IMPORTING i_block TYPE boolean,
+             get_block_flags RETURNING value(return) TYPE boolean,
+
+             set_direct_initialize IMPORTING i_direct_initialize TYPE boolean,
+
+             refresh_alv IMPORTING i_stable	      TYPE lvc_s_stbl OPTIONAL
+                                   i_soft_refresh TYPE char01 OPTIONAL,
+
+             add_line,
+             delete_line RAISING lcx_no_fields_selected,
+
+             suggest_join,
+
+             open_join_fields IMPORTING i_index TYPE lvc_index,
+
+             search_help_for_tabname IMPORTING i_index TYPE i,
+
+             check_join_tables IMPORTING i_index               TYPE i       OPTIONAL
+                                         i_consist_join_fields TYPE boolean OPTIONAL
+                                         PREFERRED PARAMETER i_consist_join_fields
+                               RAISING lcx_join_error,
+
+             get_tables RETURNING value(return) TYPE salv_wd_t_string,
+
+             flush IMPORTING i_no_flags TYPE boolean OPTIONAL,
+
+             build_join_tables IMPORTING i_from TYPE REF TO lcl_from.
+
+  PRIVATE SECTION.
+    DATA: o_container   TYPE REF TO cl_gui_custom_container,
+          o_alv         TYPE REF TO cl_gui_alv_grid,
+          o_handler     TYPE REF TO lcl_event_handler,
+          t_join_tables TYPE tyt_join_table,
+          v_block_flags TYPE boolean,
+          v_direct_initialize TYPE boolean.
+
+    METHODS: check_table_name RAISING lcx_table_not_found,
+             check_table_alias RAISING lcx_table_alias,
+             initialize_join_grid,
+             initialize_container,
+             initialize_alv,
+             exclude_functions RETURNING value(return) TYPE ui_functions,
+             get_fieldcat RETURNING value(return) TYPE lvc_t_fcat,
+             get_drop_down RETURNING value(return) TYPE lvc_t_dral,
+             add_option_to_drop_down IMPORTING i_handle    TYPE	int4
+                                               i_value     TYPE string
+                                               i_int_value TYPE	string
+                                      CHANGING e_drop_down TYPE lvc_t_dral,
+             get_f4_fields RETURNING value(return) TYPE lvc_t_f4,
+
+             get_related_tables IMPORTING i_tabname TYPE string
+                                RETURNING value(return) TYPE dd05mttyp,
+
+             compute_related_tables IMPORTING i_tables TYPE dd05mttyp,
+             get_block_style_for_join_table RETURNING value(return) TYPE lvc_t_styl,
+
+             add_style IMPORTING i_fieldname TYPE lvc_fname
+                                 i_style     TYPE lvc_style
+                        CHANGING e_style     TYPE lvc_t_styl,
+
+             consist_join_table IMPORTING i_join_table TYPE ty_join_table
+                                          i_index      TYPE i
+                                          i_consist_join_fields TYPE boolean OPTIONAL
+                                RAISING lcx_join_error.
+
+ENDCLASS.                    &quot;lcl_screen_600 DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_screen_700 DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_screen_700 DEFINITION INHERITING FROM lcl_screen.
+  PUBLIC SECTION.
+    METHODS: lif_screen~user_command      REDEFINITION,
+             lif_screen~screen_status     REDEFINITION,
+             lif_screen~initialize_screen REDEFINITION,
+
+             set_join_fields IMPORTING i_join_fields TYPE REF TO lcl_join_fields, &quot;dd05mttyp,
+             get_join_fields RETURNING value(return) TYPE REF TO lcl_join_fields, &quot;dd05mttyp,
+
+             set_join_table IMPORTING i_table TYPE string,
+             get_join_table RETURNING value(return) TYPE string,
+
+             refresh_alv IMPORTING i_stable	      TYPE lvc_s_stbl OPTIONAL
+                                   i_soft_refresh TYPE char01 OPTIONAL,
+
+             add_line,
+             delete_line,
+
+             consist_tables IMPORTING i_tables TYPE salv_wd_t_string,
+
+             set_handle_checkfield IMPORTING i_index TYPE i
+                                             i_value TYPE any,
+
+             flush.
+
+  PRIVATE SECTION.
+    DATA: o_container   TYPE REF TO cl_gui_custom_container,
+          o_grid        TYPE REF TO cl_gui_alv_grid,
+          t_join_fields TYPE tyt_join_fields,
+          v_join_table  TYPE string,
+          t_handle      TYPE TABLE OF ty_handle,
+          t_drop_down   TYPE lvc_t_drop.
+
+    METHODS: initialize_container,
+             initialize_alv,
+             create_fieldcat RETURNING value(return) TYPE lvc_t_fcat,
+             exclude_functions RETURNING value(return) TYPE ui_functions,
+             get_style_block_fields RETURNING value(return) TYPE lvc_t_styl,
+             add_handle IMPORTING i_tabname       TYPE string
+                                  i_tab_handle    TYPE i
+                                  i_fields_handle TYPE i,
+
+             add_dropdown IMPORTING i_handle TYPE i
+                                    i_fields TYPE tyt_table_fields OPTIONAL
+                                    i_value  TYPE any OPTIONAL,
+
+             get_field_handle IMPORTING i_tabname     TYPE any
+                              RETURNING value(return) TYPE i,
+
+             compute_join_fields,
+             check_join_fields RAISING lcx_join_error.
+
+ENDCLASS.                    &quot;lcl_screen_700 DEFINITION</source>
+</PROG>

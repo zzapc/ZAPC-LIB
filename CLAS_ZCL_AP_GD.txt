@@ -1,0 +1,1621 @@
+CLASS zcl_ap_gd DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF  t_contenido_xstring,
+        filename TYPE string,
+        docsize  TYPE int4,
+        mimetype TYPE string,
+        xstring  TYPE xstring,
+      END OF t_contenido_xstring.
+    TYPES tt_contenido_xstring TYPE TABLE OF t_contenido_xstring.
+
+    DATA o_class      TYPE REF TO zcl_ap_clasificacion.
+    DATA draw         TYPE draw.
+    DATA status       TYPE string.
+    DATA descripcion  TYPE string.
+    DATA i_status     TYPE dms_tbl_drap.
+    DATA i_documentos TYPE dms_tbl_draz.
+    DATA i_doc_docs   TYPE dms_tbl_drad.
+
+    CONSTANTS c_objectclas TYPE cdhdr-objectclas VALUE 'DOKUMENT' ##NO_TEXT.
+
+    METHODS constructor
+      IMPORTING doknr           TYPE doknr     OPTIONAL
+                dokar           TYPE dokar     OPTIONAL
+                doktl           TYPE doktl_d   DEFAULT '000'
+                dokvr           TYPE dokvr     DEFAULT '00'
+                classnum        TYPE any       OPTIONAL
+                validar_grabado TYPE abap_bool DEFAULT 'X'
+                draw            TYPE draw      OPTIONAL
+      PREFERRED PARAMETER doknr.
+
+    METHODS get_clasificacion
+      IMPORTING !language TYPE spras DEFAULT sy-langu.
+
+    METHODS get_descripcion
+      IMPORTING spras              TYPE sy-langu DEFAULT sy-langu
+      RETURNING VALUE(descripcion) TYPE string.
+
+    METHODS get_documentos.
+    METHODS get_doc_docs.
+    METHODS free.
+
+    CLASS-METHODS visualizar
+      IMPORTING doknr TYPE doknr
+                dokar TYPE dokar
+                doktl TYPE doktl_d DEFAULT '000'
+                dokvr TYPE dokvr   DEFAULT '00'.
+
+    CLASS-METHODS get_anexos_st
+      IMPORTING doknr              TYPE doknr
+                dokar              TYPE dokar
+                doktl              TYPE doktl_d   DEFAULT '000'
+                dokvr              TYPE dokvr     DEFAULT '00'
+                kpro_use           TYPE abap_bool DEFAULT ''
+                dappl              TYPE dappl     DEFAULT ''
+                servidor           TYPE abap_bool DEFAULT ''
+                tabla              TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(i_documents) TYPE t_bapi_doc_files2.
+
+    CLASS-METHODS es_ultima_version_st
+      IMPORTING doknr                 TYPE doknr
+                dokar                 TYPE dokar
+                doktl                 TYPE doktl_d DEFAULT '000'
+                dokvr                 TYPE dokvr   DEFAULT '00'
+      RETURNING VALUE(ultima_version) TYPE abap_bool.
+
+    CLASS-METHODS anyadir_enlace
+      IMPORTING dokar         TYPE dokar
+                doknr         TYPE doknr
+                doktl         TYPE doktl_d
+                dokvr         TYPE dokvr
+                objecttype    TYPE dokob
+                objectkey     TYPE any
+                borrar        TYPE lkenz DEFAULT ''
+      RETURNING VALUE(return) TYPE bapiret2.
+
+    CLASS-METHODS get_short_text
+      IMPORTING doknr        TYPE doknr
+                dokar        TYPE dokar
+                doktl        TYPE doktl_d  DEFAULT '000'
+                dokvr        TYPE dokvr    DEFAULT '00'
+                langu        TYPE sy-langu DEFAULT sy-langu
+      RETURNING VALUE(dktxt) TYPE dktxt.
+
+    CLASS-METHODS check_in_doc
+      IMPORTING doknr         TYPE doknr
+                dokar         TYPE dokar
+                doktl         TYPE doktl_d DEFAULT '000'
+                dokvr         TYPE dokvr   DEFAULT '00'
+                dappl         TYPE dappl   DEFAULT ''
+                nuevo_fichero TYPE any
+      RETURNING VALUE(return) TYPE bapiret2.
+
+    CLASS-METHODS get_valor_caract_tabla
+      IMPORTING caract        TYPE any
+                klart         TYPE any
+                draw          TYPE draw    OPTIONAL
+                dokar         TYPE dokar   OPTIONAL
+                doknr         TYPE doknr   OPTIONAL
+                dokvr         TYPE dokvr   OPTIONAL
+                doktl         TYPE doktl_d OPTIONAL
+                valor_buscado TYPE atwrt   OPTIONAL
+      RETURNING VALUE(ausp)   TYPE ausp.
+
+    CLASS-METHODS get_reg_caract_valor
+      IMPORTING dokar         TYPE dokar
+                caract        TYPE any
+                klart         TYPE ausp-klart OPTIONAL
+                valor         TYPE any
+      RETURNING VALUE(i_draw) TYPE dms_tbl_draw.
+
+    METHODS get_fichero_dms
+      IMPORTING dappl          TYPE dappl DEFAULT 'ZWR'
+      RETURNING VALUE(fichero) TYPE string.
+
+    CLASS-METHODS get_valor_caract
+      IMPORTING caract        TYPE any
+                klart         TYPE any
+                draw          TYPE draw      OPTIONAL
+                dokar         TYPE dokar     OPTIONAL
+                doknr         TYPE doknr     OPTIONAL
+                dokvr         TYPE dokvr     OPTIONAL
+                doktl         TYPE doktl_d   OPTIONAL
+                valor_buscado TYPE atwrt     OPTIONAL
+                tipo_fecha    TYPE abap_bool DEFAULT ''
+                importe       TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(atwrt)  TYPE ausp-atwrt.
+
+    CLASS-METHODS get_anexos_contenido
+      IMPORTING doknr               TYPE doknr
+                dokar               TYPE dokar
+                doktl               TYPE doktl_d         DEFAULT '000'
+                dokvr               TYPE dokvr           DEFAULT '00'
+                kpro_use            TYPE abap_bool       DEFAULT ''
+                dappl               TYPE dappl           DEFAULT ''
+                fichero             TYPE any             DEFAULT ''
+                file_idx            TYPE dms_doc_index   OPTIONAL
+                s_adatum            TYPE datum_range_tab OPTIONAL
+      EXPORTING i_contenido         TYPE rmps_t_post_content
+                i_documents         TYPE t_bapi_doc_files2
+                i_contenido_xstring TYPE tt_contenido_xstring.
+
+    CLASS-METHODS set_status
+      IMPORTING doknr         TYPE doknr
+                dokar         TYPE dokar
+                doktl         TYPE doktl_d   DEFAULT '000'
+                dokvr         TYPE dokvr     DEFAULT '00'
+                !status       TYPE dokst
+                !commit       TYPE abap_bool DEFAULT 'X'
+      RETURNING VALUE(return) TYPE bapiret2.
+
+    CLASS-METHODS get_drad_old
+      RETURNING VALUE(i_drad_old) TYPE dms_tbl_drad.
+
+    CLASS-METHODS get_drad
+      IMPORTING drad           TYPE dms_tbl_drad OPTIONAL
+                draw           TYPE draw
+      RETURNING VALUE(drad_ok) TYPE dms_tbl_drad.
+
+    CLASS-METHODS add_adjunto
+      IMPORTING fichero        TYPE any
+                contenido      TYPE xstring   OPTIONAL
+                dappl          TYPE dappl
+                storage_cat    TYPE any
+                descripcion    TYPE any       DEFAULT ''
+                !path          TYPE any       DEFAULT ''
+                doknr          TYPE doknr
+                dokar          TYPE dokar
+                doktl          TYPE doktl_d   DEFAULT '000'
+                dokvr          TYPE dokvr     DEFAULT '00'
+                no_si_existe   TYPE abap_bool DEFAULT 'X'
+                tipo_busqueda  TYPE any       DEFAULT '*'
+      RETURNING VALUE(message) TYPE message.
+
+    CLASS-METHODS existe_adjunto
+      IMPORTING fichero       TYPE any
+                doknr         TYPE doknr
+                dokar         TYPE dokar
+                doktl         TYPE doktl_d DEFAULT '000'
+                dokvr         TYPE dokvr   DEFAULT '00'
+                tipo_busqueda TYPE any     DEFAULT '*'
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+    CLASS-METHODS get_ultimo_status_log
+      IMPORTING doknr       TYPE doknr   OPTIONAL
+                dokar       TYPE dokar   OPTIONAL
+                doktl       TYPE doktl_d OPTIONAL
+                dokvr       TYPE dokvr   OPTIONAL
+                draw        TYPE draw    OPTIONAL
+                dokst       TYPE any
+      RETURNING VALUE(drap) TYPE drap.
+
+    CLASS-METHODS get_key
+      IMPORTING doknr      TYPE doknr   OPTIONAL
+                dokar      TYPE dokar   OPTIONAL
+                doktl      TYPE doktl_d DEFAULT '000'
+                dokvr      TYPE dokvr   DEFAULT '00'
+                draw       TYPE draw    OPTIONAL
+      RETURNING VALUE(key) TYPE dms_doc_key.
+
+    CLASS-METHODS ha_contenido_status
+      IMPORTING doknr     TYPE doknr   OPTIONAL
+                dokar     TYPE dokar   OPTIONAL
+                doktl     TYPE doktl_d OPTIONAL
+                dokvr     TYPE dokvr   OPTIONAL
+                draw      TYPE draw    OPTIONAL
+                dokst     TYPE any
+      RETURNING VALUE(si) TYPE abap_bool.
+
+    CLASS-METHODS get_fecha_cambio_valor_caract
+      IMPORTING caract       TYPE any
+                klart        TYPE any
+                draw         TYPE draw    OPTIONAL
+                dokar        TYPE dokar   OPTIONAL
+                doknr        TYPE doknr   OPTIONAL
+                dokvr        TYPE dokvr   OPTIONAL
+                doktl        TYPE doktl_d OPTIONAL
+                campo        TYPE any     DEFAULT 'ATWRT'
+                valor        TYPE any
+      RETURNING VALUE(fecha) TYPE dats.
+
+    CLASS-METHODS editar
+      IMPORTING doknr TYPE doknr
+                dokar TYPE dokar
+                doktl TYPE doktl_d DEFAULT '000'
+                dokvr TYPE dokvr   DEFAULT '00'.
+
+    CLASS-METHODS get_num_adj_gos
+      IMPORTING doknr          TYPE doknr   OPTIONAL
+                dokar          TYPE dokar   OPTIONAL
+                doktl          TYPE doktl_d DEFAULT '000'
+                dokvr          TYPE dokvr   DEFAULT '00'
+                draw           TYPE draw    OPTIONAL
+                ar_object      TYPE any     DEFAULT ''
+      RETURNING VALUE(num_adj) TYPE int4.
+
+    CLASS-METHODS get_adjunto
+      IMPORTING fichero         TYPE any
+                doknr           TYPE doknr
+                dokar           TYPE dokar
+                doktl           TYPE doktl_d DEFAULT '000'
+                dokvr           TYPE dokvr   DEFAULT '00'
+                tipo_busqueda   TYPE any     DEFAULT '*'
+      RETURNING VALUE(document) TYPE bapi_doc_files2.
+
+    CLASS-METHODS get_xstring_alink
+      IMPORTING doc_id         TYPE saeardoid
+                !archive       TYPE saearchivi
+                ver            TYPE abap_bool DEFAULT ''
+                !extension     TYPE any       DEFAULT 'pdf'
+      EXPORTING !message       TYPE bapi_msg
+                filename       TYPE toaat-filename
+      RETURNING VALUE(xstring) TYPE xstring.
+
+    CLASS-METHODS get_conexiones_archiv
+      IMPORTING sap_object          TYPE toav0-sap_object
+                object_id           TYPE any
+                ar_object           TYPE toav0-ar_object DEFAULT ''
+      RETURNING VALUE(i_conexiones) TYPE toav0_t.
+
+    CLASS-METHODS get_xstring_archiv
+      IMPORTING sap_object     TYPE toav0-sap_object
+                object_id      TYPE any
+                ar_object      TYPE toav0-ar_object OPTIONAL
+                ver            TYPE abap_bool DEFAULT ''
+      EXPORTING !message       TYPE bapi_msg
+                filename       TYPE toaat-filename
+                !extension     TYPE any
+      RETURNING VALUE(xstring) TYPE xstring.
+
+    CLASS-METHODS borrar_adjunto
+      IMPORTING fichero        TYPE any
+                doknr          TYPE doknr
+                dokar          TYPE dokar
+                doktl          TYPE doktl_d DEFAULT '000'
+                dokvr          TYPE dokvr   DEFAULT '00'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+    DATA clave TYPE cvddockey.
+endclass. "ZCL_AP_GD definition
+class ZCL_AP_GD implementation.
+  METHOD add_adjunto.
+    DATA: l_file            TYPE cvapi_doc_file,
+          l_document        TYPE bapi_doc_files2,
+          pt_files_x        TYPE TABLE OF cvapi_doc_file,
+          l_ftpdest         TYPE rfcdes-rfcdest VALUE 'SAPFTPA',
+          l_content_provide TYPE mcdok-content_provide,
+          pfx_file_size     TYPE i,
+          pt_content        TYPE TABLE OF drao,
+          i_bin             TYPE TABLE OF drao-orblk,
+          l_drao            TYPE drao,
+          psx_message       TYPE messages.
+
+    FIELD-SYMBOLS: <bin>  TYPE drao-orblk,
+                   <drao> TYPE drao.
+
+    l_file-appnr    = '1'.
+    l_file-filename = fichero.
+    l_file-pathname = path.
+
+    IF path = fichero.
+      l_file-filename = zcl_ap_ficheros=>get_nombre_fichero( fichero       = fichero
+                                                             con_extension = 'X' ).
+      l_file-pathname = zcl_ap_ficheros=>get_directorio_fichero( fichero = fichero ).
+    ENDIF.
+
+    l_file-dappl          = dappl.
+    l_file-storage_cat    = storage_cat.
+    l_file-description    = descripcion.
+    l_file-checked_in     = 'X'.
+    l_file-active_version = 'X'.
+
+    l_document = get_adjunto( dokar         = dokar
+                              doknr         = doknr
+                              doktl         = doktl
+                              dokvr         = dokvr
+                              fichero       = fichero
+                              tipo_busqueda = tipo_busqueda ).
+
+    IF l_document IS INITIAL.
+      l_file-updateflag = 'I'.
+    ELSE.
+      l_file-updateflag = 'U'.
+      l_file-lo_objid   = l_document-application_id.
+      l_file-ph_objid   = l_document-file_id.
+      IF no_si_existe = 'X'.
+        EXIT.
+      ENDIF.
+    ENDIF.
+
+    APPEND l_file TO pt_files_x.
+
+    IF contenido IS INITIAL.
+      IF l_file-pathname CS ':'.
+        l_ftpdest = 'SAPFTP'.
+        l_content_provide = 'CLNT'.
+      ELSE.
+        l_content_provide = 'SRV'.
+        CALL FUNCTION 'CV120_READ_FILE2TABLE'
+          EXPORTING  pf_file       = l_file-pathname
+          IMPORTING  pfx_file_size = pfx_file_size
+          TABLES     ptx_data      = pt_content
+          EXCEPTIONS read_error    = 1.
+        IF sy-subrc <> 0.
+          CONCATENATE 'Error al leer fichero'(ELF) l_file-pathname INTO message SEPARATED BY space.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+        EXPORTING buffer        = contenido
+*                  APPEND_TO_TABLE = ' '
+        IMPORTING output_length = pfx_file_size
+        TABLES    binary_tab    = i_bin.
+      LOOP AT i_bin ASSIGNING <bin>.
+        CLEAR l_drao.
+        l_drao-orblk = <bin>.
+        APPEND l_drao TO pt_content.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT pt_content IS INITIAL.
+      l_content_provide = 'TBL'.
+
+      LOOP AT pt_content ASSIGNING <drao>.
+        <drao>-dokar = dokar.
+        <drao>-doknr = doknr.
+        <drao>-dokvr = dokvr.
+        <drao>-doktl = doktl.
+        <drao>-appnr = '1'.
+        <drao>-orln  = pfx_file_size.
+      ENDLOOP.
+    ENDIF.
+
+    CALL FUNCTION 'CVAPI_DOC_CHECKIN'
+      EXPORTING pf_dokar           = dokar
+                pf_doknr           = doknr
+                pf_dokvr           = dokvr
+                pf_doktl           = doktl
+                pf_ftp_dest        = l_ftpdest
+                pf_http_dest       = 'SAPHTTPA'
+                pf_replace         = 'X'
+                pf_content_provide = l_content_provide
+      IMPORTING psx_message        = psx_message
+      TABLES    pt_files_x         = pt_files_x
+                pt_content         = pt_content.
+
+    IF psx_message-msg_type = 'E'.
+      message = psx_message-msg_txt.
+    ENDIF.
+  ENDMETHOD.
+  METHOD anyadir_enlace.
+    DATA: l_drad        TYPE bapi_doc_drad,
+          i_drad        TYPE TABLE OF bapi_doc_drad,
+          documentdata  TYPE bapi_doc_draw2,
+          documentdatax TYPE bapi_doc_drawx2.
+
+    l_drad-objecttype  = objecttype.
+    l_drad-objectkey   = objectkey.
+
+    l_drad-deletevalue = borrar.
+    APPEND l_drad TO i_drad.
+
+    CALL FUNCTION 'BAPI_DOCUMENT_CHANGE2'
+      EXPORTING documenttype    = dokar
+                documentnumber  = doknr
+                documentpart    = doktl
+                documentversion = dokvr
+                documentdata    = documentdata
+                documentdatax   = documentdatax
+*                HOSTNAME        =
+*                DOCBOMCHANGENUMBER =
+*                DOCBOMVALIDFROM =
+*                DOCBOMREVISIONLEVEL =
+*                SENDCOMPLETEBOM = ' '
+*                PF_FTP_DEST     = ' '
+*                PF_HTTP_DEST    = ' '
+*                CAD_MODE        = ' '
+*                ACCEPT_EMPTY_BOM = ' '
+      IMPORTING return          = return
+      TABLES
+*                CHARACTERISTICVALUES =
+*                CLASSALLOCATIONS =
+*                DOCUMENTDESCRIPTIONS =
+                objectlinks     = i_drad
+*                DOCUMENTSTRUCTURE =
+*                DOCUMENTFILES   =
+*                LONGTEXTS       =
+*                COMPONENTS      =
+              .
+
+    IF return-type <> 'E'.
+      CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+        EXPORTING wait = 'X'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD borrar_adjunto.
+    DATA: l_file        TYPE string,
+          documentdata  TYPE bapi_doc_draw2,
+          documentdatax TYPE bapi_doc_drawx2,
+          return        TYPE bapiret2.
+
+    CLEAR message.
+    DATA(i_docs) = zcl_ap_gd=>get_anexos_st( dokar = dokar
+                                             doknr = doknr
+                                             doktl = doktl
+                                             dokvr = dokvr ).
+    LOOP AT i_docs ASSIGNING FIELD-SYMBOL(<doc>) WHERE docfile = fichero.
+      <doc>-deletevalue = 'X'.
+    ENDLOOP.
+    IF sy-subrc <> 0.
+      l_file = fichero.
+      l_file = to_upper( l_file ).
+      LOOP AT i_docs ASSIGNING <doc>.
+        <doc>-docfile = to_upper( <doc>-docfile ).
+        IF <doc>-docfile CS l_file.
+          <doc>-deletevalue = 'X'.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+    IF sy-subrc <> 0.
+      message = |No existe el fichero { fichero }|.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION 'BAPI_DOCUMENT_CHANGE2'
+      EXPORTING documenttype    = dokar
+                documentnumber  = doknr
+                documentpart    = doktl
+                documentversion = dokvr
+                documentdata    = documentdata
+                documentdatax   = documentdatax
+*                HOSTNAME        =
+*                DOCBOMCHANGENUMBER =
+*                DOCBOMVALIDFROM =
+*                DOCBOMREVISIONLEVEL =
+*                SENDCOMPLETEBOM = ' '
+*                PF_FTP_DEST     = ' '
+*                PF_HTTP_DEST    = ' '
+*                CAD_MODE        = ' '
+*                ACCEPT_EMPTY_BOM = ' '
+      IMPORTING return          = return
+      TABLES
+*                CHARACTERISTICVALUES =
+*                CLASSALLOCATIONS =
+*                DOCUMENTDESCRIPTIONS =
+*                objectlinks     =
+*                DOCUMENTSTRUCTURE =
+                documentfiles   = i_docs
+*                LONGTEXTS       =
+*                COMPONENTS      =
+      .
+
+    zcl_ap_dev=>commit( ).
+
+    IF zcl_ap_gd=>existe_adjunto( dokar   = dokar
+                                  doknr   = doknr
+                                  doktl   = doktl
+                                  dokvr   = dokvr
+                                  fichero = fichero ) = 'X'.
+      message = return-message.
+    ENDIF.
+  ENDMETHOD.
+  METHOD check_in_doc.
+    DATA i_documents TYPE TABLE OF bapi_doc_files2.
+
+    FIELD-SYMBOLS <doc> TYPE bapi_doc_files2.
+
+    i_documents[] = get_anexos_st( dokar = dokar
+                                   doknr = doknr
+                                   doktl = doktl
+                                   dokvr = dokvr ).
+
+    LOOP AT i_documents ASSIGNING <doc> WHERE     storagecategory <> ''
+                                              AND wsapplication    = dappl.
+      <doc>-docfile = nuevo_fichero.
+    ENDLOOP.
+    IF sy-subrc = 0.
+      CALL FUNCTION 'BAPI_DOCUMENT_CHECKIN_REPLACE2'
+        EXPORTING documenttype    = dokar
+                  documentnumber  = doknr
+                  documentpart    = doktl
+                  documentversion = dokvr
+*                  HOSTNAME        = ' '
+*                  STATUSINTERN    = ' '
+*                  STATUSEXTERN    = ' '
+*                  STATUSLOG       = ' '
+*                  REVLEVEL        = ' '
+*                  AENNR           = ' '
+*                  PF_HTTP_DEST    = ' '
+*                  PF_FTP_DEST     = ' '
+        IMPORTING return          = return
+        TABLES    documentfiles   = i_documents
+*                  COMPONENTS      =
+*                  DOCUMENTSTRUCTURE =
+                .
+      IF return-type <> 'E'.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ELSE.
+      return-type    = 'E'.
+      return-message = 'No existen documentos a actualizar'(NED).
+    ENDIF.
+  ENDMETHOD.
+  METHOD constructor.
+    DATA l_tdwa TYPE tdwa.
+
+    IF draw IS INITIAL.
+      SELECT SINGLE * FROM draw
+        INTO me->draw
+        WHERE dokar = dokar
+          AND doknr = doknr
+          AND dokvr = dokvr
+          AND doktl = doktl.
+    ELSE.
+      me->draw = draw.
+    ENDIF.
+
+    IF me->draw IS INITIAL.
+      IF NOT doknr IS INITIAL.
+        IF validar_grabado = 'X'.
+          MESSAGE 'Guarde primero el documento'(gpd) TYPE 'E'.
+        ELSE.
+          me->draw-dokar = dokar.
+          me->draw-doknr = doknr.
+          me->draw-dokvr = dokvr.
+          me->draw-doktl = doktl.
+          CLEAR sy-subrc.
+        ENDIF.
+      ELSEIF NOT dokar IS INITIAL.
+        SELECT SINGLE * FROM tdwa
+          INTO l_tdwa
+          WHERE dokar = dokar.
+        IF sy-subrc = 0.
+          o_class = NEW #( objecttable = 'DRAW'
+                           classnum    = classnum
+                           classtype   = l_tdwa-klassenart ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE dostx FROM tdwst
+      INTO status
+      WHERE cvlang = sy-langu
+        AND dokst  = me->draw-dokst.
+
+    SELECT dktxt FROM drat
+      INTO descripcion
+      UP TO 1 ROWS
+      WHERE dokar = me->draw-dokar
+        AND doknr = me->draw-doknr
+        AND dokvr = me->draw-dokvr
+        AND doktl = me->draw-doktl
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+    SELECT * FROM drap
+      INTO TABLE i_status
+      WHERE dokar = me->draw-dokar
+        AND doknr = me->draw-doknr
+        AND dokvr = me->draw-dokvr
+        AND doktl = me->draw-doktl.
+
+    SELECT SINGLE * FROM tdwa
+      INTO l_tdwa
+      WHERE dokar = me->draw-dokar.
+    IF sy-subrc = 0.
+      IF classnum IS NOT INITIAL.
+        l_tdwa-klasse = classnum.
+      ENDIF.
+      o_class = NEW #( objecttable = 'DRAW'
+                       classnum    = l_tdwa-klasse
+                       classtype   = l_tdwa-klassenart ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD editar.
+    SET PARAMETER ID 'CV1' FIELD doknr.
+    SET PARAMETER ID 'CV2' FIELD dokar.
+    SET PARAMETER ID 'CV3' FIELD dokvr.
+    SET PARAMETER ID 'CV4' FIELD doktl.
+    CALL TRANSACTION 'CV02N' AND SKIP FIRST SCREEN.        "#EC CI_CALLTA
+  ENDMETHOD.
+  METHOD es_ultima_version_st.
+    DATA l_draw TYPE draw.
+
+    CLEAR ultima_version.
+    CALL FUNCTION 'DOCUMENT_ACTUAL_VERSION'
+      EXPORTING
+*                 DATUM               = SY-DATUM
+                 dokar               = dokar
+                 doknr               = doknr
+                 teildok             = doktl
+*                 DOKOB               = ' '
+*                 OBJKY               = ' '
+*                 PFX_CV140_CALL      =
+      IMPORTING  dokar               = l_draw-dokar
+                 doknr               = l_draw-doknr
+                 dokst               = l_draw-dokst
+                 dokvr               = l_draw-dokvr
+*                 FRKNZ               = ¿Queremos los liberados?
+*                 TEILDOK             =
+      EXCEPTIONS no_document         = 1
+                 no_version_for_time = 2
+                 OTHERS              = 3.
+    IF dokvr = l_draw-dokvr.
+      ultima_version = 'X'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD existe_adjunto.
+    DATA l_document TYPE bapi_doc_files2.
+
+    l_document = get_adjunto( fichero       = fichero
+                              doknr         = doknr
+                              dokar         = dokar
+                              doktl         = doktl
+                              dokvr         = dokvr
+                              tipo_busqueda = tipo_busqueda ).
+
+    IF NOT l_document IS INITIAL.
+      existe = 'X'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD free.
+    IF NOT o_class IS INITIAL.
+      o_class->free( ).
+      CLEAR o_class.
+    ENDIF.
+
+    CLEAR: i_status,
+           i_documentos,
+           i_doc_docs.
+  ENDMETHOD.
+  METHOD get_adjunto.
+    DATA: i_documents TYPE TABLE OF bapi_doc_files2,
+          l_file      TYPE string,
+          l_document  TYPE bapi_doc_files2.
+
+    CLEAR document.
+
+    i_documents[] = get_anexos_st( dokar = dokar
+                                   doknr = doknr
+                                   doktl = doktl
+                                   dokvr = dokvr ).
+
+    l_file = fichero.
+    l_file = to_upper( l_file ).
+
+    LOOP AT i_documents INTO l_document.
+      l_document-docfile = to_upper( l_document-docfile ).
+      IF tipo_busqueda = '*'.
+        IF l_document-docfile CS l_file.
+          document = l_document.
+          EXIT.
+        ENDIF.
+      ELSEIF tipo_busqueda = '*'.
+        IF l_document-docfile CS l_file.
+          document = l_document.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_anexos_contenido.
+    " TODO: parameter S_ADATUM is never used (ABAP cleaner)
+
+    DATA: l_tabla             TYPE tabname,
+          l_draw              TYPE draw,
+          l_created_at        TYPE sdok_chtst,
+          l_doc_file          TYPE dms_doc_file,
+          l_count_def         TYPE dms_checkout_def,
+          l_phio              TYPE dms_phio,
+          l_frontend          TYPE dms_frontend_data,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_file              TYPE draw-filep,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_url               TYPE mcdok-url,
+          i_content           TYPE TABLE OF drao,
+          l_contenido         TYPE rmps_post_content,
+          l_content           TYPE drao,
+          l_index             TYPE i,
+          l_solix             TYPE lxe_x255,
+          l_contenido_xstring TYPE t_contenido_xstring.
+    DATA: l_uri    TYPE string,
+          l_http   TYPE REF TO if_http_client,
+          i_header TYPE tihttpnvp,
+          l_data   TYPE xstring,
+          l_header TYPE ihttpnvp.
+
+    FIELD-SYMBOLS <doc> TYPE bapi_doc_files2.
+
+    FIELD-SYMBOLS: <hexa> TYPE solix,
+                   <dest> TYPE x.
+
+    CLEAR: i_contenido,
+           i_documents,
+           i_contenido_xstring.
+
+    l_tabla = 'DRAW'.
+    SELECT SINGLE *
+      FROM (l_tabla)
+      INTO l_draw
+      WHERE dokar = dokar
+        AND doknr = doknr
+        AND dokvr = dokvr
+        AND doktl = doktl.
+
+    CALL FUNCTION 'BAPI_DOCUMENT_GETDETAIL2'
+      EXPORTING documenttype       = dokar
+                documentnumber     = doknr
+                documentpart       = doktl
+                documentversion    = dokvr
+                getactivefiles     = 'X'
+                getdocdescriptions = 'X'
+                getdocfiles        = 'X'
+      TABLES    documentfiles      = i_documents.
+
+* Debido a las exits de al pasar por gestión documental,
+* me devuelve documentos "fantasmas".
+    CONCATENATE sy-datum '000000' INTO l_created_at.
+    DELETE i_documents WHERE     created_by  = sy-uname
+                             AND changed_by  = ''
+                             AND checkedin   = ''
+                             AND file_id     = ''
+                             AND created_at >= l_created_at.
+
+    IF NOT dappl IS INITIAL.
+      DELETE i_documents WHERE wsapplication <> dappl.
+    ENDIF.
+
+* Sí sólo queremos recuperar el contenido de un fichero específico, borramos el resto!
+    IF NOT fichero IS INITIAL.
+      DELETE i_documents WHERE NOT docfile CS fichero.
+    ENDIF.
+
+    IF file_idx IS NOT INITIAL.
+      DELETE i_documents WHERE originaltype <> file_idx.
+    ENDIF.
+
+    IF kpro_use <> 'X'.
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_documents ASSIGNING <doc> WHERE storagecategory <> '' AND checkedin = 'X'.
+      MOVE-CORRESPONDING <doc> TO l_doc_file.
+      l_doc_file-langu = 'S'.
+      l_doc_file-dappl = <doc>-wsapplication.
+
+      l_count_def-kpro_use = 'X'.
+      l_count_def-comp_get = 'X'.
+
+      l_phio-lo_index       = sy-tabix.
+      l_phio-ph_index       = sy-tabix.
+      l_phio-langu          = 'S'.
+      l_phio-lo_objid       = <doc>-application_id.
+      l_phio-ph_objid       = <doc>-file_id.
+      l_phio-file_id        = <doc>-file_id.
+      l_phio-storage_cat    = <doc>-storagecategory.
+      l_phio-filename       = <doc>-docfile.
+      l_phio-active_version = 'X'.
+      l_phio-delete_flag    = 'X'.
+      l_phio-protected      = 'X'.
+      l_phio-default_langu  = 'X'.
+
+      l_count_def-batchmode       = 'X'.
+      l_count_def-content_provide = 'TBL'.
+
+      CALL FUNCTION 'CV120_DOC_CHECKOUT_VIEW'
+        EXPORTING  ps_cout_def = l_count_def
+                   pf_tcode    = 'CV03'
+                   ps_doc_file = l_doc_file
+                   ps_draw     = l_draw
+                   ps_phio     = l_phio
+                   ps_frontend = l_frontend
+*                   PF_STD_URL  = 'X'
+        IMPORTING  pfx_file    = l_file
+                   pfx_url     = l_url
+*                   PFX_USE_LAST =
+        TABLES
+*                   PT_COMPONENTS =
+*                   PT_DRAZ     =
+                   ptx_content = i_content
+        EXCEPTIONS error       = 1
+                   OTHERS      = 2.
+      IF sy-subrc = 0.
+        CLEAR l_contenido.
+        l_contenido-filename = l_phio-filename.
+
+        LOOP AT i_content INTO l_content.
+          CLEAR l_index.
+          DO 10 TIMES.
+            l_solix = l_content-orblk+l_index(255)
+              .
+            APPEND INITIAL LINE TO l_contenido-cont_hex ASSIGNING <hexa>.
+            ASSIGN <hexa>-line TO <dest>.
+            <dest> = l_solix.
+            l_index = l_index + 255.
+          ENDDO.
+        ENDLOOP.
+        l_contenido-docsize = l_content-orln.
+
+        APPEND l_contenido TO i_contenido.
+
+        CLEAR l_contenido_xstring.
+        MOVE-CORRESPONDING l_contenido TO l_contenido_xstring.
+        CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+          EXPORTING  input_length = 999999999
+*                     FIRST_LINE   = 0
+*                     LAST_LINE    = 0
+          IMPORTING  buffer       = l_contenido_xstring-xstring
+          TABLES     binary_tab   = l_contenido-cont_hex
+          EXCEPTIONS failed       = 1
+                     OTHERS       = 2.
+        APPEND l_contenido_xstring TO i_contenido_xstring.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT i_documents ASSIGNING <doc> WHERE checkedin = '' AND ( docfile(4) = 'http' OR docfile(4) = 'HTTP' ).
+      l_uri = <doc>-docfile.
+
+      TRY.
+          cl_http_client=>create_by_url( EXPORTING url    = l_uri
+                                         IMPORTING client = l_http ).
+          l_http->send( ).
+          l_http->receive( EXCEPTIONS OTHERS = 1 ).
+          l_http->response->get_header_fields( CHANGING fields = i_header ).
+          l_data = l_http->response->get_data( ).
+          l_http->close( ).
+        CATCH cx_root.
+          CONTINUE.
+      ENDTRY.
+
+      CLEAR l_contenido_xstring.
+      LOOP AT i_header INTO l_header.
+        IF l_header-name = 'content-disposition'.
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          SPLIT l_header-value AT 'filename=' INTO DATA(aux) l_contenido_xstring-filename.
+        ENDIF.
+        IF l_header-name = 'content-type'.
+          l_contenido_xstring-mimetype = l_header-value.
+        ENDIF.
+        IF l_header-name = 'content-length'.
+          l_contenido_xstring-docsize = l_header-value.
+        ENDIF.
+
+      ENDLOOP.
+
+      l_contenido_xstring-xstring = l_data.
+      APPEND l_contenido_xstring TO i_contenido_xstring.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_anexos_st.
+    DATA: l_tabla      TYPE tabname,
+          l_draw       TYPE draw,
+          l_created_at TYPE sdok_chtst,
+          l_doc_file   TYPE dms_doc_file,
+          l_count_def  TYPE dms_checkout_def,
+          l_phio       TYPE dms_phio,
+          l_frontend   TYPE dms_frontend_data,
+          l_file       TYPE draw-filep,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_url        TYPE mcdok-url,
+          i_content    TYPE TABLE OF drao.
+
+    FIELD-SYMBOLS <doc> TYPE bapi_doc_files2.
+
+    l_tabla = 'DRAW'.
+    SELECT SINGLE *
+      FROM (l_tabla)
+      INTO l_draw
+      WHERE dokar = dokar
+        AND doknr = doknr
+        AND dokvr = dokvr
+        AND doktl = doktl.
+
+    CALL FUNCTION 'BAPI_DOCUMENT_GETDETAIL2'
+      EXPORTING documenttype       = dokar
+                documentnumber     = doknr
+                documentpart       = doktl
+                documentversion    = dokvr
+                getactivefiles     = 'X'
+                getdocdescriptions = 'X'
+                getdocfiles        = 'X'
+      TABLES    documentfiles      = i_documents.
+
+* Debido a las exits de al pasar por gestión documental,
+* me devuelve documentos "fantasmas".
+    CONCATENATE sy-datum '000000' INTO l_created_at.
+    DELETE i_documents WHERE     created_by  = sy-uname
+                             AND changed_by  = ''
+                             AND checkedin   = ''
+                             AND file_id     = ''
+                             AND created_at >= l_created_at.
+
+    IF NOT dappl IS INITIAL.
+      DELETE i_documents WHERE wsapplication <> dappl.
+    ENDIF.
+
+    IF kpro_use <> 'X'.
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_documents ASSIGNING <doc> WHERE storagecategory <> ''.
+      MOVE-CORRESPONDING <doc> TO l_doc_file.
+      l_doc_file-langu = 'S'.
+      l_doc_file-dappl = <doc>-wsapplication.
+
+      l_count_def-kpro_use = 'X'.
+      l_count_def-comp_get = 'X'.
+
+      l_phio-lo_index       = sy-tabix.
+      l_phio-ph_index       = sy-tabix.
+      l_phio-langu          = 'S'.
+      l_phio-lo_objid       = <doc>-application_id.
+      l_phio-ph_objid       = <doc>-file_id.
+      l_phio-file_id        = <doc>-file_id.
+      l_phio-storage_cat    = <doc>-storagecategory.
+      l_phio-filename       = <doc>-docfile.
+      l_phio-active_version = 'X'.
+      l_phio-delete_flag    = 'X'.
+      l_phio-protected      = 'X'.
+      l_phio-default_langu  = 'X'.
+
+      IF servidor IS INITIAL AND tabla IS INITIAL.
+        l_frontend-frontend_type = 'SL'.
+        l_frontend-hostname      = 'DEFAULT'.
+        l_frontend-winsys        = 'WN32'.
+        l_frontend-platform      = 0.
+      ELSEIF servidor = 'X'.
+        l_count_def-batchmode       = 'X'.
+        l_count_def-content_provide = 'SRV'.
+      ELSEIF tabla = 'X'.
+        l_count_def-batchmode       = 'X'.
+        l_count_def-content_provide = 'TBL'.
+      ENDIF.
+
+      CALL FUNCTION 'CV120_DOC_CHECKOUT_VIEW'
+        EXPORTING  ps_cout_def = l_count_def
+                   pf_tcode    = 'CV03'
+                   ps_doc_file = l_doc_file
+                   ps_draw     = l_draw
+                   ps_phio     = l_phio
+                   ps_frontend = l_frontend
+*                   PF_STD_URL  = 'X'
+        IMPORTING  pfx_file    = l_file
+                   pfx_url     = l_url
+*                   PFX_USE_LAST =
+        TABLES
+*                   PT_COMPONENTS =
+*                   PT_DRAZ     =
+                   ptx_content = i_content
+        EXCEPTIONS error       = 1
+                   OTHERS      = 2.
+      IF sy-subrc = 0.
+        <doc>-docfile = l_file.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_clasificacion.
+    DATA l_object TYPE bapi1003_key-object.
+
+    IF o_class IS INITIAL.
+      MESSAGE 'No se ha definido clasificación'(NDC) TYPE 'E'.
+    ENDIF.
+
+    l_object = draw+3(33).
+    o_class->get_datos( objectkey = l_object
+                        language  = language ).
+  ENDMETHOD.
+  METHOD get_conexiones_archiv.
+    DATA l_object_id TYPE toav0-object_id.
+
+    CLEAR i_conexiones.
+    l_object_id = object_id.
+    CALL FUNCTION 'ARCHIV_GET_CONNECTIONS'
+      EXPORTING  objecttype    = sap_object
+                 object_id     = l_object_id
+                 documenttype  = ar_object
+                 until_ar_date = sy-datum
+      TABLES     connections   = i_conexiones
+      EXCEPTIONS nothing_found = 1
+                 OTHERS        = 2.
+
+    SORT i_conexiones BY ar_date ASCENDING.
+  ENDMETHOD.
+  METHOD get_descripcion.
+    DATA: drat     TYPE drat,
+          l_tdname TYPE thead-tdname,
+          i_lineas TYPE TABLE OF tline,
+          l_linea  TYPE tline.
+
+    SELECT SINGLE * FROM drat
+      INTO drat
+      WHERE dokar = draw-dokar
+        AND doknr = draw-doknr
+        AND dokvr = draw-dokvr
+        AND doktl = draw-doktl
+        AND langu = spras.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    IF drat-ltxin = space.
+      descripcion = drat-dktxt.
+    ELSE.
+      CLEAR l_tdname.
+      l_tdname = sy-mandt.
+      l_tdname+3(25) = drat-dokar.
+      l_tdname+6(25) = drat-doknr.
+      l_tdname+31(2) = drat-dokvr.
+      l_tdname+33(3) = drat-doktl.
+      REFRESH i_lineas.
+      CALL FUNCTION 'READ_TEXT'
+        EXPORTING  client                  = sy-mandt
+                   id                      = 'LTXT'
+                   language                = spras
+                   name                    = l_tdname
+                   object                  = 'DRAT'
+        TABLES     lines                   = i_lineas
+        EXCEPTIONS id                      = 1
+                   language                = 2
+                   name                    = 3
+                   not_found               = 4
+                   object                  = 5
+                   reference_check         = 6
+                   wrong_access_to_archive = 7
+                   OTHERS                  = 8.
+
+      CLEAR descripcion.
+      LOOP AT i_lineas INTO l_linea.
+        IF NOT l_linea-tdline IS INITIAL.
+          IF descripcion IS INITIAL.
+            descripcion = l_linea-tdline.
+          ELSE.
+            CONCATENATE descripcion l_linea-tdline INTO descripcion
+                        SEPARATED BY space.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      IF sy-subrc <> 0.
+        descripcion = drat-dktxt.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_doc_docs.
+* Documentos de modificacion
+    SELECT * FROM drad
+      INTO TABLE i_doc_docs
+      WHERE dokar = draw-dokar
+        AND doknr = draw-doknr
+        AND dokvr = draw-dokvr
+        AND doktl = draw-doktl
+        AND dokob = 'DRAW'.
+  ENDMETHOD.
+  METHOD get_documentos.
+    DATA l_doc TYPE draz.
+
+    CLEAR i_documentos.
+    SELECT dappl filename FROM dms_doc_files
+      INTO ( l_doc-dttrg, l_doc-filep )
+      WHERE dokar = draw-dokar
+        AND doknr = draw-doknr
+        AND dokvr = draw-dokvr
+        AND doktl = draw-doktl.
+      APPEND l_doc TO i_documentos.
+    ENDSELECT.
+    IF sy-subrc <> 0.
+      IF NOT draw-filep IS INITIAL.
+        l_doc-filep = draw-filep.
+        l_doc-dttrg = draw-dappl.
+        APPEND l_doc TO i_documentos.
+      ENDIF.
+
+      IF NOT draw-filep1 IS INITIAL.
+        l_doc-filep = draw-filep1.
+        l_doc-dttrg = draw-dappl1.
+        APPEND l_doc TO i_documentos.
+      ENDIF.
+    ENDIF.
+
+    LOOP AT i_documentos INTO l_doc.
+      SELECT SINGLE cvtext FROM tdwp
+        INTO l_doc-frmtx
+        WHERE dappl = l_doc-dttrg.
+      MODIFY i_documentos FROM l_doc.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_drad.
+    DATA: i_drad     TYPE TABLE OF drad,
+          i_drad_db  TYPE TABLE OF drad,
+          i_drad_old TYPE TABLE OF drad.
+
+    FIELD-SYMBOLS <drad> TYPE drad.
+
+    IF drad IS INITIAL.
+*    CALL FUNCTION 'CV110_DOC_DATA_GET'
+*      EXPORTING
+*        pf_read_drad = 'X'
+*      TABLES
+*        ptx_drad     = i_drad.
+    ELSE.
+      i_drad = drad.
+    ENDIF.
+
+    CALL FUNCTION 'CV200_DB_DRAD_SELECT'
+      EXPORTING  pf_dokar  = draw-dokar
+                 pf_doknr  = draw-doknr
+                 pf_doktl  = draw-doktl
+                 pf_dokvr  = draw-dokvr
+      TABLES     ptx_drad  = i_drad_db
+      EXCEPTIONS not_found = 1
+                 OTHERS    = 2.
+
+    i_drad_old = get_drad_old( ).
+
+    LOOP AT i_drad ASSIGNING <drad>.
+      READ TABLE i_drad_db TRANSPORTING NO FIELDS WITH KEY dokob = <drad>-dokob
+                                                           obzae = <drad>-obzae
+                                                           objky = <drad>-objky.
+      IF sy-subrc = 0.
+        DELETE i_drad_db INDEX sy-tabix.
+      ENDIF.
+      APPEND <drad> TO drad_ok.
+    ENDLOOP.
+
+    LOOP AT i_drad_db ASSIGNING <drad>.
+      IF line_exists( i_drad_old[ dokob = <drad>-dokob
+                                  obzae = <drad>-obzae
+                                  objky = <drad>-objky ] ).
+        <drad>-delflag = 'X'.
+      ENDIF.
+      APPEND <drad> TO drad_ok.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_drad_old.
+    TYPES: BEGIN OF intdrad.
+             INCLUDE TYPE drad.        " LOOP-Dynpro Verarbeitung
+    TYPES    set_type           TYPE i.          " CONTROL
+    TYPES    set_text           TYPE c LENGTH 1. " text
+    TYPES    set_class          TYPE c LENGTH 1. " class
+    TYPES    set_auth           TYPE c LENGTH 4. " auth
+    TYPES    tab_mark           TYPE c LENGTH 1. " marked line
+    TYPES    set_enqueue_record TYPE c LENGTH 1. " Note 941311
+    TYPES: END OF intdrad,
+           tt_intdrad TYPE TABLE OF intdrad.
+
+    DATA: l_intdrad TYPE intdrad,
+          l_drad    TYPE drad.
+
+    FIELD-SYMBOLS <i_drad> TYPE table.
+
+    ASSIGN ('(SAPLCV110)GT_DRAD_OLD[]') TO <i_drad>.
+    LOOP AT <i_drad> INTO l_intdrad.
+      CLEAR l_drad.
+      MOVE-CORRESPONDING l_intdrad TO l_drad.
+      APPEND l_drad TO i_drad_old.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_fecha_cambio_valor_caract.
+    " TODO: parameter CAMPO is never used (ABAP cleaner)
+
+    DATA: l_draw TYPE draw,
+          l_inob TYPE inob.
+
+    IF NOT draw IS INITIAL.
+      l_draw = draw.
+    ELSE.
+      l_draw-dokar = dokar.
+      l_draw-doknr = doknr.
+      l_draw-dokvr = dokvr.
+      l_draw-doktl = doktl.
+    ENDIF.
+
+    SELECT cuobj FROM inob
+      INTO l_inob-cuobj
+      UP TO 1 ROWS
+      WHERE klart = klart
+        AND objek = l_draw+3(33)
+        AND obtab = 'DRAW'
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      fecha = zcl_ap_clasificacion=>get_fecha_cambio_valor( objectid = l_inob-cuobj
+                                                            caract   = caract
+                                                            valor    = valor ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_fichero_dms.
+    DATA: i_documents TYPE TABLE OF bapi_doc_files2,
+          l_documento TYPE bapi_doc_files2.
+
+    CLEAR fichero.
+
+* Buscamos si tiene algún documento anexo en OpenText.
+    i_documents[] = get_anexos_st( dokar    = draw-dokar
+                                   doknr    = draw-doknr
+                                   doktl    = draw-doktl
+                                   dokvr    = draw-dokvr
+                                   kpro_use = 'X' ).
+
+    LOOP AT i_documents INTO l_documento WHERE     wsapplication    = dappl
+                                               AND storagecategory <> ''.
+      fichero = l_documento-docfile.
+      EXIT.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_key.
+    CLEAR key.
+    IF NOT draw IS INITIAL.
+      MOVE-CORRESPONDING draw TO key.
+    ELSE.
+      key-dokar = dokar.
+      key-doknr = doknr.
+      key-doktl = doktl.
+      key-dokvr = dokvr.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_num_adj_gos.
+    DATA l_key TYPE dms_doc_key.
+
+    l_key = get_key( draw  = draw
+                     dokar = dokar
+                     doknr = doknr
+                     doktl = doktl
+                     dokvr = dokvr ).
+
+    IF ar_object IS INITIAL.
+      SELECT COUNT( * ) FROM toa01
+        INTO num_adj
+        WHERE sap_object = 'DRAW'
+          AND object_id  = l_key.
+    ELSE.
+      SELECT COUNT( * ) FROM toa01
+        INTO num_adj
+        WHERE sap_object = 'DRAW'
+          AND object_id  = l_key
+          AND ar_object  = ar_object.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_reg_caract_valor.
+    DATA: l_atinn TYPE atinn,
+          l_objek TYPE ausp-objek,
+          i_ausp  TYPE TABLE OF ausp,
+          l_draw  TYPE draw,
+          l_inob  TYPE inob.
+
+    FIELD-SYMBOLS <ausp> TYPE ausp.
+
+    CLEAR i_draw.
+    l_atinn = zcl_ap_clasificacion=>get_caract_interno( caract ).
+
+    IF l_atinn IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CONCATENATE dokar '%' INTO l_objek.
+
+    IF klart IS INITIAL.
+      SELECT klart objek FROM ausp                        "#EC CI_NOFIRST
+        INTO CORRESPONDING FIELDS OF TABLE i_ausp
+        WHERE atinn = l_atinn
+          AND mafid = 'O'
+          AND atwrt = valor.
+    ELSE.
+      SELECT klart objek FROM ausp                        "#EC CI_NOFIRST
+        INTO CORRESPONDING FIELDS OF TABLE i_ausp
+        WHERE atinn = l_atinn
+          AND mafid = 'O'
+          AND klart = klart
+          AND atwrt = valor.
+    ENDIF.
+
+* lrr17/01/13 En función de la categoría de clase, guarda el objeto
+* propietario del valor de la característica en AUSP o en INOB:
+    LOOP AT i_ausp ASSIGNING <ausp>.
+      IF <ausp>-klart = '017'.
+        IF <ausp>-objek(3) = dokar.
+          CLEAR l_draw.
+          l_draw+3(33) = <ausp>-objek(33).
+          APPEND l_draw TO i_draw.
+        ENDIF.
+      ELSEIF <ausp>-klart = 'Z17'.
+        SELECT SINGLE objek FROM inob
+          INTO l_inob-objek
+          WHERE cuobj    = <ausp>-objek
+            AND klart    = <ausp>-klart
+            AND objek LIKE l_objek.
+        IF sy-subrc = 0.
+          CLEAR l_draw.
+          l_draw+3(33) = l_inob-objek(33).
+          APPEND l_draw TO i_draw.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    SORT i_draw.
+  ENDMETHOD.
+  METHOD get_short_text.
+    CLEAR dktxt.
+    SELECT SINGLE dktxt FROM drat
+      INTO dktxt
+      WHERE dokar = dokar
+        AND doknr = doknr
+        AND dokvr = dokvr
+        AND doktl = doktl
+        AND langu = langu.
+    IF sy-subrc = 0.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE dktxt FROM drat
+      INTO dktxt
+      WHERE dokar = dokar
+        AND doknr = doknr
+        AND dokvr = dokvr
+        AND doktl = doktl.
+    IF sy-subrc <> 0.
+      SELECT dktxt FROM drat
+        INTO dktxt
+        UP TO 1 ROWS
+        WHERE dokar = dokar
+          AND doknr = doknr
+          AND dokvr = dokvr
+          AND langu = langu
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_ultimo_status_log.
+    " TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_key TYPE dms_doc_key.
+
+    l_key = get_key( draw  = draw
+                     dokar = dokar
+                     doknr = doknr
+                     doktl = doktl
+                     dokvr = dokvr ).
+
+    CLEAR drap.
+    SELECT * FROM drap
+      INTO drap
+      WHERE dokar = dokar
+        AND doknr = doknr
+        AND doktl = doktl
+        AND dokvr = dokvr
+        AND dokst = dokst.
+    ENDSELECT.
+  ENDMETHOD.
+  METHOD get_valor_caract.
+    DATA: l_ausp TYPE ausp,
+          l_num  TYPE i.
+
+    l_ausp = get_valor_caract_tabla( caract        = caract
+                                     klart         = klart
+                                     draw          = draw
+                                     dokar         = dokar
+                                     doknr         = doknr
+                                     doktl         = doktl
+                                     dokvr         = dokvr
+                                     valor_buscado = valor_buscado ).
+    IF importe = 'X'.
+      atwrt = l_ausp-atflv.
+    ELSEIF tipo_fecha = 'X'.
+      l_num = l_ausp-atflv.
+      IF l_num <> 0.
+        atwrt = l_num.
+        CONDENSE atwrt NO-GAPS.
+      ENDIF.
+    ELSE.
+      atwrt = l_ausp-atwrt.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_valor_caract_tabla.
+    DATA: l_draw  TYPE draw,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_ausp  TYPE ausp,
+          l_atinn TYPE atinn,
+          l_inob  TYPE inob.
+
+    IF NOT draw IS INITIAL.
+      l_draw = draw.
+    ELSE.
+      l_draw-dokar = dokar.
+      l_draw-doknr = doknr.
+      l_draw-dokvr = dokvr.
+      l_draw-doktl = doktl.
+    ENDIF.
+
+    CLEAR l_ausp.
+    l_atinn = zcl_ap_clasificacion=>get_caract_interno( caract ).
+    SELECT SINGLE * FROM ausp
+      INTO ausp
+      WHERE objek = l_draw+3(33)
+        AND mafid = 'O'
+        AND klart = klart
+        AND atinn = l_atinn.
+    IF sy-subrc = 0.
+      RETURN.
+    ENDIF.
+
+    SELECT cuobj FROM inob
+      INTO l_inob-cuobj
+      UP TO 1 ROWS
+      WHERE klart = klart
+        AND objek = l_draw+3(33)
+        AND obtab = 'DRAW'
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      IF valor_buscado IS INITIAL.
+        SELECT * FROM ausp
+          INTO ausp
+          UP TO 1 ROWS
+          WHERE objek = l_inob-cuobj
+            AND mafid = 'O'
+            AND klart = klart
+            AND atinn = l_atinn
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ELSE.
+        SELECT * FROM ausp
+          INTO ausp
+          UP TO 1 ROWS
+          WHERE objek = l_inob-cuobj
+            AND mafid = 'O'
+            AND klart = klart
+            AND atinn = l_atinn
+            AND atwrt = valor_buscado
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_xstring_alink.
+    DATA ex_length   TYPE int4.
+    DATA ex_message  TYPE bapiret2.
+    DATA ex_document TYPE STANDARD TABLE OF tbl1024.
+
+    CLEAR: xstring,
+           message.
+    CALL FUNCTION 'ALINK_RFC_TABLE_GET'
+      EXPORTING im_docid    = doc_id
+                im_crepid   = archive
+*                IM_COMPID   = IM_COMPID
+      IMPORTING ex_length   = ex_length
+                ex_message  = ex_message
+      TABLES    ex_document = ex_document.
+
+    IF ex_document IS INITIAL.
+      message = ex_message-message.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+      EXPORTING  input_length = ex_length
+*                 FIRST_LINE   = 0
+*                 LAST_LINE    = 0
+      IMPORTING  buffer       = xstring
+      TABLES     binary_tab   = ex_document
+      EXCEPTIONS failed       = 1
+                 OTHERS       = 2.
+
+    IF xstring IS INITIAL.
+      message = 'Error convirtiendo binario'.
+      RETURN.
+    ENDIF.
+    SELECT SINGLE filename FROM toaat
+      INTO filename
+      WHERE arc_doc_id = doc_id.
+
+    IF ver = 'X'.
+      DATA(l_filename) = filename.
+      IF l_filename IS INITIAL.
+        l_filename = 'documento.' && extension.
+      ENDIF.
+
+      zcl_ap_ficheros=>visualizar( fichero = l_filename
+                                   xstring = xstring ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_xstring_archiv.
+    DATA(i_conexiones) = get_conexiones_archiv( sap_object = sap_object
+                                                object_id  = object_id
+                                                ar_object  = ar_object ).
+
+    IF i_conexiones IS INITIAL.
+      message = 'No hay documentos'.
+      RETURN.
+    ENDIF.
+
+    SORT i_conexiones BY ar_date DESCENDING. " Seleccionamos el más actual
+    ASSIGN i_conexiones[ 1 ] TO FIELD-SYMBOL(<conexion>).
+
+    extension = <conexion>-reserve.
+
+    xstring = get_xstring_alink( EXPORTING doc_id    = <conexion>-arc_doc_id
+                                           archive   = <conexion>-archiv_id
+                                           extension = <conexion>-reserve
+                                 IMPORTING message   = message
+                                           filename  = filename ).
+
+    IF filename IS INITIAL.
+      SELECT SINGLE objecttext FROM toasp
+        INTO filename
+        WHERE ar_object = <conexion>-ar_object
+          AND language  = sy-langu.
+      IF sy-subrc = 0.
+        filename = filename && '.' && extension.
+      ELSE.
+        filename = 'documento' && '.' && extension.
+      ENDIF.
+    ENDIF.
+
+    IF ver = 'X' AND NOT xstring IS INITIAL.
+      zcl_ap_ficheros=>visualizar( fichero = filename
+                                   xstring = xstring ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD ha_contenido_status.
+    DATA: l_key  TYPE dms_doc_key,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_drap TYPE drap.
+
+    l_key = get_key( draw  = draw
+                     dokar = dokar
+                     doknr = doknr
+                     doktl = doktl
+                     dokvr = dokvr ).
+
+    CLEAR si.
+    SELECT SINGLE dokar FROM drap
+      INTO l_drap-dokar
+      WHERE dokar = l_key-dokar
+        AND doknr = l_key-doknr
+        AND doktl = l_key-doktl
+        AND dokvr = l_key-dokvr
+        AND dokst = dokst.
+    IF sy-subrc = 0.
+      si = 'X'.
+    ELSE.
+      SELECT SINGLE dokar FROM draw
+        INTO l_drap-dokar
+        WHERE dokar = l_key-dokar
+          AND doknr = l_key-doknr
+          AND doktl = l_key-doktl
+          AND dokvr = l_key-dokvr
+          AND dokst = dokst.
+      IF sy-subrc = 0.
+        si = 'X'.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD set_status.
+    CALL FUNCTION 'BAPI_DOCUMENT_SETSTATUS'
+      EXPORTING documenttype    = dokar
+                documentnumber  = doknr
+                documentpart    = doktl
+                documentversion = dokvr
+*                STATUSEXTERN    = ' '
+                statusintern    = status
+*                STATUSLOG       = ' '
+      IMPORTING return          = return.
+
+    IF commit = 'X'.
+      zcl_ap_dev=>commit( ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD visualizar.
+    SET PARAMETER ID 'CV1' FIELD doknr.
+    SET PARAMETER ID 'CV2' FIELD dokar.
+    SET PARAMETER ID 'CV3' FIELD dokvr.
+    SET PARAMETER ID 'CV4' FIELD doktl.
+    CALL TRANSACTION 'CV03N' AND SKIP FIRST SCREEN.        "#EC CI_CALLTA
+  ENDMETHOD.

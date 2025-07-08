@@ -1,0 +1,3147 @@
+CLASS zcl_ap_gos DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF t_adj,
+        fichero TYPE string,
+        xstring TYPE xstring,
+      END OF t_adj.
+    TYPES tt_adj TYPE TABLE OF t_adj.
+
+    CLASS-METHODS urls_gos_st
+      IMPORTING tipo         TYPE srgbtbrel-typeid_a
+                clave        TYPE any
+                atta         TYPE abap_bool DEFAULT ''
+                url          TYPE abap_bool DEFAULT 'X'
+                notas        TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(tabla) TYPE ztab_url_gos.
+
+    CLASS-METHODS insertar_url_gos_st
+      IMPORTING tipo         TYPE srgbtbrel-typeid_a
+                clave        TYPE srgbtbrel-instid_a
+                url          TYPE string
+                titulo       TYPE string
+      RETURNING VALUE(error) TYPE ekko-loekz.
+
+    CLASS-METHODS visualizar_fichero_st
+      IMPORTING fichero             TYPE any
+                imprimir            TYPE abap_bool       DEFAULT ''
+                archiv_id           TYPE toa01-archiv_id DEFAULT ''
+                !extension          TYPE any             DEFAULT ''
+                navegador           TYPE abap_bool       DEFAULT ''
+                dokar               TYPE draw-dokar      DEFAULT ''
+                doknr               TYPE draw-doknr      DEFAULT ''
+                doktl               TYPE draw-doktl      DEFAULT ''
+                dokvr               TYPE draw-dokvr      DEFAULT ''
+                url2local           TYPE abap_bool       DEFAULT ''
+                nombre_fichero_temp TYPE any             DEFAULT ''.
+
+    CLASS-METHODS get_url_por_titulo_st
+      IMPORTING tipo       TYPE srgbtbrel-typeid_a
+                clave      TYPE srgbtbrel-instid_a
+                titulo     TYPE string
+      RETURNING VALUE(url) TYPE string.
+
+    CLASS-METHODS atta_gos_st
+      IMPORTING tipo         TYPE srgbtbrel-typeid_a
+                clave        TYPE srgbtbrel-instid_a
+      RETURNING VALUE(tabla) TYPE ztab_url_gos.
+
+    CLASS-METHODS borrar_url_gos_st
+      IMPORTING tipo         TYPE any
+                clave        TYPE any
+                url          TYPE any
+                titulo       TYPE any
+      RETURNING VALUE(error) TYPE ekko-loekz.
+
+    CLASS-METHODS inserta_boton_gos.
+
+    CLASS-METHODS insertar_ata_gos_st
+      IMPORTING tipo         TYPE srgbtbrel-typeid_a
+                clave        TYPE any
+                content      TYPE soli_tab        OPTIONAL
+                titulo       TYPE any
+                fichero      TYPE any
+                !convert     TYPE abap_bool       DEFAULT ''
+                i_otfdata    TYPE tsfotf          OPTIONAL
+                xstring      TYPE xstring         OPTIONAL
+                reltype      TYPE breltyp-reltype DEFAULT 'ATTA'
+                !string      TYPE string          OPTIONAL
+                ar_object    TYPE toa01-ar_object DEFAULT ''
+                archiv_id    TYPE toa01-archiv_id DEFAULT ''
+                !extension   TYPE any             DEFAULT ''
+      EXPORTING arc_doc_id   TYPE toav0-arc_doc_id
+      RETURNING VALUE(error) TYPE ekko-loekz.
+
+    CLASS-METHODS get_file_list
+      IMPORTING instid          TYPE any
+                typeid          TYPE sibftypeid
+                catid           TYPE sibfcatid           DEFAULT 'BO'
+                get_adj_mail    TYPE abap_bool           DEFAULT ''
+                instid_b        TYPE any                 DEFAULT ''
+      CHANGING  i_attachments   TYPE zt_sood             OPTIONAL
+                i_return        TYPE bapirettab          OPTIONAL
+                i_adjuntos_mail TYPE rmps_t_post_content OPTIONAL
+                i_adj           TYPE tt_adj              OPTIONAL.
+
+    CLASS-METHODS download_file_to_gui
+      IMPORTING ruta       TYPE any
+                attachment TYPE sood
+      EXPORTING i_return   TYPE bapirettab.
+
+    CLASS-METHODS get_file_xstring
+      IMPORTING folder_region TYPE so_fol_rg DEFAULT 'B'
+                doctp         TYPE so_obj_tp
+                docyr         TYPE so_obj_yr
+                docno         TYPE so_obj_no
+      EXPORTING o_fichero     TYPE string
+                o_mimetype    TYPE w3conttype
+                o_content     TYPE string
+                o_content_hex TYPE xstring
+                i_return      TYPE bapirettab
+                longitud      TYPE i.
+
+    CLASS-METHODS get_file_solitab
+      IMPORTING folder_region     TYPE so_fol_rg DEFAULT 'B'
+                doctp             TYPE so_obj_tp
+                docyr             TYPE so_obj_yr
+                docno             TYPE so_obj_no
+      EXPORTING o_fichero         TYPE string
+                o_mimetype        TYPE w3conttype
+                o_content_solitab TYPE soli_tab
+                o_filelength      TYPE i
+                i_return          TYPE bapirettab.
+
+    CLASS-METHODS attach_file_xstring
+      IMPORTING iv_name         TYPE any
+                iv_content      TYPE string    OPTIONAL
+                iv_content_hex  TYPE xstring   OPTIONAL
+                is_lporb        TYPE sibflporb
+                iv_objtp        TYPE so_obj_tp DEFAULT 'EXT'
+                descripcion     TYPE any       DEFAULT ''
+      RETURNING VALUE(i_return) TYPE bapirettab.
+
+    CLASS-METHODS attach_file_solitab
+      IMPORTING iv_name            TYPE string
+                iv_content         TYPE string    OPTIONAL
+                iv_content_solitab TYPE soli_tab  OPTIONAL
+                is_lporb           TYPE sibflporb
+                iv_objtp           TYPE so_obj_tp OPTIONAL
+                iv_filelength      TYPE i
+      RETURNING VALUE(i_return)    TYPE bapirettab.
+
+    CLASS-METHODS email_attached_file
+      IMPORTING folder_region TYPE so_fol_rg DEFAULT 'B'
+                doctp         TYPE so_obj_tp
+                docyr         TYPE so_obj_yr
+                docno         TYPE so_obj_no
+                t_receivers   TYPE table_of_strings
+                send_now      TYPE abap_bool DEFAULT ''
+      EXPORTING i_return      TYPE bapirettab.
+
+    CLASS-METHODS delete_file
+      IMPORTING folder_region TYPE so_fol_rg DEFAULT 'B'
+                doctp         TYPE so_obj_tp
+                docyr         TYPE so_obj_yr
+                docno         TYPE so_obj_no
+                is_lporb      TYPE sibflporb OPTIONAL
+      EXPORTING i_return      TYPE bapirettab.
+
+    CLASS-METHODS get_archivelink_files
+      IMPORTING sap_object        TYPE any
+                object_id         TYPE any
+                ar_object         TYPE toa01-ar_object OPTIONAL
+                !reserve          TYPE toa01-reserve   OPTIONAL
+                copiar_a_temp     TYPE abap_bool       DEFAULT 'X'
+      RETURNING VALUE(i_ficheros) TYPE zal_files_t.
+
+    CLASS-METHODS get_archivelink_files_m
+      IMPORTING sap_object        TYPE any
+                object_id         TYPE any
+                ar_object         TYPE toa01-ar_object OPTIONAL
+                !reserve          TYPE toa01-reserve   OPTIONAL
+                get_contenido     TYPE abap_bool       DEFAULT ''
+                descripcion       TYPE any             DEFAULT ''
+      RETURNING VALUE(i_ficheros) TYPE zal_files_m_t.
+
+    CLASS-METHODS get_archivelink_xstring
+      IMPORTING archiv_id  TYPE saearchivi
+                arc_doc_id TYPE saeardoid
+                visualizar TYPE abap_bool DEFAULT ''
+      EXPORTING contenido  TYPE zxstring
+                longitud   TYPE i
+                !message   TYPE bapi_msg.
+
+    CLASS-METHODS crear_nota
+      IMPORTING clave             TYPE any
+                contenido         TYPE string  OPTIONAL
+                contenido_xstring TYPE xstring OPTIONAL
+                tipo              TYPE any
+                descripcion       TYPE any     DEFAULT ''
+      RETURNING VALUE(i_return)   TYPE bapirettab.
+
+    CLASS-METHODS leer_nota
+      IMPORTING clave              TYPE any
+                tipo               TYPE any
+                descripcion        TYPE any DEFAULT ''
+      EXPORTING contenido          TYPE string
+                contenido_xstring  TYPE xstring
+                i_return           TYPE bapirettab
+                descripcion_salida TYPE any.
+
+    CLASS-METHODS modificar_nota
+      IMPORTING sood           TYPE sood
+                contenido      TYPE string
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS borrar_nota
+      IMPORTING clave       TYPE any
+                tipo        TYPE any
+                descripcion TYPE any
+      EXPORTING i_return    TYPE bapirettab.
+
+    CLASS-METHODS get_popup_gos
+      IMPORTING objeto         TYPE swo_objtyp
+                clave          TYPE any
+                servicio_crear TYPE sgs_srvnam DEFAULT 'URL_CREA'
+                ar_object      TYPE any        DEFAULT ''.
+
+    CLASS-METHODS get_num_gos
+      IMPORTING tipo         TYPE any
+                clave        TYPE any
+                atta         TYPE abap_bool DEFAULT 'X'
+                url          TYPE abap_bool DEFAULT 'X'
+                notas        TYPE abap_bool DEFAULT ''
+                ar_object    TYPE any       DEFAULT ''
+      RETURNING VALUE(total) TYPE int4.
+
+    CLASS-METHODS view_gos
+      IMPORTING tipo           TYPE any
+                clave          TYPE any
+                atta           TYPE abap_bool  DEFAULT 'X'
+                url            TYPE abap_bool  DEFAULT 'X'
+                notas          TYPE abap_bool  DEFAULT ''
+                ar_object      TYPE any        DEFAULT ''
+                popup_si_no    TYPE abap_bool  DEFAULT ''
+                servicio_crear TYPE sgs_srvnam DEFAULT ''.
+
+    CLASS-METHODS get_nota
+      IMPORTING clave       TYPE any
+                tipo        TYPE any
+                descripcion TYPE any DEFAULT ''
+      RETURNING VALUE(sood) TYPE sood.
+
+    CLASS-METHODS existe_url
+      IMPORTING tipo          TYPE srgbtbrel-typeid_a
+                clave         TYPE srgbtbrel-instid_a
+                VALUE(url)    TYPE any
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+    CLASS-METHODS visualizar
+      IMPORTING objtp TYPE so_obj_tp
+                objyr TYPE so_obj_yr
+                objno TYPE so_obj_no.
+
+    CLASS-METHODS actualizar_url
+      IMPORTING tipo      TYPE any
+                clave     TYPE any
+                url_new   TYPE any
+                url_old   TYPE any
+      EXPORTING VALUE(ok) TYPE abap_bool
+                !message  TYPE bapi_msg.
+
+    CLASS-METHODS actualizar_nota
+      IMPORTING clave             TYPE any
+                contenido         TYPE string  OPTIONAL
+                contenido_xstring TYPE xstring OPTIONAL
+                tipo              TYPE any
+                descripcion       TYPE any     DEFAULT ''
+      RETURNING VALUE(message)    TYPE bapi_msg.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
+endclass. "ZCL_AP_GOS definition
+class ZCL_AP_GOS implementation.
+  METHOD actualizar_nota.
+    DATA(l_sood) = get_nota( clave       = clave
+                             tipo        = tipo
+                             descripcion = descripcion ).
+
+    IF l_sood IS INITIAL.
+      DATA(i_return) = crear_nota( clave             = clave
+                                   tipo              = tipo
+                                   descripcion       = descripcion
+                                   contenido         = contenido
+                                   contenido_xstring = contenido_xstring ).
+      ASSIGN i_return[ type = 'E' ] TO FIELD-SYMBOL(<return>).
+      IF sy-subrc = 0.
+        message = <return>-message.
+      ENDIF.
+    ELSE.
+      IF contenido IS INITIAL.
+        borrar_nota( EXPORTING clave       = clave
+                               tipo        = tipo
+                               descripcion = descripcion
+                     IMPORTING i_return    = i_return ).
+        ASSIGN i_return[ type = 'E' ] TO <return>.
+        IF sy-subrc = 0.
+          message = <return>-message.
+        ENDIF.
+      ELSE.
+        message = modificar_nota( sood      = l_sood
+                                  contenido = contenido ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD actualizar_url.
+    DATA: ls_object   TYPE gos_s_obj,
+          ls_atta_key TYPE gos_s_attkey.
+
+    CLEAR: ok,
+           message.
+
+    IF url_new IS INITIAL.
+      message = 'No informado URL destino'(nud).
+      RETURN.
+    ENDIF.
+
+    ls_object-typeid = tipo.
+    ls_object-instid = clave.
+    ls_object-catid  = 'BO'.
+
+    TRY.
+        DATA(lo_ins) = cl_gos_api=>create_instance( ls_object ).
+      CATCH cx_gos_api INTO DATA(cx_gos_api).
+        message = cx_gos_api->get_text( ).
+    ENDTRY.
+
+    SELECT instid_b FROM srgbtbrel
+      INTO TABLE @DATA(i_srgbtbrel)
+      WHERE reltype  = 'URL'
+        AND instid_a = @clave
+        AND typeid_a = @tipo
+        AND typeid_b = 'MESSAGE'.
+
+    LOOP AT i_srgbtbrel ASSIGNING FIELD-SYMBOL(<srgbtbrel>).
+      ls_atta_key-atta_id  = <srgbtbrel>-instid_b.
+      ls_atta_key-atta_cat = 'MSG'.
+      TRY.
+          DATA(ls_att_cont) = lo_ins->get_al_item( ls_atta_key ).
+        CATCH cx_root INTO DATA(o_root).
+
+      ENDTRY.
+      IF ls_att_cont-content <> url_old.
+        CONTINUE.
+      ENDIF.
+
+      ls_att_cont-content = url_new.
+
+      TRY.
+          CLEAR sy-msgno.
+          lo_ins->update_al_item( is_attcont = ls_att_cont ).
+
+          ls_att_cont = lo_ins->get_al_item( ls_atta_key ).
+          IF ls_att_cont-content = url_new.
+            ok = 'X'.
+          ELSE.
+            message = 'No se actualizado la URL'(nud).
+          ENDIF.
+        CATCH cx_root INTO o_root.
+          MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO DATA(l_msg).
+          message = o_root->get_longtext( ).
+          IF message IS INITIAL.
+            message = o_root->get_text( ).
+          ENDIF.
+
+          CONCATENATE message l_msg INTO message.
+
+      ENDTRY.
+    ENDLOOP.
+    IF sy-subrc <> 0.
+      message = 'No hay ningún enlace GOS a esa clave'(neg).
+    ENDIF.
+  ENDMETHOD.
+  METHOD atta_gos_st.
+    DATA: i_urls      TYPE TABLE OF srgbtbrel,
+          l_srgbtbrel TYPE srgbtbrel,
+          l_soodk     TYPE soodk,
+          l_folder_id TYPE soodk,
+          i_objcont   TYPE TABLE OF soli,
+          l_sood2     TYPE sood2,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_objcont   TYPE soli,
+          l_url       TYPE zest_url_gos.
+
+    SELECT instid_b utctime FROM srgbtbrel
+      INTO CORRESPONDING FIELDS OF TABLE i_urls
+      WHERE reltype  = 'ATTA'
+        AND instid_a = clave
+        AND typeid_a = tipo
+        AND catid_a  = 'BO'.
+
+    LOOP AT i_urls INTO l_srgbtbrel.
+      l_soodk = l_srgbtbrel-instid_b+17.
+      l_folder_id = l_srgbtbrel-instid_b(17).
+      REFRESH i_objcont.
+      CALL FUNCTION 'SO_OBJECT_READ'
+        EXPORTING
+*                   FILTER                     =
+                   folder_id                  = l_folder_id
+*                   FORWARDER                  =
+                   object_id                  = l_soodk
+*                   OWNER                      =
+*                   F_MAILER                   = ' '
+        IMPORTING
+*                   OBJECT_FL_DISPLAY          =
+                   object_hd_display          = l_sood2
+*                   OBJECT_RC_DISPLAY          =
+        TABLES     objcont                    = i_objcont
+*                   OBJHEAD                    =
+*                   OBJPARA                    =
+*                   OBJPARB                    =
+        EXCEPTIONS active_user_not_exist      = 1
+                   communication_failure      = 2
+                   component_not_available    = 3
+                   folder_not_exist           = 4
+                   folder_no_authorization    = 5
+                   object_not_exist           = 6
+                   object_no_authorization    = 7
+                   operation_no_authorization = 8
+                   owner_not_exist            = 9
+                   parameter_error            = 10 ##NUMBER_OK
+                   substitute_not_active      = 11 ##NUMBER_OK
+                   substitute_not_defined     = 12 ##NUMBER_OK
+                   system_failure             = 13 ##NUMBER_OK
+                   x_error                    = 14 ##NUMBER_OK
+                   OTHERS                     = 15 ##NUMBER_OK.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+
+      LOOP AT i_objcont INTO l_objcont.
+        l_url-titulo = l_sood2-objdes.
+        CALL FUNCTION 'WRF_PBAS_TIMESTAMP_TO_DATE'
+          EXPORTING  i_timestamp       = l_srgbtbrel-utctime
+                     i_tzone           = sy-zonlo
+          IMPORTING  e_datlo           = l_url-fecha_creacion
+                     e_timlo           = l_url-hora_creacion
+          EXCEPTIONS invalid_date      = 1
+                     invalid_time      = 2
+                     invalid_date_time = 3
+                     OTHERS            = 4.
+        IF sy-subrc <> 0.
+          MESSAGE 'Error convirtiendo fecha'(ecf) TYPE 'E'.
+        ENDIF.
+
+        l_url-url = l_srgbtbrel-instid_b.
+        APPEND l_url TO tabla.
+      ENDLOOP.
+
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD attach_file_solitab.
+    DATA ls_header     TYPE solisti1.
+    DATA lt_obj_header TYPE STANDARD TABLE OF solisti1.
+    DATA l_obj_rolea   TYPE borident.
+    DATA l_obj_roleb   TYPE borident.
+    DATA: lt_ls_doc_change   TYPE STANDARD TABLE OF sodocchgi1,
+          l_folder_id        TYPE sofdk,
+          size               TYPE i,
+          objname            TYPE string,
+          filename           TYPE string,
+          file_ext           TYPE string,
+          ls_doc_change      LIKE LINE OF lt_ls_doc_change,
+          l_retype           TYPE breltyp-reltype,
+          l_obj_type         TYPE so_obj_tp,
+          l_object_hd_change TYPE sood1,
+          lt_data            TYPE soli_tab,
+          offset             TYPE i,
+          offset_old         TYPE i,
+          temp_len           TYPE i,
+          ls_data            TYPE soli,
+          l_document_title   TYPE so_text255,
+          lt_urltab          TYPE STANDARD TABLE OF sood-objdes,
+          l_tab_size         TYPE int4,
+          ls_object_id       TYPE soodk,
+          ls_message         TYPE bapiret2,
+          l_object_id_fol    TYPE so_obj_id,
+          l_object_id        TYPE so_obj_id.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING region    = 'B'
+      IMPORTING folder_id = l_folder_id.
+    IF iv_objtp = 'EXT'.
+      size = iv_filelength.
+
+      objname  = zcl_ap_ficheros=>get_nombre_fichero( filename ).
+      file_ext = zcl_ap_ficheros=>get_extension( filename ).
+
+      ls_doc_change-obj_name   = objname.
+      ls_doc_change-obj_descr  = objname.
+      ls_doc_change-obj_langu  = sy-langu.
+      ls_doc_change-sensitivty = 'F'.
+      ls_doc_change-doc_size   = size.
+      l_retype = 'ATTA'.
+      l_obj_type = 'EXT'.
+      l_object_hd_change-objnam   = ls_doc_change-obj_name.
+      l_object_hd_change-objdes   = ls_doc_change-obj_descr.
+      l_object_hd_change-objsns   = ls_doc_change-sensitivty.
+      l_object_hd_change-objla    = ls_doc_change-obj_langu.
+      l_object_hd_change-objlen   = ls_doc_change-doc_size.
+      l_object_hd_change-file_ext = file_ext.
+      CONCATENATE '&SO_FILENAME=' filename INTO ls_header.
+      APPEND ls_header TO lt_obj_header.
+      CLEAR ls_header.
+      ls_header = '&SO_FORMAT=BIN'.
+      APPEND ls_header TO lt_obj_header.
+      lt_data[] = iv_content_solitab[].
+    ELSE.
+      size = strlen( iv_content ).
+      objname = iv_name.
+      ls_doc_change-obj_descr  = objname.
+      ls_doc_change-sensitivty = 'O'.
+      ls_doc_change-obj_langu  = sy-langu.
+      offset = 0.
+      IF iv_objtp = 'RAW'.
+        l_retype = 'NOTE'.
+        l_obj_type = 'RAW'.
+        l_object_hd_change-file_ext = 'TXT'.
+        WHILE offset <= size.
+          offset_old = offset.
+          offset = offset + 255 ##NUMBER_OK.
+          IF offset > size.
+            temp_len = strlen( iv_content+offset_old ).
+            CLEAR ls_data-line.
+            ls_data-line = iv_content+offset_old(temp_len).
+          ELSE.
+            ls_data-line = iv_content+offset_old(255).
+          ENDIF.
+          APPEND ls_data TO lt_data.
+        ENDWHILE.
+        IF objname IS INITIAL.
+          READ TABLE lt_data INDEX 1 INTO l_document_title.
+          WHILE l_document_title+49 <> ' '.
+            SHIFT l_document_title RIGHT.
+          ENDWHILE.
+          SHIFT l_document_title LEFT DELETING LEADING ' '.
+          ls_doc_change-obj_descr = l_document_title.
+        ENDIF.
+      ELSE.
+*     it's url (not note)
+        l_retype = 'URL'.
+        l_obj_type = 'URL'.
+        IF objname IS INITIAL.
+          SPLIT iv_content AT '/' INTO TABLE lt_urltab.
+          l_tab_size = lines( lt_urltab ).
+          READ TABLE lt_urltab INDEX l_tab_size INTO ls_doc_change-obj_descr.
+        ENDIF.
+        WHILE offset <= size.
+          offset_old = offset.
+          offset = offset + 250 ##NUMBER_OK.
+          IF offset > size.
+            temp_len = strlen( iv_content+offset_old ).
+            CLEAR ls_data-line.
+            ls_data-line = iv_content+offset_old(temp_len).
+          ELSE.
+            ls_data-line = iv_content+offset_old(250).
+          ENDIF.
+          CONCATENATE '&KEY&' ls_data-line INTO ls_data-line.
+          APPEND ls_data TO lt_data.
+        ENDWHILE.
+      ENDIF.
+      ls_doc_change-doc_size = size.
+      l_object_hd_change-objdes = ls_doc_change-obj_descr.
+      l_object_hd_change-objsns = ls_doc_change-sensitivty.
+      l_object_hd_change-objla  = ls_doc_change-obj_langu.
+      l_object_hd_change-objlen = ls_doc_change-doc_size.
+    ENDIF.
+* save object
+    CALL FUNCTION 'SO_OBJECT_INSERT'
+      EXPORTING  folder_id                  = l_folder_id
+                 object_hd_change           = l_object_hd_change
+                 object_type                = l_obj_type
+      IMPORTING  object_id                  = ls_object_id
+      TABLES     objcont                    = lt_data
+                 objhead                    = lt_obj_header
+      EXCEPTIONS component_not_available    = 01 ##NUMBER_OK
+                 folder_not_exist           = 06 ##NUMBER_OK
+                 folder_no_authorization    = 05 ##NUMBER_OK
+                 object_type_not_exist      = 17 ##NUMBER_OK
+                 operation_no_authorization = 21 ##NUMBER_OK
+                 parameter_error            = 23 ##NUMBER_OK
+                 OTHERS                     = 1000 ##NUMBER_OK.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+      ls_message-type       = sy-msgty.
+      ls_message-id         = sy-msgid.
+      ls_message-number     = sy-msgno.
+      ls_message-message_v1 = sy-msgv1.
+      ls_message-message_v2 = sy-msgv2.
+      ls_message-message_v3 = sy-msgv3.
+      ls_message-message_v4 = sy-msgv4.
+      APPEND ls_message TO i_return.
+      RETURN.
+    ENDIF.
+* create relation
+    l_obj_rolea-objkey  = is_lporb-instid.
+    l_obj_rolea-objtype = is_lporb-typeid.
+    l_obj_rolea-logsys  = is_lporb-catid.
+    l_object_id_fol = l_folder_id.
+    l_object_id = ls_object_id.
+    CONCATENATE l_object_id_fol l_object_id INTO l_obj_roleb-objkey RESPECTING BLANKS.
+    l_obj_roleb-objtype = 'MESSAGE'.
+    CLEAR l_obj_roleb-logsys.
+    CALL FUNCTION 'BINARY_RELATION_CREATE'
+      EXPORTING  obj_rolea    = l_obj_rolea
+                 obj_roleb    = l_obj_roleb
+                 relationtype = l_retype
+      EXCEPTIONS OTHERS       = 1.
+    IF sy-subrc = 0.
+      COMMIT WORK AND WAIT.
+    ELSE.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+      ls_message-type       = sy-msgty.
+      ls_message-id         = sy-msgid.
+      ls_message-number     = sy-msgno.
+      ls_message-message_v1 = sy-msgv1.
+      ls_message-message_v2 = sy-msgv2.
+      ls_message-message_v3 = sy-msgv3.
+      ls_message-message_v4 = sy-msgv4.
+      APPEND ls_message TO i_return.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+  METHOD attach_file_xstring.
+    DATA ls_header     TYPE solisti1.
+    DATA lt_obj_header TYPE STANDARD TABLE OF solisti1.
+    DATA l_obj_rolea   TYPE borident.
+    DATA l_obj_roleb   TYPE borident.
+    DATA: lt_ls_doc_change   TYPE STANDARD TABLE OF sodocchgi1,
+          l_folder_id        TYPE sofdk,
+          size               TYPE i,
+          filename           TYPE string,
+          objname            TYPE string,
+          file_ext           TYPE string,
+          ls_doc_change      LIKE LINE OF lt_ls_doc_change,
+          offset             TYPE i,
+          offset_old         TYPE i,
+          temp_len           TYPE i,
+          ls_xdata           TYPE solix,
+          hex_null           TYPE x LENGTH 1 VALUE '20',
+          lt_xdata           TYPE solix_tab,
+          l_retype           TYPE breltyp-reltype,
+          l_obj_type         TYPE so_obj_tp,
+          l_object_hd_change TYPE sood1,
+          lt_data            TYPE soli_tab,
+          ls_data            TYPE soli,
+          l_document_title   TYPE so_text255,
+          lt_urltab          TYPE STANDARD TABLE OF sood-objdes,
+          l_tab_size         TYPE int4,
+          ls_object_id       TYPE soodk,
+          ls_message         TYPE bapiret2,
+          l_object_id_fol    TYPE so_obj_id,
+          l_object_id        TYPE so_obj_id.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING region    = 'B'
+      IMPORTING folder_id = l_folder_id.
+    IF iv_objtp = 'EXT' OR iv_objtp = 'BIN'.
+      size     = xstrlen( iv_content_hex ).
+      filename = zcl_ap_ficheros=>get_nombre_fichero( iv_name ).
+
+      objname  = zcl_ap_ficheros=>get_nombre_fichero( filename ).
+      file_ext = zcl_ap_ficheros=>get_extension( iv_name ).
+
+      ls_doc_change-obj_name = objname.
+      IF descripcion IS INITIAL.
+        ls_doc_change-obj_descr = objname.
+      ELSE.
+        ls_doc_change-obj_descr = descripcion.
+      ENDIF.
+      ls_doc_change-obj_langu  = sy-langu.
+      ls_doc_change-sensitivty = 'F'.
+      ls_doc_change-doc_size   = size.
+      offset                   = 0.
+      WHILE offset <= size.
+        offset_old = offset.
+        offset     = offset + 255 ##NUMBER_OK.
+        IF offset > size.
+          temp_len = xstrlen( iv_content_hex+offset_old ).
+          CLEAR ls_xdata-line WITH hex_null IN BYTE MODE.
+          ls_xdata-line = iv_content_hex+offset_old(temp_len).
+        ELSE.
+          ls_xdata-line = iv_content_hex+offset_old(255).
+        ENDIF.
+        APPEND ls_xdata TO lt_xdata.
+      ENDWHILE.
+      l_retype                    = 'ATTA'.
+      l_obj_type                  = iv_objtp.
+      l_object_hd_change-objnam   = ls_doc_change-obj_name.
+      l_object_hd_change-objdes   = ls_doc_change-obj_descr.
+      l_object_hd_change-objsns   = ls_doc_change-sensitivty.
+      l_object_hd_change-objla    = ls_doc_change-obj_langu.
+      l_object_hd_change-objlen   = ls_doc_change-doc_size.
+      l_object_hd_change-file_ext = file_ext.
+      l_object_hd_change-file_ext = to_lower( l_object_hd_change-file_ext ). " APC?
+*    l_object_hd_change-EXTCT    = 'K'. "APC?
+      CONCATENATE '&SO_FILENAME=' filename INTO ls_header.
+      APPEND ls_header TO lt_obj_header.
+      CLEAR ls_header.
+      ls_header = '&SO_FORMAT=BIN'.
+      APPEND ls_header TO lt_obj_header.
+*   change hex data to text data
+      CALL FUNCTION 'SO_SOLIXTAB_TO_SOLITAB'
+        EXPORTING ip_solixtab = lt_xdata
+        IMPORTING ep_solitab  = lt_data.
+    ELSE.
+      size    = strlen( iv_content ).
+      objname = iv_name.
+      IF descripcion IS INITIAL.
+        ls_doc_change-obj_descr = objname.
+      ELSE.
+        ls_doc_change-obj_descr = descripcion.
+      ENDIF.
+      ls_doc_change-sensitivty = 'O'.
+      ls_doc_change-obj_langu  = sy-langu.
+      offset                   = 0.
+      IF iv_objtp = 'RAW'.
+        l_retype                    = 'NOTE'.
+        l_obj_type                  = 'RAW'.
+        l_object_hd_change-file_ext = 'TXT'.
+        WHILE offset <= size.
+          offset_old = offset.
+          offset     = offset + 255 ##NUMBER_OK.
+          IF offset > size.
+            temp_len = strlen( iv_content+offset_old ).
+            CLEAR ls_data-line.
+            ls_data-line = iv_content+offset_old(temp_len).
+          ELSE.
+            ls_data-line = iv_content+offset_old(255).
+          ENDIF.
+          APPEND ls_data TO lt_data.
+        ENDWHILE.
+        IF objname IS INITIAL.
+          READ TABLE lt_data INDEX 1 INTO l_document_title.
+          WHILE l_document_title+49 <> ' '.
+            SHIFT l_document_title RIGHT.
+          ENDWHILE.
+          SHIFT l_document_title LEFT DELETING LEADING ' '.
+          ls_doc_change-obj_descr = l_document_title.
+        ENDIF.
+      ELSE.
+*     it's url (not note)
+        l_retype   = 'URL'.
+        l_obj_type = 'URL'.
+        IF objname IS INITIAL.
+          SPLIT iv_content AT '/' INTO TABLE lt_urltab.
+          l_tab_size = lines( lt_urltab ).
+          READ TABLE lt_urltab INDEX l_tab_size INTO ls_doc_change-obj_descr.
+        ENDIF.
+        WHILE offset <= size.
+          offset_old = offset.
+          offset     = offset + 250 ##NUMBER_OK.
+          IF offset > size.
+            temp_len = strlen( iv_content+offset_old ).
+            CLEAR ls_data-line.
+            ls_data-line = iv_content+offset_old(temp_len).
+          ELSE.
+            ls_data-line = iv_content+offset_old(250).
+          ENDIF.
+          CONCATENATE '&KEY&' ls_data-line INTO ls_data-line.
+          APPEND ls_data TO lt_data.
+        ENDWHILE.
+      ENDIF.
+      ls_doc_change-doc_size    = size.
+      l_object_hd_change-objdes = ls_doc_change-obj_descr.
+      l_object_hd_change-objsns = ls_doc_change-sensitivty.
+      l_object_hd_change-objla  = ls_doc_change-obj_langu.
+      l_object_hd_change-objlen = ls_doc_change-doc_size.
+    ENDIF.
+* save object
+    CALL FUNCTION 'SO_OBJECT_INSERT'
+      EXPORTING  folder_id                  = l_folder_id
+                 object_hd_change           = l_object_hd_change
+                 object_type                = l_obj_type
+      IMPORTING  object_id                  = ls_object_id
+      TABLES     objcont                    = lt_data
+                 objhead                    = lt_obj_header
+      EXCEPTIONS component_not_available    = 01 ##NUMBER_OK
+                 folder_not_exist           = 06 ##NUMBER_OK
+                 folder_no_authorization    = 05 ##NUMBER_OK
+                 object_type_not_exist      = 17 ##NUMBER_OK
+                 operation_no_authorization = 21 ##NUMBER_OK
+                 parameter_error            = 23 ##NUMBER_OK
+                 OTHERS                     = 1000 ##NUMBER_OK.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+      ls_message-type       = sy-msgty.
+      ls_message-id         = sy-msgid.
+      ls_message-number     = sy-msgno.
+      ls_message-message_v1 = sy-msgv1.
+      ls_message-message_v2 = sy-msgv2.
+      ls_message-message_v3 = sy-msgv3.
+      ls_message-message_v4 = sy-msgv4.
+      APPEND ls_message TO i_return.
+      RETURN.
+    ENDIF.
+* create relation
+    l_obj_rolea-objkey  = is_lporb-instid.
+    l_obj_rolea-objtype = is_lporb-typeid.
+    l_obj_rolea-logsys  = is_lporb-catid.
+    l_object_id_fol     = l_folder_id.
+    l_object_id         = ls_object_id.
+    CONCATENATE l_object_id_fol l_object_id INTO l_obj_roleb-objkey RESPECTING BLANKS.
+    l_obj_roleb-objtype = 'MESSAGE'.
+    CLEAR l_obj_roleb-logsys.
+    CALL FUNCTION 'BINARY_RELATION_CREATE'
+      EXPORTING  obj_rolea    = l_obj_rolea
+                 obj_roleb    = l_obj_roleb
+                 relationtype = l_retype
+      EXCEPTIONS OTHERS       = 1.
+    IF sy-subrc = 0.
+      COMMIT WORK AND WAIT.
+    ELSE.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+      ls_message-type       = sy-msgty.
+      ls_message-id         = sy-msgid.
+      ls_message-number     = sy-msgno.
+      ls_message-message_v1 = sy-msgv1.
+      ls_message-message_v2 = sy-msgv2.
+      ls_message-message_v3 = sy-msgv3.
+      ls_message-message_v4 = sy-msgv4.
+      APPEND ls_message TO i_return.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+  METHOD borrar_nota.
+    DATA: i_urls    TYPE TABLE OF sood,
+          sood      TYPE sood,
+          sibflporb TYPE sibflporb.
+
+    CLEAR i_return.
+
+    zcl_ap_gos=>get_file_list( EXPORTING typeid        = tipo
+                                         instid        = clave
+                               CHANGING  i_attachments = i_urls ).
+
+    READ TABLE i_urls INTO sood WITH KEY objdes   = descripcion
+                                         objtp    = 'RAW'
+                                         file_ext = 'TXT'.
+
+    IF sood IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    sibflporb-typeid = tipo.
+    sibflporb-instid = clave.
+
+    delete_file( EXPORTING doctp    = sood-objtp
+                           docyr    = sood-objyr
+                           docno    = sood-objno
+                           is_lporb = sibflporb
+                 IMPORTING i_return = i_return ).
+  ENDMETHOD.
+  METHOD borrar_url_gos_st.
+    DATA: ls_object   TYPE borident,
+          ls_fol_id   TYPE soodk,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          ls_obj_data TYPE sood1,
+          ls_obj_id   TYPE soodk,
+          ls_folmem_k TYPE sofmk,
+          lv_ep_note  TYPE borident-objkey,
+          ls_note     TYPE borident.
+
+    DATA: i_urls      TYPE TABLE OF srgbtbrel,
+          l_srgbtbrel TYPE srgbtbrel,
+          l_soodk     TYPE soodk,
+          i_objcont   TYPE TABLE OF soli,
+          l_folder_id TYPE soodk,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_sood2     TYPE sood2,
+          l_objcont   TYPE soli.
+
+    error = 'X'.
+
+    ls_object-objkey  = clave.
+    ls_object-objtype = tipo.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING  region    = 'B'
+      IMPORTING  folder_id = ls_fol_id
+      EXCEPTIONS OTHERS    = 1.
+    IF sy-subrc <> 0.
+*       message
+    ENDIF.
+    ls_obj_data-objsns = 'O'.
+    ls_obj_data-objla  = sy-langu.
+    ls_obj_data-objdes = titulo.
+
+    SELECT instid_b FROM srgbtbrel
+      INTO CORRESPONDING FIELDS OF TABLE i_urls
+      WHERE reltype  = 'URL'
+        AND instid_a = clave
+        AND typeid_a = tipo
+        AND catid_a  = 'BO'.
+
+    LOOP AT i_urls INTO l_srgbtbrel.
+      IF l_srgbtbrel-instid_b(17) <> ls_fol_id.
+        CONTINUE.
+      ENDIF.
+
+      l_soodk = l_srgbtbrel-instid_b+17.
+      REFRESH i_objcont.
+      l_folder_id = l_srgbtbrel-instid_b(17).
+
+      CALL FUNCTION 'SO_OBJECT_READ'
+        EXPORTING
+*                   FILTER                     =
+                   folder_id                  = l_folder_id
+*                   FORWARDER                  =
+                   object_id                  = l_soodk
+*                   OWNER                      =
+*                   F_MAILER                   = ' '
+        IMPORTING
+*                   OBJECT_FL_DISPLAY          =
+                   object_hd_display          = l_sood2
+*                   OBJECT_RC_DISPLAY          =
+        TABLES     objcont                    = i_objcont
+*                   OBJHEAD                    =
+*                   OBJPARA                    =
+*                   OBJPARB                    =
+        EXCEPTIONS active_user_not_exist      = 1
+                   communication_failure      = 2
+                   component_not_available    = 3
+                   folder_not_exist           = 4
+                   folder_no_authorization    = 5
+                   object_not_exist           = 6
+                   object_no_authorization    = 7
+                   operation_no_authorization = 8
+                   owner_not_exist            = 9
+                   parameter_error            = 10 ##NUMBER_OK
+                   substitute_not_active      = 11 ##NUMBER_OK
+                   substitute_not_defined     = 12 ##NUMBER_OK
+                   system_failure             = 13 ##NUMBER_OK
+                   x_error                    = 14 ##NUMBER_OK
+                   OTHERS                     = 15 ##NUMBER_OK.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+
+      LOOP AT i_objcont INTO l_objcont.
+        IF l_objcont+5 = url.
+          ls_obj_id = l_soodk.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+    IF NOT ls_obj_id IS INITIAL.
+      CALL FUNCTION 'SO_OBJECT_DELETE'
+        EXPORTING  folder_id                  = ls_fol_id
+*                   FORWARDER                  = ' '
+*                   F_UNREAD_DELETE            = ' '
+                   object_id                  = ls_obj_id
+*                   OWNER                      = ' '
+*                   PUT_IN_WASTEBASKET         = 'X'
+        EXCEPTIONS communication_failure      = 1
+                   folder_not_empty           = 2
+                   folder_not_exist           = 3
+                   folder_no_authorization    = 4
+                   forwarder_not_exist        = 5
+                   object_not_exist           = 6
+                   object_no_authorization    = 7
+                   operation_no_authorization = 8
+                   owner_not_exist            = 9
+                   substitute_not_active      = 10 ##NUMBER_OK
+                   substitute_not_defined     = 11 ##NUMBER_OK
+                   system_failure             = 12 ##NUMBER_OK
+                   x_error                    = 13 ##NUMBER_OK
+                   OTHERS                     = 14 ##NUMBER_OK.
+
+      IF sy-subrc = 0 AND ls_object-objkey IS NOT INITIAL.
+        ls_folmem_k-foltp = ls_fol_id-objtp.
+        ls_folmem_k-folyr = ls_fol_id-objyr.
+        ls_folmem_k-folno = ls_fol_id-objno.
+        ls_folmem_k-doctp = ls_obj_id-objtp.
+        ls_folmem_k-docyr = ls_obj_id-objyr.
+        ls_folmem_k-docno = ls_obj_id-objno.
+        lv_ep_note = ls_folmem_k.
+        ls_note-objtype = 'MESSAGE'.
+        ls_note-objkey  = lv_ep_note.
+
+        CALL FUNCTION 'BINARY_RELATION_DELETE_COMMIT'
+          EXPORTING  obj_rolea          = ls_object
+                     obj_roleb          = ls_note
+                     relationtype       = 'URL'
+          EXCEPTIONS entry_not_existing = 1
+                     internal_error     = 2
+                     no_relation        = 3
+                     no_role            = 4
+                     OTHERS             = 5.
+
+        IF sy-subrc = 0.
+          CLEAR error.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD crear_nota.
+    DATA sibflporb TYPE sibflporb.
+
+    sibflporb-typeid = tipo.
+    sibflporb-instid = clave.
+
+    i_return = attach_file_xstring( iv_content     = contenido
+                                    iv_content_hex = contenido_xstring
+                                    iv_name        = clave
+                                    descripcion    = descripcion
+                                    iv_objtp       = 'RAW'
+                                    is_lporb       = sibflporb ).
+  ENDMETHOD.
+  METHOD delete_file.
+    DATA: ls_fol_id        TYPE soodk,
+          l_folder_id      TYPE soodk,
+          l_object_id      TYPE soodk,
+          document_content TYPE STANDARD TABLE OF soli,
+          document_id      TYPE sofmk,
+          l_document_id    TYPE swo_typeid,
+          lo_docsrv        TYPE REF TO cl_gos_document_service,
+          lv_message       TYPE bapiret2,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          ex               TYPE REF TO cx_root.
+
+    CLEAR i_return.
+
+    TRY.
+        CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+          EXPORTING  region    = folder_region
+          IMPORTING  folder_id = ls_fol_id
+          EXCEPTIONS OTHERS    = 1.
+        IF sy-subrc = 0.
+          l_folder_id-objtp = ls_fol_id-objtp.
+          l_folder_id-objyr = ls_fol_id-objyr.
+          l_folder_id-objno = ls_fol_id-objno.
+          l_object_id-objtp = doctp.
+          l_object_id-objyr = docyr.
+          l_object_id-objno = docno.
+          CALL FUNCTION 'SO_OBJECT_READ'
+            EXPORTING  folder_id                  = l_folder_id
+                       object_id                  = l_object_id
+            TABLES     objcont                    = document_content
+            EXCEPTIONS active_user_not_exist      = 1
+                       communication_failure      = 2
+                       component_not_available    = 3
+                       folder_not_exist           = 4
+                       folder_no_authorization    = 5
+                       object_not_exist           = 6
+                       object_no_authorization    = 7
+                       operation_no_authorization = 8
+                       owner_not_exist            = 9
+                       parameter_error            = 10 ##NUMBER_OK
+                       substitute_not_active      = 11 ##NUMBER_OK
+                       substitute_not_defined     = 12 ##NUMBER_OK
+                       system_failure             = 13 ##NUMBER_OK
+                       x_error                    = 14 ##NUMBER_OK
+                       OTHERS                     = 15 ##NUMBER_OK.
+          IF sy-subrc = 0.
+            document_id-foltp = l_folder_id-objtp.
+            document_id-folyr = l_folder_id-objyr.
+            document_id-folno = l_folder_id-objno.
+            document_id-doctp = l_object_id-objtp.
+            document_id-docyr = l_object_id-objyr.
+            document_id-docno = l_object_id-objno.
+            l_document_id     = document_id.
+            lo_docsrv = NEW #( ).
+            CASE doctp.
+              WHEN 'EXT'.
+                lo_docsrv->delete_attachment( is_lporb      = is_lporb
+                                              ip_attachment = l_document_id ).
+              WHEN 'RAW'.
+                lo_docsrv->delete_note( is_lporb = is_lporb
+                                        ip_note  = l_document_id ).
+              WHEN 'URL'.
+                lo_docsrv->delete_url( is_lporb = is_lporb
+                                       ip_url   = l_document_id ).
+            ENDCASE.
+            IF sy-subrc = 0.
+              COMMIT WORK AND WAIT.
+            ELSE.
+              lv_message-id         = sy-msgid.
+              lv_message-number     = sy-msgno.
+              lv_message-message_v1 = sy-msgv1.
+              lv_message-message_v2 = sy-msgv2.
+              lv_message-message_v3 = sy-msgv3.
+              lv_message-message_v4 = sy-msgv4.
+              APPEND lv_message TO i_return.
+              RETURN.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root INTO ex.
+        lv_message-id         = sy-msgid.
+        lv_message-number     = sy-msgno.
+        lv_message-message_v1 = sy-msgv1.
+        lv_message-message_v2 = sy-msgv2.
+        lv_message-message_v3 = sy-msgv3.
+        lv_message-message_v4 = sy-msgv4.
+        APPEND lv_message TO i_return.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD download_file_to_gui.
+    DATA: ltp_sortfield   TYPE char30,
+          lta_objcont     TYPE soli_tab,
+          ltp_pathfile    TYPE c LENGTH 1000,
+          ltp_binfilesize TYPE so_doc_len,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          ltp_filename    TYPE string,
+          ls_message      TYPE bapiret2,
+          ex              TYPE REF TO cx_root,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          text            TYPE string.
+
+    CLEAR i_return.
+
+    TRY.
+        CONCATENATE attachment-objtp attachment-objyr attachment-objno INTO ltp_sortfield.
+        IMPORT objcont_tab TO lta_objcont FROM DATABASE soc3(dt) ID ltp_sortfield.
+        IF sy-subrc = 0.
+          IF NOT attachment-acnam IS INITIAL.
+            CONCATENATE ruta '\' attachment-objdes '.' attachment-acnam INTO ltp_pathfile.
+          ELSE.
+            CONCATENATE ruta '\' attachment-objdes '.' attachment-file_ext INTO ltp_pathfile.
+          ENDIF.
+          REPLACE '\\' WITH '\' INTO ltp_pathfile+2.
+          ltp_pathfile = translate( val  = ltp_pathfile
+                                    from = `/`
+                                    to   = ` ` ).
+          ltp_binfilesize = attachment-objlen.
+          CALL FUNCTION 'SO_OBJECT_DOWNLOAD'
+            EXPORTING  bin_filesize     = ltp_binfilesize
+                       filetype         = 'BIN'
+                       path_and_file    = ltp_pathfile
+                       extct            = attachment-extct
+                       no_dialog        = 'X'
+            IMPORTING  act_filename     = ltp_filename
+            TABLES     objcont          = lta_objcont
+            EXCEPTIONS file_write_error = 1
+                       invalid_type     = 2
+                       x_error          = 3
+                       kpro_error       = 4
+                       OTHERS           = 5.
+          IF sy-subrc <> 0.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+            ls_message-type       = sy-msgty.
+            ls_message-id         = sy-msgid.
+            ls_message-number     = sy-msgno.
+            ls_message-message_v1 = sy-msgv1.
+            ls_message-message_v2 = sy-msgv2.
+            ls_message-message_v3 = sy-msgv3.
+            ls_message-message_v4 = sy-msgv4.
+            APPEND ls_message TO i_return.
+            RETURN.
+          ENDIF.
+        ELSE.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+          ls_message-type       = sy-msgty.
+          ls_message-id         = sy-msgid.
+          ls_message-number     = sy-msgno.
+          ls_message-message_v1 = sy-msgv1.
+          ls_message-message_v2 = sy-msgv2.
+          ls_message-message_v3 = sy-msgv3.
+          ls_message-message_v4 = sy-msgv4.
+          APPEND ls_message TO i_return.
+          RETURN.
+        ENDIF.
+      CATCH cx_root INTO ex.
+        text = ex->get_text( ).
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+        ls_message-type       = sy-msgty.
+        ls_message-id         = sy-msgid.
+        ls_message-number     = sy-msgno.
+        ls_message-message_v1 = sy-msgv1.
+        ls_message-message_v2 = sy-msgv2.
+        ls_message-message_v3 = sy-msgv3.
+        ls_message-message_v4 = sy-msgv4.
+        APPEND ls_message TO i_return.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD email_attached_file.
+    DATA: lwa_object_header    TYPE STANDARD TABLE OF solisti1,
+          ls_fol_id            TYPE soodk,
+          l_folder_id          TYPE soodk,
+          l_object_id          TYPE soodk,
+          document_content     TYPE STANDARD TABLE OF soli,
+          document_id          TYPE sofmk,
+          l_document_id        TYPE so_entryid,
+          lwa_document_data    TYPE sofolenti1,
+          lwa_object_content_1 TYPE STANDARD TABLE OF solisti1,
+          lwa_contents_hex     TYPE STANDARD TABLE OF solix,
+          send_request         TYPE REF TO cl_bcs,
+          document             TYPE REF TO cl_document_bcs,
+          recipient            TYPE REF TO if_recipient_bcs,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          sent_to_all          TYPE os_boolean,
+          fil_nm_txt           TYPE so_obj_des,
+          wa_t_receivers       LIKE LINE OF t_receivers,
+          mailto               TYPE ad_smtpadr,
+          wa_object_header     LIKE LINE OF lwa_object_header,
+          moff                 TYPE i,
+          fil_nm               TYPE c LENGTH 50,
+          lt_url_tab           TYPE TABLE OF so_url,
+          ld_url_tab_size      TYPE sytabix,
+          file_ext             TYPE c LENGTH 3,
+          ttext                TYPE bcsy_text,
+          bcs_exception        TYPE REF TO cx_bcs,
+          ls_message           TYPE bapiret2,
+          ex                   TYPE REF TO cx_root,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          text                 TYPE string.
+
+    CLEAR i_return.
+
+    TRY.
+        CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+          EXPORTING  region    = folder_region
+          IMPORTING  folder_id = ls_fol_id
+          EXCEPTIONS OTHERS    = 1.
+        IF sy-subrc = 0.
+          l_folder_id-objtp = ls_fol_id-objtp.
+          l_folder_id-objyr = ls_fol_id-objyr.
+          l_folder_id-objno = ls_fol_id-objno.
+          l_object_id-objtp = doctp.
+          l_object_id-objyr = docyr.
+          l_object_id-objno = docno.
+          CALL FUNCTION 'SO_OBJECT_READ'
+            EXPORTING  folder_id                  = l_folder_id
+                       object_id                  = l_object_id
+            TABLES     objcont                    = document_content
+            EXCEPTIONS active_user_not_exist      = 1
+                       communication_failure      = 2
+                       component_not_available    = 3
+                       folder_not_exist           = 4
+                       folder_no_authorization    = 5
+                       object_not_exist           = 6
+                       object_no_authorization    = 7
+                       operation_no_authorization = 8
+                       owner_not_exist            = 9
+                       parameter_error            = 10 ##NUMBER_OK
+                       substitute_not_active      = 11 ##NUMBER_OK
+                       substitute_not_defined     = 12 ##NUMBER_OK
+                       system_failure             = 13 ##NUMBER_OK
+                       x_error                    = 14 ##NUMBER_OK
+                       OTHERS                     = 15 ##NUMBER_OK.
+          IF sy-subrc = 0.
+            document_id-foltp = l_folder_id-objtp.
+            document_id-folyr = l_folder_id-objyr.
+            document_id-folno = l_folder_id-objno.
+            document_id-doctp = l_object_id-objtp.
+            document_id-docyr = l_object_id-objyr.
+            document_id-docno = l_object_id-objno.
+            l_document_id     = document_id.
+            CALL FUNCTION 'SO_DOCUMENT_READ_API1'
+              EXPORTING  document_id                = l_document_id
+              IMPORTING  document_data              = lwa_document_data
+              TABLES     object_header              = lwa_object_header
+                         object_content             = lwa_object_content_1
+                         contents_hex               = lwa_contents_hex
+              EXCEPTIONS document_id_not_exist      = 1
+                         operation_no_authorization = 2
+                         x_error                    = 3
+                         OTHERS                     = 4.
+            IF sy-subrc = 0.
+              CLEAR: send_request,
+                     document,
+                     recipient,
+                     sent_to_all,
+                     fil_nm_txt.
+              TRY.
+                  READ TABLE t_receivers INTO wa_t_receivers INDEX 1.
+                  mailto       = wa_t_receivers. "-receiver.
+                  send_request = cl_bcs=>create_persistent( ).
+                  READ TABLE lwa_object_header INTO wa_object_header INDEX 1.
+                  IF sy-subrc = 0.
+                    FIND '=' IN wa_object_header-line MATCH OFFSET moff.
+                    moff = moff + 1.
+                    fil_nm = wa_object_header-line+moff.
+                    SPLIT fil_nm AT '.' INTO TABLE lt_url_tab.
+                    ld_url_tab_size = lines( lt_url_tab ).
+                    IF ld_url_tab_size > 1.
+                      READ TABLE lt_url_tab INDEX ld_url_tab_size INTO file_ext.
+                    ELSE.
+                      CLEAR file_ext.
+                    ENDIF.
+                  ENDIF.
+                  fil_nm_txt = fil_nm.
+                  IF fil_nm_txt IS INITIAL.
+                    fil_nm_txt = 'Requested File is Attached'(rfa).
+                  ENDIF.
+                  APPEND 'The file you requested file is attached.'(fra) TO ttext.
+                  document = cl_document_bcs=>create_document( i_type    = 'RAW'
+                                                               i_text    = ttext
+                                                               i_subject = fil_nm_txt ).
+                  document->add_attachment( i_attachment_type    = file_ext
+                                            i_attachment_subject = fil_nm
+                                            i_att_content_hex    = lwa_contents_hex
+                                            i_attachment_header  = lwa_object_header
+                                            i_attachment_size    = lwa_document_data-doc_size ).
+                  send_request->set_document( document ).
+                  recipient = cl_cam_address_bcs=>create_internet_address( mailto ).
+                  send_request->add_recipient( recipient ).
+                  sent_to_all = send_request->send( i_with_error_screen = 'X' ).
+                CATCH cx_bcs INTO bcs_exception.
+                  MESSAGE i865(so) WITH bcs_exception->error_type.
+              ENDTRY.
+              IF sy-subrc = 0.
+                IF send_now = 'X'.
+                  SUBMIT rsconn01 WITH mode = 'INT' AND RETURN.  ""#EC CI_SUBMIT
+                ENDIF.
+              ELSE.
+                MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                        WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+                ls_message-type       = sy-msgty.
+                ls_message-id         = sy-msgid.
+                ls_message-number     = sy-msgno.
+                ls_message-message_v1 = sy-msgv1.
+                ls_message-message_v2 = sy-msgv2.
+                ls_message-message_v3 = sy-msgv3.
+                ls_message-message_v4 = sy-msgv4.
+                APPEND ls_message TO i_return.
+                RETURN.
+              ENDIF.
+              COMMIT WORK.
+            ELSE.
+              MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                      WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+              ls_message-type       = sy-msgty.
+              ls_message-id         = sy-msgid.
+              ls_message-number     = sy-msgno.
+              ls_message-message_v1 = sy-msgv1.
+              ls_message-message_v2 = sy-msgv2.
+              ls_message-message_v3 = sy-msgv3.
+              ls_message-message_v4 = sy-msgv4.
+              APPEND ls_message TO i_return.
+              RETURN.
+            ENDIF.
+          ELSE.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+            ls_message-type       = sy-msgty.
+            ls_message-id         = sy-msgid.
+            ls_message-number     = sy-msgno.
+            ls_message-message_v1 = sy-msgv1.
+            ls_message-message_v2 = sy-msgv2.
+            ls_message-message_v3 = sy-msgv3.
+            ls_message-message_v4 = sy-msgv4.
+            APPEND ls_message TO i_return.
+            RETURN.
+          ENDIF.
+        ELSE.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+          ls_message-type       = sy-msgty.
+          ls_message-id         = sy-msgid.
+          ls_message-number     = sy-msgno.
+          ls_message-message_v1 = sy-msgv1.
+          ls_message-message_v2 = sy-msgv2.
+          ls_message-message_v3 = sy-msgv3.
+          ls_message-message_v4 = sy-msgv4.
+          APPEND ls_message TO i_return.
+          RETURN.
+        ENDIF.
+      CATCH cx_root INTO ex.
+        text = ex->get_text( ).
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+        ls_message-type       = sy-msgty.
+        ls_message-id         = sy-msgid.
+        ls_message-number     = sy-msgno.
+        ls_message-message_v1 = sy-msgv1.
+        ls_message-message_v2 = sy-msgv2.
+        ls_message-message_v3 = sy-msgv3.
+        ls_message-message_v4 = sy-msgv4.
+        APPEND ls_message TO i_return.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD existe_url.
+    DATA i_urls TYPE ztab_url_gos.
+
+    i_urls = urls_gos_st( tipo  = tipo
+                          clave = clave ).
+
+    IF line_exists( i_urls[ url = url ] ).
+      existe = 'X'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_archivelink_files.
+    DATA: l_dir_temp   TYPE string,
+          i_ficheros_m TYPE zal_files_m_t,
+          l_fichero    TYPE zal_files,
+          l_file       TYPE string,
+          l_dtpath     TYPE sapb-sappfad.
+
+    FIELD-SYMBOLS <fichero_m> TYPE zal_files_m.
+
+    IF copiar_a_temp = 'X'.
+      l_dir_temp = zcl_ap_documentos=>get_directorio_temporal( ).
+    ENDIF.
+
+    i_ficheros_m = get_archivelink_files_m( sap_object = sap_object
+                                            object_id  = object_id
+                                            ar_object  = ar_object
+                                            reserve    = reserve ).
+
+    LOOP AT i_ficheros_m ASSIGNING <fichero_m>.
+      CLEAR l_fichero.
+      MOVE-CORRESPONDING <fichero_m> TO l_fichero.
+
+      IF copiar_a_temp = 'X'.
+        l_file = zcl_ap_ficheros=>concat_ruta( directorio = l_dir_temp
+                                               fichero    = l_fichero-fichero ).
+        l_dtpath = l_file.
+        l_fichero-fichero = l_file.
+        CALL FUNCTION 'ARCHIVOBJECT_GET_DT_VIA_TABLE'
+          EXPORTING  archiv_id         = <fichero_m>-archiv_id
+                     archiv_doc_id     = <fichero_m>-arc_doc_id
+                     dtpath            = l_dtpath
+                     convert           = ' '
+          EXCEPTIONS error_application = 1.
+        IF sy-subrc <> 0.
+* message
+        ENDIF.
+      ENDIF.
+
+      APPEND l_fichero TO i_ficheros.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_archivelink_files_m.
+    DATA: l_ar_object    TYPE toaom-ar_object,
+          l_object_id    TYPE sapb-sapobjid,
+          l_sap_object   TYPE toaom-sap_object,
+          connect_info   TYPE STANDARD TABLE OF toav0,
+          l_fichero      TYPE zal_files_m,
+          l_nombre_tabla TYPE c LENGTH 40.
+
+    FIELD-SYMBOLS <info> TYPE toav0.
+
+    IF ar_object <> '*'.
+      l_ar_object = ar_object.
+    ENDIF.
+
+    l_object_id = object_id.
+    l_sap_object = sap_object.
+    CALL FUNCTION 'ARCHIV_CONNECTINFO_GET_META'
+      EXPORTING
+*                 ARCHIV_ID             = ' '
+                 ar_object             = l_ar_object
+*                 DOC_TYPE              = ' '
+                 object_id             = l_object_id
+                 sap_object            = l_sap_object
+*                 LIMITED               = LIMITED
+*     IMPORTING
+*                 NUMBER                = NUMBER
+*                 REDUCEDBYLIMIT        = REDUCEDBYLIMIT
+*                 REDUCEDBYAUTHORITY    = REDUCEDBYAUTHORITY
+*                 COUNT                 = COUNT
+      TABLES     connect_info          = connect_info
+      EXCEPTIONS error_connectiontable = 1.
+    IF sy-subrc <> 0.
+*    MESSAGE 'Error recuperando adjuntos'(era) TYPE 'E'.
+    ENDIF.
+
+    LOOP AT connect_info ASSIGNING <info>.
+      IF NOT reserve IS INITIAL.
+        IF reserve <> <info>-reserve.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      CLEAR l_fichero.
+      l_nombre_tabla = 'TOAAT'.
+      SELECT SINGLE filename descr
+        FROM (l_nombre_tabla)
+        INTO ( l_fichero-fichero, l_fichero-descripcion )
+        WHERE arc_doc_id = <info>-arc_doc_id.
+      IF sy-subrc <> 0.
+        CONCATENATE <info>-arc_doc_id '.' <info>-reserve INTO l_fichero-fichero.
+      ENDIF.
+
+      IF NOT descripcion IS INITIAL AND l_fichero-descripcion <> descripcion.
+        CONTINUE.
+      ENDIF.
+
+      l_fichero-extension  = zcl_ap_ficheros=>get_extension( l_fichero-fichero ).
+
+      l_fichero-archiv_id  = <info>-archiv_id.
+      l_fichero-arc_doc_id = <info>-arc_doc_id.
+      l_fichero-date       = <info>-ar_date.
+      IF get_contenido = 'X'.
+        get_archivelink_xstring( EXPORTING archiv_id  = l_fichero-archiv_id
+                                           arc_doc_id = l_fichero-arc_doc_id
+                                 IMPORTING contenido  = l_fichero-contenido
+                                           longitud   = l_fichero-longitud ).
+      ENDIF.
+
+      APPEND l_fichero TO i_ficheros.
+    ENDLOOP.
+
+*  DATA: l_fichero          TYPE zal_files_m,
+*        i_toa01            TYPE TABLE OF toa01,
+*        l_toa01            TYPE toa01,
+*        r_ar_object        TYPE rstt_t_range_string,
+*        r_reserve          TYPE rstt_t_range_string,
+*        l_nombre_tabla(40).
+*
+*  r_ar_object = zcl_ap_rango=>set_eq_str( ar_object ).
+*  r_reserve = zcl_ap_rango=>set_eq_str( reserve ).
+*
+*  SELECT * FROM toa01
+*    INTO TABLE i_toa01
+*   WHERE sap_object = sap_object
+*     AND object_id  = object_id
+*     AND ar_object IN r_ar_object
+*     AND reserve   IN r_reserve.
+*
+*  LOOP AT i_toa01 INTO l_toa01.
+*    CLEAR l_fichero.
+*    l_nombre_tabla = 'TOAAT'.
+*    SELECT SINGLE filename descr FROM (l_nombre_tabla)
+*       INTO (l_fichero-fichero, l_fichero-descripcion)
+*      WHERE arc_doc_id = l_toa01-arc_doc_id.
+*    IF sy-subrc NE 0.
+*      CONCATENATE l_toa01-arc_doc_id '.' l_toa01-reserve INTO l_fichero-fichero.
+*    ENDIF.
+*
+*    l_fichero-extension = zcl_ap_ficheros=>get_extension( l_fichero-fichero ).
+*
+*    l_fichero-archiv_id = l_toa01-archiv_id.
+*    l_fichero-arc_doc_id = l_toa01-arc_doc_id.
+*    l_fichero-date = l_toa01-ar_date.
+*    IF get_contenido = 'X'.
+*      get_archivelink_xstring( EXPORTING archiv_id  = l_fichero-archiv_id
+*                                         arc_doc_id = l_fichero-arc_doc_id
+*                               IMPORTING contenido  = l_fichero-contenido
+*                                         longitud   = l_fichero-longitud ).
+*    ENDIF.
+*
+*    APPEND l_fichero TO i_ficheros.
+*  ENDLOOP.
+  ENDMETHOD.
+  METHOD get_archivelink_xstring.
+    DATA: length          TYPE sapb-length,
+          offset          TYPE sapb-offset,
+          binlength       TYPE sapb-length,
+          binarchivobject TYPE TABLE OF tbl1024,
+          l_aux           TYPE c LENGTH 2.
+
+    CLEAR: message,
+           contenido,
+           longitud.
+
+    CALL FUNCTION 'ARCHIVOBJECT_GET_BYTES'
+      EXPORTING  archiv_id                = archiv_id
+                 archiv_doc_id            = arc_doc_id
+                 document_type            = ' '
+                 length                   = 0
+                 offset                   = 0
+                 mode                     = ' '
+                 signature                = 'X'
+                 shift_flag               = ' '
+                 compid                   = ' '
+      IMPORTING  length                   = length
+                 offset                   = offset
+                 binlength                = binlength
+      TABLES     binarchivobject          = binarchivobject
+      EXCEPTIONS error_archiv             = 1
+                 error_communicationtable = 2
+                 error_kernel             = 3
+                 OTHERS                   = 4.
+    IF sy-subrc <> 0.
+      l_aux = sy-subrc.
+      CONCATENATE 'Error'(err) l_aux 'llamando a función ARCHIVOBJECT_GET_BYTES'(agb) INTO message SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+    longitud = binlength.
+    CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+      EXPORTING  input_length = longitud
+      IMPORTING  buffer       = contenido
+      TABLES     binary_tab   = binarchivobject
+      EXCEPTIONS failed       = 1.
+    IF sy-subrc <> 0.
+      l_aux = sy-subrc.
+      CONCATENATE 'Error'(err) l_aux 'llamando a función SCMS_BINARY_TO_XSTRING'(lfu) INTO message SEPARATED BY space.
+      RETURN.
+    ENDIF.
+
+    IF visualizar = 'X'.
+      IF NOT contenido IS INITIAL.
+        SELECT SINGLE filename FROM toaat
+          INTO @DATA(l_filename)
+          WHERE arc_doc_id = @arc_doc_id.
+        IF sy-subrc = 0.
+          message = zcl_ap_ficheros=>visualizar( xstring = contenido
+                                                 fichero = l_filename ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_file_list.
+* http://scn.sap.com/docs/DOC-41922
+
+    TYPES: BEGIN OF ts_key,
+             foltp     TYPE so_fol_tp,
+             folyr     TYPE so_fol_yr,
+             folno     TYPE so_fol_no,
+             objtp     TYPE so_obj_tp,
+             objyr     TYPE so_obj_yr,
+             objno     TYPE so_obj_no,
+             forwarder TYPE so_usr_nam,
+           END OF ts_key,
+           BEGIN OF ts_attachment,
+             foltp    TYPE so_fol_tp,
+             folyr    TYPE so_fol_yr,
+             folno    TYPE so_fol_no,
+             objtp    TYPE so_obj_tp,
+             objyr    TYPE so_obj_yr,
+             objno    TYPE so_obj_no,
+             brelguid TYPE oblguid32,
+             roletype TYPE oblroltype,
+           END OF ts_attachment,
+           tt_attachment TYPE TABLE OF ts_attachment.
+
+    DATA objhead_tab TYPE TABLE OF soli.
+    DATA: r_instid_b      TYPE RANGE OF srgbtbrel-instid_b,
+          ta_srgbtbrel    TYPE STANDARD TABLE OF srgbtbrel,
+          wa_srgbtbrel    TYPE srgbtbrel,
+          lt_attachment   TYPE tt_attachment,
+          lta_attachments TYPE tt_attachment,
+          gs_lpor         TYPE sibflporb,
+          ls_option       TYPE obl_s_relt,
+          lt_options      TYPE obl_t_relt,
+          lt_links        TYPE obl_t_link,
+          ls_link         TYPE obl_s_link,
+          ls_key          TYPE ts_key,
+          ls_attachment   TYPE ts_attachment,
+          lta_sood        TYPE STANDARD TABLE OF sood,
+          ls_message      TYPE bapiret2.
+    DATA sood_key        TYPE soodk.
+    DATA objcont_tab     TYPE TABLE OF soli.
+    DATA objpara_tab     TYPE TABLE OF selc.
+    DATA objparb_tab     TYPE TABLE OF soop1.
+    DATA hex_mode        TYPE sonv-flag.
+    DATA rcode           TYPE i.
+    DATA l_param_search  TYPE soli-line.
+    DATA wa_objhead_tab  LIKE LINE OF objhead_tab.
+    DATA moff            TYPE i.
+    DATA l_param_head    TYPE soli-line.
+    DATA value           TYPE soli-line.
+    DATA lt_url_tab      TYPE TABLE OF so_url.
+    DATA ld_url_tab_size TYPE sytabix.
+
+    FIELD-SYMBOLS <fs> TYPE LINE OF zt_sood.
+
+    DATA: o_mail        TYPE REF TO zcl_ap_envio_mail,
+          l_url         LIKE LINE OF i_attachments,
+          o_fichero     TYPE string,
+          o_mimetype    TYPE w3conttype,
+          o_content     TYPE string,
+          o_content_hex TYPE xstring,
+          l_longitud    TYPE i,
+          l_ext         TYPE string,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_aux         TYPE string.
+
+    IF NOT typeid IS INITIAL AND NOT instid IS INITIAL.
+      IF NOT instid_b IS INITIAL.
+        APPEND VALUE #( option = 'EQ'
+                        sign   = 'I'
+                        low    = instid_b ) TO r_instid_b.
+      ENDIF.
+
+      SELECT catid_a typeid_a instid_a
+        FROM srgbtbrel
+        INTO CORRESPONDING FIELDS OF TABLE ta_srgbtbrel
+        WHERE instid_a  = instid
+          AND typeid_a  = typeid
+          AND catid_a   = catid
+          AND instid_b IN r_instid_b.
+      IF sy-subrc = 0.
+        SORT ta_srgbtbrel BY instid_a
+                             typeid_a
+                             catid_a.
+        DELETE ADJACENT DUPLICATES FROM ta_srgbtbrel COMPARING instid_a typeid_a catid_a.
+        LOOP AT ta_srgbtbrel INTO wa_srgbtbrel.
+          CLEAR: lt_attachment[],
+                 lta_attachments[].
+          gs_lpor-instid = wa_srgbtbrel-instid_a.
+          gs_lpor-typeid = wa_srgbtbrel-typeid_a.
+          gs_lpor-catid  = wa_srgbtbrel-catid_a.
+          ls_option-sign   = 'I'.
+          ls_option-option = 'EQ'.
+          ls_option-low    = 'ATTA'.
+          APPEND ls_option TO lt_options.
+          ls_option-low = 'NOTE'.
+          APPEND ls_option TO lt_options.
+          ls_option-low = 'PNOT'.
+          APPEND ls_option TO lt_options.
+          ls_option-low = 'URL'.
+          APPEND ls_option TO lt_options.
+          TRY.
+              cl_binary_relation=>read_links_of_binrels( EXPORTING is_object           = gs_lpor
+                                                                   it_relation_options = lt_options
+                                                                   ip_role             = 'GOSAPPLOBJ'
+                                                         IMPORTING et_links            = lt_links ).
+              LOOP AT lt_links INTO ls_link WHERE instid_b IN r_instid_b.
+                CASE ls_link-typeid_b.
+                  WHEN 'MESSAGE'.
+                    IF ls_link-roletype_b = 'PERSNOTE'.
+                      ls_key = ls_link-instid_b+12.
+                    ELSE.
+                      ls_key = ls_link-instid_b.
+                    ENDIF.
+                    MOVE-CORRESPONDING ls_key TO ls_attachment.
+                    ls_attachment-roletype = ls_link-roletype_b.
+                    IF ls_link-brelguid IS INITIAL.
+                      ls_attachment-brelguid = ls_link-relguidold.
+                    ELSE.
+                      ls_attachment-brelguid = ls_link-brelguid.
+                    ENDIF.
+                    APPEND ls_attachment TO lt_attachment.
+                  WHEN OTHERS.
+                    CONTINUE.
+                ENDCASE.
+              ENDLOOP.
+            CATCH cx_obl_parameter_error.
+            CATCH cx_obl_internal_error.
+            CATCH cx_obl_model_error.
+            CATCH cx_root.
+          ENDTRY.
+        ENDLOOP.
+        lta_attachments[] = lt_attachment[].
+        IF lta_attachments[] IS INITIAL.
+          RETURN.
+        ENDIF.
+        SELECT * FROM sood
+          INTO TABLE lta_sood
+          FOR ALL ENTRIES IN lta_attachments
+          WHERE objtp = lta_attachments-objtp
+            AND objyr = lta_attachments-objyr
+            AND objno = lta_attachments-objno.
+        IF sy-subrc = 0.
+          i_attachments[] = lta_sood.
+        ENDIF.
+        LOOP AT i_attachments ASSIGNING <fs>.
+          IF <fs>-objtp IS INITIAL OR <fs>-objyr IS INITIAL OR <fs>-objno IS INITIAL.
+            CONTINUE.
+          ENDIF.
+
+          CONCATENATE <fs>-objtp <fs>-objyr <fs>-objno INTO sood_key.
+          PERFORM socx_select IN PROGRAM sapfsso0
+                  TABLES objhead_tab
+                         objcont_tab
+                         objpara_tab
+                         objparb_tab
+                  USING  sood_key
+                         hex_mode
+                         rcode.
+          IF rcode <> 0.
+            CONTINUE.
+          ENDIF.
+
+          l_param_search = '&SO_FILENAME'.
+          l_param_search = to_upper( l_param_search ).
+          LOOP AT objhead_tab INTO wa_objhead_tab.
+            CLEAR moff.
+            FIND '=' IN wa_objhead_tab-line MATCH OFFSET moff.
+            IF sy-subrc <> 0.
+              CONTINUE.
+            ENDIF.
+            l_param_head = wa_objhead_tab-line(moff).
+            l_param_head = to_upper( l_param_head ).
+            IF l_param_head = l_param_search.
+              moff = moff + 1.
+              value = wa_objhead_tab-line+moff.
+              IF NOT ( value IS INITIAL ).
+                SPLIT value AT '.' INTO TABLE lt_url_tab.
+                ld_url_tab_size = lines( lt_url_tab ).
+                IF ld_url_tab_size > 1.
+                  READ TABLE lt_url_tab INDEX ld_url_tab_size INTO <fs>-acnam.
+                ENDIF.
+              ENDIF.
+            ENDIF.
+          ENDLOOP.
+        ENDLOOP.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE 'I' NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+        ls_message-type       = sy-msgty.
+        ls_message-id         = sy-msgid.
+        ls_message-number     = sy-msgno.
+        ls_message-message_v1 = sy-msgv1.
+        ls_message-message_v2 = sy-msgv2.
+        ls_message-message_v3 = sy-msgv3.
+        ls_message-message_v4 = sy-msgv4.
+        APPEND ls_message TO i_return.
+        RETURN.
+      ENDIF.
+    ELSE.
+      MESSAGE ID sy-msgid TYPE 'I' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO ls_message-message.
+      ls_message-type       = sy-msgty.
+      ls_message-id         = sy-msgid.
+      ls_message-number     = sy-msgno.
+      ls_message-message_v1 = sy-msgv1.
+      ls_message-message_v2 = sy-msgv2.
+      ls_message-message_v3 = sy-msgv3.
+      ls_message-message_v4 = sy-msgv4.
+      APPEND ls_message TO i_return.
+      RETURN.
+    ENDIF.
+
+    IF get_adj_mail = 'X'.
+      o_mail = NEW #( ).
+      LOOP AT i_attachments INTO l_url WHERE objtp = 'EXT'.
+        zcl_ap_gos=>get_file_xstring( EXPORTING doctp         = l_url-objtp
+                                                docyr         = l_url-objyr
+                                                docno         = l_url-objno
+                                      IMPORTING o_fichero     = o_fichero
+                                                o_mimetype    = o_mimetype
+                                                o_content     = o_content
+                                                o_content_hex = o_content_hex
+                                                longitud      = l_longitud ).
+        IF o_fichero IS INITIAL AND NOT l_url-objdes IS INITIAL.
+          o_fichero = l_url-objdes.
+          IF NOT l_url-file_ext IS INITIAL.
+            o_fichero = |{ o_fichero }.{ l_url-file_ext }|.
+          ENDIF.
+        ENDIF.
+        IF NOT o_fichero IS INITIAL.
+          l_ext = zcl_ap_ficheros=>get_extension( o_fichero ).
+          IF l_ext IS INITIAL.
+            IF o_mimetype CS '/'.
+              SPLIT o_mimetype AT '/' INTO l_aux l_ext.
+            ELSE.
+              l_ext = o_mimetype.
+            ENDIF.
+            IF NOT l_ext IS INITIAL.
+              CONCATENATE o_fichero l_ext INTO o_fichero SEPARATED BY space.
+            ENDIF.
+          ENDIF.
+          l_ext = to_upper( l_ext ).
+          o_mail->add_adjunto( titulo   = o_fichero
+                               xstring  = o_content_hex
+                               longitud = l_longitud
+                               tipo     = '' ).
+        ENDIF.
+
+        APPEND VALUE #( fichero = o_fichero
+                        xstring = o_content_hex ) TO i_adj.
+      ENDLOOP.
+      i_adjuntos_mail = o_mail->i_adjuntos.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_file_solitab.
+    DATA: ls_fol_id        TYPE soodk,
+          l_folder_id      TYPE soodk,
+          l_object_id      TYPE soodk,
+          document_content TYPE STANDARD TABLE OF soli,
+          document_id      TYPE sofmk,
+          l_document_id    TYPE sofolenti1-doc_id,
+          l_document_data  TYPE sofolenti1,
+          lt_header        TYPE soli_tab,
+          lt_data          TYPE STANDARD TABLE OF solisti1,
+          lt_xdata         TYPE solix_tab,
+          l_subrc          TYPE int4,
+          lv_message       TYPE bapiret2,
+          lo_header        TYPE REF TO cl_bcs_objhead,
+          lv_filename      TYPE string,
+          file             TYPE string,
+          dot_offset       TYPE i,
+          extension        TYPE mimetypes-extension,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          ex               TYPE REF TO cx_root.
+
+    CLEAR: i_return,
+           o_content_solitab,
+           o_mimetype,
+           o_filelength,
+           o_fichero.
+
+    TRY.
+        CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+          EXPORTING  region    = folder_region
+          IMPORTING  folder_id = ls_fol_id
+          EXCEPTIONS OTHERS    = 1.
+        IF sy-subrc = 0.
+          l_folder_id-objtp = ls_fol_id-objtp.
+          l_folder_id-objyr = ls_fol_id-objyr.
+          l_folder_id-objno = ls_fol_id-objno.
+          l_object_id-objtp = doctp.
+          l_object_id-objyr = docyr.
+          l_object_id-objno = docno.
+          CALL FUNCTION 'SO_OBJECT_READ'
+            EXPORTING  folder_id                  = l_folder_id
+                       object_id                  = l_object_id
+            TABLES     objcont                    = document_content
+            EXCEPTIONS active_user_not_exist      = 1
+                       communication_failure      = 2
+                       component_not_available    = 3
+                       folder_not_exist           = 4
+                       folder_no_authorization    = 5
+                       object_not_exist           = 6
+                       object_no_authorization    = 7
+                       operation_no_authorization = 8
+                       owner_not_exist            = 9
+                       parameter_error            = 10 ##NUMBER_OK
+                       substitute_not_active      = 11 ##NUMBER_OK
+                       substitute_not_defined     = 12 ##NUMBER_OK
+                       system_failure             = 13 ##NUMBER_OK
+                       x_error                    = 14 ##NUMBER_OK
+                       OTHERS                     = 15 ##NUMBER_OK.
+          IF sy-subrc = 0.
+            document_id-foltp = l_folder_id-objtp.
+            document_id-folyr = l_folder_id-objyr.
+            document_id-folno = l_folder_id-objno.
+            document_id-doctp = l_object_id-objtp.
+            document_id-docyr = l_object_id-objyr.
+            document_id-docno = l_object_id-objno.
+            l_document_id = document_id.
+            CALL FUNCTION 'SO_DOCUMENT_READ_API1'
+              EXPORTING  document_id                = l_document_id
+              IMPORTING  document_data              = l_document_data
+              TABLES     object_header              = lt_header
+                         object_content             = lt_data
+                         contents_hex               = lt_xdata
+              EXCEPTIONS document_id_not_exist      = 1
+                         operation_no_authorization = 2
+                         x_error                    = 3
+                         OTHERS                     = 4.
+            IF sy-subrc <> 0.
+*       message
+            ENDIF.
+
+            o_filelength = l_document_data-doc_size.
+            IF sy-subrc <> 0.
+              l_subrc = sy-subrc.
+              lv_message-type = 'E'.
+              IF sy-msgid IS NOT INITIAL AND sy-msgno IS NOT INITIAL.
+                lv_message-id         = sy-msgid.
+                lv_message-number     = sy-msgno.
+                lv_message-message_v1 = sy-msgv1.
+                lv_message-message_v2 = sy-msgv2.
+                lv_message-message_v3 = sy-msgv3.
+                lv_message-message_v4 = sy-msgv4.
+              ELSEIF l_subrc = 2.
+                lv_message-id         = 'SO'.
+                lv_message-number     = '055'.
+                lv_message-message_v1 = l_document_id.
+              ELSE.
+                lv_message-id         = 'SO'.
+                lv_message-number     = '006'.
+                lv_message-message_v1 = l_document_id.
+              ENDIF.
+              APPEND lv_message TO i_return.
+              RETURN.
+            ENDIF.
+            lo_header = cl_bcs_objhead=>create( lt_header ).
+            lv_filename = lo_header->get_filename( ).
+            o_fichero = lv_filename.
+            file = o_fichero.
+            FIND FIRST OCCURRENCE OF REGEX '\.[^\.]+$' IN file MATCH OFFSET dot_offset.
+            dot_offset = dot_offset + 1.
+            extension = file+dot_offset.
+            CALL FUNCTION 'SDOK_MIMETYPE_GET'
+              EXPORTING extension = extension
+              IMPORTING mimetype  = o_mimetype.
+            IF lt_data IS NOT INITIAL.
+              o_content_solitab[] = lt_data[].
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root INTO ex.
+        lv_message-id         = sy-msgid.
+        lv_message-number     = sy-msgno.
+        lv_message-message_v1 = sy-msgv1.
+        lv_message-message_v2 = sy-msgv2.
+        lv_message-message_v3 = sy-msgv3.
+        lv_message-message_v4 = sy-msgv4.
+        APPEND lv_message TO i_return.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD get_file_xstring.
+    DATA: ls_fol_id        TYPE soodk,
+          l_folder_id      TYPE soodk,
+          l_object_id      TYPE soodk,
+          document_content TYPE STANDARD TABLE OF soli,
+          document_id      TYPE sofmk,
+          l_document_id    TYPE sofolenti1-doc_id,
+          l_document_data  TYPE sofolenti1,
+          lt_header        TYPE soli_tab,
+          lt_data          TYPE STANDARD TABLE OF solisti1,
+          lt_xdata         TYPE solix_tab,
+          l_subrc          TYPE int4,
+          lv_message       TYPE bapiret2,
+          lo_header        TYPE REF TO cl_bcs_objhead,
+          lv_filename      TYPE string,
+          file             TYPE string,
+          dot_offset       TYPE i,
+          extension        TYPE mimetypes-extension,
+          ls_xdata         TYPE solix,
+          l_xdata          TYPE xstring,
+          ls_data          TYPE solisti1,
+          l_data           TYPE string,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          ex               TYPE REF TO cx_root.
+    DATA l_counter TYPE i.
+    DATA conv_out  TYPE REF TO cl_abap_conv_out_ce.
+
+    CLEAR: o_content_hex,
+           i_return,
+           o_fichero,
+           o_mimetype,
+           longitud,
+           o_content.
+
+    TRY.
+        CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+          EXPORTING  region    = folder_region
+          IMPORTING  folder_id = ls_fol_id
+          EXCEPTIONS OTHERS    = 1.
+        IF sy-subrc = 0.
+          l_folder_id-objtp = ls_fol_id-objtp.
+          l_folder_id-objyr = ls_fol_id-objyr.
+          l_folder_id-objno = ls_fol_id-objno.
+          l_object_id-objtp = doctp.
+          l_object_id-objyr = docyr.
+          l_object_id-objno = docno.
+          CALL FUNCTION 'SO_OBJECT_READ'
+            EXPORTING  folder_id                  = l_folder_id
+                       object_id                  = l_object_id
+            TABLES     objcont                    = document_content
+            EXCEPTIONS active_user_not_exist      = 1
+                       communication_failure      = 2
+                       component_not_available    = 3
+                       folder_not_exist           = 4
+                       folder_no_authorization    = 5
+                       object_not_exist           = 6
+                       object_no_authorization    = 7
+                       operation_no_authorization = 8
+                       owner_not_exist            = 9
+                       parameter_error            = 10 ##NUMBER_OK
+                       substitute_not_active      = 11 ##NUMBER_OK
+                       substitute_not_defined     = 12 ##NUMBER_OK
+                       system_failure             = 13 ##NUMBER_OK
+                       x_error                    = 14 ##NUMBER_OK
+                       OTHERS                     = 15 ##NUMBER_OK.
+          IF sy-subrc = 0.
+            document_id-foltp = l_folder_id-objtp.
+            document_id-folyr = l_folder_id-objyr.
+            document_id-folno = l_folder_id-objno.
+            document_id-doctp = l_object_id-objtp.
+            document_id-docyr = l_object_id-objyr.
+            document_id-docno = l_object_id-objno.
+            l_document_id = document_id.
+            CALL FUNCTION 'SO_DOCUMENT_READ_API1'
+              EXPORTING  document_id                = l_document_id
+              IMPORTING  document_data              = l_document_data
+              TABLES     object_header              = lt_header
+                         object_content             = lt_data
+                         contents_hex               = lt_xdata
+              EXCEPTIONS document_id_not_exist      = 1
+                         operation_no_authorization = 2
+                         x_error                    = 3
+                         OTHERS                     = 4.
+            IF sy-subrc <> 0.
+              l_subrc = sy-subrc.
+              lv_message-type = 'E'.
+              IF sy-msgid IS NOT INITIAL AND sy-msgno IS NOT INITIAL.
+                lv_message-id         = sy-msgid.
+                lv_message-number     = sy-msgno.
+                lv_message-message_v1 = sy-msgv1.
+                lv_message-message_v2 = sy-msgv2.
+                lv_message-message_v3 = sy-msgv3.
+                lv_message-message_v4 = sy-msgv4.
+              ELSEIF l_subrc = 2.
+                lv_message-id         = 'SO'.
+                lv_message-number     = '055'.
+                lv_message-message_v1 = l_document_id.
+              ELSE.
+                lv_message-id         = 'SO'.
+                lv_message-number     = '006'.
+                lv_message-message_v1 = l_document_id.
+              ENDIF.
+              APPEND lv_message TO i_return.
+              RETURN.
+            ENDIF.
+            longitud = l_document_data-doc_size.
+            lo_header = cl_bcs_objhead=>create( lt_header ).
+            lv_filename = lo_header->get_filename( ).
+            o_fichero = lv_filename.
+            file = o_fichero.
+            FIND FIRST OCCURRENCE OF REGEX '\.[^\.]+$' IN file MATCH OFFSET dot_offset.
+            dot_offset = dot_offset + 1.
+            IF NOT file IS INITIAL.
+              extension = file+dot_offset.
+            ELSE.
+              extension = l_document_data-obj_type.
+            ENDIF.
+
+            IF NOT extension IS INITIAL.
+              CALL FUNCTION 'SDOK_MIMETYPE_GET'
+                EXPORTING extension = extension
+                IMPORTING mimetype  = o_mimetype.
+            ENDIF.
+            IF lt_xdata IS NOT INITIAL.
+              l_counter = l_document_data-doc_size.
+              LOOP AT lt_xdata INTO ls_xdata.
+                IF l_counter > 255 ##NUMBER_OK.
+                  CONCATENATE l_xdata ls_xdata-line INTO l_xdata IN BYTE MODE.
+                ELSE.
+                  CONCATENATE l_xdata ls_xdata-line+0(l_counter) INTO l_xdata IN BYTE MODE.
+                ENDIF.
+                l_counter = l_counter - 255 ##NUMBER_OK.
+              ENDLOOP.
+              o_content_hex = l_xdata.
+            ELSE.
+              LOOP AT lt_data INTO ls_data.
+                IF doctp = 'URL' AND strlen( ls_data-line ) >= 5.
+                  CONCATENATE l_data ls_data-line+5 INTO l_data.
+                ENDIF.
+                IF doctp = 'RAW'.
+                  CONCATENATE l_data ls_data-line INTO l_data.
+                ENDIF.
+              ENDLOOP.
+              IF doctp = 'RAW' OR doctp = 'URL'.
+                o_content = l_data.
+                RETURN.
+              ENDIF.
+              conv_out = cl_abap_conv_out_ce=>create( encoding = 'UTF-8' ).
+              conv_out->convert( EXPORTING data   = l_data
+                                 IMPORTING buffer = o_content_hex ).
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root INTO ex.
+        lv_message-id         = sy-msgid.
+        lv_message-number     = sy-msgno.
+        lv_message-message_v1 = sy-msgv1.
+        lv_message-message_v2 = sy-msgv2.
+        lv_message-message_v3 = sy-msgv3.
+        lv_message-message_v4 = sy-msgv4.
+        APPEND lv_message TO i_return.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD get_nota.
+    DATA i_urls TYPE TABLE OF sood.
+
+    zcl_ap_gos=>get_file_list( EXPORTING typeid        = tipo
+                                         instid        = clave
+                               CHANGING  i_attachments = i_urls ).
+
+    IF descripcion IS INITIAL.
+      READ TABLE i_urls INTO sood INDEX 1.              "#EC CI_NOORDER
+    ELSE.
+      READ TABLE i_urls INTO sood WITH KEY objdes   = descripcion
+                                           objtp    = 'RAW'
+                                           file_ext = 'TXT'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_num_gos.
+    DATA l_cont TYPE i.
+
+    IF url = 'X'.
+      SELECT COUNT( * ) FROM srgbtbrel
+        INTO l_cont
+        WHERE reltype  = 'URL'
+          AND instid_a = clave
+          AND typeid_a = tipo
+          AND catid_a  = 'BO'.
+      total = total + l_cont.
+    ENDIF.
+
+    IF atta = 'X'.
+      IF ar_object IS INITIAL.
+        SELECT COUNT( * ) FROM srgbtbrel
+          INTO l_cont
+          WHERE reltype  = 'ATTA'
+            AND instid_a = clave
+            AND typeid_a = tipo
+            AND catid_a  = 'BO'.
+      ELSEIF ar_object = '*'.
+        SELECT COUNT( * ) FROM toa01
+          INTO l_cont
+          WHERE sap_object = tipo
+            AND object_id  = clave.
+      ELSE.
+        SELECT COUNT( * ) FROM toa01
+          INTO l_cont
+          WHERE sap_object = tipo
+            AND object_id  = clave
+            AND ar_object  = ar_object.
+      ENDIF.
+      total = total + l_cont.
+    ENDIF.
+
+    IF notas = 'X'.
+      SELECT COUNT( * ) FROM srgbtbrel
+        INTO l_cont
+        WHERE reltype  = 'NOTE'
+          AND instid_a = clave
+          AND typeid_a = tipo
+          AND catid_a  = 'BO'.
+      total = total + l_cont.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_popup_gos.
+    DATA: l_obj     TYPE borident,
+          l_num_gos TYPE i,
+          l_service TYPE sgs_srvnam,
+          l_manager TYPE REF TO cl_gos_manager.
+
+* Set object Key
+    l_obj-objtype = objeto.
+    l_obj-objkey  = clave.
+
+    l_num_gos = zcl_ap_gos=>get_num_gos( tipo      = l_obj-objtype
+                                         clave     = l_obj-objkey
+                                         ar_object = ar_object ).
+
+    IF l_num_gos > 0.
+      l_service = 'VIEW_ATTA'.
+    ELSE.
+*    l_service = 'ARL_LINK'.
+      IF servicio_crear IS INITIAL.
+        RETURN.
+      ENDIF.
+      l_service = servicio_crear.
+    ENDIF.
+
+* GOS toolbar
+    CREATE OBJECT l_manager
+      EXPORTING
+        is_object    = l_obj
+        ip_no_commit = ''
+      EXCEPTIONS
+        OTHERS       = 1.
+    IF sy-subrc NE 0.
+      MESSAGE 'Error creando toolbar' TYPE 'S'.
+      RETURN.
+    ENDIF.
+
+    l_manager->start_service_direct( EXPORTING  ip_service         = l_service    " Generic Service to Be Executed
+                                                is_object          = l_obj
+                                                ip_check_available = ''
+                                     EXCEPTIONS no_object          = 1
+                                                object_invalid     = 2
+                                                execution_failed   = 3
+                                                OTHERS             = 4 ).
+
+    IF sy-subrc <> 0.
+      IF NOT sy-msgty IS INITIAL.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_url_por_titulo_st.
+    DATA: i_urls   TYPE ztab_url_gos,
+          l_titulo TYPE so_obj_des,
+          l_url    TYPE zest_url_gos.
+
+    i_urls = urls_gos_st( tipo  = tipo
+                          clave = clave ).
+
+    CLEAR url.
+    l_titulo = titulo.
+    LOOP AT i_urls INTO l_url WHERE     titulo  = l_titulo
+                                    AND url    <> ''.
+      url = l_url-url.
+      EXIT.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD inserta_boton_gos.
+*  if not p_matnr is initial.
+*    data: lo_manager  type ref to cl_gos_manager,
+*          la_obj      type borident.
+**
+**
+** Set object Key
+*    la_obj-objtype = 'ZCURSO_TMP'.
+*    la_obj-objkey  =  p_matnr.
+**
+** GOS toolbar
+*    create object lo_manager
+*      exporting
+*        is_object    = la_obj
+*        ip_no_commit = space
+*      exceptions
+*        others       = 1.
+*  else.
+*    if not lo_manager is initial.
+*      lo_manager->unpublish( ).
+*      clear lo_manager.
+*    endif.
+*  endif.
+  ENDMETHOD.
+  METHOD insertar_ata_gos_st.
+    DATA: ls_object   TYPE borident,
+          ls_fol_id   TYPE soodk,
+          ls_obj_data TYPE sood1,
+          l_fichero   TYPE filename,
+          lv_offset   TYPE i,
+          ls_obj_id   TYPE soodk,
+          ls_folmem_k TYPE sofmk,
+          lv_ep_note  TYPE borident-objkey,
+          ls_note     TYPE borident.
+    DATA: it_content TYPE STANDARD TABLE OF soli,
+          it_objhead TYPE STANDARD TABLE OF soli.
+    DATA: l_arcid      TYPE toaom-archiv_id,
+          i_data       TYPE TABLE OF tbl1024,
+          l_arcdocid   TYPE toav0-arc_doc_id,
+          l_descr      TYPE c LENGTH 60,
+          l_filename   TYPE char255,
+          l_object_id  TYPE sapb-sapobjid,
+          l_sap_object TYPE toaom-sap_object.
+    DATA : content_txt    TYPE soli_tab,
+           l_xstring      TYPE xstring,
+           l_itcoo        TYPE itcoo,
+           ac             LIKE LINE OF content_txt,
+           l_len          TYPE so_obj_len,
+           l_longitud_pdf TYPE i,
+           l_transfer_bin TYPE sx_boolean,
+           l_extension    TYPE toadv-doc_type,
+           content_bin    TYPE solix_tab,
+           objhead        TYPE soli_tab,
+           l_size         TYPE i,
+           l_offset       TYPE i,
+           l_offset_old   TYPE i,
+           l_temp_len     TYPE i,
+           l_content_bin  TYPE solix,
+           hex_null       TYPE x LENGTH 1 VALUE '20',
+           l_content_txt  TYPE soli,
+           l_obj_type     TYPE soodk-objtp.
+
+    CLEAR arc_doc_id.
+    error = 'X'.
+
+    ls_object-objkey  = clave.
+    ls_object-objtype = tipo.
+
+    l_xstring = xstring.
+
+    IF content IS INITIAL AND i_otfdata IS INITIAL AND xstring IS INITIAL AND string IS INITIAL AND NOT fichero IS INITIAL.
+      zcl_ap_ficheros=>leer_xstring( EXPORTING fichero = fichero
+                                     IMPORTING xstring = l_xstring ).
+    ENDIF.
+
+    IF NOT content IS INITIAL.
+      it_content = content.
+    ELSEIF NOT i_otfdata IS INITIAL.
+      LOOP AT i_otfdata INTO l_itcoo.
+        CONCATENATE l_itcoo-tdprintcom l_itcoo-tdprintpar INTO ac.
+        APPEND ac TO content_txt.
+      ENDLOOP.
+      l_len = l_longitud_pdf.
+      l_transfer_bin = ''.
+      l_extension = 'PDF'.
+
+      CALL FUNCTION 'SX_OBJECT_CONVERT_OTF_PDF'
+        EXPORTING  format_src      = 'OTF'
+                   format_dst      = 'PDF'
+                   devtype         = 'ASCIIPRI'
+        CHANGING   transfer_bin    = l_transfer_bin
+                   len             = l_len
+                   content_txt     = content_txt
+                   content_bin     = content_bin
+                   objhead         = objhead
+        EXCEPTIONS err_conv_failed = 1
+                   OTHERS          = 2.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+
+      l_size = l_len.
+      CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+        EXPORTING  input_length = l_size
+        IMPORTING  buffer       = l_xstring
+        TABLES     binary_tab   = content_bin
+        EXCEPTIONS failed       = 1
+                   OTHERS       = 2.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+
+      CALL FUNCTION 'SO_SOLIXTAB_TO_SOLITAB'
+        EXPORTING ip_solixtab = content_bin
+        IMPORTING ep_solitab  = it_content.
+
+    ELSEIF NOT l_xstring IS INITIAL.
+      l_size = xstrlen( l_xstring ).
+      l_offset = 0.
+      WHILE l_offset <= l_size.
+        l_offset_old = l_offset.
+        l_offset     = l_offset + 255 ##NUMBER_OK.
+        IF l_offset > l_size.
+          l_temp_len = xstrlen( l_xstring+l_offset_old ).
+          CLEAR l_content_bin-line WITH hex_null IN BYTE MODE.
+          l_content_bin-line = l_xstring+l_offset_old(l_temp_len).
+        ELSE.
+          l_content_bin-line = l_xstring+l_offset_old(255).
+        ENDIF.
+        APPEND l_content_bin TO content_bin.
+      ENDWHILE.
+
+      CALL FUNCTION 'SO_SOLIXTAB_TO_SOLITAB'
+        EXPORTING ip_solixtab = content_bin
+        IMPORTING ep_solitab  = it_content.
+
+    ELSEIF NOT string IS INITIAL.
+      l_size = strlen( string ).
+      l_offset = 0.
+      WHILE l_offset <= l_size.
+        l_offset_old = l_offset.
+        l_offset     = l_offset + 255 ##NUMBER_OK.
+        IF l_offset > l_size.
+          l_temp_len = strlen( string+l_offset_old ).
+          CLEAR l_content_txt-line.
+          l_content_txt-line = string+l_offset_old(l_temp_len).
+        ELSE.
+          l_content_txt-line = string+l_offset_old(255).
+        ENDIF.
+        APPEND l_content_txt TO it_content.
+      ENDWHILE.
+    ENDIF.
+
+    IF NOT convert IS INITIAL.
+      CALL FUNCTION 'SO_CONVERT_CONTENTS_BIN'
+        EXPORTING it_contents_bin = it_content
+        IMPORTING et_contents_bin = it_content.
+    ENDIF.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING  region    = 'B'
+      IMPORTING  folder_id = ls_fol_id
+      EXCEPTIONS OTHERS    = 1.
+    IF sy-subrc <> 0.
+*       message
+    ENDIF.
+
+    ls_obj_data-objsns = 'O'.
+    ls_obj_data-objla  = sy-langu.
+    ls_obj_data-objdes = titulo.
+
+    l_fichero = fichero.
+
+    IF reltype = 'NOTE'.
+      ls_obj_data-file_ext = 'TXT'.
+      l_obj_type = 'RAW'.
+    ELSE.
+      l_obj_type = 'EXT'.
+      lv_offset = strlen( l_fichero ) - 3.
+      IF lv_offset > 0.
+        ls_obj_data-file_ext = l_fichero+lv_offset(3).
+      ENDIF.
+    ENDIF.
+    ls_obj_data-objlen = lines( it_content ) * 255 ##NUMBER_OK.
+
+    IF NOT extension IS INITIAL.
+      ls_obj_data-file_ext = extension.
+    ENDIF.
+
+    IF archiv_id IS INITIAL OR ar_object IS INITIAL.
+      CALL FUNCTION 'SO_OBJECT_INSERT'
+        EXPORTING  folder_id             = ls_fol_id
+                   object_type           = l_obj_type
+                   object_hd_change      = ls_obj_data
+        IMPORTING  object_id             = ls_obj_id
+        TABLES     objhead               = it_objhead
+                   objcont               = it_content
+        EXCEPTIONS active_user_not_exist = 35 ##NUMBER_OK
+                   folder_not_exist      = 6 ##NUMBER_OK
+                   object_type_not_exist = 17 ##NUMBER_OK
+                   owner_not_exist       = 22 ##NUMBER_OK
+                   parameter_error       = 23 ##NUMBER_OK
+                   OTHERS                = 1000 ##NUMBER_OK.
+
+      IF sy-subrc = 0 AND ls_object-objkey IS NOT INITIAL.
+        ls_folmem_k-foltp = ls_fol_id-objtp.
+        ls_folmem_k-folyr = ls_fol_id-objyr.
+        ls_folmem_k-folno = ls_fol_id-objno.
+        ls_folmem_k-doctp = ls_obj_id-objtp.
+        ls_folmem_k-docyr = ls_obj_id-objyr.
+        ls_folmem_k-docno = ls_obj_id-objno.
+        lv_ep_note = ls_folmem_k.
+        ls_note-objtype = 'MESSAGE'.
+        ls_note-objkey  = lv_ep_note.
+        CALL FUNCTION 'BINARY_RELATION_CREATE_COMMIT'
+          EXPORTING  obj_rolea    = ls_object
+                     obj_roleb    = ls_note
+                     relationtype = reltype
+          EXCEPTIONS OTHERS       = 1.
+        IF sy-subrc = 0.
+          CLEAR error.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      SELECT archiv_id FROM toaom
+        INTO l_arcid
+        UP TO 1 ROWS
+        WHERE sap_object = tipo
+          AND ar_object  = ar_object
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+        EXPORTING buffer        = l_xstring
+        IMPORTING output_length = l_size
+        TABLES    binary_tab    = i_data.
+
+      IF extension IS INITIAL.
+        l_extension = zcl_ap_ficheros=>get_extension( l_fichero ).
+      ELSE.
+        l_extension = extension.
+      ENDIF.
+
+      CALL FUNCTION 'SCMS_AO_TABLE_CREATE'
+        EXPORTING  arc_id       = l_arcid
+                   doc_type     = l_extension
+                   length       = l_size
+        IMPORTING  doc_id       = l_arcdocid
+        TABLES     data         = i_data
+        EXCEPTIONS error_http   = 1
+                   error_archiv = 2
+                   error_kernel = 3
+                   error_config = 4
+                   OTHERS       = 5.
+* realizamos la conexion de la imagen archivada
+      IF sy-subrc = 0.
+        l_descr = titulo.
+        IF fichero IS INITIAL.
+          CONCATENATE l_descr '.' l_extension INTO l_filename.
+        ELSE.
+          l_filename = fichero.
+        ENDIF.
+        l_object_id = clave.
+        l_sap_object = tipo.
+        CALL FUNCTION 'ARCHIV_CONNECTION_INSERT'
+          EXPORTING  archiv_id             = l_arcid
+                     arc_doc_id            = l_arcdocid
+                     ar_date               = sy-datum
+                     ar_object             = ar_object
+                     object_id             = l_object_id
+                     sap_object            = l_sap_object
+                     filename              = l_filename
+                     doc_type              = l_extension
+                     descr                 = l_descr
+                     creator               = sy-uname
+          EXCEPTIONS error_connectiontable = 1
+                     OTHERS                = 2.
+        IF sy-subrc = 0.
+          CLEAR error.
+          arc_doc_id = l_arcdocid.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD insertar_url_gos_st.
+    DATA: ls_object   TYPE borident,
+          ls_fol_id   TYPE soodk,
+          ls_obj_data TYPE sood1,
+          ls_obj_id   TYPE soodk,
+          ls_folmem_k TYPE sofmk,
+          lv_ep_note  TYPE borident-objkey,
+          ls_note     TYPE borident.
+
+    DATA: it_content TYPE STANDARD TABLE OF soli,
+          wa_content TYPE soli,
+          it_objhead TYPE STANDARD TABLE OF soli.
+
+    error = 'X'.
+
+    ls_object-objkey  = clave.
+    ls_object-objtype = tipo.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING  region    = 'B'
+      IMPORTING  folder_id = ls_fol_id
+      EXCEPTIONS OTHERS    = 1.
+    IF sy-subrc <> 0.
+*       message
+    ENDIF.
+
+    ls_obj_data-objsns = 'O'.
+    ls_obj_data-objla  = sy-langu.
+    ls_obj_data-objdes = titulo.
+
+    REFRESH it_content.
+    CONCATENATE '&KEY&' url INTO wa_content.
+    APPEND wa_content TO it_content.
+
+    CALL FUNCTION 'SO_OBJECT_INSERT'
+      EXPORTING  folder_id             = ls_fol_id
+                 object_type           = 'URL'
+                 object_hd_change      = ls_obj_data
+      IMPORTING  object_id             = ls_obj_id
+      TABLES     objhead               = it_objhead
+                 objcont               = it_content
+      EXCEPTIONS active_user_not_exist = 35 ##NUMBER_OK
+                 folder_not_exist      = 6 ##NUMBER_OK
+                 object_type_not_exist = 17 ##NUMBER_OK
+                 owner_not_exist       = 22 ##NUMBER_OK
+                 parameter_error       = 23 ##NUMBER_OK
+                 OTHERS                = 1000 ##NUMBER_OK.
+
+    IF sy-subrc = 0 AND ls_object-objkey IS NOT INITIAL.
+      ls_folmem_k-foltp = ls_fol_id-objtp.
+      ls_folmem_k-folyr = ls_fol_id-objyr.
+      ls_folmem_k-folno = ls_fol_id-objno.
+      ls_folmem_k-doctp = ls_obj_id-objtp.
+      ls_folmem_k-docyr = ls_obj_id-objyr.
+      ls_folmem_k-docno = ls_obj_id-objno.
+      lv_ep_note = ls_folmem_k.
+      ls_note-objtype = 'MESSAGE'.
+      ls_note-objkey  = lv_ep_note.
+      CALL FUNCTION 'BINARY_RELATION_CREATE_COMMIT'
+        EXPORTING  obj_rolea    = ls_object
+                   obj_roleb    = ls_note
+                   relationtype = 'URL'
+        EXCEPTIONS OTHERS       = 1.
+      IF sy-subrc = 0.
+        CLEAR error.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD leer_nota.
+    DATA sood TYPE sood.
+
+    CLEAR: contenido_xstring,
+           i_return,
+           descripcion_salida,
+           contenido.
+
+    sood = get_nota( tipo        = tipo
+                     clave       = clave
+                     descripcion = descripcion ).
+
+    IF sood IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    get_file_xstring( EXPORTING doctp         = sood-objtp
+                                docyr         = sood-objyr
+                                docno         = sood-objno
+                      IMPORTING o_content     = contenido
+                                o_content_hex = contenido_xstring
+                                i_return      = i_return ).
+  ENDMETHOD.
+  METHOD modificar_nota.
+    DATA: folder_id        TYPE soodk,
+          object_id        TYPE soodk,
+          object_hd_change TYPE sood1,
+          size             TYPE i,
+          offset           TYPE i,
+          offset_old       TYPE i,
+          temp_len         TYPE i,
+          ls_data          TYPE soli,
+          objcont          TYPE TABLE OF soli,
+          objhead          TYPE TABLE OF soli.
+
+    CALL FUNCTION 'SO_FOLDER_ROOT_ID_GET'
+      EXPORTING region    = 'B'
+      IMPORTING folder_id = folder_id.
+
+    MOVE-CORRESPONDING sood TO object_id.
+    MOVE-CORRESPONDING sood TO object_hd_change.
+    size   = strlen( contenido ).
+    offset = 0.
+    WHILE offset <= size.
+      offset_old = offset.
+      offset     = offset + 255 ##NUMBER_OK.
+      IF offset > size.
+        temp_len = strlen( contenido+offset_old ).
+        CLEAR ls_data-line.
+        ls_data-line = contenido+offset_old(temp_len).
+      ELSE.
+        ls_data-line = contenido+offset_old(255).
+      ENDIF.
+      APPEND ls_data TO objcont.
+    ENDWHILE.
+
+    CALL FUNCTION 'SO_OBJECT_UPDATE'
+      EXPORTING  folder_id                  = folder_id
+*                 FORWARDER                  = ' '
+*                 OBJECT_FL_CHANGE           = ' '
+                 object_hd_change           = object_hd_change
+                 object_id                  = object_id
+*                 OBJECT_REAPPEAR            = ' '
+*                 OWNER                      = ' '
+*   IMPORTING
+*                 OBJECT_FL_DISPLAY          = OBJECT_FL_DISPLAY
+*                 OBJECT_HD_DISPLAY          = OBJECT_HD_DISPLAY
+      TABLES     objcont                    = objcont
+                 objhead                    = objhead
+*                 OBJPARA                    = OBJPARA
+*                 OBJPARB                    = OBJPARB
+      EXCEPTIONS active_user_not_exist      = 1
+                 communication_failure      = 2
+                 component_not_available    = 3
+                 folder_not_exist           = 4
+                 folder_no_authorization    = 5
+                 forwarder_not_exist        = 6
+                 object_not_exist           = 7
+                 object_no_authorization    = 8
+                 operation_no_authorization = 9
+                 owner_not_exist            = 10 ##NUMBER_OK
+                 parameter_error            = 11 ##NUMBER_OK
+                 substitute_not_active      = 12 ##NUMBER_OK
+                 substitute_not_defined     = 13 ##NUMBER_OK
+                 system_failure             = 14 ##NUMBER_OK
+                 x_error                    = 15 ##NUMBER_OK.
+
+    IF sy-subrc <> 0.
+      __concat3 message 'Error'(err) sy-subrc 'modificando nota'(mno).
+    ENDIF.
+  ENDMETHOD.
+  METHOD urls_gos_st.
+    DATA: i_urls      TYPE TABLE OF srgbtbrel,
+          l_srgbtbrel TYPE srgbtbrel,
+          l_soodk     TYPE soodk,
+          i_objcont   TYPE TABLE OF soli,
+          l_folder_id TYPE soodk,
+          l_sood2     TYPE sood2,
+          l_url       TYPE zest_url_gos,
+          l_objcont   TYPE soli,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_aux       TYPE string.
+
+    IF url = 'X'.
+      SELECT instid_b reltype utctime
+        FROM srgbtbrel
+        INTO CORRESPONDING FIELDS OF TABLE i_urls
+        WHERE reltype  = 'URL'
+          AND instid_a = clave
+          AND typeid_a = tipo
+          AND catid_a  = 'BO'.
+    ENDIF.
+
+    IF atta = 'X'.
+      SELECT instid_b reltype utctime
+        FROM srgbtbrel
+        APPENDING CORRESPONDING FIELDS OF TABLE i_urls
+        WHERE reltype  = 'ATTA'
+          AND instid_a = clave
+          AND typeid_a = tipo
+          AND catid_a  = 'BO'.
+    ENDIF.
+
+    IF notas = 'X'.
+      SELECT instid_b reltype utctime
+        FROM srgbtbrel
+        APPENDING CORRESPONDING FIELDS OF TABLE i_urls
+        WHERE reltype  = 'NOTE'
+          AND instid_a = clave
+          AND typeid_a = tipo
+          AND catid_a  = 'BO'.
+    ENDIF.
+
+    LOOP AT i_urls INTO l_srgbtbrel.
+      l_soodk = l_srgbtbrel-instid_b+17.
+      REFRESH i_objcont.
+      l_folder_id = l_srgbtbrel-instid_b(17).
+      CALL FUNCTION 'SO_OBJECT_READ'
+        EXPORTING
+*                   FILTER                     =
+                   folder_id                  = l_folder_id
+*                   FORWARDER                  =
+                   object_id                  = l_soodk
+*                   OWNER                      =
+*                   F_MAILER                   = ' '
+        IMPORTING
+*                   OBJECT_FL_DISPLAY          =
+                   object_hd_display          = l_sood2
+*                   OBJECT_RC_DISPLAY          =
+        TABLES     objcont                    = i_objcont
+*                   OBJHEAD                    =
+*                   OBJPARA                    =
+*                   OBJPARB                    =
+        EXCEPTIONS active_user_not_exist      = 1
+                   communication_failure      = 2
+                   component_not_available    = 3
+                   folder_not_exist           = 4
+                   folder_no_authorization    = 5
+                   object_not_exist           = 6
+                   object_no_authorization    = 7
+                   operation_no_authorization = 8
+                   owner_not_exist            = 9
+                   parameter_error            = 10 ##NUMBER_OK
+                   substitute_not_active      = 11 ##NUMBER_OK
+                   substitute_not_defined     = 12 ##NUMBER_OK
+                   system_failure             = 13 ##NUMBER_OK
+                   x_error                    = 14 ##NUMBER_OK
+                   OTHERS                     = 15 ##NUMBER_OK.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+      l_url-titulo   = l_sood2-objdes.
+      l_url-file_ext = l_sood2-file_ext.
+      CALL FUNCTION 'WRF_PBAS_TIMESTAMP_TO_DATE'
+        EXPORTING  i_timestamp       = l_srgbtbrel-utctime
+                   i_tzone           = sy-zonlo
+        IMPORTING  e_datlo           = l_url-fecha_creacion
+                   e_timlo           = l_url-hora_creacion
+        EXCEPTIONS invalid_date      = 1
+                   invalid_time      = 2
+                   invalid_date_time = 3
+                   OTHERS            = 4.
+      IF sy-subrc <> 0.
+*       message
+      ENDIF.
+
+      LOOP AT i_objcont INTO l_objcont.
+        IF l_srgbtbrel-reltype = 'NOTE'.
+          IF l_url-url IS INITIAL.
+            l_url-url = l_objcont.
+          ELSE.
+            CONCATENATE l_url-url l_objcont INTO l_url-url SEPARATED BY space.
+          ENDIF.
+        ELSE.
+          SPLIT l_objcont AT '&KEY&' INTO l_aux l_url-url.
+        ENDIF.
+      ENDLOOP.
+      APPEND l_url TO tabla.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD view_gos.
+    DATA: l_num_gos        TYPE i,
+          l_servicio_crear TYPE sgs_srvnam,
+          i_attachments    TYPE zt_sood,
+          l_sood           TYPE sood,
+          l_sood4          TYPE sood4,
+          documents        TYPE TABLE OF sood4.
+
+    l_num_gos = get_num_gos( tipo      = tipo
+                             clave     = clave
+                             atta      = atta
+                             url       = url
+                             notas     = notas
+                             ar_object = ar_object ).
+
+    IF ( l_num_gos = 0 AND popup_si_no = 'X' ) OR l_num_gos > 1.
+      IF servicio_crear IS INITIAL.
+        IF atta = 'X'.
+          IF ar_object IS INITIAL.
+            l_servicio_crear = 'PCATTA_CREA'.
+          ELSE.
+            l_servicio_crear = 'ARL_LINK'.
+          ENDIF.
+        ELSEIF url = 'X'.
+          l_servicio_crear = 'URL_CREA'.
+        ENDIF.
+      ELSE.
+        l_servicio_crear = servicio_crear.
+      ENDIF.
+
+      get_popup_gos( objeto         = tipo
+                     clave          = clave
+                     ar_object      = ar_object
+                     servicio_crear = l_servicio_crear ).
+    ELSE.
+      IF ar_object IS INITIAL.
+        get_file_list( EXPORTING instid        = clave
+                                 typeid        = tipo
+                       CHANGING  i_attachments = i_attachments ).
+        READ TABLE i_attachments INTO l_sood INDEX 1.       "#EC CI_NOORDER
+        IF sy-subrc = 0.
+          MOVE-CORRESPONDING l_sood TO l_sood4.
+          APPEND l_sood4 TO documents.
+          CALL FUNCTION 'SO_DOCUMENTS_MANAGER'
+            EXPORTING activity  = 'DISP'
+            TABLES    documents = documents.
+        ENDIF.
+      ELSE.
+        DATA(i_ficheros) = get_archivelink_files_m( sap_object    = tipo
+                                                    object_id     = clave
+                                                    ar_object     = ar_object    " Clase documentos
+*                                                    reserve       = reserve    " SAP ArchiveLink: Reserva para aplicaciones futuras
+                                                    get_contenido = '' ).
+        ASSIGN i_ficheros[ 1 ] TO FIELD-SYMBOL(<fichero>).
+        IF sy-subrc = 0.
+          CALL FUNCTION 'ARCHIVOBJECT_DISPLAY'
+            EXPORTING  archiv_doc_id            = <fichero>-arc_doc_id
+                       archiv_id                = <fichero>-archiv_id
+                       ar_object                = ar_object
+            EXCEPTIONS error_archiv             = 1
+                       error_communicationtable = 2
+                       error_kernel             = 3
+                       OTHERS                   = 4.
+          IF sy-subrc <> 0.
+*         MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+*                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD visualizar.
+    DATA: o_fichero     TYPE string,
+          o_mimetype    TYPE w3conttype,
+          o_content     TYPE string,
+          o_content_hex TYPE xstring,
+          i_return      TYPE bapirettab,
+          l_longitud    TYPE i,
+          l_file        TYPE string.
+
+    get_file_xstring( EXPORTING doctp         = objtp
+                                docyr         = objyr
+                                docno         = objno
+                      IMPORTING o_fichero     = o_fichero
+                                o_mimetype    = o_mimetype
+                                o_content     = o_content
+                                o_content_hex = o_content_hex
+                                i_return      = i_return
+                                longitud      = l_longitud ).
+    IF NOT l_longitud IS INITIAL.
+      l_file = o_fichero.
+      l_file = zcl_ap_ficheros=>get_directorio_temporal( fichero = l_file ).
+      zcl_ap_ficheros=>grabar_xstring( EXPORTING xstring       = o_content_hex
+                                                 fichero       = l_file
+                                                 mostrar_error = ''
+                                       IMPORTING mensaje       = DATA(l_msg) ).
+      IF l_msg IS INITIAL.
+        visualizar_fichero_st( l_file ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD visualizar_fichero_st.
+    DATA: l_fichero       TYPE dsvasdocid,
+          l_extension     TYPE dsvasdocid,
+          l_archiv_doc_id TYPE sapb-sapadokid,
+          l_archiv_id     TYPE toaar-archiv_id,
+          l_dappl         TYPE draw-dappl,
+          l_file          TYPE c LENGTH 255,
+          l_program       TYPE c LENGTH 255,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_ext           TYPE c LENGTH 50,
+          l_aux           TYPE c LENGTH 255,
+          l_opc_imprimir  TYPE c LENGTH 10.
+    DATA l_url                 TYPE string.
+    DATA l_nombre_fichero_temp TYPE string.
+    DATA i_doc                 TYPE TABLE OF sood4.
+    DATA application           TYPE string.
+    DATA parameter             TYPE string.
+
+    l_fichero = fichero.
+
+    l_extension = l_fichero(8).
+    l_extension = to_lower( l_extension ).
+    IF l_extension CS 'https://' OR l_extension CS 'http://'.
+      DATA(l_es_url) = 'X'.
+      IF url2local = 'X'.
+        l_url = fichero.
+        IF l_fichero CS 'sharepoint' AND NOT l_fichero CS '?download=1'.
+          CONCATENATE l_fichero '?download=1' INTO l_url.
+        ENDIF.
+        zcl_ap_ws=>get_fichero_local( EXPORTING url     = l_url
+                                      IMPORTING xstring = DATA(l_xstring) ).
+        IF NOT l_xstring IS INITIAL.
+          DATA(l_string) = zcl_ap_string=>xstring2string( l_xstring ).
+          IF l_string CS '%PDF' AND nombre_fichero_temp IS INITIAL.
+            l_nombre_fichero_temp = 'pdf.pdf'.
+          ELSE.
+            l_nombre_fichero_temp = nombre_fichero_temp.
+          ENDIF.
+
+          DATA(l_msg) = zcl_ap_ficheros=>visualizar( xstring = l_xstring
+                                                     fichero = l_nombre_fichero_temp ).
+          IF l_msg IS INITIAL.
+            RETURN.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT archiv_id IS INITIAL.
+      IF NOT fichero IS INITIAL.
+        l_archiv_doc_id = fichero.
+        l_archiv_id = archiv_id.
+        CALL FUNCTION 'ARCHIVOBJECT_DISPLAY'
+          EXPORTING  archiv_doc_id            = l_archiv_doc_id
+*                     ARCHIV_DOC_INDEX         = ' '
+                     archiv_id                = l_archiv_id
+*                     OBJECTTYPE               = ' '
+*                     OBJECT_ID                = ' '
+*                     AR_OBJECT                = ' '
+*                     LANGUAGE                 = ' '
+*                     SIGN                     = ' '
+*                     WINDOW_ID                = ' '
+*                     WINDOW_TITLE             = ' '
+*                     DOC_TYPE                 = ' '
+*                     POSITIONINALFFILE        = ' '
+*                     NOGET                    = ' '
+*                     PATHOFFILE               = ' '
+*                     EOF                      = ' '
+*                     DALENGTH                 = ' '
+*                     PFSTATUS                 = ' '
+*                     REPORT                   = ' '
+*                     MULTIPLE                 = ' '
+* IMPORTING
+*                     RETURNCODE               =
+* TABLES
+*                     DISPDOCS                 =
+          EXCEPTIONS error_archiv             = 1
+                     error_communicationtable = 2
+                     error_kernel             = 3
+                     OTHERS                   = 4.
+        IF sy-subrc <> 0.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+      ENDIF.
+    ELSEIF NOT doknr IS INITIAL.
+      zcl_ap_gd=>get_anexos_contenido( EXPORTING dokar               = dokar
+                                                 doknr               = doknr
+                                                 doktl               = doktl
+                                                 dokvr               = dokvr
+                                                 kpro_use            = 'X'
+                                       " TODO: variable is assigned but never used (ABAP cleaner)
+                                       IMPORTING i_documents         = DATA(i_documents)
+                                                 i_contenido_xstring = DATA(i_contenido) ).
+      LOOP AT i_contenido ASSIGNING FIELD-SYMBOL(<contenido>) WHERE filename CS fichero.
+        zcl_ap_ficheros=>visualizar( fichero = fichero
+                                     xstring = <contenido>-xstring ).
+      ENDLOOP.
+    ELSEIF fichero(3) = 'FOL' AND fichero+17(3) = 'EXT'.
+      APPEND fichero TO i_doc.
+      CALL FUNCTION 'SO_DOCUMENTS_MANAGER'
+        EXPORTING activity  = 'DISP'
+*                  OFFICE_USER =
+        TABLES    documents = i_doc.
+    ELSE.
+      IF l_es_url = 'X' OR sy-sysid = 'NSP' OR navegador = 'X'.
+        CALL FUNCTION 'PRGN_GENER_EXECUTE_URL'
+          EXPORTING node_data = l_fichero.
+      ELSE.
+        IF extension IS INITIAL.
+          l_extension = zcl_ap_ficheros=>get_extension( l_fichero ).
+        ELSE.
+          l_extension = extension.
+        ENDIF.
+        l_dappl = l_extension.
+        l_dappl = to_upper( l_dappl ).                    "#EC *
+        l_file = fichero.
+        IF navegador = 'E' OR l_dappl = 'XLS' OR l_dappl = 'DOC'.
+          sy-subrc = 4.
+        ELSE.
+          CALL FUNCTION 'CV120_START_APPLICATION'
+            EXPORTING  pf_dappl       = l_dappl
+                       pf_file        = l_file
+            EXCEPTIONS error          = 1
+                       file_not_found = 2
+                       OTHERS         = 3.
+        ENDIF.
+        IF sy-subrc <> 0.
+          l_file = fichero.
+          IF NOT extension IS INITIAL.
+            CONCATENATE fichero '.' extension INTO l_file.
+          ENDIF.
+          CALL FUNCTION 'CV120_GET_APPL_FROM_REGISTRY'
+            EXPORTING  pf_apptp         = '1'
+                       pf_file          = l_file
+            IMPORTING  pfx_program      = l_program
+            EXCEPTIONS no_valid_program = 1
+                       OTHERS           = 2.
+          IF sy-subrc <> 0.
+            l_file = fichero.
+            CONCATENATE '.' l_dappl INTO l_ext.
+            REPLACE l_ext WITH '.HTM' INTO l_file.
+            CALL FUNCTION 'CV120_GET_APPL_FROM_REGISTRY'
+              EXPORTING  pf_apptp         = '1'
+                         pf_file          = l_file
+              IMPORTING  pfx_program      = l_program
+              EXCEPTIONS no_valid_program = 1
+                         OTHERS           = 2.
+            IF sy-subrc <> 0.
+*       message
+            ENDIF.
+          ENDIF.
+          IF NOT l_fichero IS INITIAL.
+            IF l_program IS INITIAL.
+              CALL FUNCTION 'PRGN_GENER_EXECUTE_URL'
+                EXPORTING node_data = l_fichero.
+            ELSE.
+              SPLIT l_program+1 AT '"' INTO l_program l_aux.
+              IF l_program(1) = ':'.
+                CONCATENATE 'c' l_program INTO l_program.
+              ENDIF.
+              REPLACE '%f' WITH '' INTO l_program.
+              CLEAR l_aux.
+              IF imprimir = 'X'.
+                l_extension = to_upper( l_extension ).
+                CASE l_extension.
+                  WHEN 'PDF'.
+                    l_opc_imprimir = '/t'.
+                  WHEN 'DOC' OR 'DOCX'.
+                    l_opc_imprimir = '/i'.
+                  WHEN 'XLS' OR 'XLSX'.
+                    l_opc_imprimir = '/i'.
+
+                ENDCASE.
+              ENDIF.
+              CONCATENATE '"' fichero '"' INTO l_aux.
+
+              IF NOT l_opc_imprimir IS INITIAL.
+                CONCATENATE l_opc_imprimir l_aux INTO l_aux SEPARATED BY space.
+              ENDIF.
+
+              application = l_program.
+              parameter = l_aux.
+              cl_gui_frontend_services=>execute( EXPORTING
+*                                                            document               = document
+                                                            application            = application
+                                                            parameter              = parameter
+*                                                            default_directory      = default_directory
+*                                                            maximized              = maximized
+*                                                            minimized              = minimized
+*                                                            synchronous            = synchronous
+*                                                            operation              = 'OPEN'
+                                                 EXCEPTIONS cntl_error             = 1
+                                                            error_no_gui           = 2
+                                                            bad_parameter          = 3
+                                                            file_not_found         = 4
+                                                            path_not_found         = 5
+                                                            file_extension_unknown = 6
+                                                            error_execute_failed   = 7
+                                                            synchronous_failed     = 8
+                                                            not_supported_by_gui   = 9 ).
+              IF sy-subrc <> 0.
+                MESSAGE 'Error abriendo fichero'(eaf) TYPE 'E'.
+              ENDIF.
+
+*            CALL FUNCTION 'WS_EXECUTE'
+*              EXPORTING
+*                commandline        = l_aux
+*                program            = l_program
+*              EXCEPTIONS
+*                frontend_error     = 1
+*                no_batch           = 2
+*                prog_not_found     = 3
+*                illegal_option     = 4
+*                gui_refuse_execute = 5
+*                OTHERS             = 6.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.

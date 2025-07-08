@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_EXITS" VERSION="1" LANGU="S" DESCRIPT="Exits cliente Grefusa" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZCL_AP_EXITS">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZCL_EXITS" REFCLSNAME="ZCL_AP_EXITS" VERSION="1" STATE="1"/>
+ <method CLSNAME="ZCL_EXITS" CMPNAME="NAVEGAR" VERSION="1" LANGU="S" DESCRIPT="Navega a tarea" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_EXITS" CMPNAME="NAVEGAR" SCONAME="TK" VERSION="1" LANGU="S" DESCRIPT="Code Inspector: Tokens" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STOKESX_TAB" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_EXITS" CMPNAME="NAVEGAR" SCONAME="O_OBJECTNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_EXITS" CMPNAME="NAVEGAR" SCONAME="O_OBJECTTYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD navegar.
+
+*APC20180313 Si el literal sobre el que se ha hecho doble click, es una definición de exit,
+* navegamos a la transacción donde se gestionan
+    IF o_objectname(1) = &apos;&apos;&apos;&apos; AND o_objecttype = &apos;D&apos;.
+      LOOP AT tk TRANSPORTING NO FIELDS WHERE str CS &apos;EXIT&apos;.
+        EXIT.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        DATA: l_id2 TYPE string,
+              l_id  TYPE zap_exits-id.
+        l_id2 = o_objectname.
+        REPLACE ALL OCCURRENCES OF &apos;&apos;&apos;&apos; IN l_id2 WITH ``.
+        SELECT SINGLE id FROM zap_exits
+          INTO l_id
+         WHERE id = l_id2.
+        IF sy-subrc = 0.
+          SUBMIT zap_exits
+            WITH p_id = l_id
+             AND RETURN.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

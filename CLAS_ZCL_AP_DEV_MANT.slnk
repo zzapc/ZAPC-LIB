@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_DEV_MANT" VERSION="1" LANGU="S" DESCRIPT="Mantenimientos" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZCL_AP_DEV">
+ <types CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="T_CAMPOS_TEXTO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="11 " SRCROW2="18 " SRCCOLUMN2="31 " TYPESRC_LENG="489 " TYPESRC="BEGIN OF t_campos_texto,
+             campo      TYPE string,
+             fieldname  TYPE dd05q-fieldname,
+             checktable TYPE dd05q-checktable,
+             checkfield TYPE dd05q-checkfield,
+             tabname    TYPE dd08l-tabname,
+             texto      TYPE dd05q-fieldname,
+             scrtext_s  TYPE lvc_s_fcat-scrtext_s,
+             scrtext_m  TYPE lvc_s_fcat-scrtext_m,
+             scrtext_l  TYPE lvc_s_fcat-scrtext_l,
+           END OF t_campos_texto
+"/>
+ <types CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="TT_CAMPOS_TEXTO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="20 " SRCCOLUMN1="11 " SRCROW2="20 " SRCCOLUMN2="78 " TYPESRC_LENG="70 " TYPESRC="tt_campos_texto TYPE STANDARD TABLE OF t_campos_texto WITH KEY campo
+"/>
+ <types CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="T_INI_LISTADO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="23 " SRCCOLUMN1="6 " SRCROW2="27 " SRCCOLUMN2="25 " TYPESRC_LENG="173 " TYPESRC="BEGIN OF t_ini_listado,
+        clave_interna TYPE string,
+        check         TYPE xfeld,
+        lights        TYPE zico_estado_mensaje,
+      END OF t_ini_listado
+"/>
+ <types CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="T_FIN_LISTADO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="29 " SRCCOLUMN1="6 " SRCROW2="35 " SRCCOLUMN2="25 " TYPESRC_LENG="210 " TYPESRC="BEGIN OF t_fin_listado,
+        message TYPE bapi_msg,
+        style   TYPE lvc_t_styl,
+        color   TYPE lvc_t_scol,
+        updkz   TYPE char1,
+        tabix   TYPE int4,
+      END OF t_fin_listado
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CAMPOS_CLAVE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CAMPOS_INPUT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CAMPOS_OBLIGATORIOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="I_CAMPOS_ALV" VERSION="1" LANGU="S" DESCRIPT="Catálogo campos p.ListViewerControl" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="LVC_T_FCAT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="I_CAMPOS_TABLA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ENH_T_DD03L" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="I_CAMPOS_TEXTO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_CAMPOS_TEXTO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="LONGITUD_CLAVE" VERSION="1" LANGU="S" DESCRIPT="Número natural" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="INT4" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="TABIX" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="INT4" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Nombre de tabla" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TABNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="WHERE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <inheritance CLSNAME="ZCL_AP_DEV_MANT" REFCLSNAME="ZCL_AP_DEV" VERSION="1" STATE="1"/>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="BORRAR_REGISTRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="BORRAR_REGISTRO" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="BORRAR_REGISTRO" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="BORRAR_REGISTRO" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD borraR_registro.
+    &quot; TODO: parameter REGISTRO is never used or assigned (ABAP cleaner)
+
+    DATA l_hay_sel TYPE xfeld.
+
+    o_alv-&gt;comprobar_cambios( ).
+    o_alv-&gt;set_marca_filas_sel( EXPORTING validar_seleccion = &apos;X&apos; CHANGING t_tabla = i_listado hay_sel = l_hay_sel ).
+    IF l_hay_sel = &apos;X&apos;.
+      LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+        ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;check&gt;).
+        IF &lt;check&gt; = &apos;X&apos;.
+          ASSIGN COMPONENT &apos;UPDKZ&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;updkz&gt;).
+          IF &lt;updkz&gt; = &apos;I&apos;.
+            DELETE i_listado.
+          ELSEIF &lt;updkz&gt; = &apos;D&apos;.
+            ASSIGN COMPONENT &apos;LIGHTS&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;lights&gt;).
+            CLEAR: &lt;updkz&gt;, &lt;check&gt;, &lt;lights&gt;.
+            validaciones( EXPORTING mod = &apos;U&apos; CHANGING listado = &lt;listado&gt; ).
+          ELSE.
+            validaciones( EXPORTING mod = &apos;D&apos; CHANGING listado = &lt;listado&gt; ).
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      o_alv-&gt;refrescar_grid( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COMMAND_DYNPRO_0100" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COMMAND_DYNPRO_0100" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COMMAND_DYNPRO_0100" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COMMAND_DYNPRO_0100" SCONAME="I_LISTADO_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <source>METHOD command_dynpro_0100.
+    DATA: l_comm_sel TYPE string VALUE &apos;OT&apos;,
+          l_hay_sel  TYPE c LENGTH 1.
+
+    DATA i_keys TYPE TABLE OF string.
+
+*          l_key  TYPE c LENGTH 120.
+
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
+                    CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
+
+    CASE ucomm.
+      WHEN &apos;GRABAR&apos;.
+        validar_duplicados( EXPORTING datos = i_listado IMPORTING message = DATA(l_message) ).
+        IF NOT l_message IS INITIAL.
+          MESSAGE &apos;No puede grabar si hay duplicados&apos; TYPE &apos;I&apos;.
+          o_alv-&gt;refrescar_grid( ).
+          RETURN.
+        ENDIF.
+
+        LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+          ASSIGN COMPONENT &apos;UPDKZ&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;updkz&gt;).
+          IF &lt;updkz&gt; &lt;&gt; &apos;&apos;.
+            ASSIGN COMPONENT &apos;MESSAGE&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;message&gt;).
+            IF &lt;message&gt; &lt;&gt; &apos;&apos;.
+              MESSAGE &apos;No puede grabar si hay errores&apos; TYPE &apos;I&apos;.
+              RETURN.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+
+        grabar_datos( CHANGING i_listado = i_listado
+                               i_listado_ini = i_listado_ini ).
+        o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+        o_alv-&gt;refrescar_grid( ).
+
+      WHEN &apos;OT&apos;.
+        DATA: reg   TYPE REF TO data,
+              l_key TYPE string.
+
+        FIELD-SYMBOLS &lt;reg&gt; TYPE any.
+        LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;check&gt;).
+          IF &lt;check&gt; = &apos;X&apos;.
+            zcl_ap_fs=&gt;create_wa_from_struc( EXPORTING i_struc = tabla
+                                             IMPORTING e_workarea = reg ).
+            ASSIGN reg-&gt;* TO &lt;reg&gt;.
+            MOVE-CORRESPONDING &lt;listado&gt; TO &lt;reg&gt;.
+
+            ASSIGN COMPONENT &apos;MANDT&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;mandt&gt;).
+            IF sy-subrc = 0.
+              &lt;mandt&gt; = sy-mandt.
+            ENDIF.
+            l_key = &lt;reg&gt;(longitud_clave).
+            APPEND l_key TO i_keys.
+          ENDIF.
+        ENDLOOP.
+
+        zcl_ap_utils=&gt;grabar_tabla_en_ot( tabla = tabla i_keys = i_keys ).
+
+      WHEN &apos;COMP&apos;.
+        SUBMIT zap_comparar_tablas
+          AND RETURN
+               WITH s_table = tabla.
+*             WITH p_clave = p_cprog. &quot;CAMBIAR
+
+    ENDCASE.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CONFIGURACION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CONFIGURACION" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABNAME"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="CONFIGURACION" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD configuracion.
+    me-&gt;tabla = tabla.
+    CLEAR: campos_clave, i_campos_tabla, i_campos_alv, i_campos_texto.
+
+    i_campos_alv = get_fieldcatalog_tabla_alv( tabla = datos ).
+
+    SELECT fieldname keyflag leng position FROM dd03l
+      INTO CORRESPONDING FIELDS OF TABLE i_campos_tabla
+     WHERE tabname    = tabla
+       AND fieldname &lt;&gt; &apos;MANDT&apos;
+     ORDER BY position.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE |No existe tabla { tabla }| TYPE &apos;E&apos;.
+    ENDIF.
+
+    LOOP AT i_campos_tabla ASSIGNING FIELD-SYMBOL(&lt;campo&gt;).
+      IF line_exists(  i_campos_alv[ fieldname = &lt;campo&gt;-fieldname ] ).
+        IF &lt;campo&gt;-keyflag = &apos;X&apos;.
+          IF campos_clave IS INITIAL.
+            campos_clave = &lt;campo&gt;-fieldname.
+          ELSE.
+            CONCATENATE campos_clave &lt;campo&gt;-fieldname INTO campos_clave SEPARATED BY &apos;,&apos;.
+          ENDIF.
+          longitud_clave = longitud_clave + &lt;campo&gt;-leng.
+        ELSE.
+          __add_lista campos_input &lt;campo&gt;-fieldname.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    campos_obligatorios = campos_clave.
+
+    SELECT dd05q~fieldname, dd05q~checktable, dd05q~checkfield,
+           dd08l~tabname
+      FROM dd05q LEFT OUTER JOIN dd08l ON dd08l~checktable = dd05q~checktable
+       AND dd08l~fieldname = dd05q~checkfield
+       AND dd08l~frkart = &apos;TEXT&apos;
+      INTO CORRESPONDING FIELDS OF TABLE @i_campos_texto
+     WHERE dd05q~tabname = @tabla
+       AND dd05q~checktable NE &apos;&apos;
+       AND dd05q~fieldname NE &apos;MANDT&apos;
+       AND dd05q~checkfield NE &apos;MANDT&apos;.
+
+    LOOP AT i_campos_texto ASSIGNING FIELD-SYMBOL(&lt;ctext&gt;).
+      &lt;ctext&gt;-campo = &lt;ctext&gt;-fieldname &amp;&amp; &apos;_T&apos;.
+
+      ASSIGN i_campos_alv[ fieldname = &lt;ctext&gt;-campo ] TO FIELD-SYMBOL(&lt;alv&gt;).
+      IF sy-subrc = 0.
+        &lt;ctext&gt;-scrtext_s = &lt;alv&gt;-scrtext_s.
+        &lt;ctext&gt;-scrtext_m = &lt;alv&gt;-scrtext_m.
+        &lt;ctext&gt;-scrtext_l = &lt;alv&gt;-scrtext_l.
+        SELECT SINGLE position FROM dd03l
+          INTO @DATA(l_pos)
+         WHERE tabname = @&lt;ctext&gt;-tabname
+           AND fieldname = @&lt;ctext&gt;-checkfield.
+        ADD 1 TO l_pos.
+        SELECT SINGLE fieldname FROM dd03l
+          INTO &lt;ctext&gt;-texto
+         WHERE tabname = &lt;ctext&gt;-tabname
+           AND position = l_pos.
+      ELSE.
+        DELETE i_campos_texto.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COPIAR_REGISTRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COPIAR_REGISTRO" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COPIAR_REGISTRO" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="COPIAR_REGISTRO" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD copiar_registro.
+    DATA l_hay_sel TYPE xfeld.
+
+    o_alv-&gt;comprobar_cambios( ).
+    o_alv-&gt;set_marca_filas_sel( EXPORTING validar_seleccion = &apos;X&apos; CHANGING t_tabla = i_listado hay_sel = l_hay_sel ).
+    IF l_hay_sel = &apos;X&apos;.
+      LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+        ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;check&gt;).
+        IF &lt;check&gt; = &apos;X&apos;.
+          registro = &lt;listado&gt;.
+          ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE registro TO FIELD-SYMBOL(&lt;tabix&gt;).
+          tabix = tabix + 1.
+          &lt;tabix&gt; = tabix.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE registro TO &lt;check&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;listado&gt; TO &lt;check&gt;.
+          clear &lt;check&gt;.
+          validaciones( EXPORTING mod = &apos;I&apos; CHANGING listado = registro ).
+          APPEND registro TO i_listado.
+        ENDIF.
+      ENDLOOP.
+      o_alv-&gt;refrescar_grid( soft_refresh = &apos;&apos; ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_DATOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_DATOS" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_DATOS" SCONAME="I_LISTADO_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <source>METHOD grabar_datos.
+    DATA(l_cont) = 0.
+    DATA(l_cont_error) = 0.
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      ASSIGN COMPONENT &apos;UPDKZ&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;updkz&gt;).
+      ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;tabix&gt;).
+      IF &lt;updkz&gt; &lt;&gt; &apos;&apos;.
+        IF &lt;updkz&gt; = &apos;D&apos;.
+          DATA(l_where_delete) = where_clave( &lt;listado&gt; ).
+          DELETE FROM (tabla)
+           WHERE (l_where_delete).
+          IF sy-subrc = 0.
+            l_cont = l_cont + 1.
+            LOOP AT i_listado_ini ASSIGNING FIELD-SYMBOL(&lt;ini&gt;).
+              ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE &lt;ini&gt; TO FIELD-SYMBOL(&lt;tabix_ini&gt;).
+              IF &lt;tabix_ini&gt; = &lt;tabix&gt;.
+                DELETE i_listado_ini.
+                EXIT.
+              ENDIF.
+            ENDLOOP.
+            DELETE i_listado.
+          ELSE.
+            l_cont_error = l_cont_error + 1.
+          ENDIF.
+        ELSE.
+          IF grabar_registro( registro = &lt;listado&gt; ).
+            l_cont = l_cont + 1.
+            ASSIGN COMPONENT &apos;LIGHTS&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;lights&gt;).
+            ASSIGN COMPONENT &apos;MESSAGE&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;message&gt;).
+            ASSIGN COMPONENT &apos;STYLE&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;style&gt;).
+            CLEAR: &lt;updkz&gt;, &lt;lights&gt;, &lt;message&gt;, &lt;style&gt;.
+
+            LOOP AT i_listado_ini ASSIGNING &lt;ini&gt;.
+              ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE &lt;ini&gt; TO &lt;tabix_ini&gt;.
+              IF &lt;tabix_ini&gt; = &lt;tabix&gt;.
+                &lt;ini&gt; = &lt;listado&gt;.
+              ENDIF.
+            ENDLOOP.
+            IF sy-subrc NE 0.
+              APPEND &lt;listado&gt; TO i_listado_ini.
+            ENDIF.
+          ELSE.
+            l_cont_error = l_cont_error + 1.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    IF l_cont = 0.
+      IF l_cont_error IS INITIAL.
+        MESSAGE &apos;No había cambios&apos; TYPE &apos;S&apos;.
+      ELSE.
+        MESSAGE |Error guardando { l_cont_error } registros | TYPE &apos;I&apos;.
+      ENDIF.
+    ELSE.
+      IF l_cont_error IS INITIAL.
+        MESSAGE |Se han grabado { l_cont } registros| TYPE &apos;S&apos;.
+      ELSE.
+        MESSAGE |Se han grabado { l_cont } registros pero se han quedado sin grabar { l_cont_error }| TYPE &apos;I&apos;.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_REGISTRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_REGISTRO" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="GRABAR_REGISTRO" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD grabar_registro.
+    DATA reg TYPE REF TO data.
+
+    FIELD-SYMBOLS &lt;reg&gt; TYPE any.
+
+    CLEAR ok.
+    zcl_ap_fs=&gt;create_wa_from_struc( EXPORTING i_struc = tabla
+                                     IMPORTING e_workarea = reg ).
+    ASSIGN reg-&gt;* TO &lt;reg&gt;.
+    MOVE-CORRESPONDING registro TO &lt;reg&gt;.
+    MODIFY (tabla) FROM &lt;reg&gt;.
+    IF sy-subrc = 0.
+      ok = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="NUEVO_REGISTRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="NUEVO_REGISTRO" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="NUEVO_REGISTRO" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="NUEVO_REGISTRO" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD nuevo_registro.
+    ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE registro TO FIELD-SYMBOL(&lt;tabix&gt;).
+    tabix = tabix + 1.
+    &lt;tabix&gt; = tabix.
+    validaciones( EXPORTING mod = &apos;I&apos; CHANGING listado = registro ).
+    APPEND registro TO i_listado.
+
+    IF NOT o_alv IS INITIAL.
+      o_alv-&gt;refrescar_grid( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="PERSONALIZAR_ALV" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="PERSONALIZAR_ALV" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID"/>
+  <source>METHOD personalizar_alv.
+
+    LOOP AT i_campos_texto ASSIGNING FIELD-SYMBOL(&lt;ctext&gt;).
+      o_alv-&gt;set_field( campo = &lt;ctext&gt;-campo op = &apos;COL_AFTER&apos; valor = &lt;ctext&gt;-fieldname ).
+      o_alv-&gt;set_field_text( campo = &lt;ctext&gt;-campo valor = &lt;ctext&gt;-SCRTEXT_S valor2 = &lt;ctext&gt;-SCRTEXT_l  ).
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" SCONAME="O_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV_GRID"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" SCONAME="VISUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" SCONAME="CREAR_OT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" SCONAME="COMPARAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="STATUS_DYNPRO_0100" SCONAME="I_LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD status_dynpro_0100.
+    IF inicio IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    status_dynpro( EXPORTING cprog = &apos;ZAP_STATUS&apos; status = &apos;ST_DYN&apos; titulo = string CHANGING i_listado = i_listado ).
+
+    inicio = &apos;X&apos;.
+    o_alv-&gt;registrar_mod( ).
+    o_alv-&gt;set_layout( ancho_optimizado = &apos;X&apos; no_rowmove = &apos;X&apos; no_rowins = &apos;X&apos; style = &apos;STYLE&apos; colort = &apos;COLOR&apos; ).
+    o_alv-&gt;quitar_opciones( cl_gui_alv_grid=&gt;mc_fc_refresh ).
+    o_alv-&gt;set_campos_tabint( i_listado[] ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK,MANDT,MESSAGE,TABIX,UPDKZ,CLAVE_INTERNA&apos; ).
+
+    IF visualizar IS INITIAL.
+      o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Grabar&apos; icon = icon_system_save ucomm = &apos;GRABAR&apos; ).
+
+      IF sy-sysid = zcl_c=&gt;entorno_desarrollo.
+        IF crear_ot = &apos;X&apos;.
+          o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Crear OT&apos;  icon =  icon_import_transport_request ucomm = &apos;OT&apos; ).
+        ENDIF.
+        IF comparar = &apos;X&apos;.
+          o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Comparar con producción&apos;  icon =  icon_compare ucomm = &apos;COMP&apos; ).
+        ENDIF.
+      ELSE.
+        IF comparar = &apos;X&apos;.
+          o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Comparar con desarrollo&apos;  icon =  icon_compare ucomm = &apos;COMP&apos; ).
+        ENDIF.
+      ENDIF.
+      o_alv-&gt;set_field_input( campos_input ).
+    ENDIF.
+
+    personalizar_alv( o_alv = o_alv ).
+
+    o_alv-&gt;set_orden( campos_clave ).
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+    o_alv-&gt;show( CHANGING tabla = i_listado ).
+
+    i_campos_alv = o_alv-&gt;get_fcat_inicial( ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDACIONES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDACIONES" SCONAME="MOD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDACIONES" SCONAME="DATOS_INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDACIONES" SCONAME="LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD validaciones.
+    DATA: campos_edit  TYPE string,
+          campos_error TYPE string.
+
+    ASSIGN COMPONENT &apos;MESSAGE&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;message&gt;).
+    ASSIGN COMPONENT &apos;STYLE&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;style&gt;).
+    ASSIGN COMPONENT &apos;COLOR&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;color&gt;).
+    ASSIGN COMPONENT &apos;LIGHTS&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;lights&gt;).
+    ASSIGN COMPONENT &apos;UPDKZ&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;updkz&gt;).
+    ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;tabix&gt;).
+    ASSIGN COMPONENT &apos;CLAVE_INTERNA&apos; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;clave_interna&gt;).
+
+    CLEAR: &lt;message&gt;, &lt;style&gt;, &lt;color&gt;.
+
+    LOOP AT i_campos_texto ASSIGNING FIELD-SYMBOL(&lt;ctext&gt;) WHERE tabname NE &apos;&apos;.
+      ASSIGN COMPONENT &lt;ctext&gt;-campo OF STRUCTURE listado TO FIELD-SYMBOL(&lt;campo_t&gt;).
+      ASSIGN COMPONENT &lt;ctext&gt;-fieldname OF STRUCTURE listado TO FIELD-SYMBOL(&lt;campo_o&gt;).
+      &lt;campo_t&gt; = get( tabla = &lt;ctext&gt;-tabname clave = &lt;campo_o&gt; ).
+    ENDLOOP.
+
+    CASE mod.
+      WHEN &apos;I&apos;.
+        &lt;updkz&gt; = &apos;I&apos;.
+      WHEN &apos;D&apos;.
+        &lt;updkz&gt; = &apos;D&apos;.
+      WHEN &apos;U&apos;.
+        IF &lt;updkz&gt; IS INITIAL.
+          LOOP AT datos_ini ASSIGNING FIELD-SYMBOL(&lt;ini&gt;).
+            ASSIGN COMPONENT &apos;TABIX&apos; OF STRUCTURE &lt;ini&gt; TO FIELD-SYMBOL(&lt;tabix_ini&gt;).
+            IF &lt;tabix_ini&gt; = &lt;tabix&gt;.
+              IF &lt;ini&gt; &lt;&gt; listado.
+                DATA(l_enc) = &apos;X&apos;.
+                &lt;updkz&gt; = &apos;U&apos;.
+              ENDIF.
+              EXIT.
+            ENDIF.
+          ENDLOOP.
+          IF l_enc = &apos;X&apos;.
+            &lt;updkz&gt; = &apos;U&apos;.
+          ENDIF.
+        ENDIF.
+    ENDCASE.
+
+    CASE &lt;updkz&gt;.
+      WHEN &apos;I&apos;.
+        DATA(l_icono) = icon_create.
+        campos_edit = campos_clave.
+      WHEN &apos;D&apos;.
+        l_icono = icon_delete.
+      WHEN &apos;U&apos;.
+        l_icono = icon_change.
+    ENDCASE.
+
+    IF &lt;updkz&gt; = &apos;I&apos; OR &lt;updkz&gt; = &apos;U&apos;.
+      SPLIT campos_obligatorios AT &apos;,&apos; INTO TABLE DATA(i_campos_obl).
+      LOOP AT i_campos_obl ASSIGNING FIELD-SYMBOL(&lt;obl&gt;).
+        ASSIGN COMPONENT &lt;obl&gt; OF STRUCTURE listado TO FIELD-SYMBOL(&lt;fs&gt;).
+        IF sy-subrc &lt;&gt; 0.
+          CONTINUE.
+        ENDIF.
+
+        IF &lt;fs&gt; IS NOT INITIAL.
+          CONTINUE.
+        ENDIF.
+
+        __add_lista campos_error &lt;obl&gt;.
+        IF &lt;message&gt; IS NOT INITIAL.
+          CONTINUE.
+        ENDIF.
+
+        ASSIGN i_campos_alv[ fieldname = &lt;obl&gt; ] TO FIELD-SYMBOL(&lt;alv&gt;).
+        IF sy-subrc &lt;&gt; 0.
+          CONTINUE.
+        ENDIF.
+
+        DATA(l_desc_campo) = &lt;alv&gt;-scrtext_m.
+        IF l_desc_campo IS INITIAL.
+          SELECT SINGLE ddtext FROM dd03t
+           INTO l_desc_campo
+          WHERE tabname    = tabla
+            AND ddlanguage = sy-langu
+            AND fieldname  = &lt;obl&gt;.
+          IF sy-subrc &lt;&gt; 0.
+            ASSIGN i_campos_tabla[ fieldname = &lt;obl&gt; ] TO FIELD-SYMBOL(&lt;campo&gt;).
+            SELECT ddtext FROM dd04t
+              INTO l_desc_campo
+              UP TO 1 ROWS
+             WHERE ddlanguage = sy-langu
+               AND rollname   = &lt;campo&gt;-rollname
+              ORDER BY PRIMARY KEY.
+            ENDSELECT.
+          ENDIF.
+          IF l_desc_campo IS INITIAL.
+            l_desc_campo = &lt;obl&gt;.
+          ENDIF.
+        ENDIF.
+
+        &lt;message&gt; = |Informe campo { l_desc_campo }|.
+        l_icono = icon_red_light.
+      ENDLOOP.
+    ENDIF.
+
+    CLEAR &lt;clave_interna&gt;.
+    LOOP AT i_campos_tabla ASSIGNING &lt;campo&gt; WHERE keyflag = &apos;X&apos;.
+      ASSIGN COMPONENT &lt;campo&gt;-fieldname OF STRUCTURE listado TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        CONCATENATE &lt;clave_interna&gt; &lt;fs&gt; INTO &lt;clave_interna&gt; SEPARATED BY &apos;-&apos;.
+      ENDIF.
+    ENDLOOP.
+
+    IF &lt;ini&gt; IS ASSIGNED.
+      validar_registro( EXPORTING mod = mod
+                                  ini = &lt;ini&gt;
+                         CHANGING listado = listado ).
+    ELSE.
+      validar_registro( EXPORTING mod = mod
+                    CHANGING listado = listado ).
+    ENDIF.
+
+    set_status_list( EXPORTING message = &lt;message&gt;
+                               icono = l_icono
+                               campos_editables = campos_edit
+                               resaltar_campos = campos_error
+                               color_resalte = &apos;R&apos;
+                     CHANGING list = listado ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_DUPLICADOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_DUPLICADOS" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_DUPLICADOS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD validar_duplicados.
+    TYPES: BEGIN OF t_list_dup,
+             clave_interna TYPE string,
+             cont          TYPE int4,
+             tabix         TYPE string,
+           END OF t_list_dup.
+
+    DATA: i_list_dup TYPE TABLE OF t_list_dup,
+          l_list_dup TYPE t_list_dup.
+
+    LOOP AT datos ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      ASSIGN COMPONENT &apos;CLAVE_INTERNA&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;clave_interna&gt;).
+      IF line_exists( i_list_dup[ clave_interna = &lt;clave_interna&gt;  ] ).
+        i_list_dup[ clave_interna = &lt;clave_interna&gt;  ]-cont = 2.
+      ELSE.
+        l_list_dup-clave_interna = &lt;clave_interna&gt;.
+        l_list_dup-tabix         = 1.
+        APPEND l_list_dup TO i_list_dup.
+      ENDIF.
+    ENDLOOP.
+    LOOP AT i_list_dup ASSIGNING FIELD-SYMBOL(&lt;list&gt;) WHERE tabix &gt; 1.
+      LOOP AT datos ASSIGNING &lt;listado&gt;.
+        ASSIGN COMPONENT &apos;CLAVE_INTERNA&apos; OF STRUCTURE &lt;listado&gt; TO &lt;clave_interna&gt;.
+        IF &lt;clave_interna&gt; = &lt;list&gt;-clave_interna.
+          ASSIGN COMPONENT &apos;COLOR&apos; OF STRUCTURE &lt;listado&gt; TO FIELD-SYMBOL(&lt;color&gt;).
+          CLEAR &lt;color&gt;.
+          set_status_list( EXPORTING color = &apos;R&apos; CHANGING list = &lt;listado&gt; ).
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+    IF sy-subrc = 0.
+      message = &apos;No puede grabar si hay duplicados&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_REGISTRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_REGISTRO" SCONAME="MOD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_REGISTRO" SCONAME="INI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="VALIDAR_REGISTRO" SCONAME="LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD validar_registro.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="WHERE_CLAVE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="WHERE_CLAVE" SCONAME="LISTADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_DEV_MANT" CMPNAME="WHERE_CLAVE" SCONAME="WHERE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD where_clave.
+    CLEAR where.
+    LOOP AT i_campos_tabla ASSIGNING FIELD-SYMBOL(&lt;campo&gt;) WHERE keyflag = &apos;X&apos;.
+      ASSIGN COMPONENT &lt;campo&gt;-fieldname OF STRUCTURE listado TO FIELD-SYMBOL(&lt;fs&gt;).
+      DATA(l_w) = |{ &lt;campo&gt;-fieldname } = &apos;{ &lt;fs&gt; }&apos;|.
+      IF where IS INITIAL.
+        where = l_w.
+      ELSE.
+        where = |{ where } AND { l_w }|.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

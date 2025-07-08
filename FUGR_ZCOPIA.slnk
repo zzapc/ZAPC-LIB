@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FUGR AREA="ZCOPIA" SPRAS="S" AREAT="Copia datos producción a desarrollo">
+ <functionGroupDocumentation/>
+ <mainprogram NAME="SAPLZCOPIA" VARCL="X" DBAPL="S" DBNA="D$" SUBC="F" APPL="S" RMAND="100" RLOAD="S" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+  <textPool>
+   <language SPRAS="S">
+    <textElement ID="R" LENGTH="0 "/>
+   </language>
+  </textPool>
+  <source>*******************************************************************
+*   System-defined Include-files.                                 *
+*******************************************************************
+  INCLUDE LZCOPIATOP.                        &quot; Global Data
+  INCLUDE LZCOPIAUXX.                        &quot; Function Modules
+
+*******************************************************************
+*   User-defined Include-files (if necessary).                    *
+*******************************************************************
+* INCLUDE LZCOPIAF...                        &quot; Subprograms
+* INCLUDE LZCOPIAO...                        &quot; PBO-Modules
+* INCLUDE LZCOPIAI...                        &quot; PAI-Modules</source>
+ </mainprogram>
+ <includeprograms>
+  <include>
+   <include_source></include_source>
+  </include>
+  <include NAME="LZCOPIATOP" VARCL="X" SUBC="I" APPL="S" RMAND="100" RLOAD="S" UCCHECK="X">
+   <include_source>FUNCTION-POOL ZCOPIA.                       &quot;MESSAGE-ID ..</include_source>
+  </include>
+ </includeprograms>
+ <functionmodules>
+  <functionmodule NAME="Z_GET_WHERE" REMOTE="R" STEXT="Recupera tabla de otro mandante">
+   <importing PARAMETER="TABLA" TYP="TABNAME"/>
+   <importing PARAMETER="CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CLAVE2" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CAMPO_CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="INICIO_CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="BEGDA" OPTIONAL="X" TYP="BEGDA"/>
+   <importing PARAMETER="ENDDA" OPTIONAL="X" TYP="ENDDA"/>
+   <importing PARAMETER="WHERE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <tables PARAMETER="I_CLAVES" DBSTRUCT="AGR_TXT" OPTIONAL="X"/>
+   <tables PARAMETER="I_WHERE" DBSTRUCT="AFX_STR_WHERE_CLAUSE"/>
+   <documentation PARAMETER="TABLA" KIND="P" STEXT="Nombre de tabla" INDEX=" 001"/>
+   <documentation PARAMETER="CLAVE" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="CLAVE2" KIND="P" INDEX=" 003"/>
+   <documentation PARAMETER="CAMPO_CLAVE" KIND="P" STEXT="Nombre campo clave" INDEX=" 004"/>
+   <documentation PARAMETER="INICIO_CLAVE" KIND="P" STEXT="Coger sólo inicio de clave &apos;%&apos;" INDEX=" 005"/>
+   <documentation PARAMETER="BEGDA" KIND="P" STEXT="Inicio de la validez" INDEX=" 006"/>
+   <documentation PARAMETER="ENDDA" KIND="P" STEXT="Fin de la validez" INDEX=" 007"/>
+   <documentation PARAMETER="WHERE" KIND="P" STEXT="Sentencia where" INDEX=" 008"/>
+   <documentation PARAMETER="I_CLAVES" KIND="P" STEXT="Rol y texto" INDEX=" 009"/>
+   <documentation PARAMETER="I_WHERE" KIND="P" STEXT="Sentencia WHERE" INDEX=" 010"/>
+   <fm_source_new>DATA: l_primer_campo_clave  TYPE dd03l-fieldname,
+        l_segundo_campo_clave TYPE dd03l-fieldname,
+        l_position            LIKE dd03l-position,
+        l_aux                 TYPE string,
+        l_operador(10),
+        i_w                   TYPE TABLE OF afx_str_where_clause,
+        l_w                   TYPE afx_str_where_clause.
+
+
+  IF inicio_clave IS INITIAL.
+    l_operador = &apos;=&apos;.
+  ELSE.
+    l_operador = &apos;LIKE&apos;.
+  ENDIF.
+
+  REFRESH i_where.
+
+  IF not ( clave IS INITIAL AND i_claves[] IS INITIAL ).
+    IF tabla = &apos;PCL2&apos;.
+      l_primer_campo_clave = &apos;SRTFD&apos;.
+    ELSE.
+      IF campo_clave IS INITIAL.
+        SELECT fieldname position FROM dd03l
+          INTO (l_primer_campo_clave, l_position)
+         UP TO 1 ROWS
+         WHERE tabname = tabla
+           AND fieldname NE &apos;MANDT&apos;
+           AND fieldname NE &apos;.INCLUDE&apos;
+           AND keyflag = &apos;X&apos;
+         ORDER BY position.
+        ENDSELECT.
+      ELSE.
+        l_primer_campo_clave = campo_clave.
+      ENDIF.
+      IF sy-subrc = 0.
+        IF NOT clave2 IS INITIAL.
+          SELECT fieldname position FROM dd03l
+            INTO (l_segundo_campo_clave, l_position)
+           UP TO 1 ROWS
+           WHERE tabname = tabla
+             AND fieldname NE &apos;MANDT&apos;
+             AND fieldname NE &apos;.INCLUDE&apos;
+             AND fieldname NE l_primer_campo_clave
+             AND keyflag = &apos;X&apos;
+           ORDER BY position.
+          ENDSELECT.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT clave IS INITIAL.
+      IF tabla = &apos;PCL2&apos;.
+*        IF begda IS INITIAL.
+        CONCATENATE &apos;&apos;&apos;&apos; clave &apos;%&apos; &apos;&apos;&apos;&apos; INTO i_where.
+        CONCATENATE &apos;SRTFD LIKE &apos; i_where
+               INTO i_where SEPARATED BY space.
+        APPEND i_where.
+*        ELSE.
+*          CONCATENATE &apos;&apos;&apos;&apos; clave begda(6) &apos;0&apos; &apos;&apos;&apos;&apos; INTO i_where.
+*          CONCATENATE &apos;SRTFD &gt;= &apos; i_where &apos;AND&apos; INTO i_where SEPARATED BY space.
+*          APPEND i_where.
+*          CONCATENATE &apos;&apos;&apos;&apos; clave endda(6) &apos;9&apos; &apos;&apos;&apos;&apos; INTO i_where.
+*          CONCATENATE &apos;SRTFD &lt;= &apos; i_where INTO i_where SEPARATED BY space.
+*          APPEND i_where.
+*        ENDIF.
+      ELSEIF tabla = &apos;TEVEN&apos;.
+      ELSE.
+        CONCATENATE &apos;&apos;&apos;&apos; clave inicio_clave &apos;&apos;&apos;&apos; INTO i_where.
+        CONCATENATE l_primer_campo_clave l_operador i_where INTO i_where
+          SEPARATED BY space.
+        IF NOT clave2 IS INITIAL.
+          CONCATENATE &apos;&apos;&apos;&apos; clave2 inicio_clave &apos;&apos;&apos;&apos; INTO l_aux.
+          CONCATENATE i_where &apos;AND&apos;
+                      l_segundo_campo_clave l_operador l_aux INTO i_where
+                              SEPARATED BY space.
+        ENDIF.
+        APPEND i_where.
+      ENDIF.
+    ELSEIF NOT i_claves[] IS INITIAL.
+      DATA l_first.
+      LOOP AT i_claves.
+        AT FIRST.
+          l_first = &apos;X&apos;.
+        ENDAT.
+        IF tabla = &apos;PCL2&apos;.
+          IF l_first = &apos;X&apos;.
+            i_where = &apos;(&apos;.
+            APPEND i_where.
+            CLEAR l_first.
+          ELSE.
+            i_where = &apos;OR&apos;.
+            APPEND i_where.
+          ENDIF.
+*          IF begda IS INITIAL.
+          CONCATENATE &apos;&apos;&apos;&apos; i_claves-agr_name &apos;%&apos; &apos;&apos;&apos;&apos; INTO i_where.
+          CONCATENATE &apos;SRTFD LIKE &apos; i_where
+                 INTO i_where SEPARATED BY space.
+*          ELSE.
+*            CONCATENATE &apos;&apos;&apos;&apos; i_claves-agr_name begda(6) &apos;0&apos; &apos;&apos;&apos;&apos; INTO i_where.
+*            CONCATENATE &apos;( SRTFD &gt;= &apos; i_where &apos;AND&apos; INTO i_where SEPARATED BY space.
+*            APPEND i_where.
+*            CONCATENATE &apos;&apos;&apos;&apos; i_claves-agr_name endda(6) &apos;9&apos; &apos;&apos;&apos;&apos; INTO i_where.
+*            CONCATENATE &apos;SRTFD &lt;= &apos; i_where &apos;)&apos; INTO i_where SEPARATED BY space.
+*          ENDIF.
+        ELSE.
+          CONCATENATE &apos;&apos;&apos;&apos; i_claves-agr_name inicio_clave &apos;&apos;&apos;&apos; INTO i_where.
+          IF l_first = &apos;X&apos;.
+            CONCATENATE &apos;(&apos; l_primer_campo_clave l_operador i_where
+                  INTO i_where SEPARATED BY space.
+            CLEAR l_first.
+          ELSE.
+            CONCATENATE &apos;OR&apos;
+                     l_primer_campo_clave l_operador i_where INTO i_where
+                                SEPARATED BY space.
+          ENDIF.
+        ENDIF.
+
+        AT LAST.
+          CONCATENATE i_where &apos;)&apos; INTO i_where SEPARATED BY space.
+        ENDAT.
+        APPEND i_where.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+  IF tabla = &apos;TEVEN&apos;.
+    IF NOT endda IS INITIAL AND NOT begda IS INITIAL.
+      CONCATENATE &apos;&apos;&apos;&apos; endda &apos;&apos;&apos;&apos; INTO i_where.
+      CONCATENATE &apos;AND LDATE &lt;=&apos; i_where INTO i_where SEPARATED BY space.
+      APPEND i_where.
+      CONCATENATE &apos;&apos;&apos;&apos; begda &apos;&apos;&apos;&apos; INTO i_where.
+      CONCATENATE &apos;AND LDATE &gt;=&apos; i_where INTO i_where SEPARATED BY space.
+      APPEND i_where.
+    ENDIF.
+  ELSEIF tabla NE &apos;PCL2&apos;.
+    IF NOT endda IS INITIAL AND NOT begda IS INITIAL.
+      CONCATENATE &apos;&apos;&apos;&apos; endda &apos;&apos;&apos;&apos; INTO i_where.
+      CONCATENATE &apos;AND BEGDA &lt;=&apos; i_where INTO i_where SEPARATED BY space.
+      APPEND i_where.
+      CONCATENATE &apos;&apos;&apos;&apos; begda &apos;&apos;&apos;&apos; INTO i_where.
+      CONCATENATE &apos;AND ENDDA &gt;=&apos; i_where INTO i_where SEPARATED BY space.
+      APPEND i_where.
+    ENDIF.
+  ENDIF.
+
+  IF NOT where IS INITIAL.
+    zcl_ap_string=&gt;string2tabla( EXPORTING string = where longitud = 72 partir_solo_en_blanco = &apos;X&apos;
+                                 CHANGING tabla = i_w ).
+    IF NOT i_where[] IS INITIAL.
+      APPEND &apos;AND &apos; TO i_where.
+    ENDIF.
+    APPEND LINES OF i_w TO i_where.
+  ENDIF.</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_RFC_GET_EMPLEADOS" REMOTE="R" STEXT="Recupera tabla de otro mandante">
+   <exporting PARAMETER="CONTENIDO" TYP="XSTRING"/>
+   <tables PARAMETER="I_EMPLEADOS" DBSTRUCT="ZHE_EMPLEADOS"/>
+   <tables PARAMETER="R_PERNR" DBSTRUCT="PERSNO_RANGE" OPTIONAL="X"/>
+   <tables PARAMETER="R_PERSK" DBSTRUCT="PERSK_RANGE" OPTIONAL="X"/>
+   <documentation PARAMETER="CONTENIDO" KIND="P" STEXT="Contenido de la tabla" INDEX=" 001"/>
+   <documentation PARAMETER="I_EMPLEADOS" KIND="P" STEXT="Empleados" INDEX=" 002"/>
+   <documentation PARAMETER="R_PERNR" KIND="P" STEXT="Línea de una tabla range p.números de personal" INDEX=" 003"/>
+   <documentation PARAMETER="R_PERSK" KIND="P" STEXT="Rango para PERSK" INDEX=" 004"/>
+   <fm_source>SELECT DISTINCT pernr ename FROM pa0001
+        INTO CORRESPONDING FIELDS OF TABLE i_empleados
+     WHERE pernr IN r_pernr
+       AND persk IN r_persk.
+
+  CALL TRANSFORMATION id
+       SOURCE i_empleados = i_empleados
+       RESULT XML contenido.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_RFC_GET_SOURCE" REMOTE="R" STEXT="Recupera codigo fuente de un report de otro mandante">
+   <importing PARAMETER="REPORT" TYP="RS38M-PROGRAMM"/>
+   <tables PARAMETER="I_CONTENT" DBSTRUCT="SOLI" OPTIONAL="X"/>
+   <documentation PARAMETER="REPORT" KIND="P" STEXT="Nombre de tabla" INDEX=" 001"/>
+   <documentation PARAMETER="I_CONTENT" KIND="P" STEXT="Código" INDEX=" 002"/>
+   <fm_source>READ REPORT report INTO i_content.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_RFC_GET_TABLA" REMOTE="R" STEXT="Recupera tabla de otro mandante">
+   <importing PARAMETER="TABLA" TYP="TABNAME"/>
+   <importing PARAMETER="CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CLAVE2" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="ACTUALIZAR" DEFAULT="&apos;X&apos;" OPTIONAL="X" TYP="CHAR1"/>
+   <importing PARAMETER="SISTEMA" DEFAULT="ZCL_C=&gt;RFC_PRODUCCION" OPTIONAL="X" TYP="RFCDEST"/>
+   <importing PARAMETER="CAMPO_CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="INICIO_CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="BEGDA" OPTIONAL="X" TYP="BEGDA"/>
+   <importing PARAMETER="ENDDA" OPTIONAL="X" TYP="ENDDA"/>
+   <importing PARAMETER="PREVISUALIZAR" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <importing PARAMETER="WHERE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="GET_CONTENIDO" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="XFELD"/>
+   <exporting PARAMETER="MESSAGE" TYP="BAPI_MSG"/>
+   <exporting PARAMETER="CONTENIDO" TYP="XSTRING"/>
+   <tables PARAMETER="I_CLAVES" DBSTRUCT="AGR_TXT" OPTIONAL="X"/>
+   <documentation PARAMETER="TABLA" KIND="P" STEXT="Nombre de tabla" INDEX=" 001"/>
+   <documentation PARAMETER="CLAVE" KIND="P" STEXT="Clave 1" INDEX=" 002"/>
+   <documentation PARAMETER="CLAVE2" KIND="P" STEXT="Clave 2" INDEX=" 003"/>
+   <documentation PARAMETER="ACTUALIZAR" KIND="P" STEXT="Actualizar valores de tabla" INDEX=" 004"/>
+   <documentation PARAMETER="SISTEMA" KIND="P" STEXT="Destino" INDEX=" 005"/>
+   <documentation PARAMETER="CAMPO_CLAVE" KIND="P" STEXT="Nombre campo clave" INDEX=" 006"/>
+   <documentation PARAMETER="INICIO_CLAVE" KIND="P" STEXT="Coger sólo inicio de clave &apos;%&apos;" INDEX=" 007"/>
+   <documentation PARAMETER="BEGDA" KIND="P" STEXT="Inicio de la validez" INDEX=" 008"/>
+   <documentation PARAMETER="ENDDA" KIND="P" STEXT="Fin de la validez" INDEX=" 009"/>
+   <documentation PARAMETER="PREVISUALIZAR" KIND="P" STEXT="Previsualizar valores en un ALV" INDEX=" 010"/>
+   <documentation PARAMETER="WHERE" KIND="P" STEXT="Sentencia where" INDEX=" 011"/>
+   <documentation PARAMETER="GET_CONTENIDO" KIND="P" STEXT="Recupera contenido en formato XSTRING" INDEX=" 012"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 013"/>
+   <documentation PARAMETER="CONTENIDO" KIND="P" INDEX=" 014"/>
+   <documentation PARAMETER="I_CLAVES" KIND="P" STEXT="Claves" INDEX=" 015"/>
+   <fm_source>DATA: g_wa_tabla TYPE REF TO data,
+        g_it_tabla TYPE REF TO data,
+        l_string   TYPE string,
+        l_string2  TYPE string,
+        i_where    TYPE TABLE OF afx_str_where_clause WITH HEADER LINE.
+
+  DATA l_cont TYPE xstring.
+  DATA ltext  TYPE string.
+  DATA o_alv  TYPE REF TO zcl_ap_alv.
+
+  FIELD-SYMBOLS: &lt;g_wa_tabla&gt;,
+                 &lt;g_it_tabla&gt; TYPE STANDARD TABLE.
+
+  CREATE DATA g_wa_tabla TYPE (tabla).
+  ASSIGN g_wa_tabla-&gt;* TO &lt;g_wa_tabla&gt;.
+  CREATE DATA g_it_tabla TYPE STANDARD TABLE OF (tabla).
+  ASSIGN g_it_tabla-&gt;* TO &lt;g_it_tabla&gt;.
+
+  l_string = clave.
+  l_string2 = clave2.
+  CALL FUNCTION &apos;Z_RFC_SET_TABLA&apos;
+    DESTINATION sistema
+    EXPORTING
+      tabla        = tabla
+      clave        = l_string
+      clave2       = l_string2
+      campo_clave  = campo_clave
+      inicio_clave = inicio_clave
+      begda        = begda
+      endda        = endda
+      where        = where
+    IMPORTING
+      contenido    = l_cont
+      message      = message
+    TABLES
+      i_claves     = i_claves
+    EXCEPTIONS
+      communication_failure       = 1
+      system_failure              = 2
+      OTHERS = 99.
+    if sy-subrc &lt;&gt; 0.
+      message = &apos;Error en la llamada remota&apos;.
+      RETURN.
+    endif.
+
+
+  IF get_contenido = &apos;X&apos; AND previsualizar = &apos;&apos;.
+    contenido = l_cont.
+  ELSE.
+    CALL TRANSFORMATION id
+         SOURCE XML l_cont
+         RESULT &lt;g_wa_tabla&gt; = &lt;g_it_tabla&gt;.
+
+    IF previsualizar = &apos;X&apos;.
+      o_alv = NEW #(
+          tabla = &apos;&apos; ).
+      o_alv-&gt;constructor_tabla( CHANGING t_tabla = &lt;g_it_tabla&gt; ).
+      o_alv-&gt;show( ).
+    ELSE.
+      IF NOT actualizar IS INITIAL.
+        CALL FUNCTION &apos;Z_GET_WHERE&apos;
+          EXPORTING
+            tabla        = tabla
+            clave        = clave
+            clave2       = clave2
+            campo_clave  = campo_clave
+            inicio_clave = inicio_clave
+            begda        = begda
+            endda        = endda
+            where        = where
+          TABLES
+            i_claves     = i_claves
+            i_where      = i_where.
+
+        DELETE FROM (tabla)
+         WHERE (i_where).
+
+        LOOP AT &lt;g_it_tabla&gt; INTO &lt;g_wa_tabla&gt;.
+          MODIFY (tabla) FROM &lt;g_wa_tabla&gt;.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+  ENDIF.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_RFC_SET_TABLA" REMOTE="R" STEXT="Recupera tabla de otro mandante">
+   <importing PARAMETER="TABLA" TYP="TABNAME"/>
+   <importing PARAMETER="CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CLAVE2" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="CAMPO_CLAVE" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="INICIO_CLAVE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <importing PARAMETER="BEGDA" OPTIONAL="X" TYP="BEGDA"/>
+   <importing PARAMETER="ENDDA" OPTIONAL="X" TYP="ENDDA"/>
+   <importing PARAMETER="WHERE" DEFAULT="&apos;&apos;" OPTIONAL="X" TYP="STRING"/>
+   <exporting PARAMETER="CONTENIDO" TYP="XSTRING"/>
+   <exporting PARAMETER="MESSAGE" TYP="BAPI_MSG"/>
+   <tables PARAMETER="I_CLAVES" DBSTRUCT="AGR_TXT" OPTIONAL="X"/>
+   <documentation PARAMETER="TABLA" KIND="P" STEXT="Nombre de tabla" INDEX=" 001"/>
+   <documentation PARAMETER="CLAVE" KIND="P" INDEX=" 002"/>
+   <documentation PARAMETER="CLAVE2" KIND="P" INDEX=" 003"/>
+   <documentation PARAMETER="CAMPO_CLAVE" KIND="P" STEXT="Nombre campo clave" INDEX=" 004"/>
+   <documentation PARAMETER="INICIO_CLAVE" KIND="P" STEXT="Coger sólo inicio de clave &apos;%&apos;" INDEX=" 005"/>
+   <documentation PARAMETER="BEGDA" KIND="P" STEXT="Inicio de la validez" INDEX=" 006"/>
+   <documentation PARAMETER="ENDDA" KIND="P" STEXT="Fin de la validez" INDEX=" 007"/>
+   <documentation PARAMETER="WHERE" KIND="P" STEXT="Sentencia where" INDEX=" 008"/>
+   <documentation PARAMETER="CONTENIDO" KIND="P" STEXT="Contenido de la tabla" INDEX=" 009"/>
+   <documentation PARAMETER="MESSAGE" KIND="P" STEXT="Texto de mensaje" INDEX=" 010"/>
+   <documentation PARAMETER="I_CLAVES" KIND="P" STEXT="Rol y texto" INDEX=" 011"/>
+   <fm_source_new>DATA: i_where TYPE TABLE OF afx_str_where_clause WITH HEADER LINE.
+
+  DATA: g_it_tabla       TYPE REF TO data,
+        g_wa_tabla       TYPE REF TO data,
+        o_conv_no_nomber TYPE REF TO cx_sy_conversion_no_number,
+        o_root           TYPE REF TO cx_root.
+
+  FIELD-SYMBOLS: &lt;g_it_tabla&gt; TYPE STANDARD TABLE,
+                 &lt;g_wa_tabla&gt;.
+
+  CREATE DATA g_wa_tabla TYPE (tabla).
+  ASSIGN g_wa_tabla-&gt;* TO &lt;g_wa_tabla&gt;.
+  CREATE DATA g_it_tabla TYPE STANDARD TABLE OF (tabla).
+  ASSIGN g_it_tabla-&gt;* TO &lt;g_it_tabla&gt;.
+
+  IF clave IS INITIAL AND i_claves[] IS INITIAL AND begda IS INITIAL and where is initial.
+    SELECT * FROM (tabla)
+      INTO TABLE &lt;g_it_tabla&gt;.
+  ELSE.
+    CALL FUNCTION &apos;Z_GET_WHERE&apos;
+      EXPORTING
+        tabla        = tabla
+        clave        = clave
+        clave2       = clave2
+        campo_clave  = campo_clave
+        inicio_clave = inicio_clave
+        begda        = begda
+        endda        = endda
+        where        = where
+      TABLES
+        i_claves     = i_claves
+        i_where      = i_where.
+
+    SELECT * FROM (tabla)
+      INTO TABLE &lt;g_it_tabla&gt;
+     WHERE (i_where).
+  ENDIF.
+
+  DATA ixml TYPE xstring.
+  DATA xml TYPE string.
+
+  TRY.
+      CALL TRANSFORMATION id
+        SOURCE &lt;g_wa_tabla&gt; = &lt;g_it_tabla&gt;
+        RESULT XML  contenido.
+    CATCH cx_sy_conversion_no_number INTO o_conv_no_nomber.
+      message = o_conv_no_nomber-&gt;get_text( ).
+      CONCATENATE &apos;Error conv.&apos; message &apos;en tabla&apos; tabla INTO message SEPARATED BY space.
+    CATCH cx_root INTO o_root.
+      message = o_root-&gt;get_text( ).
+      CONCATENATE &apos;Error&apos; message &apos;en tabla&apos; tabla INTO message SEPARATED BY space.
+  ENDTRY.</fm_source_new>
+   <functionModuleDocumentation/>
+  </functionmodule>
+ </functionmodules>
+</FUGR>

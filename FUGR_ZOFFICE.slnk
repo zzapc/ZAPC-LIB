@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FUGR AREA="ZOFFICE" SPRAS="S" AREAT="FUNCIONES PARA MENSAJERIA INTERNA">
+ <functionGroupDocumentation OBJECT="SAPLZOFFICE">
+  <language SPRAS="S">
+   <textLine TDFORMAT="U1" TDLINE="&amp;PURPOSE&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;INTEGRATION&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;PREREQUISITES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;FEATURES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;SELECTION&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;STANDARD_VARIANTS&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U2" TDLINE="&amp;OUTPUT&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;ACTIVITIES&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="U1" TDLINE="&amp;EXAMPLE&amp;"/>
+   <textLine TDFORMAT="AS"/>
+   <textLine TDFORMAT="AS"/>
+  </language>
+ </functionGroupDocumentation>
+ <mainprogram NAME="SAPLZOFFICE" VARCL="X" DBAPL="S" DBNA="D$" SUBC="F" APPL="S" RMAND="012" RLOAD="S" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+  <textPool/>
+  <source>*******************************************************************
+*   System-defined Include-files.                                 *
+*******************************************************************
+  INCLUDE LZOFFICETOP.                       &quot; Global Data
+  INCLUDE LZOFFICEUXX.                       &quot; Function Modules
+
+*******************************************************************
+*   User-defined Include-files (if necessary).                    *
+*******************************************************************
+* INCLUDE LZOFFICEF...                       &quot; Subprograms
+* INCLUDE LZOFFICEO...                       &quot; PBO-Modules
+* INCLUDE LZOFFICEI...                       &quot; PAI-Modules</source>
+ </mainprogram>
+ <includeprograms/>
+ <functionmodules>
+  <functionmodule NAME="Z_SEND_MAIL" STEXT="Envio de ZSAPOffice">
+   <importing PARAMETER="SUBJECT" DBFIELD="SOOD1-OBJDES"/>
+   <importing PARAMETER="MAILNAME" DBFIELD="SOOD1-OBJNAM" DEFAULT="&apos;NOTE&apos;"/>
+   <importing PARAMETER="ENVIAR_COMO_PDF" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X"/>
+   <importing PARAMETER="NOMBRE_PDF" OPTIONAL="X" REFERENCE="X" TYP="STRING"/>
+   <tables PARAMETER="TEXT" DBSTRUCT="SOLI" OPTIONAL="X"/>
+   <tables PARAMETER="SPOOLNUMBERS" DBSTRUCT="SELC" OPTIONAL="X"/>
+   <tables PARAMETER="RECEPIENTS" DBSTRUCT="SELC"/>
+   <exceptions EXCEPTION="SPOOL_NO_EXISTE"/>
+   <exceptions EXCEPTION="NO_ENVIADO"/>
+   <documentation PARAMETER="SUBJECT" KIND="P" STEXT="Breve descripción del contenido" INDEX=" 001"/>
+   <documentation PARAMETER="MAILNAME" KIND="P" STEXT="Nombre del documento, de la carpeta o lista de distribución" INDEX=" 002"/>
+   <documentation PARAMETER="ENVIAR_COMO_PDF" KIND="P" STEXT="Enviar como PDF" INDEX=" 003"/>
+   <documentation PARAMETER="NOMBRE_PDF" KIND="P" INDEX=" 004"/>
+   <documentation PARAMETER="TEXT" KIND="P" STEXT="SAPofficeL Línea, longitud 255" INDEX=" 005"/>
+   <documentation PARAMETER="SPOOLNUMBERS" KIND="P" STEXT="ABAP: Estructura antigua de la tabla de selección" INDEX=" 006"/>
+   <documentation PARAMETER="RECEPIENTS" KIND="P" STEXT="Generated Table for View ZUSUARIO" INDEX=" 007"/>
+   <documentation PARAMETER="SPOOL_NO_EXISTE" KIND="X" STEXT="Orden de spool no existe" INDEX=" 008"/>
+   <documentation PARAMETER="NO_ENVIADO" KIND="X" STEXT="Mensaje no enviado a usuarios" INDEX=" 009"/>
+   <fm_source>*-----------------------------------------------------------------------
+* INTERNAL TABLES
+*-----------------------------------------------------------------------
+  DATA: lt_rec_tab LIKE STANDARD TABLE OF soos1 WITH HEADER LINE,
+        lt_note_text   LIKE STANDARD TABLE OF soli  WITH HEADER LINE,
+        lt_attachments LIKE STANDARD TABLE OF sood5 WITH HEADER LINE.
+
+  DATA: lt_objcont LIKE STANDARD TABLE OF soli WITH HEADER LINE,
+        lt_objhead LIKE STANDARD TABLE OF soli WITH HEADER LINE.
+
+  DATA: l_objcont     LIKE soli OCCURS 0 WITH HEADER LINE,
+        l_objhead     LIKE soli OCCURS 0 WITH HEADER LINE.
+
+*-----------------------------------------------------------------------
+* STRUCTURES
+*-----------------------------------------------------------------------
+  DATA: folder_id      LIKE soodk,
+        object_id      LIKE soodk,
+        link_folder_id LIKE soodk,
+        l_folder_id    LIKE sofdk.
+
+
+  DATA: hd_dat  LIKE sood1.
+  DATA: client  LIKE tst01-dclient,
+        name    LIKE tst01-dname,
+        objtype LIKE rststype-type,
+        type    LIKE rststype-type.
+
+*DATA: numbytes TYPE i,
+*      arc_idx LIKE toa_dara,
+*      pdfspoolid LIKE tsp01-rqident,
+*      jobname LIKE tbtcjob-jobname,
+*      jobcount LIKE tbtcjob-jobcount,
+*      is_otf.
+
+  DATA: outbox_flag LIKE sonv-flag VALUE &apos;X&apos;,
+        store_flag  LIKE sonv-flag,
+        delete_flag LIKE sonv-flag,
+        owner       LIKE soud-usrnam,
+        on          LIKE sonv-flag VALUE &apos;X&apos;,
+        sent_to_all LIKE sonv-flag,
+        g_authority LIKE sofa-usracc,
+        w_objdes    LIKE sood4-objdes,
+        object_hd_change LIKE sood1,
+        document_id LIKE soodk,
+        parent_id LIKE soodk,
+        src_spoolid LIKE tsp01-rqident.
+
+  DATA: desired_type  LIKE sood-objtp,
+        real_type LIKE sood-objtp,
+        attach_type LIKE sood-objtp,
+        otf LIKE sood-objtp VALUE &apos;OTF&apos;, &quot; SAPscript Ausgabeformat
+        ali LIKE sood-objtp VALUE &apos;ALI&apos;. &quot; ABAP lists
+
+
+*-----------------------------------------------------------------------
+*  CONSTANTS
+*-----------------------------------------------------------------------
+  CONSTANTS: ou_fol LIKE sofh-folrg              VALUE &apos;O&apos;,
+             c_objtp    LIKE sood-objtp          VALUE &apos;RAW&apos;.
+
+  READ TABLE spoolnumbers INDEX 1.
+  IF sy-subrc NE 0.
+    EXIT.
+  ENDIF.
+
+  IF enviar_como_pdf IS INITIAL.
+      EXPORTING
+        owner     = sy-uname
+        region    = ou_fol
+      IMPORTING
+        folder_id = l_folder_id
+      EXCEPTIONS
+        OTHERS    = 5.
+
+
+    object_hd_change-objla  = sy-langu.
+    object_hd_change-objnam = &apos;NOTA&apos;.
+    object_hd_change-objdes = subject.
+    object_hd_change-objsns = &apos;F&apos;.
+    object_hd_change-vmtyp  = &apos;T&apos;.
+    object_hd_change-skips  = &apos;X&apos;.
+    object_hd_change-acnam  = &apos;SP01&apos;.
+    object_hd_change-objcp  = &apos;X&apos;.
+
+    parent_id-objtp = l_folder_id-foltp.
+    parent_id-objyr = l_folder_id-folyr.
+    parent_id-objno = l_folder_id-folno.
+
+      EXPORTING
+        parent_id                  = parent_id
+        object_hd_change           = object_hd_change
+        document_type              = c_objtp
+        owner                      = sy-uname
+      IMPORTING
+        document_id                = document_id
+      TABLES
+        objcont_text               = text
+      EXCEPTIONS
+        active_user_not_exist      = 1
+        dl_name_exist              = 2
+        folder_not_exist           = 3
+        folder_no_authorization    = 4
+        object_type_not_exist      = 5
+        operation_no_authorization = 6
+        owner_not_exist            = 7
+        parameter_error            = 8
+        substitute_not_active      = 9
+        substitute_not_defined     = 10
+        x_error                    = 11
+        OTHERS                     = 12.
+
+
+
+    object_id-objtp = document_id-objtp.
+    object_id-objyr = document_id-objyr.
+    object_id-objno = document_id-objno.
+
+
+
+    CLEAR spoolnumbers.
+    LOOP AT spoolnumbers.
+
+      SELECT SINGLE * FROM tsp01 WHERE rqident = spoolnumbers-low.
+      IF sy-subrc NE 0.
+        RAISE spool_no_existe.
+        &quot;MESSAGE e126 WITH &apos;Orden de spool no existe&apos;.
+      ENDIF.
+
+      client = tsp01-rqclient.
+      name   = tsp01-rqo1name.
+
+        EXPORTING
+          authority     = &apos;SP01&apos;
+          client        = client
+          name          = name
+          part          = 1
+        IMPORTING
+          type          = type
+          objtype       = objtype
+        EXCEPTIONS
+          fb_error      = 1
+          fb_rsts_other = 2
+          no_object     = 3
+          no_permission = 4
+          OTHERS        = 5.
+
+
+
+      IF objtype(3) = &apos;OTF&apos;.
+        desired_type = otf.
+      ELSE.
+        desired_type = ali.
+      ENDIF.
+
+      REFRESH: l_objcont, l_objhead.
+      src_spoolid = tsp01-rqident.
+
+        EXPORTING
+          rqident              = src_spoolid
+          desired_type         = desired_type
+        IMPORTING
+          real_type            = real_type
+        TABLES
+          buffer               = l_objcont
+        EXCEPTIONS
+          no_such_job          = 14
+          type_no_match        = 94
+          job_contains_no_data = 54
+          no_permission        = 21
+          can_not_access       = 21
+          read_error           = 54.
+
+      IF sy-subrc EQ 0.
+        attach_type = real_type.
+      ENDIF.
+
+* begin of insertion by faianf01
+      MOVE-CORRESPONDING object_hd_change TO hd_dat.
+      hd_dat-objdes = subject.
+
+        EXPORTING
+          object_id                  = object_id
+          attach_type                = attach_type
+          object_hd_change           = hd_dat
+          owner                      = sy-uname
+        TABLES
+          objcont                    = l_objcont
+          objhead                    = l_objhead
+        EXCEPTIONS
+          active_user_not_exist      = 35
+          communication_failure      = 71
+          object_type_not_exist      = 17
+          operation_no_authorization = 21
+          owner_not_exist            = 22
+          parameter_error            = 23
+          substitute_not_active      = 31
+          substitute_not_defined     = 32
+          system_failure             = 72
+          x_error                    = 1000.
+
+      IF sy-subrc &gt; 0.
+      ENDIF.
+    ENDLOOP.
+
+
+    folder_id-objtp = l_folder_id-foltp.
+    folder_id-objyr = l_folder_id-folyr.
+    folder_id-objno = l_folder_id-folno.
+
+* end of insertion by faianf01
+    link_folder_id-objtp = l_folder_id-foltp.
+    link_folder_id-objyr = l_folder_id-folyr.
+    link_folder_id-objno = l_folder_id-folno.
+
+    REFRESH lt_rec_tab.
+    LOOP AT recepients.
+      lt_rec_tab-rcdat = sy-datum.
+      lt_rec_tab-rctim = sy-uzeit.
+      lt_rec_tab-recnam = recepients-low.
+      lt_rec_tab-rtunam = recepients-low.
+      lt_rec_tab-sndex  = &apos;X&apos;.     &quot; Express-Mail
+      APPEND lt_rec_tab.
+    ENDLOOP.
+
+* send email from SAPOFFICE
+      EXPORTING
+        folder_id                  = folder_id
+        object_id                  = object_id
+        outbox_flag                = outbox_flag
+        link_folder_id             = link_folder_id
+        owner                      = sy-uname
+      TABLES
+        receivers                  = lt_rec_tab
+      EXCEPTIONS
+        active_user_not_exist      = 35
+        communication_failure      = 71
+        component_not_available    = 1
+        folder_no_authorization    = 5
+        folder_not_exist           = 6
+        forwarder_not_exist        = 8
+        object_no_authorization    = 13
+        object_not_exist           = 14
+        object_not_sent            = 15
+        operation_no_authorization = 21
+        owner_not_exist            = 22
+        parameter_error            = 23
+        substitute_not_active      = 31
+        substitute_not_defined     = 32
+        system_failure             = 72
+        too_much_receivers         = 73
+        user_not_exist             = 35.
+
+
+    IF sy-subrc &lt;&gt; 0.
+      RAISE no_enviado.
+    ENDIF.
+
+  ELSE.
+    DATA: l_bin_filesize TYPE i,
+          l_dir LIKE rlgrap-filename,
+          l_dir2 LIKE rlgrap-filename,
+          l_fichero TYPE string,
+          l_lon TYPE i.
+
+    DATA: i_pdf LIKE tline OCCURS 1000 WITH HEADER LINE,
+          l_data_is_otf,
+          l_rqident LIKE tsp01-rqident.
+
+    DATA: i_ficheros LIKE tnotetem OCCURS 0 WITH HEADER LINE,
+          i_destinatarios LIKE solisti1 OCCURS 0 WITH HEADER LINE.
+
+    CLEAR spoolnumbers.
+    LOOP AT spoolnumbers.
+
+      CLEAR l_data_is_otf.
+      l_rqident = spoolnumbers-low.
+        EXPORTING
+          rqident        = l_rqident
+        IMPORTING
+          is_otf         = l_data_is_otf
+        EXCEPTIONS
+          can_not_access = 1.
+
+      IF l_data_is_otf IS INITIAL.
+          EXPORTING
+            src_spoolid                    = l_rqident
+            no_dialog                      = &apos;X&apos;
+*       DST_DEVICE                     =
+*       PDF_DESTINATION                =
+          IMPORTING
+            pdf_bytecount                  = l_bin_filesize
+*       PDF_SPOOLID                    =
+*       LIST_PAGECOUNT                 =
+*       BTC_JOBNAME                    =
+*       BTC_JOBCOUNT                   =
+          TABLES
+            pdf                            = i_pdf
+         EXCEPTIONS
+           err_no_abap_spooljob           = 1
+           err_no_spooljob                = 2
+           err_no_permission              = 3
+           err_conv_not_possible          = 4
+           err_bad_destdevice             = 5
+           user_cancelled                 = 6
+           err_spoolerror                 = 7
+           err_temseerror                 = 8
+           err_btcjob_open_failed         = 9
+           err_btcjob_submit_failed       = 10
+           err_btcjob_close_failed        = 11
+           OTHERS                         = 12.
+      ELSE.
+          EXPORTING
+            src_spoolid                    = l_rqident
+            no_dialog                      = &apos;X&apos;
+*       DST_DEVICE                     =
+*       PDF_DESTINATION                =
+          IMPORTING
+            pdf_bytecount                  = l_bin_filesize
+*       PDF_SPOOLID                    =
+*       LIST_PAGECOUNT                 =
+*       BTC_JOBNAME                    =
+*       BTC_JOBCOUNT                   =
+          TABLES
+            pdf                            = i_pdf
+         EXCEPTIONS
+           err_no_abap_spooljob           = 1
+           err_no_spooljob                = 2
+           err_no_permission              = 3
+           err_conv_not_possible          = 4
+           err_bad_destdevice             = 5
+           user_cancelled                 = 6
+           err_spoolerror                 = 7
+           err_temseerror                 = 8
+           err_btcjob_open_failed         = 9
+           err_btcjob_submit_failed       = 10
+           err_btcjob_close_failed        = 11
+           OTHERS                         = 12.
+      ENDIF.
+      IF sy-subrc = 0.
+        l_dir = zcl_documentos=&gt;get_directorio_temporal( ).
+        IF nombre_pdf IS INITIAL.
+          CONCATENATE l_dir &apos;\&apos; &apos;Adjunto.PDF&apos; INTO l_fichero.
+        ELSE.
+          CONCATENATE l_dir &apos;\&apos; nombre_pdf &apos;.PDF&apos; INTO l_fichero.
+        ENDIF.
+          EXPORTING
+            bin_filesize            = l_bin_filesize
+            filename                = l_fichero
+            filetype                = &apos;BIN&apos;
+          TABLES
+            data_tab                = i_pdf
+          EXCEPTIONS
+            file_write_error        = 1
+            no_batch                = 2
+            gui_refuse_filetransfer = 3
+            invalid_type            = 4
+            no_authority            = 5
+            unknown_error           = 6
+            header_not_allowed      = 7
+            separator_not_allowed   = 8
+            filesize_not_allowed    = 9
+            header_too_long         = 10
+            dp_error_create         = 11
+            dp_error_send           = 12
+            dp_error_write          = 13
+            unknown_dp_error        = 14
+            access_denied           = 15
+            dp_out_of_memory        = 16
+            disk_full               = 17
+            dp_timeout              = 18
+            file_not_found          = 19
+            dataprovider_exception  = 20
+            control_flush_error     = 21
+            OTHERS                  = 22.
+
+        IF sy-subrc = 0.
+          i_ficheros-template = l_fichero.
+          APPEND i_ficheros.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+    IF sy-subrc = 0.
+      LOOP AT recepients.
+        i_destinatarios = recepients-low.
+        APPEND i_destinatarios.
+      ENDLOOP.
+        EXPORTING
+          subject                   = subject
+*           URGENTE                   =
+*           DOC_ID                    =
+*           HTML                      =
+*           SENDER                    =
+*           COMMIT                    = &apos;X&apos;
+*           FORZAR_MAIL_EXTERNO       =
+*         IMPORTING
+*           RETURNCODE                =
+        TABLES
+          texto                     = text
+          t_ficheros                = i_ficheros
+          i_destinatarios           = i_destinatarios.
+
+      DATA l_file TYPE rlgrap-filename.
+      l_file = l_fichero.
+        EXPORTING
+          file_name = l_file
+        EXCEPTIONS
+          failed    = 1
+          OTHERS    = 2.
+    ENDIF.
+  ENDIF.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_SEND_MAIL2" STEXT="Envio de ZSAPOffice">
+   <importing PARAMETER="SUBJECT" DBFIELD="SOOD1-OBJDES"/>
+   <importing PARAMETER="MAILNAME" DBFIELD="SOOD1-OBJNAM" DEFAULT="&apos;NOTE&apos;"/>
+   <tables PARAMETER="TEXT" DBSTRUCT="SOLI" OPTIONAL="X"/>
+   <tables PARAMETER="SPOOLNUMBERS" DBSTRUCT="SELC" OPTIONAL="X"/>
+   <tables PARAMETER="RECEPIENTS" DBSTRUCT="SELC"/>
+   <exceptions EXCEPTION="SPOOL_NO_EXISTE"/>
+   <exceptions EXCEPTION="NO_ENVIADO"/>
+   <documentation PARAMETER="SUBJECT" KIND="P" STEXT="Breve descripción del contenido" INDEX=" 001"/>
+   <documentation PARAMETER="MAILNAME" KIND="P" STEXT="Nombre del documento, de la carpeta o lista de distribución" INDEX=" 002"/>
+   <documentation PARAMETER="TEXT" KIND="P" STEXT="SAPofficeL Línea, longitud 255" INDEX=" 003"/>
+   <documentation PARAMETER="SPOOLNUMBERS" KIND="P" STEXT="ABAP: Estructura antigua de la tabla de selección" INDEX=" 004"/>
+   <documentation PARAMETER="RECEPIENTS" KIND="P" STEXT="Generated Table for View ZUSUARIO" INDEX=" 005"/>
+   <documentation PARAMETER="SPOOL_NO_EXISTE" KIND="X" STEXT="Orden de spool no existe" INDEX=" 006"/>
+   <documentation PARAMETER="NO_ENVIADO" KIND="X" STEXT="Mensaje no enviado a usuarios" INDEX=" 007"/>
+   <fm_source>*-----------------------------------------------------------------------
+* INTERNAL TABLES
+*-----------------------------------------------------------------------
+  DATA: lt_rec_tab LIKE STANDARD TABLE OF soos1 WITH HEADER LINE,
+        lt_note_text   LIKE STANDARD TABLE OF soli  WITH HEADER LINE,
+        lt_attachments LIKE STANDARD TABLE OF sood5 WITH HEADER LINE.
+
+  DATA: lt_objcont LIKE STANDARD TABLE OF soli WITH HEADER LINE,
+        lt_objhead LIKE STANDARD TABLE OF soli WITH HEADER LINE.
+
+  DATA: l_objcont     LIKE soli OCCURS 0 WITH HEADER LINE,
+        l_objhead     LIKE soli OCCURS 0 WITH HEADER LINE.
+
+*-----------------------------------------------------------------------
+* STRUCTURES
+*-----------------------------------------------------------------------
+  DATA: folder_id      LIKE soodk,
+        object_id      LIKE soodk,
+        link_folder_id LIKE soodk,
+        l_folder_id    LIKE sofdk.
+
+
+  DATA: hd_dat  LIKE sood1.
+  DATA: client  LIKE tst01-dclient,
+        name    LIKE tst01-dname,
+        objtype LIKE rststype-type,
+        type    LIKE rststype-type.
+
+*DATA: numbytes TYPE i,
+*      arc_idx LIKE toa_dara,
+*      pdfspoolid LIKE tsp01-rqident,
+*      jobname LIKE tbtcjob-jobname,
+*      jobcount LIKE tbtcjob-jobcount,
+*      is_otf.
+
+  DATA: outbox_flag LIKE sonv-flag VALUE &apos;X&apos;,
+        store_flag  LIKE sonv-flag,
+        delete_flag LIKE sonv-flag,
+        owner       LIKE soud-usrnam,
+        on          LIKE sonv-flag VALUE &apos;X&apos;,
+        sent_to_all LIKE sonv-flag,
+        g_authority LIKE sofa-usracc,
+        w_objdes    LIKE sood4-objdes,
+        object_hd_change LIKE sood1,
+        document_id LIKE soodk,
+        parent_id LIKE soodk,
+        src_spoolid LIKE tsp01-rqident.
+
+  DATA: desired_type  LIKE sood-objtp,
+        real_type LIKE sood-objtp,
+        attach_type LIKE sood-objtp,
+        otf LIKE sood-objtp VALUE &apos;OTF&apos;, &quot; SAPscript Ausgabeformat
+        ali LIKE sood-objtp VALUE &apos;ALI&apos;. &quot; ABAP lists
+
+
+*-----------------------------------------------------------------------
+*  CONSTANTS
+*-----------------------------------------------------------------------
+  CONSTANTS: ou_fol LIKE sofh-folrg              VALUE &apos;O&apos;,
+             c_objtp    LIKE sood-objtp          VALUE &apos;RAW&apos;.
+
+*  READ TABLE spoolnumbers INDEX 1.
+*  IF sy-subrc NE 0.
+*    EXIT.
+*  ENDIF.
+
+    EXPORTING
+      owner     = sy-uname
+      region    = ou_fol
+    IMPORTING
+      folder_id = l_folder_id
+    EXCEPTIONS
+      OTHERS    = 5.
+
+
+  object_hd_change-objla  = sy-langu.
+  object_hd_change-objnam = &apos;NOTA&apos;.
+  object_hd_change-objdes = subject.
+  object_hd_change-objsns = &apos;F&apos;.
+  object_hd_change-vmtyp  = &apos;T&apos;.
+  object_hd_change-skips  = &apos;X&apos;.
+  object_hd_change-acnam  = &apos;SP01&apos;.
+  object_hd_change-objcp  = &apos;X&apos;.
+
+  parent_id-objtp = l_folder_id-foltp.
+  parent_id-objyr = l_folder_id-folyr.
+  parent_id-objno = l_folder_id-folno.
+
+    EXPORTING
+      parent_id                  = parent_id
+      object_hd_change           = object_hd_change
+      document_type              = c_objtp
+      owner                      = sy-uname
+    IMPORTING
+      document_id                = document_id
+    TABLES
+      objcont_text               = text
+    EXCEPTIONS
+      active_user_not_exist      = 1
+      dl_name_exist              = 2
+      folder_not_exist           = 3
+      folder_no_authorization    = 4
+      object_type_not_exist      = 5
+      operation_no_authorization = 6
+      owner_not_exist            = 7
+      parameter_error            = 8
+      substitute_not_active      = 9
+      substitute_not_defined     = 10
+      x_error                    = 11
+      OTHERS                     = 12.
+
+
+
+  object_id-objtp = document_id-objtp.
+  object_id-objyr = document_id-objyr.
+  object_id-objno = document_id-objno.
+
+
+
+  CLEAR spoolnumbers.
+  LOOP AT spoolnumbers.
+
+    SELECT SINGLE * FROM tsp01 WHERE rqident = spoolnumbers-low.
+    IF sy-subrc NE 0.
+      RAISE spool_no_existe.
+      &quot;MESSAGE e126 WITH &apos;Orden de spool no existe&apos;.
+    ENDIF.
+
+    client = tsp01-rqclient.
+    name   = tsp01-rqo1name.
+
+      EXPORTING
+        authority     = &apos;SP01&apos;
+        client        = client
+        name          = name
+        part          = 1
+      IMPORTING
+        type          = type
+        objtype       = objtype
+      EXCEPTIONS
+        fb_error      = 1
+        fb_rsts_other = 2
+        no_object     = 3
+        no_permission = 4
+        OTHERS        = 5.
+
+
+
+    IF objtype(3) = &apos;OTF&apos;.
+      desired_type = otf.
+    ELSE.
+      desired_type = ali.
+    ENDIF.
+
+    REFRESH: l_objcont, l_objhead.
+    src_spoolid = tsp01-rqident.
+
+      EXPORTING
+        rqident              = src_spoolid
+        desired_type         = desired_type
+      IMPORTING
+        real_type            = real_type
+      TABLES
+        buffer               = l_objcont
+      EXCEPTIONS
+        no_such_job          = 14
+        type_no_match        = 94
+        job_contains_no_data = 54
+        no_permission        = 21
+        can_not_access       = 21
+        read_error           = 54.
+
+    IF sy-subrc EQ 0.
+      attach_type = real_type.
+    ENDIF.
+
+* begin of insertion by faianf01
+    MOVE-CORRESPONDING object_hd_change TO hd_dat.
+    hd_dat-objdes = subject.
+
+      EXPORTING
+        object_id                  = object_id
+        attach_type                = attach_type
+        object_hd_change           = hd_dat
+        owner                      = sy-uname
+      TABLES
+        objcont                    = l_objcont
+        objhead                    = l_objhead
+      EXCEPTIONS
+        active_user_not_exist      = 35
+        communication_failure      = 71
+        object_type_not_exist      = 17
+        operation_no_authorization = 21
+        owner_not_exist            = 22
+        parameter_error            = 23
+        substitute_not_active      = 31
+        substitute_not_defined     = 32
+        system_failure             = 72
+        x_error                    = 1000.
+
+    IF sy-subrc &gt; 0.
+    ENDIF.
+  ENDLOOP.
+
+
+  folder_id-objtp = l_folder_id-foltp.
+  folder_id-objyr = l_folder_id-folyr.
+  folder_id-objno = l_folder_id-folno.
+
+* end of insertion by faianf01
+  link_folder_id-objtp = l_folder_id-foltp.
+  link_folder_id-objyr = l_folder_id-folyr.
+  link_folder_id-objno = l_folder_id-folno.
+
+  REFRESH lt_rec_tab.
+  LOOP AT recepients.
+    lt_rec_tab-rcdat = sy-datum.
+    lt_rec_tab-rctim = sy-uzeit.
+    lt_rec_tab-recnam = recepients-low.
+    lt_rec_tab-rtunam = recepients-low.
+    lt_rec_tab-sndex  = &apos;X&apos;.     &quot; Express-Mail
+    APPEND lt_rec_tab.
+  ENDLOOP.
+
+* send email from SAPOFFICE
+    EXPORTING
+      folder_id                  = folder_id
+      object_id                  = object_id
+      outbox_flag                = outbox_flag
+      link_folder_id             = link_folder_id
+      owner                      = sy-uname
+    TABLES
+      receivers                  = lt_rec_tab
+    EXCEPTIONS
+      active_user_not_exist      = 35
+      communication_failure      = 71
+      component_not_available    = 1
+      folder_no_authorization    = 5
+      folder_not_exist           = 6
+      forwarder_not_exist        = 8
+      object_no_authorization    = 13
+      object_not_exist           = 14
+      object_not_sent            = 15
+      operation_no_authorization = 21
+      owner_not_exist            = 22
+      parameter_error            = 23
+      substitute_not_active      = 31
+      substitute_not_defined     = 32
+      system_failure             = 72
+      too_much_receivers         = 73
+      user_not_exist             = 35.
+
+
+  IF sy-subrc &lt;&gt; 0.
+    RAISE no_enviado.
+  ENDIF.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+ </functionmodules>
+</FUGR>

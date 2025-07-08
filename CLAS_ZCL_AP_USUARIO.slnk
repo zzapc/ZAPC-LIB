@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Usuario SAP" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_APELLIDO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el apellido del usuario" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_APELLIDO" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_APELLIDO" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_APELLIDO" SCONAME="APELLIDO" VERSION="1" LANGU="S" DESCRIPT="Nombre" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ADRP-NAME_LAST"/>
+  <source>METHOD get_apellido.
+    DATA: l_usr21 TYPE usr21,
+          l_adrnr TYPE cdpos-value_old.
+
+    CLEAR apellido.
+    SELECT SINGLE persnumber FROM usr21
+      INTO l_usr21-persnumber
+     WHERE bname = uname.
+    IF sy-subrc = 0.
+      SELECT SINGLE name_last FROM adrp
+        INTO apellido
+       WHERE persnumber = l_usr21-persnumber.
+    ENDIF.
+
+* Si han especificado una fecha anterior a la del sistemas es que quieren
+* obtener el valor que tenia a una fecha dada
+    IF fecha &gt;= sy-datum OR fecha IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_adrnr = zcl_ap_control_cambios=&gt;get_valor_a_fecha( objectclas = &apos;IDENTITY&apos;
+                                                         objectid   = uname
+                                                         tabname    = &apos;USR21&apos;
+                                                         fname      = &apos;PERSNUMBER&apos;
+                                                         fecha      = fecha ).
+    IF l_adrnr &lt;&gt; &apos;&apos;.
+      IF l_adrnr &lt;&gt; l_usr21-persnumber.
+        SELECT name_last FROM adrp
+          INTO apellido
+          UP TO 1 ROWS
+         WHERE persnumber = l_adrnr
+         ORDER BY date_from DESCENDING.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_DEFAULTS" VERSION="1" LANGU="S" DESCRIPT="Devuelve valores por defecto" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_DEFAULTS" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_DEFAULTS" SCONAME="DEFAULTS" VERSION="1" LANGU="S" DESCRIPT="Usuario: Estr.transferencia val.fijos" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIDEFAUL"/>
+  <source>METHOD get_defaults.
+    DATA i_return TYPE TABLE OF bapiret2.
+
+    CLEAR defaults.
+    CALL FUNCTION &apos;BAPI_USER_GET_DETAIL&apos;
+      EXPORTING
+        username = uname
+      IMPORTING
+        defaults = defaults
+      TABLES
+        return   = i_return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_EMAIL" VERSION="1" LANGU="S" DESCRIPT="Devuelve el mail de usuario" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_EMAIL" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_EMAIL" SCONAME="EMAIL" VERSION="1" LANGU="S" DESCRIPT="Tabla estándar para la estructura ADSMTP" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="AD_SMTPADR"/>
+  <source>METHOD get_email.
+    CLEAR email.
+    SELECT adr6~smtp_addr INTO email
+      UP TO 1 ROWS
+     FROM usr21 JOIN adr6 ON  usr21~persnumber = adr6~persnumber
+                          AND usr21~addrnumber = adr6~addrnumber
+     WHERE usr21~bname = uname
+     ORDER BY date_from DESCENDING.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_IMPRESORA" VERSION="1" LANGU="S" DESCRIPT="Devuelve la impresora por defecto" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_IMPRESORA" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_IMPRESORA" SCONAME="IMPRESORA" VERSION="1" LANGU="S" DESCRIPT="SPOOL: Dispositivo de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSPOPNAME"/>
+  <source>METHOD get_impresora.
+    DATA l_def TYPE bapidefaul.
+
+    l_def = zcl_ap_usuario=&gt;get_defaults( uname ).
+    impresora = l_def-spld.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del usuario" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_NOMBRE" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_NOMBRE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_NOMBRE" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;name_text&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_NOMBRE" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ADRP-NAME_TEXT"/>
+  <source>METHOD get_nombre.
+    DATA: l_usr21 TYPE usr21,
+          l_adrnr TYPE cdpos-value_old.
+
+    CLEAR nombre.
+    SELECT SINGLE persnumber FROM usr21
+      INTO l_usr21-persnumber
+     WHERE bname = uname.
+    IF sy-subrc = 0.
+      SELECT SINGLE (campo) FROM adrp
+        INTO nombre
+       WHERE persnumber = l_usr21-persnumber.
+    ENDIF.
+
+* Si han especificado una fecha anterior a la del sistemas es que quieren
+* obtener el valor que tenia a una fecha dada
+    IF fecha &gt;= sy-datum OR fecha IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_adrnr = zcl_ap_control_cambios=&gt;get_valor_a_fecha( objectclas = &apos;IDENTITY&apos;
+                                                         objectid   = uname
+                                                         tabname    = &apos;USR21&apos;
+                                                         fname      = &apos;PERSNUMBER&apos;
+                                                         fecha      = fecha ).
+    IF l_adrnr &lt;&gt; &apos;&apos;.
+      IF l_adrnr &lt;&gt; l_usr21-persnumber.
+        SELECT (campo) FROM adrp
+          INTO nombre
+          UP TO 1 ROWS
+         WHERE persnumber = l_adrnr
+        ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_PRINT_PARAMETERS" VERSION="1" LANGU="S" DESCRIPT="Devuelve parametros de impresión" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_PRINT_PARAMETERS" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_PRINT_PARAMETERS" SCONAME="PRI_PARAMS" VERSION="1" LANGU="S" DESCRIPT="Estructura para transferir parámetros impr." CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PRI_PARAMS"/>
+  <source>METHOD get_print_parameters.
+    CALL FUNCTION &apos;GET_PRINT_PARAMETERS&apos;
+      EXPORTING
+        mode           = &apos;BATCH&apos;
+        report         = sy-cprog
+        no_dialog      = &apos;X&apos;
+        immediately    = &apos; &apos;
+        new_list_id    = &apos;X&apos;
+        release        = &apos;X&apos;
+*       destination    = impresora
+        user           = uname
+      IMPORTING
+*       out_archive_parameters = arc_param
+        out_parameters = pri_params.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TELEFONO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el teléfono del usuario" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TELEFONO" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TELEFONO" SCONAME="TELEFONO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ADR2-TEL_NUMBER"/>
+  <source>METHOD get_telefono.
+    CLEAR telefono.
+    SELECT adr2~tel_number INTO telefono
+      UP TO 1 ROWS
+     FROM usr21 JOIN adr2 ON  usr21~persnumber = adr2~persnumber
+                          AND usr21~addrnumber = adr2~addrnumber
+     WHERE usr21~bname = uname
+     ORDER BY usr21~bname.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TOTAL_MODOS_ACTIVOS" VERSION="1" LANGU="S" DESCRIPT="Recupera nº de modos activos" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TOTAL_MODOS_ACTIVOS" SCONAME="UNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_USUARIO" CMPNAME="GET_TOTAL_MODOS_ACTIVOS" SCONAME="MODOS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD get_total_modos_activos.
+    DATA info TYPE TABLE OF uinfo2.
+
+    CLEAR modos.
+    CALL FUNCTION &apos;TH_LONG_USR_INFO&apos;
+      EXPORTING
+        user      = uname
+      TABLES
+        user_info = info.
+
+    modos = lines( info ).
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

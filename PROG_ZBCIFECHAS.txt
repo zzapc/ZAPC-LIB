@@ -1,0 +1,332 @@
+************************************************************************
+* TITULO      : Macros útiles funciones de fechas                      *
+* DESCRIPCION :                                                        *
+* AUTOR       : Andrés Picazo                   FECHA: 06/07/05        *
+* MACROS
+*   FECHA2SEMANA -> Convierte una fecha en semana
+*   PRIMER_DIA_SEMANA: Obtiene el primer dia de una semana
+*   PRIMER_DIA_SEMANA_FECHA: Obtiene el lunes de una fecha
+*   ULTIMO_DIA_SEMANA_FECHA: Obtiene el domingo de una fecha
+*   DIA_SEMANA: Obtiene el ordenal del día dentro de la semana
+*   CALCULA_DIA_SEMANA: Dada una fecha obtenemos el día X (de lunes a
+*                       domingo) de esa semana
+*   ES_DIA_LABORABLE: Devuelve si es un día laborable en el calendario
+*          suponiendo que hemos informado previamente el calendario de
+*          fabrica en la variable v_fec_calid
+*   ES_DIA_LABORABLE_CALID: Devuelve si es un día laborable en el
+*          calendario que indicamos en el segundo parámetro
+*   PRIMER_DIA_LABORABLE_DESDE_FECHA: Si la fecha dada es laborable
+*          devuelve esa fecha, sino devuelve el primer día laborable a
+*          partir de esa fecha
+*   ANTERIOR_DIA_LABORABLE_DESDE_FECHA: Si la fecha dada es laborable
+*    devuelve esa fecha, sino devuelve el primer día laborable anterior
+*    a esa fecha
+*
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA            NOMBRE            DESCRIPCION                       *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy       username                                            *
+************************************************************************
+* TABLAS
+*   - THOCD  Dias festivos asociados a calendario de festivos
+*   - THOL   Días festivos
+*   - TFACS  Calendario de fábrica (Visualizar)
+*   - TFACD  Definiciones de calendarios de fábrica
+
+* Variables auxiliares
+DATA: v_fec_week LIKE scal-week,
+       v_fec_calid LIKE scal-fcalid,
+       v_fec_ndia TYPE p,
+       i_DAY_ATTRIBUTES like CASDAYATTR occurs 1 with header line.
+
+*&---------------------------------------------------------------------*
+*&      Macro FECHA2SEMANA
+*&---------------------------------------------------------------------*
+*       Convierte una fecha en semana
+*&---------------------------------------------------------------------*
+DEFINE fecha2semana.
+  CALL FUNCTION 'DATE_GET_WEEK'
+    EXPORTING
+      date         = &1
+    IMPORTING
+      week         = &2
+    EXCEPTIONS
+      date_invalid = 1
+      others       = 2.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro PRIMER_DIA_SEMANA
+*&---------------------------------------------------------------------*
+*       Obtiene el primer dia de una semana
+*&---------------------------------------------------------------------*
+DEFINE primer_dia_semana.
+  CALL FUNCTION 'WEEK_GET_FIRST_DAY'
+    EXPORTING
+      week         = &1
+    IMPORTING
+      date         = &2
+    EXCEPTIONS
+      week_invalid = 1
+      others       = 2.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro PRIMER_DIA_SEMANA_FECHA
+*&---------------------------------------------------------------------*
+*       Obtiene el lunes de una fecha
+*&---------------------------------------------------------------------*
+DEFINE primer_dia_semana_fecha.
+  fecha2semana &1 v_fec_week.
+  primer_dia_semana v_fec_week &1.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro ULTIMO_DIA_SEMANA_FECHA
+*&---------------------------------------------------------------------*
+*       Obtiene el domingo de una fecha
+*&---------------------------------------------------------------------*
+DEFINE ultimo_dia_semana_fecha.
+  fecha2semana &1 v_fec_week.
+  primer_dia_semana v_fec_week &1.
+  ADD 6 TO &1.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro DIA_SEMANA
+*&---------------------------------------------------------------------*
+*       Obtiene el ordenal del día dentro de la semana
+*&---------------------------------------------------------------------*
+DEFINE dia_semana.
+  CALL FUNCTION 'DAY_IN_WEEK'
+    EXPORTING
+      datum = &1
+    IMPORTING
+      wotnr = &2.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro CALCULA_DIA_SEMANA
+*&---------------------------------------------------------------------*
+*       Dada una fecha obtenemos el día X (de lunes a
+*       domingo) de esa semana
+*&---------------------------------------------------------------------*
+DEFINE calcula_dia_semana.
+  dia_semana &1 v_fec_ndia.
+  IF v_fec_ndia <= &2.
+    &3 = fini + ( &2 - v_fec_ndia ).
+  ELSE.
+    &3 = fini + ( &2 + 7 - v_fec_ndia ).
+  ENDIF.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro ES_DIA_LABORABLE
+*&---------------------------------------------------------------------*
+*       Devuelve si es un día laborable en el calendario suponiendo
+*       que hemos informado previamente el calendario de  fábrica
+*       en la variable v_fec_calid
+*&---------------------------------------------------------------------*
+DEFINE es_dia_laborable.
+  CALL FUNCTION 'DATE_CHECK_WORKINGDAY'
+    EXPORTING
+      date                       = &1
+      factory_calendar_id        = v_fec_calid
+      message_type               = 'I'
+    EXCEPTIONS
+      date_after_range           = 1
+      date_before_range          = 2
+      date_invalid               = 3
+      date_no_workingday         = 4
+      factory_calendar_not_found = 5
+      message_type_invalid       = 6
+      others                     = 7.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro ES_DIA_LABORABLE_CALID
+*&---------------------------------------------------------------------*
+*       Devuelve si es un día laborable en el calendario que
+*       indicamos en el segundo parámetro
+*&---------------------------------------------------------------------*
+DEFINE es_dia_laborable_calid.
+  v_fec_calid = &2.
+  es_dia_laborable &1.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro PRIMER_DIA_LABORABLE_DESDE_FECHA
+*&---------------------------------------------------------------------*
+*       Si la fecha dada es laborable devuelve esa fecha,
+*       sino devuelve el primer día laborable a partir de esa fecha
+*&---------------------------------------------------------------------*
+DEFINE primer_dia_labor_desde_fecha.
+  CALL FUNCTION 'DATE_CONVERT_TO_FACTORYDATE'
+    EXPORTING
+      correct_option               = '+'
+      date                         = &1
+      factory_calendar_id          = &2
+    IMPORTING
+      date                         = &3
+    EXCEPTIONS
+      calendar_buffer_not_loadable = 1
+      correct_option_invalid       = 2
+      date_after_range             = 3
+      date_before_range            = 4
+      date_invalid                 = 5
+      factory_calendar_not_found   = 6
+      others                       = 7.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro ANTERIOR_DIA_LABORABLE_DESDE_FECHA
+*&---------------------------------------------------------------------*
+*       Si la fecha dada es laborable devuelve esa fecha,
+*       sino devuelve el primer día laborable anterior a esa fecha
+*&---------------------------------------------------------------------*
+DEFINE anterior_dia_labor_desde_fecha.
+  CALL FUNCTION 'DATE_CONVERT_TO_FACTORYDATE'
+    EXPORTING
+      correct_option               = '-'
+      date                         = &1
+      factory_calendar_id          = &2
+    IMPORTING
+      date                         = &3
+    EXCEPTIONS
+      calendar_buffer_not_loadable = 1
+      correct_option_invalid       = 2
+      date_after_range             = 3
+      date_before_range            = 4
+      date_invalid                 = 5
+      factory_calendar_not_found   = 6
+      others                       = 7.
+END-OF-DEFINITION.
+
+*&---------------------------------------------------------------------*
+*&      Macro ULTIMO_DIA_MES
+*&---------------------------------------------------------------------*
+*       Devuelve el último día del mes
+*&---------------------------------------------------------------------*
+DEFINE ultimo_dia_mes.
+
+  CALL FUNCTION 'RP_LAST_DAY_OF_MONTHS'
+    EXPORTING
+      day_in            = &1
+    IMPORTING
+      last_day_of_month = &2
+    EXCEPTIONS
+      day_in_no_date    = 1
+      others            = 2.
+END-OF-DEFINITION.
+
+define atributos_dia.
+  CALL FUNCTION 'DAY_ATTRIBUTES_GET'
+   EXPORTING
+     FACTORY_CALENDAR                 = &1
+     HOLIDAY_CALENDAR                 = &2
+     DATE_FROM                        = &3
+     DATE_TO                          = &3
+     LANGUAGE                         = SY-LANGU
+*  IMPORTING
+*    YEAR_OF_VALID_FROM               =
+*    YEAR_OF_VALID_TO                 =
+*    RETURNCODE                       =
+    TABLES
+      day_attributes                   = i_day_attributes
+   EXCEPTIONS
+     FACTORY_CALENDAR_NOT_FOUND       = 1
+     HOLIDAY_CALENDAR_NOT_FOUND       = 2
+     DATE_HAS_INVALID_FORMAT          = 3
+     DATE_INCONSISTENCY               = 4
+     OTHERS                           = 5.
+
+  CLEAR I_DAY_ATTRIBUTES.
+  READ TABLE I_DAY_ATTRIBUTES INDEX 1.
+
+end-of-definition.
+
+*&---------------------------------------------------------------------
+*&      Macro SUMA_DIAS_LABORABLES
+*&---------------------------------------------------------------------*
+*       Suma días laborables
+*&---------------------------------------------------------------------*
+DEFINE suma_dias_laborables.
+  v_fec_fkday = &3.
+  CALL FUNCTION 'WDKAL_DATE_ADD_FKDAYS'
+    exporting
+      i_date        = &1
+      i_fkday       = v_fec_fkday
+      i_fabkl       = &2
+    importing
+      e_date        = &4
+*   E_FKDAY       =
+    exceptions
+      error         = 1
+      others        = 2.
+END-OF-DEFINITION.
+
+DEFINE resta_anyos.
+  if &2 = '99991231'.
+    &3 = 99.
+  else.
+    CALL FUNCTION 'HR_HK_DIFF_BT_2_DATES'
+      EXPORTING
+        date1                   = &2
+        date2                   = &1
+        output_format           = '07'
+      IMPORTING
+        years                   = &3
+      EXCEPTIONS
+        invalid_dates_specified = 1
+        others                  = 2.
+  endif.
+END-OF-DEFINITION.
+
+DEFINE resta_meses.
+  if &2 = '99991231'.
+    &3 = 9999.
+  else.
+    CALL FUNCTION 'HR_HK_DIFF_BT_2_DATES'
+      EXPORTING
+        date1                   = &2
+        date2                   = &1
+        output_format           = '08'
+      IMPORTING
+        MONTHS                  = &3
+      EXCEPTIONS
+        invalid_dates_specified = 1
+        others                  = 2.
+  endif.
+END-OF-DEFINITION.
+
+define suma_meses.
+  CALL FUNCTION 'MONTH_PLUS_DETERMINE'
+    EXPORTING
+      MONTHS  = &1
+      OLDDATE = &2
+    IMPORTING
+      NEWDATE = &3.
+end-of-definition.
+
+*&---------------------------------------------------------------------
+*&      Macro CALCULA_EDAD
+*&---------------------------------------------------------------------*
+*       Calcula edad con respecto a la fecha del sistema
+*&---------------------------------------------------------------------*
+DEFINE calcula_edad.
+  if &1 = '00000000'.
+    &2 = 99.
+  else.
+    call function 'COMPUTE_YEARS_BETWEEN_DATES'
+      exporting
+        first_date                        = &1
+*       MODIFY_INTERVAL                   = ' '
+        second_date                       = sy-datum
+     importing
+       years_between_dates               = &2
+     exceptions
+       sequence_of_dates_not_valid       = 1
+       others                            = 2.
+  endif.
+END-OF-DEFINITION.

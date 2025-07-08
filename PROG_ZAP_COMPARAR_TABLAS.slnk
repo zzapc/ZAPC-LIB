@@ -1,0 +1,933 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_COMPARAR_TABLAS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="PNF" ENTRY="This program can&apos;t run in batch process" LENGTH="84 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting Data" LENGTH="29 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="PNF" ENTRY="Este programa no se puede ejecutar en fondo" LENGTH="84 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="R" ENTRY="Comparar tablas entre sistemas" LENGTH="30 "/>
+   <textElement ID="S" KEY="P_CLAVE" ENTRY="        Campo clave" LENGTH="19 "/>
+   <textElement ID="S" KEY="P_CLAVE2" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_FSTD" ENTRY="        Usar función std.acceso remoto" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_IGNERR" ENTRY="        Ignorar error tablas diferente" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_NOVAC" ENTRY="        No mostrar campos vacíos" LENGTH="32 "/>
+   <textElement ID="S" KEY="P_SOLDIF" ENTRY="        Sólo diferencias" LENGTH="24 "/>
+   <textElement ID="S" KEY="P_TARGET" ENTRY="        Destino RFC a comparar" LENGTH="30 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="P_WHERE1" ENTRY="        Where" LENGTH="13 "/>
+   <textElement ID="S" KEY="P_WHERE2" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_WHERE3" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_WHERE4" LENGTH="0 "/>
+   <textElement ID="S" KEY="P_WHERE5" LENGTH="0 "/>
+   <textElement ID="S" KEY="S_FIELD" ENTRY="D       ." LENGTH="20 "/>
+   <textElement ID="S" KEY="S_TABLE" ENTRY="D       ." LENGTH="13 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+ </textPool>
+ <dynpros>
+  <dynpro PROG="ZAP_COMPARAR_TABLAS" DNUM="0100" FNUM="0100" BZMX="57 " BZBR="255 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="57 " NOCO="255 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Grid">
+   <dynprofield FNAM="GRID" DIDX="0039" FLG1="00" FLG2="30" FLG3="00" FILL="U" FMB1="30" FMB2="00" LENG="FF" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" AUTH="101" AGLT="14" ADEZ="63"/>
+   <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+   <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0100.
+*
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_0100 AT EXIT-COMMAND.
+
+ MODULE USER_COMMAND_0100.</dynproflowsource>
+  </dynpro>
+ </dynpros>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : Adaptación report UGMD_TABLE_DELTA_TO_TRANSPORT
+*
+* AUTOR: Andrés Picazo                                FECHA: 04/03/2019
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:,http://sap4.com
+**-&gt;PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&amp;ntask=TTT
+*
+***********************************************************************
+REPORT zap_comparar_tablas.
+
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: dd03l.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_base,
+         check      TYPE xfeld,
+         lights     TYPE zico_estado_mensaje,
+         tabla      TYPE tabname,
+         key        TYPE string,
+         sistema    TYPE string,
+         campos_dif TYPE string,
+         message    TYPE bapi_msg,
+         color      TYPE lvc_t_scol,
+       END OF t_base.
+__data_set_var base.
+
+
+*------VARIABLES-------------------------------------------------------*
+FIELD-SYMBOLS: &lt;i_listado&gt; TYPE table,
+               &lt;lineal&gt;    TYPE any.
+DATA: i_listado TYPE REF TO data,
+      lineal    TYPE REF TO data.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: data_changed REDEFINITION,
+      data_changed_finished REDEFINITION,
+      toolbar      REDEFINITION,
+      user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    DATA: o_alv            TYPE REF TO zcl_ap_alv_grid,
+          o_event          TYPE REF TO lcl_event_grid,
+          i_campos_alv     TYPE lvc_t_fcat,
+          l_campos_alv     TYPE lvc_s_fcat,
+          num_tablas       TYPE i,
+          no_key,
+          campos_excluidos,
+          key_len          TYPE i,
+          lt_dfies_s       TYPE STANDARD TABLE OF dfies.
+
+    METHODS:  buscar_datos REDEFINITION,
+      comparar_tablas IMPORTING p_table  TYPE tabname
+                                crear_ot TYPE abap_bool DEFAULT &apos;&apos;,
+      status_dynpro_0100,
+      command_dynpro_0100.
+  PRIVATE SECTION.
+
+    METHODS get_key
+      IMPORTING
+        datos      TYPE any
+      RETURNING
+        VALUE(key) TYPE string.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+DATA: o_prog  TYPE REF TO zcl_report.                       &quot;#EC NEEDED
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME.
+PARAMETERS: p_target TYPE rfcdest OBLIGATORY,
+            p_source TYPE rfcdest DEFAULT space             &quot;H1489976
+                                        NO-DISPLAY.
+SELECT-OPTIONS: s_table  FOR dd03l-tabname OBLIGATORY,
+                s_field  FOR dd03l-fieldname.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_soldif AS CHECKBOX DEFAULT &apos;X&apos;,
+            p_novac  AS CHECKBOX DEFAULT &apos;X&apos;,
+            p_ignerr AS CHECKBOX,
+            p_fstd   AS CHECKBOX DEFAULT &apos;&apos; USER-COMMAND fuz.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_clave  TYPE text255 MODIF ID fuz,
+            p_clave2 TYPE text255 MODIF ID fuz.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_where1 TYPE text255 MODIF ID whe,
+            p_where2 TYPE text255 MODIF ID whe,
+            p_where3 TYPE text255 MODIF ID whe,
+            p_where4 TYPE text255 MODIF ID whe,
+            p_where5 TYPE text255 MODIF ID whe.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+
+  METHOD toolbar.
+
+    super-&gt;toolbar( e_object = e_object e_interactive = e_interactive ).
+
+  ENDMETHOD.                                               &quot;toolbar
+
+  METHOD user_command.
+
+    CASE e_ucomm.
+      WHEN OTHERS.
+        super-&gt;user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+
+  ENDMETHOD.                                               &quot;USER_COMMAND
+
+
+  METHOD data_changed.
+
+  ENDMETHOD.                                               &quot;data_changed
+
+  METHOD data_changed_finished.
+
+    IF NOT tabla_data_changed IS INITIAL.
+      o_alv-&gt;refrescar_grid( ).
+      CLEAR tabla_data_changed.
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.                    &quot;lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+  METHOD buscar_datos.
+
+    i_campos_alv  = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( i_base ).
+
+    CLEAR l_campos_alv.
+    l_campos_alv-fieldname = &apos;COLOR&apos;.
+    l_campos_alv-ref_table = &apos;CALENDAR_TYPE&apos;.
+    l_campos_alv-ref_field = &apos;COLTAB&apos;.
+
+    APPEND l_campos_alv TO i_campos_alv.
+
+    SELECT tabname FROM dd02l
+    INTO TABLE @DATA(i_tablas)
+    WHERE tabname IN @s_table.
+
+    num_tablas = lines( i_tablas ).
+
+    LOOP AT i_tablas ASSIGNING FIELD-SYMBOL(&lt;tabla&gt;).
+      DATA(i_campos) = zcl_ap_dev=&gt;get_fieldcatalog_tabla( &lt;tabla&gt;-tabname ).
+      LOOP AT i_campos ASSIGNING FIELD-SYMBOL(&lt;campos&gt;) WHERE fieldname IN s_field.
+        IF NOT line_exists( i_campos_alv[ fieldname = &lt;campos&gt;-fieldname ] ).
+          IF &lt;campos&gt;-inttype = &apos;y&apos;.
+            campos_excluidos = &apos;X&apos;.
+          ELSE.
+            CLEAR l_campos_alv.
+            MOVE-CORRESPONDING &lt;campos&gt; TO l_campos_alv.
+            APPEND l_campos_alv TO i_campos_alv.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+    CALL METHOD cl_alv_table_create=&gt;create_dynamic_table
+      EXPORTING
+        it_fieldcatalog           = i_campos_alv
+      IMPORTING
+        ep_table                  = i_listado
+      EXCEPTIONS
+        generate_subpool_dir_full = 1.
+    IF sy-subrc = 0.
+      ASSIGN i_listado-&gt;* TO &lt;i_listado&gt;.
+      CLEAR &lt;i_listado&gt;.
+    ENDIF.
+
+    LOOP AT i_tablas ASSIGNING &lt;tabla&gt;.
+      comparar_tablas( &lt;tabla&gt;-tabname ).
+    ENDLOOP.
+
+  ENDMETHOD.                                               &quot;seleccionar_datos
+
+  METHOD status_dynpro_0100.
+
+
+    status_dynpro( EXPORTING cprog = &apos;ZAP_STATUS&apos; status = &apos;ST_DYN&apos; CHANGING i_listado = &lt;i_listado&gt; ).
+    IF inicio IS INITIAL.
+      inicio = &apos;X&apos;.
+      IF sy-sysid = zcl_c=&gt;entorno_desarrollo AND no_key IS INITIAL.
+        o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Crear OT&apos;  icon = icon_execute_object ).
+      ENDIF.
+      IF s_field[] IS INITIAL AND campos_excluidos IS INITIAL.
+        o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Copiar a sistema local&apos;  icon = icon_system_copy ).
+      ENDIF.
+      IF no_key IS INITIAL.
+        o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Borrar de sistema local&apos;  icon = icon_delete ).
+      ENDIF.
+      o_alv-&gt;registrar_mod( ).
+      o_alv-&gt;set_layout( no_rowmove = &apos;X&apos; no_rowins = &apos;X&apos; style = &apos;STYLE&apos; colort = &apos;COLOR&apos; ).
+      o_alv-&gt;quitar_opciones( cl_gui_alv_grid=&gt;mc_fc_refresh ).
+      o_alv-&gt;set_campos_tabint( &lt;i_listado&gt; ).
+      o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+      o_alv-&gt;set_orden( &apos;TABLA,KEY,SISTEMA&apos; ).
+      o_alv-&gt;set_field_noout( &apos;MESSAGE,KEY,CAMPOS_DIF&apos; ).
+      IF line_exists( i_campos_alv[ fieldname = &apos;MANDT&apos; ] ).
+        o_alv-&gt;set_field_noout( &apos;MANDT&apos; ).
+      ENDIF.
+      IF line_exists( i_campos_alv[ fieldname = &apos;DOCUMENTACION&apos; ] ).
+        o_alv-&gt;set_field_hotspot( campo = &apos;DOCUMENTACION&apos; valor = &apos;TEXT&apos; ).
+      ENDIF.
+
+
+      LOOP AT i_campos_alv INTO l_campos_alv WHERE fieldname NE &apos;COLOR&apos;.
+        o_alv-&gt;set_field_text( campo = l_campos_alv-fieldname valor = l_campos_alv-reptext ).
+      ENDLOOP.
+
+      o_alv-&gt;ocultar_columnas_vacias( &lt;i_listado&gt; ).
+
+      sgpi_texto( &apos;Generando informe&apos; ).
+      o_alv-&gt;show( CHANGING tabla = &lt;i_listado&gt; ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD command_dynpro_0100.
+    DATA: l_hay_sel,
+          l_comm_sel TYPE string VALUE &apos;F01,F02,F03&apos;.
+
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
+                            CHANGING i_listado = &lt;i_listado&gt; i_listado_ini = &lt;i_listado&gt; hay_sel = l_hay_sel ).
+
+    IF zcl_ap_lista=&gt;es_elemento( lista = l_comm_sel elemento = ucomm ).
+      IF l_hay_sel IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    CASE ucomm.
+      WHEN &apos;F01&apos;.
+        DATA: ls_e071  TYPE e071,
+              lt_e071  TYPE tr_objects,
+              ls_e071k TYPE e071k,
+              lt_e071k TYPE tr_keys,
+              l_tabla  TYPE tabname.
+        FIELD-SYMBOLS: &lt;tabla&gt;   TYPE any,
+                       &lt;key&gt;     TYPE any,
+                       &lt;check&gt;   TYPE any,
+                       &lt;sistema&gt; TYPE any,
+                       &lt;lineal&gt;  TYPE any,
+                       &lt;linea&gt;   TYPE any.
+
+        LOOP AT &lt;i_listado&gt; ASSIGNING FIELD-SYMBOL(&lt;list&gt;).
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;list&gt; TO &lt;check&gt;.
+          IF &lt;check&gt; = &apos;X&apos;.
+            ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;list&gt; TO &lt;sistema&gt;.
+            IF &lt;sistema&gt; = &apos;Local&apos;.
+              ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;list&gt; TO &lt;tabla&gt;.
+              ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;list&gt; TO &lt;key&gt;.
+              IF &lt;tabla&gt; NE l_tabla.
+                l_tabla = &lt;tabla&gt;.
+                ls_e071-as4pos   = 1.
+                ls_e071-pgmid    = &apos;R3TR&apos;.
+                ls_e071-object   = &apos;TABU&apos;.
+                ls_e071-obj_name = &lt;tabla&gt;.
+                ls_e071-objfunc  = &apos;K&apos;.
+                ls_e071-lang     = sy-langu.
+                INSERT ls_e071 INTO TABLE lt_e071.
+              ENDIF.
+              ls_e071k-pgmid      = &apos;R3TR&apos;.
+              ls_e071k-object     = &apos;TABU&apos;.
+              ls_e071k-objname    = &lt;tabla&gt;.
+              ls_e071k-mastertype = &apos;TABU&apos;.
+              ls_e071k-mastername = &lt;tabla&gt;.
+              ls_e071k-lang       = sy-langu.
+
+              ls_e071k-tabkey = &lt;key&gt;.
+
+              INSERT ls_e071k INTO TABLE lt_e071k.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        IF lt_e071k[] IS INITIAL.
+          MESSAGE &apos;No ha seleccionado ninguna entrada local&apos; TYPE &apos;I&apos;.
+        ELSE.
+          CALL FUNCTION &apos;TR_REQUEST_CHOICE&apos;
+            EXPORTING
+*             IV_REQUEST_TYPES     =
+*             IV_CLI_DEP           = &apos; &apos;
+*             IV_REQUEST           = &apos; &apos;
+              it_e071  = lt_e071
+              it_e071k = lt_e071k
+*             IV_LOCK_OBJECTS      = &apos; &apos;
+*             IV_NO_OWNER_CHECK    = &apos; &apos;
+            EXCEPTIONS
+              OTHERS   = 1.
+          IF sy-subrc &lt;&gt; 0.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ENDIF.
+        ENDIF.
+      WHEN &apos;F02&apos;.
+        DATA tabla TYPE REF TO data.
+        CLEAR cont.
+        IF sy-sysid = zcl_c=&gt;entorno_produccion.
+          IF zcl_ap_popup=&gt;confirmar( texto = &apos;¿Está seguro de querer modificar registros en producción?&apos; ) = &apos;&apos;.
+            RETURN.
+          ENDIF.
+        ENDIF.
+        LOOP AT &lt;i_listado&gt; ASSIGNING &lt;list&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;list&gt; TO &lt;check&gt;.
+          IF &lt;check&gt; = &apos;X&apos;.
+            ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;list&gt; TO &lt;sistema&gt;.
+            IF &lt;sistema&gt; = &apos;Remoto&apos;.
+              ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;list&gt; TO &lt;tabla&gt;.
+
+              CREATE DATA tabla TYPE (&lt;tabla&gt;).
+              ASSIGN tabla-&gt;* TO &lt;lineal&gt;.
+              MOVE-CORRESPONDING &lt;list&gt; TO &lt;lineal&gt;.
+              MODIFY (&lt;tabla&gt;) FROM &lt;lineal&gt;.
+              IF sy-subrc NE 0.
+                MESSAGE |Error modificando { &lt;tabla&gt; } { &lt;key&gt; }| TYPE &apos;E&apos;.
+              ELSE.
+                ADD 1 TO cont.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        IF cont = 0.
+          MESSAGE &apos;No se ha modificado ningún registro. Debe seleccionar registros del sistema remoto&apos; TYPE &apos;I&apos;.
+        ELSE.
+          MESSAGE |Se han actualizado { cont } registros| TYPE &apos;S&apos;.
+        ENDIF.
+
+      WHEN &apos;F03&apos;.
+        IF sy-sysid = zcl_c=&gt;entorno_produccion.
+          IF zcl_ap_popup=&gt;confirmar( texto = &apos;¿Está seguro de querer borrar registros en producción?&apos; ) = &apos;&apos;.
+            RETURN.
+          ENDIF.
+        ENDIF.
+        CLEAR cont.
+        LOOP AT &lt;i_listado&gt; ASSIGNING &lt;list&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;list&gt; TO &lt;check&gt;.
+          IF &lt;check&gt; = &apos;X&apos;.
+            ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;list&gt; TO &lt;sistema&gt;.
+            IF &lt;sistema&gt; = &apos;Local&apos;.
+              ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;list&gt; TO &lt;tabla&gt;.
+
+              CREATE DATA tabla TYPE (&lt;tabla&gt;).
+              ASSIGN tabla-&gt;* TO &lt;lineal&gt;.
+              MOVE-CORRESPONDING &lt;list&gt; TO &lt;lineal&gt;.
+              DELETE (&lt;tabla&gt;) FROM &lt;lineal&gt;.
+              IF sy-subrc NE 0.
+                MESSAGE |Error modificando { &lt;tabla&gt; } { &lt;key&gt; }| TYPE &apos;E&apos;.
+              ELSE.
+                ADD 1 TO cont.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        IF cont = 0.
+          MESSAGE &apos;No se ha modificado ningún registro. Debe seleccionar registros del sistema local&apos; TYPE &apos;I&apos;.
+        ELSE.
+          MESSAGE |Se han actualizado { cont } registros| TYPE &apos;S&apos;.
+        ENDIF.
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD comparar_tablas.
+    DATA: lt_dfies_t  TYPE STANDARD TABLE OF dfies,
+          lt_data     TYPE STANDARD TABLE OF tab512,
+          lr_s_data   TYPE REF TO data,
+          lr_t_data_s TYPE REF TO data,
+          lr_t_data_t TYPE REF TO data,
+          lr_t_data_p TYPE REF TO data,
+          lr_t_data_m TYPE REF TO data,
+          lt_keyfield TYPE ugmd_t_fieldname,
+          l_keylen    TYPE i,
+          l_i         TYPE i,
+          lt_option   TYPE TABLE OF rfc_db_opt,             &quot;H1489976
+          ls_field    TYPE rfc_db_fld,
+          lt_field    TYPE TABLE OF rfc_db_fld,
+          l_message   TYPE bapi_msg,
+          where       TYPE string,
+          clave1      TYPE string,
+          clave2      TYPE string.
+
+    FIELD-SYMBOLS: &lt;ls_data&gt;    TYPE any,
+                   &lt;lt_data_s&gt;  TYPE ANY TABLE,
+                   &lt;lt_data_t&gt;  TYPE ANY TABLE,
+                   &lt;lt_data_p&gt;  TYPE ANY TABLE,
+                   &lt;lt_data_m&gt;  TYPE ANY TABLE,
+                   &lt;any&gt;        TYPE any,
+                   &lt;ls_dfies&gt;   TYPE dfies,
+                   &lt;fs&gt;         TYPE any,
+                   &lt;sistema&gt;    TYPE any,
+                   &lt;tabla&gt;      TYPE any,
+                   &lt;key&gt;        TYPE any,
+                   &lt;lights&gt;     TYPE any,
+                   &lt;campos_dif&gt; TYPE any.
+
+    IF NOT p_where1 IS INITIAL OR NOT p_where2 IS INITIAL.
+      CONCATENATE p_where1 p_where2 p_where3 p_where4 p_where5 INTO where SEPARATED BY space.
+    ENDIF.
+
+    DATA(l_dest) = SWITCH  string( sy-sysid WHEN zcl_c=&gt;entorno_desarrollo THEN  &apos;CLAVEP&apos; ELSE &apos;CLAVED&apos; ).
+    string = zcl_ap_temp=&gt;get_st_valor1( clave = &apos;ZAP_OTS&apos; subclave = sy-uname &amp;&amp; l_dest ).
+    IF NOT string IS INITIAL.
+      zcl_ap_string=&gt;to_clipboard( string = string ).
+      MESSAGE |Se copia clave en portapapeles| TYPE &apos;S&apos;.
+    ENDIF.
+
+    CLEAR sy-msgid.
+    CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+      DESTINATION p_target
+      EXPORTING
+        tabname        = p_table
+      TABLES
+        dfies_tab      = lt_dfies_t
+      EXCEPTIONS
+        not_found      = 1
+        internal_error = 2
+        OTHERS         = 3.
+    IF sy-subrc &lt;&gt; 0.
+      IF sy-msgty IS INITIAL.
+        LEAVE LIST-PROCESSING.
+      ELSE.
+        IF sy-msgid IS INITIAL.
+          MESSAGE |Error conectando con destino { p_target }| TYPE &apos;E&apos;.
+        ELSE.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+      EXPORTING
+        tabname        = p_table
+      TABLES
+        dfies_tab      = lt_dfies_s
+      EXCEPTIONS
+        not_found      = 1
+        internal_error = 2
+        OTHERS         = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+    IF lt_dfies_t[] NE lt_dfies_s[].
+      DATA(lt_dfies_t_copy) = lt_dfies_t.
+      DATA(lt_dfies_s_copy) = lt_dfies_s.
+      LOOP AT lt_dfies_t_copy ASSIGNING FIELD-SYMBOL(&lt;copy_t&gt;).
+        READ TABLE lt_dfies_s_copy ASSIGNING FIELD-SYMBOL(&lt;copy_s&gt;) WITH KEY fieldname = &lt;copy_t&gt;-fieldname.
+        IF sy-subrc = 0.
+          IF &lt;copy_s&gt;-fieldname = &lt;copy_t&gt;-fieldname AND &lt;copy_s&gt;-offset = &lt;copy_t&gt;-offset.
+            DELETE lt_dfies_s_copy INDEX sy-tabix.
+            DELETE lt_dfies_t_copy.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      IF NOT lt_dfies_s_copy IS INITIAL OR NOT lt_dfies_t_copy IS INITIAL.
+        MESSAGE &apos;Los campos en sistema origen y destino no coinciden!&apos; TYPE &apos;I&apos;.
+        IF p_ignerr IS INITIAL.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+* get the data
+    LOOP AT lt_dfies_s ASSIGNING &lt;ls_dfies&gt;.
+      IF &lt;ls_dfies&gt;-keyflag NE space.
+        INSERT &lt;ls_dfies&gt;-fieldname INTO TABLE lt_keyfield.
+        ADD &lt;ls_dfies&gt;-leng TO l_keylen.
+        IF NOT &lt;ls_dfies&gt;-fieldname IN s_field.
+          no_key = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+      l_i = &lt;ls_dfies&gt;-offset + &lt;ls_dfies&gt;-leng.
+      IF l_i GT 512.
+        EXIT.
+      ENDIF.
+      ls_field-fieldname = &lt;ls_dfies&gt;-fieldname.
+      ls_field-offset    = &lt;ls_dfies&gt;-offset.
+      ls_field-length    = &lt;ls_dfies&gt;-leng.
+*  ls_field-TYPE      = &lt;ls_dfies&gt;-DATATYPE.
+      ls_field-type      = &lt;ls_dfies&gt;-inttype.
+      ls_field-fieldtext = &lt;ls_dfies&gt;-fieldtext.
+      INSERT ls_field INTO TABLE lt_field.
+    ENDLOOP.
+
+    key_len = l_keylen.
+
+    CREATE DATA lr_t_data_s TYPE SORTED TABLE OF (p_table)
+                            WITH UNIQUE KEY (lt_keyfield).
+    ASSIGN lr_t_data_s-&gt;* TO &lt;lt_data_s&gt;.
+    CREATE DATA lr_t_data_t LIKE &lt;lt_data_s&gt;.
+    ASSIGN lr_t_data_t-&gt;* TO &lt;lt_data_t&gt;.
+    CREATE DATA lr_s_data LIKE LINE OF &lt;lt_data_s&gt;.
+    ASSIGN lr_s_data-&gt;* TO &lt;ls_data&gt;.
+
+    CREATE DATA lineal LIKE LINE OF &lt;i_listado&gt;.
+    ASSIGN lineal-&gt;* TO &lt;lineal&gt;.
+
+
+    sgpi_texto( &apos;Seleccionando datos del entorno actual&apos; ).
+    IF p_fstd = &apos;X&apos;.
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = where longitud = 72
+                                   CHANGING tabla = lt_option[] ).
+      CALL FUNCTION &apos;RFC_READ_TABLE&apos;
+        DESTINATION p_source
+        EXPORTING
+          query_table          = p_table
+*         NO_DATA              = &apos; &apos;
+*         ROWSKIPS             = 0
+*         ROWCOUNT             = 0
+        TABLES
+          options              = lt_option
+          fields               = lt_field
+          data                 = lt_data
+        EXCEPTIONS
+          table_not_available  = 1
+          table_without_data   = 2
+          option_not_valid     = 3
+          field_not_valid      = 4
+          not_authorized       = 5
+          data_buffer_exceeded = 6
+          OTHERS               = 7.
+      IF sy-subrc NE 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        EXIT.
+      ENDIF.
+
+      LOOP AT lt_data ASSIGNING &lt;any&gt;.
+        CLEAR &lt;ls_data&gt;.
+        &lt;ls_data&gt; = &lt;any&gt;.
+        INSERT &lt;ls_data&gt; INTO TABLE &lt;lt_data_s&gt;.
+
+        MOVE-CORRESPONDING &lt;ls_data&gt; TO &lt;lineal&gt;.
+        ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;sistema&gt;.
+        &lt;sistema&gt; = &apos;Local&apos;.
+        ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;key&gt;.
+        &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+        ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;tabla&gt;.
+        &lt;tabla&gt; = p_table.
+        APPEND &lt;lineal&gt; TO &lt;i_listado&gt;.
+      ENDLOOP.
+
+    ELSE.
+      clave1 = p_clave.
+      clave2 = p_clave2.
+      DATA l_cont TYPE xstring.
+      CALL FUNCTION &apos;Z_RFC_SET_TABLA&apos;
+        EXPORTING
+          tabla     = p_table
+          clave     = clave1
+          clave2    = clave2
+          where     = where
+        IMPORTING
+          contenido = l_cont
+          message   = l_message.
+
+      CALL TRANSFORMATION id
+        SOURCE XML l_cont
+        RESULT &lt;g_wa_tabla&gt; = &lt;lt_data_s&gt;.
+
+      IF NOT l_message IS INITIAL.
+        MESSAGE l_message TYPE &apos;E&apos;.
+      ENDIF.
+
+      LOOP AT &lt;lt_data_s&gt; ASSIGNING &lt;ls_data&gt;.
+        MOVE-CORRESPONDING &lt;ls_data&gt; TO &lt;lineal&gt;.
+        ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;sistema&gt;.
+        &lt;sistema&gt; = &apos;Local&apos;.
+        ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;key&gt;.
+        &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+
+
+        ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;tabla&gt;.
+        &lt;tabla&gt; = p_table.
+        APPEND &lt;lineal&gt; TO &lt;i_listado&gt;.
+      ENDLOOP.
+    ENDIF.
+
+    sgpi_texto( &apos;Seleccionando datos del entorno destino&apos; ).
+    REFRESH lt_data.
+    IF p_fstd = &apos;X&apos;.
+      CALL FUNCTION &apos;RFC_READ_TABLE&apos;
+        DESTINATION p_target
+        EXPORTING
+          query_table          = p_table
+*         NO_DATA              = &apos; &apos;
+*         ROWSKIPS             = 0
+*         ROWCOUNT             = 0
+        TABLES
+          options              = lt_option                    &quot;H1489976
+          fields               = lt_field
+          data                 = lt_data
+        EXCEPTIONS
+          table_not_available  = 1
+          table_without_data   = 2
+          option_not_valid     = 3
+          field_not_valid      = 4
+          not_authorized       = 5
+          data_buffer_exceeded = 6
+          OTHERS               = 7.
+      IF sy-subrc NE 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        EXIT.
+      ENDIF.
+      LOOP AT lt_data ASSIGNING &lt;any&gt;.
+        CLEAR &lt;ls_data&gt;.
+        &lt;ls_data&gt; = &lt;any&gt;.
+        INSERT &lt;ls_data&gt; INTO TABLE &lt;lt_data_t&gt;.
+
+        MOVE-CORRESPONDING &lt;ls_data&gt; TO &lt;lineal&gt;.
+        ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;sistema&gt;.
+        &lt;sistema&gt; = &apos;Remoto&apos;.
+        ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;key&gt;.
+        &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+
+        ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;tabla&gt;.
+        &lt;tabla&gt; = p_table.
+        APPEND &lt;lineal&gt; TO &lt;i_listado&gt;.
+      ENDLOOP.
+
+    ELSE.
+      CALL FUNCTION &apos;Z_RFC_SET_TABLA&apos;
+        DESTINATION p_target
+        EXPORTING
+          tabla     = p_table
+          clave     = clave1
+          clave2    = clave2
+          where     = where
+        IMPORTING
+          contenido = l_cont
+          message   = l_message.
+
+      CALL TRANSFORMATION id
+        SOURCE XML l_cont
+        RESULT &lt;g_wa_tabla&gt; = &lt;lt_data_t&gt;.
+
+      IF NOT l_message IS INITIAL.
+        MESSAGE l_message TYPE &apos;E&apos;.
+      ENDIF.
+
+      LOOP AT &lt;lt_data_t&gt; ASSIGNING &lt;ls_data&gt;.
+        TRY.
+            MOVE-CORRESPONDING &lt;ls_data&gt; TO &lt;lineal&gt;.
+          CATCH cx_root into data(o_root).
+            message |Error moviendo datos { o_root-&gt;get_text( ) }| type &apos;S&apos;.
+        ENDTRY.
+        ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;sistema&gt;.
+        &lt;sistema&gt; = &apos;Remoto&apos;.
+        ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;key&gt;.
+        &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+        ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;lineal&gt; TO &lt;tabla&gt;.
+        &lt;tabla&gt; = p_table.
+        APPEND &lt;lineal&gt; TO &lt;i_listado&gt;.
+      ENDLOOP.
+    ENDIF.
+
+
+
+* compare the data
+    CREATE DATA lr_t_data_p LIKE &lt;lt_data_s&gt;.
+    ASSIGN lr_t_data_p-&gt;* TO &lt;lt_data_p&gt;.
+    CREATE DATA lr_t_data_m LIKE &lt;lt_data_s&gt;.
+    ASSIGN lr_t_data_m-&gt;* TO &lt;lt_data_m&gt;.
+* data missing in source system
+    LOOP AT &lt;lt_data_t&gt; ASSIGNING &lt;ls_data&gt;.
+      READ TABLE &lt;lt_data_s&gt; FROM &lt;ls_data&gt; TRANSPORTING NO FIELDS.
+      IF sy-subrc NE space.
+        INSERT &lt;ls_data&gt; INTO TABLE &lt;lt_data_p&gt;.
+      ENDIF.
+    ENDLOOP.
+* data missing in target system
+    LOOP AT &lt;lt_data_s&gt; ASSIGNING &lt;ls_data&gt;.
+      READ TABLE &lt;lt_data_t&gt; FROM &lt;ls_data&gt; TRANSPORTING NO FIELDS.
+      IF sy-subrc NE space.
+        INSERT &lt;ls_data&gt; INTO TABLE &lt;lt_data_m&gt;.
+      ENDIF.
+    ENDLOOP.
+
+
+    ASSIGN lineal-&gt;* TO &lt;lineal&gt;.
+    LOOP AT &lt;i_listado&gt; ASSIGNING FIELD-SYMBOL(&lt;list&gt;).
+
+      ASSIGN COMPONENT &apos;TABLA&apos; OF STRUCTURE &lt;list&gt; TO &lt;tabla&gt;.
+      IF &lt;tabla&gt; = p_table.
+        ASSIGN COMPONENT &apos;KEY&apos; OF STRUCTURE &lt;list&gt; TO &lt;key&gt;.
+        ASSIGN COMPONENT &apos;SISTEMA&apos; OF STRUCTURE &lt;list&gt; TO &lt;sistema&gt;.
+        ASSIGN COMPONENT &apos;LIGHTS&apos; OF STRUCTURE &lt;list&gt; TO &lt;lights&gt;.
+        ASSIGN COMPONENT &apos;CAMPOS_DIF&apos; OF STRUCTURE &lt;list&gt; TO &lt;campos_dif&gt;.
+        IF &lt;sistema&gt; = &apos;Local&apos;.
+          LOOP AT &lt;lt_data_m&gt; ASSIGNING &lt;ls_data&gt;.
+            IF &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+              set_status_list( EXPORTING message = &apos;Registro no existe en sistema destino&apos; icono = icon_delete color = &apos;N&apos; int = 1 CHANGING list = &lt;list&gt; ).
+            ENDIF.
+          ENDLOOP.
+        ELSE.
+          LOOP AT &lt;lt_data_p&gt; ASSIGNING &lt;ls_data&gt;.
+            IF &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+              set_status_list( EXPORTING message = &apos;Registro no existe en sistema local&apos; icono = icon_create color = &apos;N&apos; CHANGING list = &lt;list&gt; ).
+            ENDIF.
+          ENDLOOP.
+        ENDIF.
+        IF &lt;lights&gt; IS INITIAL.
+          UNASSIGN: &lt;ls_data&gt;.
+          DATA(l_found) = &apos;&apos;.
+          IF &lt;sistema&gt; = &apos;Local&apos;.
+            LOOP AT &lt;lt_data_t&gt; ASSIGNING &lt;ls_data&gt;.
+              IF &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+                l_found = &apos;X&apos;.
+                EXIT.
+              ENDIF.
+            ENDLOOP.
+          ELSE.
+            LOOP AT &lt;lt_data_s&gt; ASSIGNING &lt;ls_data&gt;.
+              IF &lt;key&gt; = get_key( &lt;ls_data&gt; ).
+                l_found = &apos;X&apos;.
+                EXIT.
+              ENDIF.
+            ENDLOOP.
+          ENDIF.
+          IF l_found = &apos;X&apos;.
+            MOVE-CORRESPONDING &lt;ls_data&gt; TO &lt;lineal&gt;.
+            LOOP AT lt_dfies_s ASSIGNING &lt;ls_dfies&gt; WHERE fieldname IN s_field.
+              ASSIGN COMPONENT &lt;ls_dfies&gt;-fieldname OF STRUCTURE &lt;list&gt; TO &lt;fs&gt;.
+              ASSIGN COMPONENT &lt;ls_dfies&gt;-fieldname OF STRUCTURE &lt;lineal&gt; TO &lt;any&gt;.
+              IF &lt;fs&gt; NE &lt;any&gt;.
+                __add_lista &lt;campos_dif&gt; &lt;ls_dfies&gt;-fieldname.
+              ENDIF.
+            ENDLOOP.
+            IF NOT &lt;campos_dif&gt; IS INITIAL.
+              set_status_list( EXPORTING message = &apos;Existen diferencias en campos&apos; icono = icon_reject campos_color = &lt;campos_dif&gt; color = &apos;R&apos; CHANGING list = &lt;list&gt; ).
+            ENDIF.
+          ELSE.
+            &lt;lights&gt; = &apos;Error buscando&apos;.
+          ENDIF.
+        ENDIF.
+
+        IF p_soldif = &apos;X&apos; AND &lt;lights&gt; IS INITIAL.
+          DELETE &lt;i_listado&gt;.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD get_key.
+    DATA l_text TYPE text255.
+    FIELD-SYMBOLS &lt;any&gt; TYPE any.
+
+    TRY.
+        key = datos(key_len).
+      CATCH  cx_sy_range_out_of_bounds.
+        MESSAGE &apos;Imposible recuperar indice&apos; TYPE &apos;E&apos;.
+      CATCH cx_sy_offset_not_allowed.
+        CLEAR: cont, l_text.
+        LOOP AT lt_dfies_s ASSIGNING FIELD-SYMBOL(&lt;ls_dfies&gt;) WHERE keyflag = &apos;X&apos;.
+          ASSIGN COMPONENT &lt;ls_dfies&gt;-fieldname OF STRUCTURE  datos TO &lt;any&gt;.
+          l_text+cont(&lt;ls_dfies&gt;-leng) = &lt;any&gt;.
+          ADD &lt;ls_dfies&gt;-leng TO cont.
+        ENDLOOP.
+        key = l_text.
+    ENDTRY.
+
+  ENDMETHOD.
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status       = &apos;INICIO&apos;
+                  guardar_logz = &apos;X&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos; ).
+
+  IF sy-sysid = zcl_c=&gt;entorno_produccion.
+    p_target = zcl_c=&gt;rfc_desarrollo.
+  ELSE.
+    p_target = zcl_c=&gt;rfc_produccion.
+  ENDIF.
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+  IF sy-batch IS INITIAL.
+    o_prog-&gt;o_event = NEW #( boton_refrescar = &apos;X&apos;
+                             boton_excel     = &apos;Y&apos;
+                             o_prog          = o_prog ).
+
+    o_prog-&gt;o_alv = NEW #( estructura = &apos;&apos;
+                           o_event    = o_prog-&gt;o_event ).
+
+  ENDIF.
+
+
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN OUTPUT.
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;FUZ&apos; variable = p_fstd variable_inv = &apos;X&apos; ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;buscar_datos( ).
+
+  IF sy-batch IS INITIAL.
+    CALL SCREEN 0100.
+  ELSE.
+    MESSAGE &apos;Este programa no se puede ejecutar en fondo&apos;(pnf) TYPE &apos;E&apos;.
+  ENDIF.
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog-&gt;status_dynpro_0100( ).
+
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  o_prog-&gt;command_dynpro_0100( ).
+
+
+ENDMODULE.                 &quot; USER_COMMAND_0100  INPUT</source>
+</PROG>

@@ -1,0 +1,1450 @@
+CLASS zcl_ap_log DEFINITION
+  PUBLIC FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    DATA s_log TYPE bal_s_log.
+
+    CONSTANTS prob_very_high TYPE bal_s_msg-probclass VALUE '4' ##NO_TEXT.
+    CONSTANTS prob_high      TYPE bal_s_msg-probclass VALUE '3' ##NO_TEXT.
+    CONSTANTS prob_medium    TYPE bal_s_msg-probclass VALUE '2' ##NO_TEXT.
+    CONSTANTS prob_low       TYPE bal_s_msg-probclass VALUE '1' ##NO_TEXT.
+    CONSTANTS prob_none      TYPE bal_s_msg-probclass VALUE ' ' ##NO_TEXT.
+
+    DATA l_msg                 TYPE msgv1.
+    DATA l_msg2                TYPE msgv2.
+    DATA l_msg3                TYPE msgv3.
+    DATA l_msg4                TYPE msgv4.
+    DATA i_tabla_errores       TYPE ps_messages.
+    DATA error                 TYPE bal_s_msg.
+    DATA i_log                 TYPE zlog_t.
+    DATA log_handle            TYPE balloghndl.
+    DATA clave                 TYPE zlog-clave.
+    DATA guardar_tabla_interna TYPE abap_bool.
+    DATA no_grabar_log         TYPE abap_bool VALUE '' ##NO_TEXT.
+
+    METHODS constructor
+      IMPORTING extnumber             TYPE any       OPTIONAL
+                !object               TYPE any
+                subobject             TYPE any       OPTIONAL
+                !report               TYPE sy-cprog  OPTIONAL
+                grabar_siempre        TYPE abap_bool DEFAULT 'X'
+                dias_validez          TYPE i         DEFAULT 60
+                clave                 TYPE any       DEFAULT ''
+                guardar_tabla_interna TYPE abap_bool DEFAULT ''.
+
+    METHODS msg
+      IMPORTING msgty TYPE sy-msgty  DEFAULT sy-msgty
+                msgid TYPE sy-msgid  DEFAULT sy-msgid
+                msgno TYPE any       DEFAULT sy-msgno
+                msgv1 TYPE any       DEFAULT ''
+                msgv2 TYPE any       DEFAULT ''
+                msgv3 TYPE any       DEFAULT ''
+                msgv4 TYPE any       DEFAULT ''
+                prob  TYPE balprobcl DEFAULT prob_high.
+
+    METHODS msg_error
+      IMPORTING msgty TYPE sy-msgty  DEFAULT 'E'
+                msgid TYPE sy-msgid  DEFAULT '00'
+                msgno TYPE sy-msgno  DEFAULT '398'
+                msgv1 TYPE any       DEFAULT ''
+                msgv2 TYPE any       DEFAULT ' '
+                msgv3 TYPE any       DEFAULT ' '
+                msgv4 TYPE any       DEFAULT ' '
+                prob  TYPE balprobcl DEFAULT prob_very_high
+      PREFERRED PARAMETER msgv1.
+
+    METHODS msg_info
+      IMPORTING msgty TYPE sy-msgty  DEFAULT 'I'
+                msgid TYPE sy-msgid  DEFAULT '00'
+                msgno TYPE sy-msgno  DEFAULT '398'
+                msgv1 TYPE any       DEFAULT ''
+                msgv2 TYPE any       DEFAULT ' '
+                msgv3 TYPE any       DEFAULT ' '
+                msgv4 TYPE any       DEFAULT ' '
+                prob  TYPE balprobcl DEFAULT prob_none
+      PREFERRED PARAMETER msgv1.
+
+    METHODS msg_warning
+      IMPORTING msgty TYPE sy-msgty  DEFAULT 'W'
+                msgid TYPE sy-msgid  DEFAULT '00'
+                msgno TYPE sy-msgno  DEFAULT '398'
+                msgv1 TYPE any       DEFAULT ''
+                msgv2 TYPE any       DEFAULT ' '
+                msgv3 TYPE any       DEFAULT ' '
+                msgv4 TYPE any       DEFAULT ' '
+                prob  TYPE balprobcl DEFAULT prob_low.
+
+    METHODS msg_succes
+      IMPORTING msgty TYPE sy-msgty  DEFAULT 'S'
+                msgid TYPE sy-msgid  DEFAULT '00'
+                msgno TYPE sy-msgno  DEFAULT '398'
+                msgv1 TYPE any       DEFAULT ''
+                msgv2 TYPE any       DEFAULT ' '
+                msgv3 TYPE any       DEFAULT ' '
+                msgv4 TYPE any       DEFAULT ' '
+                prob  TYPE balprobcl DEFAULT prob_none
+      PREFERRED PARAMETER msgv1.
+
+    METHODS ver_log.
+
+    METHODS grabar
+      IMPORTING !refresh TYPE abap_bool DEFAULT 'X'.
+
+    METHODS msg_operacion
+      IMPORTING !subrc TYPE sy-subrc DEFAULT sy-subrc
+                texto  TYPE any      DEFAULT ''
+      PREFERRED PARAMETER texto.
+
+    METHODS msg_398
+      IMPORTING msgty TYPE sy-msgty
+                msgid TYPE sy-msgid  DEFAULT '00'
+                msgno TYPE sy-msgno  DEFAULT '398'
+                msgv1 TYPE sy-msgv1
+                msgv2 TYPE sy-msgv2  DEFAULT ' '
+                msgv3 TYPE sy-msgv3  DEFAULT ' '
+                msgv4 TYPE sy-msgv4  DEFAULT ' '
+                prob  TYPE balprobcl DEFAULT prob_very_high.
+
+    METHODS append_return
+      IMPORTING i_return TYPE fmfg_t_bapireturn.
+
+    CLASS-METHODS ver_logs
+      IMPORTING !object            TYPE balobj_d
+                subobject          TYPE balsubobj
+                extnumber          TYPE any       OPTIONAL
+                !report            TYPE sy-cprog  DEFAULT sy-cprog
+                borrar_logs_vacios TYPE abap_bool DEFAULT ''
+                date_from          TYPE dats      DEFAULT sy-datum
+                date_to            TYPE dats      DEFAULT sy-datum
+                inmediato          TYPE abap_bool DEFAULT ''.
+
+    METHODS append_matreturn2
+      IMPORTING i_return TYPE zcl_ap_material=>tt_bapi_matreturn2.
+
+    METHODS append_return2
+      IMPORTING i_return TYPE bapiret2_t.
+
+    METHODS append_bapiret2
+      IMPORTING !return TYPE bapiret2.
+
+    METHODS append_bdct
+      IMPORTING i_return TYPE tab_bdcmsgcoll.
+
+    METHODS append_bapireturn
+      IMPORTING !return TYPE bapireturn.
+
+    CLASS-METHODS borrar_log
+      IMPORTING !log TYPE balognr.
+
+    CLASS-METHODS borrar_logs
+      IMPORTING !object   TYPE any
+                subobject TYPE any       OPTIONAL
+                extnumber TYPE any       OPTIONAL
+                fecha     TYPE dats      OPTIONAL
+                vacios    TYPE abap_bool DEFAULT 'X'.
+
+    CLASS-METHODS get_text_message
+      IMPORTING !return        TYPE bapiret2
+      RETURNING VALUE(message) TYPE bapiret2-message.
+
+    CLASS-METHODS get_contenido_mensaje
+      IMPORTING lognumber       TYPE balhdr-lognumber OPTIONAL
+      PREFERRED PARAMETER lognumber
+      RETURNING VALUE(i_return) TYPE bapiret2_t.
+
+    METHODS set_tabla_log
+      IMPORTING msgid    TYPE any DEFAULT '00'
+                msgty    TYPE any DEFAULT 'E'
+                msgno    TYPE any DEFAULT '398'
+                msgv1    TYPE any OPTIONAL
+                msgv2    TYPE any OPTIONAL
+                msgv3    TYPE any OPTIONAL
+                msgv4    TYPE any OPTIONAL
+                !message TYPE any DEFAULT ''
+                fichero  TYPE any OPTIONAL
+                clave    TYPE any DEFAULT ''
+                p1       TYPE any DEFAULT ''
+                p2       TYPE any DEFAULT ''
+                p3       TYPE any DEFAULT ''
+                p4       TYPE any DEFAULT ''
+                p5       TYPE any DEFAULT ''
+                p6       TYPE any DEFAULT ''
+                p7       TYPE any DEFAULT ''
+                p8       TYPE any DEFAULT ''
+                p9       TYPE any DEFAULT ''.
+
+    METHODS set_tabla_log_syst
+      IMPORTING msgid    TYPE any DEFAULT sy-msgid
+                msgty    TYPE any DEFAULT sy-msgty
+                msgno    TYPE any DEFAULT sy-msgno
+                msgv1    TYPE any DEFAULT sy-msgv1
+                msgv2    TYPE any DEFAULT sy-msgv2
+                msgv3    TYPE any DEFAULT sy-msgv3
+                msgv4    TYPE any DEFAULT sy-msgv4
+                !message TYPE any DEFAULT ''
+                fichero  TYPE any DEFAULT ''
+                clave    TYPE any DEFAULT ''.
+
+    METHODS enviar_log_por_mail
+      IMPORTING info                    TYPE abap_bool DEFAULT ''
+                errores                 TYPE abap_bool DEFAULT 'X'
+                warnings                TYPE abap_bool DEFAULT 'X'
+                titulo                  TYPE any
+                destinatario            TYPE any       OPTIONAL
+                aviso_usuario_online    TYPE abap_bool DEFAULT ''
+                log_completo_en_adjunto TYPE abap_bool DEFAULT ''.
+
+    CLASS-METHODS ver_lognumber
+      IMPORTING lognumber TYPE balhdr-lognumber.
+
+    METHODS msg_syst
+      IMPORTING msgty TYPE sy-msgty  DEFAULT sy-msgty
+                msgid TYPE sy-msgid  DEFAULT sy-msgid
+                msgno TYPE any       DEFAULT sy-msgno
+                msgv1 TYPE any       DEFAULT sy-msgv1
+                msgv2 TYPE any       DEFAULT sy-msgv2
+                msgv3 TYPE any       DEFAULT sy-msgv3
+                msgv4 TYPE any       DEFAULT sy-msgv4
+                prob  TYPE balprobcl DEFAULT prob_high.
+
+    METHODS free.
+
+    CLASS-METHODS set_log
+      IMPORTING proceso          TYPE any
+                progname         TYPE any      DEFAULT sy-cprog
+                clave            TYPE any      DEFAULT ''
+                msgid            TYPE any      OPTIONAL
+                msgty            TYPE any      DEFAULT 'E'
+                msgno            TYPE any      OPTIONAL
+                msgv1            TYPE any      OPTIONAL
+                msgv2            TYPE any      OPTIONAL
+                msgv3            TYPE any      OPTIONAL
+                msgv4            TYPE any      OPTIONAL
+                !message         TYPE any      DEFAULT ''
+                fichero          TYPE any      OPTIONAL
+                !mail            TYPE any      DEFAULT ''
+                solo_primera_vez TYPE any      DEFAULT ''
+                p1               TYPE any      DEFAULT ''
+                p2               TYPE any      DEFAULT ''
+                p3               TYPE any      DEFAULT ''
+                p4               TYPE any      DEFAULT ''
+                p5               TYPE any      DEFAULT ''
+                p6               TYPE any      DEFAULT ''
+                p7               TYPE any      DEFAULT ''
+                p8               TYPE any      DEFAULT ''
+                p9               TYPE any      DEFAULT ''
+                p10              TYPE any      DEFAULT ''
+                p15              TYPE any      DEFAULT ''
+                p14              TYPE any      DEFAULT ''
+                p13              TYPE any      DEFAULT ''
+                p12              TYPE any      DEFAULT ''
+                p11              TYPE any      DEFAULT ''
+                !uname           TYPE sy-uname DEFAULT sy-uname
+      RETURNING VALUE(zlog)      TYPE zlog.
+
+    METHODS set_tabla_log_from_bapiret2
+      IMPORTING bapiret2 TYPE bapiret2 OPTIONAL
+                clave    TYPE any      DEFAULT ''
+      PREFERRED PARAMETER bapiret2.
+
+    METHODS set_tabla_log_from_bapiret2_t
+      IMPORTING bapiret2_t TYPE bapiret2_t OPTIONAL
+                clave      TYPE any        DEFAULT ''
+      PREFERRED PARAMETER bapiret2_t.
+
+    METHODS show_log
+      IMPORTING show_msgv1 TYPE abap_bool DEFAULT ''
+                show_msgv2 TYPE abap_bool DEFAULT ''
+                titulo     TYPE any       DEFAULT ''.
+
+    METHODS log
+      IMPORTING msgid            TYPE any      DEFAULT '00'
+                msgty            TYPE any      DEFAULT 'E'
+                msgno            TYPE any      DEFAULT '398'
+                msgv1            TYPE any      OPTIONAL
+                msgv2            TYPE any      OPTIONAL
+                msgv3            TYPE any      OPTIONAL
+                msgv4            TYPE any      OPTIONAL
+                !message         TYPE any      DEFAULT ''
+                fichero          TYPE any      OPTIONAL
+                clave            TYPE any      DEFAULT ''
+                p1               TYPE any      DEFAULT ''
+                p2               TYPE any      DEFAULT ''
+                p3               TYPE any      DEFAULT ''
+                p4               TYPE any      DEFAULT ''
+                p5               TYPE any      DEFAULT ''
+                p6               TYPE any      DEFAULT ''
+                p7               TYPE any      DEFAULT ''
+                p8               TYPE any      DEFAULT ''
+                p9               TYPE any      DEFAULT ''
+                p10              TYPE any      DEFAULT ''
+                solo_primera_vez TYPE any      DEFAULT ''
+                p11              TYPE any      DEFAULT ''
+                p12              TYPE any      DEFAULT ''
+                p13              TYPE any      DEFAULT ''
+                p14              TYPE any      DEFAULT ''
+                p15              TYPE any      DEFAULT ''
+                !uname           TYPE sy-uname DEFAULT sy-uname
+      RETURNING VALUE(zlog)      TYPE zlog.
+
+    METHODS logm
+      IMPORTING msgid            TYPE any DEFAULT '00'
+                msgty            TYPE any DEFAULT 'E'
+                msgno            TYPE any DEFAULT '398'
+                msgv1            TYPE any OPTIONAL
+                msgv2            TYPE any OPTIONAL
+                msgv3            TYPE any OPTIONAL
+                msgv4            TYPE any OPTIONAL
+                !message         TYPE any DEFAULT ''
+                fichero          TYPE any OPTIONAL
+                clave            TYPE any DEFAULT ''
+                p1               TYPE any DEFAULT ''
+                p2               TYPE any DEFAULT ''
+                p3               TYPE any DEFAULT ''
+                p4               TYPE any DEFAULT ''
+                p5               TYPE any DEFAULT ''
+                p6               TYPE any DEFAULT ''
+                p7               TYPE any DEFAULT ''
+                p8               TYPE any DEFAULT ''
+                p9               TYPE any DEFAULT ''
+                p10              TYPE any DEFAULT ''
+                solo_primera_vez TYPE any DEFAULT ''
+      RETURNING VALUE(msg)       TYPE bapi_msg.
+
+    METHODS save_ilog
+      IMPORTING nueva_clave TYPE any DEFAULT ''.
+
+    CLASS-METHODS grabar_cambios
+      IMPORTING tabla       TYPE any DEFAULT ''
+                campo       TYPE any DEFAULT ''
+                !new        TYPE any
+                old         TYPE any DEFAULT ''
+                progname    TYPE any DEFAULT sy-cprog
+                proceso     TYPE any DEFAULT 'CAMBIOS'
+                clave       TYPE any
+                campo_clave TYPE any DEFAULT ''.
+
+    CLASS-METHODS borrar_logsz
+      IMPORTING dias_error   TYPE int2 DEFAULT 90
+                dias_warning TYPE int2 DEFAULT 45
+                dias_resto   TYPE int2 DEFAULT 30.
+
+
+  PRIVATE SECTION.
+    DATA s_msg          TYPE bal_s_msg.
+    DATA hay_cambios    TYPE abap_bool.
+    DATA grabar_siempre TYPE abap_bool.
+endclass. "ZCL_AP_LOG definition
+class ZCL_AP_LOG implementation.
+  METHOD append_bapiret2.
+    DATA: l_type TYPE sy-msgty,
+          l_prob TYPE balprobcl.
+
+    CHECK NOT return IS INITIAL.
+
+    l_type = return-type.
+
+* Los datos batch input para el dynpro xxx no existen.
+    IF return-id = '00' AND return-number = '344'.
+      l_type = 'E'.
+    ENDIF.
+
+    CASE l_type.
+      WHEN 'S' OR 'I'. l_prob = prob_none.
+      WHEN 'W'. l_prob = prob_low.
+      WHEN OTHERS. l_prob = prob_very_high.
+    ENDCASE.
+
+    msg( msgty = l_type
+         msgid = return-id
+         msgno = return-number
+         msgv1 = return-message_v1
+         msgv2 = return-message_v2
+         msgv3 = return-message_v3
+         msgv4 = return-message_v4
+         prob  = l_prob ).
+  ENDMETHOD.
+  METHOD append_bapireturn.
+    DATA: l_prob   TYPE balprobcl,
+          l_id     TYPE msgid,
+          l_number TYPE sy-msgno.
+
+    CASE return-type.
+      WHEN 'S' OR 'I'. l_prob = prob_none.
+      WHEN 'W'. l_prob = prob_low.
+      WHEN OTHERS. l_prob = prob_very_high.
+    ENDCASE.
+
+    l_id = return-code(2).
+    l_number = return-code+2.
+
+    msg( msgty = return-type
+         msgid = l_id
+         msgno = l_number
+         msgv1 = return-message_v1
+         msgv2 = return-message_v2
+         msgv3 = return-message_v3
+         msgv4 = return-message_v4
+         prob  = l_prob ).
+  ENDMETHOD.
+  METHOD append_bdct.
+    DATA: l_bdc    TYPE bdcmsgcoll,
+          l_return TYPE bapiret2.
+
+    LOOP AT i_return INTO l_bdc.
+      CLEAR l_return.
+      l_return-type       = l_bdc-msgtyp.
+      l_return-id         = l_bdc-msgid.
+      l_return-number     = l_bdc-msgnr.
+      l_return-message_v1 = l_bdc-msgv1.
+      l_return-message_v2 = l_bdc-msgv2.
+      l_return-message_v3 = l_bdc-msgv3.
+      l_return-message_v4 = l_bdc-msgv4.
+
+      append_bapiret2( l_return ).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD append_matreturn2.
+    DATA: l_return TYPE bapi_matreturn2,
+          l_prob   TYPE balprobcl.
+
+    LOOP AT i_return INTO l_return.
+
+      CASE l_return-type.
+        WHEN 'S' OR 'I'. l_prob = prob_none.
+        WHEN 'W'. l_prob = prob_low.
+        WHEN OTHERS. l_prob = prob_very_high.
+      ENDCASE.
+
+      msg( msgty = l_return-type
+           msgid = l_return-id
+           msgno = l_return-number
+           msgv1 = l_return-message_v1
+           msgv2 = l_return-message_v2
+           msgv3 = l_return-message_v3
+           msgv4 = l_return-message_v4
+           prob  = l_prob ).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD append_return.
+    DATA: l_return TYPE bapireturn,
+          l_id     TYPE msgid,
+          l_number TYPE sy-msgno,
+          l_prob   TYPE balprobcl.
+
+    LOOP AT i_return INTO l_return.
+      l_id = l_return-code(2).
+      l_number = l_return-code+2.
+
+      CASE l_return-type.
+        WHEN 'S' OR 'I'. l_prob = prob_none.
+        WHEN 'W'. l_prob = prob_low.
+        WHEN OTHERS. l_prob = prob_very_high.
+      ENDCASE.
+
+      msg( msgty = l_return-type
+           msgid = l_id
+           msgno = l_number
+           msgv1 = l_return-message_v1
+           msgv2 = l_return-message_v2
+           msgv3 = l_return-message_v3
+           msgv4 = l_return-message_v4
+           prob  = l_prob ).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD append_return2.
+    DATA l_return TYPE bapiret2.
+
+    LOOP AT i_return INTO l_return.
+      append_bapiret2( l_return ).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD borrar_log.
+    DATA i_t_lognumber TYPE bal_t_logn.
+
+    APPEND log TO i_t_lognumber.
+    CALL FUNCTION 'BAL_DB_DELETE'
+      EXPORTING
+*       I_T_LOGS_TO_DELETE =
+*       I_T_LOG_HANDLE     =
+        i_t_lognumber      = i_t_lognumber
+*       I_CLIENT           = SY-MANDT
+        i_in_update_task   = ' '
+        i_with_commit_work = 'X'
+*       I_PACKAGE_SIZE     = 100
+      EXCEPTIONS
+        no_logs_specified  = 1
+        OTHERS             = 2.
+
+    COMMIT WORK AND WAIT.
+  ENDMETHOD.
+  METHOD borrar_logs.
+    DATA: r_obj    TYPE RANGE OF balobj_d,
+          r_fec    TYPE RANGE OF baldate,
+          r_num    TYPE RANGE OF baldbcntal,
+          lr_obj   LIKE LINE OF r_obj,
+          lr_sub   LIKE LINE OF r_obj,
+          r_sub    TYPE RANGE OF balsubobj,
+          lr_ext   LIKE LINE OF r_obj,
+          r_ext    TYPE RANGE OF balnrext,
+          lr_fec   LIKE LINE OF r_fec,
+          lr_num   LIKE LINE OF r_num,
+          l_tabla  TYPE tabname,
+          i_balhdr TYPE balhdr_t.
+
+    IF NOT object IS INITIAL.
+      lr_obj-option = 'EQ'.
+      lr_obj-sign   = 'I'.
+      lr_obj-low    = object.
+      APPEND lr_obj TO r_obj.
+    ENDIF.
+    IF NOT subobject IS INITIAL.
+      lr_sub-option = 'EQ'.
+      lr_sub-sign   = 'I'.
+      lr_sub-low    = subobject.
+      APPEND lr_sub TO r_sub.
+    ENDIF.
+    IF NOT extnumber IS INITIAL.
+      lr_ext-option = 'EQ'.
+      lr_ext-sign   = 'I'.
+      lr_ext-low    = extnumber.
+      APPEND lr_ext TO r_ext.
+    ENDIF.
+    IF NOT fecha IS INITIAL.
+      lr_fec-option = 'EQ'.
+      lr_fec-sign   = 'I'.
+      lr_fec-low    = fecha.
+      APPEND lr_fec TO r_fec.
+    ENDIF.
+    IF NOT vacios IS INITIAL.
+      lr_num-option = 'EQ'.
+      lr_num-sign   = 'I'.
+      lr_num-low    = 0.
+      APPEND lr_num TO r_num.
+    ENDIF.
+
+    l_tabla = 'BALHDR'.
+    SELECT * FROM (l_tabla)
+      INTO TABLE i_balhdr
+     WHERE object     IN r_obj
+       AND subobject  IN r_sub
+       AND extnumber  IN r_ext
+       AND aldate     IN r_fec
+       AND msg_cnt_al IN r_num.
+
+    IF sy-subrc = 0.
+      CALL FUNCTION 'BAL_DB_DELETE'
+        EXPORTING
+          i_t_logs_to_delete = i_balhdr
+*         I_T_LOG_HANDLE     =
+*         i_t_lognumber      = i_t_lognumber
+*         I_CLIENT           = SY-MANDT
+          i_in_update_task   = ''
+          i_with_commit_work = 'X'
+*         I_PACKAGE_SIZE     = 100
+        EXCEPTIONS
+          no_logs_specified  = 1
+          OTHERS             = 2.
+
+      COMMIT WORK AND WAIT.
+    ENDIF.
+  ENDMETHOD.
+  METHOD borrar_logsz.
+    FIELD-SYMBOLS <log> TYPE zlog_param.
+
+    DATA: r_proceso    TYPE RANGE OF zlog_param-proceso,
+          i_logs_param TYPE TABLE OF zlog_param,
+          l_fecha      TYPE d,
+          lr_proceso   LIKE LINE OF r_proceso.
+
+    SELECT proceso dias_error dias_warning dias_resto FROM zlog_param "#EC CI_NOFIELD
+      INTO CORRESPONDING FIELDS OF TABLE i_logs_param
+     WHERE dias_error   <> 0
+        OR dias_warning <> 0
+        OR dias_resto   <> 0.
+
+    CLEAR r_proceso.
+    LOOP AT i_logs_param ASSIGNING <log> WHERE dias_error <> 0. "#EC CI_STDSEQ
+      l_fecha = sy-datum - <log>-dias_error.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE proceso = <log>-proceso
+         AND fecha   < l_fecha
+         AND msgty   = 'E'.
+      CLEAR lr_proceso.
+      lr_proceso-option = 'EQ'.
+      lr_proceso-sign   = 'E'.
+      lr_proceso-low    = <log>-proceso.
+      APPEND lr_proceso TO r_proceso.
+    ENDLOOP.
+    IF NOT dias_error IS INITIAL.
+      l_fecha = sy-datum - dias_error.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE proceso IN r_proceso
+         AND fecha    < l_fecha
+         AND msgty    = 'E'.
+    ENDIF.
+
+    CLEAR r_proceso.
+    LOOP AT i_logs_param ASSIGNING <log> WHERE dias_warning <> 0. "#EC CI_STDSEQ
+      l_fecha = sy-datum - <log>-dias_warning.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE proceso = <log>-proceso
+         AND fecha   < l_fecha
+         AND msgty   = 'W'.
+      CLEAR lr_proceso.
+      lr_proceso-option = 'EQ'.
+      lr_proceso-sign   = 'E'.
+      lr_proceso-low    = <log>-proceso.
+      APPEND lr_proceso TO r_proceso.
+    ENDLOOP.
+    IF NOT dias_warning IS INITIAL.
+      l_fecha = sy-datum - dias_warning.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE proceso IN r_proceso
+         AND fecha    < l_fecha
+         AND msgty    = 'W'.
+    ENDIF.
+
+    CLEAR r_proceso.
+    LOOP AT i_logs_param ASSIGNING <log> WHERE dias_resto <> 0. "#EC CI_STDSEQ
+      l_fecha = sy-datum - <log>-dias_resto.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE     proceso  = <log>-proceso
+         AND     fecha    < l_fecha
+         AND NOT msgty   IN ( 'E', 'W' ).
+      CLEAR lr_proceso.
+      lr_proceso-option = 'EQ'.
+      lr_proceso-sign   = 'E'.
+      lr_proceso-low    = <log>-proceso.
+      APPEND lr_proceso TO r_proceso.
+    ENDLOOP.
+    IF NOT dias_resto IS INITIAL.
+      l_fecha = sy-datum - dias_resto.
+      DELETE FROM (zcl_c=>tabla_zlog)
+       WHERE     proceso IN r_proceso
+         AND     fecha    < l_fecha
+         AND NOT msgty   IN ( 'E', 'W' ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD constructor.
+    CLEAR s_log.
+    s_log-object    = object.
+    s_log-subobject = subobject.
+
+    IF extnumber IS INITIAL.
+      CONCATENATE sy-datum '_' sy-uzeit INTO s_log-extnumber.
+    ELSE.
+      s_log-extnumber = extnumber.
+    ENDIF.
+    s_log-aluser = sy-uname.
+    IF report IS INITIAL.
+      s_log-alprog = sy-cprog.
+    ELSE.
+      s_log-alprog = report.
+    ENDIF.
+    s_log-aldate_del = sy-datum + dias_validez.
+
+* ... see structure BAL_S_LOG for further data ...
+* ... which can be added to a log header       ...
+* create a log
+    IF NOT s_log-subobject IS INITIAL.
+      CALL FUNCTION 'BAL_LOG_CREATE'
+        EXPORTING
+          i_s_log      = s_log
+        IMPORTING
+          e_log_handle = log_handle
+        EXCEPTIONS
+          OTHERS       = 1.
+    ENDIF.
+
+    CLEAR hay_cambios.
+
+    me->grabar_siempre        = grabar_siempre.
+    me->clave                 = clave.
+    me->guardar_tabla_interna = guardar_tabla_interna.
+  ENDMETHOD.
+  METHOD enviar_log_por_mail.
+    " TODO: parameter ERRORES is never used (ABAP cleaner)
+
+    DATA: i_logm   TYPE zlog_t,
+          l_param  TYPE zlog_param,
+          o_mail   TYPE REF TO zcl_ap_envio_mail,
+          l_string TYPE string,
+          l_log    TYPE zlog.
+
+    i_logm = i_log.
+
+    IF info = ''.
+      DELETE i_logm WHERE msgty = 'I' OR msgty = 'S'.    "#EC CI_STDSEQ
+    ENDIF.
+    IF warnings = ''.
+      DELETE i_logm WHERE msgty = 'W'.                   "#EC CI_STDSEQ
+    ENDIF.
+
+    IF i_logm IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE * FROM zlog_param
+      INTO l_param
+     WHERE proceso = s_log-object.
+
+    o_mail = NEW #(
+        usar_clases = 'X' ).
+
+    IF destinatario IS INITIAL.
+      IF l_param-email IS INITIAL.
+        MESSAGE 'Debe definir un destinatario para mail del log'(ddm) TYPE 'E'.
+      ELSE.
+        o_mail->add_destinatario( destinatario = l_param-email ).
+      ENDIF.
+    ELSE.
+      o_mail->add_destinatario( destinatario = destinatario ).
+    ENDIF.
+
+    IF aviso_usuario_online = 'X'.
+      o_mail->add_destinatario( destinatario = sy-uname ).
+    ENDIF.
+
+    o_mail->cabecera_html( ).
+
+    IF titulo IS INITIAL.
+      IF s_log-object = s_log-alprog.
+        CONCATENATE 'Mensajes proceso'(msp) s_log-object sy-datum sy-uzeit INTO l_string SEPARATED BY space.
+      ELSE.
+        CONCATENATE 'Mensajes proceso'(msp) s_log-object s_log-alprog sy-datum sy-uzeit INTO l_string SEPARATED BY space.
+      ENDIF.
+
+      o_mail->add_parrafo_html( l_string ).
+    ENDIF.
+
+    o_mail->set_text( '<font size="2">' ).
+    o_mail->inicio_tabla_html( longitud = 1600
+                               c1 = l_param-msgv1
+                               c2 = l_param-msgv2
+                               c3 = l_param-msgv3
+                               c4 = l_param-msgv4
+                               c5 = 'Mensaje'(msg) ).
+
+    LOOP AT i_logm INTO l_log.
+      o_mail->add_fila_html( c1 = l_log-msgv1
+                             c2 = l_log-msgv2
+                             c3 = l_log-msgv3
+                             c4 = l_log-msgv4
+                             c5 = l_log-message ).
+    ENDLOOP.
+
+    o_mail->fin_tabla_html( ).
+    o_mail->set_text( '</font>' ).
+    o_mail->set_text( '</body></html>' ).
+
+    CONCATENATE titulo l_string INTO l_string SEPARATED BY space.
+
+    IF log_completo_en_adjunto IS INITIAL.
+      o_mail->add_itab_alv_as_xls( EXPORTING descripcion = 'Mensajes'(msg) CHANGING itab = i_logm ).
+    ELSE.
+      o_mail->add_itab_alv_as_xls( EXPORTING descripcion = 'Mensajes'(msg) CHANGING itab = i_log ).
+    ENDIF.
+
+    o_mail->envio_mail(
+        subject             = l_string
+        html                = 'X'
+        forzar_mail_externo = 'X' ).
+
+    o_mail->free( ).
+    " TODO: remove needless CLEAR (ABAP cleaner)
+    CLEAR o_mail.
+  ENDMETHOD.
+  METHOD free.
+    IF NOT log_handle IS INITIAL.
+      CALL FUNCTION 'BAL_LOG_REFRESH'
+        EXPORTING
+          i_log_handle  = log_handle
+        EXCEPTIONS
+          log_not_found = 1.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_contenido_mensaje.
+    DATA: g_r_lognumber  TYPE bal_s_logn,
+          g_s_log_filter TYPE bal_s_lfil,
+          g_t_log_header TYPE balhdr_t,
+          i_msg          TYPE bal_t_msgh,
+          l_return       TYPE bapiret2,
+          l_message      TYPE bal_s_msg,
+          l_header       TYPE balhdr.
+
+    g_r_lognumber-sign   = 'I'.
+    g_r_lognumber-option = 'EQ'.
+    g_r_lognumber-low    = lognumber.
+    APPEND g_r_lognumber TO g_s_log_filter-lognumber.
+
+    CALL FUNCTION 'BAL_DB_SEARCH'
+      EXPORTING
+        i_s_log_filter = g_s_log_filter
+      IMPORTING
+        e_t_log_header = g_t_log_header
+      EXCEPTIONS
+        OTHERS         = 0.
+
+    CALL FUNCTION 'BAL_DB_LOAD'
+      EXPORTING
+        i_t_log_header = g_t_log_header
+      IMPORTING
+        e_t_msg_handle = i_msg
+      EXCEPTIONS
+        OTHERS         = 0.
+
+    LOOP AT i_msg ASSIGNING FIELD-SYMBOL(<msg>).
+
+      CLEAR l_return.
+      CALL FUNCTION 'BAL_LOG_MSG_READ'
+        EXPORTING
+          i_s_msg_handle = <msg>
+          i_langu        = sy-langu
+        IMPORTING
+          e_s_msg        = l_message
+*         E_EXISTS_ON_DB =
+*         e_txt_msgty    = l_return-type
+*         e_txt_msgid    = l_return-id
+*         e_txt_detlevel =
+*         e_txt_probclass                =
+          e_txt_msg      = l_return-message
+*         E_WARNING_TEXT_NOT_FOUND       =
+        EXCEPTIONS
+          log_not_found  = 1
+          msg_not_found  = 2
+          OTHERS         = 3.
+
+      MOVE-CORRESPONDING l_message TO l_return.
+      l_return-type       = l_message-msgty.
+      l_return-id         = l_message-msgid.
+      l_return-number     = l_message-msgno.
+      l_return-message_v1 = l_message-msgv1.
+      l_return-message_v2 = l_message-msgv2.
+      l_return-message_v3 = l_message-msgv3.
+      l_return-message_v4 = l_message-msgv4.
+
+      IF l_return-message IS INITIAL.
+        CALL FUNCTION 'BAL_DSP_TXT_MSG_READ'
+          EXPORTING
+            i_langu        = sy-langu
+            i_msgid        = l_message-msgid
+            i_msgno        = l_message-msgno
+            i_msgv1        = l_message-msgv1
+            i_msgv2        = l_message-msgv2
+            i_msgv3        = l_message-msgv3
+            i_msgv4        = l_message-msgv4
+          IMPORTING
+            e_message_text = l_return-message.
+      ENDIF.
+      APPEND l_return TO i_return.
+    ENDLOOP.
+    IF NOT l_header-log_handle IS INITIAL.
+      CALL FUNCTION 'BAL_LOG_REFRESH'
+        EXPORTING
+          i_log_handle  = l_header-log_handle
+        EXCEPTIONS
+          log_not_found = 1
+          OTHERS        = 2.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_text_message.
+    MESSAGE ID return-id TYPE return-type NUMBER return-number
+            WITH return-message_v1 return-message_v2 return-message_v3 return-message_v4
+            INTO message.
+  ENDMETHOD.
+  METHOD grabar.
+    IF NOT ( hay_cambios = 'X' OR grabar_siempre = 'X' ).
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION 'BAL_DB_SAVE'
+      EXPORTING
+*       I_CLIENT         = SY-MANDT
+*       I_IN_UPDATE_TASK = ' '
+        i_save_all       = 'X'
+*       I_T_LOG_HANDLE   =
+* IMPORTING
+*       E_NEW_LOGNUMBERS =
+      EXCEPTIONS
+        log_not_found    = 1
+        save_not_allowed = 2
+        numbering_error  = 3
+        OTHERS           = 4.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      IF refresh = 'X'.
+        free( ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD grabar_cambios.
+    DATA: o_dato  TYPE REF TO data,
+          l_where TYPE string,
+          l_old   TYPE string.
+
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    IF old IS INITIAL AND NOT campo_clave IS INITIAL AND NOT tabla IS INITIAL AND NOT clave IS INITIAL.
+      TRY.
+          ASSIGN ('NEW') TO <fs>.
+          CREATE DATA o_dato LIKE <fs>.
+          ASSIGN o_dato->* TO <fs>.
+
+          CONCATENATE '''' clave '''' INTO l_where.
+          CONCATENATE campo_clave '=' l_where INTO l_where SEPARATED BY space.
+          SELECT SINGLE (campo) FROM (tabla)
+            INTO <fs>
+           WHERE (l_where).
+          l_old = <fs>.
+        CATCH cx_root.
+          EXIT.
+      ENDTRY.
+    ELSE.
+      l_old = old.
+    ENDIF.
+
+    IF new <> l_old.
+      zcl_ap_log=>set_log(
+          proceso  = proceso
+          progname = progname
+          clave    = clave
+          msgty    = 'I'
+          msgv1    = tabla
+          msgv2    = campo
+          msgv3    = new
+          msgv4    = l_old ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD log.
+    DATA l_clave TYPE zlog-clave.
+
+    IF no_grabar_log = 'X'.
+      RETURN.
+    ENDIF.
+
+    IF NOT clave IS INITIAL.
+      l_clave = clave.
+    ELSE.
+      l_clave = me->clave.
+    ENDIF.
+
+    zlog = set_log( proceso  = s_log-object
+                      progname = s_log-alprog
+                      clave    = l_clave
+             msgid    = msgid
+             msgty    = msgty
+             msgno    = msgno
+             msgv1    = msgv1
+             msgv2    = msgv2
+             msgv3    = msgv3
+             msgv4    = msgv4
+             p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6 p7 = p7 p8 = p8 p9 = p9 p10 = p10 p11 = p11 p12 = p12 p13 = p13 p14 = p14 p15 = p15
+             message  = message
+             fichero  = fichero
+             solo_primera_vez = solo_primera_vez
+             uname = uname ).
+
+    IF guardar_tabla_interna = 'X' AND NOT zlog IS INITIAL.
+      APPEND zlog TO i_log.
+    ENDIF.
+  ENDMETHOD.
+  METHOD logm.
+    DATA l_zlog TYPE zlog.
+
+    l_zlog = log( clave    = clave
+             msgid    = msgid
+             msgty    = msgty
+             msgno    = msgno
+             msgv1    = msgv1
+             msgv2    = msgv2
+             msgv3    = msgv3
+             msgv4    = msgv4
+             p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6 p7 = p7 p8 = p8 p9 = p9 p10 = p10
+             message  = message
+             fichero  = fichero
+             solo_primera_vez = solo_primera_vez ).
+
+    msg = l_zlog-message.
+  ENDMETHOD.
+  METHOD msg.
+* define data of message for Application Log
+    s_msg-msgty     = msgty.
+    s_msg-msgid     = msgid.
+    s_msg-msgno     = msgno.
+    s_msg-msgv1     = msgv1.
+    s_msg-msgv2     = msgv2.
+    s_msg-msgv3     = msgv3.
+    s_msg-msgv4     = msgv4.
+    s_msg-probclass = prob.
+    CONDENSE: s_msg-msgv1, s_msg-msgv2, s_msg-msgv3, s_msg-msgv4.
+* ... see structure BAL_S_LOG or report SBAL_DEMO_02 for ...
+* ... further data which can be added to a message       ...
+
+* add this message to log file
+* we do not specify I_LOG_HANDLE since we want to add this message
+* to the default log. If it does not exist we do not care
+* (EXCEPTIONS log_not_found = 0).
+    CALL FUNCTION 'BAL_LOG_MSG_ADD'
+      EXPORTING
+        i_s_msg       = s_msg
+*       I_LOG_HANDLE  =
+      EXCEPTIONS
+        log_not_found = 0
+        OTHERS        = 1.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+    hay_cambios = 'X'.
+
+    APPEND s_msg TO i_tabla_errores.
+
+    IF guardar_tabla_interna = 'X'.
+      log( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4 ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD msg_398.
+    DATA l_prob TYPE balprobcl.
+
+    CASE msgty.
+      WHEN 'E'.
+        l_prob = prob_very_high.
+      WHEN 'W'.
+        l_prob = prob_low.
+      WHEN 'I'.
+        l_prob = prob_none.
+    ENDCASE.
+
+    msg( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4
+         prob  = l_prob ).
+  ENDMETHOD.
+  METHOD msg_error.
+    msg( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4
+         prob  = prob ).
+  ENDMETHOD.
+  METHOD msg_info.
+    DATA l_msgv1 TYPE msgv1.
+
+    l_msgv1 = msgv1.
+    msg( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = l_msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4
+         prob  = prob ).
+  ENDMETHOD.
+  METHOD msg_operacion.
+    DATA l_msgv2 TYPE msgv2.
+
+    IF subrc <> 0.
+      l_msgv2 = sy-subrc.
+    ENDIF.
+    msg_succes( msgv1 = texto msgv2 = l_msgv2 ).
+  ENDMETHOD.
+  METHOD msg_succes.
+    msg( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4
+         prob  = prob ).
+  ENDMETHOD.
+  METHOD msg_syst.
+    " TODO: parameter PROB is never used (ABAP cleaner)
+
+* define data of message for Application Log
+    s_msg-msgty = msgty.
+    s_msg-msgid = msgid.
+    s_msg-msgno = msgno.
+    s_msg-msgv1 = msgv1.
+    s_msg-msgv2 = msgv2.
+    s_msg-msgv3 = msgv3.
+    s_msg-msgv4 = msgv4.
+
+    CASE msgty.
+      WHEN 'E' OR '' OR 'A'.
+        s_msg-probclass = prob_very_high.
+      WHEN 'S' OR 'I'.
+        s_msg-probclass = prob_none.
+      WHEN 'W'.
+        s_msg-probclass = prob_low.
+
+    ENDCASE.
+* ... see structure BAL_S_LOG or report SBAL_DEMO_02 for ...
+* ... further data which can be added to a message       ...
+
+* add this message to log file
+* we do not specify I_LOG_HANDLE since we want to add this message
+* to the default log. If it does not exist we do not care
+* (EXCEPTIONS log_not_found = 0).
+    CALL FUNCTION 'BAL_LOG_MSG_ADD'
+      EXPORTING
+        i_s_msg       = s_msg
+*       I_LOG_HANDLE  =
+      EXCEPTIONS
+        log_not_found = 0
+        OTHERS        = 1.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+    hay_cambios = 'X'.
+
+    APPEND s_msg TO i_tabla_errores.
+  ENDMETHOD.
+  METHOD msg_warning.
+    msg( msgty = msgty
+         msgid = msgid
+         msgno = msgno
+         msgv1 = msgv1
+         msgv2 = msgv2
+         msgv3 = msgv3
+         msgv4 = msgv4
+         prob  = prob ).
+  ENDMETHOD.
+  METHOD save_ilog.
+    FIELD-SYMBOLS <zlog> TYPE zlog.
+
+    IF NOT nueva_clave IS INITIAL.
+      LOOP AT i_log ASSIGNING <zlog>.
+        DELETE zlog FROM <zlog>.
+
+        <zlog>-clave = nueva_clave.
+      ENDLOOP.
+    ENDIF.
+
+    MODIFY zlog FROM TABLE i_log.
+
+    LOOP AT i_log ASSIGNING FIELD-SYMBOL(<log>) WHERE msgty = 'M' AND message CS '&'.
+      SPLIT <log>-message AT '&' INTO DATA(l_email) DATA(l_asunto).
+      zcl_ap_envio_mail=>mail( direccion = l_email
+                               subject   = l_asunto
+                               texto     = l_asunto ).
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD set_log.
+    DATA: l_message   TYPE message,
+          zlog_param  TYPE zlog_param,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_zlog      TYPE zlog,
+          l_direccion TYPE string,
+          l_subject   TYPE string,
+          l_texto     TYPE solisti1,
+          i_textos    TYPE rspc_t_text.
+
+    l_message = message.
+    IF message IS INITIAL AND NOT p1 IS INITIAL.
+      l_message = zcl_ap_utils=>concat( p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6 p7 = p7 p8 = p8 p9 = p9 p10 = p10 p11 = p11 p12 = p12 p13 = p13 p14 = p14 p15 = p15 ).
+    ENDIF.
+
+    CLEAR zlog.
+    zlog-proceso  = proceso.
+    zlog-progname = progname.
+    zlog-clave    = clave.
+    zlog-fecha    = sy-datum.
+    zlog-hora     = sy-uzeit.
+    zlog-usuario  = uname.
+    zlog-msgid    = msgid.
+    zlog-msgty    = msgty.
+    zlog-msgno    = msgno.
+    zlog-msgv1    = msgv1.
+    zlog-msgv2    = msgv2.
+    zlog-msgv3    = msgv3.
+    zlog-msgv4    = msgv4.
+    zlog-message  = l_message.
+
+    IF         l_message IS INITIAL
+       AND NOT msgno     IS INITIAL
+       AND NOT msgid     IS INITIAL.
+      MESSAGE ID msgid TYPE 'S' NUMBER msgno
+              WITH msgv1 msgv2 msgv3 msgv4
+              INTO zlog-message.
+    ENDIF.
+
+    zlog-fichero = fichero.
+
+    CLEAR zlog_param.
+    SELECT SINGLE solo_tipos endda email FROM zlog_param
+      INTO CORRESPONDING FIELDS OF zlog_param
+     WHERE proceso = zlog-proceso.
+    IF NOT zlog_param-endda IS INITIAL.
+* Si hay fecha fin es que han limitado la grabación del lo a una fecha tope
+      IF sy-datum > zlog_param-endda.
+        RETURN.
+      ENDIF.
+    ENDIF.
+    IF NOT zlog_param-solo_tipos IS INITIAL.
+* Sólo grabaremos determinados tipos de error
+      IF zcl_ap_lista=>es_elemento( lista = zlog_param-solo_tipos elemento = msgty ) = ''.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    IF solo_primera_vez = 'X'.
+      SELECT SINGLE proceso FROM (zcl_c=>tabla_zlog)
+        INTO l_zlog-proceso
+             WHERE proceso  = proceso
+               AND progname = progname
+               AND clave    = clave
+               AND msgv1    = msgv1
+               AND msgv2    = msgv2
+               AND msgv3    = msgv3
+               AND msgv4    = msgv4
+               AND msgty    = msgty
+               AND msgid    = msgid
+               AND msgno    = msgno
+               AND message  = l_message
+               AND fichero  = fichero.
+      IF sy-subrc = 0.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    SELECT MAX( indice ) FROM (zcl_c=>tabla_zlog)
+      INTO zlog-indice
+     WHERE proceso  = zlog-proceso
+       AND progname = zlog-progname
+       AND clave    = zlog-clave
+       AND fecha    = zlog-fecha
+       AND hora     = zlog-hora
+       AND usuario  = zlog-usuario.
+    zlog-indice = zlog-indice + 1.
+
+    TRY.
+        INSERT (zcl_c=>tabla_zlog) FROM zlog.
+
+        IF NOT mail IS INITIAL AND zlog-msgty = 'E'.
+          IF mail = 'X'.
+            l_direccion = zlog_param-email.
+          ELSE.
+            l_direccion = mail.
+          ENDIF.
+
+          IF NOT l_direccion IS INITIAL.
+            CONCATENATE 'Error en'(err) zlog-proceso zlog-clave INTO l_subject SEPARATED BY space.
+
+            l_texto = zcl_ap_utils=>concat( p1 = 'Se ha producido un error en'(spe) p2 = zlog-proceso p3 = 'clave'(key) p4 = zlog-clave p5 = 'report'(rep) p6 = zlog-progname ).
+            APPEND l_texto TO i_textos.
+            l_texto = zcl_ap_utils=>concat( p1 = 'Usuario'(usr) p2 = zlog-usuario p3 = 'el'(ell) p4 = zlog-fecha p5 = 'hora'(hor) p6 = zlog-hora ).
+            APPEND l_texto TO i_textos.
+            l_texto = zlog-message.
+            APPEND l_texto TO i_textos.
+
+            zcl_ap_envio_mail=>mail( subject   = l_subject
+                                     direccion = l_direccion
+                                     commit    = ''
+                                     i_textos  = i_textos ).
+          ENDIF.
+        ENDIF.
+
+      CATCH cx_root INTO DATA(cx_root).
+        MESSAGE cx_root->get_text( ) TYPE 'I'.
+    ENDTRY.
+  ENDMETHOD.
+  METHOD set_tabla_log.
+    DATA l_zlog TYPE zlog.
+
+    l_zlog = log( clave    = clave
+             msgid    = msgid
+             msgty    = msgty
+             msgno    = msgno
+             msgv1    = msgv1
+             msgv2    = msgv2
+             msgv3    = msgv3
+             msgv4    = msgv4
+             p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6 p7 = p7 p8 = p8 p9 = p9
+             message  = message
+             fichero  = fichero ).
+
+    IF guardar_tabla_interna IS INITIAL.
+      APPEND l_zlog TO i_log.
+    ENDIF.
+  ENDMETHOD.
+  METHOD set_tabla_log_from_bapiret2.
+    DATA l_zlog TYPE zlog.
+
+    l_zlog = set_log( proceso  = s_log-object
+                      progname = s_log-alprog
+                      clave    = clave
+                      msgid    = bapiret2-id
+                      msgty    = bapiret2-type
+                      msgno    = bapiret2-number
+                      msgv1    = bapiret2-message_v1
+                      msgv2    = bapiret2-message_v2
+                      msgv3    = bapiret2-message_v3
+                      msgv4    = bapiret2-message_v4
+                      message  = bapiret2-message ).
+
+    APPEND l_zlog TO i_log.
+  ENDMETHOD.
+  METHOD set_tabla_log_from_bapiret2_t.
+    DATA: bapiret2 TYPE bapiret2,
+          l_zlog   TYPE zlog.
+
+    LOOP AT bapiret2_t INTO bapiret2.
+      l_zlog = set_log( proceso  = s_log-object
+                        progname = s_log-alprog
+                        clave    = clave
+                        msgid    = bapiret2-id
+                        msgty    = bapiret2-type
+                        msgno    = bapiret2-number
+                        msgv1    = bapiret2-message_v1
+                        msgv2    = bapiret2-message_v2
+                        msgv3    = bapiret2-message_v3
+                        msgv4    = bapiret2-message_v4
+                        message  = bapiret2-message ).
+
+      APPEND l_zlog TO i_log.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD set_tabla_log_syst.
+    " TODO: parameter MESSAGE is never used (ABAP cleaner)
+
+    set_tabla_log( msgid = msgid
+                   msgty = msgty
+                   msgno = msgno
+                   msgv1 = msgv1
+                   msgv2 = msgv2
+                   msgv3 = msgv3
+                   msgv4 = msgv4
+                   fichero = fichero
+                   clave = clave ).
+  ENDMETHOD.
+  METHOD show_log.
+    DATA o_popup TYPE REF TO zcl_ap_popup.
+
+    FIELD-SYMBOLS <log> TYPE zlog.
+
+    CHECK NOT i_log IS INITIAL.
+
+    o_popup = NEW #( ).
+
+    LOOP AT i_log ASSIGNING <log>.
+      o_popup->add_message( msgty = <log>-msgty
+                            msgid = <log>-msgid
+                            msgno = <log>-msgno
+                            msgv1 = <log>-msgv1
+                            msgv2 = <log>-msgv2
+                            msgv3 = <log>-msgv3
+                            msgv4 = <log>-msgv4
+                            message = <log>-message ).
+    ENDLOOP.
+
+    o_popup->show_errores( show_msgv1 = show_msgv1 show_msgv2 = show_msgv2 titulo = titulo ).
+  ENDMETHOD.
+  METHOD ver_log.
+***************************************************************
+* display log file
+***************************************************************
+* - we do not specify a display profile I_S_DISPLAY_PROFILE
+*   since we want to use the standard profile
+* - we also do not specify any filter (I_S_LOG_FILTER, ...
+*   I_T_MSG_HANDLE) since we want to display all messages available
+    CALL FUNCTION 'BAL_DSP_LOG_DISPLAY'
+*      EXPORTING
+*           I_S_LOG_FILTER         =
+*           I_T_LOG_CONTEXT_FILTER =
+*           I_S_MSG_FILTER         =
+*           I_T_MSG_CONTEXT_FILTER =
+*           I_T_LOG_HANDLE         =
+*           I_T_MSG_HANDLE         =
+*           I_S_DISPLAY_PROFILE    =
+*           I_AMODAL               = ' '
+      EXCEPTIONS
+        OTHERS = 1.
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.
+  METHOD ver_lognumber.
+    TYPES: BEGIN OF  t_lognumber,
+             item TYPE balhdr-lognumber,
+           END OF t_lognumber.
+
+    DATA i_lognumbers TYPE TABLE OF t_lognumber.
+
+    APPEND lognumber TO i_lognumbers.
+
+    CALL FUNCTION 'APPL_LOG_DISPLAY_WITH_LOGNO'
+* EXPORTING
+*   OBJECT_ATTRIBUTE                     = 0
+*   SUBOBJECT_ATTRIBUTE                  = 0
+*   EXTERNAL_NUMBER_ATTRIBUTE            = 0
+*   TITLE_LIST_SCREEN                    = ' '
+*   COLUMN_SELECTION                     = '11112221122   '
+*   COLUMN_SELECTION_MSG_JUMP            = '1'
+*   EXTERNAL_NUMBER_DISPLAY_LENGTH       = 20
+*   I_S_DISPLAY_PROFILE                  =
+* IMPORTING
+*   NUMBER_OF_PROTOCOLS                  =
+      TABLES
+        lognumbers   = i_lognumbers
+      EXCEPTIONS
+        no_authority = 1
+        OTHERS       = 2.
+
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.
+  METHOD ver_logs.
+    DATA l_external_number TYPE balhdr-extnumber.
+
+    IF borrar_logs_vacios = 'X'.
+      borrar_logs( object = object
+                   subobject = subobject
+                   extnumber = extnumber
+                   vacios    = 'X' ).
+    ENDIF.
+
+    l_external_number = extnumber.
+
+    CALL FUNCTION 'APPL_LOG_DISPLAY'
+      EXPORTING
+        object                         = object
+        object_attribute               = 0
+        subobject                      = subobject
+        subobject_attribute            = 0
+        external_number                = l_external_number
+        external_number_attribute      = 0
+        title_list_screen              = ' '
+        title_selection_screen         = ' '
+        date_from                      = date_from          "#EC DOM_EQUAL
+        date_to                        = date_to            "#EC DOM_EQUAL
+        time_to                        = '235959'           "#EC DOM_EQUAL
+        external_number_display_length = 20
+        i_variant_report               = report
+        suppress_selection_dialog      = inmediato
+      EXCEPTIONS
+        no_authority                   = 01.
+  ENDMETHOD.

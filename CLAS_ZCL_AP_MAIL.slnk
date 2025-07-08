@@ -1,0 +1,1526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_MAIL" VERSION="1" LANGU="S" DESCRIPT="Envio mail" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="TDG" ENTRY="Tabla demasiado grande (" LENGTH="24 "/>
+  </language>
+  <language SPRAS="P">
+   <textElement ID="I" KEY="TDG" ENTRY="Tabla demasiado grande (" LENGTH="24 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_MAIL" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="I_ADJUNTOS" VERSION="1" LANGU="S" DESCRIPT="Tabla transferencia contenidos correo entr." EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RMPS_T_POST_CONTENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="I_ADJUNTOS_BIN" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BCST_FILE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="I_DESTINATARIOS" VERSION="1" LANGU="S" DESCRIPT="SAPoffice: Lista simple con longitud columna 255" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SWFTLISTI1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="I_TEXTO_MAIL" VERSION="1" LANGU="S" DESCRIPT="Tabla de solisti1" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SRM_T_SOLISTI1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="L_TEXTO" VERSION="1" LANGU="S" DESCRIPT="SAPoffice: Lista simple con longitud columna 255" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SOLISTI1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="O_DOCUMENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_DOCUMENT_BCS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="O_RECIPIENT" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_RECIPIENT_BCS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="O_SENDER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="IF_SENDER_BCS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MAIL" CMPNAME="O_SEND_REQUEST" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_BCS_MESSAGE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero adjunto" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="Sigla p.tipo de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOODK-OBJTP" PARVALUE="&apos;BIN&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="TITULO" VERSION="1" LANGU="S" DESCRIPT="Breve descripción del contenido" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="BINARIO" VERSION="1" LANGU="S" DESCRIPT="GBT: SOLIX como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOLIX_TAB" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="HEADER" VERSION="1" LANGU="S" DESCRIPT="Objcont y objhead como tipo de tabla" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SOLI_TAB" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <source>method ADD_ADJUNTO.
+  DATA: l_adjunto TYPE rmps_post_content,
+        l_size    TYPE so_obj_len.
+
+  CLEAR l_adjunto.
+  l_adjunto-doc_type = tipo.
+  l_adjunto-docsize  = longitud.
+
+  IF tipo = &apos;XLS&apos; AND NOT string IS INITIAL.
+    l_adjunto-doc_type = tipo.
+    l_adjunto-binary   = &apos;X&apos;.
+    cl_bcs_convert=&gt;string_to_solix(
+      EXPORTING
+        iv_string   = string
+        iv_codepage = &apos;4103&apos;  &quot;suitable for MS Excel, leave empty
+        iv_add_bom  = &apos;X&apos;     &quot;for other doc types
+      IMPORTING
+        et_solix  = l_adjunto-cont_hex
+        ev_size   = l_size ).
+    l_adjunto-docsize = l_size.
+  ELSEIF tipo = &apos;BIN&apos; or tipo = &apos;XLS&apos; or tipo = &apos;PDF&apos;.
+    l_adjunto-doc_type = tipo.
+    l_adjunto-binary   = &apos;X&apos;.
+    IF NOT binario IS INITIAL.
+      l_adjunto-cont_hex = binario.
+    ELSEIF NOT xstring IS INITIAL.
+      CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+        EXPORTING
+          buffer          = xstring
+          append_to_table = &apos; &apos;
+        IMPORTING
+          output_length   = l_adjunto-docsize
+        TABLES
+          binary_tab      = l_adjunto-cont_hex.
+    ENDIF.
+  ELSE.
+    IF tipo = &apos;BTX&apos;.
+      l_adjunto-doc_type = &apos;BIN&apos;.
+    ENDIF.
+    l_adjunto-cont_text = header.
+  ENDIF.
+  l_adjunto-subject  = titulo.
+  APPEND l_adjunto TO i_adjuntos.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero adjunto y lo comprime a ZIP" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" SCONAME="TITULO" VERSION="1" LANGU="S" DESCRIPT="Breve descripción del contenido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ADJUNTO_ZIP" SCONAME="REEMPLAZAR_EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>method ADD_ADJUNTO_ZIP.
+  DATA: l_string TYPE string,
+        l_xstring TYPE xstring,
+        l_nombre_fichero TYPE string,
+        o_zip TYPE REF TO cl_abap_zip.
+
+  IF NOT xstring IS INITIAL.
+    l_xstring = xstring.
+  ELSEIF NOT string IS INITIAL.
+    l_xstring = zcl_ap_string=&gt;string2xstring( string ).
+  ELSEIF NOT tabla IS INITIAL.
+    l_string = zcl_ap_string=&gt;tabla2string( tabla ).
+    l_xstring = zcl_ap_string=&gt;string2xstring( l_string ).
+  ENDIF.
+
+  CREATE OBJECT o_zip.
+  l_string = titulo.
+  o_zip-&gt;add( name    = l_string
+              content = l_xstring ).
+
+  l_xstring = o_zip-&gt;save( ).
+
+  l_nombre_fichero = titulo.
+  IF reemplazar_extension IS INITIAL.
+    CONCATENATE l_nombre_fichero &apos;.ZIP&apos; INTO l_nombre_fichero.
+  ELSE.
+    l_string = zcl_ap_ficheros=&gt;get_extension( titulo ).
+    IF l_string IS INITIAL.
+      CONCATENATE titulo &apos;.ZIP&apos; INTO l_nombre_fichero.
+    ELSE.
+      REPLACE l_string WITH &apos;ZIP&apos; INTO l_nombre_fichero.
+    ENDIF.
+  ENDIF.
+
+  add_adjunto( titulo = l_nombre_fichero xstring = l_xstring ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" VERSION="1" LANGU="S" DESCRIPT="Añadir destinatario" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="DESTINATARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="URGENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="FORZAR_MAIL_EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="LISTA_DISTRIBUCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="COPIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_DESTINATARIO" SCONAME="COPIA_OCULTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_destinatario.
+  DATA: l_dest         TYPE solisti1,
+        l_destinatario TYPE string,
+        l_usr21        TYPE usr21,
+        i_dest         TYPE TABLE OF string,
+        l_desti        TYPE so_obj_nam,
+        l_long         TYPE i,
+        l_lm,
+        l_copia        TYPE bcs_copy.
+
+  DATA iv_address      TYPE bcs_address.
+  DATA iv_commtype     TYPE bcs_commtype.
+  DATA iv_visible_name TYPE bcs_visname.
+  DATA iv_copy         TYPE bcs_copy.
+  DATA iv_fax_country  TYPE bcs_fax_country.
+
+
+
+  SPLIT destinatario AT &apos;,&apos; INTO TABLE i_dest.
+
+  LOOP AT i_dest INTO l_destinatario.
+    CONDENSE l_destinatario NO-GAPS.
+    IF forzar_mail_externo = &apos;X&apos; AND
+       lista_distribucion IS INITIAL AND
+       l_destinatario(1) NE &apos;$&apos; AND
+      ( zcl_c=&gt;salida_mail_desarrollo = &apos;X&apos; OR
+        zcl_c=&gt;entorno_produccion = sy-sysid ).
+      TRANSLATE l_destinatario TO UPPER CASE.
+      SELECT SINGLE * FROM usr21
+        INTO l_usr21
+       WHERE bname = l_destinatario.
+      IF sy-subrc = 0.
+        SELECT SINGLE smtp_addr FROM adr6
+          INTO l_destinatario
+         WHERE addrnumber = l_usr21-addrnumber
+           AND persnumber = l_usr21-persnumber.
+      ENDIF.
+    ENDIF.
+
+    l_long = strlen( l_destinatario ).
+    IF l_destinatario CS &apos;@&apos;.
+      DATA l_email TYPE adr6-smtp_addr.
+      iv_address  = l_destinatario.
+      iv_commtype = &apos;INT&apos;.
+    ELSE.
+      l_lm = l_destinatario.
+      IF lista_distribucion = &apos;X&apos; OR l_lm = &apos;$&apos;.
+        IF l_lm = &apos;$&apos;.
+          l_destinatario = l_destinatario+1.
+        ENDIF.
+        l_desti = l_destinatario.
+        TRANSLATE l_desti TO UPPER CASE.
+        iv_address  = l_desti.
+      ELSEIF l_destinatario CO &apos;0123456789 +&apos; AND l_long &gt;= 9.
+        DATA l_number TYPE ad_pagnmbr.
+*   Configuracion del receptor del SMS
+        l_number = l_destinatario.
+        iv_address  = l_number.
+        iv_commtype = &apos;SMS&apos;.
+      ELSE.
+        DATA l_uname TYPE uname.
+        l_uname = l_destinatario.
+        TRANSLATE l_uname TO UPPER CASE.
+        iv_address  = l_uname.
+        iv_commtype = &apos;USR&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF copia = &apos;X&apos;.
+      l_copia = cl_bcs_message=&gt;gc_cc.
+    ELSEIF copia_oculta = &apos;X&apos;.
+      l_copia = cl_bcs_message=&gt;gc_bcc.
+    ENDIF.
+
+    TRY.
+        o_send_request-&gt;add_recipient(
+            iv_address      = iv_address
+            iv_commtype     = iv_commtype
+*            iv_visible_name = iv_visible_name
+             iv_copy         = l_copia
+*            iv_fax_country  = iv_fax_country
+               ).
+
+      CATCH cx_root .
+        MESSAGE e398(00) WITH &apos;Error al añadir destinatario&apos; destinatario.
+    ENDTRY.
+  ENDLOOP.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_LOCAL" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero adjunto desde PC local" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_LOCAL" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_LOCAL" SCONAME="SELECCIONAR_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_fichero_local.
+  DATA lt_files TYPE filetable.
+  DATA ls_file TYPE file_table.
+  DATA lv_rc TYPE i.
+  DATA lv_action TYPE i.
+  DATA lv_len TYPE i.
+  DATA lt_name_parts  TYPE TABLE OF string.
+  DATA lv_lines TYPE i.
+  DATA lt_solix TYPE solix_tab.
+  DATA lv_file_separator TYPE c.
+  DATA rs_file TYPE bcss_file.
+
+  IF seleccionar_fichero = &apos;X&apos;.
+    cl_gui_frontend_services=&gt;file_open_dialog(
+      CHANGING
+        file_table              = lt_files
+        user_action             = lv_action
+        rc                      = lv_rc
+      EXCEPTIONS
+        file_open_dialog_failed = 1
+        cntl_error              = 2
+        error_no_gui            = 3
+        not_supported_by_gui    = 4
+        OTHERS                  = 5 ).
+    IF sy-subrc &lt;&gt; 0 OR lv_rc &lt; 0.
+      MESSAGE e005(sbcs_send).
+    ENDIF.
+
+* if user chose cancel get out
+    IF lv_action = cl_gui_frontend_services=&gt;action_cancel.
+      RETURN.
+    ENDIF.
+
+    READ TABLE lt_files INTO ls_file INDEX 1.
+* have to convert to type string
+    rs_file-filename = ls_file-filename.
+  ELSE.
+    rs_file-filename = fichero.
+  ENDIF.
+
+  cl_gui_frontend_services=&gt;gui_upload(
+    EXPORTING
+      filename                = rs_file-filename
+      filetype                = &apos;BIN&apos;
+*      virus_scan_profile      = iv_vsi_profile
+    IMPORTING
+      filelength              = lv_len &quot;will be converted to size
+    CHANGING
+      data_tab                = lt_solix
+    EXCEPTIONS
+      file_open_error         = 1
+      file_read_error         = 2
+      no_batch                = 3
+      gui_refuse_filetransfer = 4
+      no_authority            = 5
+      unknown_error           = 6
+      bad_data_format         = 7
+      access_denied           = 8
+      OTHERS                  = 9 ).
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE e005(sbcs_send).
+  ENDIF.
+
+* convert to xstring
+  rs_file-contents = cl_bcs_convert=&gt;solix_to_xstring(
+    it_solix = lt_solix
+    iv_size  = lv_len ).
+
+* determine filename from path and filename
+  cl_gui_frontend_services=&gt;get_file_separator(
+    CHANGING
+      file_separator       = lv_file_separator
+    EXCEPTIONS
+      cntl_error           = 1
+      error_no_gui         = 2
+      not_supported_by_gui = 3
+      OTHERS               = 4 ).
+  IF sy-subrc = 0.
+    SPLIT rs_file-filename AT lv_file_separator INTO TABLE lt_name_parts.
+    lv_lines = lines( lt_name_parts ).
+    IF lv_lines &gt; 1.
+      READ TABLE lt_name_parts INDEX lv_lines INTO rs_file-filename.
+    ENDIF.
+  ENDIF.
+
+  append rs_file to i_adjuntos_bin.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero adjunto desde el servidor" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" SCONAME="LEGACY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" SCONAME="MODO_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" SCONAME="CODEPAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ENCODING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FICHERO_SERV" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>method ADD_FICHERO_SERV.
+  TYPES: t_linea(65535).
+  DATA: i_att_cont2 TYPE TABLE OF t_linea,
+        l_string TYPE string,
+        l_linea TYPE string,
+        l_adjunto TYPE rmps_post_content,
+        i_ttext TYPE soli_tab.
+
+  CLEAR l_adjunto.
+  zcl_ap_ficheros=&gt;lee_fich_servidor( EXPORTING fichero = fichero
+                                                modo_texto = modo_texto
+                                                legacy  = legacy
+                                                codepage = codepage
+                                      IMPORTING longitud = l_adjunto-docsize
+                                                mensaje  = mensaje
+                                      CHANGING  tabla   = i_att_cont2 ).
+
+  IF mensaje IS INITIAL.
+    LOOP AT i_att_cont2 INTO l_linea.
+      IF l_string IS INITIAL.
+        l_string = l_linea.
+      ELSE.
+        CONCATENATE l_string cl_abap_char_utilities=&gt;cr_lf l_linea INTO l_string.
+      ENDIF.
+    ENDLOOP.
+
+    CALL FUNCTION &apos;SCMS_STRING_TO_FTEXT&apos;
+      EXPORTING
+        text      = l_string
+      IMPORTING
+        length    = l_adjunto-docsize
+      TABLES
+        ftext_tab = i_ttext.
+
+    IF codepage = &apos;4103&apos; AND modo_texto = &apos;X&apos;.
+      l_adjunto-docsize = 2 * l_adjunto-docsize.
+    ENDIF.
+
+    l_adjunto-doc_type = &apos;EXT&apos;.
+    l_adjunto-binary   = &apos;&apos;.
+    l_adjunto-subject  = fichero.
+    l_adjunto-cont_text = i_ttext.
+*  IF legacy = &apos;X&apos;.
+*    l_adjunto-docsize = l_adjunto-docsize * 4.
+*  ENDIF.
+    APPEND l_adjunto TO i_adjuntos.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" VERSION="1" LANGU="S" DESCRIPT="Añade nueva fila en HTML" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="COLOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C6" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C7" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C8" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C9" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C11" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C12" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C13" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C14" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C6" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C7" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C8" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C9" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C11" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C12" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C13" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C14" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="29 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C15" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="30 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C15" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="31 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="C16" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="32 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_FILA_HTML" SCONAME="ALIGN_C16" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="33 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>method ADD_FILA_HTML.
+  DATA: l_texto TYPE solisti1,
+        l_td TYPE string,
+        l_tipo.
+
+  DEFINE set_td.
+    if align_&amp;1 is initial.
+      describe field &amp;1 type l_tipo.
+      if l_tipo = &apos;P&apos; or l_tipo = &apos;i&apos;.
+        l_td = &apos;  &lt;td align=&quot;right&quot;&gt;&apos;.
+      else.
+        l_td = &apos;  &lt;td&gt;&apos;.
+      endif.
+    else.
+      concatenate &apos;  &lt;td align=&quot;&apos; align_&amp;1 &apos;&quot;&gt;&apos; into l_td.
+    endif.
+  END-OF-DEFINITION.
+
+  IF NOT color IS INITIAL.
+    CONCATENATE &apos;&lt;tr bgcolor=&quot;&apos; color &apos;&quot;&gt;&apos; INTO l_texto.
+    APPEND l_texto TO i_texto_mail.
+  ELSE.
+    set_text(  &apos;  &lt;tr&gt;&apos; ).
+  ENDIF.
+
+  set_td c1.
+  set_text( texto  = l_td texto2 = c1
+            texto3 = &apos;&lt;/td&gt;&apos; ).
+  IF c2 IS SUPPLIED.
+    set_td c2.
+    set_text( texto  = l_td texto2 = c2
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c3 IS SUPPLIED.
+    set_td c3.
+    set_text( texto  = l_td texto2 = c3
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c4 IS SUPPLIED.
+    set_td c4.
+    set_text( texto  = l_td texto2 = c4
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c5 IS SUPPLIED.
+    set_td c5.
+    set_text( texto  = l_td texto2 = c5
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c6 IS SUPPLIED.
+    set_td c6.
+    set_text( texto  = l_td texto2 = c6
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c7 IS SUPPLIED.
+    set_td c7.
+    set_text( texto  = l_td texto2 = c7
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c8 IS SUPPLIED.
+    set_td c8.
+    set_text( texto  = l_td texto2 = c8
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c9 IS SUPPLIED.
+    set_td c9.
+    set_text( texto  = l_td texto2 = c9
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c10 IS SUPPLIED.
+    set_td c10.
+    set_text( texto  = l_td texto2 = c10
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c11 IS SUPPLIED.
+    set_td c11.
+    set_text( texto  = l_td texto2 = c11
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c12 IS SUPPLIED.
+    set_td c12.
+    set_text( texto  = l_td texto2 = c12
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c13 IS SUPPLIED.
+    set_td c13.
+    set_text( texto  = l_td texto2 = c13
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c14 IS SUPPLIED.
+    set_td c14.
+    set_text( texto  = l_td texto2 = c14
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c15 IS SUPPLIED.
+    set_td c15.
+    set_text( texto  = l_td texto2 = c15
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+  IF c16 IS SUPPLIED.
+    set_td c16.
+    set_text( texto  = l_td texto2 = c16
+              texto3 = &apos;&lt;/td&gt;&apos; ).
+  ENDIF.
+
+  set_text(  &apos;  &lt;/tr&gt;&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" VERSION="1" LANGU="S" DESCRIPT="Añade tabla interna como fichero Excel usando ALV" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="DESCRIPCION" VERSION="1" LANGU="S" DESCRIPT="Breve descripción del contenido" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="QUITAR_CARACTERES_EXTRANOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="O_ALV_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="ZIP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;XLS&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_ALV_AS_XLS" SCONAME="ITAB" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>method ADD_ITAB_ALV_AS_XLS.
+  DATA: l_adjunto TYPE rmps_post_content,
+        o_alv TYPE REF TO zcl_ap_alv,
+        x_excelx TYPE solix_tab,
+        l_string TYPE string,
+        l_long TYPE i,
+        l_extension TYPE string,
+        l_fichero TYPE string.
+
+  l_fichero = descripcion.
+  l_extension = zcl_ap_ficheros=&gt;get_extension( l_fichero ).
+  IF l_extension IS INITIAL.
+    CONCATENATE l_fichero &apos;.&apos; tipo INTO l_fichero.
+  ENDIF.
+
+
+  IF o_alv_origen IS INITIAL.
+    CREATE OBJECT o_alv
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv-&gt;constructor_tabla( CHANGING t_tabla = itab ).
+  ELSE.
+    o_alv = o_alv_origen.
+  ENDIF.
+
+  o_alv-&gt;get_csv_as_string( EXPORTING quitar_caracteres_extranos = quitar_caracteres_extranos
+                            IMPORTING string_csv = l_string
+                            CHANGING t_tabla = itab ).
+
+  IF zip IS INITIAL.
+    l_long = STRLEN( l_string ).
+    x_excelx = zcl_ap_string=&gt;string_to_binary_tab( l_string ).
+
+    add_adjunto( titulo = l_fichero tipo = &apos;XLS&apos; binario = x_excelx longitud = l_long ).
+
+*    add_adjunto( titulo = l_fichero tipo = &apos;XLS&apos; string = l_string ).
+  ELSE.
+    add_adjunto_zip( titulo = l_fichero string = l_string ).
+  ENDIF.
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_AS_XLS" VERSION="1" LANGU="S" DESCRIPT="Añade tabla interna como fichero Excel" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_AS_XLS" SCONAME="ITAB" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATA"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_AS_XLS" SCONAME="DESCRIPCION" VERSION="1" LANGU="S" DESCRIPT="Breve descripción del contenido" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SO_OBJ_DES"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_AS_XLS" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;XLS&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_ITAB_AS_XLS" SCONAME="ZIP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>method ADD_ITAB_AS_XLS.
+  TYPE-POOLS: truxs.
+
+  DATA: lv_string TYPE string,
+        wa_field TYPE string,
+        lv_is_dd_object TYPE boolean,
+        lv_dd_header TYPE x030l,
+        lv_dd_object TYPE dd_x031l_table,
+        lt_filetable TYPE solix_tab,
+        lr_data TYPE REF TO data,
+        lr_structdescr TYPE REF TO cl_abap_structdescr,
+        lr_tabledescr TYPE REF TO cl_abap_datadescr,
+        lx_comp TYPE abap_component_tab,
+        x_excelx TYPE solix_tab,
+        l_adjunto TYPE rmps_post_content,
+        o_typedes TYPE REF TO cl_abap_typedescr,
+        l_long TYPE i,
+        l_extension TYPE string,
+        l_fichero TYPE string.
+
+  l_fichero = descripcion.
+  l_extension = zcl_ap_ficheros=&gt;get_extension( l_fichero ).
+  IF l_extension IS INITIAL.
+    CONCATENATE l_fichero &apos;.&apos; tipo INTO l_fichero.
+  ENDIF.
+
+
+  FIELD-SYMBOLS:
+                 &lt;dyn_wa&gt; TYPE ANY,
+                 &lt;fs_field&gt; TYPE ANY,
+                 &lt;fs_table&gt; TYPE ANY TABLE,
+                 &lt;fs_dd_tab&gt; TYPE x031l,
+                 &lt;fs_comp&gt; TYPE abap_componentdescr.
+
+
+
+* Deduce data type of the imported table using RTTS
+  ASSIGN itab TO &lt;fs_table&gt;.
+  CREATE DATA lr_data LIKE LINE OF &lt;fs_table&gt;.
+
+* Get the table structure
+  lr_structdescr ?= cl_abap_structdescr=&gt;describe_by_data_ref( lr_data ).
+
+* Check if this is a DD object or not
+  lv_is_dd_object = lr_structdescr-&gt;is_ddic_type( ).
+
+* If table is typed on a DD object, we can examine the fields
+  IF lv_is_dd_object = abap_true.
+
+* (Not really needed - just to show how to get header info)
+    lv_dd_header = lr_structdescr-&gt;get_ddic_header( ).
+* Retrieves DD info of table/structure
+    lv_dd_object = lr_structdescr-&gt;get_ddic_object( ).
+
+* Move results to table LX_COMP for ease of use below.
+    LOOP AT lv_dd_object ASSIGNING &lt;fs_dd_tab&gt;.
+      APPEND INITIAL LINE TO lx_comp ASSIGNING &lt;fs_comp&gt;.
+      MOVE &lt;fs_dd_tab&gt;-fieldname TO &lt;fs_comp&gt;-name.
+    ENDLOOP.
+
+* If not a DD object, use GET_COMPONENTS.
+* Does not fully work for DD objects, because does not
+* handle embedded include&apos;s.
+  ELSE.
+    lx_comp = lr_structdescr-&gt;get_components( ).
+  ENDIF.
+
+* Now we&apos;re ready to move the contents from the imported
+* table into a string for converting to xls attachment
+  IF NOT &lt;fs_table&gt;[] IS INITIAL.
+
+* Retrieve values for each &quot;cell&quot; in the source table, move to excel table:
+* Get table row
+
+* First, get the header line into the final string
+    LOOP AT lx_comp ASSIGNING &lt;fs_comp&gt;.
+      CONCATENATE lv_string &lt;fs_comp&gt;-name wa_field cl_abap_char_utilities=&gt;horizontal_tab
+                 INTO lv_string.
+    ENDLOOP.
+
+    CONCATENATE lv_string cl_abap_char_utilities=&gt;cr_lf INTO lv_string.
+
+* Then, add contents of table into final string
+    LOOP AT &lt;fs_table&gt; ASSIGNING &lt;dyn_wa&gt;.        &quot; New record
+      LOOP AT lx_comp ASSIGNING &lt;fs_comp&gt;. &quot; For each field in the record
+        IF NOT &lt;fs_comp&gt; IS INITIAL.
+          ASSIGN COMPONENT &lt;fs_comp&gt;-name OF STRUCTURE &lt;dyn_wa&gt;
+          TO &lt;fs_field&gt;.
+          IF &lt;fs_field&gt; IS ASSIGNED.
+            MOVE &lt;fs_field&gt; TO wa_field.
+            CONCATENATE lv_string wa_field cl_abap_char_utilities=&gt;horizontal_tab
+           INTO lv_string.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      CONCATENATE lv_string cl_abap_char_utilities=&gt;cr_lf INTO lv_string.
+    ENDLOOP.
+*
+    IF zip IS INITIAL.
+      l_long = STRLEN( lv_string ).
+      x_excelx = zcl_ap_string=&gt;string_to_binary_tab( lv_string ).
+
+      add_adjunto( titulo = l_fichero tipo = &apos;BIN&apos; binario = x_excelx longitud = l_long ).
+    ELSE.
+      add_adjunto_zip( titulo = l_fichero string = lv_string ).
+    ENDIF.
+
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_OTF" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero OTF" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_OTF" SCONAME="I_OTFDATA" VERSION="1" LANGU="S" DESCRIPT="OTF table" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ITCOO"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_OTF" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method ADD_OTF.
+  DATA: l_long_pdf TYPE i,
+        i_pdf TYPE solix_tab.
+
+  zcl_ap_smartforms=&gt;get_pdf_from_otfdata( EXPORTING i_otfdata = i_otfdata
+                                        IMPORTING i_pdf = i_pdf
+                                                  longitud_pdf = l_long_pdf ).
+
+  add_adjunto( titulo = titulo
+               longitud = l_long_pdf
+               binario = i_pdf ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PARRAFO_HTML" VERSION="1" LANGU="S" DESCRIPT="Añadir párrafo HTML" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PARRAFO_HTML" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PARRAFO_HTML" SCONAME="PARTIR_SIEMPRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>method ADD_PARRAFO_HTML.
+  DATA: l_long TYPE i,
+        i_lineas TYPE TABLE OF text255,
+        l_linea TYPE text255.
+
+  l_long = STRLEN( texto ).
+
+  IF l_long &lt; 248 and PARTIR_SIEMPRE = &apos;&apos;.
+    set_text( texto = &apos;&lt;P&gt;&apos; texto2 = texto texto3 = &apos;&lt;/P&gt;&apos; ).
+  ELSE.
+    zcl_ap_string=&gt;string2tabla( EXPORTING string = texto
+                                           longitud = 248
+                                 CHANGING  tabla = i_lineas ).
+
+    LOOP AT i_lineas INTO l_linea.
+      set_text( texto = &apos;&lt;P&gt;&apos; texto2 = l_linea texto3 = &apos;&lt;/P&gt;&apos; ).
+    ENDLOOP.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PDF" VERSION="1" LANGU="S" DESCRIPT="Añade un fichero PDF" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PDF" SCONAME="PDF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPCONTENT"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_PDF" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method ADD_PDF.
+  DATA: l_long_pdf TYPE i,
+        i_pdf TYPE solix_tab.
+
+  CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+    EXPORTING
+      buffer        = pdf
+    IMPORTING
+      output_length = l_long_pdf
+    TABLES
+      binary_tab    = i_pdf.
+
+  add_adjunto( titulo = titulo
+               longitud = l_long_pdf
+               binario = i_pdf
+               TIPO    = &apos;PDF&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_URL_HTML" VERSION="1" LANGU="S" DESCRIPT="Añadir párrafo HTML" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_URL_HTML" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_URL_HTML" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_URL_HTML" SCONAME="PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ADD_URL_HTML" SCONAME="CODIGO_PARRAFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;P&apos;"/>
+  <source>method ADD_URL_HTML.
+  DATA: l_texto          TYPE string,
+        l_linea          TYPE string,
+        l_inicio_parrafo TYPE string,
+        l_fin_parrafo    TYPE string.
+
+  IF texto IS INITIAL.
+    l_texto = url.
+  ELSE.
+    l_texto = texto.
+  ENDIF.
+
+  CONCATENATE &apos;&lt;a href=&quot;&apos; url &apos;&quot;&gt;&apos; l_texto &apos;&lt;/a&gt;&apos; INTO l_linea.
+  IF parrafo = &apos;X&apos;.
+    CONCATENATE &apos;&lt;&apos; codigo_parrafo &apos;&gt;&apos; INTO l_inicio_parrafo.
+    CONCATENATE &apos;&lt;/&apos; codigo_parrafo &apos;&gt;&apos; INTO l_fin_parrafo.
+    CONCATENATE l_inicio_parrafo l_linea l_fin_parrafo INTO l_linea.
+  ENDIF.
+
+  set_text( l_linea ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="CABECERA_HTML" VERSION="1" LANGU="S" DESCRIPT="Cabecera tabla HTML" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CABECERA_HTML" SCONAME="CHARSET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;Windows-1252&apos;"/>
+  <source>method CABECERA_HTML.
+
+  data l_meta type string.
+  set_text( &apos;&lt;head&gt;&apos; ).
+  set_text( &apos;&lt;title&gt;Documento sin t&amp;iacute;tulo&lt;/title&gt;&apos; ).
+  concatenate &apos;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;&apos;
+              &apos;charset=&apos; charset &apos;&quot;&gt;&apos; into l_meta separated by space.
+  set_text( l_meta ).
+  set_text( &apos;&lt;style type=&quot;text/css&quot;&gt;&apos; ).
+  set_text( &apos;&lt;!--&apos; ).
+  set_text( &apos;Estilo1 {font-family: Arial, Helvetica, sans-serif}&apos; ).
+  set_text( &apos;--&gt;&apos; ).
+  set_text( &apos;&lt;/style&gt;&apos; ).
+  set_text( &apos;&lt;/head&gt;&apos; ).
+
+  set_text( &apos;&lt;body class=&quot;Estilo1&quot;&gt;&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD constructor.
+
+  CREATE OBJECT o_send_request.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" VERSION="1" LANGU="S" DESCRIPT="Consulta mails enviados" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="FECHA_HASTA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="R_FECHA" VERSION="1" LANGU="S" DESCRIPT="Tabla para rango de fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SXDATRNGT"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="HORA_HASTA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_MAILS_ENVIADOS" SCONAME="I_SNDRECS" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para soxsp2" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SOXSP2TAB"/>
+  <source>method CONSULTA_MAILS_ENVIADOS.
+  DATA: i_snd_date TYPE  sxdatrngt,
+        l_snd_date TYPE sxdatrngl,
+        i_snd_time TYPE  sxtimrngt,
+        l_snd_time TYPE sxtimrngl,
+        l_status  TYPE  soststatus,
+        l_sndrec TYPE soxsp2.
+
+  IF NOT r_fecha IS INITIAL.
+    i_snd_date = r_fecha.
+  ELSE.
+    IF NOT fecha IS INITIAL.
+      CLEAR l_snd_date.
+      l_snd_date-sign   = &apos;I&apos;.
+      l_snd_date-low    = fecha.
+
+      IF fecha_hasta IS INITIAL.
+        l_snd_date-option = &apos;EQ&apos;.
+      ELSE.
+        l_snd_date-option = &apos;BT&apos;.
+        l_snd_date-high    = fecha_hasta.
+      ENDIF.
+
+      APPEND l_snd_date TO i_snd_date.
+    ENDIF.
+  ENDIF.
+
+  IF NOT hora IS INITIAL.
+    CLEAR l_snd_time.
+    l_snd_time-sign   = &apos;I&apos;.
+    l_snd_time-low    = hora.
+
+    IF hora_hasta IS INITIAL.
+      l_snd_time-option = &apos;EQ&apos;.
+    ELSE.
+      l_snd_time-option = &apos;BT&apos;.
+      l_snd_time-high    = hora_hasta.
+    ENDIF.
+
+    APPEND l_snd_time TO i_snd_time.
+  ENDIF.
+
+  l_status = &apos;XXXXXXXX &apos;.
+  CALL FUNCTION &apos;SX_SNDREC_SELECT&apos;
+    EXPORTING
+*         SND_ART             =
+          snd_date            = i_snd_date
+          snd_time            = i_snd_time
+*         DEL_DATE            =
+*         DEL_TIME            =
+      status              = l_status
+          notifications       = &apos;X&apos;
+*         SENDER              =
+*         MAXSEL              =
+          all_waiting         = &apos; &apos;
+   IMPORTING
+      sndrecs             = i_sndrecs.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" VERSION="1" LANGU="S" DESCRIPT="Consulta mails enviados (Formato transacción SOST)" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="FECHA_HASTA" VERSION="1" LANGU="S" DESCRIPT="Fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="R_FECHA" VERSION="1" LANGU="S" DESCRIPT="Tabla para rango de fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SXDATRNGT"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="HORA_HASTA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="CONSULTA_SOST" SCONAME="I_SOST" VERSION="1" LANGU="S" DESCRIPT="Tipo de tabla para soxsp2" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZSOST_T"/>
+  <source>method CONSULTA_SOST.
+  DATA: i_sndrecs TYPE soxsp2tab,
+        l_sndrec TYPE soxsp2,
+        l_sost TYPE zsost.
+
+  i_sndrecs = consulta_mails_enviados( fecha = fecha
+                                       fecha_hasta = fecha_hasta
+                                       r_fecha = r_fecha
+                                       hora  = hora
+                                       hora_hasta  = hora_hasta ).
+
+  LOOP AT i_sndrecs INTO l_sndrec.
+    CLEAR l_sost.
+
+    IF l_sndrec-msgty = &apos;E&apos;.
+      l_sost-status = &apos;@5C@&apos;.
+    ELSE.
+      l_sost-status = &apos;@5B@&apos;.
+    ENDIF.
+
+    CASE l_sndrec-sndart.
+      WHEN &apos;INT&apos;.
+        l_sost-forma_envio = &apos;Email&apos;.
+      WHEN &apos;PAG&apos;.
+        l_sost-forma_envio = &apos;SMS&apos;.
+      WHEN OTHERS.
+        l_sost-forma_envio =  l_sndrec-sndart.
+    ENDCASE.
+
+    l_sost-titulo = l_sndrec-titel.
+    l_sost-emisor = l_sndrec-usernam.
+    l_sost-destinatario = get_dir_envio_from_adrnr( l_sndrec-adrnr ).
+    l_sost-fecha_envio = l_sndrec-stat_date.
+    l_sost-hora_envio = l_sndrec-stat_time.
+
+    APPEND l_sost TO i_sost.
+
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" VERSION="1" LANGU="S" DESCRIPT="Envia mail" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="SUBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="DIRECCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="URGENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="FORZAR_MAIL_EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="CONFIRMACION_LECTURA" VERSION="1" LANGU="S" DESCRIPT="(E)error, (A) todos, (N)inguno" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BCS_RQST" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="EMISOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="LISTA_DISTRIBUCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="DEST_COPIA" VERSION="1" LANGU="S" DESCRIPT="Destinatarios en copia" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="DEST_COPIA_OCULTA" VERSION="1" LANGU="S" DESCRIPT="Destinatarios en copia oculta" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="SHOW_LOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="UPDATE_TASK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="ENVIO_MAIL" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD envio_mail.
+  DATA: l_adjunto      TYPE rmps_post_content,
+        i_recipients   TYPE bcsy_re,
+        l_destinatario TYPE solisti1,
+        l_smtp_addr    TYPE adr6-smtp_addr,
+        l_uname        TYPE uname,
+        l_result       TYPE os_boolean,
+        ls_file        TYPE bcss_file.
+
+*http://abapblog.com/articles/tricks/104-send-mail-in-badi-or-user-exit-without-commiting
+*RSBCS_EXAMPLE_EMAIL
+
+  CLEAR error.
+
+  SET PARAMETER ID &apos;ZMAIL&apos; FIELD &apos;X&apos;.
+
+  DATA: l_mailtext    TYPE soli_tab,
+        l_mailhex     TYPE solix_tab,
+        l_title       TYPE sood-objdes,
+        l_tipo(3),
+        l_subject     TYPE string,
+        l_importancia TYPE bcs_docimp.
+
+  DATA iv_address      TYPE bcs_address.
+  DATA iv_commtype     TYPE bcs_commtype.
+  DATA iv_visible_name TYPE bcs_visname.
+  DATA iv_fax_country  TYPE bcs_fax_country.
+
+  IF html IS INITIAL.
+    l_tipo = &apos;RAW&apos;.
+  ELSE.
+    l_tipo = &apos;HTM&apos;.
+  ENDIF.
+
+  l_title = subject.
+  l_mailtext = i_texto_mail.
+
+  IF urgente = &apos;X&apos;.
+    l_importancia = &apos;1&apos;.
+  ENDIF.
+
+  TRY.
+      CALL METHOD cl_document_bcs=&gt;create_document
+        EXPORTING
+          i_type       = l_tipo
+          i_subject    = l_title
+*         i_length     =
+*         i_language   = SPACE
+          i_importance = l_importancia
+*         i_sensitivity =
+          i_text       = l_mailtext
+*         i_hex        =
+*         i_header     =
+*         i_sender     =
+        RECEIVING
+          result       = o_document.
+    CATCH cx_document_bcs .
+      MESSAGE &apos;Error creando mail&apos; TYPE &apos;E&apos;.
+  ENDTRY.
+
+*    o_document = cl_document_bcs=&gt;create_document(
+*        i_type = l_tipo
+*        i_text = l_mailtext
+*        i_subject = l_title ).
+
+  IF o_send_request IS INITIAL.
+    error = &apos;X&apos;.
+  ELSE.
+    l_subject = subject.
+    TRY.
+        o_send_request-&gt;set_subject( l_subject ).
+      CATCH cx_root.
+        MESSAGE i398(00) WITH &apos;Error definiendo asunto:&apos; l_subject.
+    ENDTRY.
+
+
+    IF emisor IS INITIAL.
+      TRY.
+          CALL METHOD cl_sapuser_bcs=&gt;create
+            EXPORTING
+              i_user = sy-uname
+            RECEIVING
+              result = o_sender.
+        CATCH cx_address_bcs .
+          MESSAGE e398(00) WITH &apos;Error al definir emisor para usuario:&apos; sy-uname.
+      ENDTRY.
+    ELSE.
+      IF emisor CS &apos;@&apos;.
+        l_smtp_addr = emisor.
+        iv_address = l_smtp_addr.
+        iv_commtype = &apos;INT&apos;.
+      ELSE.
+        l_uname = emisor.
+        iv_address = l_uname.
+        iv_commtype = &apos;USR&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF NOT direccion IS INITIAL.
+      add_destinatario( destinatario = direccion
+                        urgente      = urgente
+                        forzar_mail_externo = forzar_mail_externo
+                        lista_distribucion = lista_distribucion ).
+    ELSEIF NOT i_destinatarios IS INITIAL.
+      LOOP AT i_destinatarios INTO l_destinatario.
+        add_destinatario( destinatario = l_destinatario
+                          urgente      = urgente
+                          forzar_mail_externo = forzar_mail_externo ).
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT dest_copia IS INITIAL.
+      add_destinatario( destinatario = dest_copia
+                        copia        = &apos;X&apos;
+                        urgente      = urgente
+                        forzar_mail_externo = forzar_mail_externo
+                        lista_distribucion = lista_distribucion ).
+    ENDIF.
+
+    IF NOT dest_copia_oculta IS INITIAL.
+      add_destinatario( destinatario = dest_copia
+                        copia_oculta = &apos;X&apos;
+                        urgente      = urgente
+                        forzar_mail_externo = forzar_mail_externo
+                        lista_distribucion = lista_distribucion ).
+    ENDIF.
+
+
+    o_send_request-&gt;set_sender(
+        iv_address      = iv_address
+        iv_commtype     = iv_commtype
+*        iv_visible_name = iv_visible_name
+*        iv_fax_country  = iv_fax_country
+           ).
+
+
+    IF urgente = &apos;X&apos;.
+      o_send_request-&gt;set_send_immediately( abap_true ).
+      o_send_request-&gt;set_importance( cl_bcs=&gt;cp_priority_normal ).
+    ENDIF.
+
+    o_send_request-&gt;set_requested_status( confirmacion_lectura ).
+
+    DATA: o_document_bcs TYPE REF TO cx_document_bcs,
+          l_long         TYPE i,
+          l_titulo       TYPE bcs_description,
+          l_error        TYPE string,
+          l_xstring      TYPE xstring,
+          l_string       TYPE string.
+
+    LOOP AT i_adjuntos INTO l_adjunto.
+      l_long = l_adjunto-docsize.
+
+      IF NOT l_adjunto-cont_text[] IS INITIAL.
+        l_string = cl_bcs_convert=&gt;raw_to_string( l_adjunto-cont_text ).
+      ENDIF.
+
+      IF NOT l_adjunto-cont_hex[] IS INITIAL.
+        l_xstring = cl_bcs_convert=&gt;solix_to_xstring( l_adjunto-cont_hex ).
+      ENDIF.
+
+      TRY.
+          l_titulo = l_adjunto-subject.
+          o_send_request-&gt;add_attachment(
+     iv_filename     = l_titulo
+     iv_contents_bin = l_xstring
+     ).
+        CATCH cx_root INTO DATA(ex_at).
+          MESSAGE ex_at-&gt;get_text( ) TYPE &apos;E&apos;.
+      ENDTRY.
+    ENDLOOP.
+
+    LOOP AT i_adjuntos_bin INTO ls_file.
+      TRY.
+          o_send_request-&gt;add_attachment(
+            iv_filename     = ls_file-filename
+            iv_contents_bin = ls_file-contents ).
+
+        CATCH cx_root INTO DATA(ex_at2).
+          MESSAGE ex_at2-&gt;get_text( ) TYPE &apos;E&apos;.
+      ENDTRY.
+    ENDLOOP.
+
+    IF NOT l_mailtext IS INITIAL.
+      l_string = cl_bcs_convert=&gt;raw_to_string( l_mailtext ).
+    ENDIF.
+
+    o_send_request-&gt;set_main_doc( l_string ).
+
+    IF update_task = &apos;X&apos;.
+      o_send_request-&gt;set_update_task( update_task ).
+    ENDIF.
+
+    TRY.
+        o_send_request-&gt;send( ).
+        IF show_log = &apos;X&apos;.
+          o_send_request-&gt;show_send_log( ).
+        ENDIF.
+      CATCH cx_bcs_send INTO DATA(ex).
+        MESSAGE ex-&gt;get_text( ) TYPE &apos;E&apos;.
+    ENDTRY.
+  ENDIF.
+
+  SET PARAMETER ID &apos;ZMAIL&apos; FIELD &apos;&apos;.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="FIN_TABLA_HTML" VERSION="1" LANGU="S" DESCRIPT="Fin tabla HTML" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method FIN_TABLA_HTML.
+
+  set_text( &apos;&lt;/table&gt;&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Libera memoria" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method FREE.
+
+  CLEAR: i_texto_mail, i_destinatarios,
+         o_send_request, o_document, o_sender, o_recipient,
+         i_adjuntos.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="GET_DIR_ENVIO_FROM_ADRNR" VERSION="1" LANGU="S" DESCRIPT="Recupera dirección de envío desde ADRNR" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="GET_DIR_ENVIO_FROM_ADRNR" SCONAME="ADRNR" VERSION="1" LANGU="S" DESCRIPT="Dirección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ADRNR"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="GET_DIR_ENVIO_FROM_ADRNR" SCONAME="EMAIL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method GET_DIR_ENVIO_FROM_ADRNR.
+
+  SELECT SINGLE g~name_text
+         INTO email
+         FROM adcp AS f JOIN adrp AS g
+         ON  f~persnumber = g~persnumber
+         AND f~date_from  = g~date_from
+         AND f~nation     = g~nation
+  WHERE f~so_key = adrnr.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" VERSION="1" LANGU="S" DESCRIPT="Inicio tabla HTML" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;800&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C6" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C7" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C8" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C9" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C11" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C12" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C13" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C14" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="BORDER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C15" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="INICIO_TABLA_HTML" SCONAME="C16" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>method INICIO_TABLA_HTML.
+  DATA: l_long(10),
+        l_border(3),
+        l_aux(40).
+
+  l_long = longitud.
+  WRITE border TO l_border.
+  CONDENSE l_border NO-GAPS.
+
+  CONCATENATE &apos;&quot; border=&quot;&apos; l_border &apos;&quot;&gt;&apos; INTO l_aux.
+  set_text( texto  = &apos;&lt;table width=&quot;&apos; texto2 = l_long
+            texto3 = l_aux ).
+  set_text(  &apos;  &lt;tr bgcolor=&quot;#6699FF&quot;&gt;&apos; ).
+  set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c1
+            texto3 = &apos;&lt;/th&gt;&apos; ).
+  IF c2 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c2
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c3 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c3
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c4 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c4
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c5 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c5
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c6 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c6
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c7 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c7
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c8 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c8
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c9 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c9
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c10 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c10
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c11 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c11
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c12 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c12
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c13 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c13
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c14 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c14
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c15 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c15
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  IF c16 IS SUPPLIED.
+    set_text( texto  = &apos;  &lt;th scope=&quot;col&quot;&gt;&apos; texto2 = c16
+              texto3 = &apos;&lt;/th&gt;&apos; ).
+  ENDIF.
+  set_text(  &apos;  &lt;/tr&gt;&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="INI_TEXTOS" VERSION="1" LANGU="S" DESCRIPT="Inicializar textos" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method INI_TEXTOS.
+  clear I_TEXTO_MAIL.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" VERSION="1" LANGU="S" DESCRIPT="Envia mail SIMPLE" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="SUBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="DIRECCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="URGENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="FORZAR_MAIL_EXTERNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="CONFIRMACION_LECTURA" VERSION="1" LANGU="S" DESCRIPT="Status solicitado" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BCS_RQST" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="EMISOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="PDF" VERSION="1" LANGU="S" DESCRIPT="Procesamiento formulario: Contenido de XFT, XFD, PDF, etc." CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="FPCONTENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="NOMBRE_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="I_TEXTOS" VERSION="1" LANGU="S" DESCRIPT="Tablas con texto claro (línea en blanco = párrafo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RSPC_T_TEXT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="LISTA_DISTRIBUCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="I_ADJUNTOS" VERSION="1" LANGU="S" DESCRIPT="Tabla transferencia contenidos correo entr." CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RMPS_T_POST_CONTENT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="ZIP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="NOMBRE_FICHERO_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="TABLA_COMO_ALV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="DEST_COPIA" VERSION="1" LANGU="S" DESCRIPT="Destinatarios en copia" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="DEST_COPIA_OCULTA" VERSION="1" LANGU="S" DESCRIPT="Destinatarios en copia oculta" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="O_ALV_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_ALV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="MAIL" SCONAME="I_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE" PAROPTIONL="X"/>
+  <source>method MAIL.
+  DATA: o_mail TYPE REF TO zcl_ap_mail,
+        l_texto TYPE solisti1,
+        l_titulo TYPE string,
+        l_aux(10).
+
+  CREATE OBJECT o_mail.
+
+  IF NOT texto IS INITIAL.
+    o_mail-&gt;set_text( texto ).
+  ENDIF.
+
+  LOOP AT i_textos INTO l_texto.
+    o_mail-&gt;set_text( l_texto ).
+  ENDLOOP.
+
+  o_mail-&gt;i_adjuntos = i_adjuntos.
+
+  IF NOT pdf IS INITIAL.
+    IF NOT nombre_fichero IS INITIAL.
+      l_titulo = nombre_fichero.
+    ELSE.
+      l_titulo = &apos;ADJUNTO.PDF&apos;.
+    ENDIF.
+    o_mail-&gt;add_pdf( pdf = pdf titulo = l_titulo ).
+  ELSEIF NOT nombre_fichero IS INITIAL.
+    o_mail-&gt;add_fichero_local( fichero = nombre_fichero ).
+  ENDIF.
+
+  IF NOT i_tabla IS INITIAL.
+    DESCRIBE TABLE i_tabla LINES sy-tfill.
+    IF sy-tfill &gt; 20000. &quot;Si tiene más de 20000 líneas lo más securo es que casque por rendimiento, así que en lugar de enviar la tabla enviamos un mensaje diciendo que no se envía
+      l_aux = sy-tfill.
+      CONCATENATE &apos;Tabla demasiado grande (&apos;(tdg) l_aux &apos;). No es posible adjuntar contenido&apos;(npa) INTO l_texto.
+      o_mail-&gt;set_text( l_texto ).
+    ELSE.
+      IF nombre_fichero_tabla IS INITIAL.
+        IF tabla_como_alv IS INITIAL.
+          o_mail-&gt;add_itab_as_xls( descripcion = &apos;TABLA.XLS&apos;  zip = zip itab = i_tabla[] ).
+        ELSE.
+          o_mail-&gt;add_itab_alv_as_xls( EXPORTING descripcion = &apos;TABLA.XLS&apos;  zip = zip quitar_caracteres_extranos = &apos;X&apos; O_ALV_ORIGEN = O_ALV_ORIGEN CHANGING itab = i_tabla[] ).
+        ENDIF.
+      ELSE.
+        IF tabla_como_alv IS INITIAL.
+          o_mail-&gt;add_itab_as_xls( descripcion = nombre_fichero_tabla  zip = zip itab = i_tabla[] ).
+        ELSE.
+          o_mail-&gt;add_itab_alv_as_xls( EXPORTING descripcion = nombre_fichero_tabla  zip = zip quitar_caracteres_extranos = &apos;X&apos; O_ALV_ORIGEN = O_ALV_ORIGEN CHANGING itab = i_tabla[] ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  o_mail-&gt;envio_mail( subject    = subject
+                      direccion  = direccion
+                      dest_copia = dest_copia
+                      urgente = urgente
+                      html    = html
+                      forzar_mail_externo = forzar_mail_externo
+                      confirmacion_lectura = confirmacion_lectura
+                      emisor  = emisor
+                      lista_distribucion = lista_distribucion ).
+
+  o_mail-&gt;free( ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="NOMBRE_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Nombre de usuario" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="NOMBRE_USUARIO" SCONAME="UNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="NOMBRE_USUARIO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method NOMBRE_USUARIO.
+
+  SELECT SINGLE adrp~name_text
+    INTO nombre
+   FROM usr21 JOIN adrp ON usr21~persnumber EQ adrp~persnumber
+   WHERE usr21~bname = uname.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" VERSION="1" LANGU="S" DESCRIPT="Informa texto" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" SCONAME="TEXTO4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Tabla de solisti1" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SRM_T_SOLISTI1" PAROPTIONL="X"/>
+  <source>METHOD SET_TEXT.
+  DATA: l_string TYPE string,
+        l_texto TYPE solisti1,
+        l_texto2 TYPE solisti1,
+        l_tipo TYPE c,
+        l_long TYPE i,
+        l_long2 TYPE i,
+        i_tt TYPE TABLE OF solisti1.
+
+  IF tabla IS INITIAL.
+
+    DESCRIBE FIELD texto TYPE l_tipo.
+    IF l_tipo = &apos;C&apos; or l_tipo = &apos;g&apos;.
+      l_long = STRLEN( texto ).
+    ENDIF.
+    IF texto2 IS SUPPLIED.
+      DESCRIBE FIELD texto2 TYPE l_tipo.
+      IF l_tipo = &apos;C&apos; or l_tipo = &apos;g&apos;.
+        l_long2 = STRLEN( texto2 ).
+      ENDIF.
+    ENDIF.
+    IF l_long &lt;= 255 AND l_long2 &lt;= 255.
+      WRITE texto TO l_texto.
+      IF texto2 IS SUPPLIED.
+        DESCRIBE FIELD texto2 TYPE l_tipo.
+        WRITE texto2 TO l_texto2.
+        CASE l_tipo.
+          WHEN &apos;P&apos;.
+            WRITE texto2 TO l_texto2(15).
+          WHEN &apos;D&apos;.
+            IF texto2 = &apos;00000000&apos;.
+              CLEAR l_texto2.
+            ELSE.
+              WRITE texto2 TO l_texto2.
+            ENDIF.
+          WHEN &apos;T&apos;.
+            IF texto2 = &apos;000000&apos;.
+              CLEAR l_texto2.
+            ELSE.
+              WRITE texto2 TO l_texto2.
+            ENDIF.
+        ENDCASE.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+      IF texto3 IS SUPPLIED.
+        WRITE texto3 TO l_texto2.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+      IF texto4 IS SUPPLIED.
+        WRITE texto4 TO l_texto2.
+        CONCATENATE l_texto l_texto2 INTO l_texto SEPARATED BY space.
+      ENDIF.
+
+      APPEND l_texto TO i_texto_mail.
+    ELSE.
+      CONCATENATE texto texto2 texto3 texto4 INTO l_string SEPARATED BY space.
+
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = l_string longitud = 250 CHANGING tabla = i_tt ).
+      LOOP AT i_tt INTO l_texto.
+        APPEND l_texto TO i_texto_mail.
+      ENDLOOP.
+    ENDIF.
+  ELSE.
+    i_texto_mail = tabla.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXTO_ESTANDAR_HTML" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto estándar" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXTO_ESTANDAR_HTML" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXTO_ESTANDAR_HTML" SCONAME="NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXTO_ESTANDAR_HTML" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDSPRAS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXTO_ESTANDAR_HTML" SCONAME="OBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method SET_TEXTO_ESTANDAR_HTML.
+  DATA: i_lineas TYPE tlinetab,
+        l_tline TYPE tline,
+        i_tdline TYPE TABLE OF tdline,
+        l_format_ant TYPE tdformat,
+        l_first, l_fin,
+        l_texto TYPE solisti1,
+        l_texto_ant TYPE solisti1.
+
+  i_lineas = zcl_ap_textos=&gt;get_texto( id     = id
+                                    name   = name
+                                    spras  = spras
+                                    object = object ).
+
+  IF NOT i_lineas IS INITIAL.
+    l_texto = &apos;&lt;P&gt;&apos;.
+    LOOP AT i_lineas INTO l_tline.
+      l_texto_ant = l_texto.
+      CLEAR: l_first, l_fin.
+      AT FIRST.
+        l_first = &apos;X&apos;.
+      ENDAT.
+      AT LAST.
+        l_fin = &apos;X&apos;.
+      ENDAT.
+      IF l_first = &apos;&apos;.
+        IF NOT l_tline-tdformat IS INITIAL.
+          CONCATENATE l_texto &apos;&lt;/P&gt;&apos; INTO l_texto.
+          set_text( l_texto ).
+          l_texto = &apos;&lt;P&gt;&apos;.
+        ENDIF.
+      ENDIF.
+      CONCATENATE l_texto l_tline-tdline INTO l_texto.
+      l_format_ant = l_tline-tdformat.
+
+      IF STRLEN( l_texto ) &gt; 250.
+        CONCATENATE l_texto_ant &apos;&lt;/P&gt;&apos; into l_texto_ant.
+        set_text( l_texto_ant ).
+        CONCATENATE &apos;&lt;P&gt;&apos; l_tline-tdline INTO l_texto.
+      ENDIF.
+    ENDLOOP.
+    IF l_texto NE &apos;&lt;P&gt;&apos;.
+      CONCATENATE l_texto &apos;&lt;/P&gt;&apos; INTO l_texto.
+      IF STRLEN( l_texto ) &gt; 250.
+        CONCATENATE l_texto_ant &apos;&lt;/P&gt;&apos; into l_texto_ant.
+        set_text( l_texto_ant ).
+        CONCATENATE &apos;&lt;P&gt;&apos; l_tline-tdline INTO l_texto.
+      ENDIF.
+      set_text( l_texto ).
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT_AS_STRING" VERSION="1" LANGU="S" DESCRIPT="Informa texto desde un string" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="SET_TEXT_AS_STRING" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARPREFERD="X"/>
+  <source>method SET_TEXT_AS_STRING.
+
+  zcl_ap_string=&gt;string2tablastring( exporting string = texto
+                                               longitud = 255
+                                     changing  tabla = i_texto_mail ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MAIL" CMPNAME="USR2EMAIL" VERSION="1" LANGU="S" DESCRIPT="Devuelve el email del usuario" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="USR2EMAIL" SCONAME="UNAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MAIL" CMPNAME="USR2EMAIL" SCONAME="EMAIL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method USR2EMAIL.
+
+  SELECT SINGLE adr6~smtp_addr
+    INTO email
+   FROM usr21 JOIN adr6 ON usr21~persnumber EQ adr6~persnumber
+   WHERE usr21~bname EQ uname.
+
+endmethod.</source>
+ </method>
+</CLAS>

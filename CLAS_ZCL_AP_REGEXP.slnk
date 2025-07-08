@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_REGEXP" VERSION="1" LANGU="S" DESCRIPT="Expresiones regulares" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_REGEXP" CMPNAME="T_BUSQUEDAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="4 " SRCROW2="13 " SRCCOLUMN2="23 " TYPESRC_LENG="132 " TYPESRC="BEGIN OF t_busquedas,
+        texto  TYPE string,
+        offset TYPE int4,
+        length TYPE int4,
+      END OF t_busquedas
+"/>
+ <types CLSNAME="ZCL_AP_REGEXP" CMPNAME="TT_BUSQUEDAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="15 " SRCCOLUMN1="4 " SRCROW2="15 " SRCCOLUMN2="50 " TYPESRC_LENG="49 " TYPESRC="tt_busquedas TYPE STANDARD TABLE OF t_busquedas
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_REGEXP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_CORCHETES" VERSION="1" LANGU="S" DESCRIPT="Busca conjuntos de corchetes en string" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_CORCHETES" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_CORCHETES" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;\[([^]]+)\]&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_CORCHETES" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_corchetes.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Busca fechas en string" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_FECHAS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_FECHAS" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;(\d{1,2}[.|/]\d{1,2}[.|/]\d{4})|(\d{4}[.|/]\d{1,2}[.|/]\d{1,2})&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_FECHAS" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_fechas.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_HORAS" VERSION="1" LANGU="S" DESCRIPT="Busca horas en string" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_HORAS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_HORAS" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_HORAS" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_horas.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_LLAVES" VERSION="1" LANGU="S" DESCRIPT="Busca conjuntos de llaves en string" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_LLAVES" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_LLAVES" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;\{([^{}]*)\}&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_LLAVES" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_llaves.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PARENTESIS" VERSION="1" LANGU="S" DESCRIPT="Busca conjuntos de paréntesis en string" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PARENTESIS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PARENTESIS" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;\(([^()]*)\)&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PARENTESIS" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_parentesis.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" VERSION="1" LANGU="S" DESCRIPT="Busca patrón en string" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="IGNORING_CASE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="BUSQUEDAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_BUSQUEDAS"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="BUSCAR_PATRON" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD buscar_patron.
+    DATA: l_patron               TYPE string,
+          lt_result_tab          TYPE match_result_tab,
+          pattern_ref            TYPE REF TO cl_abap_regex,
+          ls_submatch_result_tab TYPE match_result,
+          lv_txt                 TYPE string.
+
+    CLEAR: ocurrencias, busquedas.
+    l_patron = patron.
+
+    CASE tipo.
+      WHEN &apos;&apos;.
+        IF ignoring_case IS INITIAL.
+          FIND ALL OCCURRENCES OF REGEX l_patron IN string RESULTS lt_result_tab.
+        ELSE.
+          FIND ALL OCCURRENCES OF REGEX l_patron IN string IGNORING CASE RESULTS lt_result_tab.
+        ENDIF.
+      WHEN &apos;PCRE&apos;.
+        TRY.
+            CALL METHOD (&apos;CL_ABAP_REGEX&apos;)=&gt;(&apos;CREATE_PCRE&apos;)
+              EXPORTING
+                pattern     = l_patron
+                ignore_case = ignoring_case
+                extended    = &apos;X&apos;
+              RECEIVING
+                regex       = pattern_ref.
+          CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        ENDTRY.
+
+        FIND ALL OCCURRENCES OF REGEX pattern_ref IN string RESULTS lt_result_tab.
+    ENDCASE.
+
+    LOOP AT lt_result_tab INTO ls_submatch_result_tab.
+      lv_txt = string+ls_submatch_result_tab-offset(ls_submatch_result_tab-length).
+      APPEND lv_txt TO ocurrencias.
+      APPEND VALUE #( texto = lv_txt offset = ls_submatch_result_tab-offset length = ls_submatch_result_tab-length ) TO busquedas.
+    ENDLOOP.
+
+* Demo Program DEMO_REGEX_TOY
+*    ^ : Matches the starting position within the string
+* () : The string matched within the parentheses can be recalled later.
+* [] : Matches a character that is contained within the brackets.
+* – : Specifies a range.
+* {} : Number of characters.
+* \d : Digits.
+* \. : Mandatory dot.
+* ?  : Indicates there is zero or one of the preceding element.
+* $ : Matches the ending position of the string.
+* [0-9]       : Digits only any number between 0 to 9.
+* {0,12}     : Up to 13 characters allowed only before decimal.
+* {0,2}        : up to 2 characters allowed only after decimal.
+
+* Ejemplo buscar pedidos 4599999999 -&gt;&apos;45[0-9]{8}&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" VERSION="1" LANGU="S" DESCRIPT="Eliminar patrón en string" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="IGNORING_CASE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="TIPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="BUSQUEDAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_BUSQUEDAS"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="ELIMINAR_PATRON" SCONAME="SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD ELIMINAR_PATRON.
+
+salida = string.
+    DATA(i_var) = zcl_ap_regexp=&gt;buscar_patron( string = string patron = patron tipo = TIPO ).
+
+    SORT i_var.
+    DELETE ADJACENT DUPLICATES FROM i_var.
+
+* Hay que ordenar por tamaño, porque sino el reeplazar falla.
+    TYPES: BEGIN OF t_var_t,
+             var  TYPE string,
+             long TYPE int4,
+           END OF t_var_t.
+
+    DATA i_var_t TYPE TABLE OF t_var_t.
+    LOOP AT i_Var ASSIGNING FIELD-SYMBOL(&lt;var&gt;).
+      APPEND INITIAL LINE TO i_var_t ASSIGNING FIELD-SYMBOL(&lt;var_t&gt;).
+      &lt;var_t&gt;-var = &lt;var&gt;.
+      &lt;var_t&gt;-long = strlen( &lt;var&gt; ).
+    ENDLOOP.
+    SORT i_var_t BY long DESCENDING var.
+    LOOP AT i_Var_t ASSIGNING &lt;var_t&gt;.
+        REPLACE ALL OCCURRENCES OF &lt;var_t&gt;-var IN salida WITH &apos;&apos;.
+    ENDLOOP.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_NUM_PATRON" VERSION="1" LANGU="S" DESCRIPT="Devuelve nº de ocurrencias de un patron en string" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_NUM_PATRON" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_NUM_PATRON" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_NUM_PATRON" SCONAME="IGNORING_CASE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_NUM_PATRON" SCONAME="OCURRENCIAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="INT4"/>
+  <source>METHOD get_num_patron.
+    TRY.
+        IF ignoring_case = &apos;X&apos;.
+          FIND ALL OCCURRENCES OF
+               REGEX patron IN string
+               MATCH COUNT  ocurrencias
+               IGNORING CASE.
+        ELSE.
+          FIND ALL OCCURRENCES OF
+               REGEX patron IN string
+               MATCH COUNT  ocurrencias.
+        ENDIF.
+      CATCH cx_root INTO DATA(o_root). &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" VERSION="1" LANGU="S" DESCRIPT="Obtiene un string sólo con letras y números sencillos" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="PATRON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;[A-ZA-Z0-9]*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="CONDENSE_NO_GAPS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="TO_UPPER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="CONDENSE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="GET_STRING_LETRAS_NUMEROS" SCONAME="CADENA" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_string_letras_numeros.
+    CLEAR cadena.
+    DATA(l_string) = string.
+    IF condense_no_gaps = &apos;X&apos;.
+      CONDENSE l_string NO-GAPS.
+    ENDIF.
+    IF to_upper = &apos;X&apos;.
+      TRANSLATE l_string TO UPPER CASE.
+    ENDIF.
+
+    DATA(ocurrencias) = buscar_patron( string = l_string patron = patron ).
+
+    LOOP AT ocurrencias ASSIGNING FIELD-SYMBOL(&lt;ocur&gt;).
+      IF cadena IS INITIAL.
+        cadena = &lt;ocur&gt;.
+      ELSE.
+        CONCATENATE cadena &lt;ocur&gt; INTO cadena SEPARATED BY space.
+      ENDIF.
+    ENDLOOP.
+
+    IF condense_no_gaps = &apos;X&apos;.
+      CONDENSE cadena NO-GAPS.
+    ELSEIF condense = &apos;X&apos;.
+      CONDENSE cadena.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="HTML2TEXT" VERSION="1" LANGU="S" DESCRIPT="Limpiar tags HTML" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="HTML2TEXT" SCONAME="HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="HTML2TEXT" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD html2text.
+    texto = html.
+    DATA(i_tags) = buscar_patron( string = html patron = &apos;&lt;[^&gt;]*&gt;&apos; ).
+    LOOP AT i_tags ASSIGNING FIELD-SYMBOL(&lt;tag&gt;).
+      REPLACE ALL OCCURRENCES OF &lt;tag&gt; IN texto WITH &apos;&apos;.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_REGEXP" CMPNAME="RECUPERAR_VALOR" VERSION="1" LANGU="S" DESCRIPT="Recuperar valor de una etiqueta HTML" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="RECUPERAR_VALOR" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="RECUPERAR_VALOR" SCONAME="ATRIBUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_REGEXP" CMPNAME="RECUPERAR_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD recuperar_valor.
+    CLEAR valor.
+    DATA(pattern) = |&quot;{ atributo }&quot;:&quot;([^&quot;]*)&quot;|.
+    DATA(regex) = NEW cl_abap_regex( pattern = pattern ).
+
+    DATA(matcher) = regex-&gt;create_matcher( text = string ).
+
+    IF matcher-&gt;find_next( ).
+      valor = matcher-&gt;get_submatch( 1 ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSMARTFORMS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Gestión smartforms Siliken" LENGTH="39 "/>
+  </language>
+ </textPool>
+ <source>************************************************************************
+* APLICACION  : SD                                                    *
+* TIPO        : Gestión smartforms
+* TITULO      : Gestión smartforms
+* DESCRIPCION :
+*                                                                      *
+*AUTOR: Andres Picazo                           FECHA: 31/10/2011      *
+* MODIFICACIONES                                                       *
+* -------------                                                        *
+* FECHA        NOMBRE                               ORDEN              *
+* -------------------------------------------------------------------- *
+* dd.mm.yyyy   username                                                *
+************************************************************************
+REPORT  zsmartforms.
+
+TABLES: ztextos_sfo.
+
+DATA: l_return, l_filtro TYPE string.
+DATA o_bi TYPE REF TO zcl_batch_input.
+DATA l_mensaje TYPE bapireturn1-message.
+
+DATA: BEGIN OF i_est OCCURS 0,
+              kappl TYPE nast-kappl,
+              kschl TYPE nast-kschl,
+              cont  TYPE i,
+              erdat TYPE nast-erdat,
+            END OF i_est.
+
+DEFINE add_boton.
+  selection-screen begin of line.
+  selection-screen position 32.
+  selection-screen pushbutton 32(40) b_&amp;1 user-command &amp;1.
+  selection-screen end of line.
+END-OF-DEFINITION.
+
+
+SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME.
+add_boton: ven, fin, com, fet.
+
+SELECTION-SCREEN SKIP.
+add_boton: tra, tst, men, txt, par, txs, gra, eti.
+SELECTION-SCREEN SKIP.
+add_boton: ume.
+SELECTION-SCREEN END OF BLOCK blk_par.
+
+INITIALIZATION.
+
+  b_ven = &apos;SMARTFORMS Ventas&apos;.
+  b_fin = &apos;SMARTFORMS Finanzas&apos;.
+  b_com = &apos;SMARTFORMS Compras&apos;.
+  b_fet = &apos;SMARTFORMS Etiquetas&apos;.
+
+  b_tra = &apos;Traducción&apos;.
+  b_tst = &apos;Transporte&apos;.
+  b_men = &apos;Mensajes&apos;.
+  b_txt = &apos;Tabla textos por idioma&apos;.
+  b_par = &apos;Parámetros&apos;.
+  b_txs = &apos;SO10 Textos estándar&apos;.
+  b_gra = &apos;SE78 Gráficos&apos;.
+  b_eti = &apos;Parametrización etiquetas&apos;.
+
+  b_ume = &apos;Uso mensajes&apos;.
+
+AT SELECTION-SCREEN.
+
+  IF o_bi IS INITIAL.
+    CREATE OBJECT o_bi.
+  ENDIF.
+  o_bi-&gt;inicio( ).
+  CASE sy-ucomm.
+    WHEN &apos;VEN&apos;.
+      SUBMIT zbcut011
+        AND RETURN
+       WITH p_report = &apos;&apos;
+       WITH p_formul = &apos;X&apos;
+       WITH s_grupo = &apos;SF_VENTAS&apos;.
+    WHEN &apos;FIN&apos;.
+
+    WHEN &apos;COM&apos;.
+      SUBMIT zbcut011
+        AND RETURN
+       WITH p_report = &apos;&apos;
+       WITH p_formul = &apos;X&apos;
+       WITH s_grupo = &apos;SF_COMPRAS&apos;.
+
+    WHEN &apos;FET&apos;.
+      SUBMIT zbcut011
+        AND RETURN
+       WITH p_report = &apos;&apos;
+       WITH p_formul = &apos;X&apos;
+       WITH s_grupo = &apos;SF_ETI&apos;.
+
+
+    WHEN &apos;TRA&apos;.
+      CALL TRANSACTION &apos;SE63&apos;.
+** Traducción: Acceso
+*      o_bi-&gt;dynpro( program = &apos;SAPMTRAN&apos; dynpro = &apos;1000&apos;).
+*      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=O&apos;).
+*
+**
+*      o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos;).
+*      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TRSL&apos;).
+*
+**
+*      o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos;).
+*      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=TRSL&apos;).
+*
+** Traducción: Objeto sencillo
+*      o_bi-&gt;dynpro( program = &apos;SAPMTRAN&apos; dynpro = &apos;2000&apos;).
+*      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=BACK&apos;).
+*      o_bi-&gt;campos( campo = &apos;DYNP_2000-CUSTMNR&apos; valor = &apos;999999&apos;).
+*
+*      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;SE63&apos; modo = &apos;E&apos;).
+
+    WHEN &apos;TST&apos;.
+      SUBMIT rs_lxe_record_torder
+         AND RETURN
+        WITH ktrans = &apos;X&apos;
+        WITH trtext = &apos;Traducciones&apos;
+        WITH st_date = sy-datum
+        VIA SELECTION-SCREEN.
+    WHEN &apos;MEN&apos;.
+      o_bi-&gt;dynpro( program = &apos;SAPLSE16N&apos; dynpro = &apos;0100&apos;).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;/00&apos;).
+      o_bi-&gt;campos( campo = &apos;GD-TAB&apos; valor = &apos;TNAPR&apos;).
+
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;SE16N&apos; modo = &apos;E&apos;).
+    WHEN &apos;TXT&apos;.
+      zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;ZTEXTOS_SFO-FORM&apos;
+                                             titulo = &apos;Formulario&apos;
+                                   IMPORTING return = l_return
+                                   CHANGING  valor1 = ztextos_sfo-form ).
+      IF l_return = &apos;&apos;.
+        CLEAR l_filtro.
+        IF NOT ztextos_sfo-form  IS INITIAL.
+          CONCATENATE &apos;FORM=&apos; ztextos_sfo-form  INTO l_filtro.
+        ENDIF.
+        zcl_ap_utils=&gt;mantener_tabla( tabla = &apos;ZTEXTOS_SFO&apos; filtro = l_filtro ).
+      ENDIF.
+
+    WHEN &apos;PAR&apos;.
+      zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;ZTEXTOS_SFO-FORM&apos;
+                                             titulo = &apos;Formulario&apos;
+                                   IMPORTING return = l_return
+                                   CHANGING  valor1 = ztextos_sfo-form ).
+      IF l_return = &apos;&apos;.
+        zcl_parametros=&gt;mantenimiento_st( clave = &apos;FORM&apos; campo = ztextos_sfo-form ).
+      ENDIF.
+    WHEN &apos;TXS&apos;.
+      CALL TRANSACTION &apos;SO10&apos;.
+    WHEN &apos;GRA&apos;.
+      CALL TRANSACTION &apos;SE78&apos;.
+    WHEN &apos;ETI&apos;.
+      zcl_ap_utils=&gt;mantener_tabla( &apos;ZFORM_ETIQ&apos; ).
+
+    WHEN &apos;UME&apos;.
+      types: begin of t_nast,
+              kappl TYPE nast-kappl,
+              kschl TYPE nast-kschl,
+              erdat TYPE nast-erdat,
+             end of t_nast.
+      DATA: i_nast TYPE TABLE OF t_nast WITH HEADER LINE,
+            l_nast TYPE t_nast,
+            o_est TYPE REF TO zcl_ap_alv.
+
+      SELECT * FROM nast
+        INTO CORRESPONDING FIELDS OF TABLE i_nast.
+
+      SORT i_nast.
+
+      REFRESH i_est.
+      LOOP AT i_nast.
+        l_nast = i_nast.
+        AT NEW kschl.
+          CLEAR i_est.
+        ENDAT.
+
+        ADD 1 TO i_est-cont.
+        AT END OF kschl.
+          MOVE-CORRESPONDING l_nast TO i_est.
+          APPEND i_est.
+        ENDAT.
+      ENDLOOP.
+
+      CREATE OBJECT o_est
+        EXPORTING
+          tabla = &apos;I_EST[]&apos;.
+
+      o_est-&gt;show( ).
+  ENDCASE.</source>
+</PROG>

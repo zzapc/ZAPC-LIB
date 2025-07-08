@@ -1,0 +1,115 @@
+class ZCL_AP_VARIANTE definition
+  public
+  create public .
+
+public section.
+
+  types:
+    tt_rsparamsl TYPE STANDARD TABLE OF rsparamsl WITH KEY selname .
+
+  data I_VALORES type RSPARAMS_TT .
+  data I_VALORESL type TT_RSPARAMSL .
+
+  methods GET_CONTENIDOS
+    importing
+      !REPORT type ANY default SY-CPROG
+      !VARIANT type ANY .
+  methods GET_VALOR
+    importing
+      !CAMPO type ANY
+      !HIGH type ABAP_BOOL default ''
+    returning
+      value(VALOR) type TVARV_VAL .
+  methods GET_VARIANTE_ACTUAL
+    importing
+      !REPORT type ANY default SY-CPROG .
+  class-methods EXISTE
+    importing
+      !REPORT type SY-CPROG default SY-CPROG
+      !VARIANT type VARIANT
+    returning
+      value(SI) type ABAP_BOOL .
+protected section.
+private section.
+endclass. "ZCL_AP_VARIANTE definition
+class ZCL_AP_VARIANTE implementation.
+  METHOD existe.
+
+    CLEAR si.
+    SELECT SINGLE variant FROM vari
+      INTO @DATA(l_variant)
+     WHERE relid = 'VA'
+       AND report = @report
+       AND variant = @variant.
+    IF sy-subrc = 0.
+      si = 'X'.
+    ENDIF.
+
+  ENDMETHOD.
+METHOD get_contenidos.
+  DATA: l_rsvar TYPE rsvar.
+
+  l_rsvar-report  = report.
+  l_rsvar-variant = variant.
+  CLEAR: me->i_valores, me->i_valoresl.
+
+  CHECK existe( report = l_rsvar-report variant = l_rsvar-variant ) = 'X'.
+  TRY.
+      CALL FUNCTION 'RS_VARIANT_CONTENTS'
+        EXPORTING
+          report               = l_rsvar-report
+          variant              = l_rsvar-variant
+*         MOVE_OR_WRITE        = 'W'
+*         NO_IMPORT            = ' '
+*         EXECUTE_DIRECT       = ' '
+*   IMPORTING
+*         SP                   = SP
+        TABLES
+*         L_PARAMS             = L_PARAMS
+*         L_PARAMS_NONV        = L_PARAMS_NONV
+*         L_SELOP              = L_SELOP
+*         L_SELOP_NONV         = L_SELOP_NONV
+          valutab              = i_valores
+          valutabl             = i_valoresl
+*         OBJECTS              = OBJECTS
+*         FREE_SELECTIONS_DESC = FREE_SELECTIONS_DESC
+*         FREE_SELECTIONS_VALUE       = FREE_SELECTIONS_VALUE
+        EXCEPTIONS
+          variant_non_existent = 1
+          variant_obsolete     = 2
+          error_message        = 999.
+      IF sy-subrc NE 0.
+      ENDIF.
+
+    CATCH cx_root.
+  ENDTRY.
+
+
+ENDMETHOD.
+method GET_VALOR.
+  DATA l_par TYPE rsparams.
+
+  CLEAR valor.
+  READ TABLE i_valores INTO l_par WITH KEY selname = campo.
+  IF sy-subrc = 0.
+    IF high IS INITIAL.
+      valor = l_par-low.
+    ELSE.
+      valor = l_par-high.
+    ENDIF.
+  ENDIF.
+
+endmethod.
+method GET_VARIANTE_ACTUAL.
+
+  CALL FUNCTION 'RS_REFRESH_FROM_SELECTOPTIONS'
+    EXPORTING
+      curr_report     = report
+    TABLES
+      selection_table = i_valores
+    EXCEPTIONS
+      not_found       = 1
+      no_report       = 2
+      OTHERS          = 3.
+
+endmethod.

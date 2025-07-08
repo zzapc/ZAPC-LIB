@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_AUTORIZACION" VERSION="1" LANGU="S" DESCRIPT="Autorizaciones" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature
+
+TYPES: BEGIN OF T_AUT_USER,
+         OBJETO     TYPE UST12-OBJCT,
+         PERFIL	    TYPE ZEST_AUT-PERFIL,
+         VALOR      TYPE ZEST_AUT-VALOR,
+         ACTIVIDAD  TYPE ZEST_AUT-ACTIVIDAD,
+       END OF T_AUT_USER.
+
+TYPES TT_AUT_USER TYPE SORTED TABLE OF T_AUT_USER
+                       WITH UNIQUE KEY OBJETO PERFIL VALOR.</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_AUTORIZACION" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <typeUsage CLSNAME="ZCL_AP_AUTORIZACION" TYPEGROUP="T" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <forwardDeclaration>T</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="AUT_USER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="T_AUT_USER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="I_AUT_USER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_AUT_USER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-UNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="USUARIO_SAPALL" VERSION="1" LANGU="S" EXPOSURE="1" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="CONSTRUCTOR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <source>METHOD constructor.
+
+    me-&gt;uname = uname.
+
+    CLEAR: i_aut_user, aut_user.
+
+    usuario_sapall  = es_sapall( uname ).
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_SAPALL" VERSION="1" LANGU="S" DESCRIPT="¿Usuario es SAPALL?" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_SAPALL" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_SAPALL" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_sapall.
+    DATA l_profile TYPE ust04-profile.
+
+    CLEAR si.
+    SELECT SINGLE profile FROM ust04
+      INTO l_profile
+     WHERE bname   = uname
+       AND profile = &apos;SAP_ALL&apos;.
+    IF sy-subrc = 0.
+      si = &apos;X&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_USUARIO_SISTEMAS" VERSION="1" LANGU="S" DESCRIPT="¿Es usuario sistemas?" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_USUARIO_SISTEMAS" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="ES_USUARIO_SISTEMAS" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_usuario_sistemas.
+
+    CLEAR si.
+    TRY.
+        CALL METHOD (&apos;ZCL_USUARIO&apos;)=&gt;(&apos;ES_USUARIO_SISTEMAS&apos;)
+          EXPORTING
+            uname = uname
+          RECEIVING
+            si    = si.
+      CATCH cx_root INTO DATA(o_root).
+        DATA(l_rol_sistemas) = zcl_c=&gt;get_constante( &apos;ROL_SISTEMAS&apos; ).
+        IF NOT l_rol_sistemas IS INITIAL.
+          si = tiene_rol( uname = uname
+                          rol   = l_rol_sistemas ).
+        ELSE.
+          si = es_sapall( uname = uname ).
+        ENDIF.
+    ENDTRY.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" VERSION="1" LANGU="S" DESCRIPT="Devuelve autorizaciones a un objeto" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Objeto de autorización" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UST12-OBJCT" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" SCONAME="ACTIVIDAD" VERSION="1" LANGU="S" DESCRIPT="Actividad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJ" SCONAME="I_AUT" VERSION="1" LANGU="S" DESCRIPT="Tabla autorizaciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_AUT"/>
+  <source>METHOD get_aut_obj.
+    DATA: l_aut TYPE zest_aut.
+    LOOP AT i_aut_user INTO aut_user WHERE objeto = objeto.
+      CLEAR l_aut.
+      MOVE-CORRESPONDING aut_user TO l_aut.
+      APPEND l_aut TO i_aut.
+    ENDLOOP.
+    IF sy-subrc NE 0.
+      i_aut  = get_aut_objeto( uname     = me-&gt;uname
+                               objeto    = objeto
+                               campo     = campo ).
+      LOOP AT i_aut INTO l_aut.
+        CLEAR aut_user.
+        aut_user-objeto = objeto.
+        MOVE-CORRESPONDING l_aut TO aut_user.
+        INSERT aut_user INTO TABLE i_aut_user.
+      ENDLOOP.
+    ENDIF.
+
+    IF actividad NE &apos;*&apos;.
+      DELETE i_aut WHERE NOT actividad CS actividad
+                     AND NOT actividad CS &apos;*&apos;.
+    ENDIF.
+    IF valor NE &apos;*&apos;.
+      DELETE i_aut WHERE NOT valor = valor
+                     AND valor NE &apos;*&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" VERSION="1" LANGU="S" DESCRIPT="Devuelve autorizaciones a un objeto (Método estático)" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Objeto de autorización" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UST12-OBJCT" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="CAMPO" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="CAMPO2" VERSION="1" LANGU="S" DESCRIPT="Campo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="ACTIVIDAD" VERSION="1" LANGU="S" DESCRIPT="Actividad" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;*&apos;"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="GET_AUT_OBJETO" SCONAME="I_AUT" VERSION="1" LANGU="S" DESCRIPT="Tabla autorizaciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_AUT"/>
+  <source>METHOD get_aut_objeto.
+    DATA: i_usvalues  TYPE TABLE OF usvalues,
+          i_usvalues2 TYPE TABLE OF usvalues,
+          l_usvalues  TYPE usvalues,
+          l_usvalues2 TYPE usvalues,
+          l_todo, l_ok, l_mod,
+          l_aut       TYPE zest_aut.
+
+    CLEAR i_usvalues.
+    CALL FUNCTION &apos;SUSR_USER_AUTH_FOR_OBJ_GET&apos;
+      EXPORTING
+        user_name           = uname
+        sel_object          = objeto
+      TABLES
+        values              = i_usvalues
+      EXCEPTIONS
+        user_name_not_exist = 1
+        not_authorized      = 2
+        internal_error      = 3
+        OTHERS              = 4.
+
+    LOOP AT i_usvalues INTO l_usvalues.
+      l_usvalues-auth = l_usvalues-auth(10).
+      COLLECT l_usvalues INTO i_usvalues2.
+    ENDLOOP.
+    SORT i_usvalues2.
+    i_usvalues = i_usvalues2.
+
+    LOOP AT i_usvalues INTO l_usvalues WHERE field = campo.
+      CLEAR l_aut.
+      l_aut-perfil = l_usvalues-auth.
+      l_aut-valor  = l_usvalues-von.
+      LOOP AT i_usvalues2 INTO l_usvalues2
+                          WHERE auth = l_usvalues-auth
+                            AND field = &apos;ACTVT&apos;.
+        IF l_aut-actividad IS INITIAL.
+          l_aut-actividad = l_usvalues2-von.
+        ELSE.
+          CONCATENATE l_aut-actividad &apos;,&apos; l_usvalues2-von
+                 INTO l_aut-actividad.
+        ENDIF.
+      ENDLOOP.
+      APPEND l_aut TO i_aut.
+    ENDLOOP.
+
+    IF actividad NE &apos;*&apos;.
+      DELETE i_aut WHERE NOT actividad CS actividad
+                     AND NOT actividad CS &apos;*&apos;.
+    ENDIF.
+    IF valor NE &apos;*&apos;.
+      DELETE i_aut WHERE NOT valor = valor
+                     AND valor NE &apos;*&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_PERFIL" VERSION="1" LANGU="S" DESCRIPT="¿Usuario tiene el perfil solicitado?" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_PERFIL" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_PERFIL" SCONAME="PERFIL" VERSION="1" LANGU="S" DESCRIPT="Perfil" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XUPROFILE"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_PERFIL" SCONAME="SI_TIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD tiene_perfil.
+    DATA l_ust04 TYPE ust04.
+
+    CLEAR si_tiene.
+
+    SELECT SINGLE * FROM ust04
+      INTO l_ust04
+     WHERE bname   = sy-uname
+       AND profile = perfil.
+    IF sy-subrc = 0.
+      si_tiene = &apos;X&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_ROL" VERSION="1" LANGU="S" DESCRIPT="¿Usuario tiene el rol solicitado?" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_ROL" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_ROL" SCONAME="ROL" VERSION="1" LANGU="S" DESCRIPT="Nombre del rol" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_ROL" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha actual del servidor de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_AUTORIZACION" CMPNAME="TIENE_ROL" SCONAME="SI_TIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD tiene_rol.
+    DATA l_agr_users TYPE agr_users.
+
+    CLEAR si_tiene.
+    SELECT SINGLE * FROM  agr_users
+      INTO l_agr_users
+     WHERE agr_name  = rol
+       AND uname     = uname
+       AND from_dat  &lt;= fecha
+       AND to_dat    &gt;= fecha.
+    IF sy-subrc = 0.
+      si_tiene = &apos;X&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

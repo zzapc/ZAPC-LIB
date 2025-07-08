@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_WORD_OLE" VERSION="1" LANGU="S" DESCRIPT="Manejo Word con OLE" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZCL_AP_OLE">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_WORD_OLE" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <typeUsage CLSNAME="ZCL_AP_WORD_OLE" TYPEGROUP="OLE2" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <forwardDeclaration>OLE2</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CONTENIDO_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Contenido del documento" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="OLE2_OBJECT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="C_COLOR_NEGRO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="2" ATTVALUE="-16777216" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="C_TEXTURA_PLANA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="2" ATTVALUE="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="C_UN_CARACTER" VERSION="1" LANGU="S" DESCRIPT="Tipo unidad caracter" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="2" ATTVALUE="1" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="C_UN_CELDA" VERSION="1" LANGU="S" DESCRIPT="Tipo unidad celda" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="2" ATTVALUE="12" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="C_UN_LINEA" VERSION="1" LANGU="S" DESCRIPT="Tipo unidad linea" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="2" ATTVALUE="5" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="DOCUMENTO_ACTIVO" VERSION="1" LANGU="S" DESCRIPT="Documento Activo" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="OLE2_OBJECT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="VENTANA_ACTIVA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="OLE2_OBJECT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <inheritance CLSNAME="ZCL_AP_WORD_OLE" REFCLSNAME="ZCL_AP_OLE" VERSION="1" STATE="1"/>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="BORRAR_CARACTER" VERSION="1" LANGU="S" DESCRIPT="Borra carácter de la izquierda" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method BORRAR_CARACTER.
+
+    exec_metodo_seleccion( metodo = &apos;TypeBackspace&apos;  ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="BORRAR_FILA" VERSION="1" LANGU="S" DESCRIPT="Borra una fila de una tabla" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD borrar_fila.
+  DATA: l_sel  TYPE ole2_object,
+        l_rows TYPE ole2_object.
+
+  l_sel = get_obj_app( &apos;Selection&apos;  ).
+  l_rows = get_obj( origen = l_sel metodo = &apos;Rows&apos; ).
+  exec_metodo( obj = l_rows metodo = &apos;Delete&apos; ).
+
+*
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="BORRAR_MARCADOR" VERSION="1" LANGU="S" DESCRIPT="Borrar marcador" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="BORRAR_MARCADOR" SCONAME="MARCADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>method BORRAR_MARCADOR.
+  data l_marcador type ole2_object.
+
+  l_marcador = get_obj( origen = documento_activo
+                        metodo = &apos;Bookmarks&apos;
+                        p1 = marcador ).
+  exec_metodo( obj = l_marcador metodo = &apos;Delete&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="BORRAR_SELECCION" VERSION="1" LANGU="S" DESCRIPT="Borra selección" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method BORRAR_SELECCION.
+
+  exec_metodo_seleccion( &apos;Delete&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CARGAR_PLANTILLA" VERSION="1" LANGU="S" DESCRIPT="Crea documento Word" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CARGAR_PLANTILLA" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>method CARGAR_PLANTILLA.
+
+  open_file( obj = documento fichero = fichero ).
+
+  documento_activo = get_obj_app( &apos;ActiveDocument&apos; ).
+
+*  contenido_documento = get_obj_app( &apos;Content&apos; ).
+
+  ventana_activa = get_obj( origen = documento_activo metodo = &apos;ActiveWindow&apos; ).
+
+  selection = get_obj_app( &apos;Selection&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CERRAR" VERSION="1" LANGU="S" DESCRIPT="Cierrar documento" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CERRAR.
+
+  set_prop_app( prop = &apos;DisplayAlerts&apos; valor = false ).
+  exec_metodo( obj = documento metodo = &apos;Close&apos; p1 = false ).
+  exec_metodo( obj = app metodo = &apos;Quit&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COLOR_CELDA" VERSION="1" LANGU="S" DESCRIPT="Cambia color celda" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COLOR_CELDA" SCONAME="TEXTURA" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="C_TEXTURA_PLANA"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COLOR_CELDA" SCONAME="FOREGROUNDPATTERNCOLOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="C_COLOR_NEGRO"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COLOR_CELDA" SCONAME="BACKGROUNDPATTERNCOLOR" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0"/>
+  <source>METHOD color_celda.
+  DATA: shading TYPE ole2_object.
+
+  IF selection IS INITIAL.
+    selection = get_obj_app( &apos;Selection&apos; ).
+  ENDIF.
+  shading = get_obj( origen = selection metodo = &apos;Shading&apos; ).
+
+  set_prop( obj = shading prop = &apos;Texture&apos; valor = textura ).
+  set_prop( obj = shading prop = &apos;ForegroundPatternColor&apos; valor = foregroundpatterncolor ).
+  set_prop( obj = shading prop = &apos;BackgroundPatternColor&apos; valor = backgroundpatterncolor ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CONSTRUCTOR" SCONAME="MOSTRAR_ERRORES" VERSION="1" LANGU="S" DESCRIPT="Mostrar errores" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CONSTRUCTOR" SCONAME="VISIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CONSTRUCTOR" SCONAME="O_LOG" VERSION="1" LANGU="S" DESCRIPT="Log" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_LOG" PAROPTIONL="X"/>
+  <source>method CONSTRUCTOR.
+
+  CALL METHOD super-&gt;constructor
+    EXPORTING
+      objeto          = &apos;word.application&apos;
+      mostrar_errores = mostrar_errores.
+
+  set_prop_app( prop = &apos;Visible&apos; valor = VISIBLE ).
+
+  documento = get_obj_app( &apos;Documents&apos; ).
+
+  selection = get_obj_app( &apos;Selection&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COPIA_N_LINEAS" VERSION="1" LANGU="S" DESCRIPT="Copia N lineas" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COPIA_N_LINEAS" SCONAME="LINEAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COPIA_N_LINEAS" SCONAME="DIRECCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;MoveDown&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COPIA_N_LINEAS" SCONAME="EXTEND" VERSION="1" LANGU="S" DESCRIPT="0 - Move / 1 Extend" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="COPIA_N_LINEAS" SCONAME="UNIDAD" VERSION="1" LANGU="S" DESCRIPT="5 - Linea / 4 Parrafo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="5"/>
+  <source>method COPIA_N_LINEAS.
+
+  exec_metodo_seleccion( metodo = direccion p1 = unidad p2 = lineas p3 = EXTEND ).
+
+*Unit Opcional WdUnits Unidad por la que va a moverse la selección. El valor predeterminado eswdLine.  Lineas = 5
+*Count Opcional Variant Número de unidades que va a moverse la selección. El valor predeterminado es 1.
+*Extend Opcional Variant Puede ser wdMove o wdExtend. Si se utiliza wdMove, se contrae la selección en el extremo final y desciende. Si se utiliza wdExtend, la selección desciende. El valor predeterminado es wdMove.
+
+  exec_metodo_seleccion( &apos;Copy&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CREAR_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Crea documento Word" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method CREAR_DOCUMENTO.
+
+  exec_metodo( obj = documento metodo = &apos;Add&apos; ).
+
+  documento_activo = get_obj_app( &apos;ActiveDocument&apos; ).
+
+  contenido_documento = get_obj_app( &apos;Content&apos; ).
+
+  ventana_activa = get_obj( origen = documento_activo metodo = &apos;ActiveWindow&apos; ).
+
+  selection = get_obj_app( &apos;Selection&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CREAR_TABLA" VERSION="1" LANGU="S" DESCRIPT="Crear tabla" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CREAR_TABLA" SCONAME="COLUMNAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="2"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="CREAR_TABLA" SCONAME="FILAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="1"/>
+  <source>method CREAR_TABLA.
+  DATA: l_sel   TYPE ole2_object,
+        l_rango TYPE ole2_object,
+        l_tabla TYPE ole2_object.
+
+*    ActiveDocument.Tables.Add Range:=Selection.Range, NumRows:=1, NumColumns:= _
+*        2, DefaultTableBehavior:=wdWord9TableBehavior, AutoFitBehavior:= _
+*        wdAutoFitFixed
+  l_sel = get_obj_app( &apos;Selection&apos;  ).
+  l_rango = get_obj( origen = l_sel metodo = &apos;Range&apos; ).
+  l_tabla = get_obj( origen = documento_activo metodo = &apos;Tables&apos; ).
+  exec_metodo( obj = l_tabla metodo = &apos;Add&apos; p1 = l_rango p2 = filas p3 = columnas no_write = &apos;X&apos; ).
+
+*
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="ESCRIBE_TABLA_STRING" VERSION="1" LANGU="S" DESCRIPT="Escribe tabla de strings" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="ESCRIBE_TABLA_STRING" SCONAME="T_STRINGS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>method ESCRIBE_TABLA_STRING.
+  DATA: l_string TYPE string,
+        l_string_normal TYPE string,
+        l_string_formateado TYPE string,
+        l_string_normal2 TYPE string.
+
+  LOOP AT t_strings INTO l_string.
+    teclea_texto_formato( texto = l_string ).
+    nuevo_parrafo( ).
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXISTE_MARCADOR" VERSION="1" LANGU="S" DESCRIPT="Verifica existencia de marcador" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXISTE_MARCADOR" SCONAME="MARCADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXISTE_MARCADOR" SCONAME="EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>method EXISTE_MARCADOR.
+
+  get_seleccion( ).
+  CALL METHOD OF selection &apos;GoTo&apos;
+    EXPORTING
+    #1 = -1
+    #2 = 0
+    #3 = 0
+    #4 = marcador.
+
+ if sy-subrc = 0.
+   existe = &apos;X&apos;.
+ else.
+   clear existe.
+ endif.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXPORTAR_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Exportar documento" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXPORTAR_DOCUMENTO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXPORTAR_DOCUMENTO" SCONAME="EXTENSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="EXPORTAR_DOCUMENTO" SCONAME="NUEVO_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Tabla de conversión: Nombres fichero internos --&gt; externos" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>method EXPORTAR_DOCUMENTO.
+  DATA: l_formato TYPE i,
+        l_long TYPE i,
+        l_fichero(255).
+
+  l_fichero = fichero.
+  l_long = STRLEN( l_fichero ).
+  l_long = l_long - 3.
+  CASE extension.
+    WHEN &apos;PDF&apos;.
+      l_formato = 17.
+      l_fichero+l_long = &apos;PDF&apos;.
+  ENDCASE.
+
+  nuevo_fichero = l_fichero.
+  exec_metodo( obj = documento_activo metodo = &apos;ExportAsFixedFormat&apos;
+               p1 = nuevo_fichero
+               p2 = l_formato ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" VERSION="1" LANGU="S" DESCRIPT="Fija formato fuente" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" SCONAME="NEGRITA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" SCONAME="FUENTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" SCONAME="TAMANYO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" SCONAME="CURSIVA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="FORMATO_FUENTE" SCONAME="SUBRAYADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PAROPTIONL="X"/>
+  <source>method FORMATO_FUENTE.
+  DATA l_obj TYPE ole2_object.
+
+  l_obj = get_obj_sel( &apos;Font&apos; ).
+
+  IF negrita IS SUPPLIED.
+    IF negrita = &apos;X&apos;.
+      set_prop( obj = l_obj prop = &apos;Bold&apos; valor = true ).
+    ELSE.
+      set_prop( obj = l_obj prop = &apos;Bold&apos; valor = false ).
+    ENDIF.
+  ENDIF.
+
+  IF cursiva IS SUPPLIED.
+    IF cursiva = &apos;X&apos;.
+      set_prop( obj = l_obj prop = &apos;Italic&apos; valor = true ).
+    ELSE.
+      set_prop( obj = l_obj prop = &apos;Italic&apos; valor = false ).
+    ENDIF.
+  ENDIF.
+
+  IF subrayado IS SUPPLIED.
+    IF subrayado = &apos;X&apos;.
+      set_prop( obj = l_obj prop = &apos;Underline&apos; valor = true ).
+    ELSE.
+      set_prop( obj = l_obj prop = &apos;Underline&apos; valor = false ).
+    ENDIF.
+  ENDIF.
+
+  IF fuente IS SUPPLIED.
+    set_prop( obj = l_obj prop = &apos;Name&apos; valor = fuente ).
+  ENDIF.
+
+  IF tamanyo IS SUPPLIED.
+    set_prop( obj = l_obj prop = &apos;Size&apos; valor = tamanyo ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_COMO_PDF" VERSION="1" LANGU="S" DESCRIPT="Grabar documento como PDF" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_COMO_PDF" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_COMO_PDF" SCONAME="CERRAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_COMO_PDF" SCONAME="VISIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;1&apos;"/>
+  <source>method GRABAR_COMO_PDF.
+  DATA l_documento_activo TYPE ole2_object.
+
+  l_documento_activo = get_obj_app( &apos;ActiveDocument&apos; ).
+
+  exec_metodo( obj = l_documento_activo metodo = &apos;ExportAsFixedFormat&apos;
+               p1 = fichero
+               p2 = 17       &quot;ExportFormat:=wdExportFormatPDF
+               p3 = 1        &quot;OpenAfterExport:=True
+               ).
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Grabar documento" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_DOCUMENTO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_DOCUMENTO" SCONAME="CERRAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="GRABAR_DOCUMENTO" SCONAME="VISIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;1&apos;"/>
+  <source>method GRABAR_DOCUMENTO.
+  DATA l_documento_activo TYPE ole2_object.
+
+  l_documento_activo = get_obj_app( &apos;ActiveDocument&apos; ).
+
+  save_file( obj = documento_activo  fichero = fichero ).
+
+  IF visible = &apos;1&apos;.
+    set_prop_app( prop = &apos;Visible&apos; valor = visible ).
+    set_prop_app( prop = &apos;WindowState&apos; valor = &apos;1&apos; ).
+
+  ENDIF.
+
+  IF cerrar = &apos;X&apos;.
+    set_prop_app( prop = &apos;DisplayAlerts&apos; valor = false ).
+    exec_metodo( obj = documento metodo = &apos;Save&apos; ).
+    exec_metodo( obj = app metodo = &apos;Save&apos; ).
+    exec_metodo( obj = documento metodo = &apos;Close&apos; p1 = false ).
+    exec_metodo( obj = app metodo = &apos;Quit&apos; ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="HABILITAR_HEADER" VERSION="1" LANGU="S" DESCRIPT="Habilita edición en cabecera documento" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="HABILITAR_HEADER" SCONAME="SEEKVIEW" VERSION="1" LANGU="S" DESCRIPT="6 Habilitar header, 0 desahillitar" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;9&apos;"/>
+  <source>METHOD habilitar_header.
+  DATA: l_active_pane TYPE ole2_object,
+        l_view TYPE ole2_object.
+
+*wdSeekCurrentPageFooter  10  The current page footer.
+*wdSeekCurrentPageHeader  9 The current page header.
+*wdSeekEndnotes	8	Endnotes.
+*wdSeekEvenPagesFooter  6 The even pages footer.
+*wdSeekEvenPagesHeader  3 The even pages header.
+*wdSeekFirstPageFooter  5 The first page footer.
+*wdSeekFirstPageHeader  2 The first page header.
+*wdSeekFootnotes  7 Footnotes.
+*wdSeekMainDocument	0	The main document.
+*wdSeekPrimaryFooter  4 The primary footer.
+*wdSeekPrimaryHeader  1 The primary header.
+
+  documento_activo = get_obj_app( &apos;ActiveDocument&apos; ).
+
+  ventana_activa = get_obj( origen = documento_activo metodo = &apos;ActiveWindow&apos; ).
+
+  l_active_pane = get_obj( origen = ventana_activa metodo = &apos;ActivePane&apos; ).
+  l_view = get_obj( origen = l_active_pane metodo = &apos;View&apos; ).
+
+  set_prop( obj = l_view prop = &apos;SeekView&apos; valor = seekview ). &quot;wdSeekCurrentPageHeader=9
+  &quot;wdSeekMainDocument=0
+
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Insertar fichero" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO" SCONAME="OBJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;S&apos;"/>
+  <source>method INSERTAR_FICHERO.
+
+  IF obj = &apos;S&apos;.
+    exec_metodo( obj = selection metodo = &apos;InsertFile&apos; p1 = fichero ).
+  ELSE.
+*    exec_metodo( obj = documento metodo = &apos;InsertFile&apos; p1 = fichero ).
+    IF documento_activo IS INITIAL.
+      exec_metodo( obj = documento metodo = &apos;InsertFile&apos; p1 = fichero ).
+    ELSE.
+      exec_metodo( obj = documento_activo metodo = &apos;InsertFile&apos; p1 = fichero ).
+    ENDIF.
+  ENDIF.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO_FIN_DOC" VERSION="1" LANGU="S" DESCRIPT="Insertar fichero al final del documento" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO_FIN_DOC" SCONAME="FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_FICHERO_FIN_DOC" SCONAME="OBJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;S&apos;"/>
+  <source>method INSERTAR_FICHERO_FIN_DOC.
+  DATA l_doc TYPE ole2_object.
+
+  l_doc = get_obj_app( &apos;Selection&apos;  ).
+  exec_metodo( obj = l_doc metodo = &apos;EndKey&apos; p1 = 6 ).
+  exec_metodo( obj = l_doc metodo = &apos;InsertBreak&apos; p1 = 7 ).
+  exec_metodo( obj = l_doc metodo = &apos;InsertFile&apos; p1 = fichero ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_IMAGEN" VERSION="1" LANGU="S" DESCRIPT="Insertar imagen" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_IMAGEN" SCONAME="IMAGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_IMAGEN" SCONAME="ANCHO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>method INSERTAR_IMAGEN.
+
+  DATA: l_sel   TYPE ole2_object,
+        l_forma TYPE ole2_object,
+        l_ancho TYPE i,
+        l_alto  TYPE i.
+
+  l_sel = get_obj_app( &apos;Selection&apos;  ).
+  l_forma = get_obj( origen = l_sel metodo = &apos;InlineShapes&apos; ).
+  exec_metodo( obj = l_forma metodo = &apos;AddPicture&apos; p1 = imagen ).
+
+  IF ancho &gt; 0.
+
+    exec_metodo_seleccion( metodo = &apos;MoveLeft&apos; p1 = 1 p2 = 1 p3 = 1 ).
+    l_forma = get_obj( origen = l_sel metodo = &apos;InlineShapes&apos; p1 = 1 ).
+
+    l_ancho = get_prop( obj = l_forma prop = &apos;Width&apos; ).
+    set_prop( obj = l_forma prop = &apos;Width&apos; valor = ancho ).
+
+    l_alto  = get_prop( obj = l_forma prop = &apos;Height&apos; ).
+    IF l_ancho NE 0.
+      l_alto = l_alto * ancho / l_ancho.
+      set_prop( obj = l_forma prop = &apos;Height&apos; valor = l_alto ).
+    ENDIF.
+    set_prop( obj = l_forma prop = &apos;LockAspectRatio&apos; valor = -1 ).
+    exec_metodo_seleccion( metodo = &apos;MoveRight&apos; p1 = 1 p2 = 1 p3 = 0 ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_NUEVA_PAGINA" VERSION="1" LANGU="S" DESCRIPT="Insertar nueva página" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_NUEVA_PAGINA" SCONAME="OBJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;D&apos;" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_NUEVA_PAGINA" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="7 Normal, 2 Nueva sección" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="7"/>
+  <source>method INSERTAR_NUEVA_PAGINA.
+
+* P1 = 7 Nueva página normal
+* p1 = 2 Nueva seccion
+  IF obj = &apos;S&apos;.
+    exec_metodo( obj = selection metodo = &apos;InsertBreak&apos; p1 = tipo ).
+  ELSE.
+    exec_metodo( obj = documento metodo = &apos;InsertBreak&apos; p1 = tipo ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_URL" VERSION="1" LANGU="S" DESCRIPT="Insertar URL" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_URL" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="INSERTAR_URL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>method INSERTAR_URL.
+
+  DATA: l_hyperlink   TYPE ole2_object,
+        l_doc TYPE ole2_object,
+        l_sel TYPE ole2_object,
+        l_rango TYPE ole2_object.
+
+  l_doc = get_obj_app( &apos;ActiveDocument&apos;  ).
+  l_hyperlink =   get_obj( origen = l_doc metodo = &apos;Hyperlinks&apos;  ).
+  l_sel = get_obj_app( &apos;Selection&apos;  ).
+  l_rango = get_obj( origen = l_sel metodo = &apos;Range&apos; ).
+
+  CALL METHOD OF l_hyperlink &apos;Add&apos;
+    EXPORTING
+    #1 = l_rango
+    #2 = url
+    #3 = &apos;&apos;
+    #4 = texto
+    #5 = texto.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_AL_FINAL_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Ir al final del documento" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_AL_FINAL_DOCUMENTO" SCONAME="OBJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;D&apos;"/>
+  <source>method IR_AL_FINAL_DOCUMENTO.
+
+  IF obj = &apos;S&apos;.
+    exec_metodo( obj = selection  metodo = &apos;EndKey&apos; p1 = 6 ).
+  ELSE.
+    IF documento_activo IS INITIAL.
+      exec_metodo( obj = documento metodo = &apos;EndKey&apos; p1 = 6 ).
+    ELSE.
+      exec_metodo( obj = documento_activo metodo = &apos;EndKey&apos; p1 = 6 ).
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_A_INICIO_DOCUMENTO" VERSION="1" LANGU="S" DESCRIPT="Ir a inicio documento" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method IR_A_INICIO_DOCUMENTO.
+
+  exec_metodo_seleccion( metodo = &apos;HomeKey&apos; p1 = 6 ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_A_MARCADOR" VERSION="1" LANGU="S" DESCRIPT="Ir a marcador" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_A_MARCADOR" SCONAME="MARCADOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_A_MARCADOR" SCONAME="BORRAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="IR_A_MARCADOR" SCONAME="HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD ir_a_marcador.
+  data l_marcador type ole2_object.
+
+  IF header IS INITIAL.
+    get_seleccion( ).
+    exec_metodo_seleccion( metodo = &apos;GoTo&apos;
+                           p1 = -1 p2 = 0 p3 = 0 p4 = marcador ).
+
+  ELSE.
+    l_marcador = get_obj( origen = documento_activo
+                          metodo = &apos;Bookmarks&apos;
+                          p1 = marcador ).
+    exec_metodo( obj = l_marcador metodo = &apos;Select&apos; ).
+  ENDIF.
+
+  IF borrar = &apos;X&apos;.
+    borrar_marcador( marcador ).
+  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_ABAJO" VERSION="1" LANGU="S" DESCRIPT="Mover a celda abajo" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_ABAJO" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="Celda=12, Caracter = 1" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="C_UN_CELDA"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_ABAJO" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_ABAJO" SCONAME="MARCAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>method MOVER_A_CELDA_ABAJO.
+
+  exec_metodo_seleccion( metodo = &apos;MoveDown&apos; p1 = tipo p2 = cantidad p3 = marcar ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_DERECHA" VERSION="1" LANGU="S" DESCRIPT="Mover a celda derecha" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_DERECHA" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="Celda=12, Caracter = 1" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="C_UN_CELDA"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_DERECHA" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_DERECHA" SCONAME="MARCAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>method MOVER_A_CELDA_DERECHA.
+
+  exec_metodo_seleccion( metodo = &apos;MoveRight&apos; p1 = tipo p2 = cantidad p3 = marcar ).
+
+*Unit Opcional WdUnits Unidad por la que va a moverse la selección. El valor predeterminado eswdCharacter.
+*Count Opcional Variant Número de unidades que va a moverse la selección. El valor predeterminado es 1.
+*Extend Opcional Variant Puede ser wdMove o wdExtend. Si se utiliza wdMove, se contrae la selección en el extremo final y se mueve hacia la izquierda. Si se utiliza wdExtend, la selección se extiende hacia la derecha. El valor predeterminado es wdMove.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_IZQUIERDA" VERSION="1" LANGU="S" DESCRIPT="Mover a celda izquieda" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_IZQUIERDA" SCONAME="TIPO" VERSION="1" LANGU="S" DESCRIPT="Celda=12, Caracter = 1" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="C_UN_CELDA"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_IZQUIERDA" SCONAME="CANTIDAD" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="1"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="MOVER_A_CELDA_IZQUIERDA" SCONAME="MARCAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>method MOVER_A_CELDA_IZQUIERDA.
+
+  exec_metodo_seleccion( metodo = &apos;MoveLeft&apos; p1 = tipo p2 = cantidad p3 = marcar ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="NUEVO_PARRAFO" VERSION="1" LANGU="S" DESCRIPT="Nuevo párrafo" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method NUEVO_PARRAFO.
+  exec_metodo_seleccion( metodo = &apos;TypeParagraph&apos; ).
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="PEGAR_SELECCION" VERSION="1" LANGU="S" DESCRIPT="Pegar" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="PEGAR_SELECCION" SCONAME="FORMATO" VERSION="1" LANGU="S" DESCRIPT="wdFormatOriginalFormatting" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="1"/>
+  <source>method PEGAR_SELECCION.
+
+*  exec_metodo_seleccion( metodo = &apos;PasteAndFormat&apos; p1 = formato ).
+  exec_metodo_seleccion( &apos;Paste&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="REEMPLAZAR_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Reemplazar texto" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="REEMPLAZAR_TEXTO" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="REEMPLAZAR_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="REEMPLAZAR_TEXTO" SCONAME="OBJ" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="OLE2_OBJECT" PAROPTIONL="X"/>
+  <source>METHOD reemplazar_texto.
+  DATA l_find TYPE ole2_object.
+
+  IF obj IS INITIAL.
+    IF contenido_documento IS INITIAL.
+      selection = get_obj_app( &apos;Selection&apos; ).
+      l_find = get_obj( origen = selection metodo = &apos;Find&apos; ).
+    ELSE.
+      l_find = get_obj( origen = contenido_documento metodo = &apos;Find&apos; ).
+    ENDIF.
+  ELSE.
+    l_find = get_obj( origen = obj metodo = &apos;Find&apos; ).
+  ENDIF.
+
+  IF strlen( texto ) &lt; 255 OR texto CS clave.
+    CALL METHOD OF l_find &apos;Execute&apos;
+      EXPORTING
+        #1  = clave  &quot;FindText
+        #2  = &apos;0&apos;
+        #3  = &apos;0&apos;
+        #4  = &apos;0&apos;
+        #5  = &apos;0&apos;
+        #6  = &apos;0&apos;
+        #7  = &apos;1&apos;
+        #8  = &apos;1&apos;    &quot;Wrap -&gt; 1 = wdFindContinue
+        #9  = &apos;0&apos;
+        #10 = texto  &quot;ReplaceWith
+        #11 = &apos;2&apos;
+        #12 = &apos;1&apos;
+        #13 = &apos;1&apos;
+        #14 = &apos;1&apos;
+        #15 = &apos;1&apos;.
+    control_error( texto = &apos;Busqueda:&apos; texto2 = clave texto3 = texto ).
+  ELSE.
+    DATA: l_texto    TYPE string,
+          l_texto200 TYPE string.
+    l_texto200 = texto(200) &amp;&amp; clave.
+    IF NOT texto+200 IS INITIAL.
+      l_texto = texto+200.
+      reemplazar_texto( obj = obj clave = clave texto = l_texto200 ).
+      reemplazar_texto( obj = obj clave = clave texto = l_texto ).
+    ENDIF.
+  ENDIF.
+
+*Ejecuta la operación de búsqueda especificada. Devuelve True si la operación de búsqueda se realiza con éxito. Boolean
+*Sintaxis
+*
+*expresión.Execute(FindText, MatchCase, MatchWholeWord, MatchWildcards, MatchSoundsLike, MatchAllWordForms, Forward, Wrap, Format,
+* ReplaceWith, Replace, MatchKashida, MatchDiacritics, MatchAlefHamza, MatchControl, MatchPrefix, MatchSuffix, MatchPhrase, IgnoreSpace, IgnorePunct)
+*
+*expresión   Requerida. Variable que representa un objeto Find.
+*
+*Parámetros
+*
+*Nombre Obligatorio/Opcional Tipo de datos Descripción
+*1. FindText Opcional Variant El texto que se va a buscar. Para buscar sólo formato se debe usar una cadena vacía (&quot;&quot;).
+* Para buscar caracteres especiales se deben especificar los códigos de caracteres apropiados. Por ejemplo, &quot;^p&quot; corresponde a una marca de párrafo y &quot;^t&quot; corresponde a un carácter de tabulación.
+*MatchCase Opcional Variant True para especificar que el texto de búsqueda distinga mayúsculas de minúsculas. Corresponde a la casilla Mayúsculas/minúsculas en el cuadro de diálogo Buscar y reemplazar (menú Edición).
+*MatchWholeWord Opcional Variant True para que la operación de búsqueda encuentre solamente palabras completas y no texto que es parte de una palabra más extensa.
+*Corresponde a la casilla Sólo palabras completas en el cuadro de diálogo Buscar y reemplazar.
+*MatchWildcards Opcional Variant True para hacer que el texto de búsqueda sea un operador de búsqueda especial. Corresponde a la casilla Usar caracteres comodín en el cuadro de diálogo Buscar y reemplazar.
+*MatchSoundsLike Opcional Variant True para hacer que la operación de búsqueda encuentre palabras que suenan de un modo similar al texto de búsqueda. Corresponde a la casilla Suena como en el cuadro de diálogo Buscar y reemplazar.
+*MatchAllWordForms Opcional Variant True para hacer que la operación de búsqueda encuentre todas las formas del texto de búsqueda (por ejemplo, &quot;sentarse&quot; encuentra &quot;sentado&quot; y &quot;sentó&quot;).
+*Corresponde a la casilla Todas las formas de la palabra en el  cuadro de diálogo Buscar y reemplazar.
+*Forward Opcional Variant True para buscar hacia adelante (hacia el final del documento).
+*8.Wrap Opcional Variant Controla lo que sucede si la búsqueda se inicia en otro punto que no sea el comienzo del documento y se alcanza el final del documento (o viceversa si Forward está establecido en False).
+* Este argumento controla además lo que  sucede si hay una selección o un intervalo y no se puede encontrar el texto de búsqueda en la selección o el intervalo. Puede ser alguna de las constantes WdFindWrap.
+*9.Format Opcional Variant True para hacer que la operación de búsqueda encuentre formato además de, o en lugar de, el texto de búsqueda.
+*10.ReplaceWith Opcional Variant Texto de reemplazo. Para eliminar el texto especificado por el argumento Find, se debe usar una cadena vacía (&quot;&quot;).
+*Los caracteres especiales y los criterios de búsqueda avanzada se especifican del mismo modo en que se  hace con el argumento Find.
+*Para especificar un objeto gráfico u otro elemento que no sea de texto como el reemplazo, se debe mover el elemento al Portapapeles y especificar &quot;^c&quot; en ReplaceWith.
+*11.Replace Opcional Variant Especifica cuántos reemplazos se efectuarán: uno, todos o ninguno. Puede ser cualquier constante WdReplace constant.
+*12.MatchKashida Opcional Variant True si las operaciones de búsqueda encuentran texto con kashida en un documento escrito en un idioma árabe.
+*Es probable que este argumento no esté disponible para usted según cuál sea la compatibilidad de idiomas  [Inglés (EE. UU.) por ejemplo] que haya seleccionado o instalado.
+*13.MatchDiacritics Opcional Variant True si las operaciones de búsqueda encuentran texto con diacríticos en un documento en un idioma en el cual se escribe de derecha a izquierda.
+* Es probable que este argumento no esté disponible para usted según cuál  sea la compatibilidad de idiomas [Inglés (EE. UU.) por ejemplo] que haya seleccionado o instalado.
+*14.MatchAlefHamza Opcional Variant True si las operaciones de búsqueda encuentran texto con alif hamza en un documento escrito en un idioma árabe.
+* Es probable que este argumento no esté disponible para usted según cuál sea la compatibilidad de idiomas  [Inglés (EE. UU.) por ejemplo] que haya seleccionado o instalado.
+*15.MatchControl Opcional Variant True si las operaciones de búsqueda encuentran texto con caracteres de control bidireccionales en un documento en un idioma en el que se escribe de derecha a izquierda.
+*Es probable que este argumento no esté disponible para usted según cuál sea la compatibilidad de idiomas [Inglés (EE. UU.) por ejemplo] que haya seleccionado o instalado.
+*MatchPrefix Opcional Variant True para encontrar palabras que comiencen con la cadena de búsqueda. Corresponde a la casilla Prefijo en el cuadro de diálogoBuscar y reemplazar.
+*MatchSuffix Opcional Variant True para encontrar palabras que terminen con la cadena de búsqueda. Corresponde a la casilla Sufijo en el cuadro de diálogo Buscar y reemplazar.
+*MatchPhrase Opcional Variant True omite todos los espacios en blanco y caracteres de control entre palabras.
+*IgnoreSpace Opcional Variant True ignora todos los espacios en blanco entre las palabras. Corresponde a la casilla Omitir espacios en blanco en el cuadro de diálogo Buscar y reemplazar.
+*IgnorePunct Opcional Variant True ignora todos los caracteres de puntuación entre las palabras
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SALTO_LINEA" VERSION="1" LANGU="S" DESCRIPT="Teclea texto" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method SALTO_LINEA.
+
+  exec_metodo_seleccion( metodo = &apos;TypeParagraph&apos; ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SET_NEGRITA" VERSION="1" LANGU="S" DESCRIPT="Fuente negrita" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SET_NEGRITA" SCONAME="NEGRITA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <source>method SET_NEGRITA.
+  DATA l_obj TYPE ole2_object.
+
+  l_obj = get_obj_sel( &apos;Font&apos; ).
+  IF negrita = &apos;X&apos;.
+    set_prop( obj = l_obj prop = &apos;Bold&apos; valor = true ).
+  ELSE.
+    set_prop( obj = l_obj prop = &apos;Bold&apos; valor = false ).
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SET_REEMPLAZAR" VERSION="1" LANGU="S" DESCRIPT="Fijar reemplazar" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SET_REEMPLAZAR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="1 Reemplazar / 0 no" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="TRUE"/>
+  <source>method SET_REEMPLAZAR.
+
+  set_prop( obj = selection prop = &apos;ReplaceSelection &apos; valor = valor ).
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SUBIR_N_LINEAS" VERSION="1" LANGU="S" DESCRIPT="Subir n lineas" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SUBIR_N_LINEAS" SCONAME="LINEAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="SUBIR_N_LINEAS" SCONAME="EXTEND" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <source>method SUBIR_N_LINEAS.
+
+  exec_metodo_seleccion( metodo = &apos;MoveUp&apos; p1 = 5 p2 = lineas p3 = extend ).
+
+*Unit Opcional WdUnits Unidad por la que va a moverse la selección. El valor predeterminado eswdLine.  Lineas = 5
+*Count Opcional Variant Número de unidades que va a moverse la selección. El valor predeterminado es 1.
+*Extend Opcional Variant Puede ser wdMove o wdExtend. Si se utiliza wdMove, se contrae la selección en el extremo final y desciende. Si se utiliza wdExtend, la selección desciende. El valor predeterminado es wdMove.
+
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Teclea texto" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO" SCONAME="FORMATEAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO" SCONAME="DECIMALES" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="99"/>
+  <source>method TECLEA_TEXTO.
+  data: l_tipo type c,
+        l_texto(10),
+        l_string(255).
+
+  describe field texto type l_tipo.
+  if l_tipo = &apos;I&apos; or l_tipo = &apos;P&apos; or l_tipo = &apos;D&apos;.
+
+    if formatear = &apos;X&apos;.
+      if decimales = 99.
+        write texto to l_texto.
+      else.
+        write texto to l_texto decimals decimales.
+      endif.
+    endif.
+
+    exec_metodo_seleccion( metodo = &apos;TypeText&apos; p1 = l_texto ).
+  else.
+
+    if formatear = &apos;X&apos;.
+      write texto to l_string.
+      exec_metodo_seleccion( metodo = &apos;TypeText&apos; p1 = l_string ).
+    else.
+      exec_metodo_seleccion( metodo = &apos;TypeText&apos; p1 = texto ).
+    endif.
+  endif.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO_FORMATO" VERSION="1" LANGU="S" DESCRIPT="Teclea texto considerando formatos &lt;H&gt; y &lt;U&gt;" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO_FORMATO" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO_FORMATO" SCONAME="FORMATEAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_WORD_OLE" CMPNAME="TECLEA_TEXTO_FORMATO" SCONAME="DECIMALES" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="99"/>
+  <source>method TECLEA_TEXTO_FORMATO.
+  DATA: l_string_normal TYPE string,
+        l_string_formateado TYPE string,
+        l_string_normal2 TYPE string,
+        l_negrita,
+        l_cursiva,
+        l_subrayado.
+
+  IF texto CS &apos;&lt;H&gt;&apos;.
+    SPLIT texto AT &apos;&lt;H&gt;&apos; INTO l_string_normal l_string_formateado.
+    l_negrita = &apos;X&apos;.
+  ELSEIF texto CS &apos;&lt;U&gt;&apos;.
+    SPLIT texto AT &apos;&lt;U&gt;&apos; INTO l_string_normal l_string_formateado.
+    l_subrayado = &apos;X&apos;.
+  ELSEIF texto CS &apos;&lt;C&gt;&apos;.
+    SPLIT texto AT &apos;&lt;C&gt;&apos; INTO l_string_normal l_string_formateado.
+    l_cursiva = &apos;X&apos;.
+  ELSEif texto cs &apos;&lt;/&gt;&apos;.
+    l_string_formateado = texto.
+  ELSE.
+    teclea_texto( texto = texto formatear = formatear decimales = decimales ).
+    EXIT.
+  ENDIF.
+
+  SPLIT l_string_formateado AT &apos;&lt;/&gt;&apos; INTO l_string_formateado l_string_normal2.
+
+  IF NOT l_string_normal IS INITIAL.
+    teclea_texto( texto = l_string_normal formatear = formatear decimales = decimales ).
+  ENDIF.
+
+  IF NOT l_string_formateado IS INITIAL.
+    IF l_negrita = &apos;X&apos;.
+      formato_fuente( negrita = &apos;X&apos; ).
+    ELSEIF l_cursiva = &apos;X&apos;.
+      formato_fuente( cursiva = &apos;X&apos; ).
+    ELSEIF l_subrayado = &apos;X&apos;.
+      formato_fuente( subrayado = &apos;X&apos; ).
+    ENDIF.
+    teclea_texto( texto = l_string_formateado ).
+    IF l_negrita = &apos;X&apos;.
+      formato_fuente( negrita = &apos;&apos; ).
+    ELSEIF l_cursiva = &apos;X&apos;.
+      formato_fuente( cursiva = &apos;&apos; ).
+    ELSEIF l_subrayado = &apos;X&apos;.
+      formato_fuente( subrayado = &apos;&apos; ).
+    ENDIF.
+  ENDIF.
+
+  IF NOT l_string_normal2 IS INITIAL.
+    teclea_texto( texto = l_string_normal2 ).
+  ENDIF.
+
+
+endmethod.</source>
+ </method>
+</CLAS>

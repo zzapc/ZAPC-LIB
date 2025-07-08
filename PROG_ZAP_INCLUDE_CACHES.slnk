@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_INCLUDE_CACHES" VARCL="X" SUBC="I" RMAND="100" RLOAD="S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include caches" LENGTH="14 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp;  Include  ZAP_INCLUDE_CACHES
+*&amp;---------------------------------------------------------------------*
+
+*https://github.com/ypinc/ypinc
+
+*report yp_bench_cache. &quot; reference class-based lru macro
+*constants: gc_heapsize type i value 1024.
+*
+*include ypinc_2q.
+*include ypinc_lru.
+*include ypinc_naive.
+*include ypinc_naive_rand.
+*
+*create_lcl_2q tdevc devclass gc_heapsize.     &quot; put your code here
+*  select single * from tdevc&quot; bypassing buffer
+*    into rs_tdevc where devclass = iv_devclass.
+*  endmethod.
+*endclass.
+*
+*create_lcl_lru tdevc devclass gc_heapsize.     &quot; put your code here
+*   select single * from tdevc&quot; bypassing buffer
+*        into rs_tdevc where devclass = iv_devclass.
+*  endmethod.
+*endclass.
+*
+*create_lcl_naive tdevc devclass gc_heapsize.     &quot; put your code here
+*  select single * from tdevc&quot; bypassing buffer
+*    into rs_tdevc where devclass = iv_devclass.
+*  endmethod.
+*endclass.
+*
+*create_lcl_nvrnd tdevc devclass gc_heapsize.     &quot; put your code here
+*  select single * from tdevc&quot; bypassing buffer
+*    into rs_tdevc where devclass = iv_devclass.
+*  endmethod.
+*endclass.
+*
+***********************************************************************
+*end-of-selection.
+*  data: ls_tadir type tadir.
+*  data: lv_prc type p decimals 4.
+*
+*  select * from tadir into ls_tadir up to 700000 rows.
+*    lcl_naive_tdevc_by_devclass=&gt;get( ls_tadir-devclass ).
+*    lcl_nvrnd_tdevc_by_devclass=&gt;get( ls_tadir-devclass ).
+*    lcl_lru_tdevc_by_devclass=&gt;get( ls_tadir-devclass ).
+*    lcl_2q_tdevc_by_devclass=&gt;get( ls_tadir-devclass ).
+*  endselect.
+*
+*  write: / &apos;500K entries from TADIR, caching for DEVCLASS, cache size =&apos;, gc_heapsize. skip.
+*
+*  write: / &apos;Naive cache: hits / miss, hitratio %&apos;.
+*  write: / lcl_naive_tdevc_by_devclass=&gt;hits, lcl_naive_tdevc_by_devclass=&gt;miss.
+*  lv_prc = ( lcl_naive_tdevc_by_devclass=&gt;hits * 100 ) / ( lcl_naive_tdevc_by_devclass=&gt;hits + lcl_naive_tdevc_by_devclass=&gt;miss ).
+*  write: / lv_prc. skip.
+*
+*  write: / &apos;Naive cache with random eviction: hits / miss, hitratio %&apos;.
+*  write: / lcl_nvrnd_tdevc_by_devclass=&gt;hits, lcl_nvrnd_tdevc_by_devclass=&gt;miss.
+*  lv_prc = ( lcl_nvrnd_tdevc_by_devclass=&gt;hits * 100 ) / ( lcl_nvrnd_tdevc_by_devclass=&gt;hits + lcl_nvrnd_tdevc_by_devclass=&gt;miss ).
+*  write: / lv_prc. skip.
+*
+*  write: / &apos;LRU: hits / miss, hitratio %&apos;.
+*  write: / lcl_lru_tdevc_by_devclass=&gt;hits, lcl_lru_tdevc_by_devclass=&gt;miss.
+*  lv_prc = ( lcl_lru_tdevc_by_devclass=&gt;hits * 100 ) / ( lcl_lru_tdevc_by_devclass=&gt;hits + lcl_lru_tdevc_by_devclass=&gt;miss ).
+*  write: / lv_prc. skip.
+*
+*  write: / &apos;2Q: hits / miss, hitratio %&apos;.
+*  write: / lcl_2q_tdevc_by_devclass=&gt;hits, lcl_2q_tdevc_by_devclass=&gt;miss.
+*  lv_prc = ( lcl_2q_tdevc_by_devclass=&gt;hits * 100 ) / ( lcl_2q_tdevc_by_devclass=&gt;hits + lcl_2q_tdevc_by_devclass=&gt;miss ).
+*  write: / lv_prc. skip.
+
+*&amp; ABAP 2Q cache (c) Pavel Niherysh 2023
+*&amp;---------------------------------------------------------------------*
+* This is a MACRO to define a CLASS which implements an 2Q cache
+*   of the structures by their key (one key field)
+* This version is the downport and should be compatible with 7.02 BASIS
+* Usage pattern - you define a 2Q cache for the data from the TABLE
+* with the given KEY as a class with two methods:
+* - GET( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+*   which returns the TABLE entry from the cache and if it is missing -
+*   calls another method SELECT to retrieve it. You have to code this:
+* - SELECT( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+* As a bonus, you have two static attributes for hits and misses count
+* to estimate the performance of your caching
+**
+* Usage example: we want to cache our beloved KNA1 customers
+*   by their KUNNR number in order to keep a cache for 128 of them:
+*
+*  create_lcl_2q KNA1 KUNNR 128
+*      select single * from KNA1 into RS_KNA1 where KUNNR = IV_KUNNR.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+*
+* Now you can call it in your program like that:
+*   lv_name = lcl_2q_kna1_by_kunnr( lt_vbap-kunag )-name1.
+*
+* You can even combine this with standard SAP where the code is used
+* from several places and enhancements within one session:
+*
+*  create_lcl_2q MARA MATNR 100
+*      CALL FUNCTION &apos;MARA_SINGLE_READ&apos;
+*        EXPORTING MATNR = IV_MATNR
+*        IMPORTING W_MARA = RS_MARA
+*        EXCEPTIONS OTHERS = 4.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+
+define create_lcl_2q. &quot;&amp;1 table &amp;2 key &amp;3 size
+
+class lcl_2q_&amp;1_by_&amp;2 definition.
+public section.
+  class-methods:
+    class_constructor,
+    get    importing iv_&amp;2 type &amp;2 returning value(rs_&amp;1) type &amp;1,
+    select importing iv_&amp;2 type &amp;2 returning value(rs_&amp;1) type &amp;1.
+  class-data:
+    miss type i,
+    hits type i.
+private section.
+  types:
+    begin of ty_node,
+      prev type ref to data, &quot; double-linked list over the hash in order
+      next type ref to data, &quot; to have an ability to emulate queue
+      main type xfeld, &quot; indicator that the node belongs to the MAIN queue
+      freq type int4,
+      data type &amp;1,
+    end of ty_node,
+    begin of ty_key_node,
+      prev type ref to data, &quot; double-linked list over the hash in order
+      next type ref to data, &quot; to have an ability to emulate queue
+      okey type &amp;1-&amp;2,
+    end of ty_key_node.
+  class-data:
+    heap type hashed table of ty_node with unique key data-&amp;2 initial size 64, &quot; both &quot;hot&quot; and &quot;cold&quot; entries
+    keys type hashed table of ty_key_node with unique key okey      initial size 64, &quot; evicted &quot;warm&quot; entries
+    mhead type ref   to ty_node, &quot; head of MAIN LRU list
+    mtail type ref   to ty_node, &quot; tail of MAIN LRU list
+    msize type i,                &quot; max size of LRU
+    ihead type ref   to ty_node, &quot; head of INPUT FIFO queue
+    itail type ref   to ty_node, &quot; tail of INPUT FIFO queue
+    isize type i, &quot; max size of INPUT FIFO
+    khead type ref   to ty_key_node, &quot; head of KEYS FIFO queue
+    ktail type ref   to ty_key_node, &quot; tail of KEYS FIFO queue
+    ksize type i, &quot; max size of KEYS storage
+    incnt type i, &quot; current size of INPUT
+    sr_node type ref to ty_node.  &quot; static link to the last accessed node
+endclass.
+
+class lcl_2q_&amp;1_by_&amp;2 implementation.
+  method class_constructor.
+    msize = &amp;3.
+    if msize &lt; 4. msize = 4. endif.
+    ksize = msize div 2. &quot; outsize contains only keys for 50% of buffer
+    isize = msize div 4. &quot; input contains minimum 25% of values
+    msize = &amp;3 - isize.  &quot; main contains 75% of values
+  endmethod.
+  method get.
+    data: ls_node type ty_node,
+          lv_freq type i,
+          ls_okey type ty_key_node,
+          lr_temp type ref to ty_node,
+          lr_okey type ref to ty_key_node, &quot; to check how WARM the entry is
+          lr_tkey type ref to ty_key_node. &quot; temporary node for deletion
+*1. if X in AM/AI -&gt; 2q AM, return
+    if sr_node is not bound or sr_node-&gt;data-&amp;2 ne iv_&amp;2. &quot; not the last access
+      read table heap reference into sr_node with key data-&amp;2 = iv_&amp;2.
+    endif.
+    if sr_node is bound and sr_node-&gt;data-&amp;2 = iv_&amp;2. &quot; 1. found in MAIN/INPUT
+      rs_&amp;1 = sr_node-&gt;data.
+      add 1 to hits. &quot; hit, return the value
+      add 1 to sr_node-&gt;freq.
+      if sr_node-&gt;main is not initial. &quot; 1.1 found in MAIN, make an LRU update, move node to the head
+        if sr_node = mhead.
+          return. &quot; nothing to update, we found the head itself
+        elseif sr_node = mtail. &quot; we found the tail, update only one ref from prev to it
+          mtail ?= sr_node-&gt;prev. &quot; get previous node,
+          clear mtail-&gt;next. &quot; clear the link to the tail
+        else. &quot; typical node in the middle, delete from the middle
+          cast ty_node( sr_node-&gt;next )-&gt;prev = sr_node-&gt;prev. &quot;lr_temp ?= sr_node-&gt;next. lr_temp-&gt;prev = sr_node-&gt;prev.
+          cast ty_node( sr_node-&gt;prev )-&gt;next = sr_node-&gt;next. &quot;lr_temp ?= sr_node-&gt;prev. lr_temp-&gt;next = sr_node-&gt;next.
+        endif.
+        clear sr_node-&gt;prev.
+        sr_node-&gt;next = mhead. &quot; link existing head as next node
+        mhead-&gt;prev = sr_node. &quot; backlink from existing head back to node
+        mhead = sr_node. &quot; now we have a new head
+      endif.
+      return. &quot; 1.2 found in INPUT, do nothing
+    endif.
+
+    add 1 to miss. &quot; well, it&apos;s a miss, baby, we shoulf find some place in HEAP to read the whole new data
+    ls_node-data = select( iv_&amp;2 ). &quot; the actual reading is done within a custom method
+    rs_&amp;1 = ls_node-data.
+    if ls_node-data is initial. &quot; there is no data, keep it in the negative?
+      return.
+    endif.
+    insert ls_node into table heap reference into sr_node. &quot; add X to the HEAP, classify later
+
+    if lines( heap ) &gt; msize + isize. &quot; 2. HEAP is full
+      if incnt &gt;= isize. &quot;3. we can cut something from the INPUT
+        subtract 1 from incnt.
+        ls_okey-okey = itail-&gt;data-&amp;2. &quot; save the key, delete the tail
+        if incnt = 0.
+          clear: ihead, itail.
+        else.
+          itail ?= itail-&gt;prev. &quot; get previous node,
+          clear itail-&gt;next. &quot; clear the link to the tail
+        endif.
+        delete table heap with table key data-&amp;2 = ls_okey-okey. &quot; free entry from INPUT
+
+        insert ls_okey into table keys reference into lr_tkey. &quot; 3.1 remove entry as WARM
+        if khead is initial. &quot; first entry, adjust tail
+          ktail = lr_tkey.
+        else.
+          lr_tkey-&gt;next = khead. &quot; adjust link to the current head
+          khead-&gt;prev = lr_tkey.
+        endif.
+        khead = lr_tkey.&quot; and replace the head
+
+      else. &quot;3.3 our HEAP is full and we cannot cut more from INPUT, so evict from MAIN
+        ls_okey-okey = mtail-&gt;data-&amp;2. &quot; save the key, delete the tail
+        mtail ?= mtail-&gt;prev. &quot; get previous node,
+        clear mtail-&gt;next. &quot; clear the link to the tail
+        delete table heap with table key data-&amp;2 = ls_okey-okey. &quot; and this entry from MAIN is gone forever
+      endif.
+    endif.
+
+    read table keys with table key okey = iv_&amp;2 reference into lr_okey. &quot; check if this key was WARM
+    if sy-subrc = 0. &quot; we&apos;ve seen it before, let&apos;s delete it from KEYS and promote it right to the MAIN!
+      if lines( keys ) = 1. &quot; last line, clear everything
+        clear: khead, ktail, keys[].
+      else.
+        if lr_okey = khead.
+          khead ?= khead-&gt;next. &quot; update khead to the next entry
+          clear khead-&gt;prev.    &quot; clear the link to the head
+        elseif lr_okey = ktail. &quot; we found the tail, update only one ref from prev to it
+          ktail ?= lr_okey-&gt;prev. &quot; get previous node,
+          clear ktail-&gt;next. &quot; clear the link to the tail
+        else. &quot; typical node in the middle, delete from the middle
+          cast ty_key_node( lr_okey-&gt;next )-&gt;prev = lr_okey-&gt;prev. &quot;lr_tkey ?= lr_okey-&gt;next. lr_tkey-&gt;prev = lr_okey-&gt;prev.
+          cast ty_key_node( lr_okey-&gt;prev )-&gt;next = lr_okey-&gt;next. &quot;lr_tkey ?= lr_okey-&gt;prev. lr_tkey-&gt;next = lr_okey-&gt;next.
+        endif.
+        delete table keys with table key okey = iv_&amp;2.
+      endif.
+
+      sr_node-&gt;main = abap_true. &quot; 4. MAIN promotion
+      if mhead is initial. &quot; first entry, adjust tail
+        mtail = sr_node.
+      else.
+        sr_node-&gt;next = mhead.
+        mhead-&gt;prev = sr_node.
+      endif.
+      mhead = sr_node.
+    else. &quot; never heard about it or already completely forgotten, append to the INPUT
+      if ihead is initial. &quot; first entry, adjust tail
+        itail = sr_node.
+      else.
+        sr_node-&gt;next = ihead.
+        ihead-&gt;prev = sr_node.
+      endif.
+      ihead = sr_node. &quot; adjust head
+      add 1 to incnt. &quot; keep count in INPUT
+    endif.
+    if lines( keys ) &gt; ksize. &quot; 3.2 overflow, delete last key
+      ls_okey-okey = ktail-&gt;okey. &quot; save the key, delete the tail
+      ktail ?= ktail-&gt;prev. &quot; get previous node,
+      clear ktail-&gt;next. &quot; clear the link to the tail
+      delete table keys with table key okey = ls_okey-okey. &quot; clear the space
+    endif.
+  endmethod.
+
+  method select.
+end-of-definition.
+
+*&amp; ABAP LRU cache (c) Pavel Niherysh 2023
+*&amp;---------------------------------------------------------------------*
+* This is a MACRO to define a CLASS which implements an LRU cache
+*   of the structures by their key (one key field)
+* This version is the downport and should be compatible with 6.40 BASIS
+* Usage pattern - you define an LRU cache for the data from the TABLE
+* with the given KEY as a class with two methods:
+* - GET( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+*   which returns the TABLE entry from the cache and if it is missing -
+*   calls another method SELECT to retrieve it. You have to code this:
+* - SELECT( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+* As a bonus, you have two static attributes for hits and misses count
+* to estimate the performance of your caching
+*
+* This cache supports negative caching - if your SELECT returns an
+* empty key - next time this request will be served from the cache
+* and you will get an empty entry as a result.
+* Right now there is no limit on a negative cache size as we
+* expect the number of negative entries to be low compared to the
+* normal ones, moreover only keys are cached so memory footprint is
+* significantly lower.
+*
+* Usage example: we want to cache our beloved KNA1 customers
+*   by their KUNNR number in order to keep a cache for 128 of them:
+*
+*  create_lcl_lru KNA1 KUNNR 128
+*      select single * from KNA1 into RS_KNA1 where KUNNR = IV_KUNNR.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+*
+* Now you can call it in your program like that:
+*   lv_name = lcl_lru_kna1_by_kunnr( lt_vbap-kunag )-name1.
+*
+* You can even combine this with standard SAP where the code is used
+* from several places and enhancements within one session:
+*
+*  create_lcl_lru MARA MATNR 100
+*      CALL FUNCTION &apos;MARA_SINGLE_READ&apos;
+*        EXPORTING MATNR = IV_MATNR
+*        IMPORTING W_MARA = RS_MARA
+*        EXCEPTIONS OTHERS = 4.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+
+define create_lcl_lru. &quot;&amp;1 table &amp;2 key &amp;3 size
+
+class lcl_lru_&amp;1_by_&amp;2 definition.
+public section.
+  class-methods:
+    class_constructor,
+    get    importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1,
+    select importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1.
+  class-data:
+    miss type i,
+    hits type i.
+private section.
+  types:
+    begin of ty_node,
+      prev type ref to data, &quot; double-linked list over the hash in order
+      next type ref to data, &quot; to have an ability to emulate queue
+      data type &amp;1,
+    end of ty_node.
+  class-data:
+    heap type hashed table of ty_node with unique key data-&amp;2 initial size &amp;3, &quot; entries
+    anti type hashed table of &amp;1-&amp;2 with unique key table_line, &quot; negative cache
+    mhead type ref   to ty_node, &quot; head of MAIN LRU list
+    mtail type ref   to ty_node, &quot; tail of MAIN LRU list
+    msize type i,                &quot; max size of LRU
+    sr_node type ref to ty_node. &quot; static link to the last accessed node
+endclass.
+
+class lcl_lru_&amp;1_by_&amp;2 implementation.
+  method class_constructor.
+    msize = &amp;3.
+  endmethod.
+  method get.
+    data: ls_node type ty_node,
+          lr_temp type ref to ty_node.
+    if sr_node is not bound or sr_node-&gt;data-&amp;2 ne iv_&amp;2. &quot; 1. not found at head
+      read table heap reference into sr_node with key data-&amp;2 = iv_&amp;2.
+      if sy-subrc = 0. &quot; 1. found, not at head
+        if sr_node = mtail. &quot; we found the tail, update only one ref from prev to it
+          mtail ?= sr_node-&gt;prev. &quot; get previous node,
+          clear mtail-&gt;next. &quot; clear the link to the tail
+        else. &quot; typical node in the middle, delete from the middle
+          lr_temp ?= sr_node-&gt;next. lr_temp-&gt;prev = sr_node-&gt;prev.&quot;cast ty_node( sr_node-&gt;next )-&gt;prev = sr_node-&gt;prev. &quot;
+          lr_temp ?= sr_node-&gt;prev. lr_temp-&gt;next = sr_node-&gt;next.&quot;cast ty_node( sr_node-&gt;prev )-&gt;next = sr_node-&gt;next. &quot;
+        endif.
+        clear sr_node-&gt;prev.   &quot; this is going to be head, no previous entry
+        sr_node-&gt;next = mhead. &quot; link existing head as next node
+        mhead-&gt;prev = sr_node. &quot; backlink from existing head back to node
+        mhead = sr_node. &quot; now we have a new head
+      else.
+        if anti[] is not initial. &quot; do we have negative cache items?
+          read table anti with table key table_line = iv_&amp;2 transporting no fields.
+          if sy-subrc = 0.
+            add 1 to hits.
+            clear rs_&amp;1. return.
+          endif.
+        endif.
+        add 1 to miss. &quot; well, it&apos;s a miss, baby, we should find some place in HEAP to read the whole new data
+        rs_&amp;1 = ls_node-data = select( iv_&amp;2 ). &quot; the actual reading is done within a custom method
+        if ls_node-data-&amp;2 is initial. &quot; there is no data, keep it in the negative?
+          insert iv_&amp;2 into table anti. return.
+        endif.
+        if lines( heap ) = msize. &quot; 2. HEAP is full, delete from tail
+          lr_temp ?= mtail-&gt;prev. &quot; get previous node,
+          clear mtail-&gt;next. &quot; clear the link to the tail
+          delete table heap with table key data-&amp;2 = mtail-&gt;data-&amp;2. &quot; and this entry from MAIN is gone forever
+          mtail = lr_temp.
+        endif.
+        insert ls_node into table heap reference into sr_node. &quot; add X to the HEAP, classify later
+        if mhead is initial. &quot; maybe first entry, adjust tail
+          mtail = sr_node.
+        else.  &quot; just append at head
+          mhead-&gt;prev = sr_node.
+        endif.
+        sr_node-&gt;next = mhead.
+        mhead = sr_node.
+        return.
+      endif.
+    endif.
+    add 1 to hits. &quot; hit, return the value
+    rs_&amp;1 = sr_node-&gt;data.
+  endmethod.
+  method select.
+end-of-definition.
+
+*&amp; ABAP Naive cache (c) Pavel Niherysh 2023
+*&amp;---------------------------------------------------------------------*
+* This is a MACRO to define a CLASS which implements a NAIVE cache
+*   of the structures by their key (one key field)
+*
+* This is provided just for the reference to compare with more
+* advanced cache algorithms and not intended for production use
+
+* Usage pattern - you define a cache for the data from the TABLE
+* with the given KEY as a class with two methods:
+* - GET( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+*   which returns the TABLE entry from the cache and if it is missing -
+*   calls another method SELECT to retrieve it. You have to code this:
+* - SELECT( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+* As a bonus, you have two static attributes for hits and misses count
+* to estimate the performance of your caching
+*
+* This cache supports negative caching - if your SELECT returns an
+* empty key - next time this request will be served from the cache
+* and you will get an empty entry as a result.
+* Right now there is no limit on a negative cache size as we
+* expect the number of negative entries to be low compared to the
+* normal ones, moreover only keys are cached so memory footprint is
+* significantly lower.
+*
+* Usage example: we want to cache our beloved KNA1 customers
+*   by their KUNNR number in order to keep a cache for 128 of them:
+*
+*  create_lcl_naive KNA1 KUNNR 128
+*      select single * from KNA1 into RS_KNA1 where KUNNR = IV_KUNNR.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+*
+* Now you can call it in your program like that:
+*   lv_name = lcl_naive_kna1_by_kunnr( lt_vbap-kunag )-name1.
+
+define create_lcl_naive. &quot;&amp;1 table &amp;2 key &amp;3 size
+
+class lcl_naive_&amp;1_by_&amp;2 definition.
+public section.
+  class-methods:
+    class_constructor,
+    get    importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1,
+    select importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1.
+  class-data:
+    miss type i,
+    hits type i.
+private section.
+  class-data:
+    heap type hashed table of &amp;1 with unique key &amp;2 initial size &amp;3, &quot; entries
+    anti type hashed table of &amp;1-&amp;2 with unique key table_line, &quot; negative cache
+    msize type i.
+endclass.
+
+class lcl_naive_&amp;1_by_&amp;2 implementation.
+  method class_constructor.
+    msize = &amp;3.
+  endmethod.
+  method get.
+    read table heap into rs_&amp;1 with key &amp;2 = iv_&amp;2.
+    if sy-subrc = 0. &quot; 1. found, not at head
+      add 1 to hits.
+    else.
+      if anti[] is not initial. &quot; do we have negative cache items?
+        read table anti with table key table_line = iv_&amp;2 transporting no fields.
+        if sy-subrc = 0.
+          add 1 to hits.
+          clear rs_&amp;1. return.
+        endif.
+      endif.
+      add 1 to miss.
+      rs_&amp;1 = select( iv_&amp;2 ). &quot; the actual reading is done within a custom method
+      if rs_&amp;1-&amp;2 is initial. &quot; there is no data, keep it in the negative?
+        insert iv_&amp;2 into table anti. return.
+      endif.
+      if lines( heap ) = msize. &quot; 2. HEAP is full, delete
+        clear heap[].
+      endif.
+      insert rs_&amp;1 into table heap.
+    endif.
+  endmethod.
+  method select.
+end-of-definition.
+
+*&amp; ABAP Naive cache with random entry eviction (c) Pavel Niherysh 2023
+*&amp;---------------------------------------------------------------------*
+* This is a MACRO to define a CLASS which implements a NAIVE cache
+*   of the structures by their key (one key field)
+*
+* This is provided just for the reference to compare with more
+* advanced cache algorithms and not intended for production use
+
+* Usage pattern - you define a cache for the data from the TABLE
+* with the given KEY as a class with two methods:
+* - GET( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+*   which returns the TABLE entry from the cache and if it is missing -
+*   calls another method SELECT to retrieve it. You have to code this:
+* - SELECT( importing iv_KEY type TABLE-KEY ) returning rs_TABLE
+* As a bonus, you have two static attributes for hits and misses count
+* to estimate the performance of your caching
+*
+* This cache supports negative caching - if your SELECT returns an
+* empty key - next time this request will be served from the cache
+* and you will get an empty entry as a result.
+* Right now there is no limit on a negative cache size as we
+* expect the number of negative entries to be low compared to the
+* normal ones, moreover only keys are cached so memory footprint is
+* significantly lower.
+*
+* Usage example: we want to cache our beloved KNA1 customers
+*   by their KUNNR number in order to keep a cache for 128 of them:
+*
+*  create_lcl_naive KNA1 KUNNR 128
+*      select single * from KNA1 into RS_KNA1 where KUNNR = IV_KUNNR.
+*    endmethod. &quot; because we finishing the method implementation
+*  endclass. &quot; because we finishing the class implementation
+*
+* Now you can call it in your program like that:
+*   lv_name = lcl_naive_kna1_by_kunnr( lt_vbap-kunag )-name1.
+
+define create_lcl_nvrnd. &quot;&amp;1 table &amp;2 key &amp;3 size
+
+class lcl_nvrnd_&amp;1_by_&amp;2 definition.
+public section.
+  class-methods:
+    class_constructor,
+    get    importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1,
+    select importing iv_&amp;2 type &amp;1-&amp;2 returning value(rs_&amp;1) type &amp;1.
+  class-data:
+    miss type i,
+    hits type i.
+private section.
+  class-data:
+    heap type sorted table of &amp;1 with unique key &amp;2 initial size &amp;3, &quot; entries
+    anti type hashed table of &amp;1-&amp;2 with unique key table_line, &quot; negative cache
+    msize type i.
+endclass.
+
+class lcl_nvrnd_&amp;1_by_&amp;2 implementation.
+  method class_constructor.
+    msize = &amp;3.
+  endmethod.
+  method get.
+    read table heap into rs_&amp;1 with key &amp;2 = iv_&amp;2.
+    if sy-subrc = 0. &quot; 1. found, not at head
+      add 1 to hits.
+    else.
+      if anti[] is not initial. &quot; do we have negative cache items?
+        read table anti with table key table_line = iv_&amp;2 transporting no fields.
+        if sy-subrc = 0.
+          add 1 to hits.
+          clear rs_&amp;1. return.
+        endif.
+      endif.
+      add 1 to miss.
+      rs_&amp;1 = select( iv_&amp;2 ). &quot; the actual reading is done within a custom method
+      if rs_&amp;1-&amp;2 is initial. &quot; there is no data, keep it in the negative?
+        insert iv_&amp;2 into table anti. return.
+      endif.
+      if lines( heap ) = msize. &quot; 2. HEAP is full, delete
+        call function &apos;QF05_RANDOM_INTEGER&apos;
+          EXPORTING
+            RAN_INT_MAX         = msize
+            RAN_INT_MIN         = 1
+         IMPORTING
+            RAN_INT             = sy-tfill.
+
+        delete heap index sy-tfill.
+      endif.
+      insert rs_&amp;1 into table heap.
+    endif.
+  endmethod.
+  method select.
+end-of-definition.</source>
+</PROG>

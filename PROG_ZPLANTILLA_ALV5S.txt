@@ -1,0 +1,283 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 13/02/2015
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+*
+* MODIFICACIONES
+* 15/01/2015 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+report zplantilla_alv5s.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: proj,
+        sscrfields. "Campos en las imágenes de selección
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+DATA: i_proyectos TYPE TABLE OF zbmm052,
+      l_proyecto   TYPE zbmm052,                        "Estructura preparaciones
+      i_ubicaciones     TYPE zbmm051_t,                      "Tipo tabla ZBMM051 Etiquetas
+      l_ubicacion      TYPE zbmm051.                        "Estructura etiquetas
+
+FIELD-SYMBOLS: <proyecto> TYPE zbmm052,                 "Estructura preparaciones
+               <ubicacion>    TYPE zbmm051.                 "Estructura etiquetas
+
+*------VARIABLES-------------------------------------------------------*
+DATA: v_inicio.
+DATA  l_prep_null TYPE zbmm052.                            "Estructura preparaciones
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_event_grid_prep DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+             data_changed REDEFINITION,
+             toolbar      REDEFINITION,
+             user_command REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_event_grid_eti DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_event_grid_eti DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+             data_changed REDEFINITION,
+             toolbar      REDEFINITION,
+             user_command REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS:  seleccionar_datos,
+              get_ubicaciones IMPORTING tplnr type tplnr.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+DATA: o_proyectos           TYPE REF TO zcl_ap_alv_grid,
+      o_ubicaciones               TYPE REF TO zcl_ap_alv_grid,
+      o_event_proy              TYPE REF TO lcl_event_grid_prep,
+      o_event_ubic               TYPE REF TO lcl_event_grid_eti,
+      o_prog                    TYPE REF TO zcl_report,
+      gf_gui_container          TYPE REF TO cl_gui_docking_container,
+      cf_gui_splitter_container TYPE REF TO cl_gui_easy_splitter_container,
+      cf_container_top          TYPE REF TO cl_gui_container,
+      cf_container_down         TYPE REF TO cl_gui_container,
+      custom_container          TYPE REF TO cl_gui_custom_container.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_pspid for proj-pspid.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2.
+SELECTION-SCREEN: FUNCTION KEY 3.
+SELECTION-SCREEN: FUNCTION KEY 4.
+
+
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid_prep IMPLEMENTATION.
+  METHOD double_click.
+
+    READ TABLE i_proyectos INTO l_proyecto INDEX e_row-index.
+    IF sy-subrc = 0.
+    ENDIF.
+
+  ENDMETHOD.                                               "double_click
+
+
+  METHOD toolbar.
+    DATA: ls_toolbar TYPE stb_button.                      "Pulsador de barra pulsadores
+
+
+  ENDMETHOD.                                               "toolbar
+
+  METHOD user_command.
+    DATA: l_fila      TYPE i.
+
+    CASE e_ucomm .
+      when others.
+    ENDCASE .
+
+  ENDMETHOD.                                               "USER_COMMAND
+
+  METHOD data_changed.
+  ENDMETHOD.                                               "data_changed
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_event_grid_eti IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_event_grid_eti IMPLEMENTATION.
+  METHOD double_click.
+    READ TABLE i_ubicaciones INTO l_ubicacion INDEX e_row-index.
+    IF sy-subrc = 0.
+    ENDIF.
+
+  ENDMETHOD.                                               "double_click
+
+
+  METHOD toolbar.
+    DATA: ls_toolbar TYPE stb_button.                      "Pulsador de barra pulsadores
+
+  ENDMETHOD.                                               "toolbar
+
+  METHOD user_command.
+    CASE e_ucomm .
+      WHEN others.
+endcase.
+
+  ENDMETHOD.                                               "USER_COMMAND
+
+  METHOD data_changed.
+  ENDMETHOD.                                               "data_changed
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+
+  METHOD seleccionar_datos.
+
+
+  ENDMETHOD.                                               "seleccionar_datos
+
+  METHOD get_ubicaciones.
+    DATA: l_titulo     TYPE string.
+
+    l_titulo = tplnr.
+    o_ubicaciones->set_titulo( l_titulo ).
+
+    o_ubicaciones->refrescar_grid( soft_refresh = '' ).
+
+  ENDMETHOD.                                               "get_etiquetas
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status = 'INICIO'.
+
+  o_prog->initialization( CHANGING sscrfields = sscrfields ).
+
+  CREATE OBJECT: o_event_proy,
+                 o_event_ubic.
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog->at_selection(  ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->seleccionar_datos( ).
+
+  CALL SCREEN 0100.
+
+************************************************************************
+*
+* FORMS ADICIONALES
+*
+************************************************************************
+
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS 'ST_0100'.
+  SET TITLEBAR '100'.
+
+  IF v_inicio IS INITIAL.
+    v_inicio = 'X'.
+
+    CREATE OBJECT gf_gui_container
+      EXPORTING
+        side  = cl_gui_docking_container=>dock_at_top
+*        metric =
+        ratio = 95
+*        parent = custom_container.
+        name = 'DOCK'.
+
+    CREATE OBJECT cf_gui_splitter_container
+      EXPORTING
+        parent      = gf_gui_container
+        orientation = cf_gui_splitter_container->orientation_vertical.
+
+    cf_container_top  = cf_gui_splitter_container->top_left_container.
+    cf_container_down = cf_gui_splitter_container->bottom_right_container.
+
+    CREATE OBJECT o_proyectos
+      EXPORTING
+        estructura  = 'ZBMM052'
+        o_event     = o_event_proy
+        o_container = cf_container_top.
+
+    o_proyectos->set_field_noout( 'TANUM,NOMBRE_COLOR,FECHA_PDA,HORA_PDA,MAT_C' ).
+    o_proyectos->show( CHANGING tabla = i_proyectos ).
+
+    CREATE OBJECT o_ubicaciones
+      EXPORTING
+        estructura  = 'ZBMM051'
+        o_event     = o_event_ubic
+        o_container = cf_container_down.
+
+    o_ubicaciones->barra_botones_minima_edit( ).
+    o_ubicaciones->quitar_botones_insercion( 'X' ).
+
+    o_ubicaciones->set_field_noout( 'PREPARACION,PETICION,POSNR,CHECK,NISTA' ).
+    o_ubicaciones->set_field_input( 'CTD_CONFIRM' ).
+    o_ubicaciones->show( CHANGING tabla = i_ubicaciones ).
+
+  ENDIF.
+
+ENDMODULE.                 " STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  CASE sy-ucomm.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.                 " USER_COMMAND_0100  INPUT

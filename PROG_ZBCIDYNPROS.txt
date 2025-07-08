@@ -1,0 +1,184 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEBCI019
+*&---------------------------------------------------------------------*
+*----------------------------------------------------------------------*
+* Funciones manejo de textos en dynpros
+************************************************************************
+
+data: v_hreditor_visualizar,
+      v_hreditor_forzar_vis,
+      v_hreditor_vis,
+      v_hreditor_maxcols type i value 72.
+
+  data:  i_hreditor_texto(132) occurs 5 with header line,
+      *i_hreditor_texto(132) occurs 5 with header line.
+
+************************ DEFINES ***************************************
+* Personalizamos el objeto editor
+data v_hreditor_repid like sy-repid.
+
+define set_editor.
+  v_hreditor_repid = sy-repid.
+  clear v_hreditor_vis.
+  if v_hreditor_visualizar = 'X' or v_hreditor_forzar_vis = 'X'.
+    v_hreditor_vis = 'X'.
+  endif.
+  call function 'RH_EDITOR_SET'
+       exporting
+            repid          = v_hreditor_repid
+            dynnr          = sy-dynnr
+            controlname    = &1
+            max_cols       = v_hreditor_maxcols
+            show_tool      = ' '
+            show_status    = ' '
+            display_mode   = v_hreditor_vis
+       tables
+            lines          = &2
+       exceptions
+            create_error   = 1
+            internal_error = 2
+            others         = 3.
+end-of-definition.
+
+define get_editor.
+  call function 'RH_EDITOR_GET'
+       exporting
+            controlname    = &1
+       tables
+            lines          = &2
+       exceptions
+            internal_error = 1
+            others         = 2.
+end-of-definition.
+
+DEFINE destruye_editor.
+  call function 'RH_EDITOR_DESTROY'
+       exporting
+            controlname = &1.
+END-OF-DEFINITION.
+
+
+*---------------------------------------------------------------------*
+*       FORM unir_en_linea                                            *
+*---------------------------------------------------------------------*
+form unir_en_linea tables i_lineas
+                 changing ps_linea.
+
+  clear ps_linea.
+  loop at i_lineas.
+    if sy-tabix > 1.
+      concatenate ps_linea cl_abap_char_utilities=>cr_lf into ps_linea.
+    endif.
+    concatenate ps_linea i_lineas into ps_linea.
+  endloop.
+
+endform.
+
+*---------------------------------------------------------------------*
+*       FORM partir_linea                                             *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+*  -->  I_LINEAS                                                      *
+*  -->  PE_LINEA                                                      *
+*---------------------------------------------------------------------*
+form partir_linea tables i_lineas
+                   using pe_linea.
+
+  data: c_aux,  x_aux type x.
+  data: l_enter1.
+  data l_linea like tline-tdline.
+  data l_lin(1000).
+  data: l_cont type i,
+         l_aux type i.
+
+
+  l_lin = pe_linea.
+  clear l_cont.
+  refresh i_lineas.
+  do.
+    add 1 to l_cont.
+    c_aux = l_lin(1).
+
+*Pasamos el carácter a binario para obtener el código ASCII
+*    write c_aux to x_aux.
+
+*   if x_aux = '0A'.   "Código del enter
+     IF X_AUX = cl_abap_char_utilities=>cr_lf.
+      if l_enter1 = 'X'.
+        i_lineas = l_linea.
+        append i_lineas.
+        clear l_linea.
+        clear l_cont.
+      endif.
+    endif.
+
+    if x_aux = '0D'.   "Código del enter
+      l_enter1 = 'X'.
+    else.
+      clear l_enter1.
+    endif.
+
+    if x_aux ne '0D'  and x_aux ne '0A'.
+      l_aux = l_cont - 1.
+      l_linea+l_aux(1) = c_aux.
+    endif.
+
+    shift l_lin left.
+    if l_lin is initial.
+      if not l_linea is initial.
+        i_lineas = l_linea.
+        append i_lineas.
+        clear l_cont.
+      endif.
+      exit.
+    endif.
+
+    if l_cont = 132.
+      i_lineas = l_linea.
+      append i_lineas.
+      clear l_linea.
+      clear l_cont.
+    endif.
+
+  enddo.
+
+endform.
+
+*---------------------------------------------------------------------*
+*       FORM LEER_TEXTO                                               *
+*---------------------------------------------------------------------*
+*       ........                                                      *
+*---------------------------------------------------------------------*
+form leer_texto_hr tables i_lineas
+                using pe_objid pe_subty.
+  data: i_1002 like p1002 occurs 1 with header line,
+        i_hrt1002 like hrt1002 occurs 1 with header line.
+
+  select * from hrp1002
+    into corresponding fields of table i_1002
+   where plvar = '01'
+     and otype = 'S'
+     and objid = pe_objid
+     and subty = pe_subty
+     and istat = '1'.
+
+  call function 'RH_READ_INFTY_TABDATA'
+       exporting
+            infty          = '1002'
+       tables
+            innnn          = i_1002
+            hrtnnnn        = i_hrt1002
+       exceptions
+            no_table_infty = 1
+            innnn_empty    = 2
+            nothing_found  = 3
+            others         = 4.
+
+  refresh i_lineas.
+  loop at i_hrt1002.
+    i_lineas = i_hrt1002-tline.
+    append i_lineas.
+  endloop.
+
+endform.

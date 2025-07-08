@@ -1,0 +1,198 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 01/12/2016
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+**->MANUAL:http://sap4.com,http://sap4.com/edicion
+**->PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 01/04/2016 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_alv7.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, mara.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+         check,
+         lights  TYPE zico_estado_mensaje,
+         message TYPE bapi_msg,
+       END OF t_listado.
+
+__data_set_var listado.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+PARAMETERS: p_defpa DEFAULT 'X' NO-DISPLAY.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    READ TABLE i_listado INTO l_listado INDEX row.
+    IF sy-subrc = 0.
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_excel( ).
+      WHEN 'CREAR'.
+        get_seleccion( ).
+        LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+*          <listado>-lights = zcl_ap_alv=>c_sem_rojo.
+        ENDLOOP.
+        IF sy-subrc NE 0.
+          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+        ELSE.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+
+    sgpi_texto( 'Seleccionando datos' ).
+
+    o_prog->o_sgpi->get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING <listado>.
+      sgpi_texto( texto1 = 'Procesando datos' cant_porc = 100 ).
+
+      IF <listado>-message IS INITIAL.
+        <listado>-lights = zcl_ap_alv=>set_icono( icono = zcl_ap_alv=>c_ico_verde mensaje = <listado>-message ).
+      ELSE.
+        <listado>-lights = zcl_ap_alv=>set_icono( icono = zcl_ap_alv=>c_ico_rojo mensaje = <listado>-message ).
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe' ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_field( campo = 'LIGHTS' op = 'KEY' ).
+    o_alv->set_field_noout( 'CHECK' ).
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = 'INICIO'
+      get_nombre_pc = 'X'
+      no_param      = 'X'.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = 'STANDARD'
+*     lights             = 'LIGHTS'
+      top_of_page_auto   = 'X'
+      top_of_page_titulo = 'X'.
+
+  p_vari = o_alv->get_default_layout( ).
+
+  o_prog->initialization_i( EXPORTING get_default_param = p_defpa CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog->at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

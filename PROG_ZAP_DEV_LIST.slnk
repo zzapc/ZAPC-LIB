@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_DEV_LIST" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Listado modificaciones desarrollos" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_MAIL" ENTRY="        Enviar mail" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_ERDAT" ENTRY="D       ." LENGTH="17 "/>
+   <textElement ID="S" KEY="S_ERNAM" ENTRY="D       ." LENGTH="18 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Listado modificaciones desarrollos" LENGTH="34 "/>
+   <textElement ID="S" KEY="P_MAIL" ENTRY="        Enviar mail" LENGTH="19 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_ERDAT" ENTRY="D       ." LENGTH="17 "/>
+   <textElement ID="S" KEY="S_ERNAM" ENTRY="D       ." LENGTH="18 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado modificaciones desarrollos
+* DESCRIPCION : Listado modificaciones desarrollos
+*
+* AUTOR: Andrés Picazo                                FECHA: 25/09/2017
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:http://sap4.com,http://sap4.com/edicion
+**-&gt;PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&amp;ntask=TTT
+*
+***********************************************************************
+REPORT zap_dev_list.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: zap_dev_est, ztemp.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+DATA: v_fechas TYPE string.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             cliente TYPE string,
+             sysid   TYPE sy-sysid,
+             ernam   TYPE ernam , &quot; Creado por
+             erdat   TYPE erdat , &quot; Creado el
+             objeto  TYPE zap_dev-objeto,
+             tipo    TYPE zap_dev-tipo,
+             text    TYPE trdirt-text,
+             valor1  TYPE text20 , &quot; Denominación
+             valor2  TYPE text20 , &quot; Denominación
+             valor3  TYPE text20 , &quot; Denominación
+             texto   TYPE text255 , &quot; Texto
+             string  TYPE zstring , &quot; String
+             trkorr  TYPE trkorr , &quot; Orden/Tarea
+             message TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          l_listado TYPE t_listado.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_ernam FOR ztemp-ernam,
+                s_erdat FOR ztemp-erdat.
+
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_mail TYPE ztemp-texto2.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    READ TABLE o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; INDEX row.
+    IF sy-subrc = 0.
+    ENDIF.
+  ENDMETHOD. &quot;handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row     TYPE i,
+          l_fichero TYPE string,
+          l_ruta    TYPE string.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    CASE e_salv_function.
+      WHEN &apos;EXCEL&apos;.
+*        exportar_excel( ).
+        exportar_xlsx( fichero = &apos;desarrollos.xlsx&apos; abrir_excel = &apos;X&apos; dir_temp = &apos;X&apos; ).
+      WHEN &apos;F01&apos;.
+        l_ruta = zcl_ap_ficheros=&gt;buscar_ruta_fichero( rutas =
+           &apos;C:\Users\Andres\Google Drive\LIB\,D:\GD_LIB\LIB\&apos; ).
+
+
+        __concat2 l_fichero zcl_c=&gt;cliente_tasks sy-sysid.
+        CONCATENATE l_fichero sy-datum v_fechas INTO l_fichero SEPARATED BY space.
+
+        IF NOT l_ruta IS INITIAL.
+          DATA: v_aux1 TYPE string, v_aux2 TYPE string.
+          SPLIT zcl_c=&gt;ruta_descarga_slnk AT &apos;\CODIGO\Reports slnk\&apos; INTO v_aux1 v_aux2.
+          CONCATENATE &apos;\CODIGO\Reports slnk\&apos; v_aux2 INTO v_aux1.
+          REPLACE &apos;\LIB\&apos; IN l_ruta WITH v_aux1.
+          CONCATENATE l_ruta l_fichero INTO l_fichero.
+        ENDIF.
+        exportar_xlsx( fichero = l_fichero abrir_excel = &apos;X&apos;   ).
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+
+    CHECK NOT i_listado[] IS INITIAL.
+
+    listado( ).
+
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE t_listado.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+    SELECT * FROM zap_dev                               &quot;#EC CI_NOFIRST
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE ernam IN s_ernam
+       AND erdat IN s_erdat.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+
+      PERFORM get_text IN PROGRAM zap_dev using o_cache CHANGING &lt;listado&gt;-tipo &lt;listado&gt;-objeto &lt;listado&gt;-text.
+
+      set_status_list( EXPORTING message = &lt;listado&gt;-message criterio = &apos;V&apos; CHANGING list = &lt;listado&gt; ).
+    ENDLOOP.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+    DATA lr_erdat LIKE LINE OF s_erdat.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+    o_alv-&gt;set_field_text( campo = &apos;STRING&apos; valor = &apos;Comentarios&apos; ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_noout( &apos;CHECK&apos; ).
+    o_alv-&gt;set_orden( campo = &apos;ERDAT&apos; down = &apos;X&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    IF p_mail IS INITIAL.
+      o_alv-&gt;show( ).
+    ELSE.
+      SET PARAMETER ID &apos;ZMAIL&apos; FIELD &apos;X&apos;.                   &quot;#EC EXISTS
+      IF s_erdat[] IS INITIAL.
+        zcl_ap_envio_mail=&gt;mail( EXPORTING subject = &apos;Modificaciones desarrollos&apos; direccion = p_mail conversion_sap = &apos;X&apos; CHANGING i_tabla = i_listado ).
+      ELSE.
+        __concat2 string &apos;Modificaciones desarrollos&apos; v_fechas.
+        zcl_ap_envio_mail=&gt;mail( EXPORTING subject = string direccion = p_mail  o_alv_origen = o_alv nombre_fichero = &apos;Desarrollos.xls&apos; CHANGING i_tabla = i_listado ).
+      ENDIF.
+    ENDIF.
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = &apos;INICIO&apos;
+      get_nombre_pc = &apos;X&apos;
+      no_param      = &apos;X&apos;
+      status_prog   = &apos;ZAP_STATUS&apos;.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = &apos;STANDARD_ALV_DYN&apos;
+      top_of_page_auto   = &apos;X&apos;
+      top_of_page_titulo = &apos;X&apos;
+      status_prog        = &apos;ZAP_STATUS&apos;.
+
+  o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Exportación&apos;  icon = icon_xls qinfo = &apos;Exportación datos&apos; ).
+*  o_alv-&gt;add_button( button = &apos;M01&apos; text = &apos;LOG&apos;  icon = &apos;@15@&apos; qinfo = &apos;Log&apos; ).
+
+  p_vari = o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  v_fechas = zcl_ap_fechas=&gt;rango2string( s_erdat[] ).
+
+
+  o_prog-&gt;main( ).</source>
+</PROG>

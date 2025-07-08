@@ -1,0 +1,570 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : Statistics
+* *
+* DESCRIPCION : Statistics
+*
+* AUTOR: Andrés Picazo                                FECHA: 15/11/2013
+*
+* MODIFICACIONES
+*
+***********************************************************************
+REPORT zstats.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: zestadisticas, sscrfields.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+*         check,
+*         lights,
+         clave(20),
+         account     TYPE zestadisticas-account,
+         name_text   TYPE adrp-name_text,
+         fecha       TYPE zestadisticas-fecha,
+         starttime   TYPE zestadisticas-starttime,
+         endti       TYPE zestadisticas-endti,
+         hours       TYPE dur_cats,
+END OF t_listado.
+DATA: i_listado TYPE TABLE OF t_listado,
+      l_listado TYPE t_listado,
+      l_listado2 TYPE t_listado.
+
+FIELD-SYMBOLS <listado> TYPE t_listado.
+
+TYPES: BEGIN OF t_detalle,
+*         check,
+         clave(20),
+         account     TYPE zestadisticas-account,
+         name_text   TYPE adrp-name_text,
+         fecha       TYPE zestadisticas-fecha,
+         starttime   TYPE zestadisticas-starttime,
+         endti       TYPE zestadisticas-endti,
+         tcode       TYPE zestadisticas-tcode,
+         ttext       TYPE tstct-ttext,
+         terminalid  TYPE zestadisticas-terminalid,
+         report      TYPE zestadisticas-report,
+         text        TYPE trdirt-text,
+         jobname     TYPE zestadisticas-jobname,
+         respti      TYPE zestadisticas-respti,
+         dbcalls     TYPE zestadisticas-dbcalls,
+         sec_next    TYPE i,
+         ratio       TYPE p DECIMALS 5,
+         seconds     TYPE i,
+END OF t_detalle.
+DATA: i_detalle TYPE TABLE OF t_detalle,
+      i_detalle_todo TYPE TABLE OF t_detalle,
+      l_detalle TYPE t_detalle,
+      v_detalle_init.
+
+FIELD-SYMBOLS <detalle> TYPE t_detalle.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS. "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+              listado_detalle IMPORTING clave TYPE any OPTIONAL,
+              agrupar_datos,
+              seleccionar_datos,
+              enviar_mail.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv TYPE REF TO lcl_alv,
+      o_alvd TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_accoun FOR zestadisticas-account,
+                s_fecha   FOR zestadisticas-fecha,
+                s_start   FOR zestadisticas-starttime,
+                s_endti   FOR zestadisticas-endti,
+                s_tcode   FOR zestadisticas-tcode,
+                s_termin  FOR zestadisticas-terminalid,
+                s_report  FOR zestadisticas-report,
+                s_jobnam FOR zestadisticas-jobname.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_list  RADIOBUTTON GROUP g USER-COMMAND g,
+            p_emails TYPE string MODIF ID lis,
+            p_deta  RADIOBUTTON GROUP g.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_secs TYPE i DEFAULT 300,
+            p_rat  TYPE p DECIMALS 2 DEFAULT 4.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_varil LIKE disvariant-variant MODIF ID lis,
+            p_varid LIKE disvariant-variant MODIF ID det.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2,
+                  FUNCTION KEY 3,
+                  FUNCTION KEY 4.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    IF nombre_tabla CS 'LISTADO'.
+      READ TABLE i_listado INDEX row INTO l_listado.
+      IF sy-subrc = 0.
+        o_prog->listado_detalle( l_listado-clave ).
+      ENDIF.
+    ELSE.
+      READ TABLE i_detalle INDEX row INTO l_detalle.
+      IF sy-subrc = 0.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+
+    seleccionar_datos( ).
+
+    IF p_list = 'X'.
+      agrupar_datos( ).
+
+      IF NOT p_emails IS INITIAL.
+        enviar_mail( ).
+      ELSE.
+        listado( ).
+      ENDIF.
+    ELSE.
+      listado_detalle( ).
+    ENDIF.
+
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+    DATA: i_det2 TYPE TABLE OF t_detalle,
+          l_tabix TYPE i,
+          l_minutos TYPE i.
+
+    zcl_ap_sgpi=>text( 'Selecting detail' ).
+
+    SELECT * FROM zestadisticas
+      INTO CORRESPONDING FIELDS OF TABLE i_detalle
+    WHERE account IN s_accoun
+      AND fecha   IN s_fecha
+      AND starttime   IN s_start
+      AND endti   IN s_endti
+      AND tcode   IN s_tcode
+      AND terminalid IN s_termin
+      AND report     IN s_report
+      AND jobname    IN s_jobnam.
+
+    IF p_list = 'X'.
+      DELETE i_detalle WHERE jobname NE ''.
+    ENDIF.
+
+    LOOP AT i_detalle ASSIGNING <detalle>.
+
+      SELECT SINGLE name_text FROM adrp JOIN usr21 ON adrp~persnumber = usr21~persnumber
+        INTO <detalle>-name_text
+       WHERE bname = <detalle>-account.
+
+      IF NOT <detalle>-tcode IS INITIAL.
+        SELECT SINGLE ttext FROM tstct
+          INTO <detalle>-ttext
+         WHERE sprsl = sy-langu
+           AND tcode = <detalle>-tcode.
+      ENDIF.
+
+      IF NOT <detalle>-report IS INITIAL.
+        SELECT SINGLE text FROM trdirt
+          INTO <detalle>-text
+         WHERE sprsl = sy-langu
+           AND name  = <detalle>-report.
+      ENDIF.
+
+      <detalle>-seconds = 1 + <detalle>-endti - <detalle>-starttime.
+      IF <detalle>-seconds > 0.
+        <detalle>-ratio = <detalle>-respti / <detalle>-seconds.
+      ENDIF.
+    ENDLOOP.
+
+    SORT: i_detalle.
+    i_det2 = i_detalle.
+    LOOP AT i_detalle ASSIGNING <detalle>.
+      l_tabix = sy-tabix + 1.
+      DO 30 TIMES.
+        READ TABLE i_det2 INTO l_detalle INDEX l_tabix.
+        IF sy-subrc NE 0 OR l_detalle-account NE <detalle>-account
+                         OR l_detalle-fecha   NE <detalle>-fecha.
+          <detalle>-sec_next = 99999.
+          EXIT.
+        ELSE.
+          IF <detalle>-ratio < p_rat.
+            <detalle>-sec_next = 0.
+          ELSE.
+            IF l_detalle-ratio < p_rat.
+              ADD 1 TO l_tabix.
+              LOOP AT i_det2 INTO l_detalle FROM l_tabix
+                              WHERE account = <detalle>-account
+                                AND fecha   = <detalle>-fecha
+                                AND ratio > p_rat.
+                <detalle>-sec_next = l_detalle-starttime - <detalle>-endti.
+              ENDLOOP.
+              IF sy-subrc NE 0.
+                <detalle>-sec_next = 99999.
+              ENDIF.
+            ELSE.
+              <detalle>-sec_next = l_detalle-starttime - <detalle>-endti.
+              IF <detalle>-sec_next >= 0.
+                EXIT.
+              ELSE.
+                ADD 1 TO l_tabix.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDDO.
+    ENDLOOP.
+
+    i_detalle_todo = i_detalle.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    zcl_ap_sgpi=>text( 'Generating list' ).
+
+    o_alv->set_layout( p_varil ).
+
+    o_alv->set_field_text( 'HOURS' ).
+    o_alv->set_agregacion( 'HOURS' ).
+    o_alv->set_field_noout( 'CLAVE' ).
+
+    o_alv->set_orden( campo = 'ACCOUNT' subtot = 'X' ).
+    o_alv->set_orden( campo = 'NAME_TEXT' ).
+    o_alv->set_orden( campo = 'FECHA' subtot = 'X' ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "listado
+
+  METHOD listado_detalle.
+
+    zcl_ap_sgpi=>text( 'Generating list' ).
+
+    CLEAR i_detalle.
+    IF clave IS INITIAL.
+      i_detalle = i_detalle_todo.
+    ELSE.
+      LOOP AT i_detalle_todo ASSIGNING <detalle> WHERE clave = clave.
+        APPEND <detalle> TO i_detalle.
+      ENDLOOP.
+    ENDIF.
+
+    IF v_detalle_init IS INITIAL.
+      v_detalle_init = 'X'.
+      o_alvd->set_layout( p_varid ).
+
+      o_alvd->set_field_text( 'SEC_NEXT,RATIO,SECONDS' ).
+      o_alvd->set_field_noout( 'CLAVE,SEC_NEXT,RATIO' ).
+    ENDIF.
+    o_alvd->show( ).
+
+
+  ENDMETHOD.                    "
+
+  METHOD agrupar_datos.
+    TYPES: BEGIN OF t_user,
+             account     TYPE zestadisticas-account,
+             fecha       TYPE zestadisticas-fecha,
+             begti  TYPE sy-uzeit,
+             endti  TYPE sy-uzeit,
+           END OF t_user.
+
+    DATA: l_new, l_end, l_minutos TYPE i, l_minutos2 TYPE i, l_endti TYPE enduz, l_begti TYPE beguz,
+          i_det TYPE TABLE OF t_detalle,
+          i_det2 TYPE TABLE OF t_detalle,
+          l_ratio TYPE p DECIMALS 5,
+          i_list TYPE TABLE OF t_listado,
+          i_list2 TYPE TABLE OF t_listado,
+          i_list3 TYPE TABLE OF t_listado,
+          l_list TYPE t_listado,
+          l_tabix TYPE sy-tabix,
+          i_user TYPE TABLE OF t_user,
+          l_user TYPE t_user,
+          i_horas TYPE TABLE OF t_user,
+          l_horas TYPE t_user.
+
+    zcl_ap_sgpi=>text( 'Collecting data' ).
+    CLEAR i_listado.
+
+* Descartamos registros con poca utilización
+    SORT i_detalle_todo.
+    LOOP AT i_detalle_todo ASSIGNING <detalle> WHERE ratio > p_rat.
+      CONCATENATE <detalle>-account <detalle>-fecha INTO <detalle>-clave.
+      APPEND <detalle> TO i_det.
+    ENDLOOP.
+
+    CLEAR l_new.
+    LOOP AT i_det ASSIGNING <detalle>.
+      CLEAR: l_end.
+      AT NEW fecha.
+        l_new = 'X'.
+        CLEAR l_endti.
+      ENDAT.
+      AT END OF fecha.
+        l_end = 'X'.
+      ENDAT.
+      IF <detalle>-sec_next > p_secs.
+        l_end = 'X'.
+      ENDIF.
+
+      IF l_new = 'X'.
+        CLEAR l_listado.
+        MOVE-CORRESPONDING <detalle> TO l_listado.
+        CLEAR l_new.
+      ENDIF.
+
+      IF <detalle>-endti > l_endti.
+        l_endti = <detalle>-endti.
+      ENDIF.
+
+      IF l_end = 'X'.
+        l_listado-endti = l_endti.
+        APPEND l_listado TO i_listado.
+        l_new = 'X'.
+        CLEAR l_endti.
+      ENDIF.
+    ENDLOOP.
+
+    DO 3 TIMES.
+      CLEAR: i_list3, i_list2.
+      i_list = i_listado.
+      LOOP AT i_listado INTO l_listado2.
+        LOOP AT i_list INTO l_listado WHERE account = l_listado2-account
+                                        AND fecha = l_listado2-fecha
+                                        AND ( starttime NE l_listado2-endti
+                                           OR  endti NE  l_listado2-starttime )
+                                        AND starttime <= l_listado2-endti
+                                        AND endti >= l_listado2-starttime.
+          APPEND l_listado TO i_list2.
+          IF l_listado-starttime < l_listado2-starttime.
+            l_listado2-starttime = l_listado-starttime.
+          ENDIF.
+          IF l_listado-endti > l_listado2-endti.
+            l_listado2-endti = l_listado-endti.
+          ENDIF.
+          DELETE i_list.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          APPEND l_listado2 TO i_list3.
+        ENDIF.
+      ENDLOOP.
+
+      IF i_list3 IS INITIAL AND i_list2 IS INITIAL.
+        EXIT.
+      ENDIF.
+
+      LOOP AT i_list2 ASSIGNING <listado>.
+        DELETE i_listado WHERE account = <listado>-account
+                           AND fecha   = <listado>-fecha
+                           AND starttime = <listado>-starttime
+                           AND endti     = <listado>-endti.
+      ENDLOOP.
+
+      LOOP AT i_list3 ASSIGNING <listado>.
+        APPEND <listado> TO i_listado.
+      ENDLOOP.
+      SORT i_listado.
+    ENDDO.
+
+    LOOP AT i_listado ASSIGNING <listado>.
+      <listado>-hours = ( <listado>-endti - <listado>-starttime ) / 3600.
+    ENDLOOP.
+
+    DELETE i_listado WHERE hours = 0.
+
+  ENDMETHOD.                    "agrupar_datos
+
+  METHOD enviar_mail.
+    TYPES: BEGIN OF t_mail,
+             name_text   TYPE adrp-name_text,
+             fecha       TYPE zestadisticas-fecha,
+             starttime   TYPE zestadisticas-starttime,
+             endti       TYPE zestadisticas-endti,
+             hours       TYPE dur_cats,
+    END OF t_mail.
+    DATA: i_mail TYPE TABLE OF t_mail,
+          l_mail TYPE t_mail.
+
+    DATA: o_mail TYPE REF TO zcl_ap_envio_mail,
+          l_string TYPE string,
+          l_fecha(10),
+          l_fecha2(10),
+          l_hours TYPE p DECIMALS 2,
+          l_begda TYPE begda,
+          l_endda TYPE endda,
+          l_desc TYPE so_obj_des.
+
+    CREATE OBJECT o_mail
+      EXPORTING
+        usar_clases = 'X'.
+
+    o_mail->cabecera_html( ).
+
+    l_begda = '99991231'.
+    LOOP AT i_listado INTO l_listado.
+      IF l_listado-fecha < l_begda.
+        l_begda = l_listado-fecha.
+      ENDIF.
+      IF l_listado-fecha > l_endda.
+        l_endda = l_listado-fecha.
+      ENDIF.
+    ENDLOOP.
+
+    WRITE l_begda TO l_fecha.
+    IF l_begda = l_endda.
+      CONCATENATE 'Time report from:' l_fecha INTO l_string SEPARATED BY space.
+    ELSE.
+      WRITE l_endda TO l_fecha2.
+      CONCATENATE 'Time report from:' l_fecha 'to' l_fecha2 INTO l_string SEPARATED BY space.
+    ENDIF.
+
+    LOOP AT i_listado ASSIGNING <listado>.
+      MOVE-CORRESPONDING <listado> TO l_mail.
+      APPEND l_mail TO i_mail.
+    ENDLOOP.
+
+    o_mail->add_parrafo_html( l_string ).
+
+    o_mail->set_text( '<font size="2">' ).
+    o_mail->inicio_tabla_html( longitud = 1024
+                               c1 = 'Name'
+                               c2 = 'Date'
+                               c3 = 'Total hours' ).
+
+    LOOP AT i_mail INTO l_mail.
+      AT NEW fecha.
+        CLEAR l_hours.
+      ENDAT.
+
+      ADD l_mail-hours TO l_hours.
+
+
+      AT END OF fecha.
+        o_mail->add_fila_html( c1 = l_mail-name_text
+                               c2 = l_mail-fecha
+                               c3 = l_hours ).
+      ENDAT.
+    ENDLOOP.
+
+    o_mail->fin_tabla_html( ).
+    o_mail->set_text( '</font>' ).
+    o_mail->set_text( '</body></html>' ).
+
+    l_desc = l_string.
+    o_mail->add_itab_alv_as_xls( EXPORTING descripcion = l_desc CHANGING itab = i_mail ).
+
+    CALL METHOD o_mail->envio_mail
+      EXPORTING
+        subject             = l_string
+        direccion           = p_emails
+        html                = 'X'
+        forzar_mail_externo = 'X'.
+
+    o_mail->free( ).
+    CLEAR o_mail.
+
+  ENDMETHOD.                    "enviar_mail
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status = 'STANDARD'.
+*      lights = 'LIGHTS'.
+
+  p_varil = o_alv->get_default_layout( ).
+
+  CREATE OBJECT o_alvd
+    EXPORTING
+      status = 'STANDARD'
+      tabla  = 'I_DETALLE'.
+
+  p_varid = o_alv->get_default_layout( ).
+
+  IF p_list IS INITIAL AND p_deta IS INITIAL.
+    p_list = 'X'.
+  ENDIF.
+
+AT SELECTION-SCREEN OUTPUT.
+
+  zcl_ap_dynpro=>screen_visible( group1 = 'LIS' variable = p_list ).
+  zcl_ap_dynpro=>screen_visible( group1 = 'DET' variable = p_deta ).
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_varil.
+  p_varil = o_alv->get_f4_layout( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_varid.
+  p_varid = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

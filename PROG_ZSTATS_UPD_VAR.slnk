@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSTATS_UPD_VAR" VARCL="X" SUBC="I" APPL="S" RMAND="100" RLOAD="S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include variables ZSTATS_UPD" LENGTH="28 "/>
+  </language>
+ </textPool>
+ <source>*------TABLAS INTERNAS-------------------------------------------------*
+TABLES: tadir, zestadisticas.
+
+DATA: BEGIN OF i_datos OCCURS 1000,
+       account    LIKE stad_output-account,
+       date       LIKE stad_output-date,
+  starttime  LIKE stad_output-starttime,
+       endti      LIKE stad_output-endti,
+       tcode      LIKE stad_output-tcode,
+       terminalid LIKE stad_output-terminalid,
+       report     LIKE stad_output-report,
+       btcjobname    LIKE stad_output-btcjobname,
+       jobstep    LIKE stad_output-btcstepnr,
+       tabload    LIKE stad_output-tabload,
+       dynpronr   LIKE stad_output-dynpronr,
+  respti LIKE stad_output-respti,
+dbcalls LIKE stad_output-dbcalls,
+     END OF i_datos.
+
+DATA: BEGIN OF i_aux OCCURS 1000,
+       account    LIKE stad_output-account,
+       tcode      LIKE stad_output-tcode,
+       report     LIKE stad_output-report,
+       date       LIKE stad_output-date,
+       endti      LIKE stad_output-endti,
+       terminalid LIKE stad_output-terminalid,
+       btcjobname    LIKE stad_output-btcjobname,
+  starttime  LIKE stad_output-starttime,
+  respti LIKE stad_output-respti,
+dbcalls LIKE stad_output-dbcalls,
+     END OF i_aux.
+*------VARIABLES-------------------------------------------------------*
+
+*** INICIO MODIFICACIONES
+PARAMETERS:      p_act AS CHECKBOX DEFAULT &apos; &apos;,
+                p_list AS CHECKBOX DEFAULT &apos;X&apos;.
+*** FIN MODIFICACIONES
+
+*** INICIO MODIFICACIONES
+********************************** ALV *********************************
+TYPE-POOLS: slis.
+
+DATA: alv_fieldtab TYPE slis_t_fieldcat_alv,
+     alv_heading  TYPE slis_t_listheader,
+     alv_layout   TYPE slis_layout_alv,
+     alv_events   TYPE slis_t_event,
+     alv_sort     TYPE slis_t_sortinfo_alv,
+     alv_filter   TYPE slis_t_filter_alv,
+     alv_repname  LIKE sy-repid,
+     alv_f2code   LIKE sy-ucomm VALUE  &apos;&amp;ETA&apos;,
+     alv_g_save(1) TYPE c,
+     alv_g_exit(1) TYPE c.
+DATA: alv_fieldcat TYPE slis_fieldcat_alv.
+*** FIN MODIFICACIONES
+
+
+
+
+
+
+
+
+
+
+
+
+
+FORM zwrite_mainlist USING rmode.
+
+* local help data
+  DATA: zeilen        TYPE i      VALUE 0,
+        kbyte         TYPE p,
+        output_flag.
+
+* progress indicator
+*
+  output_flag = &apos;X&apos;.
+  CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+    EXPORTING
+      percentage = 0
+      text       = &apos;Preparing output&apos;
+    EXCEPTIONS
+      OTHERS     = 1.
+*
+* clear workareas
+  CLEAR: wa_stats_c_lv0, wa_stats_c_lv1, wa_main, wa_all_stats.
+
+* set status, titlebar and start date
+  IF simple_mode = abap_true.
+    REFRESH buttons.
+    buttons-exclude = &apos;OPAL&apos;.
+    APPEND buttons.
+    buttons-exclude = &apos;CLAL&apos;.
+    APPEND buttons.
+    buttons-exclude = &apos;FILC&apos;.
+    APPEND buttons.
+    buttons-exclude = &apos;CLII&apos;.
+    APPEND buttons.
+    IF loghandle IS INITIAL.
+      buttons-exclude = &apos;ALOG&apos;.
+      APPEND buttons.
+    ENDIF.
+    SET PF-STATUS &apos;MAIN_SMALL&apos; EXCLUDING buttons.
+    SET TITLEBAR &apos;012&apos;.
+  ELSE.
+    CASE rmode.
+      WHEN &apos;c&apos; OR &apos;C&apos;.
+        IF overall_opened_level = 1.
+          SET PF-STATUS &apos;MAIN&apos; EXCLUDING &apos;OPAL&apos;.
+        ELSE.
+          SET PF-STATUS &apos;MAIN&apos; EXCLUDING &apos;CLAL&apos;.
+        ENDIF.
+        SET TITLEBAR &apos;010&apos;.
+      WHEN &apos;b&apos; OR &apos;B&apos;.
+        REFRESH buttons.
+        buttons-exclude = &apos;OPAL&apos;.
+        APPEND buttons.
+        buttons-exclude = &apos;CLAL&apos;.
+        APPEND buttons.
+        buttons-exclude = &apos;FILC&apos;.
+        APPEND buttons.
+        SET PF-STATUS &apos;MAIN&apos; EXCLUDING buttons.
+        SET TITLEBAR &apos;012&apos;.
+      WHEN OTHERS.
+        REFRESH buttons.
+        buttons-exclude = &apos;OPAL&apos;.
+        APPEND buttons.
+        buttons-exclude = &apos;CLAL&apos;.
+        APPEND buttons.
+        buttons-exclude = &apos;FILC&apos;.
+        APPEND buttons.
+        buttons-exclude = &apos;CLII&apos;.
+        APPEND buttons.
+        SET PF-STATUS &apos;MAIN&apos; EXCLUDING buttons.
+        SET TITLEBAR &apos;012&apos;.
+    ENDCASE.
+  ENDIF.
+  save_date = selection-sdat.
+
+* check wether table ausgabe is filled (Outputfields)
+  DESCRIBE TABLE ausgabe LINES zeilen.
+  IF zeilen &lt; 1.
+    PERFORM fill_ausgabe.
+  ENDIF.
+
+* get and set line-size
+  PERFORM get_breite USING rmode.
+  NEW-PAGE LINE-SIZE breite.
+
+* check wether records have been read
+  READ TABLE all_stats TRANSPORTING NO FIELDS INDEX 1.
+  IF sy-subrc &lt;&gt; 0.
+    FORMAT COLOR 1 INVERSE.
+    WRITE: /   sy-vline,
+            30 &apos;* No records received for current selection. *&apos;,
+            AT breite sy-vline.
+  ENDIF.
+
+* write records ------------------------------------------------------ *
+  CASE rmode.
+*
+    WHEN &apos;c&apos; OR &apos;C&apos;.
+* display mode aggregation by trans-ID ---------------------------------
+* level 0 ----------------------------
+      DESCRIBE TABLE stats_c_lv0 LINES zeilen.
+* check if stats_c_lv0 already has been filled
+      IF zeilen = 0.
+        PERFORM fill_c_level_0.
+      ENDIF.
+      &quot; 11/99 copy-free loop:
+      LOOP AT stats_c_lv0 INTO wa_stats_c_lv0.
+* Sätze ohne Trans-ID ausfiltern
+        CHECK wa_stats_c_lv0-main-transid &lt;&gt; space.
+* check user is in selection
+        CHECK wa_stats_c_lv0-main-account CP selection-sbenu.
+* are further selection criteria set?
+        IF selection-sresptime &gt; 0 OR
+           selection-scputime  &gt; 0 OR
+           selection-sdbtime   &gt; 0 OR
+           selection-sbytes    &gt; 0 OR
+           selection-schg      &gt; 0.
+          kbyte =   wa_stats_c_lv0-main-bytes / 1024.
+          CHECK wa_stats_c_lv0-main-respti     &gt;= selection-sresptime
+          AND
+                wa_stats_c_lv0-main-cputi      &gt;= selection-scputime
+                AND
+                wa_stats_c_lv0-main-dbcallti   &gt;= selection-sdbtime
+                AND
+                kbyte                          &gt;= selection-sbytes
+                AND
+                  wa_stats_c_lv0-main-phychngcnt &gt;= selection-schg.
+        ENDIF.
+* if a filter (mode c, level 0) is set, check selection
+*@AD new(7.0)
+*        lv0_filter-tcode = selection-stcod.
+*        lv0_filter-program = selection-sprogram.
+*
+        IF lv0_filter-tcode &lt;&gt; &apos;*&apos;.
+          CHECK ( wa_stats_c_lv0-main-tcode CP lv0_filter-tcode OR
+                  wa_stats_c_lv0-action     CP lv0_filter-tcode ).
+        ENDIF.
+        IF lv0_filter-program &lt;&gt; &apos;*&apos;.
+          CHECK ( wa_stats_c_lv0-main-report CP lv0_filter-program OR
+                  wa_stats_c_lv0-action      CP lv0_filter-program ).
+        ENDIF.
+        IF lv0_filter-transid &lt;&gt; &apos;*&apos;.
+          CHECK wa_stats_c_lv0-main-transid CP lv0_filter-transid.
+        ENDIF.
+* initialize some stuff
+        save_clv0_tabix = sy-tabix.
+        level = 0. opened_level = -1.
+* get client info top level
+        IF client_info_only = &apos;X&apos;.
+          CHECK wa_stats_c_lv0-subclir IS NOT INITIAL.
+*AD          READ TABLE wa_stats_c_lv0-subclir INDEX 1 INTO wa_info.
+          MOVE-CORRESPONDING wa_stats_c_lv0-subclir TO wa_info.
+          PERFORM push_client_info.&quot; using wa_info.
+        ENDIF.
+* check if level 0 is opened
+        IF wa_stats_c_lv0-opened &lt;&gt; space AND wa_stats_c_lv0-steps &gt; 1.
+          ADD 1 TO opened_level.
+          PERFORM zwrite_main_record USING level opened_level.
+* level 1 ----------------------------
+          READ TABLE stats_c_lv1 INTO wa_stats_c_lv1 WITH KEY
+                          main-transid = wa_stats_c_lv0-main-transid.
+          IF sy-subrc &lt;&gt; 0.
+            PERFORM fill_c_level_1 USING wa_stats_c_lv0-main-transid.
+          ENDIF.
+          &quot; 11/99 copy-free loop:
+          LOOP AT stats_c_lv1 INTO wa_stats_c_lv1
+                     WHERE main-transid = wa_stats_c_lv0-main-transid.
+            save_clv1_tabix = sy-tabix.
+            level = 1. opened_level = 0.
+* check if level 1 is opened and more than 1 step
+            IF wa_stats_c_lv1-opened &lt;&gt; space
+                               AND wa_stats_c_lv1-steps &gt; 1.
+              ADD 1 TO opened_level.
+              PERFORM zwrite_main_record USING level opened_level.
+* level 2 ----------------------------
+              level = 2.
+              LOOP AT navigate
+                          WHERE transid = wa_stats_c_lv0-main-transid.
+                CLEAR: wa_all_stats, wa_main.
+                READ TABLE all_stats INTO wa_all_stats
+                                            INDEX navigate-record_idx.
+*                READ TABLE wa_all_stats-main INTO wa_main
+*                                            INDEX navigate-main_idx.
+                MOVE-CORRESPONDING wa_all_stats-main TO wa_main.
+                CHECK wa_main-tasktype = wa_stats_c_lv1-main-tasktype.
+                CHECK wa_main-instance = wa_stats_c_lv1-main-instance.
+                CHECK wa_main-okey     = wa_stats_c_lv1-main-okey.
+                PERFORM zwrite_main_record USING level opened_level.
+              ENDLOOP.                 &quot;navigate
+* if level 1 is closed or only one step don&apos;t display level 2
+            ELSE.
+              PERFORM zwrite_main_record USING level opened_level.
+            ENDIF.
+*            clear wa_stats_c_lv1.     &quot;copy-free loop instead
+          ENDLOOP.                     &quot;stats_c_lv1
+* if level 0 is closed or only one step display only this level
+        ELSE.
+          PERFORM zwrite_main_record USING level opened_level.
+        ENDIF.
+*        clear wa_stats_c_lv0.         &quot;copy-free loop instead
+      ENDLOOP.                         &quot;stats_c_lv0
+    WHEN &apos;b&apos; OR &apos;B&apos;.
+* display mode all records grouped by trans-ID -------------------------
+      level = 2. opened_level = -1.
+      DESCRIBE TABLE stats_b_lv1 LINES zeilen.
+* check if stats_c_lv0 already has been filled
+      IF zeilen = 0.
+        PERFORM fill_b_level_1.
+      ENDIF.
+      LOOP AT stats_b_lv1.
+* Sätze ohne Trans-ID ausfiltern
+        CHECK stats_b_lv1-transid &lt;&gt; space.
+* are further selection criteria set?
+        IF selection-sresptime &gt; 0 OR
+           selection-scputime  &gt; 0 OR
+           selection-sdbtime   &gt; 0 OR
+           selection-sbytes    &gt; 0 OR
+           selection-schg      &gt; 0.
+          CHECK stats_b_lv1-maxrspti &gt;= selection-sresptime AND
+                stats_b_lv1-maxcputi &gt;= selection-scputime  AND
+                stats_b_lv1-maxdbti  &gt;= selection-sdbtime   AND
+                stats_b_lv1-maxkbyte &gt;= selection-sbytes    AND
+                stats_b_lv1-maxchg   &gt;= selection-schg.
+        ENDIF.
+* set color and &apos;block flag&apos; trans-ID
+        IF sy-tabix = 1.
+          save_transid = stats_b_lv1-transid.
+          PERFORM flip_flop CHANGING colflag.
+        ENDIF.
+* check client info for client_info_only mode
+        IF client_info_only = &apos;X&apos;.
+          PERFORM check_client_info USING output_flag wa_info.
+        ENDIF.
+* get records
+        IF output_flag = &apos;X&apos;.
+          LOOP AT navigate WHERE transid = stats_b_lv1-transid.
+            CLEAR: wa_all_stats, wa_main.
+            READ TABLE all_stats INTO wa_all_stats
+                                              INDEX navigate-record_idx.
+*            READ TABLE wa_all_stats-main INTO wa_main
+*                                              INDEX navigate-main_idx.
+            MOVE-CORRESPONDING wa_all_stats-main TO wa_main.
+* check selection criteria
+            CHECK  wa_main-account CP selection-sbenu
+               AND wa_main-tcode   CP selection-stcod
+               AND wa_main-report  CP selection-sprogram
+               AND ( wa_main-tasktype = rtasktype OR rtasktype = &apos;00&apos; ).
+* output
+            IF client_info_only = &apos;X&apos; AND output_flag = &apos;X&apos;.
+              CLEAR output_flag.
+              PERFORM push_client_info.&quot; using wa_info.
+            ENDIF.
+            PERFORM zwrite_main_record USING level opened_level.
+          ENDLOOP.                       &quot;navigate
+        ENDIF.
+      ENDLOOP.                         &quot;stats_b_lv1
+    WHEN OTHERS.
+* display mode all records sorted by start time ------------------------
+      SORT navigate BY startdate starttime wpid.
+      level = 2. opened_level = -1.
+      LOOP AT navigate.
+        READ TABLE occurng_trids WITH KEY transid = navigate-transid.
+        CHECK sy-subrc = 0.
+        READ TABLE all_stats INTO wa_all_stats
+                                            INDEX navigate-record_idx.
+*        READ TABLE wa_all_stats-main INTO wa_main
+*                                            INDEX navigate-main_idx.
+        MOVE-CORRESPONDING wa_all_stats-main TO wa_main.
+        CHECK  wa_main-account  CP selection-sbenu
+           AND wa_main-tcode    CP selection-stcod
+           AND wa_main-report   CP selection-sprogram
+           AND wa_main-dynpronr CP selection-sscreen
+           AND ( wa_main-tasktype = rtasktype OR rtasktype = &apos;00&apos; ).
+* are further selection criteria set?
+        IF selection-sresptime &gt; 0 OR
+           selection-scputime  &gt; 0 OR
+           selection-sdbtime   &gt; 0 OR
+           selection-sbytes    &gt; 0 OR
+           selection-schg      &gt; 0.
+          kbyte =   wa_main-bytes / 1024.
+          CHECK wa_main-respti     &gt;= selection-sresptime AND
+                wa_main-cputi      &gt;= selection-scputime  AND
+                wa_main-dbcallti   &gt;= selection-sdbtime   AND
+                kbyte              &gt;= selection-sbytes    AND
+                wa_main-phychngcnt &gt;= selection-schg.
+        ENDIF.
+        PERFORM zwrite_main_record USING level opened_level.
+      ENDLOOP.                         &quot;navigate
+      SORT navigate BY transid startdate starttime.
+  ENDCASE.
+
+**** APC!!!
+  EXIT.
+
+  ULINE.
+
+* get first and last row
+  IF overall_opened_level &gt; 0 AND ( rmode = &apos;C&apos; OR rmode = &apos;c&apos; ) .
+    first_row = tcdef + 1.
+* = Anzahl Headerzeilen + 1 jtc tcdef ist 10
+  ELSE.
+    first_row = tcdef.
+  ENDIF.
+  tcdef = 10.&quot;reinitialize tcdef change jtc
+  last_row = sy-linno - 2.             &quot; -2 wg. uline
+* there is allways the client info in the first line.
+  IF client_info_only = &apos;X&apos;.
+    first_row = first_row + 1.
+  ENDIF.
+
+ENDFORM.                               &quot; WRITE_MAINLIST
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  ZWRITE_MAIN_RECORD
+*&amp;---------------------------------------------------------------------*
+*       Write one record in main list.
+*----------------------------------------------------------------------*
+*      --&gt;P_LEVEL  display level (0..2)                                *
+*      --&gt;P_OPENED_LEVEL  opened display level (-1..1)                 *
+*----------------------------------------------------------------------*
+FORM zwrite_main_record USING p_level p_opened_level.
+
+* Borramos datos de usuarios especiales
+  CHECK NOT ( wa_main-account = &apos;DDIC&apos;
+           OR wa_main-account = &apos;SAPSYS&apos;
+           OR wa_main-account = &apos;CUA_ERD&apos;
+           OR wa_main-account = &apos;ADMIN&apos;
+           OR wa_main-account = &apos;WF-BATCH&apos;
+           OR wa_main-account = &apos;ADS_AGENT&apos;
+           OR wa_main-account = &apos;SM_SMD&apos;
+           OR wa_main-account = &apos;UNKNOWN&apos;
+           OR wa_main-account CS &apos;&lt;RPC(PLUGIN TIMEOUT&apos; ).
+
+** Borramos datos de programas especiales.
+*  CHECK NOT ( wa_main-report = &apos;RSABAPPROGRAM&apos;
+*                  OR wa_main-report = &apos;SAPMSYST&apos;
+*                  OR wa_main-report = &apos;RSBTCRTE&apos;
+*                  OR wa_main-report = &apos;RSEDNAMT&apos;
+*                  OR wa_main-report = &apos;RSCONN01&apos;
+*                  OR wa_main-report = &apos;SAPRSEUT&apos;
+*                  OR wa_main-report = &apos;SAPRSLOG&apos;
+*                  OR wa_main-report = &apos;SAPMSJOB&apos;
+*                  OR wa_main-report = &apos;RSDBAJOB&apos;
+*                  OR wa_main-report = &apos;RSM13000&apos;
+*                  OR wa_main-report = &apos;RSVRSRS3&apos;
+*                  OR wa_main-report(4) = &apos;RSWW&apos;
+*                  OR wa_main-report(1) = &apos;/&apos;
+*                  OR wa_main-report = &apos;RFC&apos;
+*                  OR wa_main-btcjobname(4) = &apos;SAP_&apos;
+*                  OR wa_main-btcjobname(13) = &apos;AUTO_SESSION_&apos;
+*                  OR wa_main-tcode = &apos;SMEN&apos;
+*                  OR wa_main-btcjobname = &apos;SWFSLSDLEX&apos;
+*                  OR wa_main-btcjobname = &apos;CODE_INSPECTOR_DELETION&apos;
+*                  ).
+
+  CHECK NOT ( wa_main-report = &apos;SAPMSSYC&apos;
+           OR wa_main-report = &apos;RSTPDAMAIN&apos;
+           OR wa_main-report = &apos;SAPMSYST&apos;
+           OR wa_main-report = &apos;SAPMSEU0&apos;
+           OR wa_main-report = &apos;&lt;AD_DISPLACE&gt;&apos;
+           OR wa_main-report = &apos;RFC&apos;
+           OR wa_main-report = &apos;&lt;AD_DEL_USER&gt;&apos;
+           OR wa_main-report = &apos;RSM13000&apos; ).
+  MOVE-CORRESPONDING wa_main TO i_aux.
+*
+*  IF i_aux-btcjobname IS INITIAL AND
+*     i_aux-tcode(1) NE &apos;Z&apos; AND
+*     i_aux-tcode NE &apos;SE38&apos; AND
+*     i_aux-tcode(7) NE &apos;SESSION&apos;.
+*    CLEAR i_aux-report.
+*  ENDIF.
+
+
+  APPEND i_aux.
+ENDFORM.                               &quot; zWRITE_MAIN_RECORD
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  agrupar_informacion
+*&amp;---------------------------------------------------------------------*
+FORM agrupar_informacion .
+
+* Eliminamos ejecuciones muy pr#ximas
+  SORT i_aux.
+  DATA: l_time LIKE stad_output-endti,
+        l_secs TYPE i,
+        l_new,
+        l_aux LIKE i_aux,
+        l_respti LIKE stad_output-respti,
+        l_dbcalls LIKE stad_output-dbcalls,
+        l_start TYPE sy-uzeit,
+        l_fin.
+
+  SORT i_aux.
+  LOOP AT i_aux.
+    l_aux = i_aux.
+    CLEAR: l_fin.
+    AT END OF date.
+      l_fin = &apos;X&apos;.
+    ENDAT.
+
+    AT NEW date.
+      l_new  = &apos;X&apos;.
+    ENDAT.
+    IF l_new = &apos;X&apos;.
+      CLEAR: l_new.
+      l_time = l_aux-endti.
+      l_start = i_aux-starttime.
+      l_dbcalls = i_aux-dbcalls.
+      l_respti = i_aux-respti.
+      l_time = l_aux-endti.
+    ENDIF.
+
+    l_secs = i_aux-endti - l_time.
+    ADD i_aux-dbcalls TO l_dbcalls.
+    ADD i_aux-respti TO l_respti.
+    IF l_secs &gt; 90 OR l_fin = &apos;X&apos;.
+      MOVE-CORRESPONDING i_aux TO i_datos.
+      i_datos-starttime = l_start.
+      i_datos-dbcalls = l_dbcalls.
+      i_datos-respti = l_respti.
+      APPEND i_datos.
+      l_new = &apos;X&apos;.
+    ENDIF.
+
+  ENDLOOP.
+  SORT i_datos.
+
+*  LOOP AT i_datos.
+*    IF NOT i_datos-report IS INITIAL.
+** Comprobamos que existan los registros
+*      SELECT SINGLE * FROM  tadir
+*             WHERE  pgmid     = &apos;R3TR&apos;
+*             AND    object    = &apos;PROG&apos;
+*             AND    obj_name  = i_datos-report.
+*      IF sy-subrc NE 0.
+*        DELETE i_datos.
+*      ENDIF.
+*    ELSEIF i_datos-tcode IS INITIAL.
+*      DELETE i_datos.
+*    ENDIF.
+*  ENDLOOP.
+
+  IF p_act = &apos;X&apos;.
+    LOOP AT i_datos.
+      CLEAR zestadisticas.
+      MOVE-CORRESPONDING i_datos TO zestadisticas.
+      zestadisticas-fecha = i_datos-date.
+      zestadisticas-jobname = i_datos-btcjobname.
+      MODIFY zestadisticas.
+    ENDLOOP.
+
+*    submit zstats_upd
+*      and return
+*     with s_fechas = rday
+*     with p_actu  = &apos;X&apos;.
+  ENDIF.
+
+  IF p_list = &apos;X&apos;.
+    PERFORM alv_write_output TABLES i_datos USING &apos;I_DATOS&apos;.
+  ENDIF.
+
+  LEAVE PROGRAM.
+
+ENDFORM.                    &quot; agrupar_informacion
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  BUILD_EVENTTAB
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      --&gt;P_EVENTS[]  text                                             *
+*----------------------------------------------------------------------*
+FORM alv_build_eventtab USING p_events TYPE slis_t_event.
+  DATA: ls_event TYPE slis_alv_event.
+  CALL FUNCTION &apos;REUSE_ALV_EVENTS_GET&apos;
+    EXPORTING
+      i_list_type = 0
+    IMPORTING
+      et_events   = p_events.
+  READ TABLE p_events WITH KEY name = slis_ev_top_of_page
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_top_of_page TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
+
+*
+  READ TABLE p_events WITH KEY name = slis_ev_pf_status_set
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_pf_status_set TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
+
+  READ TABLE p_events WITH KEY name = slis_ev_user_command
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_user_command TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
+
+ENDFORM.                               &quot; BUILD_EVENTTAB
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  WRITE_OUTPUT
+*&amp;---------------------------------------------------------------------*
+FORM alv_write_output TABLES pi_tabla
+                     USING pe_tabla.
+
+  alv_repname = sy-repid.
+  CALL FUNCTION &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;
+    EXPORTING
+      i_program_name     = alv_repname
+      i_internal_tabname = pe_tabla
+      i_inclname         = alv_repname
+    CHANGING
+      ct_fieldcat        = alv_fieldtab.
+  IF sy-subrc &lt;&gt; 0.
+    WRITE: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;.
+  ENDIF.
+  CALL FUNCTION &apos;REUSE_ALV_LIST_DISPLAY&apos;
+    EXPORTING
+      i_callback_program = alv_repname
+      i_structure_name   = pe_tabla
+      is_layout          = alv_layout
+      it_fieldcat        = alv_fieldtab
+      i_default          = &apos;A&apos;
+      i_save             = alv_g_save
+      it_events          = alv_events[]
+      it_sort            = alv_sort
+      it_filter          = alv_filter
+    TABLES
+      t_outtab           = pi_tabla.
+  IF sy-subrc &lt;&gt; 0.
+    WRITE: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_LIST_DISPLAY&apos;.
+  ENDIF.
+ENDFORM.                               &quot; WRITE_OUTPUT</source>
+</PROG>

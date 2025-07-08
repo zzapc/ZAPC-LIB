@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_SOCIEDAD" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <method CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_CIF" VERSION="1" LANGU="S" DESCRIPT="Devuelve CIF de la sociedad" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_CIF" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_CIF" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor del parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PAVAL"/>
+  <source>METHOD get_cif.
+
+  valor = get_parametro( bukrs = bukrs parametro = &apos;SAP001&apos; ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos de cuenta propia" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="HBKID" VERSION="1" LANGU="S" DESCRIPT="Clave breve para banco propio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HBKID"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="HKTID" VERSION="1" LANGU="S" DESCRIPT="Clave breve para un banco/cuenta" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HKTID" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="TIBAN" VERSION="1" LANGU="S" DESCRIPT="IBAN" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TIBAN"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="T012" VERSION="1" LANGU="S" DESCRIPT="Bancos propios" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T012"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="T012K" VERSION="1" LANGU="S" DESCRIPT="Cuentas en bancos propios" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T012K"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_DATOS_CUENTA" SCONAME="BNKA" VERSION="1" LANGU="S" DESCRIPT="Maestro de bancos" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BNKA"/>
+  <source>METHOD get_datos_cuenta.
+
+  SELECT SINGLE * FROM t012
+    INTO t012
+   WHERE bukrs = bukrs
+     AND hbkid = hbkid.
+  IF sy-subrc NE 0.
+    CONCATENATE &apos;No existe el banco propio&apos; hbkid INTO mensaje SEPARATED BY space.
+  ELSE.
+    IF hktid IS INITIAL.
+      SELECT COUNT( * ) FROM t012k
+       WHERE bukrs = bukrs
+         AND hbkid = hbkid.
+      IF sy-subrc = 0.
+        SELECT SINGLE * FROM t012k
+          INTO t012k
+         WHERE bukrs = bukrs
+           AND hbkid = hbkid.
+      ELSE.
+        CONCATENATE &apos;Debe especificar el Id. de cuenta para&apos; hbkid INTO mensaje SEPARATED BY space.
+      ENDIF.
+    ELSE.
+      SELECT SINGLE * FROM t012k
+        INTO t012k
+       WHERE bukrs = bukrs
+         AND hbkid = hbkid
+         AND hktid = hktid.
+      IF sy-subrc NE 0.
+        CONCATENATE &apos;No existe el banco propio&apos; hbkid &apos;cuenta&apos; hktid INTO mensaje SEPARATED BY space.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  IF NOT t012k IS INITIAL.
+    SELECT SINGLE * FROM  tiban
+      INTO tiban
+     WHERE banks  = t012-banks
+       AND bankl  = t012-bankl
+       AND bankn  = t012k-bankn
+       AND bkont  = t012k-bkont.
+
+    SELECT SINGLE * FROM  bnka
+      INTO bnka
+     WHERE banks  = t012-banks
+       AND bankl  = t012-bankl.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_PARAMETRO" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor del parémetro" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_PARAMETRO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_PARAMETRO" SCONAME="PARAMETRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_SOCIEDAD" CMPNAME="GET_PARAMETRO" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor del parámetro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PAVAL"/>
+  <source>METHOD get_parametro.
+
+  CLEAR valor.
+  SELECT SINGLE paval FROM  t001z
+    INTO valor
+   WHERE bukrs  = bukrs
+     AND party  = parametro.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

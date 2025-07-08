@@ -1,0 +1,3985 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSDE2" VARCL="X" SUBC="1" RMAND="100" RLOAD="E" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="Simple Data Explorer" LENGTH="20 "/>
+  </language>
+ </textPool>
+ <pfstatus>
+  <pfstatus_tit CODE="SDE" TEXT="Simple Data Explorer"/>
+ </pfstatus>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Simple SQL Explorer
+*&amp;---------------------------------------------------------------------*
+*&amp; version: beta 0.7.252.202
+*&amp; GIT:            https://github.com/ysichov/SDE/blob/master/SDE_750.abap - here may be most actual version
+*&amp; AbapGit         https://github.com/ysichov/SDE_abapgit
+*&amp; RU description  https://ysychov.wordpress.com/2020/02/10/simple-data-explorer/
+*&amp; EN description  https://blogs.sap.com/2020/03/22/simple-data-explorer/
+
+*&amp; Multi-windows program for viewing tables, views, salary clusters, CDS and some links between them
+*&amp; Written by Yurii Sychov
+*&amp; e-mail:   ysichov@gmail.com
+*&amp; skype:    ysichov
+*&amp; blog:     https://ysychov.wordpress.com/blog/
+*&amp; LinkedIn: https://www.linkedin.com/in/ysychov/
+*&amp;---------------------------------------------------------------------*
+*&amp; External resources
+*&amp; https://github.com/bizhuka/eui - ALV listboxes
+
+REPORT z_sde.
+
+FIELD-SYMBOLS: &lt;g_str&gt; TYPE any.
+
+CLASS lcl_data_receiver DEFINITION DEFERRED.
+CLASS lcl_data_transmitter DEFINITION DEFERRED.
+
+CLASS lcl_types DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF selection_display_s,
+        ind         TYPE        i,
+        field_label TYPE        lvc_fname,
+        int_type(1),
+        inherited   TYPE        aqadh_type_of_icon,
+        emitter     TYPE        aqadh_type_of_icon,
+        sign        TYPE        tvarv_sign,
+        opti        TYPE        tvarv_opti,
+        option_icon TYPE        aqadh_type_of_icon,
+        low         TYPE        string,
+        high        TYPE        string,
+        more_icon   TYPE        aqadh_type_of_icon,
+        range       TYPE        aqadh_t_ranges,
+        name        TYPE        reptext,
+        element     TYPE        text60,
+        domain      TYPE        text60,
+        datatype    TYPE        string,
+        length      TYPE        i,
+        transmitter TYPE REF TO lcl_data_transmitter,
+        receiver    TYPE REF TO lcl_data_receiver,
+        color       TYPE        lvc_t_scol,
+        style       TYPE        lvc_t_styl,
+        drop_down   TYPE        int4,
+      END OF selection_display_s,
+      BEGIN OF t_sel_row,
+        sign        TYPE tvarv_sign,
+        opti        TYPE tvarv_opti,
+        option_icon TYPE aqadh_type_of_icon,
+        low         TYPE string, &quot;aqadh_range_value,
+        high        TYPE string, &quot;aqadh_range_value,
+        more_icon   TYPE aqadh_type_of_icon,
+        range       TYPE aqadh_t_ranges,
+      END OF t_sel_row.
+
+    CLASS-DATA: mt_sel TYPE TABLE OF lcl_types=&gt;selection_display_s.
+ENDCLASS.
+
+CLASS lcl_table_viewer DEFINITION DEFERRED.
+CLASS lcl_box_handler  DEFINITION DEFERRED.
+CLASS lcl_sel_opt DEFINITION DEFERRED.
+
+&quot;Begin of INCLUDE YS_SDE_CLASSES.
+CLASS lcl_popup DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA m_counter TYPE i.
+    DATA: mo_box            TYPE REF TO cl_gui_dialogbox_container,
+          mo_splitter       TYPE REF TO cl_gui_splitter_container,
+          mo_parent         TYPE REF TO cl_gui_container,
+          m_additional_name TYPE        string.
+
+    METHODS: constructor IMPORTING i_additional_name TYPE string OPTIONAL,
+      create IMPORTING i_width       TYPE i
+                       i_hight       TYPE i
+                       i_name        TYPE text100 OPTIONAL
+             RETURNING VALUE(ro_box) TYPE REF TO cl_gui_dialogbox_container,
+
+      on_box_close FOR EVENT close OF cl_gui_dialogbox_container IMPORTING sender.
+ENDCLASS.
+
+CLASS lcl_popup IMPLEMENTATION.
+
+  METHOD constructor.
+    m_additional_name = i_additional_name.
+  ENDMETHOD.
+
+  METHOD create.
+    DATA: l_top  TYPE i,
+          l_left TYPE i.
+
+    ADD 1 TO m_counter.
+    l_top  = l_left =  10 + 10 * ( m_counter DIV 5 ) +  ( m_counter MOD 5 ) * 50.
+
+    CREATE OBJECT ro_box
+      EXPORTING
+        width                       = i_width
+        height                      = i_hight
+        top                         = l_top
+        left                        = l_left
+        caption                     = i_name
+      EXCEPTIONS
+        cntl_error                  = 1
+        cntl_system_error           = 2
+        create_error                = 3
+        lifetime_error              = 4
+        lifetime_dynpro_dynpro_link = 5
+        event_already_registered    = 6
+        error_regist_event          = 7
+        OTHERS                      = 8.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD on_box_close.
+    sender-&gt;free( ).
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lcl_ddic DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: get_text_table IMPORTING i_tname TYPE tabname
+                                  EXPORTING e_tab   TYPE tabname.
+ENDCLASS.
+
+CLASS lcl_ddic IMPLEMENTATION.
+  METHOD get_text_table.
+    CALL FUNCTION &apos;DDUT_TEXTTABLE_GET&apos;
+      EXPORTING
+        tabname   = i_tname
+      IMPORTING
+        texttable = e_tab.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_dd_data DEFINITION.&quot;drag&amp;drop data
+  PUBLIC  SECTION.
+    DATA: m_row    TYPE i,
+          m_column TYPE lvc_s_col.
+ENDCLASS.
+
+CLASS lcl_dragdrop DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS:
+      drag FOR EVENT ondrag OF cl_gui_alv_grid IMPORTING e_dragdropobj e_row e_column ,
+      drop FOR EVENT ondrop OF cl_gui_alv_grid IMPORTING e_dragdropobj e_row.
+ENDCLASS.
+
+CLASS lcl_sql DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS:
+      read_any_table IMPORTING i_tabname   TYPE tabname
+                               i_where     TYPE string
+                               i_row_count TYPE i OPTIONAL
+                     CHANGING  cr_tab      TYPE REF TO data
+                               c_count     TYPE i,
+      exist_table IMPORTING i_tab TYPE tabname RETURNING VALUE(e_subrc) LIKE sy-subrc,
+      exist_view  IMPORTING i_tab TYPE tabname RETURNING VALUE(e_subrc) LIKE sy-subrc,
+      exist_cds   IMPORTING i_tab TYPE tabname RETURNING VALUE(e_subrc) LIKE sy-subrc  .
+ENDCLASS.
+
+CLASS lcl_sql IMPLEMENTATION.
+  METHOD read_any_table.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE ANY TABLE.
+
+    ASSIGN cr_tab-&gt;* TO &lt;f_tab&gt;.
+    c_count = lines( &lt;f_tab&gt; ).
+    CHECK lcl_sql=&gt;exist_table( i_tabname ) = 1.
+    IF i_where IS NOT INITIAL.
+      TRY.
+          SELECT * FROM (i_tabname) INTO CORRESPONDING FIELDS OF  TABLE &lt;f_tab&gt; UP TO 100 ROWS WHERE (i_where) ORDER BY PRIMARY KEY
+           .
+        CATCH cx_sy_dynamic_osql_semantics.             &quot;#EC NO_HANDLER
+        CATCH cx_sy_dynamic_osql_syntax.                &quot;#EC NO_HANDLER
+        CATCH cx_sy_conversion_no_number.               &quot;#EC NO_HANDLER
+      ENDTRY.
+    ELSE.
+      IF i_row_count IS NOT SUPPLIED.
+        SELECT * FROM (i_tabname) INTO CORRESPONDING FIELDS OF TABLE &lt;f_tab&gt; UP TO 100 ROWS ORDER BY PRIMARY KEY.
+      ELSE.
+        SELECT * FROM (i_tabname) INTO CORRESPONDING FIELDS OF TABLE &lt;f_tab&gt; UP TO i_row_count ROWS ORDER BY PRIMARY KEY..
+      ENDIF.
+    ENDIF.
+    c_count = sy-dbcnt.
+  ENDMETHOD.
+
+  METHOD exist_table.
+    SELECT SINGLE tabname
+       FROM dd02l
+      INTO @data(lv_tabname)
+     WHERE tabname = @i_tab
+       AND ( tabclass = &apos;TRANSP&apos; OR tabclass = &apos;CLUSTER&apos; ).
+    IF sy-subrc = 0.
+      e_subrc = 1.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD exist_view.
+
+    SELECT SINGLE tabname
+       FROM dd02l
+      INTO @data(lv_tabname)
+     WHERE tabname = @i_tab
+       AND tabclass = &apos;VIEW&apos;.
+    IF sy-subrc = 0.
+      e_subrc = 1.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD exist_cds.
+
+    SELECT SINGLE tabname
+       FROM dd02l
+      INTO @data(lv_tabname)
+     WHERE tabname = @i_tab
+       AND tabclass = &apos;VIEW&apos;
+       AND applclass = &apos;SDGV&apos;.
+.
+    IF sy-subrc = 0.
+      e_subrc = 1.
+    ENDIF.
+
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_alv_common DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS: c_white(4) TYPE x VALUE &apos;00000001&apos;, &quot;white background
+               c_grey(4)  TYPE x VALUE &apos;00000003&apos;, &quot;gray background
+               c_green(4) TYPE x VALUE &apos;00000216&apos;, &quot;green +underline
+               c_blue(4)  TYPE x VALUE &apos;00000209&apos;, &quot; blue font +underline
+               c_bold(4)  TYPE x VALUE &apos;00000020&apos;.
+
+
+    TYPES: BEGIN OF t_tabfields.
+            INCLUDE TYPE   dfies.
+    TYPES: empty   TYPE xfeld,
+           is_text TYPE xfeld,
+           END OF t_tabfields.
+
+    CLASS-DATA: mt_tabfields TYPE HASHED TABLE OF t_tabfields WITH UNIQUE KEY tabname fieldname.
+
+    CLASS-METHODS:
+      refresh IMPORTING i_obj TYPE REF TO cl_gui_alv_grid i_layout TYPE lvc_s_layo OPTIONAL i_soft TYPE char01 OPTIONAL,
+      translate_field IMPORTING i_lang TYPE ddlanguage OPTIONAL CHANGING c_fld TYPE lvc_s_fcat,
+      get_selected IMPORTING i_obj TYPE REF TO cl_gui_alv_grid RETURNING VALUE(e_index) TYPE i.
+
+ENDCLASS.
+
+CLASS lcl_alv_common IMPLEMENTATION.
+  METHOD refresh.
+    DATA l_stable TYPE lvc_s_stbl VALUE &apos;XX&apos;.
+
+    IF i_layout IS SUPPLIED.
+      i_obj-&gt;set_frontend_layout( i_layout ) .
+    ENDIF.
+    i_obj-&gt;refresh_table_display( EXPORTING is_stable = l_stable i_soft_refresh = i_soft  ).
+  ENDMETHOD.
+
+  METHOD translate_field.
+    DATA: lt_field_info TYPE TABLE OF dfies.
+
+    CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+      EXPORTING
+        tabname        = c_fld-tabname
+        fieldname      = c_fld-fieldname
+        langu          = i_lang
+      TABLES
+        dfies_tab      = lt_field_info
+      EXCEPTIONS
+        not_found      = 1
+        internal_error = 2
+        OTHERS         = 3.
+
+    IF sy-subrc = 0.
+      READ TABLE lt_field_info INDEX 1 INTO DATA(l_info).
+      IF l_info-scrtext_l IS INITIAL AND l_info-scrtext_m IS INITIAL AND l_info-scrtext_s IS INITIAL.
+        IF l_info-fieldtext IS NOT INITIAL.
+          MOVE l_info-fieldtext TO: c_fld-reptext, c_fld-scrtext_l, c_fld-scrtext_m, c_fld-scrtext_s .
+        ELSE.
+          MOVE l_info-fieldname TO: c_fld-reptext, c_fld-scrtext_l, c_fld-scrtext_m, c_fld-scrtext_s .
+        ENDIF.
+      ELSE.
+        c_fld-scrtext_l = l_info-scrtext_l.
+        c_fld-scrtext_m = l_info-scrtext_m.
+        c_fld-scrtext_s = l_info-scrtext_s.
+        IF l_info-reptext IS NOT INITIAL.
+          c_fld-reptext   = l_info-reptext.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD get_selected.
+    i_obj-&gt;get_selected_cells( IMPORTING et_cell = DATA(lt_sel_cells) ).
+    IF lines( lt_sel_cells ) &gt; 0.
+      e_index = lt_sel_cells[ 1 ]-row_id.
+    ELSE.
+      i_obj-&gt;get_selected_rows( IMPORTING et_index_rows = DATA(lt_sel_rows) ).
+      IF lines( lt_sel_rows ) &gt; 0.
+        e_index = lt_sel_rows[ 1 ]-index.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+
+
+ENDCLASS.
+
+CLASS lcl_rtti DEFINITION.
+  PUBLIC SECTION.
+
+    CONSTANTS:
+      BEGIN OF mc_ui_type,
+        &quot; Simple UI types
+        char     TYPE string VALUE &apos;char&apos;,
+        numc     TYPE string VALUE &apos;numc&apos;,
+        numeric  TYPE string VALUE &apos;numeric&apos;,
+        boolean  TYPE string VALUE &apos;boolean&apos;,
+        date     TYPE string VALUE &apos;date&apos;,
+        time     TYPE string VALUE &apos;time&apos;,
+        datetime TYPE string VALUE &apos;datetime&apos;,
+        &quot; Complext UI types
+        string   TYPE string VALUE &apos;string&apos;,
+        range    TYPE string VALUE &apos;range&apos;,
+        table    TYPE string VALUE &apos;table&apos;,
+      END OF mc_ui_type .
+
+    TYPES: BEGIN OF ts_field_desc,
+             name(61),
+             sys_type     TYPE abap_typekind, &quot; SYSTEM
+             ui_type      TYPE string, &quot; Only for KIND = P
+             length       TYPE i,             &quot; Only for KIND = P
+             decimals     TYPE i,             &quot; Only for KIND = P
+             &quot; For editing in ALV
+             rollname(61),
+             label        TYPE dfies-fieldtext,
+             &quot; Table description
+             table_kind   TYPE abap_tablekind,
+             unique       TYPE abap_bool,
+             key          TYPE abap_keydescr_tab,
+             key_defkind  TYPE abap_keydefkind,
+             sub_fdesc    TYPE string,
+           END OF ts_field_desc .
+
+    TYPES:
+      tt_field_desc TYPE HASHED TABLE OF ts_field_desc WITH UNIQUE KEY name .
+    TYPES:
+      tt_unique_type TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line .
+
+    CLASS-METHODS:
+      create_table_by_name IMPORTING i_tname TYPE tabname
+                           CHANGING  c_table TYPE REF TO data,
+
+      create_struc_handle IMPORTING i_tname  TYPE tabname
+                          EXPORTING e_t_comp TYPE abap_component_tab
+                                    e_handle TYPE REF TO cl_abap_structdescr,
+
+      create_structure IMPORTING io_range         TYPE REF TO cl_abap_datadescr OPTIONAL
+                                 iv_sub_fdesc     TYPE string OPTIONAL
+                                 it_field_desc    TYPE tt_field_desc OPTIONAL
+                       RETURNING VALUE(ro_struct) TYPE REF TO cl_abap_structdescr,
+
+      find_table_fieldname
+        IMPORTING
+          ir_unique_type TYPE REF TO tt_unique_type
+        CHANGING
+          cv_rollname    TYPE csequence
+          cv_label       TYPE csequence OPTIONAL,
+
+      get_field_desc
+        IMPORTING
+                  iv_field_name        TYPE csequence OPTIONAL
+                  iv_data              TYPE any OPTIONAL
+                  is_sh_field          TYPE dfies OPTIONAL
+                  ir_unique_type       TYPE REF TO tt_unique_type OPTIONAL
+        RETURNING VALUE(rs_field_desc) TYPE ts_field_desc,
+
+      create_type_descr IMPORTING iv_rollname    TYPE csequence OPTIONAL
+                                  is_field_desc  TYPE ts_field_desc OPTIONAL
+                                  VALUE(ir_type) TYPE REF TO data OPTIONAL
+                        RETURNING
+                                  VALUE(ro_type) TYPE REF TO cl_abap_datadescr,
+
+      find_drop_down IMPORTING io_grid      TYPE REF TO cl_gui_alv_grid
+                     CHANGING  cs_fieldcat  TYPE lvc_s_fcat cv_drdn_hndl TYPE i,
+
+      is_list_box IMPORTING iv_tabname   TYPE dfies-tabname iv_fieldname  TYPE dfies-fieldname
+                  EXPORTING ev_list_box  TYPE abap_bool es_sh_desc  TYPE shlp_descr.
+ENDCLASS.
+
+CLASS lcl_rtti IMPLEMENTATION.
+
+  METHOD create_struc_handle.
+    DATA: ls_comp       TYPE          abap_componentdescr,
+          lt_components TYPE          abap_component_tab,
+          lt_field_info TYPE TABLE OF dfies.
+
+    lcl_ddic=&gt;get_text_table( EXPORTING i_tname = i_tname IMPORTING e_tab = DATA(l_texttab) ).
+    e_handle ?= cl_abap_typedescr=&gt;describe_by_name( i_tname ).
+
+    IF l_texttab IS NOT INITIAL.
+      DATA(lo_texttab)  = CAST cl_abap_structdescr( cl_abap_typedescr=&gt;describe_by_name( l_texttab ) ).
+      LOOP AT e_handle-&gt;components INTO DATA(l_descr).
+        ls_comp-name = l_descr-name.
+        ls_comp-type ?= e_handle-&gt;get_component_type( ls_comp-name ).
+        APPEND ls_comp TO lt_components.
+      ENDLOOP.
+
+      LOOP AT lo_texttab-&gt;components INTO l_descr.
+
+        CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+          EXPORTING
+            tabname        = l_texttab
+            fieldname      = l_descr-name
+            langu          = sy-langu
+          TABLES
+            dfies_tab      = lt_field_info
+          EXCEPTIONS
+            not_found      = 1
+            internal_error = 2
+            OTHERS         = 3.
+
+        CHECK sy-subrc = 0.
+
+        IF lt_field_info[ 1 ]-keyflag = abap_false.
+          ls_comp-name =  l_texttab &amp;&amp; &apos;_&apos; &amp;&amp; l_descr-name.
+          ls_comp-type ?= lo_texttab-&gt;get_component_type( l_descr-name ).
+          APPEND: ls_comp TO lt_components,
+                  ls_comp TO e_t_comp.
+
+          READ TABLE lcl_alv_common=&gt;mt_tabfields INTO DATA(ls_tf) WITH KEY tabname = i_tname fieldname = l_texttab.
+          IF sy-subrc NE 0.
+            MOVE-CORRESPONDING lt_field_info[ 1 ] TO ls_tf.
+            ls_tf-tabname = i_tname.
+            ls_tf-fieldname = ls_comp-name.
+            ls_tf-is_text = abap_true.
+            INSERT ls_tf INTO TABLE lcl_alv_common=&gt;mt_tabfields.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+
+      e_handle  = cl_abap_structdescr=&gt;create( lt_components ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD create_table_by_name.
+    create_struc_handle( EXPORTING i_tname = i_tname IMPORTING e_handle = data(lo_new_type) ).
+    data(lo_new_tab) = cl_abap_tabledescr=&gt;create(
+                    p_line_type  = lo_new_type
+                    p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+                    p_unique     = abap_false ).
+    CREATE DATA c_table TYPE HANDLE lo_new_tab.  &quot;Create a New table type
+  ENDMETHOD.
+
+  METHOD is_list_box. &quot;copied from https://github.com/bizhuka/eui
+    CLEAR: ev_list_box,
+           es_sh_desc.
+
+    CALL FUNCTION &apos;F4IF_DETERMINE_SEARCHHELP&apos;
+      EXPORTING
+        tabname   = iv_tabname
+        fieldname = iv_fieldname
+      IMPORTING
+        shlp      = es_sh_desc
+      EXCEPTIONS
+        OTHERS    = 1.
+
+    &quot; Fixed values of domains
+    CHECK sy-subrc = 0 AND es_sh_desc-shlptype = &apos;FV&apos;.
+    ev_list_box = abap_true.
+  ENDMETHOD.
+
+  METHOD find_drop_down. &quot;copied from https://github.com/bizhuka/eui
+    DATA:
+      ls_sh_desc        TYPE                   shlp_descr,
+      lv_list_box       TYPE                   abap_bool,
+      lt_fielddescr     TYPE                   ddfields,
+      ls_field          TYPE REF TO            dfies,
+      lt_field_desc     TYPE                   tt_field_desc,
+      ls_field_desc     TYPE                   ts_field_desc,
+      lo_struc          TYPE REF TO            cl_abap_structdescr,
+      lo_table          TYPE REF TO            cl_abap_tabledescr,
+      lr_table          TYPE REF TO            data,
+      lt_shlp_return    TYPE STANDARD TABLE OF ddshretval,
+      ls_shlp_return    TYPE REF TO            ddshretval,
+      lv_prev_pos       TYPE                   i,
+      ls_call_control   TYPE                   ddshf4ctrl,
+      ls_fld_prop       TYPE REF TO            ddshfprop,
+      lt_shlp_descr_tab TYPE                   shlp_desct,
+      lt_shlp_record    TYPE STANDARD TABLE OF seahlpres,
+      lt_dropdown       TYPE                   lvc_t_dral,
+      ls_dropdown       TYPE                   lvc_s_dral.
+
+    FIELD-SYMBOLS:
+      &lt;lt_table&gt; TYPE STANDARD TABLE,
+      &lt;ls_row&gt;   TYPE                 any,
+      &lt;lv_value&gt; TYPE                 any,
+      &lt;lv_low&gt;   TYPE                 any,
+      &lt;lv_txt&gt;   TYPE                 csequence.
+
+    &quot; No need
+    IF cs_fieldcat-ref_table = abap_undefined AND cs_fieldcat-ref_field = abap_undefined.
+      CLEAR cs_fieldcat-ref_table.
+      CLEAR cs_fieldcat-ref_field.
+      RETURN.
+    ENDIF.
+
+    &quot; No need
+    CHECK cs_fieldcat-checkbox &lt;&gt; abap_true
+      AND cs_fieldcat-hotspot  &lt;&gt; abap_true.
+
+    &quot; Get top SH
+    is_list_box(
+     EXPORTING
+      iv_tabname   = cs_fieldcat-ref_table
+      iv_fieldname = cs_fieldcat-ref_field
+     IMPORTING
+      ev_list_box  = lv_list_box
+      es_sh_desc   = ls_sh_desc ).
+    CHECK lv_list_box = abap_true.
+
+    &quot; Work with copy
+    lt_fielddescr[] = ls_sh_desc-fielddescr[].
+
+    &quot;TRY.
+    &quot; Strucure fields
+    LOOP AT lt_fielddescr REFERENCE INTO ls_field.
+      ls_field_desc = get_field_desc( is_sh_field = ls_field-&gt;* ).
+      INSERT ls_field_desc INTO TABLE lt_field_desc.
+    ENDLOOP.
+
+    &quot; Output table
+    lo_struc = create_structure( it_field_desc = lt_field_desc ).
+    lo_table = cl_abap_tabledescr=&gt;create( p_line_type = lo_struc ).
+
+    &quot; Asign it
+    CREATE DATA lr_table TYPE HANDLE lo_table.
+    ASSIGN lr_table-&gt;* TO &lt;lt_table&gt;.
+
+    CALL FUNCTION &apos;F4IF_SELECT_VALUES&apos;
+      EXPORTING
+        shlp           = ls_sh_desc
+        maxrows        = 0         &quot; all values of domain
+        call_shlp_exit = abap_true &quot; &apos;SELECT&apos; only!
+      TABLES
+        return_tab     = lt_shlp_return.
+
+**********************************************************************
+    &quot; Copied from --&gt; METHOD get_sh_table.
+**********************************************************************
+    &quot; Show all fields
+    LOOP AT ls_sh_desc-fieldprop REFERENCE INTO ls_fld_prop.
+      ls_fld_prop-&gt;shlpoutput = abap_true.
+    ENDLOOP.
+
+    &quot; Call with SELECT event only (probably no texts)
+    IF ls_sh_desc-intdescr-selmexit IS INITIAL.
+      CALL FUNCTION &apos;F4IF_SELECT_VALUES&apos;
+        EXPORTING
+          shlp           = ls_sh_desc
+          maxrows        = 0         &quot; all values of domain
+          call_shlp_exit = abap_true &quot; &apos;SELECT&apos; only!
+        TABLES
+          return_tab     = lt_shlp_return.
+    ELSE.
+      &quot; Get records first
+      CALL FUNCTION &apos;F4IF_SELECT_VALUES&apos;
+        EXPORTING
+          shlp           = ls_sh_desc
+          maxrows        = 0         &quot; all values of domain
+          call_shlp_exit = abap_true
+        TABLES
+          record_tab     = lt_shlp_record.
+
+      &quot; Disp event
+      ls_call_control-step       = &apos;DISP&apos;.
+      ls_call_control-maxrecords = 0. &quot; all values of domain
+
+      APPEND ls_sh_desc TO lt_shlp_descr_tab.
+      CALL FUNCTION ls_sh_desc-intdescr-selmexit
+        TABLES
+          shlp_tab    = lt_shlp_descr_tab
+          record_tab  = lt_shlp_record
+        CHANGING
+          shlp        = ls_sh_desc
+          callcontrol = ls_call_control.
+
+      &quot; To normal state -&gt; lt_shlp_return
+      CLEAR lt_shlp_return.
+      PERFORM transform_outval IN PROGRAM saplsdsd
+        TABLES lt_shlp_record lt_shlp_return
+        USING ls_call_control ls_sh_desc.
+    ENDIF.
+
+    &quot; Write data to table
+    lv_prev_pos = 0.
+    SORT ls_sh_desc-fielddescr BY fieldname.
+    LOOP AT lt_shlp_return REFERENCE INTO ls_shlp_return.
+      &quot; New row ?
+      IF lv_prev_pos &lt;&gt; ls_shlp_return-&gt;recordpos.
+        APPEND INITIAL LINE TO &lt;lt_table&gt; ASSIGNING &lt;ls_row&gt;.
+      ENDIF.
+      lv_prev_pos = ls_shlp_return-&gt;recordpos.
+
+      &quot; value
+      ASSIGN COMPONENT ls_shlp_return-&gt;fieldname OF STRUCTURE &lt;ls_row&gt; TO &lt;lv_value&gt;.
+      CHECK sy-subrc = 0.
+
+      &quot; Copy field field
+      READ TABLE ls_sh_desc-fielddescr REFERENCE INTO ls_field BINARY SEARCH
+        WITH KEY fieldname = ls_shlp_return-&gt;fieldname.
+
+      &quot; Special case for certain types
+      CASE ls_field-&gt;inttype.
+        WHEN cl_abap_typedescr=&gt;typekind_time.
+          CONCATENATE ls_shlp_return-&gt;fieldval+0(2)
+                      ls_shlp_return-&gt;fieldval+3(2)
+                      ls_shlp_return-&gt;fieldval+6(2) INTO &lt;lv_value&gt;.
+
+        WHEN cl_abap_typedescr=&gt;typekind_date.
+          CALL FUNCTION &apos;CONVERT_DATE_TO_INTERNAL&apos;
+            EXPORTING
+              date_external = ls_shlp_return-&gt;fieldval
+            IMPORTING
+              date_internal = &lt;lv_value&gt;
+            EXCEPTIONS
+              OTHERS        = 1.
+          IF sy-subrc &lt;&gt; 0.
+            CLEAR &lt;lv_value&gt;.
+          ENDIF.
+
+          &quot; Integer, byte, short
+        WHEN cl_abap_typedescr=&gt;typekind_int OR cl_abap_typedescr=&gt;typekind_int1  OR cl_abap_typedescr=&gt;typekind_int2.
+          RETURN.
+*          REPLACE ALL OCCURRENCES OF &apos;.&apos; IN ls_shlp_return-&gt;fieldval WITH &apos;&apos;.
+*          CONDENSE ls_shlp_return-&gt;fieldval NO-GAPS.
+*          &lt;lv_value&gt; = ls_shlp_return-&gt;fieldval.
+
+        WHEN OTHERS.
+          &lt;lv_value&gt; = ls_shlp_return-&gt;fieldval.
+      ENDCASE.
+    ENDLOOP.
+
+    &quot; Next handle
+    ADD 1 TO cv_drdn_hndl.
+
+    &quot; Prepare field catalog
+    cs_fieldcat-drdn_hndl  = cv_drdn_hndl.
+    cs_fieldcat-drdn_alias = abap_true.
+
+    LOOP AT &lt;lt_table&gt; ASSIGNING &lt;ls_row&gt;.
+      ASSIGN COMPONENT:
+       &apos;_LOW&apos;  OF STRUCTURE &lt;ls_row&gt; TO &lt;lv_low&gt;,
+       &apos;_TEXT&apos; OF STRUCTURE &lt;ls_row&gt; TO &lt;lv_txt&gt;.
+
+      ls_dropdown-handle    = cs_fieldcat-drdn_hndl.
+      ls_dropdown-int_value = &lt;lv_low&gt;.
+      ls_dropdown-value     = &lt;lv_low&gt;.
+      &quot;CONCATENATE ls_dropdown-value ` - ` &lt;lv_txt&gt; INTO ls_dropdown-value.
+
+      &quot; Add new item to dropdown
+      APPEND ls_dropdown TO lt_dropdown.
+    ENDLOOP.
+
+    io_grid-&gt;set_drop_down_table(
+     it_drop_down_alias = lt_dropdown ).
+  ENDMETHOD.
+
+  METHOD get_field_desc.
+    DATA:
+      ls_header       TYPE        x030l,
+      lr_table_descr  TYPE REF TO cl_abap_tabledescr,
+      lr_struct_descr TYPE REF TO cl_abap_structdescr,
+      lv_cnt          TYPE        i,
+      lr_row          TYPE REF TO data,
+      lo_type         TYPE REF TO cl_abap_typedescr,
+      lt_sub_fdesc    TYPE        tt_field_desc,
+      ls_subfield     TYPE        ts_field_desc.
+    FIELD-SYMBOLS:
+      &lt;ls_comp_tab&gt; TYPE abap_compdescr,
+      &lt;ls_row&gt;      TYPE any,
+      &lt;lv_subvalue&gt; TYPE any,
+      &lt;ls_subfield&gt; LIKE ls_subfield.
+
+    IF is_sh_field IS NOT INITIAL.
+      rs_field_desc-name     = is_sh_field-fieldname.
+      rs_field_desc-sys_type = is_sh_field-inttype.
+      rs_field_desc-length   = is_sh_field-leng.
+      rs_field_desc-decimals = is_sh_field-decimals.
+      rs_field_desc-label    = is_sh_field-fieldtext.
+      rs_field_desc-rollname = is_sh_field-rollname.
+    ELSE.
+      lo_type = cl_abap_typedescr=&gt;describe_by_data( iv_data ).
+      rs_field_desc-name     = iv_field_name.
+      rs_field_desc-sys_type = lo_type-&gt;type_kind. &quot;kind.
+      rs_field_desc-length   = lo_type-&gt;length.
+      rs_field_desc-decimals = lo_type-&gt;decimals.
+      IF lo_type-&gt;is_ddic_type( ) = abap_true.
+        rs_field_desc-rollname = lo_type-&gt;get_relative_name( ).
+      ENDIF.
+    ENDIF.
+
+    CASE rs_field_desc-sys_type.
+
+      WHEN cl_abap_typedescr=&gt;typekind_char.
+        &quot; Also CHAR
+        CASE rs_field_desc-rollname.
+          WHEN &apos;XSDBOOLEAN&apos;.
+            rs_field_desc-ui_type = mc_ui_type-boolean.
+
+          WHEN &apos;XSDDATETIME_Z&apos; OR &apos;XSDDATETIME_LONG_Z&apos; OR
+               &apos;XSDDATETIME_OFFSET&apos; OR &apos;XSDDATETIME_LOCAL&apos; OR &apos;XSDDATETIME_LOCAL_DT&apos;.
+            rs_field_desc-ui_type = mc_ui_type-datetime.
+
+          WHEN OTHERS.
+            rs_field_desc-ui_type  = mc_ui_type-char.
+        ENDCASE.
+
+      WHEN cl_abap_typedescr=&gt;typekind_num OR cl_abap_typedescr=&gt;typekind_numeric.
+        rs_field_desc-ui_type  = mc_ui_type-numc.
+
+        &quot; Memo text
+      WHEN cl_abap_typedescr=&gt;typekind_string.
+        rs_field_desc-ui_type  = mc_ui_type-string.
+        rs_field_desc-rollname = &apos;STRINGVAL&apos;.
+
+      WHEN cl_abap_typedescr=&gt;typekind_table.
+        rs_field_desc-ui_type  = mc_ui_type-table.
+        lr_table_descr ?= lo_type.
+
+        rs_field_desc-table_kind   = lr_table_descr-&gt;table_kind.
+        rs_field_desc-unique       = lr_table_descr-&gt;has_unique_key.
+        rs_field_desc-key          = lr_table_descr-&gt;key.
+        rs_field_desc-key_defkind  = lr_table_descr-&gt;key_defkind.
+
+        &quot; No need for standardc table
+        IF rs_field_desc-table_kind = cl_abap_tabledescr=&gt;tablekind_std.
+          CLEAR rs_field_desc-key.
+        ENDIF.
+
+        &quot; Only for structures
+        TRY.
+            lr_struct_descr ?= lr_table_descr-&gt;get_table_line_type( ).
+          CATCH cx_sy_move_cast_error.
+*          MESSAGE s016(zeui_message) WITH rs_field_desc-name INTO sy-msgli.
+*          zcx_eui_exception=&gt;raise_sys_error( ).
+        ENDTRY.
+
+        &quot; For speed creation
+        IF lr_struct_descr-&gt;is_ddic_type( ) = abap_true.
+          ls_header = lr_struct_descr-&gt;get_ddic_header( ).
+          rs_field_desc-rollname     = ls_header-tabname.
+        ENDIF.
+
+        &quot; Create STANDARD table for field catalog!
+        CREATE DATA lr_row TYPE HANDLE lr_struct_descr.
+        ASSIGN lr_row-&gt;* TO &lt;ls_row&gt;.
+
+        CLEAR:
+         rs_field_desc-sub_fdesc,
+         lt_sub_fdesc.
+        LOOP AT lr_struct_descr-&gt;components ASSIGNING &lt;ls_comp_tab&gt;.
+          ASSIGN COMPONENT &lt;ls_comp_tab&gt;-name OF STRUCTURE &lt;ls_row&gt; TO &lt;lv_subvalue&gt;.
+
+          &quot; Recursion
+          ls_subfield = get_field_desc( iv_field_name  = &lt;ls_comp_tab&gt;-name
+                                        iv_data        = &lt;lv_subvalue&gt;
+                                        ir_unique_type = ir_unique_type ).
+
+          INSERT ls_subfield INTO TABLE lt_sub_fdesc.
+        ENDLOOP.
+
+        &quot; Select option ?
+        DO 1 TIMES.
+          lv_cnt = lines( lt_sub_fdesc ).
+
+          CHECK lv_cnt = 4.
+          &quot; Check by name
+          LOOP AT lt_sub_fdesc TRANSPORTING NO FIELDS WHERE
+             name = &apos;SIGN&apos; OR name = &apos;OPTION&apos; OR name = &apos;LOW&apos; OR name = &apos;HIGH&apos;. &quot;#EC CI_HASHSEQ
+            lv_cnt = lv_cnt - 1.
+          ENDLOOP.
+
+          &quot; Select-option
+          CHECK lv_cnt = 0.
+          rs_field_desc-ui_type  = mc_ui_type-range.
+
+          &quot; No need in components
+          CLEAR rs_field_desc-sub_fdesc.
+
+          &quot; Where to find TABLE-FIELDNAME
+          READ TABLE lt_sub_fdesc ASSIGNING &lt;ls_subfield&gt;
+           WITH TABLE KEY name = &apos;LOW&apos;.
+          rs_field_desc-rollname = &lt;ls_subfield&gt;-rollname.
+          rs_field_desc-label    = &lt;ls_subfield&gt;-label.
+        ENDDO.
+
+        &quot; Date
+      WHEN cl_abap_typedescr=&gt;typekind_date.
+        rs_field_desc-ui_type  = mc_ui_type-date.
+        &quot; Time
+      WHEN cl_abap_typedescr=&gt;typekind_time.
+        rs_field_desc-ui_type  = mc_ui_type-time.
+        &quot; Integer, byte, short
+      WHEN cl_abap_typedescr=&gt;typekind_int OR cl_abap_typedescr=&gt;typekind_int1  OR cl_abap_typedescr=&gt;typekind_int2.
+        rs_field_desc-ui_type  = mc_ui_type-numeric.
+        &quot; Double
+      WHEN cl_abap_typedescr=&gt;typekind_packed OR cl_abap_typedescr=&gt;typekind_float OR
+           &apos;/&apos; OR &apos;a&apos; OR &apos;e&apos;. &quot; cl_abap_typedescr=&gt;typekind_decfloat  OR cl_abap_typedescr=&gt;typekind_decfloat16 OR cl_abap_typedescr=&gt;typekind_decfloat34.
+        rs_field_desc-ui_type  = mc_ui_type-numeric.
+      WHEN OTHERS.
+    ENDCASE.
+
+    &quot; TABLE-FIELDNAME from search help
+    IF is_sh_field-reffield IS NOT INITIAL.
+      CONCATENATE is_sh_field-reftable &apos;-&apos; is_sh_field-reffield INTO rs_field_desc-rollname.
+    ENDIF.
+
+    &quot; Try to find TABLE-FIELDNAME
+    IF
+      rs_field_desc-ui_type &lt;&gt; mc_ui_type-table  AND
+      rs_field_desc-ui_type &lt;&gt; mc_ui_type-string AND
+      rs_field_desc-rollname NP &apos;*-*&apos;.
+      find_table_fieldname(
+       EXPORTING
+        ir_unique_type = ir_unique_type
+       CHANGING
+        cv_rollname    = rs_field_desc-rollname
+        cv_label       = rs_field_desc-label ).
+    ENDIF.
+
+    &quot; Set default text
+    IF rs_field_desc-label IS INITIAL.
+      rs_field_desc-label = rs_field_desc-name.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD find_table_fieldname.
+    TYPES:
+      BEGIN OF ts_dd03l,
+        tabname    TYPE dd03l-tabname,
+        fieldname  TYPE dd03l-fieldname,
+        shlporigin TYPE dd03l-shlporigin,
+        tab_len    TYPE i,
+      END OF ts_dd03l.
+
+    DATA:
+      lv_rollname TYPE                   rollname,
+      lt_dd03l    TYPE STANDARD TABLE OF ts_dd03l,
+      ls_dd03l    TYPE REF TO            ts_dd03l,
+      lv_tabfld   TYPE                   string,
+      ls_dd04t    TYPE                   dd04t,
+      lo_type     TYPE REF TO            cl_abap_datadescr.
+    FIELD-SYMBOLS:
+      &lt;lt_unique_type&gt; TYPE tt_unique_type.
+
+    &quot; Table Fields
+    CHECK cv_rollname IS NOT INITIAL.
+    lv_rollname = cv_rollname.
+
+    SELECT d~tabname d~fieldname d~shlporigin INTO CORRESPONDING FIELDS OF TABLE lt_dd03l
+    FROM dd03l AS d UP TO 100 ROWS
+    WHERE d~rollname = lv_rollname AND d~as4local = &apos;A&apos; AND d~tabname NOT LIKE &apos;/%&apos; AND d~depth = 0.
+
+    &quot; Find short table name
+    LOOP AT lt_dd03l REFERENCE INTO ls_dd03l.
+      ls_dd03l-&gt;tab_len = strlen( ls_dd03l-&gt;tabname ).
+
+      &quot; In the end
+      IF ls_dd03l-&gt;shlporigin IS NOT INITIAL.
+        ls_dd03l-&gt;tab_len = ls_dd03l-&gt;tab_len - 1000.
+      ENDIF.
+    ENDLOOP.
+    SORT lt_dd03l BY tab_len ASCENDING.
+
+    &quot; Try to find
+    ASSIGN ir_unique_type-&gt;* TO &lt;lt_unique_type&gt;.
+    LOOP AT lt_dd03l REFERENCE INTO ls_dd03l.
+      CONCATENATE ls_dd03l-&gt;tabname &apos;-&apos; ls_dd03l-&gt;fieldname INTO lv_tabfld.
+
+      &quot; if type exist
+      TRY.
+          lo_type = create_type_descr( iv_rollname = lv_tabfld ).
+*      CATCH zcx_eui_exception.
+*        CLEAR lo_type.
+      ENDTRY.
+      CHECK lo_type IS NOT INITIAL.
+
+      &quot; Get next item
+      IF ir_unique_type IS NOT INITIAL.
+        READ TABLE &lt;lt_unique_type&gt; TRANSPORTING NO FIELDS
+         WITH TABLE KEY table_line = lv_tabfld.
+        CHECK sy-subrc &lt;&gt; 0.
+
+        &quot; Do not repeat types
+        INSERT lv_tabfld INTO TABLE &lt;lt_unique_type&gt;.
+      ENDIF.
+      cv_rollname = lv_tabfld.
+
+      DO 1 TIMES.
+        &quot; If have no text
+        CHECK cv_label IS SUPPLIED AND cv_label IS INITIAL.
+
+        &quot; №2
+        SELECT SINGLE * INTO ls_dd04t
+        FROM dd04t
+        WHERE rollname   = lv_rollname
+          AND ddlanguage = sy-langu
+          AND as4local   = &apos;A&apos;
+          AND as4vers    = 0.
+        CHECK sy-subrc = 0.
+
+        IF ls_dd04t-ddtext IS NOT INITIAL.
+          cv_label = ls_dd04t-ddtext.
+        ELSE.
+          cv_label = ls_dd04t-reptext.
+        ENDIF.
+      ENDDO.
+
+      RETURN.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD create_structure. &quot;copied from https://github.com/bizhuka/eui
+    DATA:
+      lt_comp      TYPE abap_component_tab,
+      lt_sub_fdesc TYPE tt_field_desc.
+
+    FIELD-SYMBOLS:
+      &lt;ls_field_desc&gt; TYPE         ts_field_desc,
+      &lt;ls_subfield&gt;   TYPE         ts_field_desc,
+      &lt;ls_comp&gt;       LIKE LINE OF lt_comp.
+
+    &quot; №2 For select-options
+    IF io_range IS NOT INITIAL.
+      APPEND INITIAL LINE TO lt_comp ASSIGNING &lt;ls_comp&gt;.
+      &lt;ls_comp&gt;-name = &apos;SIGN&apos;.
+      &lt;ls_comp&gt;-type = cl_abap_elemdescr=&gt;get_c( p_length = 1 ).
+
+      APPEND INITIAL LINE TO lt_comp ASSIGNING &lt;ls_comp&gt;.
+      &lt;ls_comp&gt;-name = &apos;OPTION&apos;.
+      &lt;ls_comp&gt;-type = cl_abap_elemdescr=&gt;get_c( p_length = 2 ).
+
+      APPEND INITIAL LINE TO lt_comp ASSIGNING &lt;ls_comp&gt;.
+      &lt;ls_comp&gt;-name = &apos;LOW&apos;.
+      &lt;ls_comp&gt;-type = io_range.
+
+      APPEND INITIAL LINE TO lt_comp ASSIGNING &lt;ls_comp&gt;.
+      &lt;ls_comp&gt;-name = &apos;HIGH&apos;.
+      &lt;ls_comp&gt;-type = io_range.
+    ENDIF.
+
+    &quot; №4 Called from constructor if have in DB cluster
+    LOOP AT it_field_desc ASSIGNING &lt;ls_field_desc&gt;.
+      &quot; Create sub levels
+      APPEND INITIAL LINE TO lt_comp ASSIGNING &lt;ls_comp&gt;.
+      &lt;ls_comp&gt;-name = &lt;ls_field_desc&gt;-name.
+      &lt;ls_comp&gt;-type = create_type_descr( is_field_desc = &lt;ls_field_desc&gt; ).
+    ENDLOOP.
+    ro_struct = cl_abap_structdescr=&gt;create( lt_comp ).
+  ENDMETHOD.
+
+  METHOD create_type_descr. &quot;copied from https://github.com/bizhuka/eui
+    DATA:
+      lo_line     TYPE REF TO cl_abap_datadescr,
+      lo_type     TYPE REF TO cl_abap_typedescr,
+      lv_sys_type TYPE        abap_typekind,
+      lv_message  TYPE        string.
+
+    &quot; No type
+    CLEAR ro_type.
+
+    &quot; №0
+    IF is_field_desc IS SUPPLIED.
+
+      &quot; For tables speed 1
+      IF is_field_desc-rollname IS NOT INITIAL.
+        ro_type = create_type_descr(
+          iv_rollname = is_field_desc-rollname ).
+      ENDIF.
+
+      IF ro_type IS INITIAL.
+        lv_sys_type = is_field_desc-sys_type.
+
+        &quot; For old option wrong is_field_desc-sys_type
+        IF lv_sys_type = cl_abap_typedescr=&gt;typekind_table AND is_field_desc-ui_type = mc_ui_type-range.
+          &quot; usually char
+          lv_sys_type = cl_abap_typedescr=&gt;typekind_char.
+          &quot; Show warning
+          CONCATENATE `No right type for ` is_field_desc-name ` ` is_field_desc-rollname `!` INTO lv_message.
+          MESSAGE lv_message TYPE &apos;S&apos; DISPLAY LIKE &apos;W&apos;.
+        ENDIF.
+
+        CASE lv_sys_type.
+          WHEN cl_abap_typedescr=&gt;typekind_char.
+            ro_type = cl_abap_elemdescr=&gt;get_c( p_length = is_field_desc-length ).
+          WHEN cl_abap_typedescr=&gt;typekind_date.
+            ro_type = cl_abap_elemdescr=&gt;get_d( ).
+          WHEN cl_abap_typedescr=&gt;typekind_int.
+            ro_type = cl_abap_elemdescr=&gt;get_i( ).
+          WHEN cl_abap_typedescr=&gt;typekind_float.
+            ro_type = cl_abap_elemdescr=&gt;get_f( ).
+          WHEN cl_abap_typedescr=&gt;typekind_num.
+            ro_type = cl_abap_elemdescr=&gt;get_n( p_length = is_field_desc-length ).
+          WHEN cl_abap_typedescr=&gt;typekind_packed.
+            ro_type = cl_abap_elemdescr=&gt;get_p( p_length = is_field_desc-length p_decimals = is_field_desc-decimals ).
+          WHEN cl_abap_typedescr=&gt;typekind_string.
+            ro_type = cl_abap_elemdescr=&gt;get_string( ).
+          WHEN cl_abap_typedescr=&gt;typekind_time.
+            ro_type = cl_abap_elemdescr=&gt;get_t( ).
+          WHEN cl_abap_typedescr=&gt;typekind_table.
+            &quot; Below in code CASE is_field_desc-ui_type.
+          WHEN OTHERS.
+        ENDCASE.
+      ENDIF.
+
+      CASE is_field_desc-ui_type.
+        WHEN mc_ui_type-range.
+          IF ro_type IS INITIAL.
+          ENDIF.
+
+          &quot; Call №2 recursion
+          lo_line = create_structure( io_range = ro_type ).
+          ro_type = cl_abap_tabledescr=&gt;create( p_line_type = lo_line ).
+
+        WHEN mc_ui_type-table.
+          &quot; Call №3 recursion
+          IF ro_type IS INITIAL.
+            ro_type = create_structure( iv_sub_fdesc = is_field_desc-sub_fdesc ).
+          ENDIF.
+
+          ro_type = cl_abap_tabledescr=&gt;create(
+            p_line_type   = ro_type
+            p_table_kind  = is_field_desc-table_kind
+            p_unique      = is_field_desc-unique
+            p_key         = is_field_desc-key
+            p_key_kind    = is_field_desc-key_defkind ).
+      ENDCASE.
+    ENDIF.
+
+    CHECK ro_type IS INITIAL.
+
+    &quot; №0
+    IF iv_rollname NP &apos;*-*&apos;.
+      cl_abap_datadescr=&gt;describe_by_name(
+       EXPORTING
+        p_name         = iv_rollname
+       RECEIVING
+        p_descr_ref    = lo_type
+       EXCEPTIONS
+        type_not_found = 1 ).
+
+      ro_type ?= lo_type.
+      RETURN.
+    ENDIF.
+
+    &quot; №1 - Create from text
+    IF ir_type IS INITIAL AND iv_rollname IS NOT INITIAL.
+      CREATE DATA ir_type TYPE (iv_rollname).
+    ENDIF.
+
+    &quot; №2 - Based on incoming reference
+    cl_abap_datadescr=&gt;describe_by_data_ref(
+     EXPORTING
+      p_data_ref           = ir_type
+     RECEIVING
+      p_descr_ref          = lo_type
+     EXCEPTIONS
+      reference_is_initial = 1 ).
+
+    ro_type ?= lo_type.
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lcl_appl DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF sign_option_icon_s,
+             sign          TYPE tvarv_sign,
+             option        TYPE tvarv_opti,
+             icon_name(64) TYPE c,
+             icon          TYPE aqadh_type_of_icon,
+           END OF sign_option_icon_s,
+
+           BEGIN OF t_obj,
+             alv_viewer TYPE REF TO lcl_table_viewer,
+           END OF t_obj,
+
+           BEGIN OF t_lang,
+             spras(4),
+             sptxt    TYPE sptxt,
+           END OF t_lang  .
+
+    CLASS-DATA: m_option_icons     TYPE TABLE OF sign_option_icon_s,
+                mt_lang            TYPE TABLE OF t_lang,
+                mt_obj             TYPE TABLE OF t_obj, &quot;main object table
+                m_ctrl_box_handler TYPE REF TO   lcl_box_handler,
+                c_dragdropalv      TYPE REF TO   cl_dragdrop.
+
+    CLASS-METHODS:
+      init_icons_table,
+      init_lang,
+      suppress_run_button,
+      open_int_table IMPORTING it_tab  TYPE ANY TABLE OPTIONAL
+                               it_ref  TYPE REF TO data OPTIONAL
+                               iv_name TYPE string,
+      exit.
+ENDCLASS.
+
+CLASS lcl_data_transmitter DEFINITION.
+  PUBLIC SECTION.
+    EVENTS: data_changed EXPORTING VALUE(e_row) TYPE lcl_types=&gt;t_sel_row,
+             col_changed EXPORTING VALUE(e_column) TYPE lvc_fname.
+    METHODS: emit IMPORTING e_row TYPE lcl_types=&gt;t_sel_row,
+      emit_col IMPORTING e_column TYPE lvc_fname.
+ENDCLASS.
+
+CLASS lcl_data_transmitter IMPLEMENTATION.
+  METHOD  emit.
+    RAISE EVENT data_changed EXPORTING e_row = e_row.
+  ENDMETHOD.
+
+  METHOD emit_col.
+    RAISE EVENT col_changed EXPORTING e_column = e_column.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_data_receiver DEFINITION.
+  PUBLIC SECTION.
+    DATA: mo_transmitter TYPE REF TO lcl_data_transmitter,
+          lo_tab_from    TYPE REF TO lcl_table_viewer,
+          lo_sel_to      TYPE REF TO lcl_sel_opt,
+          m_from_field   TYPE        lvc_fname,
+          m_to_field     TYPE        lvc_fname.
+    METHODS: constructor
+      IMPORTING io_transmitter TYPE REF TO lcl_data_transmitter OPTIONAL
+                io_tab_from    TYPE REF TO lcl_table_viewer OPTIONAL
+                io_sel_to      TYPE REF TO lcl_sel_opt OPTIONAL
+                i_from_field   TYPE lvc_fname OPTIONAL
+                i_to_field     TYPE lvc_fname OPTIONAL,
+      shut_down,
+      update FOR EVENT data_changed OF lcl_data_transmitter IMPORTING e_row,
+      update_col FOR EVENT col_changed OF lcl_data_transmitter IMPORTING e_column,
+      on_grid_button_click
+            FOR EVENT button_click OF cl_gui_alv_grid
+        IMPORTING
+            es_col_id
+            es_row_no.
+ENDCLASS.
+
+CLASS lcl_sel_opt DEFINITION.
+  PUBLIC SECTION.
+    DATA: mo_viewer  TYPE REF TO   lcl_table_viewer,
+          mo_sel_alv TYPE REF TO   cl_gui_alv_grid,
+          mt_fcat    TYPE          lvc_t_fcat,
+          mt_sel_tab TYPE TABLE OF lcl_types=&gt;selection_display_s,
+          ms_layout  TYPE          lvc_s_layo.
+
+    EVENTS: selection_done.
+    METHODS:
+      constructor IMPORTING io_viewer TYPE REF TO lcl_table_viewer io_container TYPE REF TO cl_gui_container,
+      raise_selection_done,
+      update_sel_tab,
+      set_value IMPORTING  i_field TYPE any i_low TYPE any OPTIONAL i_high TYPE any OPTIONAL i_clear TYPE xfeld DEFAULT abap_true ,
+      update_sel_row CHANGING c_sel_row TYPE lcl_types=&gt;selection_display_s.
+
+  PRIVATE SECTION.
+    METHODS:
+      init_fcat IMPORTING i_dd_handle TYPE i,
+      handle_sel_toolbar FOR EVENT toolbar OF cl_gui_alv_grid IMPORTING e_object,
+      on_f4 FOR EVENT onf4 OF cl_gui_alv_grid IMPORTING e_fieldname es_row_no er_event_data,
+      on_grid_button_click FOR EVENT button_click OF cl_gui_alv_grid
+        IMPORTING
+            es_col_id
+            es_row_no,
+      on_data_changed FOR EVENT data_changed OF cl_gui_alv_grid IMPORTING  er_data_changed,
+      on_data_changed_finished FOR EVENT data_changed_finished OF cl_gui_alv_grid IMPORTING e_modified,
+      handle_user_command FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+      handle_doubleclick FOR EVENT double_click OF cl_gui_alv_grid IMPORTING e_column es_row_no,
+      handle_context_menu_request FOR EVENT context_menu_request OF cl_gui_alv_grid IMPORTING e_object.
+ENDCLASS.
+
+CLASS lcl_table_viewer DEFINITION INHERITING FROM lcl_popup.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_column_emitter,
+             column  TYPE        lvc_fname,
+             emitter TYPE REF TO lcl_data_transmitter,
+           END OF t_column_emitter.
+
+    DATA: m_lang             TYPE          ddlanguage,
+          m_is_sql           TYPE          xfeld,
+          m_is_view          TYPE          xfeld,
+          m_is_cds           TYPE          xfeld,
+          m_tabname          TYPE          tabname,
+          m_texttabname      TYPE          tabname,
+          m_count            TYPE          i,
+          mo_alv             TYPE REF TO   cl_gui_alv_grid,
+          mo_sel             TYPE REF TO   lcl_sel_opt,
+          mr_table           TYPE REF TO   data,
+          mr_text_table      TYPE REF TO   data,
+          mo_sel_parent      TYPE REF TO   cl_gui_container,
+          mo_alv_parent      TYPE REF TO   cl_gui_container,
+          mt_alv_catalog     TYPE          lvc_t_fcat,
+          mt_text_components TYPE          abap_component_tab,
+          mo_column_emitters TYPE TABLE OF t_column_emitter,
+          mo_sel_width       TYPE          i,
+          m_visible,
+          m_std_tbar         TYPE          x,
+          m_show_empty.
+
+    METHODS:
+      constructor IMPORTING i_tname           TYPE any OPTIONAL
+                            ir_tab            TYPE REF TO data OPTIONAL
+                            i_additional_name TYPE string OPTIONAL
+                            i_is_view         TYPE xfeld OPTIONAL
+                            i_is_cds          TYPE xfeld OPTIONAL,
+      get_where RETURNING VALUE(c_where) TYPE string,
+      refresh_table FOR EVENT selection_done OF lcl_sel_opt.
+
+  PRIVATE SECTION.
+    METHODS:
+      create_popup,
+      create_alv,
+      create_sel_alv,
+      set_header,
+      read_text_table,
+      update_texts,
+      get_field_info IMPORTING i_tab TYPE tabname,
+      create_field_cat IMPORTING i_tname           TYPE tabname
+                       RETURNING VALUE(et_catalog) TYPE lvc_t_fcat,
+      on_f4 FOR EVENT onf4 OF cl_gui_alv_grid
+        IMPORTING e_fieldname
+                    es_row_no
+                    er_event_data,
+      on_menu_request FOR EVENT context_menu_request OF cl_gui_alv_grid IMPORTING e_object,
+      handle_tab_toolbar  FOR EVENT toolbar OF cl_gui_alv_grid  IMPORTING e_object,
+      handle_menu_button  FOR EVENT menu_button OF cl_gui_alv_grid IMPORTING e_object e_ucomm,
+      before_user_command FOR EVENT before_user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+      handle_user_command FOR EVENT user_command OF cl_gui_alv_grid IMPORTING e_ucomm,
+      handle_doubleclick FOR EVENT double_click OF cl_gui_alv_grid IMPORTING e_column es_row_no.
+ENDCLASS.
+
+CLASS lcl_py_cluster_viewer DEFINITION INHERITING FROM lcl_popup.
+  PUBLIC SECTION.
+
+    TYPES:
+      BEGIN OF ts_hier,
+        anynode   TYPE        string,
+        anyparent TYPE        string,
+        key       TYPE        salv_de_node_key, &quot;internal tree key
+        name      TYPE        string,
+        tab_ref   TYPE REF TO data,
+        type(1),
+      END OF ts_hier,
+      tt_hier TYPE TABLE OF ts_hier,
+      BEGIN OF t_children,
+        item TYPE REF TO lcl_table_viewer,
+      END OF t_children.
+
+    DATA: mt_hier     TYPE          tt_hier, &quot; Tree hierarchy
+          mo_nodes    TYPE REF TO   cl_salv_nodes,
+          mo_node     TYPE REF TO   cl_salv_node,
+          mo_events   TYPE REF TO   cl_salv_events_tree,
+          mt_empty    TYPE          tt_hier,
+          mr_cluster  TYPE REF TO   data, &quot;payru_result,
+          m_pernr(8)  TYPE          n,
+          m_seqnr(5)  TYPE          n,
+          mt_children TYPE TABLE OF t_children.
+
+    DATA :  mo_tree TYPE REF TO cl_salv_tree.
+    METHODS: constructor IMPORTING i_pernr TYPE any i_seqnr TYPE any,
+      show_tree,
+      on_box_close  REDEFINITION .
+
+  PRIVATE SECTION.
+    METHODS: init_alv_tree,
+      create_tree,
+      create_hierarchy,
+      read_cluster,
+      hndl_double_click FOR EVENT double_click OF cl_salv_events_tree IMPORTING node_key.
+ENDCLASS.
+
+CLASS  lcl_py_cluster_viewer IMPLEMENTATION.
+  METHOD constructor.
+    super-&gt;constructor( ).
+    m_pernr = i_pernr.
+    m_seqnr = i_seqnr.
+    mo_box = create( i_name = CONV #( m_pernr ) i_width = 180 i_hight = 280  ).
+    CREATE OBJECT mo_splitter ##FM_SUBRC_OK
+      EXPORTING
+        parent  = mo_box
+        rows    = 1
+        columns = 1
+      EXCEPTIONS
+        OTHERS  = 1.
+
+    mo_splitter-&gt;get_container(
+     EXPORTING
+       row       = 1
+       column    = 1
+     RECEIVING
+       container = mo_parent ).
+
+    SET HANDLER on_box_close FOR mo_box.
+
+    read_cluster( ).
+    create_hierarchy( ).
+    show_tree( ).
+  ENDMETHOD.
+
+  METHOD init_alv_tree.
+    TRY.
+        CALL METHOD cl_salv_tree=&gt;factory
+          EXPORTING
+            r_container = mo_parent
+          IMPORTING
+            r_salv_tree = mo_tree
+          CHANGING
+            t_table     = mt_empty.
+      CATCH cx_salv_error.
+    ENDTRY.
+
+    CALL METHOD mo_tree-&gt;get_event RECEIVING value = DATA(lo_event).
+    SET HANDLER me-&gt;hndl_double_click FOR lo_event.
+  ENDMETHOD.
+
+  METHOD on_box_close.
+    sender-&gt;free( ).
+
+    LOOP AT mt_children INTO DATA(child).
+      READ TABLE lcl_appl=&gt;mt_obj WITH KEY alv_viewer = child-item ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+      CHECK sy-subrc = 0.
+      DATA(l_indx) = sy-tabix.
+
+      child-item-&gt;mo_box-&gt;free( EXCEPTIONS cntl_error = 1  ).
+      FREE &lt;obj&gt;-alv_viewer-&gt;mr_table.
+      FREE &lt;obj&gt;-alv_viewer-&gt;mo_alv.
+
+      &quot;shutdown receivers.
+      IF &lt;obj&gt;-alv_viewer-&gt;mo_sel IS NOT INITIAL.
+        LOOP AT &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;mt_sel_tab INTO DATA(l_sel).
+          IF l_sel-receiver IS BOUND.
+            l_sel-receiver-&gt;shut_down( ).
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+      FREE &lt;obj&gt;-alv_viewer.
+      DELETE lcl_appl=&gt;mt_obj INDEX l_indx.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD show_tree.
+    init_alv_tree( ).
+    create_tree( ).
+
+    DATA(lo_columns) = mo_tree-&gt;get_columns( ).
+    lo_columns-&gt;set_optimize( abap_true ).
+
+    lo_columns-&gt;get_column( &apos;KEY&apos; )-&gt;set_visible( abap_false ).
+    lo_columns-&gt;get_column( &apos;NAME&apos; )-&gt;set_visible( abap_false ).
+    lo_columns-&gt;get_column( &apos;ANYNODE&apos; )-&gt;set_visible( abap_false ).
+    lo_columns-&gt;get_column( &apos;ANYPARENT&apos; )-&gt;set_visible( abap_false ).
+    lo_columns-&gt;get_column( &apos;TYPE&apos; )-&gt;set_visible( abap_false ).
+
+    DATA(lo_tree_settings) = mo_tree-&gt;get_tree_settings( ).
+    lo_tree_settings-&gt;set_hierarchy_header( CONV #( m_seqnr ) ).
+    mo_nodes-&gt;expand_all( ).
+    mo_tree-&gt;get_functions( )-&gt;set_all( ).
+    mo_tree-&gt;display( ).
+    mo_box-&gt;set_focus( mo_box ).
+  ENDMETHOD.
+
+  METHOD hndl_double_click.
+
+    DATA: go_struct    TYPE REF TO cl_abap_structdescr,
+          go_table     TYPE REF TO cl_abap_tabledescr,
+          go_abapstr   TYPE REF TO cl_abap_typedescr,
+          l_struc_name TYPE        tabname,
+          lr_tab       TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;table&gt; TYPE STANDARD TABLE,
+                   &lt;str&gt;   TYPE                 any.
+
+    DATA(ls_hier) = mt_hier[ node_key ].
+    CHECK ls_hier-tab_ref IS NOT INITIAL.
+    go_abapstr = cl_abap_structdescr=&gt;describe_by_data_ref( ls_hier-tab_ref ).
+    IF go_abapstr-&gt;type_kind = &apos;h&apos;.
+      go_table  ?= cl_abap_structdescr=&gt;describe_by_data_ref( ls_hier-tab_ref ).
+      go_struct ?= go_table-&gt;get_table_line_type( ).
+      l_struc_name = go_struct-&gt;absolute_name.
+    ELSE.
+      go_struct  ?= cl_abap_structdescr=&gt;describe_by_data_ref( ls_hier-tab_ref ).
+      l_struc_name = go_struct-&gt;absolute_name.
+      lcl_rtti=&gt;create_table_by_name( EXPORTING i_tname = l_struc_name CHANGING c_table = lr_tab  ).
+      ASSIGN lr_tab-&gt;* TO &lt;table&gt;.
+      ASSIGN ls_hier-tab_ref-&gt;* TO &lt;str&gt;.
+      APPEND INITIAL LINE TO &lt;table&gt; ASSIGNING FIELD-SYMBOL(&lt;line&gt;).
+      MOVE-CORRESPONDING &lt;str&gt; TO &lt;line&gt;.
+      ls_hier-tab_ref = lr_tab.
+    ENDIF.
+    ls_hier-type = go_abapstr-&gt;type_kind.
+    DATA(l_name) = |{ m_pernr }: ({ m_seqnr }) |.
+    REPLACE ALL OCCURRENCES OF &apos;\TYPE=&apos; IN l_struc_name WITH &apos;&apos;.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = l_struc_name ir_tab = ls_hier-tab_ref i_additional_name = l_name.
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+    APPEND VALUE #( item = &lt;obj&gt;-alv_viewer  ) TO mt_children.
+  ENDMETHOD.
+
+  METHOD read_cluster.
+    DATA: lo_handle TYPE REF TO cl_abap_complexdescr.
+
+    FIELD-SYMBOLS: &lt;cluster&gt; TYPE any.
+
+    lo_handle ?= cl_abap_typedescr=&gt;describe_by_name( &apos;PAYRU_RESULT&apos; ).
+    CREATE DATA mr_cluster TYPE HANDLE lo_handle.
+    ASSIGN mr_cluster-&gt;* TO &lt;cluster&gt;.
+
+    CALL FUNCTION &apos;PYXX_READ_PAYROLL_RESULT&apos;
+      EXPORTING
+        employeenumber               = m_pernr
+        sequencenumber               = m_seqnr
+      CHANGING
+        payroll_result               = &lt;cluster&gt;
+      EXCEPTIONS
+        illegal_isocode_or_clusterid = 1
+        error_generating_import      = 2
+        import_mismatch_error        = 3
+        subpool_dir_full             = 4
+        no_read_authority            = 5
+        no_record_found              = 6
+        versions_do_not_match        = 7
+        error_reading_archive        = 8
+        error_reading_relid          = 9
+        OTHERS                       = 10.
+  ENDMETHOD.
+
+  METHOD create_hierarchy.
+    DATA: lo_stru    TYPE REF TO  cl_abap_structdescr,
+          lo_element TYPE REF TO  cl_abap_structdescr,
+          ls_hier    LIKE LINE OF mt_hier,
+          l_lines    TYPE         i.
+
+    FIELD-SYMBOLS: &lt;table&gt;   TYPE ANY TABLE,
+                   &lt;struc&gt;   TYPE            any,
+                   &lt;cluster&gt; TYPE            any.
+
+    lo_stru ?= cl_abap_typedescr=&gt;describe_by_name( &apos;PAYRU_RESULT&apos; ).
+
+    &quot;top node
+    APPEND VALUE #( anynode = &apos;Main&apos; anyparent = &apos;&apos; name = &apos;Cluster&apos; ) TO mt_hier.
+
+    LOOP AT lo_stru-&gt;components INTO DATA(ls_comp).
+
+      ls_hier-anynode = ls_comp-name.
+      ls_hier-anyparent = &apos;Main&apos;.
+      ls_hier-name = ls_comp-name.
+      APPEND ls_hier TO mt_hier.
+
+      ASSIGN mr_cluster-&gt;* TO &lt;cluster&gt;.
+      ASSIGN COMPONENT ls_comp-name OF STRUCTURE &lt;cluster&gt; TO FIELD-SYMBOL(&lt;element&gt;).
+      lo_element ?= cl_abap_typedescr=&gt;describe_by_data( &lt;element&gt; ).
+      DATA(lt_comp) = lo_element-&gt;get_components( ).
+
+      LOOP AT lt_comp INTO DATA(ls_el).
+        CHECK ls_el-type-&gt;type_kind = &apos;u&apos; &quot;structure
+           OR ls_el-type-&gt;type_kind = &apos;h&apos;. &quot;table
+
+        CLEAR: l_lines, ls_hier.
+        IF ls_el-type-&gt;type_kind = &apos;h&apos;.
+          ASSIGN COMPONENT ls_el-name OF STRUCTURE &lt;element&gt; TO &lt;table&gt;.
+          l_lines = lines( &lt;table&gt; ).
+          GET REFERENCE OF &lt;table&gt; INTO ls_hier-tab_ref.
+        ELSE.
+          ASSIGN COMPONENT ls_el-name OF STRUCTURE &lt;element&gt; TO &lt;struc&gt;.
+          GET REFERENCE OF &lt;struc&gt; INTO ls_hier-tab_ref.
+        ENDIF.
+        CHECK l_lines NE 0 OR ls_el-type-&gt;type_kind = &apos;u&apos;.
+
+        ls_hier-anynode = ls_el-name.
+        ls_hier-anyparent = ls_comp-name.
+        ls_hier-name = ls_el-name.
+        IF ls_el-type-&gt;type_kind = &apos;h&apos;.
+          ls_hier-name = |{ ls_hier-name } ({ l_lines })|.
+        ENDIF.
+        ls_hier-type = ls_el-type-&gt;type_kind.
+        APPEND ls_hier TO mt_hier.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD create_tree.
+    DATA: lv_text TYPE lvc_value,
+          lv_icon TYPE salv_de_tree_image.
+
+    TRY.
+        mo_nodes = mo_tree-&gt;get_nodes( ).
+        LOOP AT mt_hier ASSIGNING FIELD-SYMBOL(&lt;hier&gt;).
+          READ TABLE mt_hier WITH KEY anynode = &lt;hier&gt;-anyparent ASSIGNING FIELD-SYMBOL(&lt;hier_up&gt;).
+          IF sy-subrc NE 0.&quot;root node
+
+            mo_node = mo_nodes-&gt;add_node(
+            related_node = &apos;&apos;
+            relationship = if_salv_c_node_relation=&gt;parent ).
+          ELSE.
+            IF &lt;hier&gt;-type = &apos;h&apos;.
+              lv_icon = icon_view_table.
+            ELSE.
+              lv_icon = icon_structure.
+            ENDIF.
+            mo_node = mo_nodes-&gt;add_node(
+            related_node = &lt;hier_up&gt;-key
+            relationship = if_salv_c_node_relation=&gt;last_child
+            collapsed_icon = lv_icon
+            expanded_icon  = lv_icon  ).
+          ENDIF.
+
+          &lt;hier&gt;-key = mo_node-&gt;get_key( ).
+          mo_node-&gt;set_data_row( &lt;hier&gt; ).
+          lv_text = &lt;hier&gt;-name.
+          mo_node-&gt;set_text( lv_text ).
+        ENDLOOP.
+      CATCH cx_salv_error.
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_text_viewer DEFINITION FINAL INHERITING FROM lcl_popup.
+  PUBLIC SECTION.
+    DATA: mo_text TYPE REF TO cl_gui_textedit.
+
+    METHODS: constructor IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      load_text  IMPORTING io_viewer TYPE REF TO lcl_table_viewer.
+
+ENDCLASS.
+
+CLASS lcl_text_viewer IMPLEMENTATION.
+  METHOD constructor.
+    super-&gt;constructor( ).
+    mo_box = create( i_name = &apos;text&apos; i_width = 200 i_hight = 100 ).
+    CREATE OBJECT mo_splitter ##FM_SUBRC_OK
+      EXPORTING
+        parent  = mo_box
+        rows    = 1
+        columns = 1
+      EXCEPTIONS
+        OTHERS  = 1.
+
+    mo_splitter-&gt;get_container(
+     EXPORTING
+       row       = 1
+       column    = 1
+     RECEIVING
+       container = mo_parent ).
+
+    SET HANDLER on_box_close FOR mo_box.
+
+    CREATE OBJECT mo_text
+      EXPORTING
+        parent                 = mo_parent
+      EXCEPTIONS
+        error_cntl_create      = 1
+        error_cntl_init        = 2
+        error_cntl_link        = 3
+        error_dp_create        = 4
+        gui_type_not_supported = 5
+        OTHERS                 = 6.
+    IF sy-subrc &lt;&gt; 0.
+      on_box_close( mo_box ).
+    ENDIF.
+
+    mo_text-&gt;set_readonly_mode( ).
+
+    load_text( io_viewer ).
+  ENDMETHOD.
+
+  METHOD load_text.&quot;only for HR systems
+*    DATA: lr_pskey TYPE REF TO data,
+*          lr_text  TYPE REF TO data.
+*
+*    FIELD-SYMBOLS: &lt;text_tab&gt; TYPE STANDARD TABLE,
+*                   &lt;pskey&gt;    TYPE any.
+*    CREATE DATA lr_text TYPE (&apos;HRPAD_TEXT_TAB&apos;). &quot;HANDLE lo_handle.
+*    ASSIGN lr_text-&gt;* TO &lt;text_tab&gt;.
+*
+*    CREATE DATA lr_pskey TYPE (&apos;PSKEY&apos;). &quot;HANDLE lo_handle.
+*    ASSIGN lr_pskey-&gt;* TO &lt;pskey&gt;.
+*
+*    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD  TABLE.
+*    DATA(l_row) = lcl_alv_common=&gt;get_selected( io_viewer-&gt;mo_alv ).
+*    ASSIGN io_viewer-&gt;mr_table-&gt;* TO  &lt;f_tab&gt;.
+*    READ TABLE &lt;f_tab&gt; INDEX l_row ASSIGNING FIELD-SYMBOL(&lt;row&gt;).
+*    MOVE-CORRESPONDING &lt;row&gt; TO &lt;pskey&gt;.
+*    ASSIGN COMPONENT &apos;INFTY&apos; OF STRUCTURE &lt;pskey&gt; TO FIELD-SYMBOL(&lt;field&gt;).
+*    &lt;field&gt; = io_viewer-&gt;m_tabname+2(4).
+*
+*    TRY.
+*        CALL METHOD cl_hrpa_text_cluster=&gt;read
+*          EXPORTING
+*            tclas         = &apos;A&apos;
+*            pskey         = &lt;pskey&gt;
+*            no_auth_check = abap_true
+*          IMPORTING
+*            text_tab      = &lt;text_tab&gt;.
+*      CATCH cx_hrpa_missing_authorization .
+*      CATCH cx_hrpa_violated_assertion .
+*    ENDTRY.
+*
+*    mo_text-&gt;set_text_as_r3table( &lt;text_tab&gt; ).
+*    CALL METHOD cl_gui_cfw=&gt;flush.
+*    mo_text-&gt;set_focus( mo_box ).
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lcl_plugins DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_field_links,
+             tab        TYPE tablename,
+             field      TYPE fieldname,
+             method(30),
+             rtab       TYPE tablename,
+             rfield     TYPE fieldname,
+             const      TYPE string, &quot;aqadh_range_value,
+           END OF t_field_links,
+           BEGIN OF t_el_links,
+             element TYPE tablename,
+             rtab    TYPE tablename,
+             rfield  TYPE fieldname,
+             plugin  TYPE tcode,
+           END OF t_el_links.
+
+    CLASS-DATA: mt_field_links TYPE TABLE OF t_field_links,
+                mt_el_links    TYPE TABLE OF t_el_links.
+    CLASS-METHODS: init,
+      link IMPORTING i_str     TYPE any
+                     io_viewer TYPE REF TO lcl_table_viewer
+                     i_column  TYPE any,
+      run_pa20 IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      run_pp01 IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      run_text IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      run_subty IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      run_py_cluster IMPORTING io_viewer TYPE REF TO lcl_table_viewer,
+      run_dictionary_key IMPORTING i_str     TYPE any
+                                   io_viewer TYPE REF TO lcl_table_viewer
+                                   i_column  TYPE any,
+      run_data_element IMPORTING i_str          TYPE any
+                                 io_viewer      TYPE REF TO lcl_table_viewer
+                                 i_column       TYPE any
+                       RETURNING VALUE(is_done) TYPE xfeld,
+      run_field_2_field IMPORTING i_str          TYPE any
+                                  io_viewer      TYPE REF TO lcl_table_viewer
+                                  i_column       TYPE any
+                        RETURNING VALUE(is_done) TYPE xfeld,
+      run_field_2_plugin IMPORTING &quot;i_str          TYPE any
+                                   io_viewer      TYPE REF TO lcl_table_viewer
+                                   i_column       TYPE any
+                         RETURNING VALUE(is_done) TYPE xfeld,
+
+      run_hrp1001_adatanr IMPORTING i_str          TYPE any
+                                    io_viewer      TYPE REF TO lcl_table_viewer
+                                    i_column       TYPE any
+                          RETURNING VALUE(is_done) TYPE xfeld,
+      run_hrpy_rgdir IMPORTING i_str          TYPE any.
+ENDCLASS.
+
+CLASS lcl_plugins IMPLEMENTATION.
+  METHOD init.
+    &quot;data elements links
+    mt_el_links = VALUE #(
+      ( element = &apos;PERSNO&apos;   plugin = &apos;PA20&apos; )
+      ( element = &apos;HROBJID&apos;  plugin = &apos;PP01&apos; )
+      ( element = &apos;LGART&apos;    rtab = &apos;T512W&apos;   rfield = &apos;LGART&apos; )
+      ( element = &apos;ITXEX&apos;    plugin = &apos;SHOW_TEXT&apos; )
+      ( element = &apos;SUBTY&apos;    plugin = &apos;SUBTY&apos; ) ).
+
+    &quot;field to field links
+    mt_field_links = VALUE #(
+      ( tab = &apos;PA0001&apos;     field = &apos;PLANS&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OTYPE&apos; const = &apos;S&apos; )
+      ( tab = &apos;PA0001&apos;     field = &apos;PLANS&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OBJID&apos; )
+      ( tab = &apos;PA0001&apos;     field = &apos;ORGEH&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OTYPE&apos; const = &apos;O&apos; )
+      ( tab = &apos;PA0001&apos;     field = &apos;ORGEH&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OBJID&apos; )
+      ( tab = &apos;PA0001&apos;     field = &apos;STELL&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OBJID&apos; const = &apos;C&apos; )
+      ( tab = &apos;PA0001&apos;     field = &apos;STELL&apos; rtab = &apos;HRP1000&apos; rfield = &apos;OBJID&apos; )
+      ( tab = &apos;HRP1001&apos;    field = &apos;SCLAS&apos; rfield = &apos;OTYPE&apos; )
+      ( tab = &apos;HRP1001&apos;    field = &apos;SOBID&apos; rfield = &apos;OBJID&apos; )
+      ( tab = &apos;HRP1002&apos;    field = &apos;TABNR&apos; rtab = &apos;HRT1002&apos;  rfield = &apos;TABNR&apos; )
+      ( tab = &apos;HRP1035&apos;    field = &apos;TABNR&apos; rtab = &apos;HRT1035&apos;  rfield = &apos;TABNR&apos; )
+      ( tab = &apos;HRP1222&apos;    field = &apos;TABNR&apos; rtab = &apos;HRT1222&apos;  rfield = &apos;TABNR&apos; )
+      ( tab = &apos;PA2006&apos;     field = &apos;QUONR&apos; rtab = &apos;PTQUODED&apos; rfield = &apos;QUONR&apos; )
+      ( tab = &apos;PTQUODED&apos;   field = &apos;QUONR&apos; rtab = &apos;PA2006&apos;   rfield = &apos;QUONR&apos; )
+      ( tab = &apos;PTQUODED&apos;   field = &apos;DOCNR&apos; rtab = &apos;PA2001&apos;   rfield = &apos;DOCNR&apos; )
+      ( tab = &apos;HRPY_RGDIR&apos; field = &apos;SEQNR&apos; method = &apos;RUN_PY_CLUSTER&apos; ) ).
+  ENDMETHOD.
+
+  METHOD link.
+    CHECK run_field_2_field( EXPORTING io_viewer = io_viewer i_column = i_column i_str = i_str ) = abap_false.
+    CHECK run_field_2_plugin( EXPORTING io_viewer = io_viewer i_column = i_column ) = abap_false.
+
+    CHECK run_data_element(  EXPORTING io_viewer = io_viewer i_column = i_column i_str = i_str ) = abap_false.
+    CHECK run_hrp1001_adatanr( EXPORTING io_viewer = io_viewer i_column = i_column i_str = i_str ) = abap_false.
+    run_dictionary_key( EXPORTING io_viewer = io_viewer i_column = i_column i_str = i_str ).
+
+    LOOP AT lcl_plugins=&gt;mt_field_links INTO DATA(ls_link) WHERE tab = io_viewer-&gt;m_tabname AND field = i_column AND method IS NOT INITIAL.
+      CASE ls_link-method.
+        WHEN &apos;RUN_PY_CLUSTER&apos;.
+          ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;pernr&gt;).
+          ASSIGN COMPONENT ls_link-field OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;field&gt;).
+      ENDCASE.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD run_pa20.
+    DATA: l_infty    TYPE infty,
+          l_temp(10) TYPE c.
+
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+    DATA(l_row) = lcl_alv_common=&gt;get_selected( io_viewer-&gt;mo_alv ).
+
+    ASSIGN io_viewer-&gt;mr_table-&gt;* TO  &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX l_row ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+
+    SELECT SINGLE infty INTO l_infty FROM t777d WHERE dbtab = io_viewer-&gt;m_tabname.
+    ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;field&gt;).
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;PER&apos; FIELD l_temp.
+    SET PARAMETER ID &apos;FCD&apos; FIELD &apos;DIS&apos;.
+    SET PARAMETER ID &apos;ITP&apos; FIELD l_infty.
+    ASSIGN COMPONENT &apos;SUBTY&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;SUB&apos; FIELD l_temp.
+    ASSIGN COMPONENT &apos;BEGDA&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;BEG&apos; FIELD &lt;field&gt;.
+    ASSIGN COMPONENT &apos;ENDDA&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;END&apos; FIELD &lt;field&gt;.
+    CALL TRANSACTION &apos;PA20&apos; AND SKIP FIRST SCREEN.
+  ENDMETHOD.
+
+  METHOD run_pp01.
+    DATA: it_bdcdata    TYPE TABLE OF bdcdata,
+          save_plvar(2),
+          save_otype(2),
+          save_objid(8),
+          l_infty(4),
+          l_subty(4),
+          l_temp(10).
+
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+    DATA(l_row) = lcl_alv_common=&gt;get_selected( io_viewer-&gt;mo_alv ).
+
+    ASSIGN io_viewer-&gt;mr_table-&gt;* TO  &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX l_row ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+
+    SELECT SINGLE infty INTO l_infty FROM t777d WHERE dbtab = io_viewer-&gt;m_tabname.
+
+    GET PARAMETER ID &apos;POP&apos; FIELD save_plvar.
+    GET PARAMETER ID &apos;POT&apos; FIELD save_otype.
+    GET PARAMETER ID &apos;PON&apos; FIELD save_objid.
+
+    ASSIGN COMPONENT &apos;PLVAR&apos; OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;plvar&gt;).
+    SET PARAMETER ID &apos;POP&apos; FIELD &lt;plvar&gt;.                   &quot;RITPP01
+
+    ASSIGN COMPONENT &apos;OBJID&apos; OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;field&gt;).
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;PON&apos; FIELD l_temp.
+
+    ASSIGN COMPONENT &apos;OTYPE&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+    l_temp = &lt;field&gt;.
+    SET PARAMETER ID &apos;POT&apos; FIELD l_temp.
+
+    ASSIGN COMPONENT &apos;ISTAT&apos; OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;istat&gt;).
+    l_temp = &lt;istat&gt;.
+
+    ASSIGN COMPONENT &apos;SUBTY&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+    IF sy-subrc = 0.
+      l_subty = &lt;field&gt;.
+    ELSE.
+      CLEAR l_subty.
+    ENDIF.
+
+    ASSIGN COMPONENT &apos;BEGDA&apos; OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;date&gt;).
+    SET PARAMETER ID &apos;BEG&apos; FIELD &lt;date&gt;.
+
+    ASSIGN COMPONENT &apos;ENDDA&apos; OF STRUCTURE &lt;tab&gt; TO &lt;date&gt;.
+    SET PARAMETER ID &apos;END&apos; FIELD &lt;date&gt;.
+    ASSIGN COMPONENT &apos;SUBTY&apos; OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+
+    it_bdcdata = VALUE #(
+      ( program = &apos;SAPMH5A0&apos; dynpro = &apos;1000&apos; dynbegin = abap_true )
+      ( fnam = &apos;PPHDR-INFTY&apos; fval = l_infty )
+      ( fnam = &apos;PPHDR-SUBTY&apos; fval = l_subty )
+      ( fnam = &apos;PPHDR-ISTAT&apos; fval = l_temp )
+      ( fnam = &apos;BDC_OKCODE&apos; fval = &apos;DISP&apos; )
+      ).
+    CALL TRANSACTION &apos;PP02&apos; USING it_bdcdata MODE &apos;E&apos;.
+  ENDMETHOD.
+
+  METHOD run_text.
+    NEW lcl_text_viewer( io_viewer ).
+  ENDMETHOD.
+
+  METHOD run_hrpy_rgdir.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = &apos;HRPY_RGDIR&apos;.
+    ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;pernr&gt;).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;PERNR&apos; i_low = &lt;pernr&gt;  ).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD run_hrp1001_adatanr.
+    IF i_column = &apos;ADATANR&apos; AND io_viewer-&gt;m_tabname = &apos;HRP1001&apos;.
+      ASSIGN COMPONENT &apos;ADATANR&apos; OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;datanr&gt;).
+      ASSIGN COMPONENT &apos;RELAT&apos; OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;relat&gt;).
+
+      DATA: lv_struc TYPE t77ar,
+            lv_dbtab TYPE t77ad.
+      SELECT SINGLE pasub INTO lv_struc FROM t77ar WHERE relat = &lt;relat&gt;.
+      SELECT SINGLE dbtab INTO lv_dbtab FROM t77ad WHERE pasub = lv_struc.
+
+      IF sy-subrc = 0.
+        APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+        CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = lv_dbtab.
+        &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;ADATANR&apos; i_low = &lt;datanr&gt;  ).
+        &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+        is_done = abap_true.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD run_subty.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+    DATA(l_row) = lcl_alv_common=&gt;get_selected( io_viewer-&gt;mo_alv ).
+    ASSIGN io_viewer-&gt;mr_table-&gt;* TO  &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX l_row ASSIGNING FIELD-SYMBOL(&lt;str&gt;).
+
+    DATA l_result TYPE t777d.
+
+    SELECT SINGLE stypt, namst INTO @l_result   FROM t777d WHERE dbtab = @io_viewer-&gt;m_tabname.
+    ASSIGN COMPONENT &apos;SUBTY&apos; OF STRUCTURE &lt;str&gt; TO FIELD-SYMBOL(&lt;subty&gt;).
+    DATA(l_infty) = io_viewer-&gt;m_tabname+2(4).
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = l_result-stypt.
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = l_result-namst i_low = &lt;subty&gt; ).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;SUBTY&apos; i_low = &lt;subty&gt; ).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;INFTY&apos; i_low = l_infty ).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD run_py_cluster.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+    DATA(l_row) = lcl_alv_common=&gt;get_selected( io_viewer-&gt;mo_alv ).
+    ASSIGN io_viewer-&gt;mr_table-&gt;* TO  &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX l_row ASSIGNING FIELD-SYMBOL(&lt;str&gt;).
+
+    ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE &lt;str&gt; TO FIELD-SYMBOL(&lt;pernr&gt;).
+    ASSIGN COMPONENT &apos;SEQNR&apos; OF STRUCTURE &lt;str&gt; TO FIELD-SYMBOL(&lt;seqnr&gt;).
+    NEW lcl_py_cluster_viewer( i_pernr = &lt;pernr&gt; i_seqnr = &lt;seqnr&gt; ).
+  ENDMETHOD.
+
+  METHOD run_field_2_plugin.
+    LOOP AT lcl_plugins=&gt;mt_field_links INTO DATA(ls_link) WHERE tab = io_viewer-&gt;m_tabname AND field = i_column AND method IS NOT INITIAL.
+      CASE ls_link-method.
+        WHEN &apos;RUN_PY_CLUSTER&apos;.
+          run_py_cluster( io_viewer ).
+      ENDCASE.
+      is_done = &apos;X&apos;.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD run_field_2_field.
+    DATA: lo_viewer TYPE REF TO lcl_table_viewer.
+    GET PARAMETER ID &apos;MOL&apos; FIELD DATA(l_mol).
+    LOOP AT lcl_plugins=&gt;mt_field_links INTO DATA(ls_link) WHERE tab = io_viewer-&gt;m_tabname AND field = i_column AND method IS INITIAL.
+      ASSIGN COMPONENT ls_link-field OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;field&gt;).
+      IF lo_viewer IS INITIAL.
+        IF ls_link-rtab IS INITIAL.
+          lo_viewer = io_viewer.
+        ELSE.
+          APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+          CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = ls_link-rtab.
+          lo_viewer = &lt;obj&gt;-alv_viewer.
+        ENDIF.
+      ENDIF.
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = ls_link-rfield i_low = COND aqadh_type_of_icon( WHEN ls_link-const IS INITIAL THEN &lt;field&gt; ELSE ls_link-const ) ).
+    ENDLOOP.
+    IF sy-subrc = 0.
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;SPRSL&apos; i_low = io_viewer-&gt;m_lang  ).
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;MOLGA&apos; i_low = l_mol  ).
+      lo_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+      is_done = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD run_data_element.
+    DATA: lo_viewer TYPE REF TO lcl_table_viewer.
+
+    GET PARAMETER ID &apos;MOL&apos; FIELD DATA(l_mol).
+    READ TABLE lcl_alv_common=&gt;mt_tabfields WITH KEY tabname = io_viewer-&gt;m_tabname fieldname = i_column INTO DATA(l_field).
+    LOOP AT lcl_plugins=&gt;mt_el_links INTO DATA(l_el_link) WHERE element = l_field-rollname AND plugin NE &apos;&apos; .&quot; &apos;PA20&apos; .
+      CASE l_el_link-plugin.
+        WHEN &apos;PA20&apos;.
+          lcl_plugins=&gt;run_pa20( io_viewer ).
+        WHEN &apos;PP01&apos;.
+          lcl_plugins=&gt;run_pp01( io_viewer ).
+        WHEN &apos;SHOW_TEXT&apos;.
+          lcl_plugins=&gt;run_text( io_viewer ).
+        WHEN &apos;SUBTY&apos;.
+          lcl_plugins=&gt;run_subty( io_viewer ).
+      ENDCASE.
+      is_done = abap_true.
+    ENDLOOP.
+    IF is_done = abap_true.
+      RETURN.
+    ENDIF.
+
+    LOOP AT lcl_plugins=&gt;mt_el_links INTO l_el_link WHERE element = l_field-rollname .
+      IF lo_viewer IS INITIAL.
+        APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+        CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = l_el_link-rtab.
+        lo_viewer = &lt;obj&gt;-alv_viewer.
+      ENDIF.
+      ASSIGN COMPONENT i_column OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;field&gt;).
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = l_el_link-rfield i_low = &lt;field&gt;  ).
+    ENDLOOP.
+    IF sy-subrc = 0.
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;SPRSL&apos; i_low = io_viewer-&gt;m_lang  ).
+      lo_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;MOLGA&apos; i_low = l_mol  ).
+      lo_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+      is_done = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD run_dictionary_key.
+    DATA: lt_keys TYPE TABLE OF dd05p.
+
+    GET PARAMETER ID &apos;MOL&apos; FIELD DATA(l_mol).
+    READ TABLE lcl_alv_common=&gt;mt_tabfields INTO DATA(field) WITH KEY tabname = io_viewer-&gt;m_tabname fieldname = i_column .
+    ASSIGN COMPONENT i_column OF STRUCTURE i_str TO FIELD-SYMBOL(&lt;field&gt;).
+    CHECK &lt;field&gt; IS NOT INITIAL.
+    CALL FUNCTION &apos;DD_FORKEY_GET&apos;
+      EXPORTING
+        feldname  = CONV fieldname( i_column )
+        tabname   = io_viewer-&gt;m_tabname
+      TABLES
+        forkeytab = lt_keys
+      EXCEPTIONS
+        not_equal = 1
+        not_found = 2
+        not_valid = 3
+        OTHERS    = 4.
+
+    IF sy-subrc &lt; 2.
+      APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+      CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = field-checktable.
+      LOOP AT lt_keys INTO DATA(l_keys).
+        ASSIGN COMPONENT l_keys-forkey OF STRUCTURE i_str TO &lt;field&gt;.
+        CHECK sy-subrc = 0.
+        &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = l_keys-checkfield i_low = &lt;field&gt;  ).
+      ENDLOOP.
+      &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;SPRSL&apos; i_low = io_viewer-&gt;m_lang  ).
+      &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;set_value( i_field = &apos;MOLGA&apos; i_low = l_mol  ).
+      &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_data_receiver IMPLEMENTATION.
+  METHOD constructor.
+    lo_sel_to = io_sel_to.
+    m_from_field =  i_from_field.
+    m_to_field =  i_to_field.
+    lo_tab_from = io_tab_from.
+    mo_transmitter = io_transmitter.
+
+    IF mo_transmitter IS NOT INITIAL.
+      IF lo_tab_from IS INITIAL.
+        SET HANDLER me-&gt;update FOR io_transmitter.
+      ELSE.
+        SET HANDLER me-&gt;update_col FOR io_transmitter.
+      ENDIF.
+    ELSE.
+      SET HANDLER me-&gt;update FOR ALL INSTANCES.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD shut_down.
+    IF mo_transmitter IS NOT INITIAL.
+      SET HANDLER me-&gt;update FOR mo_transmitter  ACTIVATION space.
+    ELSE.
+      SET HANDLER me-&gt;update FOR ALL INSTANCES  ACTIVATION space.
+    ENDIF.
+    CLEAR lo_sel_to.
+  ENDMETHOD.
+
+  METHOD on_grid_button_click.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+
+    CHECK m_from_field = es_col_id-fieldname.
+    ASSIGN lo_tab_from-&gt;mr_table-&gt;* TO &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX es_row_no-row_id ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+    ASSIGN COMPONENT es_col_id-fieldname OF STRUCTURE &lt;tab&gt; TO  FIELD-SYMBOL(&lt;f_field&gt;).
+    CHECK lo_sel_to IS NOT INITIAL.
+    lo_sel_to-&gt;set_value( i_field = m_to_field i_low = &lt;f_field&gt;  ).
+    lo_sel_to-&gt;raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD  update.
+    READ TABLE lo_sel_to-&gt;mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;to&gt;) WITH KEY field_label = m_to_field.
+    IF &lt;to&gt;-range[] = e_row-range[].
+      DATA(l_updated) = abap_true.&quot;so as not to have an infinite event loop
+    ENDIF.
+    MOVE-CORRESPONDING e_row TO &lt;to&gt;.
+    IF &lt;to&gt;-transmitter IS BOUND AND l_updated IS INITIAL.
+      &lt;to&gt;-transmitter-&gt;emit( EXPORTING e_row = e_row ).
+    ENDIF.
+    lo_sel_to-&gt;raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD update_col.
+    DATA: lt_sel_row TYPE lcl_types=&gt;t_sel_row.
+    FIELD-SYMBOLS: &lt;tab&gt;   TYPE STANDARD TABLE,
+                   &lt;field&gt; TYPE                 any.
+
+    CHECK lo_sel_to IS NOT INITIAL.
+    READ TABLE lo_sel_to-&gt;mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;to&gt;) WITH KEY field_label = m_to_field.
+    DATA(lt_old_range) = &lt;to&gt;-range.
+    CLEAR: &lt;to&gt;-sign, &lt;to&gt;-opti, &lt;to&gt;-low, &lt;to&gt;-high, &lt;to&gt;-range.
+    ASSIGN lo_tab_from-&gt;mr_table-&gt;* TO &lt;tab&gt;.
+
+    LOOP AT &lt;tab&gt; ASSIGNING FIELD-SYMBOL(&lt;row&gt;).
+      ASSIGN COMPONENT e_column OF STRUCTURE &lt;row&gt; TO &lt;field&gt;.
+      IF line_exists( &lt;to&gt;-range[ low = &lt;field&gt; ] ).
+        APPEND VALUE #( sign = &apos;I&apos; opti = &apos;EQ&apos; low = &lt;field&gt; ) TO &lt;to&gt;-range.
+      ENDIF.
+    ENDLOOP.
+
+    IF sy-subrc NE 0.&quot; empty column
+      APPEND VALUE #( sign = &apos;I&apos; opti = &apos;EQ&apos; low = &apos;&apos; ) TO &lt;to&gt;-range.
+    ENDIF.
+
+    LOOP AT &lt;to&gt;-range ASSIGNING FIELD-SYMBOL(&lt;sel&gt;).
+      &lt;to&gt;-low = &lt;sel&gt;-low.
+      lo_sel_to-&gt;update_sel_row( CHANGING c_sel_row = &lt;to&gt; ).
+      EXIT.
+    ENDLOOP.
+
+    MOVE-CORRESPONDING &lt;to&gt; TO lt_sel_row.
+    IF &lt;to&gt;-range = lt_old_range.
+      DATA(l_updated) = abap_true.&quot;so as not to have an infinite event loop
+    ENDIF.
+    IF &lt;to&gt;-transmitter IS BOUND AND l_updated IS INITIAL.
+      &lt;to&gt;-transmitter-&gt;emit( EXPORTING e_row = lt_sel_row ).
+      lo_sel_to-&gt;raise_selection_done( ).
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_box_handler DEFINITION.&quot;for memory clearing
+  PUBLIC SECTION.
+    METHODS: on_box_close FOR EVENT close OF cl_gui_dialogbox_container IMPORTING sender.
+ENDCLASS.
+
+CLASS lcl_box_handler IMPLEMENTATION.
+  METHOD on_box_close.
+    sender-&gt;free( ).
+
+    &quot;Free Memory
+    LOOP AT lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+      IF &lt;obj&gt;-alv_viewer-&gt;mo_box = sender.
+        data(lv_tabix) = sy-tabix.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+    IF sy-subrc = 0.
+      FREE &lt;obj&gt;-alv_viewer-&gt;mr_table.
+      FREE &lt;obj&gt;-alv_viewer-&gt;mo_alv.
+
+      &quot;shutdown receivers.
+      IF &lt;obj&gt;-alv_viewer-&gt;mo_sel IS NOT INITIAL.
+        LOOP AT &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;mt_sel_tab INTO DATA(l_sel).
+          IF l_sel-receiver IS BOUND.
+            l_sel-receiver-&gt;shut_down( ).
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+      FREE &lt;obj&gt;-alv_viewer.
+      DELETE lcl_appl=&gt;mt_obj INDEX lv_tabix.
+    ENDIF.
+  ENDMETHOD.                    &quot;ON_BOX_CLOSE
+ENDCLASS.               &quot;lcl_box_handler
+
+CLASS lcl_table_viewer IMPLEMENTATION.
+
+  METHOD constructor.
+
+    DATA: ls_comp         TYPE        abap_componentdescr,
+          lt_comp_notab   TYPE        abap_component_tab,
+          lt_comp_tab2str TYPE        abap_component_tab,
+          lt_comp_str     TYPE        abap_component_tab,
+          lv_s            TYPE        string,
+          lv_data         TYPE REF TO data.
+
+    DATA: l_notab   TYPE REF TO data,
+          l_tab2str TYPE REF TO data.
+
+    DATA: handle_notab   TYPE REF TO cl_abap_structdescr,
+          handle_tab2str TYPE REF TO cl_abap_structdescr,
+          lo_new_tab     TYPE REF TO cl_abap_tabledescr.
+
+    FIELD-SYMBOLS: &lt;notab&gt;   TYPE STANDARD TABLE,
+                   &lt;tab2str&gt; TYPE STANDARD TABLE,
+                   &lt;any_tab&gt; TYPE ANY TABLE,
+                   &lt;temptab&gt; TYPE ANY TABLE.
+
+
+    super-&gt;constructor( i_additional_name = i_additional_name ).
+    m_lang = sy-langu.
+    mo_sel_width = 0.
+    m_tabname = i_tname.
+    create_popup( ).
+
+    IF i_is_view = abap_true.
+      m_is_view = &apos;X&apos;.
+    ENDIF.
+
+    IF i_is_cds = abap_true.
+      m_is_cds = &apos;X&apos;.
+    ENDIF.
+
+    lcl_ddic=&gt;get_text_table( EXPORTING i_tname = m_tabname IMPORTING e_tab = m_texttabname ).
+    IF m_texttabname IS NOT INITIAL.
+      get_field_info( m_texttabname ).
+    ENDIF.
+    get_field_info( m_tabname ).
+    IF ir_tab IS NOT BOUND.
+      lcl_rtti=&gt;create_table_by_name( EXPORTING i_tname = m_tabname CHANGING c_table = mr_table  ).
+      IF m_is_view IS INITIAL.
+        m_is_sql = abap_true.
+      ENDIF.
+    ELSE.
+
+      FIELD-SYMBOLS:&lt;any&gt; TYPE any.
+      ASSIGN ir_tab-&gt;* TO &lt;any&gt;.
+      DATA lo_tabl TYPE REF TO cl_abap_tabledescr.
+      DATA lo_struc TYPE REF TO cl_abap_structdescr.
+      lo_tabl ?= cl_abap_typedescr=&gt;describe_by_data( &lt;any&gt; ).
+      TRY.
+          lo_struc ?= lo_tabl-&gt;get_table_line_type( ).
+          ASSIGN ir_tab-&gt;* TO &lt;any_tab&gt;.
+          TRY.
+
+              LOOP AT lo_struc-&gt;components INTO DATA(comp) WHERE type_kind NE &apos;l&apos; AND type_kind NE &apos;r&apos;. &quot;no ref
+
+                IF comp-type_kind NE &apos;h&apos;.
+                  ls_comp-name = comp-name.
+                  ls_comp-type ?= lo_struc-&gt;get_component_type( comp-name ).
+                  APPEND ls_comp TO lt_comp_notab.
+                  APPEND ls_comp TO lt_comp_tab2str.
+                ELSE.
+                  ls_comp-name = comp-name.
+                  ls_comp-type ?= cl_abap_typedescr=&gt;describe_by_data( lv_s ).
+                  APPEND ls_comp TO lt_comp_tab2str.
+                  APPEND ls_comp TO lt_comp_str.
+
+                  ls_comp-name = comp-name &amp;&amp; &apos;_REF&apos;.
+                  ls_comp-type ?= cl_abap_typedescr=&gt;describe_by_data( lv_data ).
+                  APPEND ls_comp TO lt_comp_tab2str.
+                ENDIF.
+              ENDLOOP.
+            CATCH cx_sy_move_cast_error.
+          ENDTRY.
+
+          TRY.
+              handle_notab  = cl_abap_structdescr=&gt;create( lt_comp_notab ).
+              handle_tab2str  = cl_abap_structdescr=&gt;create( lt_comp_tab2str ).
+
+              lo_new_tab = cl_abap_tabledescr=&gt;create(
+                              p_line_type  = handle_notab
+                              p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+                              p_unique     = abap_false ).
+
+              CREATE DATA l_notab TYPE HANDLE lo_new_tab.
+
+              lo_new_tab = cl_abap_tabledescr=&gt;create(
+                              p_line_type  = handle_tab2str
+                              p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+                              p_unique     = abap_false ).
+
+              CREATE DATA l_tab2str TYPE HANDLE lo_new_tab.
+
+              ASSIGN l_notab-&gt;* TO &lt;notab&gt;.
+              MOVE-CORRESPONDING &lt;any_tab&gt; TO &lt;notab&gt;.
+              ASSIGN l_tab2str-&gt;* TO &lt;tab2str&gt;.
+              MOVE-CORRESPONDING &lt;notab&gt; TO &lt;tab2str&gt;.
+
+              LOOP AT &lt;any_tab&gt; ASSIGNING FIELD-SYMBOL(&lt;old_struc&gt;).
+                READ TABLE &lt;tab2str&gt; ASSIGNING FIELD-SYMBOL(&lt;new_struc&gt;) INDEX sy-tabix.
+                LOOP AT lt_comp_str INTO ls_comp.
+                  ASSIGN COMPONENT ls_comp-name OF STRUCTURE &lt;new_struc&gt; TO FIELD-SYMBOL(&lt;field&gt;).
+                  ASSIGN COMPONENT ls_comp-name OF STRUCTURE &lt;old_struc&gt; TO &lt;temptab&gt;.
+                  &lt;field&gt; = | { icon_view_table } [{ lines( &lt;temptab&gt; ) }] |.
+                  ASSIGN COMPONENT ls_comp-name  OF STRUCTURE &lt;old_struc&gt; TO &lt;field&gt;.
+                  ASSIGN COMPONENT |{ ls_comp-name }_REF| OF STRUCTURE &lt;new_struc&gt; TO FIELD-SYMBOL(&lt;ref&gt;).
+                  GET REFERENCE OF &lt;field&gt; INTO &lt;ref&gt;.
+                ENDLOOP.
+              ENDLOOP.
+
+              GET REFERENCE OF &lt;tab2str&gt; INTO mr_table.
+            CATCH cx_root.
+              mr_table = ir_tab.
+          ENDTRY.
+        CATCH cx_sy_move_cast_error.  &quot;no structure
+          ls_comp-name = &apos;FIELD&apos;.
+          ls_comp-type ?= cl_abap_typedescr=&gt;describe_by_data( lv_s ).
+          APPEND ls_comp TO lt_comp_tab2str.
+
+          handle_tab2str  = cl_abap_structdescr=&gt;create( lt_comp_tab2str ).
+          lo_new_tab = cl_abap_tabledescr=&gt;create(
+                               p_line_type  = handle_tab2str
+                               p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+                               p_unique     = abap_false ).
+
+          CREATE DATA l_tab2str TYPE HANDLE lo_new_tab.
+          ASSIGN l_tab2str-&gt;* TO &lt;tab2str&gt;.
+          ASSIGN ir_tab-&gt;* TO &lt;any_tab&gt;.
+
+          LOOP AT &lt;any_tab&gt; ASSIGNING &lt;old_struc&gt;.
+            APPEND INITIAL LINE TO &lt;tab2str&gt; ASSIGNING &lt;new_struc&gt;.
+            ASSIGN COMPONENT &apos;FIELD&apos; OF STRUCTURE &lt;new_struc&gt; TO &lt;field&gt;.
+            &lt;field&gt; = &lt;old_struc&gt;.
+          ENDLOOP.
+          GET REFERENCE OF &lt;tab2str&gt; INTO mr_table.
+      ENDTRY.
+    ENDIF.
+    create_alv( ).
+    create_sel_alv( ).
+    mo_alv-&gt;set_focus( mo_alv ).
+  ENDMETHOD.
+
+  METHOD create_popup.
+    mo_box = create( i_width = 800 i_hight = 150 ).
+
+    CREATE OBJECT mo_splitter ##FM_SUBRC_OK
+      EXPORTING
+        parent  = mo_box
+        rows    = 1
+        columns = 2
+      EXCEPTIONS
+        OTHERS  = 1.
+
+    mo_splitter-&gt;set_column_mode(  mode = mo_splitter-&gt;mode_absolute ).
+    mo_splitter-&gt;set_column_width( id = 1 width = mo_sel_width ).
+
+    CALL METHOD:
+     mo_splitter-&gt;get_container(  EXPORTING
+        row       = 1
+        column    = 1
+      RECEIVING
+        container = mo_sel_parent ),
+
+      mo_splitter-&gt;get_container
+       EXPORTING
+        row       = 1
+        column    = 2
+       RECEIVING
+        container = mo_alv_parent.
+
+    IF lcl_appl=&gt;m_ctrl_box_handler IS INITIAL.
+      lcl_appl=&gt;m_ctrl_box_handler = NEW #( ).
+    ENDIF.
+    SET HANDLER lcl_appl=&gt;m_ctrl_box_handler-&gt;on_box_close FOR mo_box.
+  ENDMETHOD.
+
+  METHOD create_alv.
+    DATA: ls_layout TYPE lvc_s_layo,
+          effect    TYPE i,
+          lt_f4     TYPE lvc_t_f4.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+
+    mo_alv = NEW #( i_parent = mo_alv_parent ).
+    mt_alv_catalog = create_field_cat( m_tabname ).
+    ASSIGN mr_table-&gt;* TO &lt;f_tab&gt;.
+    IF m_tabname IS NOT INITIAL.
+      IF m_is_view  = abap_true.
+        CALL FUNCTION &apos;VIEW_GET_DATA&apos;
+          EXPORTING
+            view_name = m_tabname
+          TABLES
+            data      = &lt;f_tab&gt;.
+      ELSE.
+        read_text_table( ).
+        lcl_sql=&gt;read_any_table( EXPORTING i_tabname = m_tabname i_where = get_where( ) i_row_count = 100
+                             CHANGING cr_tab =  mr_table c_count = m_count ).
+        update_texts( ).
+
+      ENDIF.
+    ENDIF.
+    set_header( ).
+    ls_layout-col_opt = abap_true.
+    ls_layout-cwidth_opt = abap_true.
+    ls_layout-sel_mode = &apos;D&apos;.
+    CREATE OBJECT lcl_appl=&gt;c_dragdropalv.
+    effect = cl_dragdrop=&gt;move + cl_dragdrop=&gt;copy.
+
+    CALL METHOD lcl_appl=&gt;c_dragdropalv-&gt;add
+      EXPORTING
+        flavor     = &apos;Line&apos; ##NO_TEXT
+        dragsrc    = abap_true
+        droptarget = abap_true
+        effect     = effect.
+
+    CALL METHOD lcl_appl=&gt;c_dragdropalv-&gt;get_handle IMPORTING handle = DATA(handle_alv).
+    ls_layout-s_dragdrop-grid_ddid = handle_alv.
+    SET HANDLER   before_user_command
+                  handle_user_command
+                  handle_menu_button
+                  handle_tab_toolbar
+                  handle_doubleclick
+                  lcl_dragdrop=&gt;drag
+                  on_menu_request
+                  on_f4 FOR mo_alv.
+
+    CALL METHOD mo_alv-&gt;set_table_for_first_display
+      EXPORTING
+        i_save          = abap_true
+        i_default       = abap_true
+        is_layout       = ls_layout
+      CHANGING
+        it_fieldcatalog = mt_alv_catalog
+        it_outtab       = &lt;f_tab&gt;.
+
+    mo_alv-&gt;get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = mt_alv_catalog ).
+    LOOP AT mt_alv_catalog ASSIGNING FIELD-SYMBOL(&lt;catalog&gt;).
+      CLEAR &lt;catalog&gt;-key.
+      DATA(ls_f4) = VALUE  lvc_s_f4( register   = abap_true chngeafter = abap_true fieldname  = &lt;catalog&gt;-fieldname ).
+      INSERT ls_f4 INTO TABLE lt_f4.
+    ENDLOOP.
+    mo_alv-&gt;register_f4_for_fields( it_f4 = lt_f4 ).
+    mo_alv-&gt;set_frontend_fieldcatalog( EXPORTING it_fieldcatalog = mt_alv_catalog ).
+
+    LOOP AT mt_alv_catalog ASSIGNING FIELD-SYMBOL(&lt;cat&gt;) WHERE scrtext_l IS INITIAL.
+      lcl_alv_common=&gt;translate_field(  CHANGING c_fld = &lt;cat&gt; ).
+    ENDLOOP.
+
+    mo_alv-&gt;set_frontend_fieldcatalog( EXPORTING  it_fieldcatalog = mt_alv_catalog ).
+    me-&gt;handle_user_command( EXPORTING e_ucomm = &apos;HIDE&apos; ).
+    mo_alv-&gt;set_toolbar_interactive( ).
+  ENDMETHOD.
+
+  METHOD create_sel_alv.
+    IF mo_sel IS INITIAL.
+      mo_sel     = NEW #( io_viewer = me io_container = mo_sel_parent ).
+      SET HANDLER refresh_table FOR mo_sel.
+    ELSE.
+      mo_sel-&gt;update_sel_tab( ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD read_text_table.
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE ANY TABLE.
+    lcl_ddic=&gt;get_text_table( EXPORTING i_tname =  m_tabname IMPORTING e_tab = DATA(l_tab) ).
+    CHECK l_tab IS NOT INITIAL.
+    lcl_rtti=&gt;create_table_by_name( EXPORTING i_tname = l_tab CHANGING c_table = mr_text_table ).
+    ASSIGN mr_text_table-&gt;* TO &lt;f_tab&gt;.
+    SELECT * FROM (l_tab) INTO TABLE &lt;f_tab&gt; ORDER BY PRIMARY KEY.
+  ENDMETHOD.
+
+  METHOD set_header.
+    DATA: lv_text       TYPE as4text,
+          lv_header(80) TYPE c.
+
+    SELECT SINGLE ddtext INTO lv_text
+      FROM dd02t
+     WHERE tabname = m_tabname
+       AND ddlanguage = m_lang.
+
+    lv_header = |{ m_tabname } - { lv_text } ({ m_count }) { m_additional_name }|.
+    mo_box-&gt;set_caption( lv_header ).
+  ENDMETHOD.
+
+  METHOD on_f4.
+    FIELD-SYMBOLS: &lt;tab&gt; TYPE STANDARD TABLE.
+
+    ASSIGN mr_table-&gt;* TO &lt;tab&gt;.
+    READ TABLE &lt;tab&gt; INDEX es_row_no-row_id ASSIGNING &lt;g_str&gt;.
+    CALL FUNCTION &apos;F4IF_FIELD_VALUE_REQUEST&apos; ##FM_SUBRC_OK
+      EXPORTING
+        tabname           = m_tabname
+        fieldname         = e_fieldname
+        callback_program  = sy-repid
+        callback_form     = &apos;CALLBACK_F4_TAB&apos; &quot;callback_method - doesn&apos;t work for local class
+      EXCEPTIONS
+        field_not_found   = 1
+        no_help_for_field = 2
+        inconsistent_help = 3
+        no_values_found   = 4
+        OTHERS            = 5.
+  ENDMETHOD.
+
+  METHOD on_menu_request.
+    DATA: l_smenu TYPE REF TO cl_ctmenu.
+
+    mo_alv-&gt;get_current_cell( IMPORTING
+        es_row_id = DATA(ls_row)
+        es_col_id = DATA(ls_col) ).
+
+    e_object-&gt;add_separator( ).
+    CREATE OBJECT l_smenu.
+
+    DATA l_dbtab TYPE t777d.
+    SELECT SINGLE dbtab INTO @l_dbtab
+      FROM t777d
+      WHERE dbtab = @m_tabname.
+
+    IF sy-subrc = 0.
+      CALL METHOD l_smenu-&gt;add_function
+        EXPORTING
+          fcode = &apos;DETAIL&apos; ##NO_TEXT
+          text  = &apos;Show object&apos; ##NO_TEXT.
+
+      IF l_dbtab+0(2) = &apos;PA&apos;.
+        CALL METHOD l_smenu-&gt;add_function
+          EXPORTING
+            fcode = &apos;PY&apos; ##NO_TEXT
+            text  = &apos;PaYroll Clusters&apos; ##NO_TEXT.
+      ENDIF.
+    ENDIF.
+
+    CALL METHOD e_object-&gt;add_submenu
+      EXPORTING
+        menu = l_smenu
+        text = &apos;Data Driven Jumps&apos;.
+  ENDMETHOD.
+
+  METHOD handle_tab_toolbar.
+
+    IF m_visible IS INITIAL.
+      DATA: lt_toolbar TYPE ttb_button,
+            ls_toolbar TYPE stb_button.
+      ls_toolbar-function = &apos;SEL_ON&apos;.
+      ls_toolbar-icon = icon_arrow_left.
+      ls_toolbar-quickinfo = &apos;Select-Options&apos;.
+      ls_toolbar-butn_type = 0.
+      APPEND ls_toolbar TO lt_toolbar.
+
+      CLEAR ls_toolbar.
+      ls_toolbar-butn_type = 3.
+      APPEND ls_toolbar TO lt_toolbar.
+    ENDIF.
+
+    ls_toolbar-function = &apos;REFRESH&apos;.
+    ls_toolbar-icon = icon_refresh.
+    ls_toolbar-quickinfo = &apos;Refresh&apos;.
+    ls_toolbar-butn_type = 0.
+    APPEND ls_toolbar TO lt_toolbar.
+
+
+    ls_toolbar-function = &apos;LANGUAGE&apos;.
+    ls_toolbar-icon = icon_foreign_trade.
+    ls_toolbar-quickinfo = &apos;Languages&apos;.
+    ls_toolbar-butn_type = 2.
+    APPEND ls_toolbar TO lt_toolbar.
+
+    ls_toolbar-function = &apos;OPTIONS&apos;.
+    ls_toolbar-icon  = icon_list.
+    ls_toolbar-quickinfo = &apos;Empty columns options&apos;.
+    APPEND ls_toolbar TO lt_toolbar.
+
+    ls_toolbar-function = &apos;TABLES&apos;.
+    ls_toolbar-icon  = icon_net_graphic.
+    ls_toolbar-quickinfo = &apos;Table links&apos;.
+    ls_toolbar-butn_type = 0.
+    APPEND ls_toolbar TO lt_toolbar.
+
+    CLEAR ls_toolbar.
+    ls_toolbar-butn_type = 3.
+    APPEND ls_toolbar TO lt_toolbar.
+
+    CLEAR ls_toolbar.
+    ls_toolbar-function = &apos;TBAR&apos;.
+    ls_toolbar-butn_type = 0.
+
+    IF m_std_tbar IS INITIAL.
+      ls_toolbar-icon  = icon_column_right.
+      ls_toolbar-quickinfo = &apos;Show standard ALV function&apos;.
+
+    ELSE.
+      ls_toolbar-icon  = icon_column_left.
+      ls_toolbar-quickinfo = &apos;Hide standard ALV functio&apos;.
+
+    ENDIF.
+    APPEND ls_toolbar TO lt_toolbar.
+
+    IF m_std_tbar IS INITIAL.
+      e_object-&gt;mt_toolbar =  lt_toolbar.
+    ELSE.
+      APPEND LINES OF e_object-&gt;mt_toolbar TO lt_toolbar.
+    ENDIF.
+
+    e_object-&gt;mt_toolbar = lt_toolbar.
+
+  ENDMETHOD.
+
+  METHOD get_field_info.
+    DATA: lv_clause      TYPE          string,
+          lr_struc       TYPE REF TO   data,
+          lr_table_descr TYPE REF TO   cl_abap_structdescr,
+          it_tabdescr    TYPE          abap_compdescr_tab,
+          lt_field_info  TYPE TABLE OF dfies,
+          l_fname        TYPE          fieldname,
+          l_tname        TYPE          tabname,
+          ls_tf          LIKE LINE OF  lcl_alv_common=&gt;mt_tabfields,
+          dref           TYPE REF TO   data,
+          l_x            TYPE          xstring.
+
+    CREATE DATA lr_struc TYPE (i_tab).
+    lr_table_descr ?= cl_abap_typedescr=&gt;describe_by_data_ref( lr_struc ).
+    it_tabdescr[] = lr_table_descr-&gt;components[].
+
+*    DATA(l_exist) = lcl_sql=&gt;exist_table( i_tab ).
+*    IF  l_exist = 1.
+*      SELECT  COUNT( * ) FROM (i_tab).
+*      DATA(l_count) = sy-dbcnt.
+*    ENDIF.
+
+    LOOP AT it_tabdescr INTO DATA(ls) WHERE name NE &apos;MANDT&apos; AND name NE &apos;CLIENT&apos;.
+      IF NOT line_exists( lcl_alv_common=&gt;mt_tabfields[ tabname = i_tab fieldname = ls-name ] ).
+        l_tname = i_tab.
+        l_fname = ls-name.
+
+        CALL FUNCTION &apos;DDIF_FIELDINFO_GET&apos;
+          EXPORTING
+            tabname        = l_tname
+            fieldname      = l_fname
+            langu          = sy-langu
+          TABLES
+            dfies_tab      = lt_field_info
+          EXCEPTIONS
+            not_found      = 1
+            internal_error = 2
+            OTHERS         = 3.
+
+        CHECK sy-subrc = 0.
+        CLEAR ls_tf.
+        MOVE-CORRESPONDING lt_field_info[ 1 ] TO ls_tf.
+
+        &quot;check empty field
+*        IF l_exist = 1 AND l_count &lt; 10000.
+*          IF ls_tf-rollname IS NOT INITIAL.
+*            CREATE DATA dref TYPE (ls_tf-rollname).
+*            ASSIGN dref-&gt;* TO FIELD-SYMBOL(&lt;field&gt;).
+*            lv_clause = |{ ls_tf-fieldname } NE &apos;&apos;|.
+*            SELECT SINGLE (ls_tf-fieldname) INTO @&lt;field&gt;
+*              FROM (i_tab)
+*             WHERE (lv_clause).
+*            IF sy-subrc NE 0.
+*              ls_tf-empty = abap_true.
+*            ENDIF.
+*          ELSEIF ls_tf-datatype = &apos;RAWSTRING&apos;.
+*            lv_clause = |{ ls_tf-fieldname } NE &apos;&apos;|.
+*            SELECT SINGLE (ls_tf-fieldname) INTO @l_x
+*              FROM (i_tab)
+*             WHERE (lv_clause).
+*            IF sy-subrc NE 0.
+*              ls_tf-empty = abap_true.
+*            ENDIF.
+*          ENDIF.
+*        ENDIF.
+        INSERT ls_tf INTO TABLE lcl_alv_common=&gt;mt_tabfields.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD create_field_cat.
+    DATA: lr_struc       TYPE REF TO data,
+          lr_table_descr TYPE REF TO cl_abap_structdescr,
+          it_tabdescr    TYPE        abap_compdescr_tab,
+          l_replace      TYPE        string,
+          l_texttab      TYPE        tabname,
+          lo_str         TYPE REF TO cl_abap_structdescr.
+
+    lcl_rtti=&gt;create_struc_handle( EXPORTING i_tname = i_tname IMPORTING e_t_comp = mt_text_components e_handle = lo_str ).
+    CREATE DATA lr_struc TYPE HANDLE lo_str.
+    lr_table_descr ?= cl_abap_typedescr=&gt;describe_by_data_ref( lr_struc ).
+    it_tabdescr[] = lr_table_descr-&gt;components[].
+    lcl_ddic=&gt;get_text_table( EXPORTING i_tname = i_tname IMPORTING e_tab = l_texttab ).
+    l_replace = l_texttab &amp;&amp; &apos;_&apos;.
+
+    LOOP AT it_tabdescr INTO DATA(ls) WHERE name NE &apos;MANDT&apos; AND name NE &apos;CLIENT&apos;.
+      DATA(l_ind) = sy-tabix.
+      APPEND INITIAL LINE TO et_catalog ASSIGNING FIELD-SYMBOL(&lt;catalog&gt;).
+      &lt;catalog&gt;-col_pos = l_ind.
+      READ TABLE lcl_alv_common=&gt;mt_tabfields INTO DATA(ls_tf) WITH KEY tabname = i_tname fieldname = ls-name.
+
+      &lt;catalog&gt;-style = lcl_alv_common=&gt;c_white.
+      MOVE-CORRESPONDING ls_tf TO &lt;catalog&gt;.
+      &lt;catalog&gt;-f4availabl = abap_true.
+      IF ls_tf-is_text = abap_true.
+        &lt;catalog&gt;-style = lcl_alv_common=&gt;c_grey.
+      ENDIF.
+
+      IF ls_tf-checktable IS NOT INITIAL.
+        &lt;catalog&gt;-style = lcl_alv_common=&gt;c_blue.
+      ENDIF.
+
+      IF line_exists( lcl_plugins=&gt;mt_field_links[ tab = i_tname field = ls_tf-fieldname ] ).
+        &lt;catalog&gt;-style = lcl_alv_common=&gt;c_green.
+      ENDIF.
+
+      IF line_exists( lcl_plugins=&gt;mt_el_links[ element = ls_tf-rollname ] ).
+        &lt;catalog&gt;-style = lcl_alv_common=&gt;c_green.
+      ENDIF.
+
+      IF ls_tf-keyflag = abap_true.
+        &lt;catalog&gt;-style = &lt;catalog&gt;-style BIT-OR lcl_alv_common=&gt;c_bold.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD handle_menu_button.
+    CALL METHOD cl_gui_cfw=&gt;flush.
+    IF e_ucomm = &apos;LANGUAGE&apos;.
+      CALL METHOD e_object-&gt;add_function
+        EXPORTING
+          fcode = &apos;TECH&apos;
+          text  = &apos;Technical name&apos;. &quot;Teхническое имя
+      LOOP AT lcl_appl=&gt;mt_lang INTO DATA(ls_lang).
+        CALL METHOD e_object-&gt;add_function
+          EXPORTING
+            fcode = CONV #( ls_lang-spras )
+            text  = CONV #( ls_lang-sptxt ).
+      ENDLOOP.
+    ELSEIF e_ucomm = &apos;OPTIONS&apos;.
+      CALL METHOD e_object-&gt;add_function
+        EXPORTING
+          fcode = &apos;HIDE&apos;
+          text  = &apos;Hide empty columns&apos;. &quot;Спрятать пустые столбцы
+      CALL METHOD e_object-&gt;add_function
+        EXPORTING
+          fcode = &apos;SHOW&apos;
+          text  = &apos;Show empty columns&apos;. &quot;Отобразить пустые столбцы
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD handle_doubleclick.
+    DATA: lo_table_descr TYPE REF TO cl_tpda_script_tabledescr,
+          table_clone    TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+    CHECK es_row_no-row_id IS NOT INITIAL.
+    ASSIGN mr_table-&gt;* TO  &lt;f_tab&gt;.
+    READ TABLE &lt;f_tab&gt; INDEX es_row_no-row_id ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+    lcl_plugins=&gt;link( EXPORTING i_str = &lt;tab&gt; i_column = e_column io_viewer = me ).
+
+    ASSIGN COMPONENT |{ e_column-fieldname }_REF| OF STRUCTURE &lt;tab&gt; TO FIELD-SYMBOL(&lt;ref&gt;).
+    IF sy-subrc = 0.
+      lcl_appl=&gt;open_int_table( EXPORTING iv_name = CONV #( e_column-fieldname ) it_ref = &lt;ref&gt; ).
+    ELSE.
+*      TRY.
+*          lo_table_descr ?= cl_tpda_script_data_descr=&gt;factory( |{ m_additional_name }[ 1 ]-{ e_column-fieldname }| ).
+*          table_clone = lo_table_descr-&gt;elem_clone( ).
+*          lcl_appl=&gt;open_int_table( EXPORTING iv_name = |{ m_additional_name }[ 1 ]-{ e_column-fieldname }| it_ref = table_clone ).
+*        CATCH cx_sy_move_cast_error.
+*      ENDTRY.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD before_user_command.
+    CASE e_ucomm.
+      WHEN &apos;&amp;INFO&apos;.
+        DATA(l_url) = &apos;https://ysychov.wordpress.com/2020/02/10/simple-data-explorer/&apos;.
+        CALL FUNCTION &apos;CALL_BROWSER&apos; EXPORTING url = l_url.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD handle_user_command.
+    DATA:
+      it_fields     TYPE lvc_t_fcat,
+      lv_clause(45),
+      lv_sel_width  TYPE i.
+
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE STANDARD TABLE.
+
+    ASSIGN mr_table-&gt;* TO &lt;f_tab&gt;.
+    mo_alv-&gt;get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = it_fields[] ).
+    IF e_ucomm = &apos;SEL_ON&apos; AND m_visible IS INITIAL.
+      create_sel_alv( ).
+      m_visible = abap_true.
+      IF mo_sel_width = 0.
+        lv_sel_width = 500.
+      ELSE.
+        lv_sel_width = mo_sel_width.
+      ENDIF.
+
+      mo_splitter-&gt;set_column_width( EXPORTING id    = 1 width = lv_sel_width ).
+      mo_alv-&gt;set_toolbar_interactive( ).
+      RETURN.
+    ELSEIF e_ucomm = &apos;PY&apos;.
+      READ TABLE &lt;f_tab&gt; INDEX lcl_alv_common=&gt;get_selected( mo_alv ) ASSIGNING FIELD-SYMBOL(&lt;f_line&gt;).
+      lcl_plugins=&gt;run_hrpy_rgdir( &lt;f_line&gt; ).
+    ELSEIF e_ucomm = &apos;DETAIL&apos;.
+      IF m_tabname+0(2) = &apos;PA&apos;.
+        lcl_plugins=&gt;run_pa20( me ).
+      ELSEIF m_tabname+0(3) = &apos;HRP&apos;.
+        lcl_plugins=&gt;run_pp01( me ).
+      ENDIF.
+    ELSEIF e_ucomm = &apos;REFRESH&apos;.
+      &quot;CHECK get_where( ) IS NOT INITIAL.
+      mo_sel-&gt;raise_selection_done( ).
+      IF lcl_sql=&gt;exist_table( m_tabname ) = 1.
+        m_is_sql = &apos;X&apos;.
+      ENDIF.
+    ELSEIF e_ucomm = &apos;TBAR&apos;.
+      m_std_tbar = BIT-NOT  m_std_tbar.
+    ELSEIF e_ucomm = &apos;TABLES&apos;.
+      DATA(lt_obj) = VALUE sdg1_obj( (  obj_name = m_tabname type = &apos;TABL&apos; )  ).
+      CALL FUNCTION &apos;REPOSITORY_STRUCTURE_GRAPH&apos;
+        EXPORTING
+          type    = &apos;TABL&apos;
+        TABLES
+          objects = lt_obj.
+      SET TITLEBAR &apos;SDE&apos;.
+      RETURN.
+    ELSE.
+      LOOP AT it_fields ASSIGNING FIELD-SYMBOL(&lt;fields&gt;) WHERE domname NE &apos;MANDT&apos;.
+        &lt;fields&gt;-col_pos = sy-tabix.
+        CASE e_ucomm.
+          WHEN &apos;HIDE&apos;. &quot;hide select options
+            IF &lt;fields&gt;-tabname = m_tabname AND lines( &lt;f_tab&gt; ) &gt; 0.
+              CLEAR m_show_empty.
+              lv_clause = |{ &lt;fields&gt;-fieldname } IS NOT INITIAL|.
+              LOOP AT &lt;f_tab&gt; ASSIGNING &lt;f_line&gt;  WHERE (lv_clause).
+                EXIT.
+              ENDLOOP.
+              IF sy-subrc NE 0.
+                &lt;fields&gt;-no_out = abap_true.
+              ENDIF.
+            ENDIF.
+          WHEN &apos;SHOW&apos;.
+            IF m_show_empty = abap_false.
+              &lt;fields&gt;-no_out = &apos; &apos;.
+            ELSE.
+              lv_clause = |{ &lt;fields&gt;-fieldname } IS NOT INITIAL|.
+              LOOP AT &lt;f_tab&gt; ASSIGNING &lt;f_line&gt;  WHERE (lv_clause).
+                EXIT.
+              ENDLOOP.
+              IF sy-subrc NE 0.
+                &lt;fields&gt;-no_out = abap_true.
+              ENDIF.
+            ENDIF.
+          WHEN &apos;UPDATE&apos;.
+            lv_clause = |{ &lt;fields&gt;-fieldname } IS NOT INITIAL|.
+            LOOP AT &lt;f_tab&gt; ASSIGNING &lt;f_line&gt;  WHERE (lv_clause).
+              EXIT.
+            ENDLOOP.
+            IF sy-subrc = 0.
+              &lt;fields&gt;-no_out = &apos;&apos;.
+            ENDIF.
+          WHEN &apos;TECH&apos;. &quot;technical field name
+            &lt;fields&gt;-scrtext_l = &lt;fields&gt;-scrtext_m = &lt;fields&gt;-scrtext_s =  &lt;fields&gt;-reptext = &lt;fields&gt;-fieldname.
+          WHEN OTHERS. &quot;header names translation
+            IF line_exists( lcl_appl=&gt;mt_lang[ spras = e_ucomm ] ).
+              lcl_alv_common=&gt;translate_field( EXPORTING i_lang = CONV #( e_ucomm ) CHANGING c_fld = &lt;fields&gt; ).
+              IF mo_sel IS BOUND.
+                READ TABLE mo_sel-&gt;mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;sel&gt;) WITH KEY field_label = &lt;fields&gt;-fieldname.
+                IF sy-subrc = 0.
+                  &lt;sel&gt;-name = &lt;fields&gt;-scrtext_l.
+                  IF &lt;sel&gt;-name IS INITIAL.
+                    &lt;sel&gt;-name = &lt;fields&gt;-reptext.
+                  ENDIF.
+                ENDIF.
+              ENDIF.
+            ENDIF.
+        ENDCASE.
+      ENDLOOP.
+    ENDIF.
+
+    IF line_exists( lcl_appl=&gt;mt_lang[ spras = e_ucomm ] ).
+      m_lang = e_ucomm.
+      set_header( ).
+      update_texts( ).
+      mo_sel-&gt;set_value( i_field = &apos;SPRSL&apos; i_low = m_lang  ).
+    ENDIF.
+
+    CALL METHOD mo_alv-&gt;set_frontend_fieldcatalog EXPORTING it_fieldcatalog = it_fields[].
+
+    IF e_ucomm = &apos;TBAR&apos;.
+      RETURN.
+    ENDIF.
+
+    lcl_alv_common=&gt;refresh( mo_alv ).
+    IF mo_sel IS BOUND.
+      IF  e_ucomm = &apos;HIDE&apos; OR e_ucomm = &apos;SHOW&apos; OR e_ucomm = &apos;UPDATE&apos; .
+        mo_sel-&gt;update_sel_tab( ).
+      ENDIF.
+      lcl_alv_common=&gt;refresh( mo_sel-&gt;mo_sel_alv ).
+    ENDIF.
+  ENDMETHOD.                           &quot;handle_user_command
+
+  METHOD get_where.&quot;dynamic where clause
+    DATA: lt_where TYPE rsds_twhere,
+          lt_range TYPE rsds_trange.
+
+    IF  mo_sel IS NOT INITIAL.
+      APPEND INITIAL LINE TO lt_range ASSIGNING FIELD-SYMBOL(&lt;tabl&gt;).
+      &lt;tabl&gt;-tablename = m_tabname.
+      LOOP AT mo_sel-&gt;mt_sel_tab INTO DATA(ls_tab) WHERE range IS NOT INITIAL.
+        APPEND INITIAL LINE TO &lt;tabl&gt;-frange_t ASSIGNING FIELD-SYMBOL(&lt;t_range&gt;).
+        IF sy-subrc = 0.
+          &lt;t_range&gt;-fieldname = ls_tab-field_label.
+          &lt;t_range&gt;-selopt_t  = ls_tab-range.
+        ENDIF.
+      ENDLOOP.
+
+      CALL FUNCTION &apos;FREE_SELECTIONS_RANGE_2_WHERE&apos;
+        EXPORTING
+          field_ranges  = lt_range
+        IMPORTING
+          where_clauses = lt_where.
+
+      LOOP AT lt_where INTO DATA(ls_where) WHERE tablename = m_tabname.
+        LOOP AT ls_where-where_tab INTO DATA(l_where).
+          CONDENSE l_where-line.
+          c_where = |{ c_where } { l_where-line }|.
+        ENDLOOP.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD refresh_table.
+    DATA: ls_row    TYPE lcl_types=&gt;t_sel_row,
+          lt_filter TYPE lvc_t_filt.
+    IF m_is_sql = abap_true.
+      DATA(l_where) = get_where( ).
+      lcl_sql=&gt;read_any_table( EXPORTING i_tabname = m_tabname i_where = l_where CHANGING cr_tab =  mr_table c_count = m_count ).
+      IF l_where IS INITIAL.
+        CLEAR m_is_sql.
+      ENDIF.
+    ELSE.
+      CLEAR lt_filter.
+    ENDIF.
+    update_texts( ).
+    set_header( ).
+
+    LOOP AT mo_sel-&gt;mt_sel_tab  ASSIGNING FIELD-SYMBOL(&lt;sel&gt;).
+      IF &lt;sel&gt;-transmitter IS NOT INITIAL.
+        MOVE-CORRESPONDING &lt;sel&gt; TO ls_row.
+        &lt;sel&gt;-transmitter-&gt;emit( e_row = ls_row ).
+      ENDIF.
+      IF m_is_sql = abap_false.
+        LOOP AT &lt;sel&gt;-range INTO DATA(l_range).
+          APPEND VALUE #( fieldname = &lt;sel&gt;-field_label
+                                low = l_range-low
+                               high = l_range-high
+                               sign = l_range-sign
+                             option = l_range-opti ) TO lt_filter.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+
+    CALL METHOD mo_alv-&gt;set_filter_criteria
+      EXPORTING
+        it_filter = lt_filter.
+
+    lcl_alv_common=&gt;refresh( mo_sel-&gt;mo_sel_alv ).
+    lcl_alv_common=&gt;refresh( mo_alv ).
+    mo_sel-&gt;mo_viewer-&gt;handle_user_command( &apos;UPDATE&apos; ).
+    LOOP AT mo_column_emitters INTO DATA(l_emit).
+      l_emit-emitter-&gt;emit_col( l_emit-column ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD update_texts.
+    DATA: l_text_field TYPE fieldname,
+          l_replace    TYPE string,
+          lv_clause    TYPE string.
+
+    FIELD-SYMBOLS: &lt;f_tab&gt; TYPE ANY TABLE.
+    FIELD-SYMBOLS: &lt;text_tab&gt; TYPE STANDARD TABLE,
+                   &lt;check&gt;    TYPE                 any.
+
+    CHECK m_texttabname IS NOT INITIAL.
+
+    &quot;text fields
+    ASSIGN mr_text_table-&gt;* TO &lt;text_tab&gt;.
+    READ TABLE &lt;text_tab&gt; INDEX 1 ASSIGNING FIELD-SYMBOL(&lt;text_dummy&gt;).
+    CHECK sy-subrc = 0.
+
+    READ TABLE lcl_alv_common=&gt;mt_tabfields WITH KEY tabname = m_texttabname domname = &apos;SPRAS&apos; INTO DATA(l_texttabfield).
+    IF sy-subrc = 0.
+      DATA(l_lang) = l_texttabfield-fieldname.
+    ENDIF.
+
+    l_replace = m_texttabname &amp;&amp; &apos;_&apos;.
+    ASSIGN mr_table-&gt;* TO &lt;f_tab&gt;.
+
+    LOOP AT &lt;f_tab&gt; ASSIGNING FIELD-SYMBOL(&lt;str&gt;).
+      CLEAR lv_clause.
+      LOOP AT lcl_alv_common=&gt;mt_tabfields INTO l_texttabfield WHERE tabname = m_texttabname AND keyflag = abap_true.
+        UNASSIGN &lt;check&gt;.
+        ASSIGN COMPONENT l_texttabfield-fieldname OF STRUCTURE &lt;str&gt; TO &lt;check&gt;.
+        IF sy-subrc NE 0.
+          READ TABLE lcl_alv_common=&gt;mt_tabfields WITH KEY tabname = m_texttabname fieldname  = l_texttabfield-fieldname INTO DATA(l_texttab).
+          READ TABLE lcl_alv_common=&gt;mt_tabfields WITH KEY tabname = m_tabname domname  = l_texttab-domname INTO DATA(l_maintab).
+          ASSIGN COMPONENT l_maintab-fieldname OF STRUCTURE &lt;str&gt; TO &lt;check&gt;.
+          CLEAR l_maintab.
+          IF sy-subrc NE 0.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+
+        IF lv_clause IS INITIAL.
+          lv_clause = |{ l_texttabfield-fieldname } = &apos;{ &lt;check&gt; }&apos;|.
+        ELSE.
+          lv_clause = |{ lv_clause } AND { l_texttabfield-fieldname } = &apos;{ &lt;check&gt; }&apos;|.
+        ENDIF.
+      ENDLOOP.
+
+      IF l_lang IS NOT INITIAL.
+        ASSIGN COMPONENT l_lang OF STRUCTURE &lt;text_dummy&gt; TO FIELD-SYMBOL(&lt;dummy&gt;).
+        IF sy-subrc = 0.
+          lv_clause = |{ lv_clause } AND { l_lang } = &apos;{ m_lang }&apos;|.
+        ENDIF.
+      ENDIF.
+
+      LOOP AT &lt;text_tab&gt; ASSIGNING FIELD-SYMBOL(&lt;text_str&gt;)  WHERE (lv_clause).
+        EXIT.
+      ENDLOOP.
+      CHECK sy-subrc = 0.
+
+      LOOP AT mt_text_components INTO DATA(ls_comp).
+        l_text_field = ls_comp-name.
+        REPLACE l_replace IN l_text_field WITH &apos;&apos;.
+        ASSIGN COMPONENT ls_comp-name OF STRUCTURE &lt;str&gt; TO FIELD-SYMBOL(&lt;to&gt;).
+        ASSIGN COMPONENT l_text_field OF STRUCTURE &lt;text_str&gt; TO FIELD-SYMBOL(&lt;from&gt;).
+        &lt;to&gt; = &lt;from&gt;.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_sel_opt IMPLEMENTATION.
+  METHOD constructor.
+    DATA: effect     TYPE i,
+          handle_alv TYPE i.
+
+    mo_viewer = io_viewer.
+    mo_sel_alv = NEW #( i_parent = io_container ).
+    CREATE OBJECT lcl_appl=&gt;c_dragdropalv.
+    effect =  cl_dragdrop=&gt;copy. &quot; + cl_dragdrop=&gt;move.
+
+    CALL METHOD lcl_appl=&gt;c_dragdropalv-&gt;add
+      EXPORTING
+        flavor     = &apos;Line&apos;
+        dragsrc    = abap_true
+        droptarget = abap_true
+        effect     = effect.
+
+    CALL METHOD lcl_appl=&gt;c_dragdropalv-&gt;get_handle IMPORTING handle = handle_alv.
+    ms_layout-s_dragdrop-col_ddid = handle_alv.
+    init_fcat( handle_alv ).
+    update_sel_tab( ).
+
+    ms_layout-cwidth_opt = abap_true.
+    ms_layout-col_opt = abap_true.
+    ms_layout-ctab_fname = &apos;COLOR&apos;.
+    ms_layout-stylefname = &apos;STYLE&apos;.
+
+    &quot;fields for F4 event handling
+    DATA(gt_f4) = VALUE  lvc_t_f4( register   = abap_true chngeafter = abap_true
+                             ( fieldname  = &apos;LOW&apos;  )
+                             ( fieldname  = &apos;HIGH&apos;  ) ).
+
+    mo_sel_alv-&gt;register_f4_for_fields( it_f4 = gt_f4 ).
+    mo_sel_alv-&gt;register_edit_event( i_event_id = cl_gui_alv_grid=&gt;mc_evt_enter ).
+    mo_sel_alv-&gt;register_edit_event( i_event_id = cl_gui_alv_grid=&gt;mc_evt_modified ).
+
+    SET HANDLER handle_user_command
+                handle_sel_toolbar
+                lcl_dragdrop=&gt;drag
+                lcl_dragdrop=&gt;drop
+                on_data_changed
+                on_data_changed_finished
+                on_grid_button_click
+                handle_context_menu_request
+                handle_doubleclick
+                on_f4 FOR mo_sel_alv.
+
+    CALL METHOD mo_sel_alv-&gt;set_table_for_first_display
+      EXPORTING
+        i_save          = abap_true
+        i_default       = abap_true
+        is_layout       = ms_layout
+      CHANGING
+        it_outtab       = mt_sel_tab[]
+        it_fieldcatalog = mt_fcat.
+
+    mo_sel_alv-&gt;set_toolbar_interactive( ).
+  ENDMETHOD.
+
+  METHOD init_fcat.
+    mt_fcat = VALUE #(
+     ( fieldname = &apos;IND&apos;         coltext = &apos;№&apos;  outputlen = 3 style = &apos;00000003&apos; )
+     ( fieldname = &apos;FIELD_LABEL&apos; coltext = &apos;Label&apos;  outputlen = 30 dragdropid = i_dd_handle )
+     ( fieldname = &apos;SIGN&apos;        coltext = &apos;SIGN&apos;   tech = abap_true )
+     ( fieldname = &apos;OPTI&apos;        coltext = &apos;Option&apos; tech = abap_true )
+     ( fieldname = &apos;OPTION_ICON&apos; coltext = &apos;Option&apos; icon = abap_true outputlen = 4 style = cl_gui_alv_grid=&gt;mc_style_button )
+     ( fieldname = &apos;LOW&apos;         coltext = &apos;From data&apos; edit = abap_true lowercase = abap_true outputlen = 45 style = cl_gui_alv_grid=&gt;mc_style_f4 col_opt = abap_true drdn_field = &apos;DROP_DOWN&apos; )
+     ( fieldname = &apos;HIGH&apos;        coltext = &apos;To data&apos; edit = abap_true lowercase = abap_true outputlen = 45 style = cl_gui_alv_grid=&gt;mc_style_f4  col_opt = abap_true drdn_field = &apos;DROP_DOWN&apos; )
+     ( fieldname = &apos;MORE_ICON&apos;   coltext = &apos;Range&apos; icon = abap_true  style = cl_gui_alv_grid=&gt;mc_style_button  )
+     ( fieldname = &apos;RANGE&apos;   tech = abap_true  )
+     ( fieldname = &apos;INHERITED&apos;   coltext = &apos;Inh.&apos; icon = abap_true outputlen = 4 seltext = &apos;Inherited&apos; style = &apos;00000003&apos;)
+     ( fieldname = &apos;EMITTER&apos;    coltext = &apos;Emit.&apos; icon = abap_true outputlen = 4 seltext = &apos;Emitter&apos; style = &apos;00000003&apos;)
+     ( fieldname = &apos;NAME&apos; coltext = &apos;Field name&apos;  outputlen = 60 style = &apos;00000003&apos;)
+     ( fieldname = &apos;ELEMENT&apos; coltext = &apos;Data element&apos;  outputlen = 15 style = &apos;00000209&apos; )
+     ( fieldname = &apos;DOMAIN&apos;  coltext = &apos;Domain&apos;  outputlen = 15 style = &apos;00000209&apos; )
+     ( fieldname = &apos;DATATYPE&apos; coltext = &apos;Type&apos;  outputlen = 5 style = &apos;00000003&apos;)
+     ( fieldname = &apos;LENGTH&apos; coltext = &apos;Length&apos;  outputlen = 5 style = &apos;00000003&apos;)
+     ( fieldname = &apos;TRANSMITTER&apos;   tech = abap_true  )
+     ( fieldname = &apos;RECEIVER&apos;    tech = abap_true  )
+     ( fieldname = &apos;COLOR&apos;    tech = abap_true  ) ).
+  ENDMETHOD.
+
+  METHOD raise_selection_done.
+    lcl_alv_common=&gt;refresh( mo_sel_alv ).
+    RAISE EVENT selection_done.
+    DATA: ls_row TYPE lcl_types=&gt;t_sel_row.
+    LOOP AT mt_sel_tab  ASSIGNING FIELD-SYMBOL(&lt;sel&gt;).
+      IF &lt;sel&gt;-transmitter IS NOT INITIAL.
+        MOVE-CORRESPONDING &lt;sel&gt; TO ls_row.
+        &lt;sel&gt;-transmitter-&gt;emit( e_row = ls_row ).
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD update_sel_tab.
+    IF mt_sel_tab[] IS NOT INITIAL.
+      DATA(lt_copy) = mt_sel_tab.
+    ENDIF.
+    CLEAR mt_sel_tab[].
+    mo_viewer-&gt;mo_alv-&gt;get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = mo_viewer-&gt;mt_alv_catalog ).
+    LOOP AT mo_viewer-&gt;mt_alv_catalog INTO DATA(l_catalog) WHERE domname NE &apos;MANDT&apos;.
+      DATA(lv_ind) = sy-tabix.
+      READ TABLE lcl_alv_common=&gt;mt_tabfields WITH KEY tabname = l_catalog-tabname fieldname = l_catalog-fieldname  INTO DATA(l_tfield).
+      IF l_tfield-empty = &apos;&apos; OR mo_viewer-&gt;m_show_empty IS NOT INITIAL OR mo_viewer-&gt;m_count = 0.
+        APPEND INITIAL LINE TO mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;sel_tab&gt;).
+        READ TABLE lt_copy INTO DATA(ls_copy) WITH KEY field_label = l_catalog-fieldname.
+        IF sy-subrc = 0.
+          MOVE-CORRESPONDING ls_copy TO &lt;sel_tab&gt;.
+        ELSE.
+          &lt;sel_tab&gt;-option_icon = icon_led_inactive.
+          &lt;sel_tab&gt;-more_icon = icon_enter_more.
+        ENDIF.
+        &lt;sel_tab&gt;-ind = lv_ind.
+        &lt;sel_tab&gt;-field_label = l_catalog-fieldname.
+
+        &lt;sel_tab&gt;-int_type = l_catalog-inttype.
+        &lt;sel_tab&gt;-element = l_catalog-rollname.
+        &lt;sel_tab&gt;-domain =  l_catalog-domname.
+        &lt;sel_tab&gt;-datatype = l_catalog-datatype.
+        &lt;sel_tab&gt;-length = l_catalog-outputlen.
+
+        lcl_alv_common=&gt;translate_field( EXPORTING i_lang = mo_viewer-&gt;m_lang CHANGING c_fld = l_catalog ).
+        &lt;sel_tab&gt;-name = l_catalog-scrtext_l.
+
+        IF l_tfield-keyflag = abap_true.
+          &lt;sel_tab&gt;-style = VALUE #( ( fieldname = &apos;FIELD_LABEL&apos; style = &apos;00000020&apos; ) ).
+        ENDIF.
+        IF l_tfield-empty = abap_true.
+          &lt;sel_tab&gt;-color = VALUE #( ( fname = &apos;FIELD_LABEL&apos; color-col = 2 color-int = 0 color-inv = 1 ) ).
+        ELSE.
+          &lt;sel_tab&gt;-color = VALUE #( ( fname = &apos;FIELD_LABEL&apos; color-col = 4 color-int = 0 color-inv = 1 ) ).
+        ENDIF.
+
+        DATA: lv_drop_new TYPE i,
+              lv_drop     TYPE i.
+        l_catalog-ref_table = mo_viewer-&gt;m_tabname.
+        l_catalog-ref_field = l_catalog-fieldname.
+
+        lcl_rtti=&gt;find_drop_down(
+         EXPORTING
+          io_grid      = mo_sel_alv
+         CHANGING
+          cs_fieldcat  = l_catalog
+          cv_drdn_hndl =  lv_drop ).
+
+        IF lv_drop_new NE lv_drop.
+          lv_drop_new = &lt;sel_tab&gt;-drop_down = lv_drop.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD handle_sel_toolbar.
+    e_object-&gt;mt_toolbar[] = VALUE #( butn_type = 0 disabled = &apos;&apos;
+     ( function = &apos;SEL_OFF&apos; icon = icon_arrow_right    quickinfo = &apos;Hide&apos; )
+     ( function = &apos;SEL_CLEAR&apos; icon = icon_delete_row    quickinfo = &apos;Clear Select-Options&apos; ) ).
+  ENDMETHOD.
+
+  METHOD set_value.
+    READ TABLE mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;to&gt;) WITH KEY field_label = i_field.
+    CHECK sy-subrc = 0.
+    IF i_low IS SUPPLIED.
+      IF i_clear IS INITIAL.
+        APPEND VALUE #( sign = &apos;I&apos; opti = &apos;EQ&apos; low = i_low high = i_high ) TO &lt;to&gt;-range.
+      ELSE.
+        CLEAR:  &lt;to&gt;-opti, &lt;to&gt;-sign,&lt;to&gt;-range.
+        IF i_low IS SUPPLIED.
+          &lt;to&gt;-low = i_low.
+        ENDIF.
+        IF i_high IS SUPPLIED.
+          &lt;to&gt;-high = i_high.
+        ENDIF.
+        update_sel_row( CHANGING c_sel_row = &lt;to&gt; ).
+      ENDIF.
+    ELSE.
+      CLEAR:  &lt;to&gt;-opti, &lt;to&gt;-sign.
+      &lt;to&gt;-high = i_high.
+      update_sel_row( CHANGING c_sel_row = &lt;to&gt; ).
+    ENDIF.
+    IF &lt;to&gt;-transmitter IS BOUND.
+      DATA: ls_row TYPE lcl_types=&gt;t_sel_row.
+      MOVE-CORRESPONDING &lt;to&gt; TO ls_row.
+      &lt;to&gt;-transmitter-&gt;emit( EXPORTING e_row = ls_row ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD handle_doubleclick.
+    DATA: it_bdcdata TYPE TABLE OF bdcdata.
+    CHECK es_row_no-row_id IS NOT INITIAL.
+
+    READ TABLE mt_sel_tab INDEX es_row_no-row_id INTO DATA(l_sel).
+    APPEND VALUE #( program = &apos;SAPLSD_ENTRY&apos; dynpro = &apos;1000&apos; dynbegin = abap_true ) TO it_bdcdata.
+    APPEND VALUE #( fnam = &apos;BDC_OKCODE&apos; fval = &apos;WB_DISPLAY&apos; ) TO it_bdcdata.
+
+    IF e_column = &apos;ELEMENT&apos;.
+      SET PARAMETER ID &apos;DTYP&apos; FIELD l_sel-element.
+      APPEND VALUE #( fnam = &apos;RSRD1-DDTYPE&apos; fval = abap_true ) TO it_bdcdata.
+      CALL TRANSACTION &apos;SE11&apos; USING it_bdcdata MODE &apos;E&apos;.
+    ELSEIF e_column = &apos;DOMAIN&apos;.
+      SET PARAMETER ID &apos;DOM&apos; FIELD l_sel-domain.
+      APPEND VALUE #( fnam = &apos;RSRD1-DOMA&apos; fval = abap_true ) TO it_bdcdata.
+      CALL TRANSACTION &apos;SE11&apos; USING it_bdcdata MODE &apos;E&apos;.
+    ELSE.
+      CALL FUNCTION &apos;DOCU_CALL&apos;
+        EXPORTING
+          id                = &apos;DE&apos;
+          langu             = mo_viewer-&gt;m_lang
+          object            = l_sel-element
+          typ               = &apos;E&apos;
+          displ             = abap_true
+          displ_mode        = 3
+          use_sec_langu     = abap_true
+          display_shorttext = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD update_sel_row. &quot;select patterns rules
+    IF c_sel_row-high IS INITIAL AND c_sel_row-opti = &apos;BT&apos;.
+      CLEAR c_sel_row-opti.
+    ENDIF.
+
+    IF c_sel_row-low IS NOT INITIAL AND c_sel_row-opti IS INITIAL.
+      c_sel_row-sign = &apos;I&apos;.
+      c_sel_row-opti = &apos;EQ&apos;.
+    ENDIF.
+
+    IF c_sel_row-high IS NOT INITIAL AND c_sel_row-opti NE &apos;NB&apos; .
+      c_sel_row-opti = &apos;BT&apos;.
+    ENDIF.
+
+    IF c_sel_row-sign IS INITIAL AND c_sel_row-opti IS INITIAL.
+      CLEAR: c_sel_row-low, c_sel_row-low.
+    ENDIF.
+
+    IF c_sel_row-low CA  &apos;*%+&amp;&apos;.
+      c_sel_row-sign = &apos;I&apos;.
+      c_sel_row-opti = &apos;CP&apos;.
+    ENDIF.
+
+    IF c_sel_row-opti IS NOT INITIAL AND c_sel_row-sign IS INITIAL.
+      c_sel_row-sign = &apos;I&apos;.
+    ENDIF.
+
+    TRY.
+        c_sel_row-option_icon = lcl_appl=&gt;m_option_icons[ sign = c_sel_row-sign option = c_sel_row-opti ]-icon_name.
+      CATCH cx_sy_itab_line_not_found.                  &quot;#EC NO_HANDLER
+    ENDTRY.
+
+    IF c_sel_row-sign IS NOT INITIAL.
+      READ TABLE c_sel_row-range ASSIGNING FIELD-SYMBOL(&lt;range&gt;) INDEX 1.
+      IF sy-subrc NE 0.
+        APPEND INITIAL LINE TO c_sel_row-range ASSIGNING &lt;range&gt;.
+      ENDIF.
+      MOVE-CORRESPONDING c_sel_row TO &lt;range&gt;.
+      IF c_sel_row-opti NE &apos;BT&apos; AND c_sel_row-opti NE &apos;NB&apos; .
+        CLEAR c_sel_row-high.
+      ENDIF.
+      IF c_sel_row-int_type = &apos;D&apos; OR c_sel_row-int_type = &apos;T&apos; .
+        DO 2 TIMES.
+          ASSIGN COMPONENT  COND string( WHEN sy-index = 1 THEN &apos;LOW&apos; ELSE &apos;HIGH&apos;  ) OF STRUCTURE &lt;range&gt; TO FIELD-SYMBOL(&lt;field&gt;).
+          IF &lt;field&gt; IS INITIAL.
+            CONTINUE.
+          ENDIF.
+
+          IF c_sel_row-int_type = &apos;D&apos;.
+            CALL FUNCTION &apos;CONVERT_DATE_TO_INTERNAL&apos; ##FM_SUBRC_OK
+              EXPORTING
+                date_external            = &lt;field&gt;
+              IMPORTING
+                date_internal            = &lt;field&gt;
+              EXCEPTIONS
+                date_external_is_invalid = 1
+                OTHERS                   = 2.
+          ELSE.
+            REPLACE ALL OCCURRENCES OF &apos;:&apos; IN &lt;field&gt; WITH &apos;&apos;.
+          ENDIF.
+        ENDDO.
+      ENDIF.
+    ENDIF.
+    c_sel_row-more_icon = COND #( WHEN c_sel_row-range IS INITIAL THEN icon_enter_more    ELSE icon_display_more  ).
+
+    IF c_sel_row-receiver IS BOUND AND c_sel_row-inherited IS INITIAL.
+      c_sel_row-inherited = icon_businav_value_chain.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD on_f4.
+    DATA: return_tab TYPE STANDARD TABLE OF ddshretval,
+          lt_objec   TYPE TABLE OF          objec,
+          ls_objec   TYPE                   objec,
+          l_otype    TYPE                   otype,
+          l_plvar    TYPE                   plvar,
+          l_multiple TYPE                   xfeld,
+          l_clear    TYPE                   xfeld.
+
+    IF e_fieldname = &apos;LOW&apos;.
+      l_multiple = abap_true.
+    ENDIF.
+
+    READ TABLE mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;sel&gt;) INDEX es_row_no-row_id.
+    DATA(l_fname) =  &lt;sel&gt;-field_label.
+
+    lcl_types=&gt;mt_sel[] = mt_sel_tab[].
+    IF &lt;sel&gt;-element = &apos;HROBJID&apos;.
+      READ TABLE mt_sel_tab INTO DATA(l_sel) WITH KEY field_label = &apos;OTYPE&apos;.
+      l_otype = l_sel-low.
+      READ TABLE mt_sel_tab INTO l_sel WITH KEY field_label = &apos;PLVAR&apos;.
+      IF sy-subrc = 0 AND l_sel-low IS NOT INITIAL.
+        l_plvar = l_sel-low.
+      ELSE.
+        CALL FUNCTION &apos;RH_GET_ACTIVE_WF_PLVAR&apos;
+          IMPORTING
+            act_plvar       = l_plvar
+          EXCEPTIONS
+            no_active_plvar = 1
+            OTHERS          = 2.
+      ENDIF.
+    ELSEIF &lt;sel&gt;-element = &apos;PERSNO&apos;.
+      l_otype = &apos;P&apos;.
+    ENDIF.
+
+    IF l_otype IS NOT INITIAL.
+      CALL FUNCTION &apos;RH_OBJID_REQUEST&apos;
+        EXPORTING
+          plvar            = l_plvar
+          otype            = l_otype
+          seark_begda      = sy-datum
+          seark_endda      = sy-datum
+          dynpro_repid     = sy-repid
+          dynpro_dynnr     = sy-dynnr
+          set_mode         = l_multiple
+        IMPORTING
+          sel_object       = ls_objec
+        TABLES
+          sel_hrobject_tab = lt_objec
+        EXCEPTIONS
+          OTHERS           = 6.
+      IF sy-subrc = 0.
+        l_clear = abap_true.
+        LOOP AT lt_objec INTO ls_objec.
+          IF e_fieldname = &apos;LOW&apos;.
+            set_value( EXPORTING i_field = &lt;sel&gt;-field_label i_low = ls_objec-objid i_clear = l_clear ).
+            CLEAR l_clear.
+          ELSE.
+            set_value( EXPORTING i_field = &lt;sel&gt;-field_label i_high = ls_objec-objid i_clear = l_clear ).
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ELSE.
+
+      CALL FUNCTION &apos;F4IF_FIELD_VALUE_REQUEST&apos;
+        EXPORTING
+          tabname           = mo_viewer-&gt;m_tabname
+          fieldname         = l_fname
+          callback_program  = sy-repid
+          callback_form     = &apos;CALLBACK_F4_SEL&apos; &quot;callback_method - doesn&apos;t work for local class
+          multiple_choice   = l_multiple
+        TABLES
+          return_tab        = return_tab
+        EXCEPTIONS
+          field_not_found   = 1
+          no_help_for_field = 2
+          inconsistent_help = 3
+          no_values_found   = 4
+          OTHERS            = 5.
+
+      IF sy-subrc = 0 AND lines( return_tab ) &gt; 0.
+        ASSIGN er_event_data-&gt;m_data-&gt;* TO FIELD-SYMBOL(&lt;itab&gt;).
+        CLEAR &lt;sel&gt;-range.
+        l_clear = abap_true.
+        LOOP AT return_tab ASSIGNING FIELD-SYMBOL(&lt;ret&gt;) WHERE retfield = |{ mo_viewer-&gt;m_tabname }-{ l_fname }|.
+          IF e_fieldname = &apos;LOW&apos;.
+            set_value( EXPORTING i_field = &lt;sel&gt;-field_label i_low = &lt;ret&gt;-fieldval i_clear = l_clear ).
+            CLEAR l_clear.
+          ELSE.
+            set_value( EXPORTING i_field = &lt;sel&gt;-field_label i_high = &lt;ret&gt;-fieldval ).
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+    er_event_data-&gt;m_event_handled = abap_true.
+    raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD on_grid_button_click.
+    DATA:
+      l_tabfield TYPE rstabfield,
+      ls_opt     TYPE rsoptions VALUE &apos;XXXXXXXXXX&apos;,
+      lv_sign    TYPE raldb_sign,
+      lv_option  TYPE raldb_opti.
+
+    READ TABLE mt_sel_tab INDEX es_row_no-row_id ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+    CASE es_col_id.
+      WHEN &apos;OPTION_ICON&apos;. &quot;edit select logical expression type
+        CALL FUNCTION &apos;SELECT_OPTION_OPTIONS&apos;
+          EXPORTING
+            selctext     = &apos;nnnn&apos;
+            option_list  = ls_opt
+          IMPORTING
+            sign         = lv_sign
+            option       = lv_option
+          EXCEPTIONS
+            delete_line  = 1
+            not_executed = 2
+            illegal_sign = 3
+            OTHERS       = 4.
+        IF sy-subrc = 0.
+          &lt;tab&gt;-sign = lv_sign.
+          &lt;tab&gt;-opti = lv_option.
+        ELSEIF sy-subrc = 1.
+          CLEAR: &lt;tab&gt;-low, &lt;tab&gt;-high,&lt;tab&gt;-sign, &lt;tab&gt;-opti, &lt;tab&gt;-range.
+        ENDIF.
+      WHEN &apos;MORE_ICON&apos;. &quot;edit ranges
+        l_tabfield-tablename = mo_viewer-&gt;m_tabname.
+        l_tabfield-fieldname = &lt;tab&gt;-field_label.
+
+        CALL FUNCTION &apos;COMPLEX_SELECTIONS_DIALOG&apos;
+          EXPORTING
+            title             = &apos;title&apos;
+            text              = &apos;text&apos;
+            tab_and_field     = l_tabfield
+          TABLES
+            range             = &lt;tab&gt;-range
+          EXCEPTIONS
+            no_range_tab      = 1
+            cancelled         = 2
+            internal_error    = 3
+            invalid_fieldname = 4
+            OTHERS            = 5.
+        IF sy-subrc = 0.
+          READ TABLE &lt;tab&gt;-range INDEX 1 INTO DATA(l_range).
+          MOVE-CORRESPONDING l_range TO &lt;tab&gt;.
+          IF &lt;tab&gt;-opti NE &apos;BT&apos;.
+            CLEAR &lt;tab&gt;-high.
+          ENDIF.
+        ENDIF.
+    ENDCASE.
+    update_sel_row( CHANGING c_sel_row = &lt;tab&gt; ).
+    RAISE EVENT selection_done.
+  ENDMETHOD.
+
+  METHOD on_data_changed.
+    DATA: l_start TYPE i.
+    FIELD-SYMBOLS: &lt;field&gt; TYPE any.
+
+    LOOP AT er_data_changed-&gt;mt_good_cells ASSIGNING FIELD-SYMBOL(&lt;ls_cells&gt;).
+      READ TABLE mt_sel_tab INDEX &lt;ls_cells&gt;-row_id ASSIGNING FIELD-SYMBOL(&lt;tab&gt;).
+      ASSIGN COMPONENT &lt;ls_cells&gt;-fieldname OF STRUCTURE &lt;tab&gt; TO &lt;field&gt;.
+      READ TABLE mo_viewer-&gt;mt_alv_catalog WITH KEY fieldname = &lt;tab&gt;-field_label INTO DATA(l_cat).
+
+      IF &lt;field&gt; IS NOT INITIAL AND &lt;ls_cells&gt;-value IS INITIAL.
+
+        READ TABLE &lt;tab&gt;-range INTO DATA(l_second) INDEX 2.
+        IF sy-subrc = 0.
+          IF ( &lt;ls_cells&gt;-fieldname = &apos;LOW&apos; AND &lt;tab&gt;-high IS INITIAL ) OR  ( &lt;ls_cells&gt;-fieldname = &apos;HIGH&apos; AND &lt;tab&gt;-low IS INITIAL  ).
+            DELETE &lt;tab&gt;-range INDEX 1.
+          ELSE.
+            CLEAR l_second.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      IF l_cat-convexit = &apos;ALPHA&apos; AND NOT  &lt;ls_cells&gt;-value CA &apos;+*&apos;.
+        &lt;ls_cells&gt;-value = |{ &lt;ls_cells&gt;-value ALPHA = IN }|.
+        l_start = 128 - l_cat-dd_outlen.
+        &lt;ls_cells&gt;-value = &lt;ls_cells&gt;-value+l_start(l_cat-dd_outlen).
+      ENDIF.
+
+      IF &lt;ls_cells&gt;-value IS NOT INITIAL.
+        IF &lt;tab&gt;-int_type = &apos;D&apos;.
+          DATA: lv_date TYPE sy-datum.
+          CALL FUNCTION &apos;CONVERT_DATE_INPUT&apos;
+            EXPORTING
+              input                     = &lt;ls_cells&gt;-value
+              plausibility_check        = abap_true
+            IMPORTING
+              output                    = lv_date
+            EXCEPTIONS
+              plausibility_check_failed = 1
+              wrong_format_in_input     = 2
+              OTHERS                    = 3.
+
+          IF sy-subrc = 0.
+            &lt;ls_cells&gt;-value = |{ lv_date DATE = USER }|.
+          ENDIF.
+        ELSEIF &lt;tab&gt;-int_type = &apos;T&apos;.
+          DATA: lv_time TYPE sy-uzeit.
+          CALL FUNCTION &apos;CONVERT_TIME_INPUT&apos;
+            EXPORTING
+              input                     = &lt;ls_cells&gt;-value
+            IMPORTING
+              output                    = lv_time
+            EXCEPTIONS
+              plausibility_check_failed = 1
+              wrong_format_in_input     = 2
+              OTHERS                    = 3.
+          &lt;ls_cells&gt;-value = lv_time+0(2) &amp;&amp; &apos;:&apos; &amp;&amp; lv_time+2(2) &amp;&amp; &apos;:&apos; &amp;&amp; lv_time+4(2).
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+    CHECK sy-subrc = 0.
+
+    IF l_second IS INITIAL.
+      &lt;field&gt; = &lt;ls_cells&gt;-value.
+      er_data_changed-&gt;modify_cell( EXPORTING i_row_id = &lt;ls_cells&gt;-row_id i_fieldname = &lt;ls_cells&gt;-fieldname i_value = &lt;ls_cells&gt;-value ).
+    ELSE.
+      &lt;tab&gt;-low = l_second-low.
+      er_data_changed-&gt;modify_cell( EXPORTING i_row_id = &lt;ls_cells&gt;-row_id i_fieldname = &apos;LOW&apos; i_value = l_second-low ).
+      IF l_second-high CO &apos;0 &apos;.
+        CLEAR l_second-high.
+      ENDIF.
+      &lt;tab&gt;-high = l_second-high.
+      er_data_changed-&gt;modify_cell( EXPORTING i_row_id = &lt;ls_cells&gt;-row_id i_fieldname = &apos;HIGH&apos; i_value = l_second-high ).
+
+      &lt;tab&gt;-opti = l_second-opti.
+      er_data_changed-&gt;modify_cell( EXPORTING i_row_id = &lt;ls_cells&gt;-row_id i_fieldname = &apos;OPTI&apos; i_value = l_second-opti ).
+      &lt;tab&gt;-sign = l_second-sign.
+      er_data_changed-&gt;modify_cell( EXPORTING i_row_id = &lt;ls_cells&gt;-row_id i_fieldname = &apos;SIGN&apos; i_value = l_second-sign ).
+    ENDIF.
+
+    update_sel_row( CHANGING c_sel_row = &lt;tab&gt; ).
+    lcl_alv_common=&gt;refresh( EXPORTING i_obj = mo_sel_alv i_layout = ms_layout  ).
+    raise_selection_done( ).
+  ENDMETHOD.
+
+  METHOD on_data_changed_finished.
+    CHECK e_modified IS NOT INITIAL.
+    RAISE EVENT selection_done.
+  ENDMETHOD.
+
+  METHOD handle_context_menu_request.
+    DATA: ls_func TYPE ui_func,
+          lt_func TYPE ui_functions.
+
+    DATA(l_index) = lcl_alv_common=&gt;get_selected( mo_sel_alv ).
+
+    IF l_index IS NOT INITIAL.
+      READ TABLE mt_sel_tab INTO DATA(l_sel) INDEX l_index.
+    ENDIF.
+
+    e_object-&gt;get_functions( IMPORTING fcodes = DATA(lt_fcodes) ). &quot;Inactivate all standard functions
+
+    LOOP AT lt_fcodes INTO DATA(ls_fcode) WHERE fcode NE &apos;&amp;OPTIMIZE&apos;.
+      ls_func = ls_fcode-fcode.
+      APPEND ls_func TO lt_func.
+    ENDLOOP.
+
+    e_object-&gt;hide_functions( lt_func ).
+    e_object-&gt;add_separator( ).
+
+    IF l_sel-range[]  IS NOT INITIAL OR l_index IS INITIAL.
+      CALL METHOD e_object-&gt;add_function
+        EXPORTING
+          fcode = &apos;SEL_CLEAR&apos;
+          text  = &apos;Clear Select-Options&apos;.
+    ENDIF.
+
+    IF l_sel-receiver IS NOT INITIAL OR l_index IS INITIAL.
+      CALL METHOD e_object-&gt;add_function
+        EXPORTING
+          fcode = &apos;DELR&apos;
+          text  = &apos;Delete receiver&apos;.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD handle_user_command.
+    DATA: lv_sel_width TYPE i.
+
+    IF e_ucomm = &apos;SEL_OFF&apos;. &quot;Hide select-options alv
+      mo_viewer-&gt;m_visible = &apos;&apos;.
+
+      lv_sel_width = 0.
+      CALL METHOD mo_viewer-&gt;mo_splitter-&gt;get_column_width ##FM_SUBRC_OK
+        EXPORTING
+          id                = 1
+        IMPORTING
+          result            = mo_viewer-&gt;mo_sel_width
+        EXCEPTIONS
+          cntl_error        = 1
+          cntl_system_error = 2
+          OTHERS            = 3.
+
+      CALL METHOD mo_viewer-&gt;mo_splitter-&gt;set_column_width
+        EXPORTING
+          id    = 1
+          width = lv_sel_width.
+      mo_viewer-&gt;mo_alv-&gt;set_toolbar_interactive( ).
+      RETURN.
+    ENDIF.
+
+    IF e_ucomm = &apos;SEL_CLEAR&apos; OR e_ucomm = &apos;DELR&apos;. &quot;clear all selections
+      mo_sel_alv-&gt;get_selected_rows( IMPORTING et_index_rows = DATA(lt_sel_rows) ).
+
+      LOOP AT lt_sel_rows INTO DATA(l_row).
+        READ TABLE mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;sel&gt;) INDEX l_row-index.
+        IF e_ucomm = &apos;SEL_CLEAR&apos;.
+          CLEAR : &lt;sel&gt;-low, &lt;sel&gt;-high, &lt;sel&gt;-sign, &lt;sel&gt;-opti, &lt;sel&gt;-range.
+        ELSEIF e_ucomm = &apos;DELR&apos;.
+          IF &lt;sel&gt;-receiver IS NOT INITIAL.
+            &lt;sel&gt;-receiver-&gt;shut_down( ).
+            FREE &lt;sel&gt;-receiver.
+            CLEAR &lt;sel&gt;-receiver.
+            CLEAR &lt;sel&gt;-inherited.
+          ENDIF.
+        ENDIF.
+        update_sel_row( CHANGING c_sel_row = &lt;sel&gt; ).
+      ENDLOOP.
+      RAISE EVENT selection_done.
+    ENDIF.
+
+    lcl_alv_common=&gt;refresh( mo_viewer-&gt;mo_alv ).
+    RAISE EVENT selection_done.
+  ENDMETHOD.                           &quot;handle_user_command
+ENDCLASS.
+
+CLASS lcl_appl IMPLEMENTATION.
+  METHOD init_icons_table.
+    m_option_icons = VALUE #(
+     ( sign = space option = space  icon_name = icon_led_inactive )
+     ( sign = &apos;I&apos;   option = &apos;EQ&apos;   icon_name = icon_equal_green )
+     ( sign = &apos;I&apos;   option = &apos;NE&apos;   icon_name = icon_not_equal_green )
+     ( sign = &apos;I&apos;   option = &apos;LT&apos;   icon_name = icon_less_green )
+     ( sign = &apos;I&apos;   option = &apos;LE&apos;   icon_name = icon_less_equal_green )
+     ( sign = &apos;I&apos;   option = &apos;GT&apos;   icon_name = icon_greater_green )
+     ( sign = &apos;I&apos;   option = &apos;GE&apos;   icon_name = icon_greater_equal_green )
+     ( sign = &apos;I&apos;   option = &apos;CP&apos;   icon_name = icon_pattern_include_green )
+     ( sign = &apos;I&apos;   option = &apos;NP&apos;   icon_name = icon_pattern_exclude_green )
+     ( sign = &apos;I&apos;   option = &apos;BT&apos;   icon_name = icon_interval_include_green )
+     ( sign = &apos;I&apos;   option = &apos;NB&apos;   icon_name = icon_interval_exclude_green )
+     ( sign = &apos;E&apos;   option = &apos;EQ&apos;   icon_name = icon_equal_red )
+     ( sign = &apos;E&apos;   option = &apos;NE&apos;   icon_name = icon_not_equal_red )
+     ( sign = &apos;E&apos;   option = &apos;LT&apos;   icon_name = icon_less_red )
+     ( sign = &apos;E&apos;   option = &apos;LE&apos;   icon_name = icon_less_equal_red )
+     ( sign = &apos;E&apos;   option = &apos;GT&apos;   icon_name = icon_greater_red )
+     ( sign = &apos;E&apos;   option = &apos;GE&apos;   icon_name = icon_greater_equal_red )
+     ( sign = &apos;E&apos;   option = &apos;CP&apos;   icon_name = icon_pattern_include_red )
+     ( sign = &apos;E&apos;   option = &apos;NP&apos;   icon_name = icon_pattern_exclude_red )
+     ( sign = &apos;E&apos;   option = &apos;BT&apos;   icon_name = icon_interval_include_red )
+     ( sign = &apos;E&apos;   option = &apos;NB&apos;   icon_name = icon_interval_exclude_red ) ).
+  ENDMETHOD.
+
+  METHOD init_lang.
+    SELECT c~spras t~sptxt INTO CORRESPONDING FIELDS OF TABLE mt_lang
+      FROM t002c AS c
+      INNER JOIN t002t AS t
+      ON c~spras = t~sprsl
+      WHERE t~spras = sy-langu
+      ORDER BY c~ladatum DESCENDING c~lauzeit DESCENDING.
+  ENDMETHOD.
+
+  METHOD suppress_run_button.
+    DATA itab TYPE TABLE OF sy-ucomm.
+
+    itab = VALUE #( ( &apos;ONLI&apos; ) ( &apos;WB_EXEC&apos; ) ).
+    CALL FUNCTION &apos;RS_SET_SELSCREEN_STATUS&apos;
+      EXPORTING
+        p_status  = sy-pfkey
+      TABLES
+        p_exclude = itab.
+  ENDMETHOD.
+
+  METHOD open_int_table.
+
+    DATA r_tab TYPE REF TO data.
+    IF it_ref IS BOUND.
+      r_tab = it_ref.
+    ELSE.
+      GET REFERENCE OF it_tab INTO r_tab.
+    ENDIF.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+    &lt;obj&gt;-alv_viewer = NEW #(  i_additional_name = iv_name ir_tab = r_tab ).
+    &lt;obj&gt;-alv_viewer-&gt;mo_sel-&gt;raise_selection_done( ).
+
+  ENDMETHOD.
+
+  METHOD exit.
+    DATA: l_answer.
+    DESCRIBE TABLE lcl_appl=&gt;mt_obj.
+    IF sy-tfill NE 0.
+      CALL FUNCTION &apos;POPUP_TO_CONFIRM&apos;
+        EXPORTING
+          titlebar       = &apos;Exit&apos;
+          text_question  = &apos;Do you want to exit?&apos;
+        IMPORTING
+          answer         = l_answer
+        EXCEPTIONS
+          text_not_found = 1
+          OTHERS         = 2.
+      IF l_answer = &apos;1&apos;.
+        LEAVE PROGRAM.
+      ELSE.
+        &quot;CALL screen 101.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_dragdrop IMPLEMENTATION.
+  METHOD drag.
+    DATA(dataobj) = NEW lcl_dd_data( ).
+    dataobj-&gt;m_row = e_row-index.
+    dataobj-&gt;m_column = e_column.
+    e_dragdropobj-&gt;object = dataobj.
+  ENDMETHOD.
+
+  METHOD drop.&quot;It should be refactored someday...
+    DATA: ls_row          TYPE lcl_types=&gt;t_sel_row,
+          lv_set_receiver.
+
+    LOOP AT lcl_appl=&gt;mt_obj INTO DATA(lo).
+      &quot;to
+      IF e_dragdropobj-&gt;droptargetctrl = lo-alv_viewer-&gt;mo_sel-&gt;mo_sel_alv.
+        DATA(lo_to) = lo-alv_viewer-&gt;mo_sel.
+        DATA(to_obj) = lo.
+      ENDIF.
+      &quot;from tab
+      IF lo-alv_viewer-&gt;mo_alv = e_dragdropobj-&gt;dragsourcectrl.
+        DATA(lo_from_tab) = lo-alv_viewer.
+        DATA(from_obj) = lo.
+        CONTINUE.
+      ENDIF.
+
+      IF e_dragdropobj-&gt;dragsourcectrl = lo-alv_viewer-&gt;mo_sel-&gt;mo_sel_alv.
+        DATA(lo_from_sel) = lo-alv_viewer-&gt;mo_sel.
+        lo-alv_viewer-&gt;mo_sel-&gt;mo_sel_alv-&gt;get_selected_rows( IMPORTING et_index_rows = DATA(lt_sel_rows) ).
+        lo-alv_viewer-&gt;mo_sel-&gt;mo_sel_alv-&gt;get_selected_cells( IMPORTING et_cell = DATA(lt_sel_cells) ).
+      ENDIF.
+    ENDLOOP.
+
+    IF lo_from_tab IS BOUND.&quot; tab to select
+      FIELD-SYMBOLS: &lt;f_tab&gt;   TYPE STANDARD TABLE,
+                     &lt;f_field&gt; TYPE                 any.
+      lo_from_tab-&gt;mo_alv-&gt;get_selected_cells( IMPORTING et_cell = lt_sel_cells  ).
+      lo_from_tab-&gt;mo_alv-&gt;get_selected_columns( IMPORTING et_index_columns = DATA(lt_sel_col)  ).
+
+      LOOP AT lt_sel_col INTO DATA(l_col).
+        TRY.
+            lo_from_tab-&gt;mt_alv_catalog[ fieldname = l_col-fieldname ]-style = cl_gui_alv_grid=&gt;mc_style_button.
+          CATCH cx_sy_itab_line_not_found.
+        ENDTRY.
+        READ TABLE lo_from_tab-&gt;mo_column_emitters WITH KEY column = l_col ASSIGNING FIELD-SYMBOL(&lt;emitter&gt;).
+        IF sy-subrc NE 0.
+          APPEND INITIAL LINE TO lo_from_tab-&gt;mo_column_emitters ASSIGNING &lt;emitter&gt;.
+          &lt;emitter&gt;-column = l_col.
+          &lt;emitter&gt;-emitter = NEW #( ).
+        ENDIF.
+      ENDLOOP.
+
+      IF sy-subrc = 0.
+        lv_set_receiver = abap_true.
+        CALL METHOD lo_from_tab-&gt;mo_alv-&gt;set_frontend_fieldcatalog EXPORTING it_fieldcatalog = lo_from_tab-&gt;mt_alv_catalog.
+      ENDIF.
+
+      TRY.
+          ASSIGN lo_from_tab-&gt;mr_table-&gt;* TO &lt;f_tab&gt;.
+          READ TABLE lo_to-&gt;mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;to_tab&gt;) INDEX e_row.
+          LOOP AT lt_sel_cells INTO DATA(l_cell).
+            IF sy-tabix = 1.
+              DATA(l_colname) = l_cell-col_id-fieldname.
+            ENDIF.
+            READ TABLE &lt;f_tab&gt; INDEX l_cell-row_id ASSIGNING FIELD-SYMBOL(&lt;f_str&gt;).
+            ASSIGN COMPONENT l_colname OF STRUCTURE &lt;f_str&gt; TO &lt;f_field&gt;.
+            IF sy-subrc = 0.
+              IF lv_set_receiver IS NOT INITIAL.
+                IF &lt;to_tab&gt;-receiver IS BOUND.
+                  &lt;to_tab&gt;-receiver-&gt;shut_down( ).
+                ENDIF.
+                CREATE OBJECT &lt;to_tab&gt;-receiver
+                  EXPORTING
+                    io_transmitter = &lt;emitter&gt;-emitter
+                    i_from_field   = CONV #( lt_sel_cells[ 1 ]-col_id )
+                    i_to_field     = &lt;to_tab&gt;-field_label
+                    io_sel_to      = lo_to
+                    io_tab_from    = lo_from_tab.
+                SET HANDLER &lt;to_tab&gt;-receiver-&gt;on_grid_button_click FOR lo_from_tab-&gt;mo_alv.
+              ENDIF.
+
+              IF &lt;to_tab&gt;-range IS INITIAL.
+                &lt;to_tab&gt;-low = &lt;f_field&gt;.
+              ENDIF.
+              IF NOT line_exists( &lt;to_tab&gt;-range[ low = &lt;f_field&gt; ] ).
+                APPEND VALUE #( sign = &apos;I&apos; opti = &apos;EQ&apos; low = &lt;f_field&gt;  ) TO &lt;to_tab&gt;-range.
+              ENDIF.
+            ENDIF.
+          ENDLOOP.
+          lo_to-&gt;update_sel_row( CHANGING c_sel_row = &lt;to_tab&gt; ).
+        CATCH cx_sy_itab_line_not_found.                &quot;#EC NO_HANDLER
+      ENDTRY.
+    ENDIF.
+
+    &quot;select to select
+    IF lo_from_sel NE lo_to.
+      IF lt_sel_rows[] IS INITIAL.
+        DELETE lt_sel_cells WHERE col_id NE &apos;FIELD_LABEL&apos;.
+        LOOP AT lt_sel_cells INTO DATA(l_sel).
+          APPEND INITIAL LINE TO lt_sel_rows ASSIGNING FIELD-SYMBOL(&lt;row&gt;).
+          &lt;row&gt;-index = l_sel-row_id-index.
+        ENDLOOP.
+      ENDIF.
+
+      LOOP AT lt_sel_rows ASSIGNING &lt;row&gt;.
+        READ TABLE lo_from_sel-&gt;mt_sel_tab ASSIGNING FIELD-SYMBOL(&lt;from_tab&gt;) INDEX &lt;row&gt;-index.
+        IF lines( lt_sel_rows ) = 1.
+          READ TABLE lo_to-&gt;mt_sel_tab ASSIGNING &lt;to_tab&gt; INDEX e_row.
+        ELSE.
+          READ TABLE lo_to-&gt;mt_sel_tab ASSIGNING &lt;to_tab&gt; WITH KEY field_label = &lt;from_tab&gt;-field_label.
+          IF sy-subrc NE 0.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+        MOVE-CORRESPONDING &lt;from_tab&gt; TO ls_row.
+        MOVE-CORRESPONDING ls_row TO &lt;to_tab&gt;.
+        &lt;from_tab&gt;-emitter = icon_workflow_external_event.
+        &lt;to_tab&gt;-inherited = icon_businav_value_chain.
+        IF &lt;from_tab&gt;-transmitter IS INITIAL.
+          CREATE OBJECT &lt;from_tab&gt;-transmitter.
+        ENDIF.
+        IF &lt;to_tab&gt;-receiver IS NOT INITIAL.
+          &lt;to_tab&gt;-receiver-&gt;shut_down( ). &quot;receiver clearing
+          FREE &lt;to_tab&gt;-receiver.
+        ENDIF.
+        CREATE OBJECT &lt;to_tab&gt;-receiver
+          EXPORTING
+            io_transmitter = &lt;from_tab&gt;-transmitter
+            io_sel_to      = lo_to
+            i_to_field     = &lt;to_tab&gt;-field_label.
+      ENDLOOP.
+    ENDIF.
+
+    IF from_obj NE to_obj.
+      DATA(lo_alv) = CAST cl_gui_alv_grid( e_dragdropobj-&gt;dragsourcectrl ).
+      lcl_alv_common=&gt;refresh( EXPORTING i_obj = lo_alv i_soft = abap_true ).
+    ENDIF.
+
+    lo_alv ?= e_dragdropobj-&gt;droptargetctrl.
+    lo_to-&gt;raise_selection_done( ).
+  ENDMETHOD.
+ENDCLASS.
+
+*------------REPORT EVENTS--------------------
+TABLES sscrfields.
+DATA: g_mode TYPE i VALUE 1.
+&quot;selection-screen begin of screen 101.
+SELECTION-SCREEN: FUNCTION KEY 1.&quot;Tables
+SELECTION-SCREEN: FUNCTION KEY 2.&quot;Views
+SELECTION-SCREEN: FUNCTION KEY 3.&quot;CDS
+
+PARAMETERS: gv_tname TYPE tabname VISIBLE LENGTH 15 MATCHCODE OBJECT dd_bastab_for_view MODIF ID tab.
+PARAMETERS: gv_vname TYPE tabname VISIBLE LENGTH 15 MATCHCODE OBJECT viewmaint MODIF ID vie.
+PARAMETERS: gv_cds   TYPE tabname VISIBLE LENGTH 15 MODIF ID cds.
+&quot;selection-screen end of screen 101.
+
+INITIALIZATION.
+
+
+  lcl_appl=&gt;init_lang( ).
+  lcl_appl=&gt;init_icons_table( ).
+  lcl_plugins=&gt;init( ).
+  sscrfields-functxt_01 = &apos;Tables&apos;.
+  sscrfields-functxt_02 = &apos;Views&apos;.
+  sscrfields-functxt_03 = &apos;CDS&apos;.
+  &quot; call screen 101.
+
+AT SELECTION-SCREEN OUTPUT.
+  %_gv_tname_%_app_%-text = &apos;Enter Table name and hit Enter&apos;.
+  %_gv_vname_%_app_%-text = &apos;Enter View name and hit Enter&apos;.
+  %_gv_cds_%_app_%-text = &apos;Enter CDS name and hit Enter&apos;.
+  lcl_appl=&gt;suppress_run_button( ).
+
+  LOOP AT SCREEN.
+    IF screen-group1 = &apos;TAB&apos;.
+      IF g_mode = 1.
+        screen-active = &apos;1&apos;.
+        screen-invisible = &apos;0&apos;.
+      ELSE.
+        screen-active = &apos;0&apos;.
+        screen-invisible = &apos;1&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF screen-group1 = &apos;VIE&apos;.
+      IF g_mode = 2.
+        screen-active = &apos;1&apos;.
+        screen-invisible = &apos;0&apos;.
+      ELSE.
+        screen-active = &apos;0&apos;.
+        screen-invisible = &apos;1&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF screen-group1 = &apos;CDS&apos;.
+      IF g_mode = 3.
+        screen-active = &apos;1&apos;.
+        screen-invisible = &apos;0&apos;.
+      ELSE.
+        screen-active = &apos;0&apos;.
+        screen-invisible = &apos;1&apos;.
+      ENDIF.
+    ENDIF.
+    MODIFY SCREEN.
+  ENDLOOP.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  lcl_appl=&gt;exit( ).
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR gv_cds.
+  PERFORM search_cds.
+
+AT SELECTION-SCREEN .
+  CASE sy-ucomm.
+    WHEN &apos;FC01&apos;.
+      g_mode = 1.
+    WHEN &apos;FC02&apos;.
+      g_mode = 2.
+    WHEN &apos;FC03&apos;.
+      g_mode = 3.
+  ENDCASE.
+
+  CHECK sy-ucomm IS INITIAL.
+
+  IF g_mode = 1. &quot;table
+    CONDENSE gv_tname.
+    CHECK lcl_sql=&gt;exist_table( gv_tname ) = 1.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = gv_tname.
+  ENDIF.
+
+  IF g_mode = 2. &quot;view
+    CONDENSE gv_vname.
+    CHECK lcl_sql=&gt;exist_view( gv_vname ) = 1.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING &lt;obj&gt;.
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = gv_vname i_is_view = abap_true.
+  ENDIF.
+
+  IF g_mode = 3. &quot;CDS
+    CONDENSE gv_cds.
+    CHECK lcl_sql=&gt;exist_cds( gv_cds ) = 1.
+    APPEND INITIAL LINE TO lcl_appl=&gt;mt_obj ASSIGNING &lt;obj&gt;.
+    CREATE OBJECT &lt;obj&gt;-alv_viewer EXPORTING i_tname = gv_cds i_is_cds = abap_true.
+  ENDIF.
+
+FORM search_cds.
+  TYPES: BEGIN OF t_cds,
+           tabname TYPE tabname,
+         END OF t_cds.
+
+  DATA: lt_cds        TYPE TABLE OF t_cds,
+        l_search      TYPE          string,
+        lt_dynpfields TYPE TABLE OF dynpread.
+
+  CALL FUNCTION &apos;DYNP_VALUES_READ&apos;
+    EXPORTING
+      dyname               = sy-repid
+      dynumb               = sy-dynnr
+      request              = &apos;A&apos;
+    TABLES
+      dynpfields           = lt_dynpfields
+    EXCEPTIONS
+      invalid_abapworkarea = 1
+      invalid_dynprofield  = 2
+      invalid_dynproname   = 3
+      invalid_dynpronummer = 4
+      invalid_request      = 5
+      no_fielddescription  = 6
+      invalid_parameter    = 7
+      undefind_error       = 8
+      double_conversion    = 9
+      stepl_not_found      = 10
+      OTHERS               = 11.
+
+  l_search = lt_dynpfields[ fieldname = &apos;GV_CDS&apos; ]-fieldvalue &amp;&amp; &apos;%&apos;.
+
+  SELECT tabname INTO CORRESPONDING FIELDS OF TABLE lt_cds
+    FROM dd02l
+    UP TO 500 ROWS
+    WHERE tabclass = &apos;VIEW&apos;
+      AND applclass = &apos;SDGV&apos;
+      AND tabname LIKE l_search.
+
+  CALL FUNCTION &apos;F4IF_INT_TABLE_VALUE_REQUEST&apos;
+    EXPORTING
+      retfield    = &apos;TABNAME&apos;
+      dynpprog    = sy-repid
+      dynpnr      = sy-dynnr
+      dynprofield = &apos;GV_CDS&apos;
+      value_org   = &apos;S&apos;
+    TABLES
+      value_tab   = lt_cds.
+
+ENDFORM.
+
+FORM callback_f4_sel TABLES record_tab STRUCTURE seahlpres
+          CHANGING shlp TYPE shlp_descr
+                   callcontrol LIKE ddshf4ctrl.
+
+  LOOP AT shlp-interface ASSIGNING FIELD-SYMBOL(&lt;interface&gt;) WHERE f4field NE abap_true.
+    READ TABLE lcl_types=&gt;mt_sel WITH KEY field_label = &lt;interface&gt;-shlpfield INTO DATA(l_sel).
+    IF sy-subrc = 0.
+      LOOP AT l_sel-range INTO DATA(l_range).
+        APPEND INITIAL LINE TO shlp-selopt ASSIGNING FIELD-SYMBOL(&lt;searchsel&gt;).
+        MOVE-CORRESPONDING l_range TO &lt;searchsel&gt;.
+        &lt;searchsel&gt;-shlpfield = &lt;interface&gt;-shlpfield.
+        &lt;searchsel&gt;-option = &apos;EQ&apos;.
+      ENDLOOP.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.
+
+FORM callback_f4_tab TABLES record_tab STRUCTURE seahlpres
+          CHANGING shlp TYPE shlp_descr
+                   callcontrol LIKE ddshf4ctrl.
+
+  FIELD-SYMBOLS: &lt;field&gt; TYPE any.
+  LOOP AT shlp-interface ASSIGNING FIELD-SYMBOL(&lt;interface&gt;) WHERE f4field NE abap_true.
+    ASSIGN COMPONENT &lt;interface&gt;-shlpfield OF STRUCTURE &lt;g_str&gt; TO &lt;field&gt;.
+    IF sy-subrc = 0.
+      APPEND VALUE #( sign = &apos;I&apos; option = &apos;EQ&apos; low = &lt;field&gt; shlpfield = &lt;interface&gt;-shlpfield  ) TO shlp-selopt.
+    ENDIF.
+  ENDLOOP.
+ENDFORM.</source>
+</PROG>

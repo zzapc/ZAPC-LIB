@@ -1,0 +1,227 @@
+***********************************************************************
+* APLICACION : FI
+* TIPO : LISTADO
+* TITULO : ??
+* *
+* DESCRIPCION : ??
+*
+*
+* AUTOR: Andrés Picazo                                FECHA: 19/05/2011
+* ANALISTA: ??
+*
+* MODIFICACIONES
+*
+***********************************************************************
+REPORT zplantilla_grid3.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, vbrp, sscrfields.
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*TYPES: BEGIN OF t_listado,
+*         check,
+*         lights,
+*
+*END OF t_listado.
+DATA: i_listado TYPE TABLE OF t001,
+      i_listado_aux TYPE TABLE OF t001,
+      i_listado_ini TYPE TABLE OF t001,
+      l_listado TYPE t001.
+
+FIELD-SYMBOLS <listado> TYPE t001.
+
+*------VARIABLES-------------------------------------------------------*
+DATA: v_inicio.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos.
+  PUBLIC SECTION.
+    METHODS: double_click REDEFINITION,
+             data_changed REDEFINITION,
+             toolbar      REDEFINITION,
+             user_command REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
+
+DATA: o_alv TYPE REF TO zcl_ap_alv_grid,
+      o_event TYPE REF TO lcl_event_grid,
+      o_sgpi type ref to zcl_ap_sgpi.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 1.
+SELECTION-SCREEN: FUNCTION KEY 2.
+SELECTION-SCREEN: FUNCTION KEY 3.
+
+
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+  METHOD double_click.
+    READ TABLE i_listado INTO l_listado INDEX e_row-index.
+    IF sy-subrc = 0.
+      IF e_column CS '_ENT'.
+      ELSE.
+*          zcl_pedido_sd=>visualizar( l_listado_color-vbeln ).
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.                    "double_click
+
+
+  METHOD toolbar.
+    DATA: ls_toolbar TYPE stb_button.
+
+    CLEAR ls_toolbar.
+    ls_toolbar-function  = 'REFRESCAR'.
+    ls_toolbar-icon      = '@42@'.
+    ls_toolbar-quickinfo = text-ref. "Refrescar
+    ls_toolbar-text      = text-ref.
+    APPEND ls_toolbar TO e_object->mt_toolbar.
+
+    CLEAR ls_toolbar.
+    ls_toolbar-function  = 'EXCEL'.
+    ls_toolbar-icon      = '@J2@'.
+    ls_toolbar-quickinfo = 'Excel'.
+    ls_toolbar-text      = 'Excel'.
+    APPEND ls_toolbar TO e_object->mt_toolbar.
+
+  ENDMETHOD.                    "toolbar
+
+  METHOD user_command.
+
+    CASE e_ucomm .
+      WHEN 'REFRESCAR'.
+        PERFORM leer_datos.
+        o_alv->refrescar_grid( ).
+      WHEN 'EXCEL'.
+        o_alv->comprobar_cambios( ).
+        o_alv->exportar_excel( CHANGING t_tabla = i_listado ).
+    ENDCASE .
+
+  ENDMETHOD.                    "USER_COMMAND
+
+  METHOD data_changed.
+  ENDMETHOD.                    "data_changed
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+*+*+*+*+ PLANTILLA *+*+*+*+
+  SET PF-STATUS 'INICIO'.
+
+  zcl_ap_dev=>initialization( changing sscrfields = sscrfields ).
+
+  CREATE OBJECT o_event.
+  CREATE OBJECT o_alv
+    EXPORTING
+      estructura = 'T001'
+      o_event    = o_event.
+
+  p_vari = o_alv->get_default_layout( ).
+*+*+*+*+ PLANTILLA *+*+*+*+
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  create object o_sgpi
+    exporting
+      commit_work = 'X'.
+
+*+*+*+*+ PLANTILLA *+*+*+*+
+  zcl_ap_dev=>at_selection_screen( ).
+*+*+*+*+ PLANTILLA *+*+*+*+
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  PERFORM leer_datos.
+
+  CALL SCREEN 0100.
+
+************************************************************************
+*
+* FORMS ADICIONALES
+*
+************************************************************************
+
+*&---------------------------------------------------------------------*
+*&      Form  LEER_DATOS
+*&---------------------------------------------------------------------*
+FORM leer_datos .
+
+  o_sgpi->texto( 'Generando informe' ).
+
+ENDFORM.                    " LEER_DATOS
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+  SET PF-STATUS 'ST_0100'.
+  SET TITLEBAR '100'.
+
+
+  IF v_inicio IS INITIAL.
+    v_inicio = 'X'.
+
+    o_alv->variant-variant = p_vari.
+*    o_alv->set_layout( colort = 'COLOR' ).
+
+*    o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
+
+    o_alv->show( CHANGING tabla = i_listado ).
+  ENDIF.
+
+ENDMODULE.                 " STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+  CASE sy-ucomm.
+    WHEN 'BACK'.
+      o_alv->comprobar_cambios( ).
+      i_listado_aux = i_listado.
+      SORT: i_listado_ini, i_listado_aux.
+      IF i_listado_ini NE i_listado_aux.
+        IF zcl_ap_popup=>confirmar( titulo = 'Datos sin guardar'
+                                    texto  = 'Existen datos manuales no grabados'
+                                    texto2   = '¿Está seguro de salir sin guardar?' ) = 'X'.
+          LEAVE TO SCREEN 0.
+        ENDIF.
+      ELSE.
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN 'GRABAR'.
+      o_alv->comprobar_cambios( ).
+      o_alv->refrescar_grid( ).
+      o_alv->comprobar_cambios( ).
+  ENDCASE.
+ENDMODULE.                 " USER_COMMAND_0100  INPUT

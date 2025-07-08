@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" VERSION="1" LANGU="S" DESCRIPT="Cl.implement.p.cl.add-in ZCTS_REQUEST_CHECK" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <implementing CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" REFCLSNAME="IF_EX_CTS_REQUEST_CHECK" VERSION="1" EXPOSURE="2" STATE="1" RELTYPE="1" EDITORDER="1 "/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <interfaceMethod CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" CPDNAME="IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_ADD_OBJECTS">
+  <source>METHOD if_ex_cts_request_check~check_before_add_objects.
+* No implementado &quot;#EC EMPTY_PROCEDURE
+  ENDMETHOD.</source>
+ </interfaceMethod>
+ <interfaceMethod CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" CPDNAME="IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_CHANGING_OWNER">
+  <source>METHOD if_ex_cts_request_check~check_before_changing_owner.
+* No implementado &quot;#EC EMPTY_PROCEDURE
+  ENDMETHOD.</source>
+ </interfaceMethod>
+ <interfaceMethod CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" CPDNAME="IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_CREATION">
+  <source>METHOD if_ex_cts_request_check~check_before_creation.
+* No implementado &quot;#EC EMPTY_PROCEDURE
+  ENDMETHOD.</source>
+ </interfaceMethod>
+ <interfaceMethod CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" CPDNAME="IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_RELEASE">
+  <source>METHOD if_ex_cts_request_check~check_before_release.
+*        DATA: lv_exit TYPE char10.
+*
+*    CALL FUNCTION &apos;TRINT_TDR_USER_COMMAND&apos;
+*      EXPORTING
+*        iv_object  = request
+*        iv_type    = &apos;TASK&apos;
+*        iv_command = &apos;CHAO&apos;
+*      IMPORTING
+*        ev_exit    = lv_exit.
+*    DATA: lv_field TYPE char70.
+*    FIELD-SYMBOLS: &lt;fs_okcode&gt; TYPE any.
+*
+*    lv_field = &apos;(SAPLSTR7)GV_OKCODE&apos;.
+*    ASSIGN (lv_field) TO &lt;fs_okcode&gt;.
+*    IF &lt;fs_okcode&gt; EQ &apos;CANC&apos;.
+*      RAISE cancel.
+*    ENDIF.
+
+    TYPES: BEGIN OF t_obj_pend,
+             padre    TYPE tmsbuffer-trkorr,
+             hijo     TYPE tmsbuffer-trkorr,
+             sysnam   TYPE tmsbuffer-sysnam,
+             owner    TYPE tmsbuffer-owner,
+             text     TYPE tmsbuffer-text,
+             object   TYPE e071-object,
+             obj_name TYPE e071-obj_name,
+           END OF t_obj_pend.
+
+    DATA is_ok TYPE abap_bool VALUE abap_true.
+    DATA: r_object   TYPE RANGE OF e071-object,
+          r_obj_name TYPE RANGE OF e071-obj_name.
+    DATA: l_obj_pend TYPE t_obj_pend,
+          i_obj_pend TYPE TABLE OF t_obj_pend.
+    DATA l_ucomm TYPE sy-ucomm.
+
+* Sólo para usuario APC
+    IF sy-uname &lt;&gt; zcl_c=&gt;usuario_ap.
+      RETURN.
+    ENDIF.
+
+* Sólo en estas transacciones
+    IF NOT ( sy-tcode = &apos;SE09&apos; OR sy-tcode = &apos;YAP&apos; ).
+      RETURN.
+    ENDIF.
+
+    IF sy-tcode = &apos;YAP&apos;.
+      GET PARAMETER ID &apos;ZNO_VERIF&apos; FIELD DATA(l_no_verif).
+      IF l_no_verif = &apos;X&apos;.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+* Si en alguna OT no queremos verificación ponemos esto
+    IF text CS &apos;¡!&apos;.
+      RETURN.
+    ENDIF.
+
+* Si hemos confirmado previamente una OT, lo miramos, si no a veces entra en bucel.
+    GET PARAMETER ID &apos;ZOT&apos; FIELD DATA(l_ot).
+    IF NOT l_ot IS INITIAL.
+      IF request = l_ot.
+        RETURN.
+      ELSE.
+* Si es la orden superior de la que acabamos de autorizar, tampoco verificamos
+        SELECT SINGLE trkorr FROM e070
+          INTO l_ot
+         WHERE trkorr  = l_ot
+           AND strkorr = request.
+        IF sy-subrc = 0.
+          RETURN.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+* Si existe, mejor la variante ZAPC
+    SELECT SINGLE checkvname FROM scichkv_hd            &quot;#EC CI_NOFIRST
+      INTO @DATA(l_checkvname)                          &quot;#EC CI_NOORDER
+     WHERE checkvname = &apos;ZAPC&apos;.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT SINGLE checkvname_new FROM scichkv_alter
+        INTO @l_checkvname
+       WHERE checkvname_def = &apos;TRANSPORT&apos;.
+    ENDIF.
+    IF l_checkvname IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    TRY.
+        DATA(or_factory) = NEW cl_satc_api_factory( ).
+        DATA(it_objects) = cl_satc_object_set_factory=&gt;create_for_transport( request )-&gt;if_satc_object_set~get_object_keys( ).
+        DATA(or_objects) = cl_satc_object_set_factory=&gt;create_for_object_keys( it_objects ).
+
+        DATA(or_variant) = NEW cl_satc_ci_check_variant( ).
+        or_variant-&gt;set_name( l_checkvname ).  &quot; check variant
+        DATA(l_desc) = |Transport release { request } |.
+        DATA(or_run_config) = or_factory-&gt;create_run_config_with_chk_var( i_object_set = or_objects
+                                                                          i_check_variant = or_variant
+                                                                          i_description = CONV #( l_desc ) ).
+
+        DATA(or_run_controller) = or_factory-&gt;create_run_controller( or_run_config ).
+        or_run_controller-&gt;run( IMPORTING e_result_access = DATA(or_result_access) ).
+        or_result_access-&gt;get_findings( IMPORTING e_findings = DATA(it_f) ).
+
+        LOOP AT it_f ASSIGNING FIELD-SYMBOL(&lt;wa_f&gt;) WHERE     ( kind = &apos;E&apos; OR kind = &apos;W&apos; ) &quot; errors/warnings
+                                                          AND exceptn &lt;&gt; &apos;P&apos;. &quot; pseudo comments and pragmas
+          is_ok = abap_false.
+*          EXIT.
+          IF &lt;wa_f&gt;-kind = &apos;E&apos;.
+            DATA(l_error) = &apos;X&apos;.
+          ENDIF.
+        ENDLOOP.
+
+      CATCH cx_satc_failure cx_satc_not_found INTO DATA(cx).
+        DATA(exc_text) = cx-&gt;get_text( ).
+        MESSAGE exc_text TYPE &apos;E&apos;.
+        is_ok = abap_false.
+      CATCH cx_satc_empty_object_set cx_satc_invalid_argument INTO cx.  &quot; ok, if transport is empty or contains only non-checkable objects
+        exc_text = cx-&gt;get_text( ).
+        MESSAGE exc_text TYPE &apos;S&apos;.
+    ENDTRY.
+
+    IF is_ok = abap_true.
+      MESSAGE &apos;Validaciones correctas&apos; TYPE &apos;S&apos;.
+    ELSE.
+*      &quot;we only get the execution ID with this “dirty” cast:
+*      DATA(or_result_access_int) = CAST CL_SATC_AC_RESULT_ACCESS( or_result_access ).
+
+*      or_result_access_int-&gt;display_result( ).
+
+      SELECT display_id FROM satc_ac_resulth &quot;#EC CI_GENBUFF &quot;#EC CI_BYPASS
+        INTO @DATA(l_display_id)
+        UP TO 1 ROWS
+       WHERE title            = @l_desc
+         AND chk_profile_name = @l_checkvname
+         AND scheduled_by     = @sy-uname
+       ORDER BY scheduled_on_ts DESCENDING.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        CALL FUNCTION &apos;SATC_AC_DISPL_RESULT_BY_EXEC&apos;
+          EXPORTING
+            i_execution_id     = l_display_id
+          EXCEPTIONS
+            xpt_no_results     = 1
+            xpt_not_authorized = 2
+            xpt_display_used   = 3
+            OTHERS             = 4.
+      ENDIF.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Errores de ATC revise objetos&apos; TYPE &apos;I&apos;.
+      ENDIF.
+
+* Verificamos si hay objetos pendientes de importar en producción
+      IF NOT it_objects IS INITIAL.
+        SELECT tmsbuffer~trkorr AS padre, e070~trkorr AS hijo, sysnam, owner, text FROM tmsbuffer JOIN e070 ON e070~strkorr = tmsbuffer~trkorr
+          INTO TABLE @DATA(i_tms)
+         WHERE sysnam &lt;&gt; @zcl_c=&gt;entorno_desarrollo
+           AND impflg  = &apos;k&apos; &quot; La orden K está pendiente del import
+           AND trfunc  = &apos;K&apos;
+           AND umodes &lt;&gt; &apos;I&apos;
+           AND umodes &lt;&gt; &apos;FI&apos; &quot; Orden ya importada, pero en espera de reimportación
+           AND comsys  = @sy-sysid.
+
+        LOOP AT i_tms ASSIGNING FIELD-SYMBOL(&lt;tms&gt;).
+          LOOP AT it_objects ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+            CASE &lt;obj&gt;-obj_type.
+              WHEN &apos;PROG&apos;.
+                r_object = VALUE #( option = &apos;EQ&apos;
+                                    sign = &apos;I&apos;
+                                    ( low = &apos;PROG&apos; )
+                                    ( low = &apos;REPS&apos; ) ).
+                r_obj_name = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = &lt;obj&gt;-obj_name ) ).
+              WHEN &apos;METH&apos; OR &apos;CLAS&apos;.
+                r_object = VALUE #( option = &apos;EQ&apos;
+                                    sign = &apos;I&apos;
+                                    ( low = &apos;METH&apos; )
+                                    ( low = &apos;CLAS&apos; ) ).
+
+                r_obj_name = VALUE #( ( option = &apos;CP&apos; sign = &apos;I&apos; low = |{ &lt;obj&gt;-obj_name(30) }*| ) ).
+              WHEN &apos;CINC&apos;.
+                &quot; TODO: variable is assigned but never used (ABAP cleaner)
+                SPLIT &lt;obj&gt;-obj_name AT &apos;=&apos; INTO DATA(cl) DATA(otr).
+                r_obj_name = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = cl ) ).
+              WHEN OTHERS.
+                r_obj_name = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = &lt;obj&gt;-obj_name ) ).
+            ENDCASE.
+            SELECT trkorr, object, obj_name FROM e071
+              INTO TABLE @DATA(i_obj)
+             WHERE (    trkorr = @&lt;tms&gt;-hijo
+                     OR trkorr = @&lt;tms&gt;-padre )
+               AND obj_name IN @r_obj_name
+               AND object   IN @r_object.
+            LOOP AT i_obj ASSIGNING FIELD-SYMBOL(&lt;objt&gt;).
+              CLEAR l_obj_pend.
+              MOVE-CORRESPONDING &lt;tms&gt; TO l_obj_pend.
+              MOVE-CORRESPONDING &lt;objt&gt; TO l_obj_pend.
+              COLLECT l_obj_pend INTO i_obj_pend.
+            ENDLOOP.
+          ENDLOOP.
+        ENDLOOP.
+        IF NOT i_obj_pend IS INITIAL.
+          CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+            EXPORTING
+              titulo  = &apos;Objetos en ordenes pendientes de subir a producción&apos;
+              texto   = &apos;Los siguientes objetos están pendientes de subir a producción&apos;
+              texto2  = &apos;¿Está seguro de querer liberar la OT?&apos;
+              botones = &apos;OK_CANCEL&apos;
+            IMPORTING
+              ucomm   = l_ucomm
+            TABLES
+              t_datos = i_obj_pend.
+          IF l_ucomm &lt;&gt; &apos;F01&apos;.
+            RAISE cancel.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      IF l_error = &apos;X&apos;.
+        DATA(l_titulo) = &apos;Errores de verificación&apos;.
+      ELSE.
+        l_titulo = &apos;Advertencias en verificación&apos;.
+      ENDIF.
+
+      IF zcl_ap_popup=&gt;confirmar( titulo = l_titulo
+                                  texto  = &apos;Confirme si desea seguir liberando&apos;
+                                  opcion = &apos;N&apos; ) = &apos;X&apos;.
+        IF l_error = &apos;X&apos;.
+          IF zcl_ap_popup=&gt;confirmar( titulo = &apos;Errores de verificación&apos;
+                                      texto  = &apos;¿Realmente estás seguro?&apos;
+                                      opcion = &apos;N&apos; ) = &apos;&apos;.
+            RAISE cancel.
+          ENDIF.
+        ENDIF.
+      ELSE.
+        RAISE cancel.
+      ENDIF.
+    ENDIF.
+
+    SET PARAMETER ID &apos;ZOT&apos; FIELD request.
+  ENDMETHOD.</source>
+ </interfaceMethod>
+ <interfaceMethod CLSNAME="ZCL_IM_CTS_REQUEST_CHECK" CPDNAME="IF_EX_CTS_REQUEST_CHECK~CHECK_BEFORE_RELEASE_SLIN">
+  <source>METHOD if_ex_cts_request_check~check_before_release_slin.
+* No implementado
+  ENDMETHOD.</source>
+ </interfaceMethod>
+</CLAS>

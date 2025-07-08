@@ -1,0 +1,222 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 13/02/2015
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+*->MANUAL:http://sap4.com,http://sap4.com/edicion
+*
+* MODIFICACIONES
+* 15/01/2015 Tarea inicial: http://sap4.com/tareas?&ntask=NNN
+*
+***********************************************************************
+REPORT zplantilla_alv_6f.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk, vbrp.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+         check,
+         lights,
+
+END OF t_listado.
+__data_set_var listado.
+
+*------VARIABLES-------------------------------------------------------*
+
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: top_of_page REDEFINITION.
+ENDCLASS. "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+              cargar_fichero.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+DATA: o_alv TYPE REF TO lcl_alv,
+      o_prog TYPE REF TO zcl_report.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+PARAMETERS: p_file TYPE localfile OBLIGATORY.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+parameter: p_defpa default 'X' no-display.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    READ TABLE i_listado INDEX row INTO l_listado.
+    IF sy-subrc = 0.
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_excel( ).
+      WHEN 'BLOQUEAR'.
+        get_seleccion( ).
+        LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+          <listado>-lights = zcl_ap_alv=>c_sem_rojo.
+        ENDLOOP.
+        refresh( ).
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+  METHOD top_of_page.
+    DATA l_texto TYPE string.
+    CLEAR o_content.
+
+    o_top_page->set_titulo( sy-title ).
+
+    o_top_page->add_rango_auto( ).
+    o_top_page->crea_info_seleccion( ).
+
+    CONCATENATE 'Fichero:' p_file INTO l_texto SEPARATED BY space.
+    o_top_page->set_linea( l_texto ).
+
+    o_content = o_top_page->get_grid( ).
+
+  ENDMETHOD.                    "top_of_page
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    cargar_fichero( ).
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD cargar_fichero.
+    TYPES: BEGIN OF t_fichero,
+             id(10),
+             charg(10),
+             nserie(10),
+             maktx(80),
+             cal_funcional(10),
+             calidad_visual(10),
+             potencia(20),
+             orden(10),
+           END OF t_fichero.
+    DATA: i_fichero TYPE TABLE OF t_fichero.
+
+    FIELD-SYMBOLS <fichero> TYPE t_fichero.
+
+    o_prog->sgpi_texto( 'Importando fichero' ).
+    zcl_ap_import_excel=>importar( EXPORTING fichero = p_file
+                                 CHANGING tabla = i_fichero[] ).
+
+    o_prog->o_sgpi->get_filas_tabla( i_fichero[] ).
+    LOOP AT i_fichero ASSIGNING <fichero>.
+      CLEAR l_listado.
+      o_prog->o_sgpi->porcentaje( texto = 'Procesando fichero' cantidad = 1000 ).
+      MOVE-CORRESPONDING <fichero> TO l_listado.
+*      l_listado-fecha = zcl_ap_fechas=>string2fecha( <fichero>-fecha ).
+*       zcl_ap_string=>STRING2CTD( EXPORTING CTD_TEXTO = <fichero>-importe
+*                                  IMPORTING cantidad  = <fichero>-cantidad
+*                                            mensaje   = <fichero>-mensaje ).
+    ENDLOOP.
+
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe' ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status = 'INICIO'.
+
+  o_prog->initialization_i( exporting get_default_param = p_defpa changing sscrfields = sscrfields ).
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status = 'STANDARD'
+      lights = 'LIGHTS'.
+  p_vari = o_alv->get_default_layout( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_file.
+  p_file = zcl_ap_ficheros=>popup_select_fichero( file_filter = zcl_ap_ficheros=>c_filtro_xls ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog->at_selection(  ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection(  ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

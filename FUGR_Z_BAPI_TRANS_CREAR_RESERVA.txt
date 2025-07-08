@@ -1,0 +1,476 @@
+FUNCTION z_bapi_trans_crear_reserva.
+*"----------------------------------------------------------------------
+*"*"Interfase local
+*"  IMPORTING
+*"     REFERENCE(ACCION) TYPE  BKPF-BUKRS DEFAULT 'INSE'
+*"     REFERENCE(RECURSO) TYPE  HRP1000-OBJID
+*"     REFERENCE(USUARIO) TYPE  HRP1000-OBJID
+*"     REFERENCE(NOTA) TYPE  ZEST_RESERVAS-NOTA
+*"     REFERENCE(FINICIO) TYPE  HRP1000-BEGDA
+*"     REFERENCE(FFIN) TYPE  HRP1000-BEGDA
+*"     REFERENCE(HINI) TYPE  RHRA2-BBLK1
+*"     REFERENCE(HFIN) TYPE  RHRA2-EBLK1
+*"     REFERENCE(TABLA_Z) TYPE  ABAP_BOOL DEFAULT ''
+*"     REFERENCE(BDC) TYPE  BDCMODE DEFAULT 'N'
+*"     REFERENCE(NO_VALIDAR_OCUPACION) TYPE  ABAP_BOOL DEFAULT ''
+*"     REFERENCE(CLAVE) TYPE  ZEST_RESERVAS-CLAVE DEFAULT ''
+*"  EXPORTING
+*"     VALUE(ERROR) TYPE  ZEST_RESERVAS-MENSAJE
+*"  CHANGING
+*"     VALUE(RESERVA) TYPE  ZEST_RESERVAS-RESERVA
+*"----------------------------------------------------------------------
+  TABLES: rhra1, rhra2, rhra3.
+  DATA: l_ultimo_curso       TYPE hrp1000-objid,
+        l_okcode(4),
+        recursos             TYPE TABLE OF zest_recursos,
+        i_res_previas        TYPE TABLE OF zest_reservas2,
+        i_suplentes          TYPE TABLE OF zest_recurso_suplentes,
+        l_ind                TYPE numc2,
+        i_textos             TYPE rspc_t_text,
+        l_qmnum              TYPE qmnum,
+        l_hora               TYPE sy-uzeit,
+        l_hora_txt(8),
+        l_hora_txt2(8),
+        l_qmtxt              TYPE riwo00-headktxt,
+        l_pedir_autorizacion,
+        l_emails             TYPE string,
+        l_subject            TYPE string,
+        l_texto              TYPE string,
+        l_res                TYPE zreservas,
+        l_mod_sap,
+        l_tabla_z,
+        l_hrp1000            TYPE hrp1000.
+
+
+
+  IF accion = 'INSE'.
+    l_tabla_z = tabla_z.
+  ELSEIF NOT reserva IS INITIAL AND accion NE 'INSE'.
+    SELECT SINGLE * FROM zreservas
+      INTO l_res
+     WHERE reserva = reserva.
+    IF sy-subrc NE 0.
+      SELECT SINGLE * FROM zreservas
+        INTO l_res
+       WHERE reserva_sap = reserva.
+      IF sy-subrc NE 0.
+        l_res-reserva_sap = reserva.
+      ENDIF.
+    ENDIF.
+
+    IF NOT ( l_res-reserva_sap = '' OR l_res-reserva_sap = '00000000' ).
+      l_tabla_z = ''.
+    ELSEIF NOT l_res-reserva IS INITIAL.
+      l_tabla_z = 'X'.
+    ELSE.
+      error = |No existe la reserva { reserva ALPHA = OUT }|.
+    ENDIF.
+  ENDIF.
+
+  CLEAR error.
+  CALL FUNCTION 'DEQUEUE_ALL'
+    EXPORTING
+      _synchron = 'X'.
+
+  DATA(o_par) = NEW zcl_ap_parametros( clave = 'ZRECURSOS' ).
+  DATA(o_log) = NEW zcl_ap_log( object = 'CR_RES' ).
+
+*APC20200607 Validaciones
+  CALL FUNCTION 'Z_BAPI_RECURSOS'
+    EXPORTING
+      fecha_inicio = finicio
+      fecha_fin    = ffin
+      recurso      = recurso
+    TABLES
+      recursos     = recursos
+      suplentes    = i_suplentes.
+  READ TABLE recursos INTO DATA(l_recurso) INDEX 1.
+  IF sy-subrc = 0.
+    IF accion = 'INSE'.
+
+      IF l_recurso-centro_trabajot = 'Alicante'.
+        DATA(l_centro) = 'ALI'.
+      ELSE.
+        l_centro = 'VAL'.
+      ENDIF.
+
+      IF no_validar_ocupacion IS INITIAL.
+        CALL FUNCTION 'Z_LISTA_RESERVAS'
+          EXPORTING
+            recurso      = recurso
+            fecha_inicio = finicio
+            fecha_fin    = ffin
+            tabla_z      = tabla_z
+          TABLES
+            reservas     = i_res_previas.
+
+
+        LOOP AT i_res_previas ASSIGNING FIELD-SYMBOL(<res>) WHERE hini < hfin AND hfin > hini.
+          IF usuario = <res>-usuario.
+            error = |Tiene otra reserva de { <res>-hini TIME = USER } a { <res>-hfin TIME = USER }|.
+          ELSE.
+            error = |Recurso ya reservado por { <res>-ename } de { <res>-hini TIME = USER } a { <res>-hfin TIME = USER }|.
+          ENDIF.
+          IF <res>-finicio NE finicio.
+            error = |{ error } del { <res>-finicio DATE = USER } a { <res>-ffin DATE = USER }|.
+          ENDIF.
+
+          RETURN.
+        ENDLOOP.
+
+
+        DATA(l_validaciones_covid) = o_par->get_atr1( 'VALIDACIONES_COVID' ).
+      ENDIF.
+
+
+      IF l_recurso-tipo_recursot = 'Sala' OR l_recurso-tipo_recursot = 'Aula'.
+        l_pedir_autorizacion = 'X'.
+        DATA(l_horas) = zcl_ap_fechas=>get_duracion_intervalo( fini = sy-datum hini = sy-uzeit
+                                                               ffin = finicio hfin = hini ).
+        IF l_horas < 24.
+          IF l_validaciones_covid = 'X'.
+            error = 'No es posible crear la reserva sin una antelación superior a 24 horas'.
+            RETURN.
+          ENDIF.
+        ENDIF.
+        CASE l_recurso-tipo_recursot.
+          WHEN 'Sala'.
+            IF NOT ( ( hini = '080000' AND hfin = '110000' ) OR
+                     ( hini = '113000' AND hfin = '150000' ) OR
+                     ( hini = '160000' AND hfin = '180000' ) OR
+                     ( hini = '183000' AND hfin = '220000' ) OR
+                     ( hini = '080000' AND hfin = '150000' ) OR
+                     ( hini = '160000' AND hfin = '220000' ) OR
+                     ( hini = '000000' AND hfin = '240000' )
+              ).
+              IF l_validaciones_covid = 'X'.
+                error = 'Reserva sólo en: [08:00-11:00], [11:30-15:00], [16:00-18:00], [18:30-22:00]'.
+                RETURN.
+              ENDIF.
+            ENDIF.
+            DATA(l_crear_aviso) =  o_par->get_atr1( 'CREAR_SV' ).
+          WHEN 'Aula'.
+            l_crear_aviso = o_par->get_atr1( 'CREAR_SV' ).
+        ENDCASE.
+      ENDIF.
+    ENDIF.
+  ELSE.
+    o_log->log( p1 = 'No encontramos recurso' p2 = recurso  ).
+  ENDIF.
+
+  l_pedir_autorizacion = 'X'.
+
+  o_log->log( p1 = 'Recurso' p2 = recurso p3 = finicio p4 = hini p5 = hfin p6 = usuario p7 = nota msgty = 'I' ).
+
+  CLEAR error.
+
+  IF l_tabla_z IS INITIAL.
+    CLEAR rhra1.
+    rhra1-plvar = '01'.
+    rhra1-otype = 'G'.
+    rhra1-objid = recurso.
+
+    CLEAR : rhra2.
+    CLEAR : rhra3.
+    rhra2-plvar = '01'.
+    rhra2-otype = 'E'.
+    rhra2-objid = l_res-reserva_sap.
+
+    IF accion = 'INSE'.
+      rhra2-istat = '1'.
+    ELSE.
+      SELECT SINGLE istat FROM hrp1001
+        INTO rhra2-istat
+       WHERE otype = 'E'
+         AND objid = l_res-reserva_sap
+         AND begda <= ffin
+         AND endda >= finicio
+         AND sclas = 'G'
+         AND sobid = recurso.
+    ENDIF.
+    rhra2-begda = finicio.
+*    rhra2-endda = ffin.       "Siempre la creamos con fecha inicio sólo
+    rhra2-endda = finicio.     "Siempre la creamos con fecha inicio sólo
+    rhra2-short = '$MEETING'.
+    rhra2-vkind = '$MEETING'.
+    rhra2-stext = nota.
+    rhra2-langu = sy-langu.
+    rhra2-bblk1 = hini.
+    rhra2-eblk1 = hfin.
+    rhra2-sapot = 'P'.
+    rhra2-sapid = usuario.
+    rhra2-lunot = 'VE'.
+
+    rhra3-tncls = 'K'.
+    rhra3-sclas = 'P'.
+    rhra3-sobid = usuario.
+
+    EXPORT accion rhra1 rhra2 rhra3 TO MEMORY ID 'ZPOR003'.
+
+    SELECT objid FROM hrp1000
+      INTO l_ultimo_curso
+     WHERE plvar = '01'
+       AND otype = 'E'
+       AND istat = rhra2-istat
+       AND begda = finicio
+*       AND endda = ffin
+       AND endda = finicio  "Siempre la creamos con fecha inicio sólo
+       AND short = rhra2-short
+       AND stext = nota
+       AND aedtm = sy-datum
+       AND uname = sy-uname.
+    ENDSELECT.
+
+    IF accion = 'INSE' OR accion = 'AEND'.
+      l_okcode = '=UPD'.
+    ELSEIF accion = 'DEL '.
+      l_okcode = '=DEL'.
+    ENDIF.
+
+    PERFORM init_bdcdata.
+    PERFORM dynpro USING:
+      'X' 'RHRAUM20'      '2500',
+      ' ' 'BDC_OKCODE'    l_okcode.
+
+
+    IF bdc = 'N'.
+      IF sy-tcode(1) = 'Z' OR sy-tcode = 'SE38'.
+        PERFORM llamar_transaccion USING 'ZPOR003' 'E'.
+      ELSE.
+        PERFORM llamar_transaccion USING 'ZPOR003' 'N'.
+      ENDIF.
+    ELSE.
+      PERFORM llamar_transaccion USING 'ZPOR003' 'A'.
+    ENDIF.
+
+    IF sy-msgty = 'S'.
+      IF accion = 'DEL '.
+        SELECT SINGLE objid FROM hrp1000
+          INTO reserva
+         WHERE otype = 'E'
+           AND objid = reserva
+           AND begda <= ffin
+           AND endda >= finicio.
+        IF sy-subrc NE 0.
+          DATA(l_borrado_ok) = 'X'.
+
+          UPDATE zreservas
+             SET estado = '2'
+           WHERE reserva_sap = reserva.
+        ENDIF.
+      ELSE.
+        SELECT * FROM hrp1000
+          INTO l_hrp1000
+         WHERE plvar = '01'
+           AND otype = 'E'
+           AND objid > l_ultimo_curso
+           AND istat = rhra2-istat
+           AND begda = finicio
+*           AND endda = ffin   "Siempre la creamos con fecha inicio sólo
+           AND endda = finicio
+           AND short = rhra2-short
+           AND stext = nota
+           AND aedtm = sy-datum
+           AND uname = sy-uname.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          reserva = l_hrp1000-objid.
+* Como el estándar no deja crear con fecha fin > fecha inicio, lo modificamos a pelo para no tener que crear tantas reservas como días,
+* lo que haría que complicara mucho la gestión posterior.
+          IF ffin > finicio.
+            UPDATE hrp1000
+               SET endda = ffin
+                   WHERE  plvar  = l_hrp1000-plvar
+                   AND    otype  = l_hrp1000-otype
+                   AND    objid  = l_hrp1000-objid
+                   AND    istat  = l_hrp1000-istat
+                   AND    begda  = l_hrp1000-begda
+                   AND    endda  = l_hrp1000-endda
+                   AND    langu  = l_hrp1000-langu
+                   AND    seqnr  = l_hrp1000-seqnr.
+
+            UPDATE hrp1001
+               SET endda = ffin
+             WHERE plvar  = l_hrp1000-plvar
+               AND begda  = l_hrp1000-begda
+               AND endda  = l_hrp1000-endda
+               AND ( ( otype  = l_hrp1000-otype
+                   AND objid  = l_hrp1000-objid )
+                  OR ( sclas  = l_hrp1000-otype
+                   AND sobid  = l_hrp1000-objid ) ).
+
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ELSE.
+    IF accion = 'DEL'.
+      IF reserva IS INITIAL.
+        v_bdc_text = 'No ha informado reserva a borrar'.
+      ELSE.
+        UPDATE zreservas
+           SET estado = '2'
+         WHERE reserva_sap = reserva.
+        IF sy-subrc = 0.
+          CLEAR reserva.
+        ELSE.
+          DELETE FROM zreservas WHERE reserva = reserva.
+          IF sy-subrc = 0.
+            CLEAR reserva.
+          ELSE.
+            v_bdc_text = 'No existía la reserva'.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSEIF accion = 'INSE'.
+      SELECT MAX( reserva ) FROM zreservas
+        INTO reserva.
+      ADD 1 TO reserva.
+
+      rhra2-istat = '2'.
+      CLEAR zreservas.
+      zreservas-reserva = reserva.
+      zreservas-recurso = recurso.
+      zreservas-usuario = usuario.
+      zreservas-estado  = '0'.
+      zreservas-finicio = finicio.
+      zreservas-ffin    = ffin.
+      zreservas-hini    = hini.
+      zreservas-hfin    = hfin.
+      zreservas-nota    = nota.
+      zreservas-ernam = sy-uname.
+      zreservas-erdat = sy-datum.
+      zreservas-erzet = sy-uzeit.
+      zreservas-clave = clave.
+      INSERT zreservas.
+      IF sy-subrc NE 0.
+        v_bdc_text = 'Error insertando reserva'.
+        CLEAR reserva.
+      ENDIF.
+    ELSEIF accion = 'AEND'.
+      UPDATE zreservas
+         SET recurso = l_recurso
+             usuario = usuario
+             finicio = finicio
+             ffin    = ffin
+             hini    = hini
+             hfin    = hfin
+             nota    = nota
+             aedat   = sy-datum
+     WHERE reserva = reserva.
+      IF sy-subrc NE 0.
+        v_bdc_text = 'Error actualizando reserva'.
+        CLEAR reserva.
+      ENDIF.
+    ENDIF.
+
+  ENDIF.
+
+
+
+
+  IF reserva IS INITIAL.
+    IF accion = 'DEL '.
+      o_log->log( p1 = 'Se ha borrado la reserva' p2 = reserva p3 = error msgty = 'S' ).
+      RETURN.
+    ENDIF.
+    o_log->log( p1 = 'Mensaje BDC' p2 = v_bdc_text msgty = 'E' ).
+    IF v_bdc_err = '344'.
+      error = 'Error al crear reserva'.
+    ELSE.
+      error = v_bdc_text.
+    ENDIF.
+    o_log->log( p1 = error ).
+  ELSE.
+    IF accion = 'DEL '.
+      IF NOT l_borrado_ok = 'X'.
+        IF v_bdc_text CS 'no se ha creado por medio de'.
+          DELETE FROM hrp1000 WHERE otype = 'E' AND objid = reserva.
+          DELETE FROM hrpad23 WHERE otype = 'E' AND objid = reserva.
+          DELETE FROM hrp1001 WHERE otype = 'E' AND objid = reserva.
+          DELETE FROM hrp1001 WHERE sclas = 'E' AND sobid = reserva.
+
+        ELSE.
+          error = v_bdc_text.
+          o_log->log( p1 = 'Error borrando reserva' p2 = reserva p3 = error msgty = 'E' ).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      IF rhra2-istat = '2'.
+        error = 'Pendiente de autorización'.
+      ENDIF.
+      o_log->log( p1 = 'Se ha creado reserva' p2 = reserva p3 = error msgty = 'S' ).
+
+      IF l_pedir_autorizacion = 'X' AND l_tabla_z = 'X'. "Sólo enviamos mails cuando creamos la entrada en tabla Z
+        SELECT DISTINCT sobid FROM hrp1001
+          INTO TABLE @DATA(i_resp)
+         WHERE otype = 'G'
+           AND objid = @l_recurso-recurso
+           AND rsign = 'A'
+           AND endda >= @finicio
+           AND begda <= @ffin
+           AND sclas = 'P'.
+        IF sy-subrc = 0.
+          LOOP AT i_resp ASSIGNING FIELD-SYMBOL(<resp>).
+            DATA(l_email) = zcl_empleado_fgv=>get_email( CONV #( <resp>-sobid ) ).
+            __add_lista l_emails l_email.
+          ENDLOOP.
+        ELSE.
+          IF NOT l_recurso-responsable IS INITIAL.
+            l_emails = zcl_empleado_fgv=>get_email( l_recurso-responsable ).
+          ENDIF.
+          LOOP AT i_suplentes ASSIGNING FIELD-SYMBOL(<suplente>).
+            l_email = zcl_empleado_fgv=>get_email( <suplente>-pernr ).
+            __add_lista l_emails l_email.
+          ENDLOOP.
+        ENDIF.
+
+*        IF l_centro = 'ALI'.
+*          LOOP AT o_par->i_par ASSIGNING FIELD-SYMBOL(<par>) WHERE campo = 'INTERLOCUTOR_ALICANT' AND atributo1 NE ''.
+*            __add_lista l_emails <par>-atributo1.
+*          ENDLOOP.
+*        ELSE.
+*          LOOP AT o_par->i_par ASSIGNING <par> WHERE campo = 'INTERLOCUTOR_VALENCI' AND atributo1 NE ''.
+*            __add_lista l_emails <par>-atributo1.
+*          ENDLOOP.
+*        ENDIF.
+
+        IF NOT l_emails IS INITIAL.
+          WRITE hini TO l_hora_txt.
+          WRITE hfin TO l_hora_txt2.
+
+          l_subject = |Reserva de { l_recurso-descripcion } el { finicio DATE = USER } a las { l_hora_txt(5) } |.
+
+          o_log->log( p1 = 'Se envía mails ' p2 = l_emails msgty = 'S' ).
+
+          l_texto = zcl_ap_usuario=>get_nombre( ).
+          l_texto = |{ l_texto } ha solicitado reservar { l_recurso-descripcion }|.
+          APPEND l_texto TO i_textos.
+
+          l_texto = |el { finicio DATE = USER } de { l_hora_txt(5) } a { l_hora_txt2(5) }|.
+          APPEND l_texto TO i_textos.
+
+          IF NOT nota IS INITIAL.
+            CONCATENATE 'Motivo solicitud:' nota INTO l_texto SEPARATED BY space.
+            APPEND l_texto TO i_textos.
+          ENDIF.
+
+          APPEND '' TO i_textos.
+
+          APPEND 'Por favor, entre en SAP a ZAPROV_RESERVAS para autorizarla' TO i_textos.
+
+          zcl_ap_envio_mail=>mail( subject = l_subject
+                                   direccion = l_emails
+                                   i_textos = i_textos ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+  ENDIF.
+
+  CALL FUNCTION 'DEQUEUE_ALL'
+    EXPORTING
+      _synchron = 'X'.
+
+ENDFUNCTION.

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_PROVEEDOR" VERSION="1" LANGU="S" DESCRIPT="Proveedor" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="MUC" ENTRY="Existe más de una cuenta. Especifique" LENGTH="74 "/>
+   <textElement ID="I" KEY="NCB" ENTRY="No existe cuenta bancaria" LENGTH="50 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_PROVEEDOR" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos del banco" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="LIFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="BANKS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="BANKL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="BANKN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="LFBK" VERSION="1" LANGU="S" DESCRIPT="Maestro de proveedores (conexiones banco/cuenta)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="LFBK"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="TIBAN" VERSION="1" LANGU="S" DESCRIPT="IBAN" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TIBAN"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="BNKA" VERSION="1" LANGU="S" DESCRIPT="Maestro de bancos" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BNKA"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="IBAN" VERSION="1" LANGU="S" DESCRIPT="IBAN (International Bank Account Number)" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TIBAN-IBAN"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DATOS_BANCO" SCONAME="SWIFT" VERSION="1" LANGU="S" DESCRIPT="Código SWIFT para pagos internacionales" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BNKA-SWIFT"/>
+  <source>METHOD get_datos_banco.
+    DATA: or_banks TYPE REF TO zcl_ap_rango,
+          or_bankn TYPE REF TO zcl_ap_rango,
+          or_bankl TYPE REF TO zcl_ap_rango.
+
+    or_banks = NEW #( valor_inicial = banks ).
+    or_bankn = NEW #( valor_inicial = bankn ).
+    or_bankl = NEW #( valor_inicial = bankl ).
+
+    SELECT COUNT( * ) FROM lfbk
+      INTO sy-tfill
+     WHERE lifnr  = lifnr
+       AND banks IN or_banks-&gt;rango
+       AND bankl IN or_bankl-&gt;rango
+       AND bankn IN or_bankn-&gt;rango.
+    IF sy-tfill = 0.
+      mensaje = &apos;No existe cuenta bancaria&apos;(ncb).
+    ELSEIF sy-tfill &gt; 1.
+      mensaje = &apos;Existe más de una cuenta. Especifique&apos;(muc).
+    ELSE.
+      SELECT * FROM lfbk
+        INTO lfbk
+        UP TO 1 ROWS
+       WHERE lifnr  = lifnr
+         AND banks IN or_banks-&gt;rango
+         AND bankl IN or_bankl-&gt;rango
+         AND bankn IN or_bankn-&gt;rango
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      SELECT SINGLE * FROM  tiban
+        INTO tiban
+       WHERE banks = lfbk-banks
+         AND bankl = lfbk-bankl
+         AND bankn = lfbk-bankn
+         AND bkont = lfbk-bkont.
+      iban = tiban-iban.
+
+      SELECT SINGLE * FROM  bnka
+        INTO bnka
+       WHERE banks = lfbk-banks
+         AND bankl = lfbk-bankl.
+      swift = bnka-swift.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION" VERSION="1" LANGU="S" DESCRIPT="Devuelve dirección" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION" SCONAME="ADRNR" VERSION="1" LANGU="S" DESCRIPT="Dirección" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ADRNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION" SCONAME="DIRECCION" VERSION="1" LANGU="S" DESCRIPT="Estructura de transferencia para dirección" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ADDR1_DATA"/>
+  <source>METHOD get_direccion.
+    DATA l_adrnr TYPE adrnr.
+
+    IF adrnr IS INITIAL.
+      SELECT SINGLE adrnr FROM lfa1
+        INTO l_adrnr
+       WHERE lifnr = lifnr.
+    ELSE.
+      l_adrnr = adrnr.
+    ENDIF.
+
+    direccion = zcl_ap_direcciones=&gt;get_direccion2( l_adrnr ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION_STRING" VERSION="1" LANGU="S" DESCRIPT="Devuelve la dirección postal simple en un string" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION_STRING" SCONAME="ADRNR" VERSION="1" LANGU="S" DESCRIPT="Nº dirección" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ADRC-ADDRNUMBER" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION_STRING" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_DIRECCION_STRING" SCONAME="DIRECCION" VERSION="1" LANGU="S" DESCRIPT="Forma abreviada en una línea de la dirección editada" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SZAD_FIELD-ADDR_SHORT"/>
+  <source>METHOD get_direccion_string.
+    DATA l_adrnr TYPE adrnr.
+
+    IF adrnr IS INITIAL.
+      SELECT SINGLE adrnr FROM lfa1
+        INTO l_adrnr
+       WHERE lifnr = lifnr.
+    ELSE.
+      l_adrnr = adrnr.
+    ENDIF.
+
+    direccion = zcl_ap_direcciones=&gt;get_direccion_string( l_adrnr ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" VERSION="1" LANGU="S" DESCRIPT="Devuelve los mails de un proveedor" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" SCONAME="PARNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PARNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" SCONAME="REMARK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAIL" SCONAME="EMAIL" VERSION="1" LANGU="S" DESCRIPT="Tabla estándar para la estructura ADSMTP" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="AD_SMTPADR"/>
+  <source>METHOD get_email.
+    DATA: i_emails TYPE isu_adsmtp_tab,
+          l_email  TYPE adsmtp.
+
+    CLEAR email.
+    i_emails = get_emails( lifnr = lifnr parnr = parnr remark = remark ).
+
+    IF lista IS INITIAL.
+      READ TABLE i_emails INTO l_email WITH KEY flgdefault = &apos;X&apos;.
+      IF sy-subrc = 0.
+        email = l_email-smtp_addr.
+      ELSE.
+        READ TABLE i_emails INTO l_email INDEX 1. &quot;#EC CI_NOORDER
+        IF sy-subrc = 0.
+          email = l_email-smtp_addr.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      LOOP AT i_emails INTO l_email.
+        __add_lista email l_email-smtp_addr.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAILS" VERSION="1" LANGU="S" DESCRIPT="Devuelve los mails de un proveedor" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAILS" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAILS" SCONAME="PARNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PARNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAILS" SCONAME="REMARK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_EMAILS" SCONAME="EMAILS" VERSION="1" LANGU="S" DESCRIPT="Tabla estándar para la estructura ADSMTP" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ISU_ADSMTP_TAB"/>
+  <source>METHOD get_emails.
+    DATA l_adrnr TYPE lfa1-adrnr.
+
+    SELECT SINGLE adrnr FROM lfa1
+      INTO l_adrnr
+     WHERE lifnr = lifnr.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF parnr IS INITIAL.
+      emails = zcl_ap_direcciones=&gt;get_emails( adrnr = l_adrnr remark = remark ).
+    ELSE.
+      SELECT SINGLE prsnr FROM knvk
+        INTO @DATA(l_prsnr)
+       WHERE parnr = @parnr.
+      IF sy-subrc = 0.
+        SELECT * FROM adr6
+          APPENDING CORRESPONDING FIELDS OF TABLE emails  ##TOO_MANY_ITAB_FIELDS
+         WHERE addrnumber = l_adrnr
+           AND persnumber = l_prsnr.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del proveedor" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_NOMBRE" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_NOMBRE" SCONAME="NAME1" VERSION="1" LANGU="S" DESCRIPT="Nombre" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NAME1"/>
+  <source>METHOD get_nombre.
+    CLEAR name1.
+    SELECT SINGLE name1 FROM lfa1
+      INTO name1
+     WHERE lifnr = lifnr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_URL_POR_TITULO_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve URL por tipo adjunto" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LFA1-LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="Documentos URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_url_por_titulo_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    l_clave = lifnr.
+    url = zcl_ap_gos=&gt;get_url_por_titulo_st( tipo   = &apos;LFA1&apos;
+                                          clave  = l_clave
+                                          titulo = titulo ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_VOLUMEN_NEGOCIO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el volumen de negocio" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_VOLUMEN_NEGOCIO" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_VOLUMEN_NEGOCIO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_VOLUMEN_NEGOCIO" SCONAME="FECHAS" VERSION="1" LANGU="S" DESCRIPT="Rangos para fecha" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPMY_R_DATE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="GET_VOLUMEN_NEGOCIO" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Volumen de negocios" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CF005-UMSAZ"/>
+  <source>METHOD get_volumen_negocio.
+    TYPES: BEGIN OF t_partidas,
+             shkzg TYPE shkzg,
+             dmbtr TYPE dmbtr,
+           END OF t_partidas.
+
+    FIELD-SYMBOLS &lt;partida&gt; TYPE t_partidas.
+
+    DATA: r_bukrs    TYPE RANGE OF bukrs,
+          lr_bukrs   LIKE LINE OF r_bukrs,
+          i_partidas TYPE TABLE OF t_partidas.
+
+    IF NOT bukrs IS INITIAL.
+      lr_bukrs-option = &apos;EQ&apos;.
+      lr_bukrs-sign   = &apos;I&apos;.
+      lr_bukrs-low    = bukrs.
+      APPEND lr_bukrs TO r_bukrs.
+    ENDIF.
+
+    SELECT shkzg SUM( dmbtr ) FROM bsik
+      INTO TABLE i_partidas
+     WHERE lifnr  = lifnr
+       AND bukrs IN r_bukrs
+       AND budat IN fechas
+       AND bschl IN ( &apos;21&apos;, &apos;22&apos;, &apos;31&apos;, &apos;32&apos; )
+     GROUP BY shkzg.
+
+    SELECT shkzg SUM( dmbtr ) FROM bsak
+      APPENDING TABLE i_partidas
+     WHERE lifnr  = lifnr
+       AND budat IN fechas
+       AND bukrs IN r_bukrs
+       AND bschl IN ( &apos;21&apos;, &apos;22&apos;, &apos;31&apos;, &apos;32&apos; )
+     GROUP BY shkzg.
+
+    CLEAR valor.
+    LOOP AT i_partidas ASSIGNING &lt;partida&gt;.
+      IF &lt;partida&gt;-shkzg = &apos;H&apos;.
+        valor = valor + &lt;partida&gt;-dmbtr.
+      ELSE.
+        valor = valor - &lt;partida&gt;-dmbtr.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="INSERTAR_URL_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Insertar URL en proveedor" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LFA1-LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD insertar_url_gos_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    l_clave = lifnr.
+    zcl_ap_gos=&gt;insertar_url_gos_st( tipo   = &apos;LFA1&apos;
+                                  clave  = l_clave
+                                  titulo = titulo
+                                  url    = url ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="POPUP_EMAILS" VERSION="1" LANGU="S" DESCRIPT="Muestra popup emails proveedor" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="POPUP_EMAILS" SCONAME="LIFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="POPUP_EMAILS" SCONAME="OPERACION" VERSION="1" LANGU="S" DESCRIPT="MAINTAIN/DISPLAY" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;MAINTAIN&apos;"/>
+  <source>METHOD popup_emails.
+    DATA l_adrnr TYPE adrnr.
+
+    SELECT SINGLE adrnr FROM lfa1
+      INTO l_adrnr
+     WHERE lifnr = lifnr.
+
+    IF NOT l_adrnr IS INITIAL.
+      zcl_ap_direcciones=&gt;popup_emails( adrnr = l_adrnr operacion = operacion ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="URLS_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de URLs de GOS" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="URLS_GOS_ST" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LFA1-LIFNR"/>
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="URLS_GOS_ST" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZTAB_URL_GOS"/>
+  <source>METHOD urls_gos_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    l_clave = lifnr.
+    tabla = zcl_ap_gos=&gt;urls_gos_st( tipo = &apos;LFA1&apos; clave = l_clave ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="VISUALIZAR_PROVEEDOR_ST" VERSION="1" LANGU="S" DESCRIPT="Visualizar proveedor" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_PROVEEDOR" CMPNAME="VISUALIZAR_PROVEEDOR_ST" SCONAME="LIFNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LFA1-LIFNR"/>
+  <source>METHOD visualizar_proveedor_st.
+* Para los parámetros se puede usar (include MF02KO00 linea
+*  IF l_rc = 4.
+**------- SET/GET-Parameter KDY einlesen -------------------------------
+*    GET PARAMETER ID &apos;KDY&apos; FIELD kred-auswl.
+*  ENDIF.
+**\AT Ende
+* SET PARAMETER ID &apos;KDY&apos; FIELD &apos;/111&apos;.  &quot;Dirección
+* SET PARAMETER ID &apos;KDY&apos; FIELD &apos;/380&apos;.  &quot;Persona contacto
+*
+    SET PARAMETER ID &apos;LIF&apos; FIELD lifnr.
+    CALL TRANSACTION &apos;XK03&apos; AND SKIP FIRST SCREEN.       &quot;#EC CI_CALLTA
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

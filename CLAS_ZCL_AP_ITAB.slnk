@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_ITAB" VERSION="1" LANGU="S" DESCRIPT="Gestión tablas internas" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_ITAB" CMPNAME="ZRNRANGEFIELDNAME" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="9 " SRCROW2="14 " SRCCOLUMN2="34 " TYPESRC_LENG="214 " TYPESRC="BEGIN OF zrnrangefieldname,
+             sign   TYPE  ddsign,
+             option TYPE  ddoption,
+             low    TYPE  lvc_fname,
+             high   TYPE  lvc_fname,
+           END OF zrnrangefieldname
+"/>
+ <types CLSNAME="ZCL_AP_ITAB" CMPNAME="ZT_RANGEFIELDNAME" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="15 " SRCCOLUMN1="8 " SRCROW2="15 " SRCCOLUMN2="95 " TYPESRC_LENG="90 " TYPESRC="zt_rangefieldname TYPE STANDARD TABLE OF zrnrangefieldname WITH key sign option low high
+"/>
+ <types CLSNAME="ZCL_AP_ITAB" CMPNAME="T_DIF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="17 " SRCCOLUMN1="4 " SRCROW2="22 " SRCCOLUMN2="17 " TYPESRC_LENG="148 " TYPESRC="BEGIN OF t_dif,
+        clave TYPE string,
+        updkz TYPE updkz,
+        t1    TYPE string,
+        t2    TYPE string,
+      END OF t_dif
+"/>
+ <types CLSNAME="ZCL_AP_ITAB" CMPNAME="TT_DIF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="24 " SRCCOLUMN1="4 " SRCROW2="24 " SRCCOLUMN2="29 " TYPESRC_LENG="28 " TYPESRC="tt_dif TYPE TABLE OF t_dif
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_ITAB" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" VERSION="1" LANGU="S" DESCRIPT="Compara tablas internas" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="T1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="T2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="QUITAR_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="LONG_CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS" SCONAME="DIF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="TT_DIF"/>
+  <source>method COMPARA_TABLAS.
+  DATA: t1_data TYPE REF TO data,
+        l1_data TYPE REF TO data,
+        t2_data TYPE REF TO data,
+        l2_data TYPE REF TO data,
+        l_dif type t_dif.
+
+  FIELD-SYMBOLS: &lt;n_tt1&gt; TYPE table,
+                 &lt;t1&gt; TYPE ANY,
+                 &lt;n_t1&gt; TYPE ANY,
+                 &lt;n_tt2&gt; TYPE table,
+                 &lt;t2&gt; TYPE ANY,
+                 &lt;n_t2&gt; TYPE ANY.
+
+  IF t1 = t2.
+    EXIT.
+  ELSE.
+    copiar_tabla( EXPORTING tabla = t1
+                            quitar_campos    = quitar_campos
+                            solo_campos      = solo_campos
+                  IMPORTING nueva_tabla_data = t1_data ).
+
+    ASSIGN t1_data-&gt;* TO &lt;n_tt1&gt;.
+    CHECK SY-SUBRC = 0.
+
+    copiar_tabla( EXPORTING tabla = t2
+                            quitar_campos    = quitar_campos
+                            solo_campos      = solo_campos
+                  IMPORTING nueva_tabla_data = t2_data ).
+
+    ASSIGN t2_data-&gt;* TO &lt;n_tt2&gt;.
+    CHECK SY-SUBRC = 0.
+
+    SORT: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+
+    IF &lt;n_tt1&gt; = &lt;n_tt2&gt;.
+      EXIT.
+    ELSE.
+      SORT: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+      LOOP AT &lt;n_tt1&gt; ASSIGNING &lt;n_t1&gt;.
+        LOOP AT &lt;n_tt2&gt; ASSIGNING &lt;n_t2&gt;.
+          IF &lt;n_t1&gt; = &lt;n_t2&gt;.
+            DELETE: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+          ENDIF.
+        ENDLOOP.
+      ENDLOOP.
+
+      CLEAR dif.
+      LOOP AT &lt;n_tt1&gt; ASSIGNING &lt;n_t1&gt;.
+        l_dif-t1 = &lt;n_t1&gt;.
+        append l_dif to dif.
+      ENDLOOP.
+      LOOP AT &lt;n_tt2&gt; ASSIGNING &lt;n_t2&gt;.
+        l_dif-t2 = &lt;n_t2&gt;.
+        append l_dif to dif.
+      ENDLOOP.
+
+    ENDIF.
+  ENDIF.
+
+
+*¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿???????????????
+*  DATA: t1_data TYPE REF TO data,
+*        l1_data TYPE REF TO data,
+*        t2_data TYPE REF TO data,
+*        l2_data TYPE REF TO data.
+*
+*  FIELD-SYMBOLS: &lt;n_tt1&gt; TYPE table,
+*                 &lt;t1&gt; TYPE ANY,
+*                 &lt;n_t1&gt; TYPE ANY,
+*                 &lt;n_tt2&gt; TYPE table,
+*                 &lt;t2&gt; TYPE ANY,
+*                 &lt;n_t2&gt; TYPE ANY.
+*
+*  IF t1 = t2.
+*    EXIT.
+*  ELSE.
+*    copiar_tabla( EXPORTING tabla = t1
+*                            quitar_campos    = quitar_campos
+*                            solo_campos      = solo_campos
+*                  IMPORTING nueva_tabla_data = t1_data ).
+*
+*    ASSIGN t1_data-&gt;* TO &lt;n_tt1&gt;.
+*
+*    CREATE DATA l1_data LIKE LINE OF &lt;n_tt1&gt;.
+*
+*    ASSIGN l1_data-&gt;* TO &lt;n_t1&gt;.
+*
+*    LOOP AT t1 ASSIGNING &lt;t1&gt;.
+*      MOVE-CORRESPONDING &lt;t1&gt; TO &lt;n_t1&gt;.
+*      APPEND &lt;n_t1&gt; TO &lt;n_tt1&gt;.
+*    ENDLOOP.
+*
+*    copiar_tabla( EXPORTING tabla = t2
+*                            quitar_campos    = quitar_campos
+*                            solo_campos      = solo_campos
+*                  IMPORTING nueva_tabla_data = t2_data ).
+*
+*    ASSIGN t2_data-&gt;* TO &lt;n_tt2&gt;.
+*
+*    CREATE DATA l2_data LIKE LINE OF &lt;n_tt2&gt;.
+*
+*    ASSIGN l2_data-&gt;* TO &lt;n_t1&gt;.
+*
+*    LOOP AT t2 ASSIGNING &lt;t2&gt;.
+*      MOVE-CORRESPONDING &lt;t2&gt; TO &lt;n_t2&gt;.
+*      APPEND &lt;n_t2&gt; TO &lt;n_tt2&gt;.
+*    ENDLOOP.
+*
+*    SORT: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+*
+*    IF &lt;n_tt1&gt; = &lt;n_tt2&gt;.
+*      EXIT.
+*    ELSE.
+*      LOOP AT &lt;n_tt1&gt; ASSIGNING &lt;n_t1&gt;.
+*        LOOP AT &lt;n_tt2&gt; ASSIGNING &lt;n_t2&gt;.
+*          IF &lt;n_t1&gt; = &lt;n_t2&gt;.
+*            DELETE: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+*          ENDIF.
+*        ENDLOOP.
+*      ENDLOOP.
+*
+*      clear dif.
+*
+*    ENDIF.
+*  ENDIF.
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" VERSION="1" LANGU="S" DESCRIPT="Compara tablas internas" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" SCONAME="LONG_CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="0"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" SCONAME="NO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" SCONAME="DIF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" SCONAME="T1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COMPARA_TABLAS_C" SCONAME="T2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>method COMPARA_TABLAS_C.
+  DATA: i_campos TYPE TABLE OF string,
+        l_campo TYPE string,
+        l_valor type string.
+
+  FIELD-SYMBOLS: &lt;t1&gt; TYPE ANY,
+                 &lt;t2&gt; TYPE ANY,
+                 &lt;fs&gt; TYPE ANY.
+
+  i_campos = get_lista_campo( no_campos ).
+  LOOP AT i_campos INTO l_campo.
+    LOOP AT t1 ASSIGNING &lt;t1&gt;.
+      CONCATENATE &apos;&lt;T1&gt;-&apos; l_campo INTO l_valor.
+      ASSIGN (l_valor) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        CLEAR &lt;fs&gt;.
+      ENDIF.
+    ENDLOOP.
+    LOOP AT t2 ASSIGNING &lt;t2&gt;.
+      CONCATENATE &apos;&lt;T2&gt;-&apos; l_campo INTO l_valor.
+      ASSIGN (l_valor) TO &lt;fs&gt;.
+      IF sy-subrc = 0.
+        CLEAR &lt;fs&gt;.
+      ENDIF.
+    ENDLOOP.
+  ENDLOOP.
+
+
+  SORT: t1, t2.
+  IF t1 = t2.
+    REFRESH: t1, t2, dif.
+    EXIT.
+  ELSE.
+    LOOP AT t1 ASSIGNING &lt;t1&gt;.
+      LOOP AT t2 ASSIGNING &lt;t2&gt;.
+        IF &lt;t1&gt; = &lt;t2&gt;.
+          DELETE: t1, t2.
+          EXIT.
+        ELSEIF NOT long_clave IS INITIAL.
+          IF &lt;t1&gt;(long_clave) = &lt;t2&gt;(long_clave).
+            APPEND &lt;t1&gt; TO dif.
+            DELETE: t1, t2.
+            EXIT.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" VERSION="1" LANGU="S" DESCRIPT="Compara tablas internas" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" SCONAME="QUITAR_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" SCONAME="NUEVA_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="COPIAR_TABLA" SCONAME="NUEVA_TABLA_DATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD copiar_tabla.
+  DATA: nueva_linea TYPE REF TO data,
+        l_campos    TYPE string.
+
+  FIELD-SYMBOLS: &lt;linea&gt;       TYPE any,
+                 &lt;nueva_linea&gt; TYPE any,
+                 &lt;nueva_tabla&gt; TYPE table,
+                 &lt;fs&gt;          TYPE any.
+
+
+  IF solo_campos = &apos;!SOLO_INFORMADOS&apos;.
+    DATA(it_fieldcat)  = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( tabla ).
+
+    LOOP AT it_fieldcat ASSIGNING FIELD-SYMBOL(&lt;comp&gt;) WHERE fieldname NE &apos;&apos;.
+      DATA(l_valor) = &apos;&apos;.
+      LOOP AT tabla ASSIGNING FIELD-SYMBOL(&lt;tabla&gt;).
+        ASSIGN COMPONENT &lt;comp&gt;-fieldname OF STRUCTURE &lt;tabla&gt; TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          IF NOT &lt;fs&gt; IS INITIAL.
+            l_valor = &apos;X&apos;.
+            EXIT.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      IF l_valor = &apos;X&apos;.
+        IF l_campos IS INITIAL.
+          l_campos = &lt;comp&gt;-fieldname.
+        ELSE.
+          CONCATENATE l_campos &lt;comp&gt;-fieldname INTO l_campos SEPARATED BY &apos;,&apos;.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ELSE.
+    l_campos = solo_campos.
+  ENDIF.
+
+  crea_tabla_dinamica( EXPORTING tabla = tabla
+                                 quitar_campos = quitar_campos
+                                 solo_campos   = l_campos
+                       IMPORTING nueva_tabla = nueva_tabla
+                                 nueva_tabla_data = nueva_tabla_data ).
+
+  ASSIGN nueva_tabla_data-&gt;* TO &lt;nueva_tabla&gt; .
+  CHECK sy-subrc = 0.
+
+  CREATE DATA nueva_linea LIKE LINE OF &lt;nueva_tabla&gt;.
+  ASSIGN nueva_linea-&gt;* TO &lt;nueva_linea&gt;.
+  CHECK sy-subrc = 0.
+
+
+  LOOP AT tabla ASSIGNING &lt;linea&gt;.
+    MOVE-CORRESPONDING &lt;linea&gt; TO &lt;nueva_linea&gt;.
+    APPEND &lt;nueva_linea&gt; TO &lt;nueva_tabla&gt;.
+  ENDLOOP.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" VERSION="1" LANGU="S" DESCRIPT="Compara tablas internas" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="QUITAR_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="NUEVOS_CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Catálogo campos p.ListViewerControl" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_T_FCAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="NUEVA_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="CREA_TABLA_DINAMICA" SCONAME="NUEVA_TABLA_DATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD crea_tabla_dinamica.
+  DATA: i_campos        TYPE ddfields,
+        l_campos        TYPE dfies,
+        wa_fieldcat     TYPE lvc_s_fcat,
+        it_fieldcat     TYPE lvc_t_fcat,
+        r_campos_quitar TYPE zt_rangefieldname, &quot;INI 20220908 POST Ajustes UPGRADE
+        r_solo_campos   TYPE zt_rangefieldname. &quot;INI 20220908 POST Ajustes UPGRADE
+
+  FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
+*  i_campos = zcl_ap_dev=&gt;get_fieldcatalog_ddic( tabla ).
+
+  it_fieldcat  = zcl_ap_dev=&gt;get_fieldcatalog_tabla_alv( tabla ).
+
+  r_campos_quitar = get_rango_campos( quitar_campos ).
+  IF NOT solo_campos IS INITIAL.
+    r_solo_campos = get_rango_campos( solo_campos ).
+  ENDIF.
+
+
+*  LOOP AT i_campos INTO l_campos WHERE NOT fieldname IN r_campos_quitar
+*                                   AND fieldname IN r_solo_campos
+*                                   AND inttype NE &apos;h&apos;. &quot;No podemos crear tabla con campos tipo tabla
+*    CLEAR wa_fieldcat.
+*    MOVE-CORRESPONDING l_campos TO wa_fieldcat.
+*    APPEND wa_fieldcat TO it_fieldcat.
+*  ENDLOOP.
+
+  DELETE it_fieldcat WHERE fieldname IN r_campos_quitar.
+  DELETE it_fieldcat WHERE NOT fieldname IN r_solo_campos.
+
+  DELETE it_fieldcat WHERE inttype = &apos;y&apos;. &quot;Los binarios dan problemas
+
+  CHECK NOT it_fieldcat[] IS INITIAL.
+
+  CALL METHOD cl_alv_table_create=&gt;create_dynamic_table
+    EXPORTING
+      it_fieldcatalog           = it_fieldcat
+    IMPORTING
+      ep_table                  = nueva_tabla_data
+    EXCEPTIONS
+      generate_subpool_dir_full = 1.
+  IF sy-subrc = 0.
+    ASSIGN nueva_tabla_data-&gt;* TO &lt;tabla&gt;.
+  ENDIF.
+
+*  TRY.
+*      nueva_tabla = &lt;tabla&gt;.
+*    CATCH cx_root.
+*  ENDTRY.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_LISTA_CAMPO" VERSION="1" LANGU="S" DESCRIPT="Convierta lista a tabla campos" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_LISTA_CAMPO" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_LISTA_CAMPO" SCONAME="CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>method GET_LISTA_CAMPO.
+  FIELD-SYMBOLS &lt;campo&gt; TYPE string.
+
+  SPLIT lista AT &apos;,&apos; INTO table campos.
+  LOOP AT campos ASSIGNING &lt;campo&gt;.
+    TRANSLATE &lt;campo&gt; TO UPPER CASE.
+    CONDENSE &lt;campo&gt; NO-GAPS.
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_LINE" VERSION="1" LANGU="S" DESCRIPT="Get line with max value for column" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_LINE" SCONAME="TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_LINE" SCONAME="COLUMN" VERSION="1" LANGU="S" DESCRIPT="Field name" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAME_FELD"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_LINE" SCONAME="LINE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_LINE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method GET_MAX_LINE.
+**********************************************************************
+* Author: Bruno Esperança
+* Description: Get the line with the maximum value of a certain field
+**********************************************************************
+
+  FIELD-SYMBOLS:
+        &lt;lf_table&gt; TYPE STANDARD TABLE,
+        &lt;lf_line&gt; TYPE ANY,
+        &lt;lf_field&gt; TYPE ANY,
+        &lt;lf_max&gt; TYPE ANY.
+
+  DATA:
+        lo_descr  TYPE REF TO cl_abap_structdescr,
+        lv_col    TYPE name_feld,
+        lo_error  TYPE REF TO cx_root,
+        lv_max    TYPE p.
+
+  CLEAR message.
+
+  &quot;Make sure the field is in upper case
+  lv_col = column.
+  TRANSLATE lv_col TO UPPER CASE.
+
+  LOOP AT table ASSIGNING &lt;lf_line&gt;.
+
+    &quot;I would like a more elegant way to get the line
+    IF lo_descr IS NOT BOUND.
+      lo_descr ?= cl_abap_typedescr=&gt;describe_by_data( &lt;lf_line&gt; ).
+    ENDIF.
+
+    &quot;Find the field we are interested in
+    READ TABLE lo_descr-&gt;components TRANSPORTING NO FIELDS
+      WITH KEY name = lv_col.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;Raise column not found
+      CONCATENATE &apos;No existe la columna&apos; lv_col INTO message SEPARATED BY space.
+    ENDIF.
+
+    ASSIGN COMPONENT sy-tabix
+      OF STRUCTURE &lt;lf_line&gt; TO &lt;lf_field&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;This should never happen
+      EXIT.
+    ELSE.
+
+      TRY.
+          IF lv_max IS INITIAL
+            OR &lt;lf_field&gt; &gt; lv_max.
+
+            &quot;Save max value and line
+            line = &lt;lf_line&gt;.
+            lv_max = &lt;lf_field&gt;.
+
+          ENDIF.
+
+        CATCH cx_sy_conversion_no_number INTO lo_error.
+          message = &apos;Error en conversión&apos;.
+      ENDTRY.
+    ENDIF.
+
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_VAL" VERSION="1" LANGU="S" DESCRIPT="Get max value for column" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_VAL" SCONAME="TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_VAL" SCONAME="COLUMN" VERSION="1" LANGU="S" DESCRIPT="Field name" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAME_FELD"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_VAL" SCONAME="VAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MAX_VAL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method GET_MAX_VAL.
+**********************************************************************
+* Author: Bruno Esperança
+* Description: Get the maximum value of a certain field
+**********************************************************************
+
+  FIELD-SYMBOLS:
+        &lt;lf_table&gt; TYPE STANDARD TABLE,
+        &lt;lf_line&gt; TYPE any,
+        &lt;lf_field&gt; TYPE any,
+        &lt;lf_max&gt; TYPE any.
+
+  DATA:
+        lo_descr  TYPE REF TO cl_abap_structdescr,
+        lv_col    TYPE name_feld,
+        lo_error  TYPE REF TO cx_root.
+
+  &quot;Make sure the field is in upper case
+  lv_col = column.
+  TRANSLATE lv_col TO UPPER CASE.
+
+  LOOP AT table ASSIGNING &lt;lf_line&gt;.
+
+    &quot;I would like a more elegant way to get the line
+    IF lo_descr IS NOT BOUND.
+      lo_descr ?= cl_abap_typedescr=&gt;describe_by_data( &lt;lf_line&gt; ).
+    ENDIF.
+
+    &quot;Find the field we are interested in
+    READ TABLE lo_descr-&gt;components TRANSPORTING NO FIELDS
+      WITH KEY name = lv_col.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;Raise column not found
+      CONCATENATE &apos;No existe la columna&apos; lv_col into message SEPARATED BY space.
+    ENDIF.
+
+    ASSIGN COMPONENT sy-tabix
+      OF STRUCTURE &lt;lf_line&gt; TO &lt;lf_field&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;This should never happen
+      EXIT.
+    ELSE.
+
+      TRY.
+          IF val IS INITIAL
+            OR &lt;lf_field&gt; &gt; val.
+
+            &quot;Save max value
+            val = &lt;lf_field&gt;.
+
+          ENDIF.
+
+        CATCH cx_sy_conversion_no_number INTO lo_error.
+
+          message = &apos;Error en conversion&apos;.
+
+      ENDTRY.
+    ENDIF.
+
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_LINE" VERSION="1" LANGU="S" DESCRIPT="Get line with min value for column" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_LINE" SCONAME="TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_LINE" SCONAME="COLUMN" VERSION="1" LANGU="S" DESCRIPT="Field name" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAME_FELD"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_LINE" SCONAME="LINE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_LINE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method GET_MIN_LINE.
+**********************************************************************
+* Author: Bruno Esperança
+* Description: Get the line with the minimum value of a certain field
+**********************************************************************
+
+  FIELD-SYMBOLS:
+        &lt;lf_table&gt; TYPE STANDARD TABLE,
+        &lt;lf_line&gt; TYPE any,
+        &lt;lf_field&gt; TYPE any,
+        &lt;lf_max&gt; TYPE any.
+
+  DATA:
+        lo_descr  TYPE REF TO cl_abap_structdescr,
+        lv_col    TYPE name_feld,
+        lo_error  TYPE REF TO cx_root,
+        lv_max    TYPE p.
+
+  &quot;Make sure the field is in upper case
+  lv_col = column.
+  TRANSLATE lv_col TO UPPER CASE.
+
+  LOOP AT table ASSIGNING &lt;lf_line&gt;.
+
+    &quot;I would like a more elegant way to get the line struct
+    IF lo_descr IS NOT BOUND.
+      lo_descr ?= cl_abap_typedescr=&gt;describe_by_data( &lt;lf_line&gt; ).
+    ENDIF.
+
+    &quot;Find the field we are interested in
+    READ TABLE lo_descr-&gt;components TRANSPORTING NO FIELDS
+      WITH KEY name = lv_col.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;Raise column not found
+      CONCATENATE &apos;No existe la columna&apos; lv_col into message SEPARATED BY space.
+    ENDIF.
+
+    ASSIGN COMPONENT sy-tabix
+      OF STRUCTURE &lt;lf_line&gt; TO &lt;lf_field&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;This should never happen
+      EXIT.
+    ELSE.
+
+      TRY.
+          IF lv_max IS INITIAL
+            OR &lt;lf_field&gt; &lt; lv_max.
+
+            &quot;Save min value and line
+            line = &lt;lf_line&gt;.
+            lv_max = &lt;lf_field&gt;.
+
+          ENDIF.
+
+        CATCH cx_sy_conversion_no_number INTO lo_error.
+          message = &apos;Error en conversion&apos;.
+      ENDTRY.
+    ENDIF.
+
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_VAL" VERSION="1" LANGU="S" DESCRIPT="Get min value for column" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_VAL" SCONAME="TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_VAL" SCONAME="COLUMN" VERSION="1" LANGU="S" DESCRIPT="Field name" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NAME_FELD"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_VAL" SCONAME="VAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_MIN_VAL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>method GET_MIN_VAL.
+**********************************************************************
+* Author: Bruno Esperança
+* Description: Get the minimum value of a certain field
+**********************************************************************
+
+  FIELD-SYMBOLS:
+        &lt;lf_table&gt; TYPE STANDARD TABLE,
+        &lt;lf_line&gt; TYPE any,
+        &lt;lf_field&gt; TYPE any,
+        &lt;lf_max&gt; TYPE any.
+
+  DATA:
+        lo_descr  TYPE REF TO cl_abap_structdescr,
+        lv_col    TYPE name_feld,
+        lo_error  TYPE REF TO cx_root.
+
+  &quot;Make sure the field is in upper case
+  lv_col = column.
+  TRANSLATE lv_col TO UPPER CASE.
+
+  LOOP AT table ASSIGNING &lt;lf_line&gt;.
+
+    &quot;I would like a more elegant way to get the line
+    IF lo_descr IS NOT BOUND.
+      lo_descr ?= cl_abap_typedescr=&gt;describe_by_data( &lt;lf_line&gt; ).
+    ENDIF.
+
+    &quot;Find the field we are interested in
+    READ TABLE lo_descr-&gt;components TRANSPORTING NO FIELDS
+      WITH KEY name = lv_col.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;Raise column not found
+      CONCATENATE &apos;No existe la columna&apos; lv_col into message SEPARATED BY space.
+    ENDIF.
+
+    ASSIGN COMPONENT sy-tabix
+      OF STRUCTURE &lt;lf_line&gt; TO &lt;lf_field&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      &quot;This should never happen
+      EXIT.
+    ELSE.
+
+      TRY.
+          IF val IS INITIAL
+            OR &lt;lf_field&gt; &lt; val.
+
+            &quot;Save min value
+            val = &lt;lf_field&gt;.
+
+          ENDIF.
+
+        CATCH cx_sy_conversion_no_number INTO lo_error.
+
+          message = &apos;Error en conversion&apos;.
+
+      ENDTRY.
+    ENDIF.
+
+  ENDLOOP.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_RANGO_CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Recupera rango campos" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_RANGO_CAMPOS" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="GET_RANGO_CAMPOS" SCONAME="RANGO" VERSION="1" LANGU="S" DESCRIPT="Tabla de strings" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_RANGEFIELDNAME"/>
+  <source>method GET_RANGO_CAMPOS.
+  DATA: lr_field TYPE zrnrangefieldname,
+        i_campos TYPE table_of_strings.
+  FIELD-SYMBOLS &lt;string&gt; TYPE string.
+
+
+
+  CLEAR lr_field.
+  lr_field-option = &apos;EQ&apos;.
+  lr_field-sign   = &apos;I&apos;.
+  IF lista IS INITIAL.
+    lr_field-low    = &apos;?&apos;.
+    APPEND lr_field TO rango.
+  ELSE.
+    i_campos = get_lista_campo( lista ).
+    LOOP AT i_campos ASSIGNING &lt;string&gt;.
+      lr_field-low    = &lt;string&gt;.
+      APPEND lr_field TO rango.
+    ENDLOOP.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="LIBERAR_MEMORIA" VERSION="1" LANGU="S" DESCRIPT="Liberar memoria de la tabla" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="LIBERAR_MEMORIA" SCONAME="CH_T_TAB" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD liberar_memoria.
+    FIELD-SYMBOLS: &lt;fs_table&gt;    TYPE STANDARD TABLE,
+                   &lt;fs_line&gt;     TYPE any,
+                   &lt;fs_tab_line&gt; TYPE any.
+    DATA: lo_struct_typ   TYPE REF TO cl_abap_structdescr,
+          lo_dyntable_typ TYPE REF TO cl_abap_tabledescr,
+          lt_dyntable     TYPE REF TO data,
+          ls_dyntable     TYPE REF TO data.
+    READ TABLE ch_t_tab INDEX 1
+      ASSIGNING &lt;fs_tab_line&gt;.
+    lo_struct_typ ?= cl_abap_typedescr=&gt;describe_by_data( &lt;fs_tab_line&gt; ).
+    lo_dyntable_typ = cl_abap_tabledescr=&gt;create( p_line_type = lo_struct_typ ).
+    CREATE DATA: lt_dyntable TYPE HANDLE lo_dyntable_typ,
+                 ls_dyntable TYPE HANDLE lo_struct_typ.
+    ASSIGN: ls_dyntable-&gt;* TO &lt;fs_line&gt;,
+            lt_dyntable-&gt;* TO &lt;fs_table&gt;.
+    LOOP AT ch_t_tab ASSIGNING &lt;fs_tab_line&gt;.
+      MOVE-CORRESPONDING &lt;fs_tab_line&gt; TO &lt;fs_line&gt;.
+      APPEND &lt;fs_line&gt; TO &lt;fs_table&gt;.
+    ENDLOOP.
+    FREE ch_t_tab.
+    ch_t_tab[] = &lt;fs_table&gt;.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="MOVER_CAMPOS_NO_VACIOS" VERSION="1" LANGU="S" DESCRIPT="Mover datos no vacios" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="MOVER_CAMPOS_NO_VACIOS" SCONAME="ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="MOVER_CAMPOS_NO_VACIOS" SCONAME="DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD mover_campos_no_vacios.
+  DATA: o_campos_origen TYPE REF TO cl_abap_structdescr,
+        o_campos_destino TYPE REF TO cl_abap_structdescr,
+        i_campos_origen TYPE cl_abap_structdescr=&gt;component_table,
+        i_campos_destino TYPE cl_abap_structdescr=&gt;component_table.
+
+  FIELD-SYMBOLS: &lt;campos_origen&gt; TYPE cl_abap_structdescr=&gt;component,
+                 &lt;campos_destino&gt; TYPE cl_abap_structdescr=&gt;component,
+                 &lt;origen&gt; TYPE ANY,
+                 &lt;destino&gt; TYPE ANY.
+
+  o_campos_origen ?= cl_abap_structdescr=&gt;describe_by_data( origen ).
+  i_campos_origen = o_campos_origen-&gt;get_components( ).
+
+  o_campos_destino ?= cl_abap_structdescr=&gt;describe_by_data( destino ).
+  i_campos_destino = o_campos_destino-&gt;get_components( ).
+
+  LOOP AT i_campos_origen ASSIGNING &lt;campos_origen&gt;.
+    ASSIGN COMPONENT &lt;campos_origen&gt;-name OF STRUCTURE origen TO &lt;origen&gt;.
+    IF sy-subrc = 0.
+      IF NOT &lt;origen&gt; IS INITIAL.
+        READ TABLE i_campos_destino TRANSPORTING NO FIELDS WITH KEY name = &lt;campos_origen&gt;-name.
+        IF sy-subrc = 0.
+          ASSIGN COMPONENT &lt;campos_origen&gt;-name OF STRUCTURE destino TO &lt;destino&gt;.
+          IF sy-subrc = 0.
+            IF &lt;destino&gt; IS INITIAL.
+              &lt;destino&gt; = &lt;origen&gt;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDLOOP.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" VERSION="1" LANGU="S" DESCRIPT="Compara tablas internas y verifica si son iguales" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="T1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="T2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="QUITAR_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="ORDENAR_POR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ITAB" CMPNAME="TABLAS_IGUALES" SCONAME="IGUALES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD tablas_iguales.
+  DATA: t1_data TYPE REF TO data,
+        l1_data TYPE REF TO data,
+        t2_data TYPE REF TO data,
+        l2_data TYPE REF TO data,
+        lines1  TYPE i,
+        lines2  TYPE i.
+
+  FIELD-SYMBOLS: &lt;n_tt1&gt; TYPE table,
+                 &lt;t1&gt;    TYPE any,
+                 &lt;n_t1&gt;  TYPE any,
+                 &lt;n_tt2&gt; TYPE table,
+                 &lt;t2&gt;    TYPE any,
+                 &lt;n_t2&gt;  TYPE any.
+
+  DESCRIBE TABLE t1 LINES lines1.
+  DESCRIBE TABLE t2 LINES lines2.
+
+  IF lines1 NE lines2.
+    EXIT.
+  ENDIF.
+
+  IF t1 = t2.
+    iguales = &apos;X&apos;.
+    EXIT.
+  ELSE.
+    copiar_tabla( EXPORTING tabla = t1
+                            quitar_campos    = quitar_campos
+                            solo_campos      = solo_campos
+                  IMPORTING nueva_tabla_data = t1_data ).
+
+    ASSIGN t1_data-&gt;* TO &lt;n_tt1&gt;.
+    CHECK sy-subrc = 0.
+
+    CREATE DATA l1_data LIKE LINE OF &lt;n_tt1&gt;.
+
+    ASSIGN l1_data-&gt;* TO &lt;n_t1&gt;.
+    CHECK sy-subrc = 0.
+
+    copiar_tabla( EXPORTING tabla = t2
+                            quitar_campos    = quitar_campos
+                            solo_campos      = solo_campos
+                  IMPORTING nueva_tabla_data = t2_data ).
+
+    ASSIGN t2_data-&gt;* TO &lt;n_tt2&gt;.
+    CHECK sy-subrc = 0.
+
+    CREATE DATA l2_data LIKE LINE OF &lt;n_tt2&gt;.
+
+    ASSIGN l2_data-&gt;* TO &lt;n_t1&gt;.
+    CHECK sy-subrc = 0.
+
+    IF ordenar_por IS INITIAL.
+      SORT: &lt;n_tt1&gt;, &lt;n_tt2&gt;.
+    ELSE.
+      SORT: &lt;n_tt1&gt; BY (ordenar_por).
+      SORT: &lt;n_tt2&gt; BY (ordenar_por).
+    ENDIF.
+
+    IF &lt;n_tt1&gt; = &lt;n_tt2&gt;.
+      iguales = &apos;X&apos;.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

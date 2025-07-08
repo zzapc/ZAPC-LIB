@@ -1,0 +1,405 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : Listado log
+* DESCRIPCION : Listado log
+*
+* AUTOR: Andrés Picazo                                FECHA: 13/02/2015
+* ANALISTA: Andrés Picazo
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+*
+* MODIFICACIONES
+* 15/01/2015 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zlog_ap.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: zlog_ap, zlog_param, sscrfields.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_listado,
+         check,
+         lights,
+         proceso  TYPE zlog_ap-proceso,
+         clave    TYPE zlog_ap-clave,
+         progname TYPE zlog_ap-progname,
+         fecha    TYPE zlog_ap-fecha,
+         hora     TYPE zlog_ap-hora,
+         usuario  TYPE zlog_ap-usuario,
+         indice   TYPE zlog_ap-indice,
+         msgv1    TYPE zlog_ap-msgv1,
+         msgv2    TYPE zlog_ap-msgv2,
+         msgv3    TYPE zlog_ap-msgv3,
+         msgv4    TYPE zlog_ap-msgv4,
+         msgty    TYPE zlog_ap-msgty,
+         msgid    TYPE zlog_ap-msgid,
+         msgno    TYPE zlog_ap-msgno,
+         message  TYPE zlog_ap-message,
+         fichero  TYPE zlog_ap-fichero,
+       END OF t_listado.
+DATA: i_listado TYPE TABLE OF t_listado,
+      l_listado TYPE t_listado.
+
+FIELD-SYMBOLS <listado> TYPE t_listado.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: top_of_page REDEFINITION.
+ENDCLASS. "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+define: sel_msgv.
+selection-screen begin of line.
+selection-screen position 1.
+PARAMETERS p_msgv&1 like t001-butxt MODIF ID MSG DEFAULT 'Variable msg. &1'.
+selection-screen position 30.
+select-options: s_msgv&1 for  zlog_ap-msgv&1.
+selection-screen end of line.
+ end-of-DEFINITION.
+
+data tline type tline.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME.
+SELECT-OPTIONS: s_proces FOR zlog_ap-proceso,
+                s_clave   FOR tline-tdline,
+                s_progra FOR zlog_ap-progname,
+                s_fecha   FOR zlog_ap-fecha DEFAULT sy-datum,
+                s_hora    FOR zlog_ap-hora,
+                s_usuari FOR zlog_ap-usuario,
+                s_messa   FOR zlog_ap-message,
+                s_ficher FOR zlog_ap-fichero,
+                s_msgty   FOR zlog_ap-msgty.
+sel_msgv: 1, 2, 3, 4.
+
+
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+SELECTION-SCREEN: FUNCTION KEY 2,
+                  FUNCTION KEY 3,
+                  FUNCTION KEY 4.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    READ TABLE i_listado INTO l_listado INDEX row.
+    IF sy-subrc = 0.
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_excel( ).
+      WHEN 'REFRESCAR'.
+        o_prog->seleccionar_datos( ).
+        refresh( ).
+      WHEN 'BORRAR'.
+        get_seleccion( ).
+        LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+          DELETE FROM  zlog_ap
+            WHERE  proceso   = <listado>-proceso
+                 AND    progname  = <listado>-progname
+                 AND    clave     = <listado>-clave
+                 AND    fecha     = <listado>-fecha
+                 AND    hora      = <listado>-hora
+                 AND    usuario   = <listado>-usuario
+                 AND    indice    = <listado>-indice.
+          DELETE i_listado.
+        ENDLOOP.
+        refresh( ).
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+  METHOD top_of_page.
+    CLEAR o_content.
+
+    o_top_page->set_titulo( sy-title ).
+
+    o_top_page->add_rango_auto( ).
+    o_top_page->add_rango( texto = 'Proceso' rango = s_proces[] ).
+    o_top_page->add_rango( texto = 'Clave' rango = s_clave[] ).
+    o_top_page->crea_info_seleccion( ).
+
+    o_content = o_top_page->get_grid( ).
+
+  ENDMETHOD.                    "top_of_page
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+
+* Borramos registros con más 4 meses de antiguedad
+    fecha = sy-datum - 120.
+    UPDATE zlog_ap
+      SET fecha = sy-datum
+    WHERE fecha = '00000000'.
+
+    DELETE FROM zlog_ap
+     WHERE fecha < fecha.
+
+    seleccionar_datos( ).
+    listado( ).
+
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+data: r_msgv1 type range of sy-msgv1,
+      r_msgv2 type range of sy-msgv2,
+      r_msgv3 type range of sy-msgv3,
+      r_msgv4 type range of sy-msgv4,
+      lr_msgv1 like line of r_msgv1.
+
+define set_r_msgv.
+  r_msgv&1 = s_msgv&1[].
+
+  if p_msgv&1 = 'MATERIAL' or p_msgv&1(7) = 'ENTREGA'.
+    loop at r_msgv&1 into lr_msgv1 where option = 'EQ'.
+      lr_msgv1-option = 'CP'.
+      CONCATENATE '*' lr_msgv1-low into lr_msgv1-low.
+      modify r_msgv&1 from lr_msgv1.
+    endloop.
+
+  endif.
+end-OF-DEFINITION.
+
+set_r_msgv: 1, 2, 3, 4.
+
+    CLEAR i_listado.
+
+    sgpi_texto( 'Seleccionando datos' ).
+    SELECT * FROM zlog_ap
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE proceso  IN s_proces
+       AND clave    IN s_clave
+       AND progname IN s_progra
+       AND fecha    IN s_fecha
+       AND hora     IN s_hora
+       AND usuario  IN s_usuari
+       AND msgv1    IN r_msgv1
+       AND msgv2    IN r_msgv2
+       AND msgv3    IN r_msgv3
+       AND msgv4    IN r_msgv4
+       AND message  IN s_messa
+       AND msgty    IN s_msgty
+       AND fichero  IN s_ficher.
+
+    LOOP AT i_listado ASSIGNING <listado>.
+      IF <listado>-msgty = 'E'.
+        <listado>-lights = zcl_ap_alv=>c_sem_rojo..
+      ELSEIF <listado>-msgty = 'I' OR <listado>-msgty = 'S'.
+        <listado>-lights = zcl_ap_alv=>c_sem_verde.
+      ELSEIF <listado>-msgty = 'W'.
+        <listado>-lights = zcl_ap_alv=>c_sem_ambar.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe' ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->set_field_noout( 'MSGTY,MSGID,MSGNO' ).
+
+    IF NOT zlog_param-msgv1 IS INITIAL.
+      IF zlog_param-msgv1 = 'INVISIBLE'.
+        o_alv->set_field_noout( 'MSGV1' ).
+      ELSE.
+        o_alv->set_field_text( campo = 'MSGV1' valor = zlog_param-msgv1 ).
+      ENDIF.
+    ENDIF.
+    IF NOT zlog_param-msgv2 IS INITIAL.
+      IF zlog_param-msgv2 = 'INVISIBLE'.
+        o_alv->set_field_noout( 'MSGV2' ).
+      ELSE.
+        o_alv->set_field_text( campo = 'MSGV2' valor = zlog_param-msgv2 ).
+      ENDIF.
+    ENDIF.
+    IF NOT zlog_param-msgv3 IS INITIAL.
+      IF zlog_param-msgv3 = 'INVISIBLE'.
+        o_alv->set_field_noout( 'MSGV3' ).
+      ELSE.
+        o_alv->set_field_text( campo = 'MSGV3' valor = zlog_param-msgv3 ).
+      ENDIF.
+    ENDIF.
+    IF NOT zlog_param-msgv4 IS INITIAL.
+      IF zlog_param-msgv4 = 'INVISIBLE'.
+        o_alv->set_field_noout( 'MSGV4' ).
+      ELSE.
+        o_alv->set_field_text( campo = 'MSGV4' valor = zlog_param-msgv4 ).
+      ENDIF.
+    ENDIF.
+
+    o_alv->set_orden( 'FECHA,HORA,PROCESO,USUARIO,PROGNAME,INDICE,CLAVE' ).
+    o_alv->ocultar_columnas_vacias( ).
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = 'INICIO'
+      get_nombre_pc = 'X'
+      no_param      = 'X'.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status = 'STANDARD'
+      lights = 'LIGHTS'.
+  p_vari = o_alv->get_default_layout( ).
+
+  o_prog->initialization( EXPORTING nombre_pc = o_prog->nombre_pc CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+at SELECTION-SCREEN output.
+
+  READ TABLE s_proces INDEX 1.
+  IF sy-subrc = 0.
+    SELECT SINGLE * FROM zlog_param
+      INTO zlog_param
+     WHERE proceso = s_proces-low.
+    if sy-subrc = 0.
+      if not zlog_param-msgv1 is initial.
+      p_msgv1 = zlog_param-msgv1.
+      endif.
+      if not zlog_param-msgv2 is initial.
+      p_msgv2 = zlog_param-msgv2.
+      endif.
+      if not zlog_param-msgv3 is initial.
+      p_msgv3 = zlog_param-msgv3.
+      endif.
+      if not zlog_param-msgv4 is initial.
+      p_msgv4 = zlog_param-msgv4.
+      endif.
+    endif.
+  ENDIF.
+
+  loop at screen.
+    if screen-group1 = 'MSG'.
+      screen-input = '0'.
+      screen-DISPLAY_3D = '0'.
+
+      if screen-name = 'P_MSGV1' and zlog_param-msgv1 = 'INVISIBLE'. SCREEN-INVISIBLE = 1.
+      ELSEIF screen-name = 'P_MSGV2' and zlog_param-msgv2 = 'INVISIBLE'. SCREEN-INVISIBLE = 1.
+      ELSEIF screen-name = 'P_MSGV3' and zlog_param-msgv3 = 'INVISIBLE'. SCREEN-INVISIBLE = 1.
+      ELSEIF screen-name = 'P_MSGV4' and zlog_param-msgv4 = 'INVISIBLE'. SCREEN-INVISIBLE = 1.
+      ENDIF.
+      modify screen.
+    endif.
+  endloop.
+
+
+
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+
+  o_prog->at_selection(  ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection(  ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_proces-low.
+  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z.
+
+  CREATE OBJECT o_popup
+    EXPORTING
+      tabname = 'zlog_ap'.
+
+  o_popup->add_field( field = 'PROCESO' selectflag = 'X' ).
+  o_popup->add_field( 'PROGNAME' ).
+  o_popup->add_field( 'FECHA' ).
+  o_popup->add_field( 'MSGV1' ).
+
+  SELECT proceso progname COUNT( * ) FROM zlog_ap
+    INTO (zlog_ap-proceso, zlog_ap-progname, sy-tfill )
+   GROUP BY proceso progname
+   ORDER BY proceso progname.
+    o_popup->add_valor( zlog_ap-proceso ).
+    o_popup->add_valor( zlog_ap-progname ).
+    SELECT MAX( fecha ) FROM zlog_ap
+      INTO zlog_ap-fecha
+     WHERE proceso = zlog_ap-proceso
+       AND progname = zlog_ap-progname.
+      o_popup->add_valor( zlog_ap-fecha ).
+      o_popup->add_valor( sy-tfill ).
+    ENDSELECT.
+
+    o_popup->matchcode( EXPORTING field   = 'PROCESO'
+                        CHANGING  valor   = s_proces-low ).
+
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

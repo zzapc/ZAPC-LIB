@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_EXITS" VERSION="1" LANGU="S" DESCRIPT="Userexits creación de pedidos" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="ADU" ENTRY="activa dependiente de usuario, pero lista usuarios vacía" LENGTH="112 "/>
+   <textElement ID="I" KEY="APU" ENTRY="activa para los usuarios" LENGTH="48 "/>
+   <textElement ID="I" KEY="ASU" ENTRY="activa SÓLO para los usuarios" LENGTH="58 "/>
+   <textElement ID="I" KEY="DCC" ENTRY="Documento cumple condición" LENGTH="52 "/>
+   <textElement ID="I" KEY="DEC" ENTRY="Documento excluido por condición" LENGTH="64 "/>
+   <textElement ID="I" KEY="DNC" ENTRY="Documento no cumple condición" LENGTH="58 "/>
+   <textElement ID="I" KEY="EXI" ENTRY="Exit" LENGTH="14 "/>
+   <textElement ID="I" KEY="INA" ENTRY="inactiva" LENGTH="18 "/>
+   <textElement ID="I" KEY="NAU" ENTRY="NO activa para usuarios" LENGTH="46 "/>
+   <textElement ID="I" KEY="NOD" ENTRY="no definida" LENGTH="21 "/>
+   <textElement ID="I" KEY="PAR" ENTRY="Parámetro" LENGTH="19 "/>
+   <textElement ID="I" KEY="SIN" ENTRY="sin informar" LENGTH="22 "/>
+   <textElement ID="I" KEY="VAL" ENTRY="Valor" LENGTH="15 "/>
+   <textElement ID="I" KEY="VNC" ENTRY="Valor no es cantidad en" LENGTH="46 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_EXITS" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="CLAVE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="COND_OR" VERSION="1" LANGU="S" DESCRIPT="Casilla de selección" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="XFELD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="GUARDAR_LOG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="ID" VERSION="1" LANGU="S" DESCRIPT="Include exit usuario" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_EXITS-ID" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="I_CONDICIONES" VERSION="1" LANGU="S" DESCRIPT="Condiciones" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_EXITS_PAR_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="I_CONDICIONES_AGRUP" VERSION="1" LANGU="S" DESCRIPT="Condiciones agrupadas" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_EXITS_PAR_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="I_VARIABLES" VERSION="1" LANGU="S" DESCRIPT="Variables" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_EXITS_PAR_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="O_LOG" VERSION="1" LANGU="S" DESCRIPT="Log" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_LOG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-UNAME" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EXITS" CMPNAME="ZAP_EXITS" VERSION="1" LANGU="S" DESCRIPT="Exits de cliente" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZAP_EXITS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="ACTIVA" VERSION="1" LANGU="S" DESCRIPT="¿Exit activa?" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="ACTIVA" SCONAME="CONDICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="ACTIVA" SCONAME="VALOR_CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="ACTIVA" SCONAME="ACTIVA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD activa.
+    IF zap_exits-activa = &apos;X&apos;.
+      activa = zap_exits-activa.
+    ELSEIF zap_exits-activa = &apos;U&apos;.
+      IF zap_exits-usuarios_activos IS INITIAL.
+        log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;activa dependiente de usuario, pero lista usuarios vacía&apos;(adu) msgty = &apos;W&apos; ).
+      ELSEIF zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_activos elemento = uname ) = &apos;X&apos;.
+        activa = &apos;X&apos;.
+        log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;activa para los usuarios&apos;(apu) p4 = zap_exits-usuarios_activos msgty = &apos;S&apos; ).
+      ELSE.
+        log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;activa SÓLO para los usuarios&apos;(asu) p4 = zap_exits-usuarios_activos msgty = &apos;E&apos; ).
+      ENDIF.
+    ELSE.
+      log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;inactiva&apos;(ina) msgty = &apos;W&apos; ).
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-usuarios_no_exit IS INITIAL.
+      IF zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_no_exit elemento = uname ) = &apos;X&apos;.
+        CLEAR activa.
+        log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;NO activa para usuarios&apos;(nau) p4 = zap_exits-usuarios_no_exit  msgty = &apos;E&apos; ).
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-ffin IS INITIAL.
+      IF NOT ( zap_exits-ffin &gt;= sy-datum AND zap_exits-finicio &lt;= sy-datum ).
+        log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;no activa a fecha de hoy&apos; p4 = &apos;Sólo desde&apos; p5 = zap_exits-finicio p6 = &apos;a&apos; p7 = zap_exits-ffin msgty = &apos;S&apos; ).
+        CLEAR activa.
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos;.
+      IF NOT condicion IS INITIAL.
+        IF NOT line_exists( i_condiciones[ clave = condicion clave2 = valor_clave2 ] ).
+          IF line_exists( i_condiciones[ clave = condicion  ] ). &quot; Sólo desactivamos si hay alguna entrada para la condición
+            CLEAR activa.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-usuarios_break IS INITIAL.
+      IF zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_break elemento = uname ) = &apos;X&apos;.
+        BREAK-POINT.                                          &quot;#EC *
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" SCONAME="EXIT" VERSION="1" LANGU="S" DESCRIPT="Include exit usuario" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" SCONAME="INCLUDE" VERSION="1" LANGU="S" DESCRIPT="Include" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" SCONAME="FORM" VERSION="1" LANGU="S" DESCRIPT="Form" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CONSTRUCTOR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <source>METHOD constructor.
+    DATA l_report TYPE sy-cprog.
+
+    l_report = exit.
+
+    IF NOT include IS INITIAL.
+      CONCATENATE l_report include INTO l_report SEPARATED BY &apos;_INC_&apos;.
+    ENDIF.
+
+    IF NOT form IS INITIAL.
+      CONCATENATE l_report form INTO l_report SEPARATED BY &apos;_FORM_&apos;.
+    ENDIF.
+    o_log = NEW #(
+      object                = &apos;EXITS&apos;
+      report                = l_report
+      clave                 = clave
+      guardar_tabla_interna = &apos;X&apos; ).
+
+    SELECT SINGLE * FROM zap_exits
+    INTO zap_exits
+   WHERE id = exit.
+    IF sy-subrc &lt;&gt; 0.
+      o_log-&gt;log( p1 = &apos;Exit&apos;(exi) p2 = id p3 = &apos;no definida&apos;(nod) ).
+    ENDIF.
+
+    id = exit.
+    guardar_log = zap_exits-grabar_log.
+    me-&gt;uname = uname.
+    me-&gt;clave = clave.
+
+    SELECT * FROM zap_exits_par
+    INTO TABLE i_condiciones
+   WHERE id   = id
+     AND tipo = &apos;C&apos;
+    ORDER BY PRIMARY KEY.
+
+    i_condiciones_agrup = i_condiciones.
+    DELETE ADJACENT DUPLICATES FROM i_condiciones_agrup COMPARING clave.
+
+    SELECT * FROM zap_exits_par
+    INTO TABLE i_variables
+   WHERE id   = id
+     AND tipo = &apos;V&apos;
+    ORDER BY PRIMARY KEY.
+
+    IF line_exists( i_variables[ clave = &apos;COND_OR&apos; ] ).
+      cond_or = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND" VERSION="1" LANGU="S" DESCRIPT="Comple condiciones" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD cumple_cond.
+    DATA: l_cond       TYPE zap_exits_par,
+          l_valor_cond TYPE string,
+          l_cumple     TYPE c LENGTH 1.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    IF i_condiciones IS INITIAL.
+      si = &apos;X&apos;.
+    ELSE.
+      LOOP AT i_condiciones_agrup INTO l_cond.
+        CASE l_cond-clave.
+          WHEN OTHERS.
+            ASSIGN (l_cond-clave) TO &lt;fs&gt;.
+            IF sy-subrc = 0.
+              l_valor_cond = &lt;fs&gt;.
+            ELSE.
+              log( p1 = &apos;Condición&apos; p2 = l_cond-clave p3 = &apos;desconocida&apos; ).
+            ENDIF.
+        ENDCASE.
+
+        l_cumple = eval_cond( clave = l_cond-clave valor = l_valor_cond ).
+        IF l_cumple IS INITIAL AND cond_or IS INITIAL.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+      IF l_cumple = &apos;X&apos;.
+        si = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" VERSION="1" LANGU="S" DESCRIPT="Verifica si cumple condición mirando CLAVE2 (static)" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" SCONAME="EXIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" SCONAME="CONDICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" SCONAME="SIN_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="CUMPLE_COND_CLAVE2" SCONAME="CUMPLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD cumple_cond_clave2.
+    DATA l_valor_sin_ceros TYPE zap_exits_par-clave2.
+
+    CLEAR cumple.
+    l_valor_sin_ceros = valor.
+    IF sin_ceros = &apos;X&apos;.
+      __quitar_ceros l_valor_sin_ceros.
+    ENDIF.
+
+    SELECT SINGLE clave2 FROM zap_exits_par
+    INTO l_valor_sin_ceros
+   WHERE id    = exit
+     AND tipo  = &apos;C&apos;
+     AND clave = condicion
+     AND ( clave2 = valor OR clave2 = l_valor_sin_ceros ).
+    IF sy-subrc = 0.
+      cumple = &apos;X&apos;.
+    ELSE.
+      SELECT SINGLE clave2 FROM zap_exits_par &quot; Si no existe la condición, también lo doy por buena
+      INTO l_valor_sin_ceros
+     WHERE id    = exit
+       AND tipo  = &apos;C&apos;
+       AND clave = condicion.
+      IF sy-subrc &lt;&gt; 0.
+        cumple = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="EVAL_COND" VERSION="1" LANGU="S" DESCRIPT="Evalua condición" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EVAL_COND" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EVAL_COND" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EVAL_COND" SCONAME="CUMPLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD eval_cond.
+    DATA: l_cumple              TYPE c LENGTH 1,
+          l_cond2               TYPE zap_exits_par,
+          l_string              TYPE string,
+          l_no_cumple           TYPE c LENGTH 1,
+          l_excluido            TYPE c LENGTH 1,
+          l_cumple_no_exclusion TYPE c LENGTH 1.
+
+    IF line_exists( i_condiciones[ clave  = clave
+                                   clave2 = valor
+                                   clave3 = &apos;&apos; ] ).
+      l_cumple = &apos;X&apos;.
+      log( p1 = &apos;Documento cumple condicion&apos;(dcc) p2 = clave p3 = valor msgty = &apos;S&apos; ).
+    ELSE.
+      LOOP AT i_condiciones INTO l_cond2 WHERE clave = clave AND clave3 = &apos;&apos;.
+        __add_lista l_string l_cond2-clave2.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        l_no_cumple = &apos;X&apos;.
+        IF guardar_log = &apos;X&apos;.
+          log( p1 = &apos;Documento no cumple condicion&apos;(dnc) p2 = clave p3 = l_string p4 = &apos;Valor&apos;(val) p5 = valor msgty = &apos;W&apos; ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF line_exists( i_condiciones[ clave  = clave
+                                   clave2 = valor
+                                   clave3 = &apos;EXCLUIR&apos; ] ).
+      l_excluido = &apos;X&apos;.
+      IF guardar_log = &apos;X&apos;.
+        log( p1 = &apos;Documento excluido por condicion&apos;(dec) p2 = clave p3 = valor msgty = &apos;S&apos; ).
+      ENDIF.
+    ELSE.
+      IF line_exists( i_condiciones[ clave  = clave
+                                     clave3 = &apos;EXCLUIR&apos; ] ).
+        l_cumple_no_exclusion = &apos;X&apos;.
+        l_cumple = l_cumple_no_exclusion.
+      ENDIF.
+    ENDIF.
+    IF l_cumple = &apos;X&apos; AND l_no_cumple = &apos;&apos; AND l_excluido IS INITIAL.
+      cumple = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" VERSION="1" LANGU="S" DESCRIPT="Existe condición" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_CONDICION" SCONAME="SI" VERSION="1" LANGU="S" DESCRIPT="Valor" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_condicion.
+    DATA: l_clave2    TYPE zap_exits_par-clave2,
+          l_condicion TYPE zap_exits_par.
+
+    l_clave2 = clave2.
+    IF quitar_ceros = &apos;X&apos;.
+      __quitar_ceros l_clave2.
+    ENDIF.
+
+    CLEAR: l_condicion, si.
+    IF clave3 IS INITIAL.
+      LOOP AT i_condiciones INTO l_condicion WHERE     clave = clave
+                                                   AND ( clave2 = clave2 OR clave2 = l_clave2 )
+                                                   AND clave3 = clave3.
+        EXIT.
+      ENDLOOP.
+    ELSE.
+      LOOP AT i_condiciones INTO l_condicion WHERE clave = clave AND clave2 = clave2 AND ( clave3 = &apos;&apos; OR clave3 = sy-sysid ).
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+    IF NOT l_condicion IS INITIAL.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" VERSION="1" LANGU="S" DESCRIPT="Existe variable" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" SCONAME="QUITAR_CEROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXISTE_VARIABLE" SCONAME="SI" VERSION="1" LANGU="S" DESCRIPT="Valor" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe_variable.
+    DATA: l_clave2   TYPE zap_exits_par-clave2,
+          l_variable TYPE zap_exits_par.
+
+    l_clave2 = clave2.
+    IF quitar_ceros = &apos;X&apos;.
+      __quitar_ceros l_clave2.
+    ENDIF.
+
+    CLEAR: l_variable, si.
+    IF clave3 IS INITIAL.
+      LOOP AT i_variables INTO l_variable WHERE     clave = clave
+                                                AND ( clave2 = clave2 OR clave2 = l_clave2 )
+                                                AND clave3 = clave3.
+        EXIT.
+      ENDLOOP.
+    ELSE.
+      LOOP AT i_variables INTO l_variable WHERE clave = clave AND clave2 = clave2 AND ( clave3 = &apos;&apos; OR clave3 = sy-sysid ).
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+    IF NOT l_variable IS INITIAL.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" VERSION="1" LANGU="S" DESCRIPT="¿Exit activa? (static)" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="EXIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="CONDICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="VALOR_CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="EXIT_ACTIVA" SCONAME="ACTIVA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD exit_activa.
+    DATA zap_exits TYPE zap_exits.
+
+    SELECT SINGLE activa usuarios_activos usuarios_no_exit usuarios_break FROM zap_exits
+    INTO CORRESPONDING FIELDS OF zap_exits
+   WHERE id = exit.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF zap_exits-activa = &apos;X&apos;.
+      activa = zap_exits-activa.
+    ELSEIF zap_exits-activa = &apos;U&apos; AND NOT zap_exits-usuarios_activos IS INITIAL.
+      activa = zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_activos elemento = uname ).
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-usuarios_no_exit IS INITIAL.
+      IF zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_no_exit elemento = uname ) = &apos;X&apos;.
+        CLEAR activa.
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-ffin IS INITIAL.
+      IF NOT ( zap_exits-ffin &gt;= sy-datum AND zap_exits-finicio &lt;= sy-datum ).
+        CLEAR activa.
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos;.
+      IF NOT condicion IS INITIAL.
+        SELECT id
+          FROM zap_exits_par
+          WHERE id = @exit
+            AND tipo = &apos;C&apos;
+            AND clave = @condicion
+            AND clave2 = @valor_clave2
+          ORDER BY PRIMARY KEY
+          INTO @zap_exits-id
+          UP TO 1 ROWS.
+        ENDSELECT.
+        IF sy-subrc &lt;&gt; 0.
+          SELECT id
+            FROM zap_exits_par
+            WHERE id = @exit
+              AND tipo = &apos;C&apos;
+              AND clave = @condicion
+            ORDER BY PRIMARY KEY
+            INTO @zap_exits-id
+            UP TO 1 ROWS.
+          ENDSELECT.
+          IF sy-subrc = 0.
+            CLEAR activa.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF activa = &apos;X&apos; AND NOT zap_exits-usuarios_break IS INITIAL.
+      IF zcl_ap_lista=&gt;es_elemento( lista = zap_exits-usuarios_break elemento = uname ) = &apos;X&apos;.
+        BREAK-POINT.                                          &quot;#EC *
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_LISTA_VARIABLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista con valores de variable" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_LISTA_VARIABLE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_LISTA_VARIABLE" SCONAME="OBLIGATORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_LISTA_VARIABLE" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_lista_variable.
+    DATA l_variable TYPE zap_exits_par.
+
+    LOOP AT i_variables INTO l_variable WHERE clave = clave AND ( clave3 = &apos;&apos; OR clave3 = sy-sysid ).
+      __add_lista lista l_variable-clave2.
+    ENDLOOP.
+
+    IF obligatorio = &apos;X&apos; AND lista IS INITIAL.
+      log( p1 = &apos;Parametro&apos;(par) p2 = clave p5 = &apos;sin informar&apos;(sin) msgty = &apos;E&apos; siempre = &apos;X&apos;  ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve rango variables" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="EXIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="CAMPO_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;CLAVE2&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="OPTION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;EQ&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="SIGN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="TODO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="ERROR_SI_VACIO" VERSION="1" LANGU="S" DESCRIPT="Si rango vacio, devolver entrada ?" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="VALOR_FILTRO_POR_CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_RANGO_VARIABLES_ST" SCONAME="R_RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RSTT_T_RANGE_STRING"/>
+  <source>METHOD get_rango_variables_st.
+    DATA: i_par   TYPE TABLE OF zap_exits_par,
+          par     TYPE zap_exits_par,
+          l_clave TYPE c LENGTH 40,
+          l_linea TYPE rstt_s_range_string.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    SELECT * FROM zap_exits_par
+      INTO TABLE i_par
+     WHERE id   = exit
+       AND tipo = &apos;V&apos;.
+
+    CLEAR r_rango.
+    LOOP AT i_par INTO par.
+      IF NOT ( par-clave = clave OR todo = &apos;X&apos; ).
+        CONTINUE.
+      ENDIF.
+
+      IF clave2 IS SUPPLIED.
+        IF clave2 &lt;&gt; par-clave2.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF clave3 IS SUPPLIED.
+        IF clave3 &lt;&gt; par-clave3.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      IF NOT filtro_por_campo IS INITIAL.
+        CONCATENATE &apos;PAR-&apos; filtro_por_campo INTO l_clave.
+        ASSIGN (l_clave) TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          IF &lt;fs&gt; &lt;&gt; valor_filtro_por_campo.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      CLEAR l_linea.
+
+      CASE campo_rango.
+        WHEN &apos;CLAVE&apos;.
+          l_linea-low = par-clave.
+        WHEN &apos;VALOR&apos;.
+          l_linea-low = par-valor.
+        WHEN &apos;VALOR2&apos;.
+          l_linea-low = par-valor2.
+        WHEN &apos;CLAVE2&apos;.
+          l_linea-low = par-clave2.
+        WHEN &apos;CLAVE3&apos;.
+          l_linea-low = par-clave3.
+      ENDCASE.
+
+      IF option = &apos;*&apos;.
+        IF l_linea-low CS &apos;*&apos;.
+          l_linea-option = &apos;CP&apos;.
+        ELSE.
+          l_linea-option = &apos;EQ&apos;.
+        ENDIF.
+      ELSE.
+        l_linea-option = option.
+      ENDIF.
+
+      l_linea-sign = sign.
+
+      COLLECT l_linea INTO r_rango.
+    ENDLOOP.
+
+    IF r_rango IS INITIAL AND error_si_vacio &lt;&gt; &apos;&apos;.
+      CLEAR l_linea.
+      l_linea-option = &apos;EQ&apos;.
+      l_linea-sign   = &apos;I&apos;.
+      IF error_si_vacio = &apos;X&apos;.
+        l_linea-low = &apos;?&apos;.
+      ELSE.
+        IF option = &apos;*&apos; AND error_si_vacio CS &apos;*&apos;.
+          l_linea-option = &apos;CP&apos;.
+        ENDIF.
+
+        l_linea-low = error_si_vacio.
+      ENDIF.
+      COLLECT l_linea INTO r_rango.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor de variable" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="CLAVE2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="CLAVE3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="CTD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="OBLIGATORIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="GET_VARIABLE" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Valor" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZAP_EXITS_PAR-VALOR"/>
+  <source>METHOD get_variable.
+    DATA: l_variable TYPE zap_exits_par,
+          l_ctd      TYPE mengev,
+          l_mensaje  TYPE bapi_msg.
+
+    IF clave3 IS INITIAL.
+      READ TABLE i_variables INTO l_variable WITH KEY clave = clave clave2 = clave2 clave3 = clave3.
+    ELSE.
+      LOOP AT i_variables INTO l_variable WHERE clave = clave AND clave2 = clave2 AND ( clave3 = &apos;&apos; OR clave3 = sy-sysid ).
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+    IF NOT l_variable IS INITIAL.
+      valor = l_variable-valor.
+
+      IF ctd = &apos;X&apos;.
+        zcl_ap_string=&gt;string2ctd( EXPORTING ctd_texto = valor
+                                 IMPORTING cantidad  = l_ctd
+                                           mensaje   = l_mensaje ).
+        IF l_mensaje IS INITIAL.
+          valor = l_ctd.
+        ELSE.
+          log( p1 = &apos;Valor no es cantidad en&apos;(vnc) p2 = clave p3 = l_variable-valor p4 = l_mensaje  siempre = &apos;X&apos; ).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      IF obligatorio = &apos;X&apos;.
+        log( p1 = &apos;Parametro&apos;(par) p2 = clave p3 = clave2 p4 = clave3 p5 = &apos;sin informar&apos;(sin) msgty = &apos;E&apos; siempre = &apos;X&apos;  ).
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" VERSION="1" LANGU="S" DESCRIPT="Guarda entrada en log" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P6" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P7" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P8" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P9" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P10" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P11" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P12" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P13" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="P14" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="SIEMPRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGTY" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Tipo de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGTY" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGV3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MSGV4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD log.
+    IF guardar_log = &apos;X&apos; OR siempre = &apos;X&apos;.
+      DATA(l_zlog) = o_log-&gt;log( p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6 p7 = p7 p8 = p8 p9 = p9 p10 = p10
+                  p11 = p11 p12 = p12 p13 = p13 p14 = p14
+                msgty = msgty msgid = msgid msgno = msgno
+                msgv1 = msgv1 msgv2 = msgv2 msgv3 = msgv3 msgv4 = msgv4 ).
+      message = l_zlog-message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" VERSION="1" LANGU="S" DESCRIPT="Guarda entrada en log (static)" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="EXIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Nombre del usuario actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PARVALUE="SY-UNAME"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P5" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="P6" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGTY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGV3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MSGV4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EXITS" CMPNAME="LOG_ST" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD log_st.
+    DATA(o_exit) = NEW zcl_ap_exits( exit = exit uname = uname clave = clave ).
+
+    message = o_exit-&gt;log( p1 = p1 p2 = p2 p3 = p3 p4 = p4 p5 = p5 p6 = p6
+                           msgty = msgty msgid = msgid msgno = msgno
+                           msgv1 = msgv1 msgv2 = msgv2 msgv3 = msgv3 msgv4 = msgv4 ).
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

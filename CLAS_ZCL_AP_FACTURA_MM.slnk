@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FACTURA_MM" VERSION="1" LANGU="S" DESCRIPT="Facturas MM" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_FACTURA_MM" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="RBKP" VERSION="1" LANGU="S" DESCRIPT="Cabecera documento factura recibida" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RBKP" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="BELNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RBKP-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="GJAHR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RBKP-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="BUDAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="STGRD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RF05R-STGRD" PARVALUE="&apos;01&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="BELNR_ANUL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="GJAHR_ANUL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ANULAR_FACTURA" SCONAME="I_RETURN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETTAB"/>
+  <source>METHOD anular_factura.
+    DATA: l_rbkp  LIKE rbkp,
+          l_stgrd TYPE uf05a-stgrd.
+
+    CLEAR: message, belnr_anul, gjahr_anul.
+    SELECT SINGLE budat gjahr stblg FROM rbkp
+      INTO CORRESPONDING FIELDS OF l_rbkp
+     WHERE belnr = belnr
+       AND gjahr = gjahr.
+    IF sy-subrc = 0 AND NOT l_rbkp-stblg IS INITIAL.
+      message = &apos;Documento ya anulado&apos;(dya).
+      belnr_anul = l_rbkp-stblg.
+      gjahr_anul = l_rbkp-gjahr.
+    ELSE.
+      IF NOT stgrd IS INITIAL.
+        l_stgrd = stgrd.
+      ELSE.
+        IF     NOT budat        IS INITIAL
+           AND     l_rbkp-budat &lt;&gt; budat.
+          l_stgrd = &apos;02&apos;.
+        ELSE.
+          l_stgrd = &apos;01&apos;.
+        ENDIF.
+      ENDIF.
+
+      CALL FUNCTION &apos;BAPI_INCOMINGINVOICE_CANCEL&apos;
+        EXPORTING
+          invoicedocnumber          = belnr
+          fiscalyear                = gjahr
+          reasonreversal            = l_stgrd
+          postingdate               = budat
+        IMPORTING
+          invoicedocnumber_reversal = belnr_anul
+          fiscalyear_reversal       = gjahr_anul
+        TABLES
+          return                    = i_return.
+
+      IF belnr_anul IS INITIAL.
+        LOOP AT i_return ASSIGNING FIELD-SYMBOL(&lt;return&gt;) WHERE type = &apos;E&apos;.
+          IF message IS INITIAL.
+            message = &lt;return&gt;-message.
+          ELSE.
+            message = message &amp;&amp; ` ` &amp;&amp; &lt;return&gt;-message.
+          ENDIF.
+        ENDLOOP.
+      ELSEIF commit = &apos;X&apos;.
+        CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+          EXPORTING
+            wait = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Borrar URL en documento" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="BORRAR_URL_GOS_ST" SCONAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Se ha producido error" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EKKO-LOEKZ"/>
+  <source>METHOD borrar_url_gos_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    CONCATENATE belnr gjahr INTO l_clave.
+    error = zcl_ap_gos=&gt;borrar_url_gos_st( tipo   = &apos;BUS2081&apos;
+                                          clave  = l_clave
+                                          titulo = titulo
+                                          url    = url ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ES_PERIODO_ABIERTO" VERSION="1" LANGU="S" DESCRIPT="¿Periodo MM abierto?" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="BUKRS" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUKRS"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="ES_PERIODO_ABIERTO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_periodo_abierto.
+    CLEAR si.
+    CALL FUNCTION &apos;MR_PERIOD_DETERMINE&apos;
+      EXPORTING
+        i_bukrs                = bukrs
+        i_budat                = budat
+*       I_KZRFB                =
+*     IMPORTING
+*       E_MONAT                =
+*       E_GJAHR                =
+*       E_XRUEJ                =
+*       E_XRUEM                =
+*       E_LFGJA                =
+*       E_LFMON                =
+      EXCEPTIONS
+        invalid_posting_period = 1
+        marv_no_entry          = 2
+        OTHERS                 = 3.
+    IF sy-subrc = 0.
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el documento contable" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de documento de un documento de factura" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RBKP-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="RBKP-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" SCONAME="BELNR_FI" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" SCONAME="GJAHR_FI" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_DOC_CONTABLE" SCONAME="BUKRS_FI" VERSION="1" LANGU="S" DESCRIPT="Sociedad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BUKRS"/>
+  <source>METHOD get_doc_contable.
+    DATA l_key TYPE bkpf-awkey.
+
+    CLEAR: bukrs_fi, belnr_fi, gjahr_fi.
+    CONCATENATE belnr gjahr INTO l_key.
+    SELECT bukrs, belnr, gjahr
+      FROM bkpf
+      INTO (@bukrs_fi, @belnr_fi, @gjahr_fi)
+      UP TO 1 ROWS
+      WHERE awtyp = &apos;RMRP&apos;
+        AND awkey = @l_key
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_EBELN_SIMPLE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el primer pedido que encuentre" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_EBELN_SIMPLE" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_EBELN_SIMPLE" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_EBELN_SIMPLE" SCONAME="EBELN" VERSION="1" LANGU="S" DESCRIPT="Número del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELN"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_EBELN_SIMPLE" SCONAME="EBELP" VERSION="1" LANGU="S" DESCRIPT="Número de posición del documento de compras" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BSEG-EBELP"/>
+  <source>METHOD get_ebeln_simple.
+    SELECT ebeln, ebelp
+      FROM ekbe
+      INTO (@ebeln, @ebelp)
+      UP TO 1 ROWS
+      WHERE belnr = @belnr
+        AND gjahr = @gjahr
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_RBKP" VERSION="1" LANGU="S" DESCRIPT="Recupera datos de caberca" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_RBKP" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_RBKP" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_RBKP" SCONAME="RBKP" VERSION="1" LANGU="S" DESCRIPT="Cabecera documento factura recibida" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="RBKP"/>
+  <source>METHOD get_rbkp.
+    CLEAR rbkp.
+    SELECT SINGLE * FROM rbkp
+      INTO rbkp
+     WHERE belnr = belnr
+       AND gjahr = gjahr.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_URL_POR_TITULO_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve URL por titulo" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="GET_URL_POR_TITULO_ST" SCONAME="URL" VERSION="1" LANGU="S" DESCRIPT="Documentos URL GOS" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_url_por_titulo_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    IF NOT belnr IS INITIAL.
+      CONCATENATE belnr gjahr INTO l_clave.
+      url = zcl_ap_gos=&gt;get_url_por_titulo_st( tipo   = &apos;BUS2081&apos;
+                                            clave  = l_clave
+                                            titulo = titulo ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Insertar URL en documento" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="INSERTAR_URL_GOS_ST" SCONAME="ERROR" VERSION="1" LANGU="S" DESCRIPT="Se ha producido error" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EKKO-LOEKZ"/>
+  <source>METHOD insertar_url_gos_st.
+    DATA l_clave TYPE srgbtbrel-instid_a.
+
+    CONCATENATE belnr gjahr INTO l_clave.
+    error = zcl_ap_gos=&gt;insertar_url_gos_st( tipo   = &apos;BUS2081&apos;
+                                          clave  = l_clave
+                                          titulo = titulo
+                                          url    = url ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="MODIFICAR" VERSION="1" LANGU="S" DESCRIPT="Modificar" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="MODIFICAR" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="MODIFICAR" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <source>METHOD modificar.
+    SELECT SINGLE bukrs, rbstat FROM rbkp
+      INTO (@DATA(l_bukrs), @DATA(l_rbstat))
+     WHERE belnr = @belnr
+       AND gjahr = @gjahr.
+
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    SET PARAMETER ID: &apos;RBN&apos; FIELD belnr,
+                      &apos;GJR&apos; FIELD gjahr,
+                      &apos;BUK&apos; FIELD l_bukrs,
+                      &apos;RBS&apos; FIELD l_rbstat,
+                      &apos;CHG&apos; FIELD &apos;X&apos;.
+
+    CALL TRANSACTION &apos;MIR4&apos; AND SKIP FIRST SCREEN.
+
+    SET PARAMETER ID: &apos;RBS&apos; FIELD &apos;&apos;,
+                      &apos;CHG&apos; FIELD &apos;&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar factura" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="VISUALIZAR" SCONAME="BELNR" VERSION="1" LANGU="S" DESCRIPT="Número de un documento contable" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-BELNR"/>
+  <parameter CLSNAME="ZCL_AP_FACTURA_MM" CMPNAME="VISUALIZAR" SCONAME="GJAHR" VERSION="1" LANGU="S" DESCRIPT="Ejercicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKPF-GJAHR"/>
+  <source>METHOD visualizar.
+    SET PARAMETER ID: &apos;RBN&apos; FIELD belnr,
+                      &apos;GJR&apos; FIELD gjahr.
+    CALL TRANSACTION &apos;MIR4&apos; AND SKIP FIRST SCREEN.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

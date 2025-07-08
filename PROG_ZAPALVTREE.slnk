@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<PROG NAME="ZAPALVTREE" VARCL="X" SUBC="1" CNAM="ZAPC" CDAT="20100324" UNAM="ZAPC" UDAT="20100324" VERN="000020" RMAND="000" RLOAD="E" FIXPT="X" SDATE="20100324" STIME="140946" IDATE="20100324" ITIME="132542" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV" LENGTH="3 "/>
+  </language>
+ </textPool>
+ <source>***&amp;---------------------------------------------------------------------*
+*&amp; Report  ZAPALV
+*&amp;
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;
+*&amp;---------------------------------------------------------------------*
+
+REPORT  zapalvtree.
+
+TABLES t100.
+DATA: i_listado TYPE TABLE OF t100,
+      i_t100 TYPE TABLE OF t100.
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv_tree DEFINITION INHERITING FROM zcl_ap_alv_tree.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv_tree IMPLEMENTATION.
+  METHOD handle_double_click.
+    BREAK-POINT.
+  ENDMETHOD.                    &quot;handle_double_click
+  METHOD handle_user_command.
+    BREAK-POINT.
+  ENDMETHOD.                    &quot;handle_USER_COMMAND
+
+ENDCLASS.                    &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS REPORT DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS report DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS main.
+  PRIVATE SECTION.
+    CLASS-DATA:
+      o_alv TYPE REF TO lcl_alv_tree.
+
+    CLASS-METHODS: recuperar_datos,
+                   listado.
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS report IMPLEMENTATION.
+  METHOD main.
+    listado( ).
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD recuperar_datos.
+    SELECT * FROM t100
+      UP TO 10 ROWS
+      INTO TABLE i_t100.
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD listado.
+    DATA l_new.
+
+    CREATE OBJECT o_alv
+      EXPORTING
+        tabla = &apos;&apos;.
+
+    o_alv-&gt;constructor_tabla( CHANGING t_tabla = i_listado ).
+
+    recuperar_datos( ).
+
+    DATA: l_salida TYPE lvc_nkey.
+
+    SORT i_t100.
+    LOOP AT i_t100 INTO t100.
+      CLEAR l_new.
+      AT NEW arbgb.
+        l_new = &apos;X&apos;.
+      ENDAT.
+
+      IF l_new = &apos;X&apos;.
+        l_salida = o_alv-&gt;add_nodo( registro = t100
+                                    key      = &apos;&apos; ).
+      ENDIF.
+
+      o_alv-&gt;add_nodo( registro = t100
+                       key      = l_salida ).
+
+    ENDLOOP.
+
+    o_alv-&gt;show(  ).
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+
+START-OF-SELECTION.
+
+  report=&gt;main( ).</source>
+</PROG>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZDEMO_ALV_MULTI01_AP" VARCL="X" SUBC="1" RMAND="100" RLOAD="E" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="multiy alv demo01" LENGTH="17 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report ZDEMO_ALV_MULTI
+*&amp;---------------------------------------------------------------------*
+*&amp; Horizontal TAB Layout
+*&amp;---------------------------------------------------------------------*
+REPORT zdemo_alv_multi01_ap.
+
+START-OF-SELECTION.
+  SELECT * FROM usr21 INTO TABLE @DATA(lt_usr21) UP TO 100 ROWS.
+  SELECT * FROM adrc INTO TABLE @DATA(lt_adrc) UP TO 100 ROWS.
+  SELECT * FROM kna1 INTO TABLE @DATA(lt_kna1) UP TO 100 ROWS.
+  SELECT * FROM knb1 INTO TABLE @DATA(lt_knb1) UP TO 100 ROWS.
+  NEW zcl_ap_alv_multi( iv_mode = &apos;H&apos;
+    iv_title = &apos;MULTI ALV DEMO01&apos;
+    it_buttons =  VALUE #(  ( obj_code = &apos;F01&apos; text = &apos;Prueba&apos; icon_id = icon_execute_object quickinfo = &apos;Quick&apos; )  )
+    it_alvs = VALUE #(
+    ( title = &apos;USR21&apos; table = REF #( lt_usr21 ) )
+*    ( title = &apos;ADRC&apos; table = REF #( lt_adrc ) )
+*    ( title = &apos;KNA1&apos; table = REF #( lt_kna1 ) )
+*    ( title = &apos;KNB1&apos; table = REF #( lt_knb1 ) )
+    ) )-&gt;display( ).</source>
+</PROG>

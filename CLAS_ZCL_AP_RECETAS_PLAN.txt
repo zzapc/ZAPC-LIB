@@ -1,0 +1,200 @@
+==================================================
+ZCL_AP_RECETAS_PLAN===========CCDEF
+==================================================
+*"* use this source file for any type of declarations (class
+*"* definitions, interfaces or type declarations) you need for
+*"* components in the private section
+
+==================================================
+ZCL_AP_RECETAS_PLAN===========CCIMP
+==================================================
+*"* use this source file for the definition and implementation of
+*"* local helper classes, interface definitions and type
+*"* declarations
+
+==================================================
+ZCL_AP_RECETAS_PLAN===========CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+
+==================================================
+ZCL_AP_RECETAS_PLAN===========CI
+==================================================
+private section.
+==================================================
+ZCL_AP_RECETAS_PLAN===========CO
+==================================================
+protected section.
+==================================================
+ZCL_AP_RECETAS_PLAN===========CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_AP_RECETAS_PLAN
+
+*"* local type definitions
+include ZCL_AP_RECETAS_PLAN===========ccdef.
+
+*"* class ZCL_AP_RECETAS_PLAN definition
+*"* public declarations
+  include ZCL_AP_RECETAS_PLAN===========cu.
+*"* protected declarations
+  include ZCL_AP_RECETAS_PLAN===========co.
+*"* private declarations
+  include ZCL_AP_RECETAS_PLAN===========ci.
+endclass. "ZCL_AP_RECETAS_PLAN definition
+
+*"* macro definitions
+include ZCL_AP_RECETAS_PLAN===========ccmac.
+*"* local class implementation
+include ZCL_AP_RECETAS_PLAN===========ccimp.
+
+class ZCL_AP_RECETAS_PLAN implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_AP_RECETAS_PLAN implementation
+
+==================================================
+ZCL_AP_RECETAS_PLAN===========CT
+==================================================
+*"* dummy include to reduce generation dependencies between
+*"* class ZCL_AP_RECETAS_PLAN and it's users.
+*"* touched if any type reference has been changed
+==================================================
+ZCL_AP_RECETAS_PLAN===========CU
+==================================================
+class ZCL_AP_RECETAS_PLAN definition
+  public
+  create public .
+
+public section.
+
+  class-methods GET_DATOS
+    importing
+      !PLNNR type PLKO-PLNNR
+      !PLNAL type PLKO-PLNAL
+      !AENNR type AENNR optional
+      !STTAG type STTAG default SY-DATUM
+      !AKTYP type AKTYP default 'A'
+    exporting
+      !MESSAGE type BAPI_MSG
+      !I_SEC_RESOURCE type MRTRSTY_PLPO_SRES
+      !I_PHASE type MRTRSTY_PLPO_PH .
+==================================================
+ZCL_AP_RECETAS_PLAN=GET_DATOS
+==================================================
+  METHOD get_datos.
+    DATA: is_rc271     TYPE  rc271,
+          is_rc27m     TYPE  rc27m,
+          is_rc27s     TYPE  rc27s,
+          xs_rc271     TYPE  rc271,
+          xs_rc27m     TYPE  rc27m,
+          xs_rc27s     TYPE  rc27s,
+          es_rc27i     TYPE  rc27i,
+          es_plkob     TYPE  plkob,
+          et_mkal      TYPE  mrtrsty_mkal,
+          et_mkal2     TYPE  mkal,
+          et_operation TYPE  mrtrsty_plpo_opr,
+          et_phase_new TYPE  mrtrsty_plpo_ph,
+          et_relation  TYPE  mrtrsty_plab,
+          et_mapl      TYPE  mrtrsty_mapl,
+          et_plmz      TYPE  mrtrsty_plmz,
+          et_plft      TYPE  mrtrsty_plft,
+          et_plfv      TYPE  mrtrsty_plfv,
+          et_plmk      TYPE  mrtrsty_plmk,
+          et_plmw      TYPE  mrtrsty_plmw,
+          et_resclas   TYPE  mrtrsty_resclas,
+          et_ltext     TYPE  mrtrsty_ltxt,
+          et_msg       TYPE  mrtrsty_cmfmsg,
+          is_stkob     TYPE  stkob,
+          is_stkok     TYPE  stkok,
+          it_stpob     TYPE  mrtrsty_stpob,
+          l_subrc      TYPE sy-subrc,
+          plko         TYPE plko.
+
+    FIELD-SYMBOLS: <phase> TYPE mrtrss_plpo_ph.
+
+    DATA: l_phase TYPE mrtrsty_plpo_ph.
+
+    IF aennr IS NOT INITIAL.
+      SELECT SINGLE datuv FROM aenr
+        INTO is_rc271-sttag
+        WHERE aennr = aennr.
+    ELSE.
+      is_rc271-sttag = sttag.
+    ENDIF.
+
+    SELECT SINGLE * FROM plko                 "#EC CI_ALL_FIELDS_NEEDED
+      INTO plko
+     WHERE plnty = '2'
+       AND plnnr = plnnr
+       AND plnal = plnal.
+
+    MOVE-CORRESPONDING plko TO is_rc271.
+
+    is_rc271-no_chk_kz  = 'X'.
+    is_rc27s-aktyp      = aktyp. "V Modificar,A Ver, L Borrar, H-Crear
+
+    TRY.
+        CALL FUNCTION 'MRTRS300_MASTER_RECIPE_INIT'
+          EXPORTING
+            i_plnty   = plko-plnty
+          EXCEPTIONS
+            not_found = 1
+            OTHERS    = 2.
+        IF sy-subrc <> 0.
+          message = 'Error en INIT'(EIN).
+        ENDIF.
+      CATCH cx_root.
+        message = 'Error en INIT'(EIN).
+    ENDTRY.
+
+    IF message IS INITIAL.
+      TRY.
+          CALL FUNCTION 'MRTRS300_MASTER_RECIPE_READ'
+            EXPORTING
+              is_rc271           = is_rc271
+              is_rc27m           = is_rc27m
+              is_rc27s           = is_rc27s
+            IMPORTING
+              xs_rc271           = xs_rc271
+              xs_rc27m           = xs_rc27m
+              xs_rc27s           = xs_rc27s
+              es_rc27i           = es_rc27i
+              es_plkob           = es_plkob
+              et_mkal            = et_mkal
+              et_operation       = et_operation
+              et_phase           = i_phase
+              et_relation        = et_relation
+              et_sec_resource    = i_sec_resource
+              et_mapl            = et_mapl
+              et_plmz            = et_plmz
+              et_plft            = et_plft
+              et_plfv            = et_plfv
+              et_plmk            = et_plmk
+              et_plmw            = et_plmw
+              et_resclas         = et_resclas
+              et_ltext           = et_ltext
+            EXCEPTIONS
+              key_not_qualified  = 1
+              key_invalid        = 2
+              key_number_invalid = 3
+              not_found          = 4
+              existing           = 5
+              internal_error     = 6
+              foreign_lock       = 7
+              OTHERS             = 8.
+          IF sy-subrc <> 0.
+            IF sy-subrc = 7.
+              message = 'Receta bloqueada'(RBL).
+            ELSE.
+              l_subrc = sy-subrc.
+              __concat2 message 'Error en READ'(ERE) l_subrc.
+            ENDIF.
+          ENDIF.
+        CATCH cx_root.
+          message = 'Error en READ'(ERE).
+      ENDTRY.
+    ENDIF.
+
+  ENDMETHOD.

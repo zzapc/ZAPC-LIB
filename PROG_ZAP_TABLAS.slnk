@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_TABLAS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="CON" ENTRY="contiene" LENGTH="18 "/>
+   <textElement ID="I" KEY="REG" ENTRY="registros en" LENGTH="22 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="I" KEY="TAB" ENTRY="La tabla" LENGTH="18 "/>
+   <textElement ID="R" ENTRY="Listado tablas AP" LENGTH="17 "/>
+   <textElement ID="S" KEY="P_CACHE" ENTRY="        ZCACHE" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_CONT" ENTRY="        Contador registros" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_MAIL" ENTRY="        Envio mail si máx.registros" LENGTH="35 "/>
+   <textElement ID="S" KEY="P_MAXREG" ENTRY="        Máx.registros" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_TEMP" ENTRY="        ZTEMP" LENGTH="13 "/>
+   <textElement ID="S" KEY="P_TEMPS" ENTRY="        ZTEMPS" LENGTH="14 "/>
+   <textElement ID="S" KEY="S_CLAVE" ENTRY="        Clave" LENGTH="13 "/>
+   <textElement ID="S" KEY="S_DEVCL" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="S_ERDAT" ENTRY="D       ." LENGTH="17 "/>
+   <textElement ID="S" KEY="S_REPORT" ENTRY="        Report" LENGTH="14 "/>
+   <textElement ID="S" KEY="S_TABLAS" ENTRY="D       ." LENGTH="23 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Gestión tablas AP
+*
+* AUTOR: Andrés Picazo                                FECHA: 01/12/2016
+*
+***********************************************************************
+REPORT zap_tablas.
+
+*------INCLUDES--------------------------------------------------------*
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: ztemp, rsrd1, tadir.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+TYPES: BEGIN OF t_ztemp,
+         check.
+    INCLUDE TYPE ztemp.
+TYPES  END OF t_ztemp.
+__data_set_var ztemp.
+
+TYPES: BEGIN OF t_ztemps,
+         check.
+    INCLUDE TYPE ztemps.
+TYPES  END OF t_ztemps.
+__data_set_var ztemps.
+
+TYPES: BEGIN OF t_zcache,
+         check,
+         color TYPE lvc_t_scol.
+    INCLUDE TYPE zcache.
+TYPES  END OF t_zcache.
+__data_set_var zcache.
+
+TYPES: BEGIN OF t_cont,
+         check,
+         tabname TYPE dd02l-tabname,
+         ddtext  TYPE dd02t-ddtext,
+         cont    TYPE pay_numrec_alv,
+       END OF t_cont.
+__data_set_var cont.
+
+DATA: v_tabla TYPE string.
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+PARAMETERS: p_temp  RADIOBUTTON GROUP g DEFAULT &apos;X&apos; USER-COMMAND ggg,
+            p_temps RADIOBUTTON GROUP g,
+            p_cache RADIOBUTTON GROUP g.
+SELECT-OPTIONS: s_clave FOR ztemp-clave,
+                s_report FOR sy-cprog MODIF ID zca,
+                s_erdat FOR ztemp-erdat.
+PARAMETERS: p_cont  RADIOBUTTON GROUP g.
+SELECT-OPTIONS: s_tablas FOR rsrd1-tbma_val MODIF ID con,
+                s_devcl FOR tadir-devclass MODIF ID con.
+PARAMETERS: p_maxreg TYPE i DEFAULT 10000,
+            p_mail   TYPE text1024.
+SELECTION-SCREEN END OF BLOCK 001.
+PARAMETERS: p_defpa DEFAULT &apos;X&apos; NO-DISPLAY.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    DATA: zcache TYPE zcache.
+    CASE v_tabla.
+      WHEN &apos;I_ZCACHE&apos;.
+        READ TABLE i_zcache ASSIGNING FIELD-SYMBOL(&lt;cache&gt;) INDEX row.
+        IF sy-subrc = 0.
+          MOVE-CORRESPONDING &lt;cache&gt; TO zcache.
+          zcl_ap_cache=&gt;visualizar( cache = zcache campo = column tipo_visualizacion = &apos;P&apos; ).
+        ENDIF.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+
+    CASE e_salv_function.
+      WHEN &apos;EXCEL&apos;.
+        exportar_excel( ).
+      WHEN &apos;F01&apos;.
+
+        get_seleccion( ).
+        refresh( ).
+        CASE v_tabla.
+          WHEN &apos;I_ZTEMP&apos;.
+            LOOP AT i_ztemp ASSIGNING &lt;ztemp&gt; WHERE check = &apos;X&apos;.
+              DELETE FROM  ztemp
+                     WHERE  clave     = &lt;ztemp&gt;-clave
+                     AND    subclave  = &lt;ztemp&gt;-subclave
+                     AND    indice    = &lt;ztemp&gt;-indice.
+              DELETE i_ztemp.
+            ENDLOOP.
+          WHEN &apos;I_ZTEMPS&apos;.
+            LOOP AT i_ztemps ASSIGNING &lt;ztemps&gt; WHERE check = &apos;X&apos;.
+              DELETE FROM  ztemps
+                     WHERE  clave     = &lt;ztemps&gt;-clave
+                     AND    subclave  = &lt;ztemps&gt;-subclave
+                     AND    indice    = &lt;ztemps&gt;-indice.
+              DELETE i_ztemps.
+            ENDLOOP.
+          WHEN &apos;I_ZCACHE&apos;.
+            LOOP AT i_zcache ASSIGNING &lt;zcache&gt; WHERE check = &apos;X&apos;.
+              DELETE FROM  zcache
+                     WHERE  report    = &lt;zcache&gt;-report
+                     AND    clave     = &lt;zcache&gt;-clave
+                     AND    subclave  = &lt;zcache&gt;-subclave.
+
+              DELETE i_zcache.
+            ENDLOOP.
+        ENDCASE.
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+
+    IF p_temp = &apos;X&apos;.
+      v_tabla = &apos;I_ZTEMP&apos;.
+    ELSEIF p_temps = &apos;X&apos;.
+      v_tabla = &apos;I_ZTEMPS&apos;.
+    ELSEIF p_cache = &apos;X&apos;.
+      v_tabla = &apos;I_ZCACHE&apos;.
+    ELSEIF p_cont = &apos;X&apos;.
+      v_tabla = &apos;I_CONT&apos;.
+    ENDIF.
+
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD seleccionar_datos.
+    __data_set_vart tadir.
+    DATA zcache TYPE zcache.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+
+    IF p_temp = &apos;X&apos;.
+      SELECT * FROM ztemp
+        INTO CORRESPONDING FIELDS OF TABLE i_ztemp
+       WHERE clave IN s_clave
+         AND erdat IN s_erdat.
+    ELSEIF p_temps = &apos;X&apos;.
+      SELECT * FROM ztemps
+        INTO CORRESPONDING FIELDS OF TABLE i_ztemps
+       WHERE clave IN s_clave
+         AND erdat IN s_erdat.
+    ELSEIF p_cache = &apos;X&apos;.
+      SELECT * FROM zcache                              &quot;#EC CI_GENBUFF
+        INTO CORRESPONDING FIELDS OF TABLE i_zcache
+       WHERE report IN s_report
+         AND clave IN s_clave
+         AND fecha IN s_erdat.
+      LOOP AT i_zcache ASSIGNING FIELD-SYMBOL(&lt;cache&gt;).
+        IF NOT &lt;cache&gt;-variables IS INITIAL.
+          MOVE-CORRESPONDING &lt;cache&gt; TO zcache.
+          IF zcl_ap_cache=&gt;visualizar( cache = zcache campo = &apos;VARIABLES&apos; tipo_visualizacion = &apos;C&apos; ).
+            zcl_ap_alv_grid=&gt;append_color( EXPORTING campo = &apos;VARIABLES&apos; colorc = &apos;V&apos; CHANGING tabla_color = &lt;cache&gt;-color ).
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ELSEIF p_cont = &apos;X&apos;.
+      CHECK NOT s_tablas[] IS INITIAL OR NOT s_devcl[] IS INITIAL.
+      CLEAR l_cont.
+      SELECT obj_name FROM tadir                        &quot;#EC CI_GENBUFF
+        INTO CORRESPONDING FIELDS OF TABLE i_tadir
+       WHERE pgmid = &apos;R3TR&apos;
+         AND object = &apos;TABL&apos;
+         AND obj_name IN s_tablas
+         AND devclass IN s_devcl.
+      IF sy-subrc = 0.
+        LOOP AT i_tadir INTO l_tadir.
+          CLEAR l_cont.
+
+          SELECT tabname FROM dd02l
+            INTO l_cont-tabname
+            UP TO 1 ROWS
+           WHERE tabname = l_tadir-obj_name
+             AND tabclass = &apos;TRANSP&apos;
+           ORDER BY PRIMARY KEY.
+          ENDSELECT.
+          IF sy-subrc = 0.
+            SELECT ddtext FROM dd02t
+              INTO l_cont-ddtext
+              UP TO 1 ROWS
+             WHERE tabname = l_cont-tabname
+             ORDER BY PRIMARY KEY.
+            ENDSELECT.
+
+            SELECT COUNT( * ) FROM (l_cont-tabname)
+              INTO l_cont-cont.
+            APPEND l_cont TO i_cont.
+
+            cont = l_cont-cont.
+            IF l_cont-tabname(4) = &apos;ZLOG&apos; OR l_cont-tabname = &apos;ZESTADISTICAS&apos; or l_cont-tabname = &apos;ZAP_MAIL_LOG&apos;.
+              cont  = l_cont-cont / 300. &quot;La tabla de LOG o estadísticas, es normal que se llene mas.
+            elseIF l_cont-tabname(5) = &apos;ZTEMP&apos;.
+              cont  = l_cont-cont / 10. &quot;La tabla de LOG o estadísticas, es normal que se llene mas.
+            ELSEIF l_cont-tabname = &apos;ZCACHE&apos;.
+              cont  = l_cont-cont * 10. &quot;La tabla de cache no queremos que crezca demasiado.
+            ENDIF.
+
+            IF l_cont-tabname = &apos;ZCACHE&apos; AND ( zcl_c=&gt;cliente_tasks = &apos;GRE&apos; OR zcl_c=&gt;cliente_tasks = &apos;JGC&apos; ) AND l_cont-cont &lt; 100000.
+            ELSEIF l_cont-tabname = &apos;ZDOCUMENTOS&apos; AND zcl_c=&gt;cliente_tasks = &apos;FGV&apos; AND l_cont-cont &lt; 900000.
+            ELSEIF l_cont-tabname = &apos;ZTEMP&apos; AND ( zcl_c=&gt;cliente_tasks = &apos;FGV&apos; OR zcl_c=&gt;cliente_tasks = &apos;JGC&apos; ) AND l_cont-cont &lt; 100000.
+            ELSE.
+              IF cont &gt; p_maxreg AND NOT p_mail IS INITIAL.
+                string = zcl_ap_utils=&gt;concat( p1 = &apos;La tabla&apos;(tab) p2 = l_cont-tabname p3 = &apos;contiene&apos;(con) p4 = l_cont-cont p5 = &apos;registros en&apos;(reg) p6 = sy-sysid ).
+                zcl_ap_envio_mail=&gt;mail( subject = string direccion = p_mail texto = string ).
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    DATA(l_campo_color) = COND lvc_fname( WHEN p_cache = &apos;X&apos; THEN &apos;COLOR&apos; ).
+
+    CREATE OBJECT o_alv
+      EXPORTING
+        status             = &apos;STANDARD_ALV_DYN&apos;
+        status_prog        = &apos;ZAP_STATUS&apos;
+*       lights             = &apos;LIGHTS&apos;
+        color              = l_campo_color
+        top_of_page_auto   = &apos;X&apos;
+        top_of_page_titulo = &apos;X&apos;
+        tabla              = v_tabla.
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Borrar&apos;  icon = icon_delete ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field_noout( &apos;CHECK&apos; ).
+
+    o_alv-&gt;set_titulo_col_sin_nombre( ).
+
+    CASE v_tabla.
+      WHEN &apos;ZTEMP&apos;.
+        o_alv-&gt;set_seleccion( CHANGING t_tabla = i_ztemp ).
+      WHEN &apos;ZTEMPS&apos;.
+        o_alv-&gt;set_seleccion( CHANGING t_tabla = i_ztemps ).
+      WHEN &apos;ZCACHE&apos;.
+        o_alv-&gt;set_seleccion( CHANGING t_tabla = i_zcache ).
+    ENDCASE.
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = &apos;INICIO_DYN&apos;
+      status_prog   = &apos;ZAP_STATUS&apos;
+      get_nombre_pc = &apos;X&apos;
+      no_param      = &apos;X&apos;.
+
+
+  APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = &apos;ZAPC&apos; ) TO s_devcl.
+  APPEND VALUE #( option = &apos;CP&apos; sign = &apos;I&apos; low = &apos;YAPC*&apos; ) TO s_devcl.
+
+  o_prog-&gt;initialization_i( EXPORTING get_default_param = p_defpa CHANGING sscrfields = sscrfields ).
+
+  zcl_ap_dynpro=&gt;set_primer_radiobutton( campos = &apos;P_TEMP,P_TEMPS,P_CACHE&apos; ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN OUTPUT.
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;ZCA&apos; variable = p_cache ).
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;CON&apos; variable = p_cont ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_clave-low.
+  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z.
+
+  CREATE OBJECT o_popup
+    EXPORTING
+      tabname = &apos;ZTEMP&apos;.
+
+  IF p_cache = &apos;X&apos;.
+    o_popup-&gt;add_field( field = &apos;SUBCLAVE&apos; ).
+  ENDIF.
+  o_popup-&gt;add_field( field = &apos;CLAVE&apos; selectflag = &apos;X&apos; ).
+  o_popup-&gt;add_field( &apos;ERDAT&apos; ).
+  o_popup-&gt;add_field( &apos;VALOR1&apos; ).
+
+  IF p_temp = &apos;X&apos;.
+    SELECT clave COUNT( * ) FROM ztemp
+      INTO (ztemp-clave, sy-tfill )
+     WHERE clave IN s_clave
+       AND erdat IN s_erdat
+    GROUP BY clave
+    ORDER BY clave.
+      ztemp-valor1 = sy-tfill.
+
+      o_popup-&gt;add_valor( ztemp-clave ).
+      SELECT MAX( erdat ) FROM ztemp
+        INTO ztemp-erdat
+       WHERE clave = ztemp-clave.
+      o_popup-&gt;add_valor( ztemp-erdat ).
+      o_popup-&gt;add_valor( ztemp-valor1 ).
+    ENDSELECT.
+  ELSEIF p_temps = &apos;X&apos;.
+    SELECT clave COUNT( * ) FROM ztemps
+      INTO (ztemp-clave, sy-tfill )
+   WHERE clave IN s_clave
+     AND erdat IN s_erdat
+      GROUP BY clave
+      ORDER BY clave.
+      ztemp-valor1 = sy-tfill.
+
+      o_popup-&gt;add_valor( ztemp-clave ).
+      SELECT MAX( erdat ) FROM ztemps
+        INTO ztemp-erdat
+       WHERE clave = ztemp-clave.
+      o_popup-&gt;add_valor( ztemp-erdat ).
+      o_popup-&gt;add_valor( ztemp-valor1 ).
+    ENDSELECT.
+  ELSEIF p_cache = &apos;X&apos;.
+    RANGES r_report FOR sy-cprog.
+    SELECT report clave COUNT( * ) FROM zcache &quot;#EC CI_BYPASS &quot;#EC CI_GENBUFF
+      INTO (ztemp-subclave, ztemp-clave, sy-tfill )
+     WHERE report IN r_report
+       AND clave IN s_clave
+       AND fecha IN s_erdat
+      GROUP BY report clave
+      ORDER BY report clave.
+      ztemp-valor1 = sy-tfill.
+
+      o_popup-&gt;add_valor( ztemp-subclave ).
+      o_popup-&gt;add_valor( ztemp-clave ).
+      SELECT MAX( fecha ) FROM zcache    &quot;#EC CI_BYPASS &quot;#EC CI_GENBUFF
+        INTO ztemp-erdat
+       WHERE report = ztemp-subclave
+         AND clave = ztemp-clave.
+      o_popup-&gt;add_valor( ztemp-erdat ).
+      o_popup-&gt;add_valor( ztemp-valor1 ).
+    ENDSELECT.
+  ENDIF.
+
+  o_popup-&gt;matchcode( EXPORTING field   = &apos;CLAVE&apos;
+                      CHANGING  valor   = s_clave-low ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_report-low.
+  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z.
+  CREATE OBJECT o_popup
+    EXPORTING
+      tabname = &apos;ZCACHE&apos;.
+
+  o_popup-&gt;add_field( field = &apos;REPORT&apos; selectflag = &apos;X&apos; ).
+  o_popup-&gt;add_field( &apos;FECHA&apos; ).
+  o_popup-&gt;add_field( &apos;AUX1&apos; ).
+
+  DATA zcache TYPE zcache.
+  RANGES r_report FOR sy-cprog.
+  SELECT report COUNT( * ) FROM zcache   &quot;#EC CI_BYPASS &quot;#EC CI_GENBUFF
+    INTO (zcache-report, sy-tfill )
+   WHERE report IN r_report
+     AND clave IN s_clave
+     AND fecha IN s_erdat
+    GROUP BY report
+    ORDER BY report.
+    ztemp-valor1 = sy-tfill.
+
+    o_popup-&gt;add_valor( zcache-report ).
+    SELECT MAX( fecha ) FROM zcache      &quot;#EC CI_BYPASS &quot;#EC CI_GENBUFF
+      INTO zcache-fecha
+     WHERE report = zcache-report.
+    o_popup-&gt;add_valor( zcache-fecha ).
+    zcache-aux1 = sy-tfill.
+    o_popup-&gt;add_valor( zcache-aux1 ).
+  ENDSELECT.
+
+  o_popup-&gt;matchcode( EXPORTING field   = &apos;REPORT&apos;
+                      CHANGING  valor   = s_report-low ).
+
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_GRID_M1" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="PNF" ENTRY="This program can&apos;t run in batch process" LENGTH="84 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting Data" LENGTH="29 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="PNF" ENTRY="Este programa no se puede ejecutar en fondo" LENGTH="84 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="R" ENTRY="Plantilla ALV GRID Múltiple" LENGTH="27 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_BUKRS" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 27/06/2023
+* ANALISTA: ??
+*
+***********************************************************************
+REPORT zplantilla_grid_m1.
+
+TABLES t001.
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: visualizar_objeto     REDEFINITION,
+      data_changed          REDEFINITION,
+      data_changed_finished REDEFINITION,
+      toolbar               REDEFINITION,
+      user_command          REDEFINITION.
+ENDCLASS.                    &quot; lcl_event_grid DEFINITION
+
+
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF  t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             bukrs   TYPE t001-bukrs,
+             butxt   TYPE t001-butxt,
+             message TYPE bapi_msg,
+             style   TYPE lvc_t_styl,
+             color   TYPE lvc_t_scol,
+             tabix   TYPE sy-tabix,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+
+    DATA: i_listado     TYPE tt_listado,
+          i_listado_ini TYPE tt_listado.
+
+    DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
+          o_event TYPE REF TO lcl_event_grid.
+
+    METHODS: buscar_datos REDEFINITION,
+
+      validaciones IMPORTING !mod    TYPE abap_bool DEFAULT &apos;&apos;
+                   CHANGING  listado TYPE t_listado ##NEEDED,
+
+      status_dynpro_m  REDEFINITION,
+      command_dynpro_m REDEFINITION.
+
+ENDCLASS.                    &quot; REPORT DEFINITION
+
+DATA o_prog TYPE REF TO zcl_report ##NEEDED.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME.
+  SELECT-OPTIONS s_bukrs FOR t001-bukrs.
+  SELECTION-SCREEN SKIP.
+  PARAMETERS p_vari LIKE disvariant-variant.                &quot;.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+CLASS lcl_event_grid IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+    DATA l_list TYPE o_prog-&gt;t_listado.
+
+    l_list = list.
+    CASE column.
+*      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot; handle_double_click
+
+  METHOD toolbar.
+    super-&gt;toolbar( e_object = e_object e_interactive = e_interactive ).
+  ENDMETHOD.                                               &quot; toolbar
+
+  METHOD user_command.
+    CASE e_ucomm.
+      WHEN OTHERS.
+        super-&gt;user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+  ENDMETHOD.                                               &quot; USER_COMMAND
+
+  METHOD data_changed.
+    ini_data_changed( cambios = er_data_changed-&gt;mt_good_cells ).
+
+    LOOP AT i_cambios_celda INTO cambio_celda.
+      AT NEW row_id.
+        READ TABLE o_prog-&gt;i_listado INTO DATA(l_listado_ini) INDEX cambio_celda-row_id. &quot;#EC CI_SUBRC
+        DATA(l_listado) = l_listado_ini.
+      ENDAT.
+
+      set_valor_mod( CHANGING datos = l_listado ).
+
+      AT END OF row_id.
+        o_prog-&gt;validaciones( EXPORTING mod = &apos;X&apos; CHANGING listado = l_listado ).
+        MODIFY o_prog-&gt;i_listado FROM l_listado INDEX cambio_celda-row_id.
+        actualizar_fila( fila_ini = l_listado_ini fila_fin = l_listado er_data_changed = er_data_changed fila = cambio_celda-row_id ).
+      ENDAT.
+    ENDLOOP.
+  ENDMETHOD.                                               &quot; data_changed
+
+  METHOD data_changed_finished.
+    IF NOT tabla_data_changed IS INITIAL.
+*      o_alv-&gt;refrescar_grid( ).
+      CLEAR tabla_data_changed.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.                    &quot; lcl_event_grid IMPLEMENTATION
+
+
+CLASS zcl_report IMPLEMENTATION.
+  METHOD buscar_datos.
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+    CLEAR i_listado.
+    SELECT * FROM t001                                      ##WARN_OK
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE bukrs IN s_bukrs.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      &lt;listado&gt;-tabix = sy-tabix.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+      get_descripciones( EXPORTING campos = &apos;MAKTX&apos; CHANGING list = &lt;listado&gt; ).
+      validaciones( CHANGING listado = &lt;listado&gt; ).
+    ENDLOOP.
+
+    i_listado_ini = i_listado.
+  ENDMETHOD.                                               &quot; seleccionar_datos
+
+  METHOD status_dynpro_m.
+    o_grid-&gt;set_layout( no_rowmove = &apos;X&apos; no_rowins = &apos;X&apos; style = &apos;STYLE&apos; colort = &apos;COLOR&apos; ).
+    o_grid-&gt;quitar_opciones( cl_gui_alv_grid=&gt;mc_fc_refresh ).
+    o_grid-&gt;set_campos_tabint( datos ).
+    o_grid-&gt;set_field_quitar( &apos;CHECK,TABIX&apos; ).
+    o_grid-&gt;set_field_hotspot( campo = &apos;BUKRS&apos; auto = &apos;X&apos; ).
+  ENDMETHOD.
+
+  METHOD command_dynpro_m.
+    DATA: l_comm_sel TYPE string VALUE &apos;EJEC&apos;,
+          l_hay_sel  TYPE c LENGTH 1.
+
+    command_dynpro( EXPORTING o_alv         = o_grid
+                              seleccion     = l_comm_sel
+                    CHANGING  i_listado     = i_listado
+                              i_listado_ini = i_listado_ini
+                              hay_sel       = l_hay_sel ).
+
+    CASE me-&gt;ucomm.
+      WHEN &apos;x&apos;.
+*
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD validaciones.
+    CLEAR: listado-message,
+           listado-style,
+           listado-color,
+           listado-lights.
+
+    set_status_list( EXPORTING message = listado-message criterio = &apos;V&apos; CHANGING list = listado ).
+  ENDMETHOD.
+ENDCLASS.                    &quot; REPORT IMPLEMENTATION
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( status       = &apos;INICIO&apos;
+                  guardar_logz = &apos;X&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos; ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+  IF sy-batch IS INITIAL.
+    o_prog-&gt;o_event = NEW #( boton_refrescar = &apos;X&apos;
+                             boton_excel     = &apos;Y&apos;
+                             o_prog          = o_prog ).
+
+    o_prog-&gt;o_alv = NEW #( estructura = &apos;&apos;
+                           o_event    = o_prog-&gt;o_event ).
+
+    p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  IF NOT o_prog-&gt;o_alv IS INITIAL.
+    p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+  ENDIF.
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN OUTPUT.
+*  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;PED&apos; variable = p_pedid ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;buscar_datos( ).
+
+  IF sy-batch IS INITIAL.
+    NEW zcl_ap_alv_multi(
+      iv_mode = &apos;V&apos;
+      iv_title = sy-title
+      it_buttons = VALUE #( ( obj_code = &apos;F01&apos; text = &apos;Prueba&apos; icon_id = icon_execute_object quickinfo = &apos;Quick&apos; ) )
+      o_prog = o_prog
+      it_alvs = VALUE #( ( title = &apos;Listado 1&apos; table = REF #( o_prog-&gt;i_listado ) o_event = o_prog-&gt;o_event )
+      )
+      )-&gt;display( ).
+  ELSE.
+    MESSAGE &apos;Este programa no se puede ejecutar en fondo&apos;(pnf) TYPE &apos;E&apos;.
+  ENDIF.</source>
+</PROG>

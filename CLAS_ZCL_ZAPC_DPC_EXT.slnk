@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_ZAPC_DPC_EXT" VERSION="1" LANGU="S" DESCRIPT="Data Provider Secondary Class" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CHGDANYBY="EXTERNO_DLT" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk" REFCLSNAME="ZCL_ZAPC_DPC">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class
+
+INCLUDE zmacros_ap_segw.</localMacros>
+ <attribute CLSNAME="ZCL_ZAPC_DPC_EXT" CMPNAME="C_ODATA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="2" ATTVALUE="&apos;ZAPC_SRV&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_ZAPC_DPC_EXT" CMPNAME="O_CACHE" VERSION="1" LANGU="S" DESCRIPT="Cache" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_CACHE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_ZAPC_DPC_EXT" CMPNAME="O_SEGW" VERSION="1" LANGU="S" DESCRIPT="Clase SEGW" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_SEGW" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_ZAPC_DPC_EXT" CMPNAME="V_HEADER" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="IHTTPNVP" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <inheritance CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="/IWBEP/IF_MGW_APPL_SRV_RUNTIME~EXECUTE_ACTION" EXPOSURE="2"/>
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="DATOS_CREATE_ENTITY" EXPOSURE="1"/>
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="DATOS_GET_ENTITY" EXPOSURE="1"/>
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="DATOS_GET_ENTITYSET" EXPOSURE="1"/>
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="PARAMETROS_GET_ENTITY" EXPOSURE="1"/>
+  <redefinition CLSNAME="ZCL_ZAPC_DPC_EXT" REFCLSNAME="ZCL_ZAPC_DPC" VERSION="1" MTDNAME="PARAMETROS_GET_ENTITYSET" EXPOSURE="1"/>
+ </inheritance>
+ <interfaceMethod CLSNAME="ZCL_ZAPC_DPC_EXT" CPDNAME="/IWBEP/IF_MGW_APPL_SRV_RUNTIME~EXECUTE_ACTION">
+  <source>METHOD /iwbep/if_mgw_appl_srv_runtime~execute_action.
+  DATA: ls_parameter       TYPE /iwbep/s_mgw_name_value_pair,
+        l_message          TYPE string,
+        l_respuesta_accion TYPE zap_sapui5_accion,
+        l_accion           TYPE string,
+        l_datos            TYPE string,
+        l_clave            TYPE string,
+        l_otros            TYPE string.
+
+  o_segw-&gt;v_log = &apos;EXECUTE_ACTION&apos;.
+
+  o_segw-&gt;set_log( p1 = &apos;Acción=&apos; p2 = iv_action_name type = &apos;I&apos; ).
+
+  CASE iv_action_name.
+    WHEN &apos;getDatos&apos;.
+      get_valor_parametro: &apos;accion&apos;  l_accion,
+                           &apos;datos&apos;   l_datos,
+                           &apos;clave&apos;   l_clave,
+                           &apos;otros&apos;   l_otros.
+
+      CASE l_accion.
+        WHEN &apos;getTabla&apos;.
+          l_respuesta_accion = o_segw-&gt;get_datos_tabla( tabla = l_datos campos = l_clave where = l_otros ).
+
+        WHEN OTHERS.
+          l_respuesta_accion-message = |Acción { l_accion } no implementada|.
+          l_respuesta_accion-type = &apos;E&apos;.
+      ENDCASE.
+
+      copy_data_to_ref( EXPORTING is_data = l_respuesta_accion
+                         CHANGING cr_data = er_data ).
+
+
+      IF NOT l_respuesta_accion-message IS INITIAL.
+        o_segw-&gt;set_log( p1 = &apos;Error ejecutando acción&apos; p2 = l_accion p3 = l_clave p4 = l_respuesta_accion-message type = &apos;E&apos; ).
+      ELSE.
+        o_segw-&gt;set_log( p1 = &apos;Se ha generado accion&apos; p2 = l_accion p3 = l_clave type = &apos;S&apos; ).
+      ENDIF.
+
+
+    WHEN OTHERS.
+      MESSAGE e398(00) WITH &apos;FunctionImport&apos; iv_action_name &apos;no definido&apos;.
+
+
+
+  ENDCASE.
+ENDMETHOD.</source>
+ </interfaceMethod>
+ <method CLSNAME="ZCL_ZAPC_DPC_EXT" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD constructor.
+
+    super-&gt;constructor( ).
+
+    CREATE OBJECT me-&gt;o_segw
+      EXPORTING
+        nombre_odata = &apos;ZAPC&apos;.
+
+*    o_segw-&gt;v_clave_parametro = &apos;FIRMAS&apos;.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_ZAPC_DPC" CMPNAME="DATOS_CREATE_ENTITY" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD datos_create_entity.
+    DATA: l_msg_err TYPE string,
+          l_msg_ok  TYPE string.
+
+    io_data_provider-&gt;read_entry_data( IMPORTING es_data = er_entity ).
+
+    CASE er_entity-clave.
+      WHEN &apos;METODO&apos;.
+*        zcl_ap_dev=&gt;exec_method_st( EXPORTING clase = er_entity-subclave
+*                                              metodo = er_entity-valor
+*                                              name1 = &apos;CLAVE&apos; value1 = er_entity-texto
+*                                              name2 = &apos;STRING&apos; value2 = er_entity-string
+*                                    IMPORTING message = DATA(msg) ).
+        TRY.
+            CALL METHOD (er_entity-subclave)=&gt;(er_entity-valor)
+              EXPORTING
+                clave   = er_entity-texto
+                string  = er_entity-string
+              IMPORTING
+                msg_err = l_msg_err
+                msg_ok  = l_msg_ok.
+            IF NOT l_msg_err IS INITIAL.
+*              o_segw-&gt;raise_message( io_context = mo_context message = l_msg_err ).
+              er_entity-texto  = &apos;E&apos;.
+              er_entity-string = l_msg_err.
+
+            ELSE.
+              er_entity-texto  = &apos;S&apos;.
+              er_entity-string = l_msg_ok.
+            ENDIF.
+          CATCH cx_root INTO DATA(o_root).
+            l_msg_err = o_root-&gt;get_longtext( ).
+            IF l_msg_err IS INITIAL.
+              l_msg_err = o_root-&gt;get_text( ).
+            ENDIF.
+*            o_segw-&gt;raise_message( io_context = mo_context message = l_msg_err ).
+            er_entity-texto  = &apos;E&apos;.
+            er_entity-string = l_msg_err.
+
+        ENDTRY.
+      WHEN OTHERS.
+        o_segw-&gt;raise_message( io_context = mo_context message = |{ er_entity-clave } no reconocido| ).
+    ENDCASE.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_ZAPC_DPC" CMPNAME="DATOS_GET_ENTITY" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD datos_get_entity.
+
+    er_entity-clave = &apos;x&apos;.
+    er_entity-subclave = &apos;x&apos;.
+    er_entity-indice = &apos;1&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_ZAPC_DPC" CMPNAME="DATOS_GET_ENTITYSET" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD datos_get_entityset.
+
+    APPEND VALUE #( clave = &apos;a&apos; subclave = &apos;b&apos; indice = &apos;1&apos; ) TO et_entityset.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_ZAPC_DPC" CMPNAME="PARAMETROS_GET_ENTITY" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD parametros_get_entity.
+
+    o_segw-&gt;get_entity_parametro( EXPORTING it_key_tab = it_key_tab
+                                  IMPORTING er_entity  = er_entity
+                                            message    = DATA(l_message) ).
+
+    IF NOT l_message IS INITIAL.
+      o_segw-&gt;raise_message( io_context = mo_context message = l_message ).
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_ZAPC_DPC" CMPNAME="PARAMETROS_GET_ENTITYSET" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD parametros_get_entityset.
+
+    CALL METHOD o_segw-&gt;get_entityset_parametros
+      EXPORTING
+        it_filter_select_options = it_filter_select_options
+        is_paging                = is_paging
+        it_key_tab               = it_key_tab
+        it_order                 = it_order
+      IMPORTING
+        et_entityset             = et_entityset
+        es_response_context      = es_response_context
+        message                  = DATA(l_message).
+
+    IF NOT l_message IS INITIAL.
+      o_segw-&gt;raise_message( io_context = mo_context message = l_message ).
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

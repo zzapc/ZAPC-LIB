@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_POPUP" VERSION="1" LANGU="S" DESCRIPT="Gestión de popups" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_POPUP" CMPNAME="T_LOG_SIMPLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="7 " SRCCOLUMN1="6 " SRCROW2="11 " SRCCOLUMN2="24 " TYPESRC_LENG="156 " TYPESRC="BEGIN OF t_log_simple,
+        lights  TYPE zico_estado_mensaje,
+        clave   TYPE string,
+        message TYPE bapi_msg,
+      END OF t_log_simple
+"/>
+ <types CLSNAME="ZCL_AP_POPUP" CMPNAME="TT_LOG_SIMPLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="12 " SRCCOLUMN1="10 " SRCROW2="12 " SRCCOLUMN2="84 " TYPESRC_LENG="77 " TYPESRC="tt_log_simple TYPE STANDARD TABLE OF t_log_simple WITH NON-UNIQUE KEY clave
+"/>
+ <localImplementation>*/---------------------------------------------------------------------\
+*|   Development&apos;s Control                                             |
+*|                                                                     |
+*|   ZDEV_CONTROL is free software; you can redistribute it and/or     |
+*|   modify it under the terms of the GNU General Public License as    |
+*|   publishedby the Free Software Foundation; either version 2 of the |
+*|   License, or (at your option) any later version.                   |
+*|                                                                     |
+*|   SAPlink is distributed in the hope that it will be useful,        |
+*|   but WITHOUT ANY WARRANTY; without even the implied warranty of    |
+*|   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the     |
+*|   GNU General Public License for more details.                      |
+*|                                                                     |
+*\---------------------------------------------------------------------/
+*| Lead Developers : Andrés Picazo       apicazo@gmail.com             |
+*|---------------------------------------------------------------------|
+*| For more information visit:                                         |
+*|                                                                     |
+*| project homepage: https://cw.sdn.sap.com/cw/groups/zdev_control     |
+*\---------------------------------------------------------------------/
+*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_POPUP" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_POPUP" CMPNAME="I_ERRORES" VERSION="1" LANGU="S" DESCRIPT="Tipo table errores" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZTAB_AP_ERRORES" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_POPUP" CMPNAME="I_LOG_SIMPLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_LOG_SIMPLE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_POPUP" CMPNAME="I_POPUP" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla ZPARAMETROS" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZT_PARAMETROS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_POPUP" CMPNAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Objeto" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEST_AP_ERRORES-OBJETO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_POPUP" CMPNAME="O_LOG" VERSION="1" LANGU="S" DESCRIPT="Log" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_LOG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_DATOS_POPUP" VERSION="1" LANGU="S" DESCRIPT="Añade fila popup" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_DATOS_POPUP" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_DATOS_POPUP" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_DATOS_POPUP" SCONAME="DESCRIPCION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD add_datos_popup.
+    DATA l_popup TYPE zv_parametros.
+
+    l_popup-atributo1 = campo.
+    WRITE valor TO l_popup-atributo2. &quot;#EC *
+    l_popup-comentario = descripcion.
+    APPEND l_popup TO i_popup.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="RETURN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET2" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="I_RETURN2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET2_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGTY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="QUITAR_MSG_TECNICOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG" SCONAME="LOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T_LOG_SIMPLE"/>
+  <source>METHOD add_log.
+    IF NOT return2 IS INITIAL.
+      add_log_simple( type = return2-type
+                      clave = clave
+                      message = return2-message ).
+    ENDIF.
+
+    DATA(li_return2) = i_return2.
+    IF quitar_msg_tecnicos = &apos;X&apos;.
+      IF line_exists( i_return2[ id = &apos;V4&apos; number = &apos;233&apos; ] ).
+        LOOP AT i_return2 TRANSPORTING NO FIELDS WHERE NOT ( id = &apos;V4&apos; AND number = &apos;233&apos; ). &quot;#EC PREF_LINE_EX
+          EXIT.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          DELETE li_return2 WHERE id = &apos;V4&apos; AND number = &apos;233&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+    LOOP AT li_return2 ASSIGNING FIELD-SYMBOL(&lt;return2&gt;).
+      add_log_simple( type = &lt;return2&gt;-type
+                      clave = clave
+                      message = &lt;return2&gt;-message ).
+    ENDLOOP.
+
+    IF NOT message IS INITIAL.
+      add_log_simple( type = type
+                      clave = clave
+                      message = message  ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" SCONAME="TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGTY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" SCONAME="ICONO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ICON_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_LOG_SIMPLE" SCONAME="LOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="T_LOG_SIMPLE"/>
+  <source>METHOD add_log_simple.
+    CLEAR log.
+    log-clave   = clave.
+    log-message = message.
+    IF NOT icono IS INITIAL.
+      DATA(l_icono) = icono.
+    ELSEIF NOT type IS INITIAL.
+      CASE type.
+        WHEN &apos;I&apos; OR &apos;S&apos;.
+          l_icono = icon_green_light.
+        WHEN &apos;W&apos;.
+          l_icono = icon_yellow_light.
+        WHEN &apos;E&apos;.
+          l_icono = icon_red_light.
+        WHEN &apos;A&apos;.
+          l_icono = icon_message_critical.
+        WHEN OTHERS.
+          l_icono = icon_question.
+      ENDCASE.
+    ENDIF.
+
+    IF NOT l_icono IS INITIAL.
+      log-lights = zcl_ap_alv=&gt;set_icono( icono = l_icono mensaje = message ).
+    ENDIF.
+
+    APPEND log TO i_log_simple.
+
+    IF NOT o_log IS INITIAL.
+      o_log-&gt;log( clave = clave msgty = type message = message ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;00&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGTY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;398&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGV3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MSGV4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="COLOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE" SCONAME="TRIM_SPACES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_message.
+    DATA: l_error  TYPE zest_ap_errores,
+          l_cadena TYPE c LENGTH 160.
+
+    CLEAR l_error.
+    l_error-msgty = msgty.
+    l_error-msgid = msgid.
+    l_error-msgno = msgno.
+    l_error-msgv1 = msgv1.
+    l_error-msgv2 = msgv2.
+    l_error-msgv3 = msgv3.
+    l_error-msgv4 = msgv4.
+
+    IF NOT string IS INITIAL.
+      l_cadena = string.
+      l_error-msgv1 = l_cadena(40).
+      l_error-msgv2 = l_cadena+40(40).
+      l_error-msgv3 = l_cadena+80(40).
+      l_error-msgv4 = l_cadena+120(40).
+    ENDIF.
+    l_error-message = message.
+    l_error-color   = color.
+    l_error-objeto  = objeto.
+
+    CASE msgty.
+      WHEN &apos;I&apos; OR &apos;S&apos;.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_verde.
+      WHEN &apos;W&apos;.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_ambar.
+      WHEN &apos;?&apos;.
+        CLEAR l_error-lights.
+      WHEN OTHERS.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_rojo.
+    ENDCASE.
+
+    IF         l_error-message IS INITIAL
+       AND NOT l_error-msgno   IS INITIAL
+       AND NOT l_error-msgid   IS INITIAL.
+      IF trim_spaces IS NOT INITIAL.
+        DATA(l_msgv1) = l_error-msgv1.
+        DATA(l_msgv2) = l_error-msgv2.
+        DATA(l_msgv3) = l_error-msgv3.
+        DATA(l_msgv4) = l_error-msgv4.
+        CONDENSE: l_msgv1, l_msgv2, l_msgv3, l_msgv4.
+        MESSAGE ID l_error-msgid TYPE &apos;S&apos; NUMBER l_error-msgno
+                WITH l_msgv1 l_msgv2 l_msgv3 l_msgv4
+                INTO l_error-message.
+      ELSE.
+        MESSAGE ID l_error-msgid TYPE &apos;S&apos; NUMBER l_error-msgno
+                WITH l_error-msgv1 l_error-msgv2 l_error-msgv3 l_error-msgv4
+                INTO l_error-message.
+      ENDIF.
+    ENDIF.
+
+    APPEND l_error TO i_errores.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRET2" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje a partir de la estructura BAPIRET2" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRET2" SCONAME="MESSAGE2" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET2" PAROPTIONL="X"/>
+  <source>METHOD add_message_bapiret2.
+    add_message( msgid = message2-id
+                 msgty = message2-type
+                 msgno = message2-number
+                 msgv1 = message2-message_v1
+                 msgv2 = message2-message_v2
+                 msgv3 = message2-message_v3
+                 msgv4 = message2-message_v4
+                 message = message2-message ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRET2_T" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje a partir de la estructura BAPIRET2" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRET2_T" SCONAME="TABLA" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET2_T" PAROPTIONL="X"/>
+  <source>METHOD add_message_bapiret2_t.
+    DATA l_bapiret2 TYPE bapiret2.
+
+    LOOP AT tabla INTO l_bapiret2.
+      add_message_bapiret2( l_bapiret2 ).
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRETURN1" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje a partir de la estructura BAPIRETURN1" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_BAPIRETURN1" SCONAME="MESSAGE1" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1" PAROPTIONL="X"/>
+  <source>METHOD add_message_bapireturn1.
+    add_message( msgid = message1-id
+                 msgty = message1-type
+                 msgno = message1-number
+                 msgv1 = message1-message_v1
+                 msgv2 = message1-message_v2
+                 msgv3 = message1-message_v3
+                 msgv4 = message1-message_v4
+                 message = message1-message ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje informativo" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;00&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGTY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;I&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;398&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGV3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MSGV4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_I" SCONAME="COLOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_message_i.
+    DATA l_error TYPE zest_ap_errores.
+
+    CLEAR l_error.
+    l_error-msgty   = msgty.
+    l_error-msgid   = msgid.
+    l_error-msgno   = msgno.
+    l_error-msgv1   = msgv1.
+    l_error-msgv2   = msgv2.
+    l_error-msgv3   = msgv3.
+    l_error-msgv4   = msgv4.
+    l_error-message = message.
+    l_error-color   = color.
+    l_error-objeto  = objeto.
+
+    CASE msgty.
+      WHEN &apos;I&apos; OR &apos;S&apos;.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_verde.
+      WHEN &apos;W&apos;.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_ambar.
+      WHEN OTHERS.
+        l_error-lights = zcl_ap_alv=&gt;c_sem_rojo.
+    ENDCASE.
+
+    IF         l_error-message IS INITIAL
+       AND NOT l_error-msgno   IS INITIAL
+       AND NOT l_error-msgid   IS INITIAL.
+      MESSAGE ID l_error-msgid TYPE &apos;S&apos; NUMBER l_error-msgno
+              WITH l_error-msgv1 l_error-msgv2 l_error-msgv3 l_error-msgv4
+              INTO l_error-message.
+    ENDIF.
+
+    APPEND l_error TO i_errores.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" VERSION="1" LANGU="S" DESCRIPT="Añade mensaje de tabla SYST" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGID"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGTY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGTY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGNO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGNO"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGV1"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGV2"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGV3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGV3"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MSGV4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-MSGV4"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ADD_MESSAGE_SYST" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD add_message_syst.
+    IF NOT msgid IS INITIAL OR NOT msgno IS INITIAL.
+      add_message( msgty = msgty
+                   msgid = msgid
+                   msgno = msgno
+                   msgv1 = msgv1
+                   msgv2 = msgv2
+                   msgv3 = msgv3
+                   msgv4 = msgv4
+                   message = message ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="CLEAR_MESSAGES" VERSION="1" LANGU="S" DESCRIPT="Inicializa tabla de mensajes" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD clear_messages.
+    CLEAR i_errores.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" VERSION="1" LANGU="S" DESCRIPT="Solicitud de confirmación" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="OPCION" VERSION="1" LANGU="S" DESCRIPT="Sí" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;J&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="START_COL" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor horizontal en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUCOL" PARVALUE="25"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="START_ROW" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor vertical en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUROW" PARVALUE="6"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="CANCEL_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR" SCONAME="RESPUESTA" VERSION="1" LANGU="S" DESCRIPT="X aceptado, blanco no" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD confirmar.
+    DATA: l_titulo TYPE string,
+          l_resp   TYPE c LENGTH 1.
+
+    CLEAR respuesta.
+
+    IF titulo IS INITIAL.
+      l_titulo = texto.
+    ELSE.
+      l_titulo = titulo.
+    ENDIF.
+
+    CALL FUNCTION &apos;POPUP_TO_CONFIRM_STEP&apos;
+      EXPORTING
+        defaultoption  = opcion
+        textline1      = texto
+        textline2      = texto2
+        titel          = l_titulo
+        start_column   = start_col
+        start_row      = start_row
+        cancel_display = cancel_display
+      IMPORTING
+        answer         = l_resp.
+
+    IF l_resp = &apos;J&apos;.
+      respuesta = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" VERSION="1" LANGU="S" DESCRIPT="Solicitud de confirmación con más lineas" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="OPCION" VERSION="1" LANGU="S" DESCRIPT="Sí" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;Y&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="LINEA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="LINEA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="CANCEL_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_2" SCONAME="RESPUESTA" VERSION="1" LANGU="S" DESCRIPT="X aceptado, blanco no" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD confirmar_2.
+    DATA: l_titulo TYPE string,
+          l_resp   TYPE c LENGTH 1.
+
+    CLEAR respuesta.
+
+    IF titulo IS INITIAL.
+      l_titulo = texto.
+    ELSE.
+      l_titulo = titulo.
+    ENDIF.
+
+    CALL FUNCTION &apos;POPUP_TO_CONFIRM_WITH_MESSAGE&apos;
+      EXPORTING
+        defaultoption  = opcion
+        diagnosetext1  = texto
+        diagnosetext2  = texto2
+        diagnosetext3  = texto3
+        textline1      = linea1
+        textline2      = linea2
+        titel          = l_titulo
+*       START_COLUMN   = 25
+*       START_ROW      = 6
+        cancel_display = cancel_display
+      IMPORTING
+        answer         = l_resp.
+
+    IF l_resp = &apos;J&apos;.
+      respuesta = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" VERSION="1" LANGU="S" DESCRIPT="Solicitud de confirmación de grabación" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Datos sin guardar&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Existen datos no grabados&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;¿Está seguro de salir sin guardar?&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="OPCION" VERSION="1" LANGU="S" DESCRIPT="No" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;N&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="START_COL" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor horizontal en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUCOL" PARVALUE="25"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="START_ROW" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor vertical en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUROW" PARVALUE="6"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="CANCEL_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONFIRMAR_GRABACION" SCONAME="RESPUESTA" VERSION="1" LANGU="S" DESCRIPT="X aceptado, blanco no" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD confirmar_grabacion.
+    respuesta = confirmar( opcion = opcion
+                           titulo = titulo
+                           texto  = texto
+                           texto2 = texto2
+                           start_col = start_col
+                           start_row = start_row
+                           cancel_display = cancel_display ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="CONSTRUCTOR" SCONAME="O_LOG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_LOG" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    me-&gt;o_log = o_log.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" VERSION="1" LANGU="S" DESCRIPT="Edición de texto" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Edición de texto&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="MAX_COLS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="DISPLAY_MODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="MODIFICADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="EDIT_TEXT" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD edit_text.
+    CALL FUNCTION &apos;Z_POPUP_EDIT_TEXT&apos;
+      EXPORTING
+        titulo       = titulo
+        texto        = texto
+        max_cols     = max_cols
+        display_mode = display_mode
+      IMPORTING
+        modificado   = modificado
+      CHANGING
+        string       = string.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" VERSION="1" LANGU="S" DESCRIPT="Enviar log por email" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="INFO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="ERRORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="WARNINGS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="DESTINATARIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="AVISO_USUARIO_ONLINE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="LOG_COMPLETO_EN_ADJUNTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="OBJECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;LOG&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="ENVIAR_LOG_POR_MAIL" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD enviar_log_por_mail.
+    DATA: o_log     TYPE REF TO zcl_ap_log,
+          l_errores TYPE zest_ap_errores,
+          l_log     TYPE zlog_ap.
+
+    o_log = NEW #(
+        object = object ).
+
+    LOOP AT i_errores INTO l_errores.
+      CLEAR l_log.
+      MOVE-CORRESPONDING l_errores TO l_log.
+      l_log-msgv1 = clave.
+      CLEAR: l_log-msgv2, l_log-msgv3, l_log-msgv4.
+      APPEND l_log TO o_log-&gt;i_log.
+    ENDLOOP.
+
+    o_log-&gt;enviar_log_por_mail( info                     = info
+                                errores                  = errores
+                                warnings                 = warnings
+                                titulo                   = titulo
+                                destinatario             = destinatario
+                                aviso_usuario_online     = aviso_usuario_online
+                                log_completo_en_adjunto  = log_completo_en_adjunto ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="FREE" VERSION="1" LANGU="S" DESCRIPT="Libera memoria" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD free.
+    CLEAR: i_errores, i_popup.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="GET_LAST_MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último mensaje" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GET_LAST_MESSAGE" SCONAME="TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GET_LAST_MESSAGE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_last_message.
+    FIELD-SYMBOLS &lt;mes&gt; TYPE zest_ap_errores.
+
+    CLEAR message.
+    LOOP AT i_errores ASSIGNING &lt;mes&gt; WHERE msgty = type.
+      message = &lt;mes&gt;-message.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="GUARDAR_LOG" VERSION="1" LANGU="S" DESCRIPT="Guardar log en tabla ZLOG" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GUARDAR_LOG" SCONAME="PROCESO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GUARDAR_LOG" SCONAME="MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GUARDAR_LOG" SCONAME="CLAVE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD guardar_log.
+    DATA: error   TYPE zest_ap_errores,
+          l_msgv1 TYPE sy-msgv1.
+
+    IF o_log IS INITIAL.
+      o_log = NEW #(
+          object = proceso ).
+    ENDIF.
+
+    LOOP AT i_errores INTO error WHERE guardada = &apos;&apos;.
+      IF msgv1 IS INITIAL AND clave IS INITIAL.
+        l_msgv1 = error-msgv1.
+      ELSE.
+        l_msgv1 = msgv1.
+      ENDIF.
+      error-guardada = &apos;X&apos;.
+      MODIFY i_errores FROM error.
+
+      o_log-&gt;set_tabla_log( clave    = clave
+                            msgid    = error-msgid
+                            msgty    = error-msgty
+                            msgno    = error-msgno
+                            msgv1    = l_msgv1
+                            msgv2    = error-msgv2
+                            msgv3    = error-msgv3
+                            msgv4    = error-msgv4
+                            message  = error-message ).
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="GUI_DISPONIBLE" VERSION="1" LANGU="S" DESCRIPT="¿Se ejecuta desde SAPGUI?" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="GUI_DISPONIBLE" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD gui_disponible.
+    DATA return TYPE c LENGTH 1.
+
+    CALL FUNCTION &apos;GUI_IS_AVAILABLE&apos;
+      IMPORTING
+        return = return.
+    si = return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" VERSION="1" LANGU="S" DESCRIPT="Información" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;Información&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" SCONAME="TEXTO1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="INFORMAR" SCONAME="TEXTO4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD informar.
+    DATA l_string TYPE string.
+
+    IF popup_permitido( ) = &apos;X&apos;.
+      CALL FUNCTION &apos;POPUP_TO_INFORM&apos;
+        EXPORTING
+          titel = titulo
+          txt1  = texto1
+          txt2  = texto2
+          txt3  = texto3
+          txt4  = texto4.
+    ELSE.
+      CONCATENATE texto1 texto2 texto3 texto4 INTO l_string SEPARATED BY space.
+      MESSAGE l_string TYPE &apos;I&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" VERSION="1" LANGU="S" DESCRIPT="Lista con opciones de radiobuttons" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="START_COL" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor horizontal en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUCOL" PARVALUE="25"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="START_ROW" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor vertical en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUROW" PARVALUE="6"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="I_LISTA" VERSION="1" LANGU="S" DESCRIPT="Selección de valores" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CCSEQ_T_VALUES" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LISTA_OPCIONES" SCONAME="RESPUESTA" VERSION="1" LANGU="S" DESCRIPT="X aceptado, blanco no" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SPOPLI-VAROPTION"/>
+  <source>METHOD lista_opciones.
+    DATA: l_titulo       TYPE string,
+          i_lista_string TYPE TABLE OF string,
+          l_string       TYPE string,
+          l_lista        TYPE spopli,
+          l_first        TYPE c LENGTH 1,
+          i_lista_local  TYPE ccseq_t_values,
+          l_answer       TYPE c LENGTH 1.
+
+    CLEAR respuesta.
+
+    IF titulo IS INITIAL.
+      l_titulo = texto.
+    ELSE.
+      l_titulo = titulo.
+    ENDIF.
+
+    IF i_lista IS INITIAL AND NOT lista IS INITIAL.
+      SPLIT lista AT &apos;,&apos; INTO TABLE i_lista_string.
+
+      LOOP AT i_lista_string INTO l_string.
+        CLEAR l_lista.
+        l_lista-varoption = l_string.
+        IF l_first IS INITIAL.
+          l_first = &apos;X&apos;.
+          l_lista-selflag = l_first.
+        ENDIF.
+        APPEND l_lista TO i_lista_local.
+      ENDLOOP.
+    ELSE.
+      i_lista_local = i_lista.
+    ENDIF.
+    CALL FUNCTION &apos;POPUP_TO_DECIDE_LIST&apos;
+      EXPORTING
+        textline1          = texto
+        textline2          = texto2
+        titel              = l_titulo
+        start_col          = start_col
+        start_row          = start_row
+      IMPORTING
+        answer             = l_answer
+      TABLES
+        t_spopli           = i_lista_local
+      EXCEPTIONS
+        not_enough_answers = 1
+        too_much_answers   = 2
+        too_much_marks     = 3.
+    IF sy-subrc = 0.
+      IF l_answer = &apos;A&apos;. &quot; Cancelado!
+        CLEAR respuesta.
+      ELSE.
+        READ TABLE i_lista_local INTO l_lista WITH KEY selflag = &apos;X&apos;.
+        IF sy-subrc = 0.
+          respuesta = l_lista-varoption.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      CLEAR respuesta.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" VERSION="1" LANGU="S" DESCRIPT="Lista en dynpro" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="VALORES" VERSION="1" LANGU="S" DESCRIPT="Gestor valores posibles: Tabla de datos" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TPDA_VRM_VALUES" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="DOMINIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="KEY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="TEXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="CAMPO_IDIOMA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="LIST_DYNPRO" SCONAME="WHERE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD list_dynpro.
+    DATA datos TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;tabla&gt; TYPE STANDARD TABLE,
+                   &lt;linea&gt; TYPE any,
+                   &lt;fs&gt;    TYPE any.
+
+    DATA: i_values TYPE vrm_values,
+          l_value  LIKE LINE OF i_values,
+          l_where  TYPE string.
+**  CALL FUNCTION &apos;VRM_REFRESH_VALUES&apos;.
+
+    IF NOT valores IS INITIAL.
+      i_values = valores.
+    ELSEIF NOT dominio IS INITIAL.
+      SELECT domvalue_l ddtext FROM  dd07t
+        INTO (l_value-key, l_value-text)
+       WHERE domname    = dominio
+         AND ddlanguage = sy-langu.
+        APPEND l_value TO i_values.
+      ENDSELECT.
+    ELSEIF NOT tabla IS INITIAL.
+      zcl_ap_fs=&gt;create_it_from_struc( EXPORTING i_struc = tabla
+                                       IMPORTING e_table = datos ).
+      ASSIGN datos-&gt;* TO &lt;tabla&gt;.
+      IF NOT campo_idioma IS INITIAL.
+        CONCATENATE &apos;&apos;&apos;&apos; sy-langu &apos;&apos;&apos;&apos; INTO l_where.
+        CONCATENATE campo_idioma &apos;= &apos; l_where INTO l_where SEPARATED BY space.
+      ENDIF.
+
+      IF NOT where IS INITIAL.
+        IF l_where IS INITIAL.
+          l_where = where.
+        ELSE.
+          CONCATENATE l_where &apos;AND&apos; where INTO l_where SEPARATED BY space.
+        ENDIF.
+      ENDIF.
+      SELECT * FROM (tabla)
+        INTO CORRESPONDING FIELDS OF TABLE &lt;tabla&gt;
+       WHERE (l_where).
+      LOOP AT &lt;tabla&gt; ASSIGNING &lt;linea&gt;.
+        CLEAR l_value.
+        ASSIGN COMPONENT key OF STRUCTURE &lt;linea&gt; TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          l_value-key = &lt;fs&gt;.
+        ENDIF.
+        ASSIGN COMPONENT text OF STRUCTURE &lt;linea&gt; TO &lt;fs&gt;.
+        IF sy-subrc = 0.
+          l_value-text = &lt;fs&gt;.
+        ENDIF.
+        APPEND l_value TO i_values.
+      ENDLOOP.
+    ENDIF.
+
+    CALL FUNCTION &apos;VRM_SET_VALUES&apos;
+      EXPORTING
+        id     = campo
+        values = i_values.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" VERSION="1" LANGU="S" DESCRIPT="Popup con dos opciones" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="OPCION1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="START_COL" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor horizontal en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUCOL" PARVALUE="25"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="START_ROW" VERSION="1" LANGU="S" DESCRIPT="Posición del cursor vertical en PAI" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CUROW" PARVALUE="6"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="CANCEL_DISPLAY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="TEXTO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="DEFAULTOPTION" VERSION="1" LANGU="S" DESCRIPT="Indicador de una posición" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="OPCION2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="LINEA1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="LINEA2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="LINEA3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_2_OPCIONES" SCONAME="RESPUESTA" VERSION="1" LANGU="S" DESCRIPT="X aceptado, blanco no" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CHAR1"/>
+  <source>METHOD popup_2_opciones.
+    &quot; TODO: parameter START_COL is never used (ABAP cleaner)
+    &quot; TODO: parameter START_ROW is never used (ABAP cleaner)
+    &quot; TODO: parameter CANCEL_DISPLAY is never used (ABAP cleaner)
+
+    DATA l_titulo TYPE text80.
+
+    IF titulo IS INITIAL.
+      l_titulo = texto.
+    ELSE.
+      l_titulo = titulo.
+    ENDIF.
+
+    CALL FUNCTION &apos;POPUP_WITH_2_BUTTONS_TO_CHOOSE&apos;
+      EXPORTING
+        defaultoption = &apos;1&apos;
+        diagnosetext1 = texto
+        diagnosetext2 = texto2
+        diagnosetext3 = texto3
+        textline1     = linea1
+        textline2     = linea2
+        textline3     = linea3
+        text_option1  = opcion1
+        text_option2  = opcion2
+        titel         = l_titulo
+      IMPORTING
+        answer        = respuesta.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" VERSION="1" LANGU="S" DESCRIPT="Popup ALV con OK / CANCEL" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="CAMPOS_NOOUT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="CAMPOS_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="CAMPOS_SUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="CAMPOS_ORDEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="BOTONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;OK_CANCEL&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_OK_CANCEL" SCONAME="OK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD popup_alv_ok_cancel.
+    DATA: lr_table_descr TYPE REF TO cl_abap_tabledescr,
+          lr_data        TYPE REF TO data,
+          l_ucomm        TYPE sy-ucomm.
+
+    FIELD-SYMBOLS &lt;tabla&gt; TYPE STANDARD TABLE.
+
+* Copiamos la tabla para poder mandarla como modificable aunque no nos interesa la salida.
+    lr_table_descr ?= cl_abap_tabledescr=&gt;describe_by_data( tabla ).
+    CREATE DATA lr_data TYPE HANDLE lr_table_descr.
+    ASSIGN lr_data-&gt;* TO &lt;tabla&gt;.
+    &lt;tabla&gt; = tabla.
+
+    CLEAR ok.
+    CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+      EXPORTING
+        titulo       = titulo
+        texto        = texto
+        texto2       = texto2
+        campos_noout = campos_noout
+        campos_texto = campos_texto
+        campos_sum   = campos_sum
+        campos_orden = campos_orden
+        botones      = botones
+      IMPORTING
+        ucomm        = l_ucomm
+      TABLES
+        t_datos      = &lt;tabla&gt;.
+    IF l_ucomm = &apos;F01&apos;.
+      ok = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="CAMPOS_NOOUT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="CAMPOS_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="CAMPOS_SUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="CAMPOS_ORDEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="BOTONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;OK_CANCEL&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="SOLO_UNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="OBLIGATORIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="REGISTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="CANCELADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_ALV_SELECCION" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD popup_alv_seleccion.
+    DATA: l_ucomm TYPE sy-ucomm,
+          l_fila  TYPE i.
+
+    DO.
+      CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+        EXPORTING
+          titulo       = titulo
+          texto        = texto
+          texto2       = texto2
+          campos_noout = campos_noout
+          campos_texto = campos_texto
+          campos_sum   = campos_sum
+          campos_orden = campos_orden
+          botones      = botones
+          check        = &apos;X&apos;
+        IMPORTING
+          ucomm        = l_ucomm
+          fila         = l_fila
+        TABLES
+          t_datos      = tabla.
+
+      IF l_ucomm IS INITIAL AND NOT l_fila IS INITIAL.
+        l_ucomm = &apos;F01&apos;.
+
+* En caso de doble click, sólo queremos el selecionado
+        LOOP AT tabla ASSIGNING FIELD-SYMBOL(&lt;registro&gt;).
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;registro&gt; TO FIELD-SYMBOL(&lt;check&gt;).
+          IF sy-subrc = 0.
+            CLEAR &lt;check&gt;.
+          ENDIF.
+        ENDLOOP.
+
+        ASSIGN tabla[ l_fila ] TO &lt;registro&gt;.
+        ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;registro&gt; TO &lt;check&gt;.
+        IF sy-subrc = 0.
+          &lt;check&gt; = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+
+      IF l_ucomm = &apos;F01&apos;.
+        DATA(cont) = 0.
+        LOOP AT tabla ASSIGNING &lt;registro&gt;.
+          ASSIGN COMPONENT &apos;CHECK&apos; OF STRUCTURE &lt;registro&gt; TO &lt;check&gt;.
+          IF sy-subrc = 0.
+            IF &lt;check&gt; = &apos;X&apos;.
+              cont = cont + 1.
+              registro = &lt;registro&gt;.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        IF cont = 0 AND obligatoria = &apos;X&apos;.
+          MESSAGE &apos;Seleccione al menos un registro&apos; TYPE &apos;I&apos;.
+        ELSEIF cont &gt; 1 AND solo_una = &apos;X&apos;.
+          MESSAGE &apos;Seleccione solo un registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          RETURN.
+        ENDIF.
+      ELSE.
+        cancelado = &apos;X&apos;.
+        EXIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" VERSION="1" LANGU="S" DESCRIPT="Popup estándar tabla interna BAPIRET2" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="I_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla con informaciones de retorno BAPI" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETTAB"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGV1" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Variable de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGV2" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Variable de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGV3" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Variable de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGV4" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Variable de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGTY" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Tipo de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGTY" PARVALUE="&apos;E&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGID" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Clase de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGID" PARVALUE="&apos;00&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_BAPIRET2" SCONAME="MSGNO" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Número de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-MSGNO" PARVALUE="&apos;398&apos;"/>
+  <source>METHOD popup_bapiret2.
+    DATA: i_ret    TYPE bapirettab,
+          l_return TYPE bapiret2.
+
+    i_ret = i_return.
+    IF NOT msgv1 IS INITIAL.
+      l_return-type       = msgty.
+      l_return-id         = msgid.
+      l_return-number     = msgno.
+      l_return-message_v1 = msgv1.
+      l_return-message_v2 = msgv2.
+      l_return-message_v3 = msgv3.
+      l_return-message_v4 = msgv4.
+      __concat4 l_return-message msgv1 msgv2 msgv3 msgv4.
+      INSERT l_return INTO i_ret INDEX 1.
+    ENDIF.
+
+    CALL FUNCTION &apos;ISH_BAPIRET2_DISPLAY&apos;
+*             EXPORTING
+*               SEND_IF_ONE         = &apos; &apos;
+*               OBJECT              = &apos; &apos;
+*               SHOW_LINNO          = &apos;X&apos;
+*               AMODAL_WINDOW       = &apos; &apos;
+      TABLES
+        ss_bapiret2 = i_ret.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_CAMPOS_ESTRUCTURA" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de campos" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_CAMPOS_ESTRUCTURA" SCONAME="ESTRUCTURA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_CAMPOS_ESTRUCTURA" SCONAME="INI_CAMPOS_NO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_CAMPOS_ESTRUCTURA" SCONAME="INI_CAMPOS_NO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_CAMPOS_ESTRUCTURA" SCONAME="R_CAMPOS" VERSION="1" LANGU="S" DESCRIPT="Tabla ranges p.nombre campo Grid ALV" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ROIJ_FIELDNAME_RTAB"/>
+  <source>METHOD popup_campos_estructura.
+    TYPES: BEGIN OF t_alv,
+             check     TYPE c LENGTH 1,
+             fieldname TYPE fieldname,
+             fieldtext TYPE as4text,
+           END OF t_alv.
+
+    DATA: i_campos  TYPE ddfields,
+          l_long    TYPE i,
+          l_campo   TYPE dfies,
+          l_alv     TYPE t_alv,
+          i_alv     TYPE TABLE OF t_alv,
+          o_alv     TYPE REF TO zcl_ap_alv,
+          lr_campos TYPE roij_fieldname_rstr.
+
+    i_campos = zcl_ap_dev=&gt;get_fieldcatalog_tabla( estructura ).
+
+    IF NOT ini_campos_no IS INITIAL.
+      l_long = strlen( ini_campos_no ).
+      LOOP AT i_campos INTO l_campo WHERE fieldname CS ini_campos_no.
+        IF l_campo-fieldname(l_long) = ini_campos_no.
+          DELETE i_campos.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT ini_campos_no2 IS INITIAL.
+      l_long = strlen( ini_campos_no2 ).
+      LOOP AT i_campos INTO l_campo WHERE fieldname CS ini_campos_no2.
+        IF l_campo-fieldname(l_long) = ini_campos_no2.
+          DELETE i_campos.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    LOOP AT i_campos INTO l_campo.
+      CLEAR l_alv.
+      MOVE-CORRESPONDING l_campo TO l_alv.
+      IF l_alv-fieldname IN r_campos.
+        l_alv-check = &apos;X&apos;.
+      ENDIF.
+      APPEND l_alv TO i_alv.
+    ENDLOOP.
+
+    o_alv = NEW #(
+        tabla = &apos;&apos; ).
+
+    o_alv-&gt;constructor_tabla( EXPORTING campo_check = &apos;CHECK&apos; sel = &apos;M&apos; no_layout = &apos;X&apos; CHANGING t_tabla = i_alv ).
+
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_alv ).
+
+    o_alv-&gt;show_popup( ).
+
+    o_alv-&gt;get_seleccion( CHANGING t_tabla = i_alv ).
+
+    CLEAR r_campos.
+    LOOP AT i_alv INTO l_alv WHERE check = &apos;X&apos;.
+      CLEAR lr_campos.
+      lr_campos-option = &apos;EQ&apos;.
+      lr_campos-sign   = &apos;I&apos;.
+      lr_campos-low    = l_alv-fieldname.
+      APPEND lr_campos TO r_campos.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" VERSION="1" LANGU="S" DESCRIPT="Popup fecha" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" SCONAME="TEXTO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHA" SCONAME="FECHA_SEL" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <source>METHOD popup_fecha.
+    DATA: l_title        TYPE text128,
+          l_description1 TYPE text128,
+          l_description2 TYPE text128.
+
+    l_title = titulo.
+    IF titulo IS INITIAL.
+      l_title = texto.
+    ENDIF.
+    l_description1 = texto.
+    l_description2 = texto2.
+
+    CALL FUNCTION &apos;TR_POPUP_INPUT_DATE&apos;
+      EXPORTING
+        iv_title               = l_title
+        iv_description1        = l_description1
+        iv_description2        = l_description2
+        iv_date                = fecha
+      IMPORTING
+        ev_date                = fecha_sel
+      EXCEPTIONS
+        action_aborted_by_user = 1
+        value_not_changed      = 2
+        OTHERS                 = 3.
+
+    IF sy-subrc = 2.
+      fecha_sel = fecha.
+    ELSEIF sy-subrc &lt;&gt; 0.
+      CLEAR fecha_sel.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Popup fecha" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" SCONAME="BEGDA_SEL" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" SCONAME="ENDDA_SEL" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_FECHAS" SCONAME="CANCELADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD popup_fechas.
+    begda_sel = begda.
+    endda_sel = endda.
+    DO.
+      CALL FUNCTION &apos;RHPK_POPUP_BEGDA_ENDA&apos;
+        CHANGING
+          begda    = begda_sel
+          endda    = endda_sel
+        EXCEPTIONS
+          canceled = 1
+          OTHERS   = 2.
+      IF sy-subrc &lt;&gt; 0.
+        cancelado = &apos;X&apos;.
+        RETURN.
+      ELSEIF begda_sel IS INITIAL OR endda_sel IS INITIAL.
+        MESSAGE &apos;Informe fechaS&apos; TYPE &apos;I&apos;.
+      ELSEIF endda_sel &lt; begda_sel.
+        MESSAGE &apos;Fecha fin no puede ser menor a fecha inicial&apos; TYPE &apos;I&apos;.
+      ELSE.
+        RETURN.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_PERMITIDO" VERSION="1" LANGU="S" DESCRIPT="¿Se permite POPUP?" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_PERMITIDO" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD popup_permitido.
+    DATA lv_update_process TYPE sy-subrc.
+
+    IF sy-batch IS INITIAL AND sy-binpt IS INITIAL. &quot; No ejecutamos en fondo ni en batch input
+      CALL FUNCTION &apos;TH_IN_UPDATE_TASK&apos;             &quot; Ni en ejecución en fondo
+        IMPORTING
+          in_update_task = lv_update_process.
+
+      IF lv_update_process = 0.
+        IF gui_disponible( ) = &apos;X&apos;.                 &quot; Ni si no se está ejecutando el GUI
+          si = &apos;X&apos;.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" VERSION="1" LANGU="S" DESCRIPT="Popup Usuario" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="CAMPO1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="CAMPO2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="CAMPO3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="CAMPO4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="START_COLUMN" VERSION="1" LANGU="S" DESCRIPT="Columna inicial" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;5&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="START_ROW" VERSION="1" LANGU="S" DESCRIPT="Fila inicial" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;5&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="&apos;A&apos; Cancelar / &apos;&apos; Ok" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="VALOR1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="VALOR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="VALOR3" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="POPUP_USUARIO" SCONAME="VALOR4" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD popup_usuario.
+    DATA: l_campo  TYPE sval,
+          i_campos TYPE TABLE OF sval.
+    DATA: v_pgv_texto1 TYPE c LENGTH 80 ##NEEDED,
+          v_pgv_texto2 TYPE c LENGTH 80 ##NEEDED.
+
+    SPLIT campo1 AT &apos;-&apos; INTO l_campo-tabname l_campo-fieldname.
+    l_campo-value = valor1.
+    APPEND l_campo TO i_campos.
+
+    IF NOT campo2 IS INITIAL.
+      CLEAR l_campo.
+      SPLIT campo2 AT &apos;-&apos; INTO l_campo-tabname l_campo-fieldname.
+      l_campo-value = valor2.
+      APPEND l_campo TO i_campos.
+    ENDIF.
+
+    IF NOT campo3 IS INITIAL.
+      CLEAR l_campo.
+      SPLIT campo3 AT &apos;-&apos; INTO l_campo-tabname l_campo-fieldname.
+      l_campo-value = valor3.
+      APPEND l_campo TO i_campos.
+    ENDIF.
+
+    IF NOT campo4 IS INITIAL.
+      CLEAR l_campo.
+      SPLIT campo4 AT &apos;-&apos; INTO l_campo-tabname l_campo-fieldname.
+      l_campo-value = valor4.
+      APPEND l_campo TO i_campos.
+    ENDIF.
+
+    CALL FUNCTION &apos;POPUP_GET_VALUES&apos;
+      EXPORTING
+        popup_title  = titulo
+        start_column = start_column
+        start_row    = start_row
+      IMPORTING
+        returncode   = return
+      TABLES
+        fields       = i_campos.
+
+    IF return &lt;&gt; &apos;A&apos;. &quot; Cancelado
+      LOOP AT i_campos INTO l_campo.
+        CASE sy-tabix.
+          WHEN 1.
+            valor1 = l_campo-value.
+          WHEN 2.
+            valor2 = l_campo-value.
+          WHEN 3.
+            valor3 = l_campo-value.
+          WHEN 4.
+            valor4 = l_campo-value.
+        ENDCASE.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="SET_OBJETO" VERSION="1" LANGU="S" DESCRIPT="Fija ID Objeto" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SET_OBJETO" SCONAME="OBJETO" VERSION="1" LANGU="S" DESCRIPT="Objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD set_objeto.
+    me-&gt;objeto = objeto.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_ERRORES" VERSION="1" LANGU="S" DESCRIPT="Muestra popup con errores" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_ERRORES" SCONAME="SHOW_MSGV1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_ERRORES" SCONAME="SHOW_MSGV2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_ERRORES" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD show_errores.
+    CALL FUNCTION &apos;Z_POPUP_ERRORES&apos;
+      EXPORTING
+        show_msgv1 = show_msgv1
+        show_msgv2 = show_msgv2
+        titulo     = titulo
+      TABLES
+        t_errores  = i_errores.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_LOG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_LOG" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_LOG" SCONAME="CAMPOS_TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_LOG" SCONAME="QUITAR_MSG_TECNICOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD show_log.
+    &quot; TODO: parameter QUITAR_MSG_TECNICOS is never used (ABAP cleaner)
+
+    IF NOT titulo IS INITIAL.
+      DATA(l_titulo) = titulo.
+    ELSE.
+      l_titulo = &apos;Resultado ejecución&apos;.
+    ENDIF.
+
+    DATA(l_campos_texto) = campos_texto.
+    IF NOT l_campos_texto CS &apos;=&apos;.
+      l_campos_texto = |CLAVE={ campos_texto }|.
+    ENDIF.
+
+    popup_alv_ok_cancel( titulo       = l_titulo
+                         tabla        = i_log_simple
+                         campos_texto = l_campos_texto
+                         botones      = &apos;OK&apos; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_POPUP" VERSION="1" LANGU="S" DESCRIPT="Muestra ventana popup ALV con confirmacion" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_POPUP" SCONAME="TEXTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_POPUP" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_POPUP" SCONAME="OCULTAR_COL_VALOR" VERSION="1" LANGU="S" DESCRIPT="Ocultar columna valor" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_POPUP" CMPNAME="SHOW_POPUP" SCONAME="OK" VERSION="1" LANGU="S" DESCRIPT="Declaraciones de tipo de lenguaje interno ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD show_popup.
+    CALL FUNCTION &apos;Z_POPUP_CONFIRM_ALV&apos;
+      EXPORTING
+        texto             = texto
+        titulo            = titulo
+        ocultar_col_valor = ocultar_col_valor
+      IMPORTING
+        ok                = ok
+      TABLES
+        t_popup           = i_popup.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,255 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 18/04/2017
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+**->MANUAL:http://sap4.com,http://sap4.com/edicion
+**->PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_alv9fd.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: top_of_page REDEFINITION.
+ENDCLASS.                    "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check      TYPE xfeld,
+             lights     TYPE zico_estado_mensaje,
+             filename   TYPE sext_file,
+             filelength TYPE fpm_file_size,
+             createdate TYPE edoc_file_date,
+             createtime TYPE edoc_file_time,
+             message    TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          l_listado TYPE t_listado.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      leer_directorio,
+      procesar_ficheros.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE text-sel.
+PARAMETERS: p_serv  RADIOBUTTON GROUP g DEFAULT 'X',
+            p_local RADIOBUTTON GROUP g.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_direct TYPE text100 MODIF ID pc,
+            p_inif   TYPE text50 DEFAULT 'REC*.TXT' MODIF ID pc.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS p_ejec AS CHECKBOX.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    FIELD-SYMBOLS <listado> TYPE o_prog->t_listado.
+
+    READ TABLE o_prog->i_listado ASSIGNING <listado> INDEX row.
+    IF sy-subrc = 0.
+      zcl_ap_ficheros=>visualizar( fichero = <listado>-filename directorio = p_direct servidor = p_serv ).
+    ENDIF.
+
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row TYPE i.
+    FIELD-SYMBOLS <listado> TYPE o_prog->t_listado.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_excel( ).
+      WHEN 'F01'.
+        get_seleccion( CHANGING t_tabla = o_prog->i_listado ).
+        LOOP AT o_prog->i_listado ASSIGNING <listado> WHERE check = 'X'.
+        ENDLOOP.
+        IF sy-subrc NE 0.
+          MESSAGE 'Seleccione algún registro'(sar) TYPE 'I'.
+        ELSE.
+          o_prog->procesar_ficheros( ).
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+
+  METHOD top_of_page.
+    CLEAR o_content.
+    o_top_page->add_rango_auto( ).
+    o_top_page->add_rango( texto = 'Directorio'(dir) valor = p_direct ).
+    IF NOT p_inif IS INITIAL.
+      o_top_page->add_rango( texto = 'Máscara'(mas) valor = p_inif ).
+    ENDIF.
+
+    o_top_page->crea_info_seleccion( ).
+
+    o_content = o_top_page->get_grid( ).
+
+  ENDMETHOD.
+
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    leer_directorio( ).
+
+    IF p_ejec = 'X'.
+      procesar_ficheros( ).
+    ENDIF.
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD procesar_ficheros.
+    FIELD-SYMBOLS <listado> TYPE t_listado.
+
+    LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+      <listado>-lights = icon_green_light.
+      <listado>-message = 'Se ha procesado el fichero'(spf).
+      o_prog->message( p1 = 'Se ha procesado el fichero'(spf) p2 = <listado>-message type = 'S' solo_log = 'X' postponer = 'X' ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD leer_directorio.
+    DATA: i_files   TYPE rstt_t_files,
+          l_listado TYPE t_listado.
+    FIELD-SYMBOLS <file> TYPE file_info.
+
+    i_files     = zcl_ap_ficheros=>lista_ficheros_comun(  servidor = p_serv directory = p_direct mayusculas = '' mask = p_inif ).
+
+    LOOP AT i_files ASSIGNING <file> WHERE isdir = '' AND filename NE ''.
+      <file>-filename = zcl_ap_ficheros=>get_nombre_fichero( fichero = <file>-filename con_extension = 'X' ).
+
+      CLEAR l_listado.
+      MOVE-CORRESPONDING <file> TO l_listado.
+      l_listado-lights = icon_yellow_light.
+      l_listado-check = p_ejec.
+      APPEND l_listado TO i_listado.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe'(gin) ).
+
+    o_alv->set_layout( p_vari ).
+
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_field( campo = 'LIGHTS' op = 'KEY' ).
+    o_alv->set_field_noout( 'CHECK' ).
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = 'INICIO'
+      get_nombre_pc = 'X'
+      no_param      = 'X'
+      status_prog   = 'ZAP_STATUS'
+      guardar_logz  = 'X'.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = 'STANDARD_ALV_DYN'
+      top_of_page_auto   = 'X'
+      top_of_page_titulo = ''
+      status_prog        = 'ZAP_STATUS'.
+
+  o_alv->add_button( button = 'F01' text = 'Procesar fichero'(prf)  icon = icon_execute_object  ).
+
+  p_vari = o_alv->get_default_layout( ).
+
+  o_prog->initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog->at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection( ).
+
+AT SELECTION-SCREEN ON p_direct.
+  IF p_direct IS INITIAL AND sy-ucomm = 'ONLI'.
+    MESSAGE 'Informe directorio'(idi) TYPE 'E'.
+  ENDIF.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_direct.
+  zcl_ap_ficheros=>popup_select_directorio( EXPORTING servidor = p_serv CHANGING directorio = p_direct ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

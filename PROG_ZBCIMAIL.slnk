@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-16"?>
+<PROG NAME="ZBCIMAIL" VARCL="X" SUBC="I" CNAM="APICAZO" CDAT="20080515" UNAM="ZAPC" UDAT="20110509" VERN="000005" RMAND="100" RLOAD="S" SDATE="20110509" STIME="135538" IDATE="20110509" ITIME="135538" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Include funciones envio mail por HTML" LENGTH="37 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp;  Include           ZBCIMAIL
+*&amp;---------------------------------------------------------------------*
+
+DATA: v_destinatario_mail(100),
+      v_emisor_mail(100),
+      v_copia_mail(100),
+      v_titulo_mail(100),
+      v_copia_a_responsable_mail,
+      v_copia_a_emisor_mail.
+
+DATA: l_usrid_mail LIKE pa0105-usrid,
+      l_aux_mail(100).
+
+DATA: i_texto_mail LIKE solisti1 OCCURS 0 WITH HEADER LINE.
+
+DEFINE t.
+  clear i_texto_mail.
+  i_texto_mail = &amp;1.
+  append i_texto_mail.
+END-OF-DEFINITION.
+DEFINE t3.
+  clear i_texto_mail.
+  concatenate &amp;1 &amp;2 &amp;3 into i_texto_mail.
+  append i_texto_mail.
+END-OF-DEFINITION.
+
+DEFINE t4.
+  clear i_texto_mail.
+  concatenate &amp;1 &amp;2 &amp;3 &amp;4 into i_texto_mail.
+  append i_texto_mail.
+END-OF-DEFINITION.
+
+DEFINE get_mail_pernr.
+  select single usrid from pa0105
+    into l_usrid_mail
+   where pernr = &amp;1
+     and endda &gt;= sy-datum
+     and begda &lt;= sy-datum
+     and subty = &apos;9003&apos;.
+  if sy-subrc = 0.
+    concatenate l_usrid_mail &apos;@airnostrum.es&apos;
+           into &amp;2.
+  endif.
+END-OF-DEFINITION.
+
+DEFINE inicio_mail_html.
+  refresh i_texto_mail.
+  t &apos;&lt;head&gt;&apos;.
+  concatenate &apos;&lt;title&gt;&apos; &amp;1 &apos;&lt;/title&gt;&apos; into l_aux_mail.
+  t l_aux_mail.
+  t &apos;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;&quot;&gt;&apos;.
+  t &apos;&lt;style type=&quot;text/css&quot;&gt;&apos;.
+  t &apos;&lt;!--&apos;.
+  t
+&apos;n1 {font-family: Arial, Helvetica, sans-serif; font-size: 14px;}&apos;.
+  t &apos;--&gt;&apos;.
+  t &apos;&lt;!--&apos;.
+  t
+&apos;n2 {font-family: Arial, Helvetica, sans-serif; font-size: 10px;}&apos;.
+  t &apos;--&gt;&apos;.
+  t &apos;&lt;/style&gt;&apos;.
+  t &apos;&lt;/head&gt;&apos;.
+
+  t &apos;&lt;body class=&quot;n1&quot;&gt;&apos;.
+END-OF-DEFINITION.
+
+DEFINE enviar_mail.
+  call function &apos;Z_ENVIO_MAIL&apos;
+    exporting
+      subject   = v_titulo_mail
+      direccion = &amp;1
+      urgente   = &apos;X&apos;
+      html      = &apos;X&apos;
+      sender    = v_emisor_mail
+    tables
+      texto     = i_texto_mail.
+
+  if not &amp;2 is initial.
+    call function &apos;Z_ENVIO_MAIL&apos;
+      exporting
+        subject   = v_titulo_mail
+        direccion = &amp;2
+        urgente   = &apos;X&apos;
+        html      = &apos;X&apos;
+        sender    = v_emisor_mail
+      tables
+        texto     = i_texto_mail.
+  endif.
+END-OF-DEFINITION.
+
+DATA: v_letra_mail(100) VALUE &apos;font-size:12px;&apos;.
+
+DEFINE col_mail.
+  concatenate &apos;  &lt;th scope=&quot;col&quot; style=&quot;&apos; v_letra_mail
+              &apos;&quot;&gt;&apos; &amp;1 &apos;&lt;/th&gt;&apos; into l_aux_mail.
+  t l_aux_mail.
+END-OF-DEFINITION.
+
+DEFINE celda_mail.
+  describe field &amp;1 type l_aux_mail.
+  if l_aux_mail = &apos;D&apos;.
+    write &amp;1 to l_aux_mail(10).
+    concatenate &apos;  &lt;td style=&quot;&apos; v_letra_mail
+                &apos;&quot;&gt;&lt;div align=&quot;center&quot;&gt;&apos; l_aux_mail(10) &apos;&lt;/DIV&gt;&lt;/td&gt;&apos;
+                into l_aux_mail.
+  else.
+    concatenate &apos;  &lt;td style=&quot;&apos; v_letra_mail
+                &apos;&quot;&gt;&apos; &amp;1 &apos;&lt;/td&gt;&apos; into l_aux_mail.
+  endif.
+  t l_aux_mail.
+END-OF-DEFINITION.
+
+DEFINE pegar_tabla_texto_mail.
+  t &apos;&lt;p&gt;&apos;.
+  loop at &amp;1.
+    if &amp;1 is initial.
+      t &apos;&lt;/p&gt;&lt;p&gt;&apos;.
+    else.
+      t &amp;1.
+    endif.
+  endloop.
+  t &apos;&lt;/p&gt;&apos;.
+END-OF-DEFINITION.</source>
+</PROG>

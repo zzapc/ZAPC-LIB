@@ -1,0 +1,1647 @@
+==================================================
+ZCL_AP_BITMAP=================CCDEF
+==================================================
+*"* use this source file for any type declarations (class
+*"* definitions, interfaces or data types) you need for method
+*"* implementation or private method's signature
+
+==================================================
+ZCL_AP_BITMAP=================CCIMP
+==================================================
+*"* local class implementation for public class
+*"* use this source file for the implementation part of
+*"* local helper classes
+
+==================================================
+ZCL_AP_BITMAP=================CCMAC
+==================================================
+*"* use this source file for any macro definitions you need
+*"* in the implementation part of the class
+
+  define read2.   "#EC NEEDED read two bytes as integer and move offset
+    w2     = &1.
+    concatenate w2+1(1) w2+0(1) into xstr in byte mode.
+    &2     = xstr.
+  end-of-definition.
+  define write2.   "#EC NEEDED read two bytes as integer and move offset
+    w2     = &1.
+    concatenate w2+1(1) w2+0(1) into xstr in byte mode.
+    &2     = xstr.
+  end-of-definition.
+  define read3.   "#EC NEEDED read two bytes as integer and move offset
+    w3     = &1.
+    concatenate w3+2(1) w3+1(1) w3+0(1) into xstr in byte mode.
+    &2     = xstr.
+  end-of-definition.
+  define read4.  "#EC NEEDED read four bytes as integer and move offset
+    w4     = &1.
+    concatenate w4+3(1) w4+2(1) w4+1(1) w4+0(1) into xstr in byte mode.
+    &2     = xstr.
+  end-of-definition.
+  define write4.  "#EC NEEDED read four bytes as integer and move offset
+    w4     = &1.
+    concatenate w4+3(1) w4+2(1) w4+1(1) w4+0(1) into xstr in byte mode.
+    &2     = xstr.
+  end-of-definition.
+==================================================
+ZCL_AP_BITMAP=================CI
+==================================================
+*"* private components of class ZCL_ABAP_BITMAP
+*"* do not include other source files here!!!
+private section.
+
+  data GX_CONTENT type XSTRING .
+  data W2 type GT_2BYTE_VALUE .
+  data W3 type GT_3BYTE_VALUE .
+  data W4 type GT_4BYTE_VALUE .
+  data MAGIC_NUMBER type GT_2BYTE_VALUE .
+  data SIZE type I .
+  data DATA_OFFSET type I .
+  data HEADER_SIZE type I .
+  data WIDTH type I .
+  data HEIGHT type I .
+  data BPP type I .
+  data COMPRESSION type STRING .
+  data XSTR type XSTRING .
+  data DIALOG_CONTAINER type ref to CL_GUI_DIALOGBOX_CONTAINER .
+  data PICTURE type ref to CL_GUI_PICTURE .
+  data COLOR_PLANES type I .
+  data COLORS_USED type I .
+  data X_GRAYSCALE_TABLE type XSTRING .
+
+  class-methods CHECK_IGS_SETUP
+    raising
+      ZCX_ABAP_BITMAP .
+  methods CONSTRUCTOR
+    importing
+      !I_BMP_XSTREAM type XSTRING
+    raising
+      ZCX_ABAP_BITMAP .
+  methods READ_BITMAP_HEADER
+    raising
+      ZCX_ABAP_BITMAP .
+  methods ON_DIALOG_CLOSE
+    for event CLOSE of CL_GUI_DIALOGBOX_CONTAINER .
+  methods BUILD_GRAYSCALE_TABLE .
+==================================================
+ZCL_AP_BITMAP=================CO
+==================================================
+*"* protected components of class ZCL_ABAP_BITMAP
+*"* do not include other source files here!!!
+protected section.
+==================================================
+ZCL_AP_BITMAP=================CP
+==================================================
+class-pool .
+*"* class pool for class ZCL_AP_BITMAP
+
+*"* local type definitions
+include ZCL_AP_BITMAP=================ccdef.
+
+*"* class ZCL_AP_BITMAP definition
+*"* public declarations
+  include ZCL_AP_BITMAP=================cu.
+*"* protected declarations
+  include ZCL_AP_BITMAP=================co.
+*"* private declarations
+  include ZCL_AP_BITMAP=================ci.
+endclass. "ZCL_AP_BITMAP definition
+
+*"* macro definitions
+include ZCL_AP_BITMAP=================ccmac.
+*"* local class implementation
+include ZCL_AP_BITMAP=================ccimp.
+
+class ZCL_AP_BITMAP implementation.
+*"* method's implementations
+  include methods.
+endclass. "ZCL_AP_BITMAP implementation
+
+==================================================
+ZCL_AP_BITMAP=================CU
+==================================================
+class ZCL_AP_BITMAP definition
+  public
+  create private .
+
+*"* public components of class ZCL_AP_BITMAP
+*"* do not include other source files here!!!
+public section.
+
+  types:
+    gt_2byte_value(2) TYPE x .
+  types:
+    gt_3byte_value(3) TYPE x .
+  types:
+    gt_4byte_value(4) TYPE x .
+  types:
+    BEGIN OF gt_binary,
+          line(255) TYPE x,
+             END OF gt_binary .
+  types:
+    gt_binary_table TYPE STANDARD TABLE OF gt_binary .
+
+  class-methods CREATE_FROM_EXT_FORMAT
+    importing
+      !I_XSTREAM type XSTRING
+      !I_FORMAT type STRING default 'JPG'
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  class-methods CREATE_FROM_BYTESTREAM
+    importing
+      !I_BMP_XSTREAM type XSTRING
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  class-methods CREATE_FROM_BYTETABLE
+    importing
+      !I_BMP_XTABLE type GT_BINARY_TABLE
+      !I_INPUT_LENGTH type I
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  methods GET_HEADER_INFORMATION
+    exporting
+      !E_SIZE type I
+      !E_HEIGHT type I
+      !E_WIDTH type I
+      !E_BPP type I
+      !E_COMPRESSION type STRING
+      !E_COLOR_PLANES type I
+      !E_COLORS_USED type I .
+  class-methods CREATE_FROM_MIME_REPOSITORY
+    importing
+      !I_PATH type STRING
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  methods PUSH_CONTENT_INTO_ICM_CACHE
+    importing
+      !I_PATH type STRING default '/sap/public'
+      !I_FORMAT type STRING default 'BMP'
+      !I_CACHE_TIMEOUT type I default 60
+    preferred parameter I_PATH
+    returning
+      value(R_URL) type STRING
+    raising
+      ZCX_ABAP_BITMAP .
+  class-methods CREATE_FROM_BDS_GRAPHIC
+    importing
+      !I_NAME type STXBITMAPS-TDNAME
+      !I_BTYPE type STXBITMAPS-TDBTYPE default 'BCOL'
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  class-methods CREATE_FROM_FRONTEND_UPLOAD
+    returning
+      value(R_BITMAP) type ref to ZCL_AP_BITMAP
+    raising
+      ZCX_ABAP_BITMAP .
+  methods DISPLAY_IN_SAPGUI
+    importing
+      !I_CONTAINER type ref to CL_GUI_CONTAINER optional
+    preferred parameter I_CONTAINER .
+  methods REFRESH_SAPGUI_DISPLAY .
+  methods TRANSFORM_ROTATE_CLOCKWISE .
+  methods TRANSFORM_ROTATE_COUNTER_CLOCK .
+  methods TRANSFORM_FLIP .
+  methods TRANSFORM_MIRROR .
+  methods TRANSFORM_INVERSION
+    raising
+      ZCX_ABAP_BITMAP .
+  methods TRANSFORM_GREYSCALE
+    raising
+      ZCX_ABAP_BITMAP .
+  methods GET_CONTENT_ZIP_BYTESTREAM
+    exporting
+      !E_BMP_XSTREAM type XSTRING .
+  methods GET_CONTENT_BYTESTEAM
+    exporting
+      !E_BMP_XSTREAM type XSTRING .
+  methods GET_CONTENT_EXT_FORMAT
+    importing
+      !I_FORMAT type STRING default 'JPG'
+    exporting
+      !E_XSTREAM type XSTRING
+    raising
+      ZCX_ABAP_BITMAP .
+  methods GET_CONTENT_BYTETABLE
+    exporting
+      !E_BMP_XTABLE type GT_BINARY_TABLE .
+  methods GET_PIXEL_VALUE
+    importing
+      !I_X type I
+      !I_Y type I
+    exporting
+      !E_RED type I
+      !E_BLUE type I
+      !E_GREEN type I
+      !E_8BIT_VALUE type I .
+  methods FREE .
+==================================================
+ZCL_AP_BITMAP=BUILD_GRAYSCALE_TABLE
+==================================================
+METHOD BUILD_GRAYSCALE_TABLE.
+
+  DATA l_grayscale_table TYPE string.
+
+  CONCATENATE
+`0000000001010100020202000303030004040400`
+`0505050006060600070707000808080009090900`
+`0A0A0A000B0B0B000C0C0C000D0D0D000E0E0E00`
+`0F0F0F0010101000111111001212120013131300`
+`1414140015151500161616001717170018181800`
+`191919001A1A1A001B1B1B001C1C1C001D1D1D00`
+`1E1E1E001F1F1F00202020002121210022222200`
+`2323230024242400252525002626260027272700`
+`28282800292929002A2A2A002B2B2B002C2C2C00`
+`2D2D2D002E2E2E002F2F2F003030300031313100`
+`3232320033333300343434003535350036363600`
+`3737370038383800393939003A3A3A003B3B3B00`
+`3C3C3C003D3D3D003E3E3E003F3F3F0040404000`
+`4141410042424200434343004444440045454500`
+`464646004747470048484800494949004A4A4A00`
+`4B4B4B004C4C4C004D4D4D004E4E4E004F4F4F00`
+`5050500051515100525252005353530054545400`
+`5555550056565600575757005858580059595900`
+`5A5A5A005B5B5B005C5C5C005D5D5D005E5E5E00`
+`5F5F5F0060606000616161006262620063636300`
+`6464640065656500666666006767670068686800`
+`696969006A6A6A006B6B6B006C6C6C006D6D6D00`
+`6E6E6E006F6F6F00707070007171710072727200`
+`7373730074747400757575007676760077777700`
+`78787800797979007A7A7A007B7B7B007C7C7C00`
+`7D7D7D007E7E7E007F7F7F008080800081818100`
+`8282820083838300848484008585850086868600`
+`8787870088888800898989008A8A8A008B8B8B00`
+`8C8C8C008D8D8D008E8E8E008F8F8F0090909000`
+`9191910092929200939393009494940095959500`
+`969696009797970098989800999999009A9A9A00`
+`9B9B9B009C9C9C009D9D9D009E9E9E009F9F9F00`
+`A0A0A000A1A1A100A2A2A200A3A3A300A4A4A400`
+`A5A5A500A6A6A600A7A7A700A8A8A800A9A9A900`
+`AAAAAA00ABABAB00ACACAC00ADADAD00AEAEAE00`
+`AFAFAF00B0B0B000B1B1B100B2B2B200B3B3B300`
+`B4B4B400B5B5B500B6B6B600B7B7B700B8B8B800`
+`B9B9B900BABABA00BBBBBB00BCBCBC00BDBDBD00`
+`BEBEBE00BFBFBF00C0C0C000C1C1C100C2C2C200`
+`C3C3C300C4C4C400C5C5C500C6C6C600C7C7C700`
+`C8C8C800C9C9C900CACACA00CBCBCB00CCCCCC00`
+`CDCDCD00CECECE00CFCFCF00D0D0D000D1D1D100`
+`D2D2D200D3D3D300D4D4D400D5D5D500D6D6D600`
+`D7D7D700D8D8D800D9D9D900DADADA00DBDBDB00`
+`DCDCDC00DDDDDD00DEDEDE00DFDFDF00E0E0E000`
+`E1E1E100E2E2E200E3E3E300E4E4E400E5E5E500`
+`E6E6E600E7E7E700E8E8E800E9E9E900EAEAEA00`
+`EBEBEB00ECECEC00EDEDED00EEEEEE00EFEFEF00`
+`F0F0F000F1F1F100F2F2F200F3F3F300F4F4F400`
+`F5F5F500F6F6F600F7F7F700F8F8F800F9F9F900`
+`FAFAFA00FBFBFB00FCFCFC00FDFDFD00FEFEFE00`
+`FFFFFF00`
+INTO l_grayscale_table.
+x_grayscale_table = l_grayscale_table.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CHECK_IGS_SETUP
+==================================================
+METHOD CHECK_IGS_SETUP.
+  DATA    g_bool_result  TYPE c.
+* check existance of ImageConverter interpreter
+  CALL METHOD cl_igs_data=>is_registered_type
+    EXPORTING
+      type                    = cl_igs_image_converter=>interpreter_type
+    RECEIVING
+      rval                    = g_bool_result
+    EXCEPTIONS
+      rfc_communication_error = 1
+      rfc_system_error        = 2
+      internal_error          = 3
+      OTHERS                  = 4.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap
+      EXPORTING
+        textid = zcx_abap_bitmap=>igs_error.
+  ELSEIF g_bool_result IS INITIAL.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap
+      EXPORTING
+        textid = zcx_abap_bitmap=>igs_converter.
+  ENDIF.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CONSTRUCTOR
+==================================================
+METHOD CONSTRUCTOR.
+  me->gx_content = i_bmp_xstream.
+  me->read_bitmap_header( ).
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_BDS_GRAPHIC
+==================================================
+METHOD CREATE_FROM_BDS_GRAPHIC.
+  DATA: l_bytecount TYPE i,
+        l_content TYPE STANDARD TABLE OF bapiconten.
+  CALL FUNCTION 'SAPSCRIPT_GET_GRAPHIC_BDS'
+    EXPORTING
+      i_object       = 'GRAPHICS'
+      i_name         = i_name
+      i_id           = 'BMAP'
+      i_btype        = i_btype
+    IMPORTING
+      e_bytecount    = l_bytecount
+    TABLES
+      content        = l_content
+    EXCEPTIONS
+      not_found      = 1
+      bds_get_failed = 2
+      bds_no_content = 3
+      OTHERS         = 4.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  DATA graphic_table TYPE gt_binary_table.
+  DATA graphic_size TYPE i.
+  CALL FUNCTION 'SAPSCRIPT_CONVERT_BITMAP'
+    EXPORTING
+      old_format               = 'BDS'
+      new_format               = 'BMP'
+      bitmap_file_bytecount_in = l_bytecount
+    IMPORTING
+      bitmap_file_bytecount    = graphic_size
+    TABLES
+      bds_bitmap_file          = l_content
+      bitmap_file              = graphic_table
+    EXCEPTIONS
+      OTHERS                   = 1.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  DATA l_xstring TYPE xstring.
+  CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+    EXPORTING
+      input_length = graphic_size
+    IMPORTING
+      buffer       = l_xstring
+    TABLES
+      binary_tab   = graphic_table
+    EXCEPTIONS
+      failed       = 1
+      OTHERS       = 2.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  CREATE OBJECT r_bitmap
+    EXPORTING
+      i_bmp_xstream = l_xstring.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_BYTESTREAM
+==================================================
+METHOD CREATE_FROM_BYTESTREAM.
+  CREATE OBJECT r_bitmap
+    EXPORTING
+      i_bmp_xstream      = i_bmp_xstream.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_BYTETABLE
+==================================================
+METHOD CREATE_FROM_BYTETABLE.
+  DATA l_content TYPE xstring.
+  CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+    EXPORTING
+      input_length = i_input_length
+    IMPORTING
+      buffer       = l_content
+    TABLES
+      binary_tab   = i_bmp_xtable
+    EXCEPTIONS
+      failed       = 1
+      OTHERS       = 2.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  CREATE OBJECT r_bitmap
+    EXPORTING
+      i_bmp_xstream      = l_content.
+
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_EXT_FORMAT
+==================================================
+METHOD CREATE_FROM_EXT_FORMAT.
+  zcl_ap_bitmap=>check_igs_setup( ).
+  DATA: l_igs_imgconv TYPE REF TO cl_igs_image_converter,
+        l_img_blob    TYPE w3mimetabtype,
+        l_img_size    TYPE w3param-cont_len,
+        l_bmp_xstream TYPE xstring.
+  CREATE OBJECT l_igs_imgconv.
+
+  l_img_size = XSTRLEN( i_xstream ).
+  CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+    EXPORTING
+      buffer     = i_xstream
+    TABLES
+      binary_tab = l_img_blob.
+  CALL METHOD l_igs_imgconv->set_image
+    EXPORTING
+      blob      = l_img_blob
+      blob_size = l_img_size.
+
+  DATA l_format TYPE string.
+  l_format = i_format.
+  CASE l_format.
+    WHEN 'TIF'.
+      l_igs_imgconv->input  = 'image/tiff'.
+    WHEN 'JPG'.
+      l_igs_imgconv->input  = 'image/jpeg'.
+    WHEN 'PNG'.
+      l_igs_imgconv->input  = 'image/png'.
+    WHEN 'GIF'.
+      l_igs_imgconv->input  = 'image/gif'.
+    WHEN OTHERS.
+      RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDCASE.
+
+  l_igs_imgconv->output = 'image/x-ms-bmp'.
+  CALL METHOD l_igs_imgconv->execute
+    EXCEPTIONS
+      OTHERS = 1.
+
+  IF sy-subrc IS INITIAL.
+    CALL METHOD l_igs_imgconv->get_image
+      IMPORTING
+        blob      = l_img_blob
+        blob_size = l_img_size.
+
+    CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+      EXPORTING
+        input_length = l_img_size
+      IMPORTING
+        buffer       = l_bmp_xstream
+      TABLES
+        binary_tab   = l_img_blob
+      EXCEPTIONS
+        failed       = 1
+        OTHERS       = 2.
+    IF sy-subrc NE 0.
+      RAISE EXCEPTION TYPE zcx_abap_bitmap.
+    ENDIF.
+  ENDIF.
+
+  CREATE OBJECT r_bitmap
+    EXPORTING
+      i_bmp_xstream = l_bmp_xstream.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_FRONTEND_UPLOA
+==================================================
+METHOD CREATE_FROM_FRONTEND_UPLOAD.
+  DATA retfiletable TYPE filetable.
+  DATA retrc TYPE sysubrc.
+  DATA retuseraction TYPE i.
+  DATA input_length TYPE i.
+  DATA filename TYPE string.
+
+  CALL METHOD cl_gui_frontend_services=>file_open_dialog
+    EXPORTING
+      multiselection    = abap_false
+      file_filter       = 'Bitmap files (*.BMP)|*.BMP|JPG files (*.JPG)|*.JPG|PNG files (*.png)|*.png|GIF files (*.gif)|*.gif|TIFF files (*.tif)|*.tif;*.tiff|'
+      default_extension = 'bmp'
+    CHANGING
+      file_table        = retfiletable
+      rc                = retrc
+      user_action       = retuseraction
+    EXCEPTIONS
+      OTHERS            = 1.
+  IF retrc < 0 OR retuseraction = cl_gui_frontend_services=>action_cancel
+     OR sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  READ TABLE retfiletable INTO filename INDEX 1.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  DATA binary_tab TYPE STANDARD TABLE OF x255.
+  CALL METHOD cl_gui_frontend_services=>gui_upload
+    EXPORTING
+      filetype   = 'BIN'
+      filename   = filename
+    IMPORTING
+      filelength = input_length
+    CHANGING
+      data_tab   = binary_tab
+    EXCEPTIONS
+      OTHERS     = 1.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  IF binary_tab IS INITIAL.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  DATA bitmap_file TYPE xstring.
+  CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+    EXPORTING
+      input_length = input_length
+    IMPORTING
+      buffer       = bitmap_file
+    TABLES
+      binary_tab   = binary_tab
+    EXCEPTIONS
+      OTHERS       = 1.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+
+  DATA dot_offset TYPE i.
+  DATA extension TYPE mimetypes-extension.
+  DATA attachment_type TYPE so_obj_tp.
+  FIND FIRST OCCURRENCE OF REGEX '\.[^\.]+$'
+    IN filename MATCH OFFSET dot_offset.
+  ADD 1 TO dot_offset.
+  extension = filename+dot_offset.
+  attachment_type = extension.
+  TRANSLATE attachment_type TO UPPER CASE.
+
+  CASE attachment_type.
+    WHEN 'BMP'.
+      CREATE OBJECT r_bitmap
+        EXPORTING
+          i_bmp_xstream = bitmap_file.
+    WHEN 'JPG' OR 'JPEG'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = bitmap_file
+          i_format  = 'JPG'   ).
+    WHEN 'TIFF' OR 'TIF'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = bitmap_file
+          i_format  = 'TIF'   ).
+    WHEN 'PNG'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = bitmap_file
+          i_format  = 'PNG'   ).
+    WHEN 'GIF'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = bitmap_file
+          i_format  = 'GIF'   ).
+  ENDCASE.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=CREATE_FROM_MIME_REPOSITOR
+==================================================
+METHOD CREATE_FROM_MIME_REPOSITORY.
+  DATA l_xstring TYPE xstring.
+  DATA lr_mime_rep TYPE REF TO if_mr_api.
+  lr_mime_rep = cl_mime_repository_api=>if_mr_api~get_api( ).
+
+  CALL METHOD lr_mime_rep->get
+    EXPORTING
+      i_url     = i_path
+    IMPORTING
+      e_content = l_xstring
+    EXCEPTIONS
+      not_found = 3.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+
+  DATA dot_offset TYPE i.
+  DATA extension TYPE mimetypes-extension.
+  DATA attachment_type TYPE so_obj_tp.
+  FIND FIRST OCCURRENCE OF REGEX '\.[^\.]+$'
+    IN i_path MATCH OFFSET dot_offset.
+  ADD 1 TO dot_offset.
+  extension = i_path+dot_offset.
+  attachment_type = extension.
+  TRANSLATE attachment_type TO UPPER CASE.
+
+  CASE attachment_type.
+    WHEN 'BMP'.
+      CREATE OBJECT r_bitmap
+        EXPORTING
+          i_bmp_xstream = l_xstring.
+    WHEN 'JPG' OR 'JPEG'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = l_xstring
+          i_format  = 'JPG'   ).
+    WHEN 'TIFF' OR 'TIF'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = l_xstring
+          i_format  = 'TIF'   ).
+    WHEN 'PNG'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = l_xstring
+          i_format  = 'PNG'   ).
+    WHEN 'GIF'.
+      r_bitmap = zcl_ap_bitmap=>create_from_ext_format(
+          i_xstream = l_xstring
+          i_format  = 'GIF'   ).
+  ENDCASE.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=DISPLAY_IN_SAPGUI
+==================================================
+METHOD DISPLAY_IN_SAPGUI.
+  DATA l_container TYPE REF TO cl_gui_container.
+  IF i_container IS NOT INITIAL.
+    l_container = i_container.
+  ELSE.
+    IF me->dialog_container IS BOUND.
+      l_container = me->dialog_container.
+    ELSE.
+      CREATE OBJECT me->dialog_container
+        EXPORTING
+          width  = 100
+          height = 100.
+      l_container = me->dialog_container.
+      SET HANDLER me->on_dialog_close FOR me->dialog_container.
+    ENDIF.
+  ENDIF.
+
+  IF me->picture IS BOUND.
+  ELSE.
+    CREATE OBJECT me->picture
+      EXPORTING
+        parent = l_container.
+  ENDIF.
+
+  DATA graphic_table TYPE gt_binary_table.
+  CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+    EXPORTING
+      buffer     = me->gx_content
+    TABLES
+      binary_tab = graphic_table.
+
+  DATA url(255) TYPE c.
+  CALL FUNCTION 'DP_CREATE_URL'
+    EXPORTING
+      type    = 'IMAGE'
+      subtype = 'X-MS-BMP'
+    TABLES
+      data    = graphic_table
+    CHANGING
+      url     = url.
+
+  CALL METHOD picture->load_picture_from_url
+    EXPORTING
+      url = url.
+  CALL METHOD picture->set_display_mode
+    EXPORTING
+      display_mode = picture->display_mode_normal.
+
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=FREE
+==================================================
+METHOD FREE.
+  IF me->picture IS BOUND.
+    me->picture->free( ).
+    CLEAR me->picture.
+  ENDIF.
+
+  IF me->dialog_container IS BOUND.
+    me->dialog_container->free( ).
+    CLEAR me->dialog_container.
+  ENDIF.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=GET_CONTENT_BYTESTEAM
+==================================================
+method GET_CONTENT_BYTESTEAM.
+  e_bmp_xstream = gx_content.
+endmethod.
+==================================================
+ZCL_AP_BITMAP=GET_CONTENT_BYTETABLE
+==================================================
+METHOD GET_CONTENT_BYTETABLE.
+  CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+    EXPORTING
+      buffer     = gx_content
+    TABLES
+      binary_tab = e_bmp_xtable.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=GET_CONTENT_EXT_FORMAT
+==================================================
+METHOD GET_CONTENT_EXT_FORMAT.
+
+  zcl_ap_bitmap=>check_igs_setup( ).
+  DATA: l_igs_imgconv TYPE REF TO cl_igs_image_converter,
+        l_img_blob    TYPE w3mimetabtype,
+        l_img_size    TYPE w3param-cont_len,
+        l_bmp_xstream TYPE xstring.
+  CREATE OBJECT l_igs_imgconv.
+
+  l_img_size = XSTRLEN( gx_content ).
+  CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+    EXPORTING
+      buffer     = gx_content
+    TABLES
+      binary_tab = l_img_blob.
+  CALL METHOD l_igs_imgconv->set_image
+    EXPORTING
+      blob      = l_img_blob
+      blob_size = l_img_size.
+
+  DATA l_format TYPE string.
+  l_format = i_format.
+  CASE l_format.
+    WHEN 'TIF'.
+      l_igs_imgconv->output  = 'image/tiff'.
+    WHEN 'JPG'.
+      l_igs_imgconv->output  = 'image/jpeg'.
+    WHEN 'PNG'.
+      l_igs_imgconv->output  = 'image/png'.
+    WHEN 'GIF'.
+      l_igs_imgconv->output  = 'image/gif'.
+    WHEN 'BMP'.
+      me->get_content_bytesteam(
+        IMPORTING
+          e_bmp_xstream = e_xstream ).
+      EXIT.
+    WHEN OTHERS.
+      RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDCASE.
+
+  l_igs_imgconv->input = 'image/x-ms-bmp'.
+  CALL METHOD l_igs_imgconv->execute
+    EXCEPTIONS
+      OTHERS = 1.
+
+  IF sy-subrc IS INITIAL.
+    CALL METHOD l_igs_imgconv->get_image
+      IMPORTING
+        blob      = l_img_blob
+        blob_size = l_img_size.
+
+    CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
+      EXPORTING
+        input_length = l_img_size
+      IMPORTING
+        buffer       = e_xstream
+      TABLES
+        binary_tab   = l_img_blob
+      EXCEPTIONS
+        failed       = 1
+        OTHERS       = 2.
+    IF sy-subrc NE 0.
+      RAISE EXCEPTION TYPE zcx_abap_bitmap.
+    ENDIF.
+  ENDIF.
+
+  .
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=GET_CONTENT_ZIP_BYTESTREAM
+==================================================
+METHOD GET_CONTENT_ZIP_BYTESTREAM.
+  DATA izip TYPE REF TO cl_abap_zip.
+  CREATE OBJECT izip.
+
+  izip->add( name = 'bitmap.bmp'
+              content = me->gx_content ).
+  e_bmp_xstream = izip->save( ).
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=GET_HEADER_INFORMATION
+==================================================
+method GET_HEADER_INFORMATION.
+  e_size = me->size.
+  e_height = me->height.
+  e_width = me->width.
+  e_bpp = me->bpp.
+  e_compression = me->compression.
+  e_color_planes = me->color_planes.
+  e_colors_used = me->colors_used.
+
+endmethod.
+==================================================
+ZCL_AP_BITMAP=GET_PIXEL_VALUE
+==================================================
+METHOD GET_PIXEL_VALUE.
+
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+  l_width = width * bytes_per_pixel.
+
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+  DATA l_y_depth TYPE i.
+  l_y_depth = ( height - i_y ) * l_width.
+
+  x_row = x_data+l_y_depth(l_width).
+  DATA x_pixel_info TYPE xstring.
+  DATA l_x_depth TYPE i.
+  l_x_depth = i_x * bytes_per_pixel.
+  DATA l_size TYPE i.
+  l_size = bytes_per_pixel.
+  x_pixel_info = x_row+l_x_depth(l_size).
+
+  DATA x_blue  TYPE xstring.
+  DATA x_red   TYPE xstring.
+  DATA x_green TYPE xstring.
+
+
+  IF bytes_per_pixel = 1.
+    e_8bit_value = x_pixel_info+0(1).
+  ELSE.
+    e_blue = x_pixel_info+0(1).
+    e_red = x_pixel_info+1(1).
+    e_green = x_pixel_info+2(1).
+  ENDIF.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=ON_DIALOG_CLOSE
+==================================================
+METHOD ON_DIALOG_CLOSE.
+  IF me->picture IS BOUND.
+    me->picture->free( ).
+    CLEAR me->picture.
+  ENDIF.
+
+  me->dialog_container->free( ).
+  CLEAR me->dialog_container.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=PUSH_CONTENT_INTO_ICM_CACH
+==================================================
+METHOD PUSH_CONTENT_INTO_ICM_CACHE.
+****Create the cached response object that we will insert our content into
+  DATA: cached_response TYPE REF TO if_http_response.
+  CREATE OBJECT cached_response
+    TYPE
+      cl_http_response
+    EXPORTING
+      add_c_msg        = 1.
+
+****set the data and the headers
+  DATA: l_app_type TYPE string.
+  DATA: l_xstring TYPE xstring.
+  CASE i_format.
+    WHEN 'BMP'.
+      cached_response->set_data( me->gx_content ).
+      l_app_type = 'image/x-ms-bmp'.
+    WHEN 'GIF'.
+      me->get_content_ext_format(
+        EXPORTING
+          i_format  = i_format
+        IMPORTING
+          e_xstream = l_xstring ).
+      cached_response->set_data( l_xstring ).
+      l_app_type = 'image/gif'.
+    WHEN 'JPG'.
+      me->get_content_ext_format(
+        EXPORTING
+          i_format  = i_format
+        IMPORTING
+          e_xstream = l_xstring ).
+      cached_response->set_data( l_xstring ).
+      l_app_type = 'image/jpeg'.
+    WHEN 'TIF'.
+      me->get_content_ext_format(
+        EXPORTING
+          i_format  = i_format
+        IMPORTING
+          e_xstream = l_xstring ).
+      cached_response->set_data( l_xstring ).
+      l_app_type = 'image/tiff'.
+    WHEN 'PNG'.
+      me->get_content_ext_format(
+        EXPORTING
+          i_format  = i_format
+        IMPORTING
+          e_xstream = l_xstring ).
+      cached_response->set_data( l_xstring ).
+      l_app_type = 'image/png'.
+    WHEN OTHERS.
+      RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDCASE.
+
+  cached_response->set_header_field( name  = if_http_header_fields=>content_type
+                                     value = l_app_type ).
+
+*****Set the filename into the response header
+*  cached_response->set_header_field( name  = 'Content-Disposition'
+*                              value = value ).
+
+****Set the Response Status
+  cached_response->set_status( code = 200 reason = 'OK' ).
+
+****Set the Cache Timeout - 60 seconds - we only need this in the cache
+****long enough to build the page and allow the IFrame on the Client to request it.
+  cached_response->server_cache_expire_rel( expires_rel = I_CACHE_TIMEOUT ).
+
+****Create a unique URL for the object
+  DATA: guid TYPE guid_32.
+  CALL FUNCTION 'GUID_CREATE'
+    IMPORTING
+      ev_guid_32 = guid.
+  CONCATENATE i_path '/' guid '.' i_format INTO r_url.
+
+****Cache the URL
+  cl_http_server=>server_cache_upload( url      = r_url
+                                       response = cached_response ).
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=READ_BITMAP_HEADER
+==================================================
+METHOD READ_BITMAP_HEADER.
+
+  IF XSTRLEN( gx_content ) < 20.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap
+     EXPORTING
+       textid = zcx_abap_bitmap=>unsupported_format.
+  ENDIF.
+  magic_number = gx_content+0(2).
+  DATA x_size(4) TYPE x.
+  x_size = gx_content+2(4).
+  DATA x_data_offset(4) TYPE x.
+  x_data_offset = gx_content+10(4).
+  read4 x_size size.
+  read4 x_data_offset data_offset.
+
+  DATA x_header_size(4) TYPE x.
+  x_header_size = gx_content+14(4).
+  read4 x_header_size header_size.
+
+  IF header_size = 40. "Windows V3 Format
+    DATA x_width(4) TYPE x.
+    DATA x_height(4) TYPE x.
+    DATA x_bpp(2) TYPE x.
+    DATA x_compression(4) TYPE x.
+    DATA i_compression TYPE i.
+    DATA x_color_planes(2) TYPE x.
+    DATA x_colors_used(4) TYPE x.
+    x_width = gx_content+18(4).
+    x_height = gx_content+22(4).
+    x_bpp = gx_content+28(2).
+    x_compression = gx_content+30(4).
+    x_color_planes = gx_content+26(2).
+    x_colors_used = gx_content+46(4).
+    read4 x_width width.
+    read4 x_height height.
+    read2 x_bpp bpp.
+    read4 x_compression i_compression.
+    read2 x_color_planes color_planes.
+    read4 x_colors_used colors_used.
+  ELSE.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap
+      EXPORTING
+        textid = zcx_abap_bitmap=>unsupported_format.
+  ENDIF.
+  CASE i_compression.
+    WHEN 0.
+      compression = 'RGB - None'.
+    WHEN 1.
+      compression = 'RLE 8-bit/pixel'.
+    WHEN 2.
+      compression = 'RLE 4-bit/pixel'.
+    WHEN 3.
+      compression = 'Bit Field'.
+    WHEN 4.
+      compression = 'JPEG'.
+    WHEN 5.
+      compression = 'PNG'.
+  ENDCASE.
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=REFRESH_SAPGUI_DISPLAY
+==================================================
+METHOD REFRESH_SAPGUI_DISPLAY.
+  CHECK me->picture IS BOUND.
+  DATA graphic_table TYPE gt_binary_table.
+  CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+    EXPORTING
+      buffer     = me->gx_content
+    TABLES
+      binary_tab = graphic_table.
+
+  DATA url(255) TYPE c.
+  CALL FUNCTION 'DP_CREATE_URL'
+    EXPORTING
+      type    = 'IMAGE'
+      subtype = 'BMP'
+    TABLES
+      data    = graphic_table
+    CHANGING
+      url     = url.
+
+  CALL METHOD picture->load_picture_from_url
+    EXPORTING
+      url = url.
+  CALL METHOD picture->set_display_mode
+    EXPORTING
+      display_mode = picture->display_mode_normal.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_FLIP
+==================================================
+METHOD TRANSFORM_FLIP.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+
+  l_width = width * bytes_per_pixel.
+
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+  DO height TIMES.
+    x_row = x_data+i_counter(l_width).
+    CONCATENATE x_row x_new_data INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width.
+  ENDDO.
+
+  IF l_len > i_counter.
+    DATA l_rest TYPE i.
+    l_rest = l_len - i_counter.
+    x_row = x_data+i_counter(l_rest).
+    CONCATENATE x_row x_new_data INTO x_new_data IN BYTE MODE.
+  ENDIF.
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE gx_content(data_offset) x_new_data INTO x_new_image IN BYTE MODE.
+
+  gx_content = x_new_image.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_GREYSCALE
+==================================================
+METHOD TRANSFORM_GREYSCALE.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA x_new_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  IF bpp NE 24.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap
+      EXPORTING
+        textid = zcx_abap_bitmap=>format_no_grayscale.
+  ENDIF.
+
+  IF me->x_grayscale_table IS INITIAL.
+    me->build_grayscale_table( ).
+  ENDIF.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+  l_width = width * bytes_per_pixel.
+  i_num_pixels = width.
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+
+  DATA new_pad TYPE i.
+  l_mod = width MOD 4.
+  new_pad = 4 - l_mod.
+  IF new_pad = 4.
+    new_pad = 0.
+  ENDIF.
+
+  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+
+  DATA new_width TYPE i.
+  new_width = width + pad.
+
+  DATA x_pixel_info TYPE xstring.
+  DATA l_size TYPE i.
+  l_size = bytes_per_pixel.
+
+  DATA l_blue  TYPE i.
+  DATA l_red   TYPE i.
+  DATA l_green TYPE i.
+
+  DATA x_pixel TYPE xstring.
+
+  DO height TIMES.
+    x_row = x_data+i_counter(l_width).
+    CLEAR i_counter2.
+    CLEAR x_new_row.
+    DO i_num_pixels TIMES.
+      x_pixel =  x_row+i_counter2(bytes_per_pixel).
+
+      l_blue = x_pixel+0(1).
+      l_red = x_pixel+1(1).
+      l_green = x_pixel+2(1).
+*      l_blue = x_pixel+2(1).
+*      l_red = x_pixel+1(1).
+*      l_green = x_pixel+0(1).
+
+      l_blue  = l_blue * '0.1140'.
+      l_red   = l_red * '0.2989'.
+      l_green = l_green * '0.5870'.
+      DATA l_scale TYPE i.
+      l_scale = l_blue + l_red + l_green.
+      DATA x_blue TYPE x.
+      DATA x_red  TYPE x.
+      DATA x_green TYPE x.
+      x_blue = l_blue.
+      x_red = l_red.
+      x_green = l_green.
+      x_pixel = l_scale.
+*      CONCATENATE x_blue x_red x_green INTO x_pixel IN BYTE MODE.
+*      CONCATENATE x_new_row x_pixel INTO x_new_row IN BYTE MODE.
+
+      CONCATENATE x_new_row x_pixel INTO x_new_row IN BYTE MODE.
+      i_counter2 = i_counter2 + bytes_per_pixel.
+    ENDDO.
+
+    DATA x_null(1) TYPE x.
+    IF new_pad > 0.
+      DO new_pad TIMES.
+        CONCATENATE  x_new_row x_null INTO x_new_row IN BYTE MODE.
+      ENDDO.
+    ENDIF.
+
+    CONCATENATE  x_new_data x_new_row INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width.
+  ENDDO.
+
+
+
+  DATA x_header TYPE xstring.
+  x_header = gx_content+0(data_offset).
+
+  DATA x_bpp(2) TYPE x.
+  DATA i_bpp TYPE i.
+  DATA i_data_offset TYPE i.
+  DATA x_data_offset(4) TYPE x.
+  i_bpp = 8.
+  i_data_offset = 1078.
+  write2 i_bpp x_bpp.
+  write4 i_data_offset x_data_offset.
+  CONCATENATE x_header+0(10) x_data_offset x_header+14 INTO x_header IN BYTE MODE.
+  CONCATENATE x_header+0(28) x_bpp x_header+30 INTO x_header IN BYTE MODE.
+
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE x_header me->x_grayscale_table x_new_data INTO x_new_image IN BYTE MODE.
+
+  DATA x_size(4) TYPE x.
+  DATA i_size TYPE i.
+  i_size = XSTRLEN( x_new_image ).
+  write4 i_size x_size.
+  CONCATENATE x_header+0(2) x_size x_header+6 INTO x_header IN BYTE MODE.
+
+  DATA x_data_size(4) TYPE x.
+  DATA i_data_size TYPE i.
+  i_data_size = XSTRLEN( x_new_data ).
+  write4 i_data_size x_data_size.
+  CONCATENATE x_header+0(34) x_data_size x_header+38 INTO x_header IN BYTE MODE.
+
+  CONCATENATE x_header me->x_grayscale_table x_new_data INTO x_new_image IN BYTE MODE.
+
+
+*  concatenate gx_content+0(data_offset) x_new_data into x_new_image in byte mode.
+  gx_content = x_new_image.
+  me->read_bitmap_header( ).
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_INVERSION
+==================================================
+METHOD TRANSFORM_INVERSION.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA x_new_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  IF bpp NE 24.
+    RAISE EXCEPTION TYPE zcx_abap_bitmap.
+  ENDIF.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+  l_width = width * bytes_per_pixel.
+  i_num_pixels = width.
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+
+  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+
+  DATA new_width TYPE i.
+  new_width = width + pad.
+
+  DATA x_pixel_info TYPE xstring.
+  DATA l_size TYPE i.
+  l_size = bytes_per_pixel.
+
+  DATA l_blue  TYPE i.
+  DATA l_red   TYPE i.
+  DATA l_green TYPE i.
+  DATA x_blue TYPE x.
+  DATA x_red  TYPE x.
+  DATA x_green TYPE x.
+
+  DATA x_pixel TYPE xstring.
+
+  DO height TIMES.
+    x_row = x_data+i_counter(l_width).
+    CLEAR i_counter2.
+    CLEAR x_new_row.
+    DO i_num_pixels TIMES.
+      x_pixel =  x_row+i_counter2(bytes_per_pixel).
+
+      l_blue = x_pixel+0(1).
+      l_red = x_pixel+1(1).
+      l_green = x_pixel+2(1).
+
+      l_blue  = ABS( l_blue - 255 ).
+      l_red   = ABS( l_red - 255 ).
+      l_green = ABS( l_green - 255 ).
+      x_blue = l_blue.
+      x_red = l_red.
+      x_green = l_green.
+      CONCATENATE x_blue x_red x_green INTO x_pixel IN BYTE MODE.
+*      CONCATENATE x_new_row x_pixel INTO x_new_row IN BYTE MODE.
+
+      CONCATENATE x_new_row x_pixel INTO x_new_row IN BYTE MODE.
+      i_counter2 = i_counter2 + bytes_per_pixel.
+    ENDDO.
+
+    DATA x_null(1) TYPE x.
+    IF pad > 0.
+      DO pad TIMES.
+        CONCATENATE  x_new_row x_null INTO x_new_row IN BYTE MODE.
+      ENDDO.
+    ENDIF.
+
+    CONCATENATE  x_new_data x_new_row INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width.
+  ENDDO.
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE gx_content(data_offset) x_new_data INTO x_new_image IN BYTE MODE.
+  gx_content = x_new_image.
+  me->read_bitmap_header( ).
+
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_MIRROR
+==================================================
+METHOD TRANSFORM_MIRROR.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  data x_new_row type xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+
+  l_width = width * bytes_per_pixel.
+  i_num_pixels = width.
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+
+
+  DO height TIMES.
+    x_row = x_data+i_counter(l_width).
+    CLEAR i_counter2.
+    CLEAR x_new_row.
+    DO i_num_pixels TIMES.
+      CONCATENATE x_row+i_counter2(bytes_per_pixel) x_new_row INTO x_new_row IN BYTE MODE.
+      i_counter2 = i_counter2 + bytes_per_pixel.
+    ENDDO.
+
+    IF pad > 0.
+      CONCATENATE  x_new_row x_row+i_counter2(pad) INTO x_new_row IN BYTE MODE.
+    ENDIF.
+
+    CONCATENATE  x_new_data x_new_row INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width.
+  ENDDO.
+
+  IF l_len > i_counter.
+    DATA l_rest TYPE i.
+    l_rest = l_len - i_counter.
+    x_row = x_data+i_counter(l_rest).
+    CONCATENATE x_row x_new_data INTO x_new_data IN BYTE MODE.
+  ENDIF.
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE gx_content(data_offset) x_new_data INTO x_new_image IN BYTE MODE.
+
+  gx_content = x_new_image.
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_ROTATE_CLOCKWISE
+==================================================
+METHOD TRANSFORM_ROTATE_CLOCKWISE.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA x_new_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+
+  l_width = width * bytes_per_pixel.
+
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+*  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+
+  DATA rows TYPE STANDARD TABLE OF xstring.
+  FIELD-SYMBOLS <wa_row> LIKE LINE OF rows.
+  DO height TIMES.
+    append initial line to rows assigning <Wa_row>.
+    <Wa_row> = x_data+i_counter(l_width).
+*    CONCATENATE x_row x_new_data INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width + pad.
+  ENDDO.
+
+
+  DATA new_height TYPE i.
+  DATA new_width  TYPE i.
+  new_height = width.
+  new_width  = height.
+*  new_width = new_width * bytes_per_pixel.
+  DATA new_pad TYPE i.
+  l_mod = ( new_width * bytes_per_pixel ) MOD 4.
+  new_pad = 4 - l_mod.
+  IF new_pad = 4.
+    new_pad = 0.
+  ENDIF.
+*  new_width = new_width + pad.
+
+  i_counter2 = width * bytes_per_pixel.
+  DO width TIMES.
+    CLEAR x_new_row.
+    i_counter2 = i_counter2 - bytes_per_pixel.
+    LOOP AT rows ASSIGNING <wa_row>.
+      CONCATENATE x_new_row <wa_row>+i_counter2(bytes_per_pixel)  INTO x_new_row IN BYTE MODE.
+    ENDLOOP.
+
+    DATA x_null(1) TYPE x.
+    IF new_pad > 0.
+      DO new_pad TIMES.
+        CONCATENATE  x_new_row x_null INTO x_new_row IN BYTE MODE.
+      ENDDO.
+    ENDIF.
+
+    CONCATENATE  x_new_data x_new_row INTO x_new_data IN BYTE MODE.
+  ENDDO.
+
+
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE gx_content(data_offset) x_new_data INTO x_new_image IN BYTE MODE.
+  DATA x_header TYPE xstring.
+  x_header = gx_content+0(data_offset).
+
+  DATA x_size(4) TYPE x.
+  DATA i_size TYPE i.
+  i_size = XSTRLEN( x_new_image ).
+  write4 i_size x_size.
+  CONCATENATE x_header+0(2) x_size x_header+6 INTO x_header IN BYTE MODE.
+
+  DATA x_data_size(4) TYPE x.
+  DATA i_data_size TYPE i.
+  i_data_size = XSTRLEN( x_new_data ).
+  write4 i_data_size x_data_size.
+  CONCATENATE x_header+0(34) x_data_size x_header+38 INTO x_header IN BYTE MODE.
+
+  DATA x_width(4) TYPE x.
+  DATA x_height(4) TYPE x.
+  DATA i_width TYPE i.
+  DATA i_height TYPE i.
+  i_width = new_width.
+  i_height = new_height.
+  write4 i_width x_width.
+  write4 i_height x_height.
+
+  CONCATENATE x_header+0(18) x_width x_height x_header+26 INTO x_header IN BYTE MODE.
+  DATA x_hres(4) TYPE x.
+  DATA x_vres(4) TYPE x.
+
+  x_hres = x_header+38(4).
+  x_vres = x_header+42(4).
+  CONCATENATE x_header+0(38) x_vres x_hres x_header+46 INTO x_header IN BYTE MODE.
+
+  CONCATENATE x_header  x_new_data INTO x_new_image IN BYTE MODE.
+
+  gx_content = x_new_image.
+  me->read_bitmap_header( ).
+ENDMETHOD.
+==================================================
+ZCL_AP_BITMAP=TRANSFORM_ROTATE_COUNTER_C
+==================================================
+METHOD TRANSFORM_ROTATE_COUNTER_CLOCK.
+  DATA x_data TYPE xstring.
+  DATA x_new_data TYPE xstring.
+  DATA x_row TYPE xstring.
+  DATA x_new_row TYPE xstring.
+  DATA i_num_pixels TYPE i.
+  DATA i_counter TYPE i.
+  DATA i_counter2 TYPE i.
+
+  x_data = gx_content+data_offset.
+
+  DATA l_width TYPE i.
+  DATA bytes_per_pixel TYPE i.
+  bytes_per_pixel = bpp / 8.
+
+  l_width = width * bytes_per_pixel.
+
+  DATA l_len TYPE i.
+  DATA pad TYPE i.
+  DATA l_mod TYPE i.
+  l_mod = l_width MOD 4.
+  pad = 4 - l_mod.
+  IF pad = 4.
+    pad = 0.
+  ENDIF.
+*  l_width = l_width + pad.
+  l_len = XSTRLEN( x_data ).
+
+  DATA rows TYPE STANDARD TABLE OF xstring.
+  FIELD-SYMBOLS <wa_row> LIKE LINE OF rows.
+  DO height TIMES.
+    x_row = x_data+i_counter(l_width).
+    INSERT x_row INTO rows INDEX 1.
+*    CONCATENATE x_row x_new_data INTO x_new_data IN BYTE MODE.
+    i_counter = i_counter + l_width + pad.
+  ENDDO.
+
+
+  DATA new_height TYPE i.
+  DATA new_width  TYPE i.
+  new_height = width.
+  new_width  = height.
+*  new_width = new_width * bytes_per_pixel.
+  DATA new_pad TYPE i.
+  l_mod = ( new_width * bytes_per_pixel ) MOD 4.
+  new_pad = 4 - l_mod.
+  IF new_pad = 4.
+    new_pad = 0.
+  ENDIF.
+*  new_width = new_width + pad.
+
+  DO width TIMES.
+    CLEAR x_new_row.
+    LOOP AT rows ASSIGNING <wa_row>.
+      CONCATENATE x_new_row <wa_row>+i_counter2(bytes_per_pixel)  INTO x_new_row IN BYTE MODE.
+    ENDLOOP.
+    i_counter2 = i_counter2 + bytes_per_pixel.
+    DATA x_null(1) TYPE x.
+    IF new_pad > 0.
+      DO new_pad TIMES.
+        CONCATENATE  x_new_row x_null INTO x_new_row IN BYTE MODE.
+      ENDDO.
+    ENDIF.
+
+    CONCATENATE  x_new_data x_new_row INTO x_new_data IN BYTE MODE.
+  ENDDO.
+
+
+
+  DATA x_new_image TYPE xstring.
+  CONCATENATE gx_content(data_offset) x_new_data INTO x_new_image IN BYTE MODE.
+  DATA x_header TYPE xstring.
+  x_header = gx_content+0(data_offset).
+
+  DATA x_size(4) TYPE x.
+  DATA i_size TYPE i.
+  i_size = XSTRLEN( x_new_image ).
+  write4 i_size x_size.
+  CONCATENATE x_header+0(2) x_size x_header+6 INTO x_header IN BYTE MODE.
+
+  DATA x_data_size(4) TYPE x.
+  DATA i_data_size TYPE i.
+  i_data_size = XSTRLEN( x_new_data ).
+  write4 i_data_size x_data_size.
+  CONCATENATE x_header+0(34) x_data_size x_header+38 INTO x_header IN BYTE MODE.
+
+  DATA x_width(4) TYPE x.
+  DATA x_height(4) TYPE x.
+  DATA i_width TYPE i.
+  DATA i_height TYPE i.
+  i_width = new_width.
+  i_height = new_height.
+  write4 i_width x_width.
+  write4 i_height x_height.
+
+  CONCATENATE x_header+0(18) x_width x_height x_header+26 INTO x_header IN BYTE MODE.
+  DATA x_hres(4) TYPE x.
+  DATA x_vres(4) TYPE x.
+
+  x_hres = x_header+38(4).
+  x_vres = x_header+42(4).
+  CONCATENATE x_header+0(38) x_vres x_hres x_header+46 INTO x_header IN BYTE MODE.
+
+  CONCATENATE x_header  x_new_data INTO x_new_image IN BYTE MODE.
+
+  gx_content = x_new_image.
+  me->read_bitmap_header( ).
+ENDMETHOD.
