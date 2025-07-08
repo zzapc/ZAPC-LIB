@@ -26,7 +26,7 @@ git filter-branch --force --index-filter \
   "git rm --cached --ignore-unmatch DOC/MG_SAP4.JSON" \
   --prune-empty --tag-name-filter cat -- --all
 
-git push -u origin main --force --all
+git push -u origin main --force 
 
 
 

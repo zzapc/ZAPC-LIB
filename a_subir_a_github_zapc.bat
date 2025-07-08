@@ -21,6 +21,6 @@ git remote add origin https://github.com/zzapc/ZAPC-LIB.git
 
 :: Subir a la rama main
 git branch -M main
-git push -u origin main --force --all
+git push -u origin main --force
 
 pause
