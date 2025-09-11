@@ -711,7 +711,7 @@ METHOD lista2rango.
         CLEAR l_rango.
         l_rango-option = 'EQ'.
         l_rango-sign   = 'I'.
-        l_rango-low    = '多多多多????'.
+        l_rango-low    = '真真????'.
         APPEND l_rango TO rango.
       ENDIF.
     ENDIF.

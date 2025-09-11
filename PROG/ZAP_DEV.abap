@@ -3,7 +3,7 @@
 * TITULO : Lista ultimos desarrollos
 * DESCRIPCION : Lista ultimos desarrollos
 *
-* AUTOR: AndrÃ©s Picazo                                FECHA: 18/04/2017
+* AUTOR: Andrés Picazo                                FECHA: 18/04/2017
 *
 ***********************************************************************
 REPORT zap_dev.
@@ -692,7 +692,7 @@ CLASS zcl_report IMPLEMENTATION.
 
       o_alv_t->registrar_mod( ).
       o_alv_t->set_campos_tabint( i_tcode[] ).
-      o_alv_t->set_field_text( campo = 'TEXTO' valor = 'TransacciÃ³n' ).
+      o_alv_t->set_field_text( campo = 'TEXTO' valor = 'Transacción' ).
       o_alv_t->quitar_botones( insercion = 'X' operaciones = 'X' resto = 'X' ).
       o_alv_t->set_field_quitar( 'CHECK,TABIX,TRKORR,LIGHTS,TIPO' ).
       o_alv_t->set_field_input( 'VALOR1,VALOR2,VALOR3,TEXTO' ).
@@ -1030,7 +1030,7 @@ CLASS zcl_report IMPLEMENTATION.
                 max_sesiones = 4.
 
           ELSE.
-            MESSAGE i398(00) WITH 'No existe transacciÃ³n' zap_dev_est-objeto '' ''.
+            MESSAGE i398(00) WITH 'No existe transacción' zap_dev_est-objeto '' ''.
           ENDIF.
         WHEN 'PC'.
           CALL FUNCTION 'WS_EXECUTE' ##FM_OLDED
@@ -1403,13 +1403,13 @@ INITIALIZATION.
     o_prog->o_alv->add_button( button = 'F04' text = 'Nuevo' icon = icon_create qinfo = 'Nuevo' ucomm = 'NUEVO' ).
     o_prog->o_alv->add_button( button = 'F05' text = 'Refrescar' icon = icon_refresh qinfo = 'Refrescar' ucomm = 'REFRESH' ).
     o_prog->o_alv->add_button( button = 'F06' text = 'Listado' icon = icon_icon_list qinfo = 'Listado' ucomm = 'LIST' ).
-    o_prog->o_alv->add_button( button = 'F07' text = 'Desarrollos' icon = icon_calculation qinfo = 'GestiÃ³n desarrollos' ucomm = 'DEV' ).
+    o_prog->o_alv->add_button( button = 'F07' text = 'Desarrollos' icon = icon_calculation qinfo = 'Gestión desarrollos' ucomm = 'DEV' ).
     o_prog->o_alv->add_button( button = 'F08' text = 'OTs' icon = icon_transport qinfo = 'Ordenes de transporte' ucomm = 'OT' ).
     o_prog->o_alv->add_button( button = 'F09' text = 'SQL' icon = icon_question qinfo = 'SQL' ucomm = 'SQL' ).
-    o_prog->o_alv->add_button( button = 'M01' text = 'Descarga librerÃ­a' qinfo = 'Descarga librerÃ­a' ).
+    o_prog->o_alv->add_button( button = 'M01' text = 'Descarga librería' qinfo = 'Descarga librería' ).
     o_prog->o_alv->add_button( button = 'M02' text = 'ZEDIT' qinfo = 'ZEDIT' ).
     o_prog->o_alv->add_button( button = 'M03' text = 'No limitar' qinfo = 'Mostrar todos los programas' ).
-    o_prog->o_alv->add_button( button = 'M04' text = 'AÃ±adir OT' qinfo = 'AÃ±adir objetos de OT' ).
+    o_prog->o_alv->add_button( button = 'M04' text = 'Añadir OT' qinfo = 'Añadir objetos de OT' ).
     o_prog->o_alv->add_button( button = 'M05' text = 'SE16N editable' qinfo = 'Ejecutar SE16N editable' ).
     o_prog->o_alv->add_button( button = 'M06' text = 'Backup datos' qinfo = 'Backup datos' ).
     o_prog->o_alv->add_button( button = 'M07' text = 'Restaurar datos' qinfo = 'Restaurar datos' ).
@@ -1471,7 +1471,7 @@ ENDMODULE.
 MODULE validar_tipo INPUT.
 
 
-  IF sy-ucomm <> 'GRABAR'. " Si pulsan en grabar modificamos lo que habÃ­a
+  IF sy-ucomm <> 'GRABAR'. " Si pulsan en grabar modificamos lo que había
     IF zap_dev_est-objeto <> *zap_dev_est-objeto OR zap_dev_est-tipo <> *zap_dev_est-tipo.
       *zap_dev_est = zap_dev_est.
       CLEAR zap_dev_est.

@@ -373,7 +373,7 @@ class ZCL_AP_GOS implementation.
       ENDTRY.
     ENDLOOP.
     IF sy-subrc <> 0.
-      message = 'No hay ningÃºn enlace GOS a esa clave'(neg).
+      message = 'No hay ningún enlace GOS a esa clave'(neg).
     ENDIF.
   ENDMETHOD.
   METHOD atta_gos_st.
@@ -1577,7 +1577,7 @@ class ZCL_AP_GOS implementation.
                  OTHERS                   = 4.
     IF sy-subrc <> 0.
       l_aux = sy-subrc.
-      CONCATENATE 'Error'(err) l_aux 'llamando a funciÃ³n ARCHIVOBJECT_GET_BYTES'(agb) INTO message SEPARATED BY space.
+      CONCATENATE 'Error'(err) l_aux 'llamando a función ARCHIVOBJECT_GET_BYTES'(agb) INTO message SEPARATED BY space.
       RETURN.
     ENDIF.
 
@@ -1589,7 +1589,7 @@ class ZCL_AP_GOS implementation.
       EXCEPTIONS failed       = 1.
     IF sy-subrc <> 0.
       l_aux = sy-subrc.
-      CONCATENATE 'Error'(err) l_aux 'llamando a funciÃ³n SCMS_BINARY_TO_XSTRING'(lfu) INTO message SEPARATED BY space.
+      CONCATENATE 'Error'(err) l_aux 'llamando a función SCMS_BINARY_TO_XSTRING'(lfu) INTO message SEPARATED BY space.
       RETURN.
     ENDIF.
 

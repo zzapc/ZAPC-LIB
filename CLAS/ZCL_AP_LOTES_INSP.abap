@@ -222,7 +222,7 @@ class ZCL_AP_LOTES_INSP implementation.
 * Pantalla acceso: tratamiento lote insp.
     o_bi->dynpro( program = 'SAPLQPL1' dynpro = '0100' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-    o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " NÂº lote inspecciÃ³n
+    o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " Nº lote inspección
 
     o_bi->dynpro( program = 'SAPLQPL1' dynpro = '0200' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=LSTO' ).
@@ -235,7 +235,7 @@ class ZCL_AP_LOTES_INSP implementation.
     IF l_status CS 'LOTA'.
       CLEAR mensaje.
     ELSEIF mensaje IS INITIAL.
-      CONCATENATE 'No se ha anulado el lote de inspecciÃ³n'(NAD) lote_insp INTO mensaje SEPARATED BY space.
+      CONCATENATE 'No se ha anulado el lote de inspección'(NAD) lote_insp INTO mensaje SEPARATED BY space.
     ENDIF.
   ENDMETHOD.
   METHOD cambiar_status.
@@ -494,7 +494,7 @@ class ZCL_AP_LOTES_INSP implementation.
             message = zcl_ap_utils=>concat( p1 = 'Material'(MAT) p2 = l_qals-matnr p3 = 'Centro'(CEN) p4 = l_qals-werk p5 = 'no actualizado para clase insp'(NAC) p6 = qals-art ).
           WHEN OTHERS.
             l_aux = lv_subrc.
-            CONCATENATE 'Error'(ERR) l_aux 'al crear lote inspecciÃ³n'(CLI) INTO message SEPARATED BY space.
+            CONCATENATE 'Error'(ERR) l_aux 'al crear lote inspección'(CLI) INTO message SEPARATED BY space.
         ENDCASE.
       ELSE.
         MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
@@ -513,8 +513,8 @@ class ZCL_AP_LOTES_INSP implementation.
 * Entrada lote insp. entrada resultados
     o_bi->dynpro( program = 'SAPMQEEA' dynpro = '0100' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENT0' ).
-    o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " NÂº lote inspecciÃ³n
-    o_bi->campos( campo = 'QAQEE-VORNR' valor = noper ). " NÃºmero de operaciÃ³n
+    o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " Nº lote inspección
+    o_bi->campos( campo = 'QAQEE-VORNR' valor = noper ). " Número de operación
     o_bi->campos( campo = 'QAQEE-MODUS' valor = '1' ). " Filtro caract.(modo lectura) p.caract.insp.
     l_mensaje = o_bi->llamar_transaccion( tcode = 'QE01' modo = 'E' ).
   ENDMETHOD.
@@ -550,7 +550,7 @@ class ZCL_AP_LOTES_INSP implementation.
     get_detalle_operacion( n_oper = n_oper ).
 
     IF i_requerimientos IS INITIAL.
-      mensaje = 'Error buscando caracterÃ­sticas lote de inspecciÃ³n'(EBC).
+      mensaje = 'Error buscando características lote de inspección'(EBC).
     ELSE.
       LOOP AT i_requerimientos TRANSPORTING NO FIELDS WHERE inspchar <= caract.
         l_pos_char = l_pos_char + 1.
@@ -564,8 +564,8 @@ class ZCL_AP_LOTES_INSP implementation.
 
 * Entrada lote insp. entrada resultados
         o_bi->dynpro( program = 'SAPMQEEA' dynpro = '0100' ).
-        o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " NÂº lote inspecciÃ³n
-        o_bi->campos( campo = 'QAQEE-VORNR' valor = n_oper ). " NÃºmero de operaciÃ³n
+        o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " Nº lote inspección
+        o_bi->campos( campo = 'QAQEE-VORNR' valor = n_oper ). " Número de operación
         o_bi->campos( campo = 'QAQEE-PRPLATZWRK' valor = werks ). " Centro
         o_bi->campos( campo = 'QAQEE-MODUS' valor = '1' ). " Filtro caract.(modo lectura) p.caract.insp.
 
@@ -576,7 +576,7 @@ class ZCL_AP_LOTES_INSP implementation.
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=MKPR_PUSH' ).
 
           LOOP AT i_requerimientos INTO l_req WHERE inspchar < caract.
-* Pantalla indiv. caract. cualitativa cÃ³digos de partic.
+* Pantalla indiv. caract. cualitativa códigos de partic.
             IF l_req-char_type = '02'.
               o_bi->dynpro( program = 'SAPLQEEM' dynpro = '0118' ).
             ELSE.
@@ -776,7 +776,7 @@ class ZCL_AP_LOTES_INSP implementation.
           APPEND l_res TO i_res.
         ENDIF.
       ENDLOOP.
-      IF sy-subrc <> 0. " Si tiene puntos de inspecciÃ³n, no queremos resultados
+      IF sy-subrc <> 0. " Si tiene puntos de inspección, no queremos resultados
         LOOP AT i_requerimientos ASSIGNING <req>.
           CLEAR l_res.
           MOVE-CORRESPONDING <req> TO l_res.                  "#EC *
@@ -832,7 +832,7 @@ class ZCL_AP_LOTES_INSP implementation.
     ENDIF.
   ENDMETHOD.
   METHOD get_resultados_simple.
-* Puede ser tambiÃ©n con qasr en lugar de QAMR
+* Puede ser también con qasr en lugar de QAMR
     SELECT qals~prueflos, v_qapo~vornr, plmk~verwmerkm, plmk~kurztext, qamr~mittelwert,
            qamr~katalgart1, qamr~gruppe1, qamr~code1, qamr~version1
       FROM qals JOIN v_qapo ON qals~aufpl = v_qapo~aufpl
@@ -1036,12 +1036,12 @@ class ZCL_AP_LOTES_INSP implementation.
       INTO l_qals
      WHERE prueflos = lote_insp.
     IF sy-subrc <> 0.
-      message = 'No existe el lote de inspecciÃ³n'(NLI).
+      message = 'No existe el lote de inspección'(NLI).
       EXIT.
     ENDIF.
 
     IF tiene_decision_empleo( lote_insp ) = 'X'.
-      message = 'DecisiÃ³n de empleo tomada'(DET).
+      message = 'Decisión de empleo tomada'(DET).
       EXIT.
     ENDIF.
 
@@ -1147,7 +1147,7 @@ class ZCL_AP_LOTES_INSP implementation.
         docyear     = emkpf-mjahr
         docnumber   = emkpf-mblnr
         docposition = l_qals-zeile " ti_datos-zeile
-        type        = '3'. " 3  Documentos de material p.traspasar una decisiÃ³n de empleo
+        type        = '3'. " 3  Documentos de material p.traspasar una decisión de empleo
 
     IF l_bestq = 'Q'.
       l_qals-lmengezub = l_qals-lmengezub + l_imseg-erfmg.
@@ -1165,14 +1165,14 @@ class ZCL_AP_LOTES_INSP implementation.
       ENDIF.
     ENDIF.
 
-*           Doc.de material de contabilizaciÃ³n DE o correcciÃ³n de ctd.
+*           Doc.de material de contabilización DE o corrección de ctd.
 *1  Documentos de material p.crear lotes
 *2  Documentos de material p.corregir una cantidad real
-*3  Documentos de material p.traspasar una decisiÃ³n de empleo
+*3  Documentos de material p.traspasar una decisión de empleo
 *4  Doc.material p.trasladar stock cal.de un lote insp.
 *5  Doc.material p.entregas siguientes tras descargo de stock
-*6  Doc.material p.creaciÃ³n lotes o entregas sig.anulados
-*7  Doc.material anulados p.traspasar una decisiÃ³n de empleo
+*6  Doc.material p.creación lotes o entregas sig.anulados
+*7  Doc.material anulados p.traspasar una decisión de empleo
 *X  Documentos de material para el inventario QM
 * DEL MOVIMIENTO
     CALL FUNCTION 'MB_POST_GOODS_MOVEMENT'
@@ -1218,7 +1218,7 @@ class ZCL_AP_LOTES_INSP implementation.
     CLEAR mensaje.
     l_status = zcl_ap_lotes_insp=>get_status_st( lote_insp ).
     IF l_status CS 'LOTA'.
-      mensaje = 'Lote de inspecciÃ³n anulado. No se puede dar DE'(NPD).
+      mensaje = 'Lote de inspección anulado. No se puede dar DE'(NPD).
     ENDIF.
 
     IF mensaje IS NOT INITIAL.
@@ -1262,19 +1262,19 @@ class ZCL_AP_LOTES_INSP implementation.
         o_bi = NEW #( ).
         o_bi->inicio( ).
 
-* Pantalla inicial decisiÃ³n de empleo
+* Pantalla inicial decisión de empleo
         o_bi->dynpro( program = 'SAPMQEVA' dynpro = '0100' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-        o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " NÂº lote inspecciÃ³n
+        o_bi->campos( campo = 'QALS-PRUEFLOS' valor = lote_insp ). " Nº lote inspección
 
         o_bi->dynpro( program = 'SAPMQEVA' dynpro = '0200' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
-        o_bi->campos( campo = 'RQEVA-VCODE' valor = code ). " CÃ³digo de decisiÃ³n de empleo
-        o_bi->campos( campo = 'RQEVA-VCODEGRP' valor = code_group ). " Grupo de cÃ³digos de decisiÃ³n de empleo
+        o_bi->campos( campo = 'RQEVA-VCODE' valor = code ). " Código de decisión de empleo
+        o_bi->campos( campo = 'RQEVA-VCODEGRP' valor = code_group ). " Grupo de códigos de decisión de empleo
 
         mensaje = o_bi->llamar_transaccion( tcode = 'QA11' modo = bdc_mode ).
 
-        IF mensaje CS 'Se ha grabado la decisiÃ³n de empleo'(SGD).
+        IF mensaje CS 'Se ha grabado la decisión de empleo'(SGD).
           CLEAR mensaje.
         ELSEIF tiene_decision_empleo( lote_insp ) = 'X'.
           CLEAR mensaje.
@@ -1296,7 +1296,7 @@ class ZCL_AP_LOTES_INSP implementation.
         ENDIF.
       ENDDO.
 
-* Nos aseguramos que el lote de inspecciÃ³n tiene estos status
+* Nos aseguramos que el lote de inspección tiene estos status
       SPLIT status_fijos AT ',' INTO TABLE i_jstatus.
       LOOP AT i_jstatus INTO l_jstatus.
         cambiar_status( lote_insp = lote_insp stat = l_jstatus ).
@@ -1476,7 +1476,7 @@ class ZCL_AP_LOTES_INSP implementation.
 
     CLEAR: return2, i_return.
 
-* APC11022013 Algunas fÃ³rmulas presentan errores de evaluciÃ³n y no sabemos por quÃ©!!!
+* APC11022013 Algunas fórmulas presentan errores de evalución y no sabemos por qué!!!
     LOOP AT i_requerimientos ASSIGNING <req> WHERE formula <> ''.
       LOOP AT i_puntos_insp ASSIGNING <pto> WHERE     inspoper   = <req>-inspoper
                                                   AND inspchar   = <req>-inspchar
@@ -1508,11 +1508,11 @@ class ZCL_AP_LOTES_INSP implementation.
     IF return2-type = 'E'.
       READ TABLE i_return INTO l_return2 WITH KEY type = 'E'.
       IF sy-subrc = 0.
-* Por si es un error al evaluar fÃ³rmulas, volvemos a intentar grabar sin evaluar esos valores
-        IF    ( l_return2-id = 'QE' AND (    l_return2-number = '388'    " Al evaluar la fÃ³rmula han surgido errores
-                                          OR l_return2-number = '362'    " La media no estÃ¡ definida. Imposible la valoraciÃ³n
-                                          OR l_return2-number = '456' ) ) " El tamaÃ±o de muestreo inspeccionado no concuerda con el planificado
-           OR ( l_return2-id = 'QI' AND ( l_return2-number = '127' ) ). " No es vÃ¡lida la muestra
+* Por si es un error al evaluar fórmulas, volvemos a intentar grabar sin evaluar esos valores
+        IF    ( l_return2-id = 'QE' AND (    l_return2-number = '388'    " Al evaluar la fórmula han surgido errores
+                                          OR l_return2-number = '362'    " La media no está definida. Imposible la valoración
+                                          OR l_return2-number = '456' ) ) " El tamaño de muestreo inspeccionado no concuerda con el planificado
+           OR ( l_return2-id = 'QI' AND ( l_return2-number = '127' ) ). " No es válida la muestra
 
           IF l_return2-id = 'QE' AND l_return2-number = '388'.
             l_err_evaluar_formula_ignorar = 'X'.
@@ -1578,9 +1578,9 @@ class ZCL_AP_LOTES_INSP implementation.
 
       IF l_err_evaluar_formula_ignorar IS INITIAL.
         IF l_error_formula_op = 'X' OR l_error_formula = 'X'.
-          CONCATENATE 'Error al evaluar fÃ³rmula.'(EEF) l_mensaje_formula INTO mensaje SEPARATED BY space.
+          CONCATENATE 'Error al evaluar fórmula.'(EEF) l_mensaje_formula INTO mensaje SEPARATED BY space.
 
-* Si hay formulas, mostramos al operario el punto de inspecciÃ³n para que pulse en calcular
+* Si hay formulas, mostramos al operario el punto de inspección para que pulse en calcular
           COMMIT WORK AND WAIT.
           WAIT UP TO 1 SECONDS.
           zcl_ap_lotes_insp=>ver_resultados( lote_insp = lote_insp
@@ -1653,13 +1653,13 @@ class ZCL_AP_LOTES_INSP implementation.
     ENDIF.
 
     IF sy-subrc <> 0.
-      CONCATENATE 'CaracterÃ­stica de inspecciÃ³n'(CDI) res-inspchar 'incorrecta'(INC) INTO mensaje SEPARATED BY space.
+      CONCATENATE 'Característica de inspección'(CDI) res-inspchar 'incorrecta'(INC) INTO mensaje SEPARATED BY space.
     ENDIF.
 
     IF katalgart IS INITIAL.
       l_valor_float = zcl_ap_string=>string2float( res-mean_value ).
       IF l_valor_float = zcl_ap_string=>c_error_float.
-        mensaje = 'NÂº incorrecto'(NIN).
+        mensaje = 'Nº incorrecto'(NIN).
       ELSE.
         CLEAR i_qaspr.
         l_qabwr-mittelwert = l_valor_float.
@@ -1691,7 +1691,7 @@ class ZCL_AP_LOTES_INSP implementation.
                                      katalgart = katalgart
                                      werks     = werks ).
       IF l_evaluation = 'F'.
-        mensaje = 'Valor no vÃ¡lido'(VNV).
+        mensaje = 'Valor no válido'(VNV).
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -1759,7 +1759,7 @@ class ZCL_AP_LOTES_INSP implementation.
           o_bi->campos( campo = 'QAPPD-USERC2' valor = datos_punto_insp-userc2 ). " Campo de usuario para diez caracteres
         ENDIF.
         IF NOT datos_punto_insp-usern1 IS INITIAL.
-          o_bi->campos( campo = 'QAPPD-USERN1' valor = datos_punto_insp-usern1 ). " Campo usuario para diez caracteres numÃ©ricos
+          o_bi->campos( campo = 'QAPPD-USERN1' valor = datos_punto_insp-usern1 ). " Campo usuario para diez caracteres numéricos
         ENDIF.
         o_bi->campos( campo = 'QAPPD-USERD1' valor = datos_punto_insp-userd1 ). " Campo de usuario para fecha
         WRITE datos_punto_insp-usert1 TO l_hora.

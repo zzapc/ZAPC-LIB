@@ -225,9 +225,9 @@ class ZCL_AP_DOCMAT implementation.
            salida.
 
     IF popup_fecha = 'X'.
-      l_budat = zcl_ap_fechas=>popup_fecha( titulo = 'Fecha anulaciÃ³n' ) ##NO_TEXT.
+      l_budat = zcl_ap_fechas=>popup_fecha( titulo = 'Fecha anulación' ) ##NO_TEXT.
       IF l_budat IS INITIAL.
-        mensaje = 'Debe indicar fecha de anulaciÃ³n' ##NO_TEXT.
+        mensaje = 'Debe indicar fecha de anulación' ##NO_TEXT.
         RETURN.
       ENDIF.
     ELSEIF budat IS INITIAL.
@@ -275,7 +275,7 @@ class ZCL_AP_DOCMAT implementation.
         mensaje = return-message.
       ENDLOOP.
 
-      IF ( mensaje CS 'period' OR mensaje CS 'perÃ­od' ) AND popup_fecha = 'Y'.
+      IF ( mensaje CS 'period' OR mensaje CS 'períod' ) AND popup_fecha = 'Y'.
         anular_doc( EXPORTING espera_a_grabado = espera_a_grabado
                               mblnr            = mblnr
                               mjahr            = mjahr
@@ -424,7 +424,7 @@ class ZCL_AP_DOCMAT implementation.
 
     fecha_abierta = fecha.
 
-* Hay que verificar que el periodo actual estÃ© abierto. En caso contra-
+* Hay que verificar que el periodo actual esté abierto. En caso contra-
 * rio, se contabiliza con fecha 01 del periodo abierto
     SELECT SINGLE * FROM marv
       INTO l_marv
@@ -576,16 +576,16 @@ class ZCL_AP_DOCMAT implementation.
 * Pantalla inicial: crear documento de invent.
     o_bi->dynpro( program = 'SAPMM07I' dynpro = '0700' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-    o_bi->campos( campo = 'RM07I-ZLDAT' valor = fecha ). " Fecha del Ãºltimo recuento
+    o_bi->campos( campo = 'RM07I-ZLDAT' valor = fecha ). " Fecha del último recuento
     o_bi->campos( campo = 'RM07I-BLDAT' valor = fecha ). " Fecha de documento en documento
     o_bi->campos( campo = 'IKPF-WERKS' valor = werks ). " Centro
-    o_bi->campos( campo = 'IKPF-LGORT' valor = lgort ). " AlmacÃ©n
+    o_bi->campos( campo = 'IKPF-LGORT' valor = lgort ). " Almacén
 
 * Posiciones: crear recuento de inventario
     o_bi->dynpro( program = 'SAPMM07I' dynpro = '0731' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
-    o_bi->campos( campo = 'ISEG-MATNR(01)' valor = matnr ). " NÃºmero de material
-    o_bi->campos( campo = 'ISEG-CHARG(01)' valor = charg ).  " NÃºmero de lote
+    o_bi->campos( campo = 'ISEG-MATNR(01)' valor = matnr ). " Número de material
+    o_bi->campos( campo = 'ISEG-CHARG(01)' valor = charg ).  " Número de lote
     o_bi->campos( campo = 'ISEG-ERFMG(01)' valor = l_ctd ). " Ctd.en unidad de medida de entrada (inventario)
     o_bi->campos( campo = 'ISEG-ERFME(01)' valor = l_meins ). " Unidad medida de entrada (inventario)
 

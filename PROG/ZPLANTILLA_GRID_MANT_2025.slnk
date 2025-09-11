@@ -256,6 +256,12 @@ AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
 
 
 START-OF-SELECTION.
+
+  IF zcl_ap_utils=&gt;bloquear_programa( intentos = 1 espera = 1 ) = &apos;X&apos;.
+    MESSAGE &apos;Programa en uso por otro usuario. Sólo se permitirá visualizar&apos; TYPE &apos;I&apos;.
+    p_vis = &apos;X&apos;.
+  ENDIF.
+
   o_prog-&gt;buscar_datos( ).
 
   IF sy-batch IS INITIAL.

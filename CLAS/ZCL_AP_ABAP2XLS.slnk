@@ -477,7 +477,18 @@
         message = zcx_excel-&gt;get_longtext( ).
     ENDTRY.
 
-    xstring = o_reader-&gt;get_fichero_desde_zip( fichero ).
+*    xstring = o_reader-&gt;get_fichero_desde_zip( fichero ).
+    TRY.
+*    xstring = o_reader-&gt;get_fichero_desde_zip( fichero ).
+        CALL METHOD o_reader-&gt;(&apos;get_fichero_desde_zip&apos;)
+          EXPORTING
+            I_FILENAME = fichero
+          RECEIVING
+            R_CONTENT = xstring.
+      CATCH cx_root INTO DATA(o_root).
+        message = o_root-&gt;get_longtext( ).
+    ENDTRY.
+
 
     IF mostrar_error = &apos;X&apos; AND NOT message IS INITIAL.
       MESSAGE message TYPE &apos;E&apos;.

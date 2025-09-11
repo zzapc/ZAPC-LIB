@@ -15,8 +15,8 @@ TABLES: zparametros,
 CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
   PUBLIC SECTION.
     METHODS: data_changed REDEFINITION,
-             user_command REDEFINITION,
-             toolbar      REDEFINITION.
+      user_command REDEFINITION,
+      toolbar      REDEFINITION.
 ENDCLASS.
 
 
@@ -158,7 +158,7 @@ CLASS lcl_event_grid IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD data_changed.
-    ini_data_changed( cambios = er_data_changed->mt_good_cells  ).
+    ini_data_changed( cambios = er_data_changed->mt_good_cells ).
 
     LOOP AT i_cambios_celda INTO cambio_celda.
       AT NEW row_id.
@@ -267,12 +267,14 @@ CLASS zcl_report IMPLEMENTATION.
       o_alv->add_button( button = 'F01' text = 'Grabar' icon = icon_system_save ucomm = 'GRABAR' ).
       o_alv->add_button( button = 'M01' text = 'Copiar en otra clave' ucomm = 'COPIAR' ).
       o_alv->add_button( button = 'M02' text = 'Grabar JSON' ucomm = 'JSON' ).
+      o_alv->add_button( button = 'M03' text = 'Exportar' ucomm = 'EXPORTAR' ).
+      o_alv->add_button( button = 'M04' text = 'Importar' ucomm = 'IMPORTAR' ).
 
       IF sy-sysid = zcl_c=>entorno_desarrollo.
-        o_alv->add_button( button = 'F02' text = 'Crear OT'  icon =  icon_import_transport_request ucomm = 'OT' ).
-        o_alv->add_button( button = 'F03' text = 'Comparar con producción'  icon =  icon_compare ucomm = 'COMP' ).
+        o_alv->add_button( button = 'F02' text = 'Crear OT' icon = icon_import_transport_request ucomm = 'OT' ).
+        o_alv->add_button( button = 'F03' text = 'Comparar con producción' icon = icon_compare ucomm = 'COMP' ).
       ELSE.
-        o_alv->add_button( button = 'F03' text = 'Comparar con desarrollo'  icon =  icon_compare ucomm = 'COMP' ).
+        o_alv->add_button( button = 'F03' text = 'Comparar con desarrollo' icon = icon_compare ucomm = 'COMP' ).
       ENDIF.
       o_alv->set_field_input( 'ATRIBUTO1,ATRIBUTO2,ATRIBUTO3,ATRIBUTO4,ATRIBUTO5,ATRIBUTO6,ATRIBUTO7,ATRIBUTO8,ATRIBUTO9,ATRIBUTO10,COMENTARIO' ).
     ENDIF.
@@ -296,11 +298,15 @@ CLASS zcl_report IMPLEMENTATION.
           l_list_dup TYPE t_listado.
     DATA: l_key  TYPE c LENGTH 120,
           i_keys TYPE TABLE OF string.
-    DATA: l_return TYPE char1,
-          l_clave  TYPE zparametros-clave.
+    DATA: l_return  TYPE char1,
+          l_clave   TYPE zparametros-clave,
+          l_listado TYPE t_listado.
 
-    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
-                            CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
+    command_dynpro( EXPORTING o_alv         = o_alv
+                              seleccion     = l_comm_sel
+                    CHANGING  i_listado     = i_listado
+                              i_listado_ini = i_listado_ini
+                              hay_sel       = l_hay_sel ).
 
     CASE ucomm.
       WHEN 'GRABAR'.
@@ -427,9 +433,9 @@ CLASS zcl_report IMPLEMENTATION.
 
       WHEN 'COPIAR'.
         zcl_ap_popup=>popup_usuario( EXPORTING campo1 = 'ZPARAMETROS-CLAVE'
-                                          titulo = 'Seleccione nueva clave destino'
-                                IMPORTING return = l_return
-                                CHANGING  valor1 = l_clave ).
+                                               titulo = 'Seleccione nueva clave destino'
+                                     IMPORTING return = l_return
+                                     CHANGING  valor1 = l_clave ).
         IF l_return = '' AND NOT l_clave IS INITIAL.
           IF l_clave = p_clave.
             MESSAGE 'La clave debe ser diferente a la origen' TYPE 'I'.
@@ -454,11 +460,104 @@ CLASS zcl_report IMPLEMENTATION.
                   zparametros-aezet = sy-uzeit.
                   MODIFY zparametros FROM zparametros.
                 ENDLOOP.
-                message |Se han copiado los parámetros a la nueva clave { l_clave }| TYPE 'I'.
+                MESSAGE |Se han copiado los parámetros a la nueva clave { l_clave }| TYPE 'I'.
               ENDIF.
             ENDIF.
           ENDIF.
         ENDIF.
+      WHEN 'EXPORTAR'.
+        TYPES: BEGIN OF t_fichero,
+                 clave      TYPE zparametros-clave,
+                 campo      TYPE zparametros-campo,
+                 valor      TYPE zparametros-valor,
+                 valor2     TYPE zparametros-valor2,
+                 valor3     TYPE zparametros-valor3,
+                 valor4     TYPE zparametros-valor4,
+                 atributo1  TYPE zparametros-atributo1,
+                 atributo2  TYPE zparametros-atributo2,
+                 atributo3  TYPE zparametros-atributo3,
+                 atributo4  TYPE zparametros-atributo4,
+                 atributo5  TYPE zparametros-atributo5,
+                 atributo6  TYPE zparametros-atributo6,
+                 atributo7  TYPE zparametros-atributo7,
+                 atributo8  TYPE zparametros-atributo8,
+                 atributo9  TYPE zparametros-atributo9,
+                 atributo10 TYPE zparametros-atributo10,
+                 comentario TYPE zparametros-comentario,
+                 aenam      TYPE zparametros-aenam,
+                 aedat      TYPE zparametros-aedat,
+                 aezet      TYPE zparametros-aezet,
+               END OF t_fichero.
+        DATA i_fichero TYPE TABLE OF t_fichero.
+        MOVE-CORRESPONDING i_listado TO i_fichero.
+
+        DATA(l_xstring) = zcl_ap_abap2xls=>alv_2_xls( tabla = i_fichero ).
+        zcl_ap_ficheros=>grabar_xstring( xstring       = l_xstring
+                                         fichero       = p_clave && '.XLSX'
+                                         dialogo       = 'X'
+                                         mostrar_error = 'X' ).
+
+
+      WHEN 'IMPORTAR'.
+        NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING popup_select_file = 'X'
+                                                       get_datos         = 'X'
+                                                       mostrar_error     = 'X'
+                                             IMPORTING datos             = i_fichero ).
+
+        LOOP AT i_fichero ASSIGNING FIELD-SYMBOL(<fichero>) WHERE clave = p_clave.
+          DELETE i_listado
+           WHERE clave  = <fichero>-clave
+             AND campo  = <fichero>-campo
+             AND valor  = <fichero>-valor
+             AND valor2 = <fichero>-valor2
+             AND valor3 = <fichero>-valor3
+             AND valor4 = <fichero>-valor4.
+
+          SELECT SINGLE * FROM zparametros
+            INTO zparametros
+           WHERE clave  = <fichero>-clave
+             AND campo  = <fichero>-campo
+             AND valor  = <fichero>-valor
+             AND valor2 = <fichero>-valor2
+             AND valor3 = <fichero>-valor3
+             AND valor4 = <fichero>-valor4.
+          IF sy-subrc = 0.
+            IF zparametros-atributo1 = <fichero>-atributo1 AND
+               zparametros-atributo2 = <fichero>-atributo2 AND
+               zparametros-atributo3 = <fichero>-atributo3 AND
+               zparametros-atributo4 = <fichero>-atributo4 AND
+               zparametros-atributo5 = <fichero>-atributo5 AND
+               zparametros-atributo6 = <fichero>-atributo6 AND
+               zparametros-atributo7 = <fichero>-atributo7 AND
+               zparametros-atributo8 = <fichero>-atributo8 AND
+               zparametros-atributo9 = <fichero>-atributo9 AND
+               zparametros-atributo10 = <fichero>-atributo10 AND
+               zparametros-comentario = <fichero>-comentario.
+              CLEAR l_listado.
+              MOVE-CORRESPONDING zparametros TO l_listado.
+              APPEND l_listado TO i_listado.
+            ELSE.
+              CLEAR l_listado.
+              MOVE-CORRESPONDING <FICHERO> TO l_listado.
+              l_listado-updkz = 'U'.
+              l_listado-aenam = sy-uname.
+              l_listado-aedat = sy-datum.
+              l_listado-aezet = sy-uzeit.
+              validaciones( EXPORTING mod = 'U' CHANGING listado = l_listado ).
+              APPEND l_listado TO i_listado.
+            ENDIF.
+          ELSE.
+            CLEAR l_listado.
+            MOVE-CORRESPONDING <fichero> TO l_listado.
+            l_listado-updkz = 'I'.
+            l_listado-aenam = sy-uname.
+            l_listado-aedat = sy-datum.
+            l_listado-aezet = sy-uzeit.
+            validaciones( EXPORTING mod = 'I' CHANGING listado = l_listado ).
+            APPEND l_listado TO i_listado.
+          ENDIF.
+        ENDLOOP.
+        o_alv->refrescar_grid( soft_refresh = '' ).
     ENDCASE.
   ENDMETHOD.
 
@@ -518,10 +617,10 @@ INITIALIZATION.
   ELSE.
     CLEAR sscrfields-functxt_02.
   ENDIF.
-  zcl_ap_documentos=>get_documentos_por_clas( EXPORTING tcode = 'ZPARAMETROS'
+  zcl_ap_documentos=>get_documentos_por_clas( EXPORTING tcode         = 'ZPARAMETROS'
                                                         clasificacion = 'MANUAL'
-                                              IMPORTING i_documentos = DATA(i_documentos)
-                                                        eliminados = DATA(l_eliminados) ).
+                                              IMPORTING i_documentos  = DATA(i_documentos)
+                                                        eliminados    = DATA(l_eliminados) ).
   IF NOT i_documentos IS INITIAL.
     sscrfields-functxt_05 = icon_message_information.
     PERFORM set_sscrfields IN PROGRAM zap_status USING sscrfields IF FOUND.
@@ -537,8 +636,8 @@ INITIALIZATION.
                              boton_borrar    = 'X'
                              o_prog          = o_prog ).
 
-    o_prog->o_alv   = NEW #( estructura = ''
-                             o_event    = o_prog->o_event ).
+    o_prog->o_alv = NEW #( estructura = ''
+                           o_event    = o_prog->o_event ).
   ENDIF.
 
 * Ya no queremos mantenimiento por SM30
@@ -601,8 +700,8 @@ START-OF-SELECTION.
     DATA o_par TYPE REF TO zcl_ap_parametros.
 
     o_par = NEW #(
-        clave = p_clave
-        campo = p_campo ).
+      clave = p_clave
+      campo = p_campo ).
 
     IF p_vis IS INITIAL.
       o_par->mantenimiento( alv = '' ).

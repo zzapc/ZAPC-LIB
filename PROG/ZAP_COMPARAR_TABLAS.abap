@@ -1,9 +1,9 @@
 ***********************************************************************
 * TIPO : LISTADO
 * TITULO : ??
-* DESCRIPCION : AdaptaciÃ³n report UGMD_TABLE_DELTA_TO_TRANSPORT
+* DESCRIPCION : Adaptación report UGMD_TABLE_DELTA_TO_TRANSPORT
 *
-* AUTOR: AndrÃ©s Picazo                                FECHA: 04/03/2019
+* AUTOR: Andrés Picazo                                FECHA: 04/03/2019
 * ANALISTA: ??
 *
 * Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
@@ -329,7 +329,7 @@ CLASS zcl_report IMPLEMENTATION.
         DATA tabla TYPE REF TO data.
         CLEAR cont.
         IF sy-sysid = zcl_c=>entorno_produccion.
-          IF zcl_ap_popup=>confirmar( texto = 'Â¿EstÃ¡ seguro de querer modificar registros en producciÃ³n?' ) = ''.
+          IF zcl_ap_popup=>confirmar( texto = '¿Está seguro de querer modificar registros en producción?' ) = ''.
             RETURN.
           ENDIF.
         ENDIF.
@@ -353,14 +353,14 @@ CLASS zcl_report IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         IF cont = 0.
-          MESSAGE 'No se ha modificado ningÃºn registro. Debe seleccionar registros del sistema remoto' TYPE 'I'.
+          MESSAGE 'No se ha modificado ningún registro. Debe seleccionar registros del sistema remoto' TYPE 'I'.
         ELSE.
           MESSAGE |Se han actualizado { cont } registros| TYPE 'S'.
         ENDIF.
 
       WHEN 'F03'.
         IF sy-sysid = zcl_c=>entorno_produccion.
-          IF zcl_ap_popup=>confirmar( texto = 'Â¿EstÃ¡ seguro de querer borrar registros en producciÃ³n?' ) = ''.
+          IF zcl_ap_popup=>confirmar( texto = '¿Está seguro de querer borrar registros en producción?' ) = ''.
             RETURN.
           ENDIF.
         ENDIF.
@@ -385,7 +385,7 @@ CLASS zcl_report IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         IF cont = 0.
-          MESSAGE 'No se ha modificado ningÃºn registro. Debe seleccionar registros del sistema local' TYPE 'I'.
+          MESSAGE 'No se ha modificado ningún registro. Debe seleccionar registros del sistema local' TYPE 'I'.
         ELSE.
           MESSAGE |Se han actualizado { cont } registros| TYPE 'S'.
         ENDIF.

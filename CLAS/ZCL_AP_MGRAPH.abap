@@ -1009,8 +1009,8 @@ METHOD get_mails.
 
         IF quitar_confirmaciones = 'X'.
           DELETE i_emails WHERE sender-emailaddress-address CS 'MicrosoftExchangE' AND sender-emailaddress-address CS '.onmicrosoft.com'
-                            AND ( subject CS 'Entregado:' OR subject CS 'Recibido:' OR subject CS 'LeÃ­do:'  ).
-          DELETE i_emails WHERE ( subject CS 'LeÃ­do:'  AND bodypreview CS 'El mensaje' AND bodypreview CS 'fue leÃ­do el' ).
+                            AND ( subject CS 'Entregado:' OR subject CS 'Recibido:' OR subject CS 'Leído:'  ).
+          DELETE i_emails WHERE ( subject CS 'Leído:'  AND bodypreview CS 'El mensaje' AND bodypreview CS 'fue leído el' ).
 
         ENDIF.
 
@@ -1534,7 +1534,7 @@ METHOD save_token.
       MESSAGE 'No se ha recuperado nada' TYPE 'I'.
       RETURN.
     ELSEIF strlen( string ) < 1000.
-      MESSAGE 'Token errÃ³neo' TYPE 'I'.
+      MESSAGE 'Token erróneo' TYPE 'I'.
       RETURN.
     ENDIF.
 

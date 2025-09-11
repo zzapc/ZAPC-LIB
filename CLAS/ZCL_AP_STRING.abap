@@ -415,35 +415,35 @@ class ZCL_AP_STRING implementation.
     ENDLOOP.
   ENDMETHOD.
   METHOD convert_html_chars.
-    REPLACE ALL OCCURRENCES OF '\u00e1' IN string WITH 'á'.
-    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH 'é'.
-    REPLACE ALL OCCURRENCES OF '\u00ed' IN string WITH 'í'.
-    REPLACE ALL OCCURRENCES OF '\u00f3' IN string WITH 'ó'.
-    REPLACE ALL OCCURRENCES OF '\u00fa' IN string WITH 'ú'.
-    REPLACE ALL OCCURRENCES OF '\u00f1' IN string WITH 'ñ'.
+    REPLACE ALL OCCURRENCES OF '\u00e1' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00ed' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00f3' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00fa' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00f1' IN string WITH '�'.
 
-    REPLACE ALL OCCURRENCES OF '\u00e0' IN string WITH 'á'.
-    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH 'é'.
-    REPLACE ALL OCCURRENCES OF '\u00ec' IN string WITH 'í'.
-    REPLACE ALL OCCURRENCES OF '\u00f2' IN string WITH 'ó'.
-    REPLACE ALL OCCURRENCES OF '\u00f9' IN string WITH 'ú'.
+    REPLACE ALL OCCURRENCES OF '\u00e0' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00ec' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00f2' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00f9' IN string WITH '�'.
 
-    REPLACE ALL OCCURRENCES OF '\u00fc' IN string WITH 'ü'.
+    REPLACE ALL OCCURRENCES OF '\u00fc' IN string WITH '�'.
 
-    REPLACE ALL OCCURRENCES OF '\u00c1' IN string WITH 'Á'.
-    REPLACE ALL OCCURRENCES OF '\u00c9' IN string WITH 'É'.
-    REPLACE ALL OCCURRENCES OF '\u00cd' IN string WITH 'Í'.
-    REPLACE ALL OCCURRENCES OF '\u00d3' IN string WITH 'Ó'.
-    REPLACE ALL OCCURRENCES OF '\u00da' IN string WITH 'Ú'.
-    REPLACE ALL OCCURRENCES OF '\u00d1' IN string WITH 'Ñ'.
+    REPLACE ALL OCCURRENCES OF '\u00c1' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00c9' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00cd' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00d3' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00da' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00d1' IN string WITH '�'.
 
-    REPLACE ALL OCCURRENCES OF '\u00c0' IN string WITH 'À'.
-    REPLACE ALL OCCURRENCES OF '\u00c8' IN string WITH 'È'.
-    REPLACE ALL OCCURRENCES OF '\u00cc' IN string WITH 'Ì'.
-    REPLACE ALL OCCURRENCES OF '\u00d2' IN string WITH 'Ò'.
-    REPLACE ALL OCCURRENCES OF '\u00d9' IN string WITH 'Ù'.
+    REPLACE ALL OCCURRENCES OF '\u00c0' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00c8' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00cc' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00d2' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00d9' IN string WITH '�'.
 
-    REPLACE ALL OCCURRENCES OF '\u00bf' IN string WITH '¿'.
+    REPLACE ALL OCCURRENCES OF '\u00bf' IN string WITH '�'.
     REPLACE ALL OCCURRENCES OF '\n' IN string WITH ' '.
     REPLACE ALL OCCURRENCES OF '\/' IN string WITH '/'.
 
@@ -489,7 +489,7 @@ class ZCL_AP_STRING implementation.
 
     IF sy-subrc <> 0.
       IF mostrar_error = 'X'.
-        MESSAGE e398(00) WITH 'Error'(err) sy-subrc 'en conversión'(enc) ''.
+        MESSAGE e398(00) WITH 'Error'(err) sy-subrc 'en conversi�n'(enc) ''.
       ELSE.
         salida = cadena.
       ENDIF.
@@ -814,7 +814,7 @@ class ZCL_AP_STRING implementation.
              proxy         TYPE ole2_parameter, " Proxy (incl. Port)
              proxyuser     TYPE ole2_parameter, " User am Proxy
              proxypassword TYPE ole2_parameter, " Password am Proxy
-             scrambled     TYPE c LENGTH 1,     " Flag ob verschlüsselt
+             scrambled     TYPE c LENGTH 1,     " Flag ob verschl�sselt
            END OF cndp_user_info.
 
     DATA: l_url     TYPE saeuri,
@@ -898,13 +898,13 @@ class ZCL_AP_STRING implementation.
                  OTHERS                      = 8.
     IF sy-subrc <> 0.
       CASE sy-subrc.
-        WHEN 1. message = 'Error de conexión'(ecn).
+        WHEN 1. message = 'Error de conexi�n'(ecn).
         WHEN 2. message = 'TimeOut'(tmo).
         WHEN 3. message = 'Error interno'(ein).
         WHEN 4. message = 'Error de TCPIP'(tcp).
         WHEN 5. message = 'Error de datos'(eda).
         WHEN 6. message = 'Fallo de sistema'(fsi).
-        WHEN 7. message = 'Fallo de comunicación'(fco).
+        WHEN 7. message = 'Fallo de comunicaci�n'(fco).
         WHEN OTHERS.
           message = 'Error llamando a HTTP_GET'(ehg).
       ENDCASE.
@@ -1031,7 +1031,7 @@ class ZCL_AP_STRING implementation.
     REPLACE ALL OCCURRENCES OF '>' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '<' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '?' IN string WITH ''.
-    REPLACE ALL OCCURRENCES OF '¿' IN string WITH ''.
+    REPLACE ALL OCCURRENCES OF '�' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '%' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '$' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '&' IN string WITH ''.
@@ -1073,7 +1073,7 @@ class ZCL_AP_STRING implementation.
       CLEAR l_rango.
       l_rango-option = 'EQ'.
       l_rango-sign   = 'I'.
-      l_rango-low    = '¿¿¿¿????'.
+      l_rango-low    = '����????'.
       APPEND l_rango TO rango.
     ENDIF.
   ENDMETHOD.
@@ -1185,10 +1185,10 @@ class ZCL_AP_STRING implementation.
                  OTHERS            = 6.
 
     IF sy-subrc <> 0.
-      MESSAGE 'Error reemplazando carácteres'(erc) TYPE 'S'.
+      MESSAGE 'Error reemplazando car�cteres'(erc) TYPE 'S'.
     ELSE.
-      IF string CS '€'.
-        REPLACE ALL OCCURRENCES OF '€' IN string WITH 'EUR'.
+      IF string CS '�'.
+        REPLACE ALL OCCURRENCES OF '�' IN string WITH 'EUR'.
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -1338,13 +1338,13 @@ class ZCL_AP_STRING implementation.
             cantidad = lv_cell_value.
           CATCH cx_sy_conversion_no_number.
             lv_value = lv_cell_value.
-            CONCATENATE 'Error de conversión'(eco) lv_value INTO mensaje SEPARATED BY space.
+            CONCATENATE 'Error de conversi�n'(eco) lv_value INTO mensaje SEPARATED BY space.
           CATCH cx_sy_conversion_overflow.
             lv_value = lv_cell_value.
             CONCATENATE 'Cantidad'(ctd) lv_value 'es demasiado grande para variable de salida'(dts) INTO mensaje SEPARATED BY space.
           CATCH cx_root. "#EC *
             lv_value = lv_cell_value.
-            CONCATENATE 'Cantidad indeterminado en conversión'(cic) lv_value INTO mensaje SEPARATED BY space.
+            CONCATENATE 'Cantidad indeterminado en conversi�n'(cic) lv_value INTO mensaje SEPARATED BY space.
         ENDTRY.
         RETURN.
       ENDIF.
@@ -1377,7 +1377,7 @@ class ZCL_AP_STRING implementation.
                 ifeld        = l_cantidad
                 messg        = l_message.
 *                MSGLN        = MSGLN
-    IF l_message-msgty = 'E' AND l_message-msgid = 'CH' AND l_message-msgno = '142'. " Sólo se permiten '3 ' decimales
+    IF l_message-msgty = 'E' AND l_message-msgid = 'CH' AND l_message-msgno = '142'. " S�lo se permiten '3 ' decimales
       CLEAR: l_error,
              l_message.
       SPLIT l_ctd_texto AT '.' INTO l_cantidad l_decimales.
@@ -1409,13 +1409,13 @@ class ZCL_AP_STRING implementation.
           cantidad = l_cantidad.
         CATCH cx_sy_conversion_no_number.
           lv_value = lv_cell_value.
-          CONCATENATE 'Error de conversión'(eco) lv_value INTO mensaje SEPARATED BY space.
+          CONCATENATE 'Error de conversi�n'(eco) lv_value INTO mensaje SEPARATED BY space.
         CATCH cx_sy_conversion_overflow.
           lv_value = lv_cell_value.
           CONCATENATE 'Cantidad'(ctd) lv_value 'es demasiado grande para variable de salida'(dts) INTO mensaje SEPARATED BY space.
         CATCH cx_root. "#EC *
           lv_value = lv_cell_value.
-          CONCATENATE 'Cantidad indeterminado en conversión'(cic) lv_value INTO mensaje SEPARATED BY space.
+          CONCATENATE 'Cantidad indeterminado en conversi�n'(cic) lv_value INTO mensaje SEPARATED BY space.
       ENDTRY.
     ENDIF.
   ENDMETHOD.
@@ -1492,10 +1492,10 @@ class ZCL_AP_STRING implementation.
     ENDTRY.
   ENDMETHOD.
   METHOD string2tabla.
-* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
-* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
-* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
-* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+* Divide una línea que llega con sáltos de página a un formato que puede
+* introducirse directamente con la función SAVE_TEXT, convirtiendo el
+* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
+* texto tuviera más de 132 carácteres lo parte.
 ************************************************************************
 
     DATA: l_long   TYPE i,
@@ -1589,11 +1589,11 @@ class ZCL_AP_STRING implementation.
 *      OTHERS                           = 2.
   ENDMETHOD.
   METHOD string2tablastring.
-*Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que
+*Divide una línea que llega con sáltos de página a un formato que
 *puede
-* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
-* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
-* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+* introducirse directamente con la función SAVE_TEXT, convirtiendo el
+* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
+* texto tuviera más de 132 carácteres lo parte.
 ************************************************************************
 
     DATA l_lin TYPE c LENGTH 10000.
@@ -1680,10 +1680,10 @@ class ZCL_AP_STRING implementation.
 *      OTHERS                           = 2.
   ENDMETHOD.
   METHOD string2tline.
-* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
-* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
-* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
-* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
+* Divide una línea que llega con sáltos de página a un formato que puede
+* introducirse directamente con la función SAVE_TEXT, convirtiendo el
+* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
+* texto tuviera más de 132 carácteres lo parte.
 ************************************************************************
 
     DATA l_lin TYPE c LENGTH 10000.

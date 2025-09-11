@@ -993,7 +993,9 @@
 
     l_fichero = get_fichero_var( fichero = CONV #( fichero ) ).
 
-    IF get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ) = &apos;L&apos;.
+    DATA(l_tipo_ruta) = get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ).
+    IF l_tipo_ruta = &apos;L&apos; OR  &quot;Local
+       l_tipo_ruta = &apos;X&apos;.    &quot;Diálogo
       grabar( EXPORTING fichero         = l_fichero
                         tipo            = &apos;BIN&apos;
                         mostrar_error   = mostrar_error

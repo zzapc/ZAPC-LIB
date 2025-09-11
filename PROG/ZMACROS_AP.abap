@@ -30,7 +30,7 @@ START-OF-SELECTION.
     IF v_new = 'X'.
       IF strlen( &1 ) > 40.
                 ROLLBACK WORK.
-        MESSAGE |LÃ­nea { &1 } con mÃ¡s de 40 carÃ¡cteres| TYPE 'E'.
+        MESSAGE |Línea { &1 } con más de 40 carácteres| TYPE 'E'.
       ENDIF.
       trmac-numm = v_numm.
       ADD 1 TO v_numm.
@@ -51,7 +51,7 @@ START-OF-SELECTION.
   END-OF-DEFINITION.
 
   mac_new 'DATA_SET_VART'.
-  mac_add: '* DefiniciÃ³n de variables en base a tipo estructura',
+  mac_add: '* Definición de variables en base a tipo estructura',
            'TYPES T_&1 TYPE &1.',
            'TYPES TT_&1 TYPE TABLE OF T_&1.',
            'DATA I_&1 TYPE TT_&1.',
@@ -59,7 +59,7 @@ START-OF-SELECTION.
            'FIELD-SYMBOLS <&1> TYPE T_&1.'.
 
   mac_new 'DATA_SET_VAR'.
-  mac_add: '* DefiniciÃ³n de variables en base a tipo',
+  mac_add: '* Definición de variables en base a tipo',
            'TYPES TT_&1 TYPE TABLE OF T_&1.',
            'DATA I_&1 TYPE TT_&1.',
            'DATA L_&1 TYPE T_&1.',
@@ -82,22 +82,22 @@ START-OF-SELECTION.
 
 
   mac_new 'CONCAT_A'.
-  mac_add: '* Concatenar 1 parÃ¡metros sobre variabla actual',
+  mac_add: '* Concatenar 1 parámetros sobre variabla actual',
            '&1 = ZCL_AP_UTILS=>CONCAT( p1 = &1     *',
            '                           p2 = &2 )'.
 
   mac_new 'CONCAT2'.
-  mac_add: '* Concatenar 2 parÃ¡metros',
+  mac_add: '* Concatenar 2 parámetros',
            '&1 = ZCL_AP_UTILS=>CONCAT( p1 = &2     *',
            '                           p2 = &3 )'.
 
   mac_new 'CONCAT3'.
-  mac_add: '* Concatenar 3 parÃ¡metros',
+  mac_add: '* Concatenar 3 parámetros',
            '&1 = ZCL_AP_UTILS=>CONCAT( p1 = &2     *',
              '                p2 = &3  p3 = &4 )'.
 
   mac_new 'CONCAT4'.
-  mac_add: '* Concatenar 4 parÃ¡metros',
+  mac_add: '* Concatenar 4 parámetros',
            '&1 = ZCL_AP_UTILS=>CONCAT( p1 = &2     *',
              '        p2 = &3  p3 = &4 p4 = &5 )'.
 
@@ -122,7 +122,7 @@ START-OF-SELECTION.
            'ENDIF.'.
 
   mac_new 'BOTONES_PLANTILLA'.
-  mac_add: '* AÃ±ade los botones por defecto pant.Sel',
+  mac_add: '* Añade los botones por defecto pant.Sel',
            'TABLES SSCRFIELDS.',
            'SELECTION-SCREEN FUNCTION KEY 2',
            'SELECTION-SCREEN FUNCTION KEY 3',
@@ -130,20 +130,20 @@ START-OF-SELECTION.
            'SELECTION-SCREEN FUNCTION KEY 5'.
 
   mac_new 'ADD_LISTA'.
-  mac_add: '* AÃ±ade elemento a lista',
+  mac_add: '* Añade elemento a lista',
            'ZCL_AP_LISTA=>ADD(                     *',
            '      EXPORTING VALOR = &2             *',
            '      CHANGING LISTA = &1 ).'.
 
   mac_new 'ADD_LISTA_NO0'.
-  mac_add: '* AÃ±ade elemento sin ceros a lista ',
+  mac_add: '* Añade elemento sin ceros a lista ',
            'ZCL_AP_LISTA=>ADD(                     *',
            '      EXPORTING VALOR = &2             *',
            '                QUITAR_CEROS = ''X''     *',
            '      CHANGING LISTA = &1 ).'.
 
   mac_new 'RANGO_EQ'.
-  mac_add: '* AÃ±ade elemento a rango',
+  mac_add: '* Añade elemento a rango',
            'CLEAR &1.',
            '&1-OPTION = ''EQ''',
            '&1-SIGN = ''I''',
@@ -151,7 +151,7 @@ START-OF-SELECTION.
            'APPEND &1'.
 
   mac_new 'RANGO_NE'.
-  mac_add: '* AÃ±ade elemento a rango',
+  mac_add: '* Añade elemento a rango',
            'CLEAR &1.',
            '&1-OPTION = ''EQ''',
            '&1-SIGN = ''E''',
@@ -159,7 +159,7 @@ START-OF-SELECTION.
            'APPEND &1'.
 
   mac_new 'RANGO_BT'.
-  mac_add: '* AÃ±ade elemento a rango',
+  mac_add: '* Añade elemento a rango',
            'CLEAR &1.',
            '&1-OPTION = ''BT''',
            '&1-SIGN = ''I''',
@@ -173,7 +173,7 @@ START-OF-SELECTION.
            'DATA LR_&1 LIKE LINE OF R_&1'.
 
   mac_new 'RANGOC_EQ'.
-  mac_add: '* AÃ±ade elemento a rango',
+  mac_add: '* Añade elemento a rango',
            'CLEAR L&1.',
            'L&1-OPTION = ''EQ''',
            'L&1-SIGN = ''I''',
@@ -181,7 +181,7 @@ START-OF-SELECTION.
            'COLLECT L&1 INTO &1'.
 
   mac_new 'RANGOC_NE'.
-  mac_add: '* AÃ±ade elemento a rango',
+  mac_add: '* Añade elemento a rango',
            'CLEAR L&1.',
            'L&1-OPTION = ''EQ''',
            'L&1-SIGN = ''E''',

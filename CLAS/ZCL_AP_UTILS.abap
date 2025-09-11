@@ -337,9 +337,9 @@ class ZCL_AP_UTILS implementation.
 
       IF sy-subrc <> 0.
         IF espera IS INITIAL.
-          MESSAGE 'El programa ya se estÃ¡ ejecutando. Salimos' TYPE 'S'.
+          MESSAGE 'El programa ya se está ejecutando. Salimos' TYPE 'S'.
         ELSE.
-          MESSAGE 'El programa ya se estÃ¡ ejecutando. Espere'(pee) TYPE 'S'.
+          MESSAGE 'El programa ya se está ejecutando. Espere'(pee) TYPE 'S'.
           WAIT UP TO espera SECONDS.
         ENDIF.
       ELSE.
@@ -600,13 +600,13 @@ class ZCL_AP_UTILS implementation.
           l_p15 TYPE string.
 
     IF NOT p1 IS INITIAL. l_p1 = format( valor = p1 meins = meins parentesis = parent1 hora_larga = hora_larga ). ENDIF.
-    IF p2 IS INITIAL AND p3 IS INITIAL AND p4 IS INITIAL AND p5 IS INITIAL. " OptimizÃ¡ciÃ³n para no perder tiempo
+    IF p2 IS INITIAL AND p3 IS INITIAL AND p4 IS INITIAL AND p5 IS INITIAL. " Optimizáción para no perder tiempo
       string = l_p1.
       RETURN.
     ENDIF.
 
     IF NOT p2 IS INITIAL. l_p2 = format( valor = p2 meins = meins parentesis = parent2 hora_larga = hora_larga ). ENDIF.
-    IF p3 IS INITIAL AND p4 IS INITIAL AND p5 IS INITIAL AND p6 IS INITIAL. " OptimizÃ¡ciÃ³n para no perder tiempo
+    IF p3 IS INITIAL AND p4 IS INITIAL AND p5 IS INITIAL AND p6 IS INITIAL. " Optimizáción para no perder tiempo
       CONCATENATE l_p1 l_p2 INTO string SEPARATED BY separador.
       RETURN.
     ENDIF.
@@ -644,7 +644,7 @@ class ZCL_AP_UTILS implementation.
     ENDSELECT.
     IF sy-subrc = 0.
       CONCATENATE 'Estructura' estructura 'ya existe' INTO string SEPARATED BY space.
-      IF zcl_ap_popup=>confirmar( texto = string texto2 = 'Â¿EstÃ¡ seguro de querer actualizarla?' opcion = 'N' ) = ''.
+      IF zcl_ap_popup=>confirmar( texto = string texto2 = '¿Está seguro de querer actualizarla?' opcion = 'N' ) = ''.
         RETURN.
       ENDIF.
     ENDIF.
@@ -987,7 +987,7 @@ class ZCL_AP_UTILS implementation.
       INSERT ls_e071k INTO TABLE lt_e071k.
     ENDLOOP.
     IF lt_e071k IS INITIAL.
-      MESSAGE 'No ha seleccionado ninguna lÃ­nea' TYPE 'I'.
+      MESSAGE 'No ha seleccionado ninguna línea' TYPE 'I'.
     ELSE.
       CALL FUNCTION 'TR_REQUEST_CHOICE'
         EXPORTING

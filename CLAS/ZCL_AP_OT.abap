@@ -1,242 +1,264 @@
-CLASS zcl_ap_ot DEFINITION
-  PUBLIC
-  CREATE PUBLIC.
+class ZCL_AP_OT definition
+  public
+  create public .
 
-  PUBLIC SECTION.
-    TYPES zt_ltap_creat TYPE TABLE OF ltap_creat.
+public section.
 
-    CLASS-METHODS visualizar
-      IMPORTING lgnum TYPE ltak-lgnum DEFAULT '002'
-                tanum TYPE any
-                tapos TYPE ltap-tapos OPTIONAL.
+  types:
+    zt_ltap_creat TYPE TABLE OF ltap_creat .
 
-    CLASS-METHODS crear_ot_multiple
-      IMPORTING lgnum               TYPE ltak-lgnum
-                bwlvs               TYPE ltak-bwlvs
-                ltak                TYPE ltak_vb       OPTIONAL
-                betyp               TYPE ltak-betyp    DEFAULT ''
-                benum               TYPE ltak-benum    DEFAULT ''
-                mostrar_mensaje     TYPE abap_bool     DEFAULT 'X'
-                in_update_task      TYPE abap_bool     DEFAULT ''
-                espera_a_grabado    TYPE abap_bool     DEFAULT ''
-                ausfb               TYPE lvs_ausfb     DEFAULT ''
-                commit_work         TYPE abap_bool     DEFAULT 'X'
-                dequeue_all         TYPE abap_bool     DEFAULT ''
-                solo_verificaciones TYPE abap_bool     DEFAULT ''
-                usar_bi             TYPE abap_bool     DEFAULT ''
-                lznum               TYPE ltak-lznum    DEFAULT ''
-      CHANGING  i_ltap_creat        TYPE zt_ltap_creat
-                tanum               TYPE ltak-tanum
-                !message            TYPE any
-                i_ltak              TYPE pdt_t_ltak_vb OPTIONAL.
-
-    CLASS-METHODS visualizar_stock_material
-      IMPORTING matnr TYPE lqua-matnr OPTIONAL
-                werks TYPE lqua-werks DEFAULT zcl_c=>werks
-                lgnum TYPE lqua-lgnum DEFAULT zcl_c=>lgnum
-                lgtyp TYPE lqua-lgtyp OPTIONAL
-                lgpla TYPE lqua-lgpla OPTIONAL
-                sonum TYPE lqua-sonum DEFAULT ''
-                sobkz TYPE lqua-sobkz DEFAULT ''
-      PREFERRED PARAMETER matnr.
-
-    CLASS-METHODS crear_ot_desde_nt
-      IMPORTING lgnum    TYPE ltak-lgnum
-                tbnum    TYPE ltak-tbnum
-                t_pos    TYPE l03b_trite_t
-                usar_bi  TYPE abap_bool  DEFAULT ''
-                squit    TYPE rl03tsquit DEFAULT ''
-      CHANGING  tanum    TYPE ltak-tanum
-                !message TYPE bapireturn1-message.
-
-    CLASS-METHODS get_stock_ubicacion
-      IMPORTING matnr        TYPE lqua-matnr
-                werks        TYPE lqua-werks DEFAULT '0002'
-                lgnum        TYPE lqua-lgnum DEFAULT '002'
-                sonum        TYPE lqua-sonum OPTIONAL
-                vbeln        TYPE vbak-vbeln OPTIONAL
-                lgtyp        TYPE lqua-lgtyp
-                lgpla        TYPE lqua-lgpla
-      RETURNING VALUE(verme) TYPE lqua-verme.
-
-    CLASS-METHODS confirmar_ot
-      IMPORTING lgnum           TYPE ltak-lgnum
-                mostrar_mensaje TYPE abap_bool  DEFAULT 'X'
-                in_update_task  TYPE abap_bool  DEFAULT ''
-                ausfb           TYPE lvs_ausfb  DEFAULT ''
-                commit_work     TYPE abap_bool  DEFAULT 'X'
-                dequeue_all     TYPE abap_bool  DEFAULT ''
-                tanum           TYPE ltak-tanum
-                quknz           TYPE rl03tquknz DEFAULT ''
-                squit           TYPE rl03tsquit DEFAULT ''
-      CHANGING  i_ltap_conf     TYPE pdt_t_ltap_conf
-                !message        TYPE any
-                confirmacion_ok TYPE abap_bool.
-
-    CLASS-METHODS confirmar_pos_ot
-      IMPORTING lgnum           TYPE ltak-lgnum
-                mostrar_mensaje TYPE abap_bool  DEFAULT 'X'
-                in_update_task  TYPE abap_bool  DEFAULT ''
-                ausfb           TYPE lvs_ausfb  DEFAULT ''
-                commit_work     TYPE abap_bool  DEFAULT 'X'
-                dequeue_all     TYPE abap_bool  DEFAULT ''
-                tanum           TYPE ltak-tanum
-                quknz           TYPE rl03tquknz DEFAULT ''
-                ctd_conf        TYPE any        OPTIONAL
-                tapos           TYPE ltap-tapos
-                kzdif           TYPE lvs_kzdif  DEFAULT ''
-                nquit           TYPE rl03tnquit DEFAULT ''
-                ctd_dif         TYPE any        OPTIONAL
-                nlpla           TYPE ltap-nlpla DEFAULT ''
-                squit           TYPE rl03tsquit DEFAULT ''
-      CHANGING  !message        TYPE any
-                confirmacion_ok TYPE abap_bool.
-
-    CLASS-METHODS borra_pos_ot
-      IMPORTING lgnum     TYPE ltak-lgnum
-                tapos     TYPE ltap-tapos
-                tanum     TYPE ltak-tanum
-      EXPORTING VALUE(ok) TYPE abap_bool
-                !message  TYPE bapireturn1-message.
-
-    CLASS-METHODS get_rango_lgtyp_est
-      IMPORTING lgnum          TYPE t334t-lgnum
-                kzear          TYPE t334t-kzear
-                lgtkz          TYPE t334t-lgtkz
-                bestq          TYPE t334t-bestq DEFAULT ''
-                sobkz          TYPE t334t-sobkz
-                lagkl          TYPE t334t-lagkl DEFAULT ''
-                bwref          TYPE t334t-bwref
-      RETURNING VALUE(r_lgtyp) TYPE tab_range_c3.
-
-    CLASS-METHODS crear_ubicacion
-      IMPORTING lgnum          TYPE lagp-lgnum
-                lgtyp          TYPE lagp-lgtyp
-                lgpla          TYPE lagp-lgpla
-                lgber          TYPE lagp-lgber DEFAULT '001'
-                lptyp          TYPE lagp-lptyp DEFAULT ''
-      RETURNING VALUE(mensaje) TYPE string.
-
-    CLASS-METHODS ubic_perm_stock_neg
-      IMPORTING lgnum        TYPE lgnum DEFAULT zcl_c=>lgnum
-                lgtyp        TYPE lgtyp OPTIONAL
-      PREFERRED PARAMETER lgtyp
-      RETURNING VALUE(negat) TYPE t331-negat.
-
-    CLASS-METHODS anular_ot
-      IMPORTING lgnum     TYPE ltak-lgnum
-                tanum     TYPE ltak-tanum
-      EXPORTING VALUE(ok) TYPE abap_bool
-                !message  TYPE bapireturn1-message.
-
-    CLASS-METHODS esta_bloqueada
-      IMPORTING lgnum            TYPE lgnum
-                tanum            TYPE tanum
-      RETURNING VALUE(bloqueado) TYPE abap_bool.
-
-    CLASS-METHODS anular_pos_ot
-      IMPORTING lgnum          TYPE ltak-lgnum
-                tapos          TYPE ltap-tapos
-                tanum          TYPE ltak-tanum
-                !commit        TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(message) TYPE bapireturn1-message.
-
-    CLASS-METHODS get_datos_usuario
-      IMPORTING !uname       TYPE sy-uname DEFAULT sy-uname
-      RETURNING VALUE(datos) TYPE lrf_wkqu.
-
-    CLASS-METHODS get_lgnum_def_usuario
-      IMPORTING !uname       TYPE sy-uname DEFAULT sy-uname
-      RETURNING VALUE(lgnum) TYPE lgnum.
-
-    CLASS-METHODS get_unidad_wm
-      IMPORTING lgnum        TYPE lgnum
-                matnr        TYPE matnr
-      RETURNING VALUE(lhme1) TYPE lhmeh1.
-
-    CLASS-METHODS convert_ctd_wm
-      IMPORTING lgnum           TYPE lgnum
-                matnr           TYPE matnr
-                cantidad_origen TYPE mengv13 OPTIONAL
-                unidad_origen   TYPE meins   OPTIONAL
-      EXPORTING cantidad_wm     TYPE mengv13
-                unidad_wm       TYPE lhmeh1.
-
-    CLASS-METHODS crear_ot_simple
-      IMPORTING lgnum               TYPE ltak-lgnum
-                bwlvs               TYPE ltak-bwlvs
-                ltak                TYPE ltak_vb    OPTIONAL
-                betyp               TYPE ltak-betyp DEFAULT ''
-                benum               TYPE ltak-benum DEFAULT ''
-                mostrar_mensaje     TYPE abap_bool  DEFAULT 'X'
-                in_update_task      TYPE abap_bool  DEFAULT ''
-                espera_a_grabado    TYPE abap_bool  DEFAULT ''
-                ausfb               TYPE lvs_ausfb  DEFAULT ''
-                commit_work         TYPE abap_bool  DEFAULT 'X'
-                dequeue_all         TYPE abap_bool  DEFAULT ''
-                solo_verificaciones TYPE abap_bool  DEFAULT ''
-                usar_bi             TYPE abap_bool  DEFAULT ''
-                matnr               TYPE matnr
-                anfme               TYPE any
-                altme               TYPE any        DEFAULT ''
-                bestq               TYPE bestq      DEFAULT ''
-                werks               TYPE werks_d
-                lgort               TYPE lgort_d
-                sobkz               TYPE any        DEFAULT ''
-                sonum               TYPE any        DEFAULT ''
-                vltyp               TYPE ltap-vltyp
-                vlpla               TYPE ltap-vlpla
-                nltyp               TYPE ltap-nltyp
-                nlpla               TYPE ltap-nlpla
-                vlqnr               TYPE ltap-vlqnr OPTIONAL
-                nlqnr               TYPE ltap-nlqnr OPTIONAL
-                lznum               TYPE ltak-lznum DEFAULT ''
-      EXPORTING tanum               TYPE any
-                !message            TYPE any
-                i_ltak              TYPE pdt_t_ltak_vb.
-
-    CLASS-METHODS buscar_ots
-      IMPORTING lgnum      TYPE lgnum
-                nltyp      TYPE lgtyp     OPTIONAL
-                nlpla      TYPE lgpla     OPTIONAL
-                matnr      TYPE matnr     OPTIONAL
-                confirmada TYPE abap_bool DEFAULT 'X'
-                anulada    TYPE abap_bool DEFAULT 'X'
-                lznum      TYPE any       OPTIONAL
-                get_lista  TYPE abap_bool
-      EXPORTING i_ltap     TYPE tt_ltap
-                lista_ots  TYPE any.
-
-    CLASS-METHODS get_ctd_ubicacion
-      IMPORTING lgnum           TYPE lgnum
-                lgtyp           TYPE lgtyp
-                lgpla           TYPE lgpla
-                disponible      TYPE abap_bool DEFAULT 'X'
-                entradas        TYPE abap_bool DEFAULT ''
-                salidas         TYPE abap_bool DEFAULT ''
-                unidad_salida   TYPE meins
-      RETURNING VALUE(cantidad) TYPE mengv13.
-
-    CLASS-METHODS get_lqua
-      IMPORTING matnr         TYPE lqua-matnr OPTIONAL
-                werks         TYPE lqua-werks DEFAULT zcl_c=>werks
-                lgnum         TYPE lqua-lgnum DEFAULT zcl_c=>lgnum
-                sonum         TYPE lqua-sonum OPTIONAL
-                vbeln         TYPE vbak-vbeln OPTIONAL
-                lgtyp         TYPE lqua-lgtyp OPTIONAL
-                lgpla         TYPE lqua-lgpla OPTIONAL
-                posnr         TYPE vbap-posnr OPTIONAL
-                bestq         TYPE lqua-bestq DEFAULT '*'
-                solo_disp     TYPE abap_bool  DEFAULT ''
-                sobkz         TYPE sobkz      OPTIONAL
-                new_meins     TYPE meins      DEFAULT ''
-      RETURNING VALUE(i_lqua) TYPE lqua_t.
-
-    CLASS-METHODS ls03n
-      IMPORTING lgnum TYPE lgnum DEFAULT ''
-                lgtyp TYPE lgtyp
-                lgpla TYPE lgpla.
-
+  class-methods VISUALIZAR
+    importing
+      !LGNUM type LTAK-LGNUM default '002'
+      !TANUM type ANY
+      !TAPOS type LTAP-TAPOS optional .
+  class-methods CREAR_OT_MULTIPLE
+    importing
+      !LGNUM type LTAK-LGNUM
+      !BWLVS type LTAK-BWLVS
+      !LTAK type LTAK_VB optional
+      !BETYP type LTAK-BETYP default ''
+      !BENUM type LTAK-BENUM default ''
+      !MOSTRAR_MENSAJE type ABAP_BOOL default 'X'
+      !IN_UPDATE_TASK type ABAP_BOOL default ''
+      !ESPERA_A_GRABADO type ABAP_BOOL default ''
+      !AUSFB type LVS_AUSFB default ''
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !DEQUEUE_ALL type ABAP_BOOL default ''
+      !SOLO_VERIFICACIONES type ABAP_BOOL default ''
+      !USAR_BI type ABAP_BOOL default ''
+      !LZNUM type LTAK-LZNUM default ''
+    changing
+      !I_LTAP_CREAT type ZT_LTAP_CREAT
+      !TANUM type LTAK-TANUM
+      !MESSAGE type ANY
+      !I_LTAK type PDT_T_LTAK_VB optional .
+  class-methods VISUALIZAR_STOCK_MATERIAL
+    importing
+      !MATNR type LQUA-MATNR optional
+      !WERKS type LQUA-WERKS default ZCL_C=>WERKS
+      !LGNUM type LQUA-LGNUM default ZCL_C=>LGNUM
+      !LGTYP type LQUA-LGTYP optional
+      !LGPLA type LQUA-LGPLA optional
+      !SONUM type LQUA-SONUM default ''
+      !SOBKZ type LQUA-SOBKZ default ''
+    preferred parameter MATNR .
+  class-methods CREAR_OT_DESDE_NT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !TBNUM type LTAK-TBNUM
+      !T_POS type L03B_TRITE_T
+      !USAR_BI type ABAP_BOOL default ''
+      !SQUIT type RL03TSQUIT default ''
+    changing
+      !TANUM type LTAK-TANUM
+      !MESSAGE type BAPIRETURN1-MESSAGE .
+  class-methods GET_STOCK_UBICACION
+    importing
+      !MATNR type LQUA-MATNR
+      !WERKS type LQUA-WERKS default '0002'
+      !LGNUM type LQUA-LGNUM default '002'
+      !SONUM type LQUA-SONUM optional
+      !VBELN type VBAK-VBELN optional
+      !LGTYP type LQUA-LGTYP
+      !LGPLA type LQUA-LGPLA
+    returning
+      value(VERME) type LQUA-VERME .
+  class-methods CONFIRMAR_OT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !MOSTRAR_MENSAJE type ABAP_BOOL default 'X'
+      !IN_UPDATE_TASK type ABAP_BOOL default ''
+      !AUSFB type LVS_AUSFB default ''
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !DEQUEUE_ALL type ABAP_BOOL default ''
+      !TANUM type LTAK-TANUM
+      !QUKNZ type RL03TQUKNZ default ''
+      !SQUIT type RL03TSQUIT default ''
+    changing
+      !I_LTAP_CONF type PDT_T_LTAP_CONF
+      !MESSAGE type ANY
+      !CONFIRMACION_OK type ABAP_BOOL .
+  class-methods CONFIRMAR_POS_OT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !MOSTRAR_MENSAJE type ABAP_BOOL default 'X'
+      !IN_UPDATE_TASK type ABAP_BOOL default ''
+      !AUSFB type LVS_AUSFB default ''
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !DEQUEUE_ALL type ABAP_BOOL default ''
+      !TANUM type LTAK-TANUM
+      !QUKNZ type RL03TQUKNZ default ''
+      !CTD_CONF type ANY optional
+      !TAPOS type LTAP-TAPOS
+      !KZDIF type LVS_KZDIF default ''
+      !NQUIT type RL03TNQUIT default ''
+      !CTD_DIF type ANY optional
+      !NLPLA type LTAP-NLPLA default ''
+      !SQUIT type RL03TSQUIT default ''
+    changing
+      !MESSAGE type ANY
+      !CONFIRMACION_OK type ABAP_BOOL .
+  class-methods BORRA_POS_OT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !TAPOS type LTAP-TAPOS
+      !TANUM type LTAK-TANUM
+    exporting
+      value(OK) type ABAP_BOOL
+      !MESSAGE type BAPIRETURN1-MESSAGE .
+  class-methods GET_RANGO_LGTYP_EST
+    importing
+      !LGNUM type T334T-LGNUM
+      !KZEAR type T334T-KZEAR
+      !LGTKZ type T334T-LGTKZ
+      !BESTQ type T334T-BESTQ default ''
+      !SOBKZ type T334T-SOBKZ
+      !LAGKL type T334T-LAGKL default ''
+      !BWREF type T334T-BWREF
+    returning
+      value(R_LGTYP) type ZCL_AP_RANGO=>TAB_RANGE_C3 .
+  class-methods CREAR_UBICACION
+    importing
+      !LGNUM type LAGP-LGNUM
+      !LGTYP type LAGP-LGTYP
+      !LGPLA type LAGP-LGPLA
+      !LGBER type LAGP-LGBER default '001'
+      !LPTYP type LAGP-LPTYP default ''
+    returning
+      value(MENSAJE) type STRING .
+  class-methods UBIC_PERM_STOCK_NEG
+    importing
+      !LGNUM type LGNUM default ZCL_C=>LGNUM
+      !LGTYP type LGTYP optional
+    preferred parameter LGTYP
+    returning
+      value(NEGAT) type T331-NEGAT .
+  class-methods ANULAR_OT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !TANUM type LTAK-TANUM
+    exporting
+      value(OK) type ABAP_BOOL
+      !MESSAGE type BAPIRETURN1-MESSAGE .
+  class-methods ESTA_BLOQUEADA
+    importing
+      !LGNUM type LGNUM
+      !TANUM type TANUM
+    returning
+      value(BLOQUEADO) type ABAP_BOOL .
+  class-methods ANULAR_POS_OT
+    importing
+      !LGNUM type LTAK-LGNUM
+      !TAPOS type LTAP-TAPOS
+      !TANUM type LTAK-TANUM
+      !COMMIT type ABAP_BOOL default ''
+    returning
+      value(MESSAGE) type BAPIRETURN1-MESSAGE .
+  class-methods GET_DATOS_USUARIO
+    importing
+      !UNAME type SY-UNAME default SY-UNAME
+    returning
+      value(DATOS) type LRF_WKQU .
+  class-methods GET_LGNUM_DEF_USUARIO
+    importing
+      !UNAME type SY-UNAME default SY-UNAME
+    returning
+      value(LGNUM) type LGNUM .
+  class-methods GET_UNIDAD_WM
+    importing
+      !LGNUM type LGNUM
+      !MATNR type MATNR
+    returning
+      value(LHME1) type LHMEH1 .
+  class-methods CONVERT_CTD_WM
+    importing
+      !LGNUM type LGNUM
+      !MATNR type MATNR
+      !CANTIDAD_ORIGEN type MENGV13 optional
+      !UNIDAD_ORIGEN type MEINS optional
+    exporting
+      !CANTIDAD_WM type MENGV13
+      !UNIDAD_WM type LHMEH1 .
+  class-methods CREAR_OT_SIMPLE
+    importing
+      !LGNUM type LTAK-LGNUM
+      !BWLVS type LTAK-BWLVS
+      !LTAK type LTAK_VB optional
+      !BETYP type LTAK-BETYP default ''
+      !BENUM type LTAK-BENUM default ''
+      !MOSTRAR_MENSAJE type ABAP_BOOL default 'X'
+      !IN_UPDATE_TASK type ABAP_BOOL default ''
+      !ESPERA_A_GRABADO type ABAP_BOOL default ''
+      !AUSFB type LVS_AUSFB default ''
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !DEQUEUE_ALL type ABAP_BOOL default ''
+      !SOLO_VERIFICACIONES type ABAP_BOOL default ''
+      !USAR_BI type ABAP_BOOL default ''
+      !MATNR type MATNR
+      !ANFME type ANY
+      !ALTME type ANY default ''
+      !BESTQ type BESTQ default ''
+      !WERKS type WERKS_D
+      !LGORT type LGORT_D
+      !SOBKZ type ANY default ''
+      !SONUM type ANY default ''
+      !VLTYP type LTAP-VLTYP
+      !VLPLA type LTAP-VLPLA
+      !NLTYP type LTAP-NLTYP
+      !NLPLA type LTAP-NLPLA
+      !VLQNR type LTAP-VLQNR optional
+      !NLQNR type LTAP-NLQNR optional
+      !LZNUM type LTAK-LZNUM default ''
+    exporting
+      !TANUM type ANY
+      !MESSAGE type ANY
+      !I_LTAK type PDT_T_LTAK_VB .
+  class-methods BUSCAR_OTS
+    importing
+      !LGNUM type LGNUM
+      !NLTYP type LGTYP optional
+      !NLPLA type LGPLA optional
+      !MATNR type MATNR optional
+      !CONFIRMADA type ABAP_BOOL default 'X'
+      !ANULADA type ABAP_BOOL default 'X'
+      !LZNUM type ANY optional
+      !GET_LISTA type ABAP_BOOL
+    exporting
+      !I_LTAP type TT_LTAP
+      !LISTA_OTS type ANY .
+  class-methods GET_CTD_UBICACION
+    importing
+      !LGNUM type LGNUM
+      !LGTYP type LGTYP
+      !LGPLA type LGPLA
+      !DISPONIBLE type ABAP_BOOL default 'X'
+      !ENTRADAS type ABAP_BOOL default ''
+      !SALIDAS type ABAP_BOOL default ''
+      !UNIDAD_SALIDA type MEINS
+    returning
+      value(CANTIDAD) type MENGV13 .
+  class-methods GET_LQUA
+    importing
+      !MATNR type LQUA-MATNR optional
+      !WERKS type LQUA-WERKS default ZCL_C=>WERKS
+      !LGNUM type LQUA-LGNUM default ZCL_C=>LGNUM
+      !SONUM type LQUA-SONUM optional
+      !VBELN type VBAK-VBELN optional
+      !LGTYP type LQUA-LGTYP optional
+      !LGPLA type LQUA-LGPLA optional
+      !POSNR type VBAP-POSNR optional
+      !BESTQ type LQUA-BESTQ default '*'
+      !SOLO_DISP type ABAP_BOOL default ''
+      !SOBKZ type SOBKZ optional
+      !NEW_MEINS type MEINS default ''
+    returning
+      value(I_LQUA) type LQUA_T .
+  class-methods LS03N
+    importing
+      !LGNUM type LGNUM default ''
+      !LGTYP type LGTYP
+      !LGPLA type LGPLA .
   PROTECTED SECTION.
 
   PRIVATE SECTION.
@@ -264,11 +286,11 @@ class ZCL_AP_OT implementation.
 * Anular OT: pantalla inicial
         o_bi->dynpro( program = 'SAPML03T' dynpro = '0118' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-        o_bi->campos( campo = 'LTAK-TANUM' valor = tanum ). " N煤mero de orden de transporte
-        o_bi->campos( campo = 'RL03T-TAPOS' valor = '' ). " Posici贸n de orden de transporte
-        o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N煤m.almac茅n/Complejo alm.
-        o_bi->campos( campo = 'RL03T-RHELL' valor = '' ). " Proceso visible de la transacci贸n
-        o_bi->campos( campo = 'RL03T-RDNKL' valor = 'X' ). " Proceso no visible de la transacci贸n
+        o_bi->campos( campo = 'LTAK-TANUM' valor = tanum ). " N鷐ero de orden de transporte
+        o_bi->campos( campo = 'RL03T-TAPOS' valor = '' ). " Posici髇 de orden de transporte
+        o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N鷐.almac閚/Complejo alm.
+        o_bi->campos( campo = 'RL03T-RHELL' valor = '' ). " Proceso visible de la transacci髇
+        o_bi->campos( campo = 'RL03T-RDNKL' valor = 'X' ). " Proceso no visible de la transacci髇
 
         message = o_bi->llamar_transaccion( tcode = 'LT15' modo = 'N' ).
 
@@ -318,7 +340,7 @@ class ZCL_AP_OT implementation.
         su_movement_partly_confirmed = 9
         update_without_commit        = 10
         no_authority                 = 11
-        error_message                = 999 " Cualquier otra excepci贸n!
+        error_message                = 999 " Cualquier otra excepci髇!
         OTHERS                       = 12.
 
     IF sy-subrc <> 0.
@@ -356,11 +378,11 @@ class ZCL_AP_OT implementation.
 * Anular OT: pantalla inicial
         o_bi->dynpro( program = 'SAPML03T' dynpro = '0118' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-        o_bi->campos( campo = 'LTAK-TANUM' valor = tanum ). " N煤mero de orden de transporte
-        o_bi->campos( campo = 'RL03T-TAPOS' valor = tapos ). " Posici贸n de orden de transporte
-        o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N煤m.almac茅n/Complejo alm.
-        o_bi->campos( campo = 'RL03T-RHELL' valor = '' ). " Proceso visible de la transacci贸n
-        o_bi->campos( campo = 'RL03T-RDNKL' valor = 'X' ). " Proceso no visible de la transacci贸n
+        o_bi->campos( campo = 'LTAK-TANUM' valor = tanum ). " N鷐ero de orden de transporte
+        o_bi->campos( campo = 'RL03T-TAPOS' valor = tapos ). " Posici髇 de orden de transporte
+        o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N鷐.almac閚/Complejo alm.
+        o_bi->campos( campo = 'RL03T-RHELL' valor = '' ). " Proceso visible de la transacci髇
+        o_bi->campos( campo = 'RL03T-RDNKL' valor = 'X' ). " Proceso no visible de la transacci髇
 
         message = o_bi->llamar_transaccion( tcode = 'LT15' modo = 'N' ).
 
@@ -456,23 +478,23 @@ class ZCL_AP_OT implementation.
          AND tanum = l_ltap_conf-tanum
          AND tapos = l_ltap_conf-tapos.
       IF sy-subrc <> 0.
-        CONCATENATE 'No existe la posici贸n'(nep) l_ltap_conf-tapos 'de la OT'(dot) l_ltap_conf-tanum
+        CONCATENATE 'No existe la posici髇'(nep) l_ltap_conf-tapos 'de la OT'(dot) l_ltap_conf-tanum
                     INTO message SEPARATED BY space.
       ENDIF.
     ENDLOOP.
 
 *QUKNZ
 *           Confirmar toma y transporte de material
-*1  S贸lo confirmar toma
-*2  S贸lo confirmar transporte de material
-*3  S贸lo informaci贸n
+*1  S髄o confirmar toma
+*2  S髄o confirmar transporte de material
+*3  S髄o informaci髇
     IF message IS INITIAL.
       CALL FUNCTION 'L_TO_CONFIRM'
         EXPORTING
           i_lgnum                        = lgnum
           i_tanum                        = tanum
-          i_squit                        = squit  " Posici贸n de orden de transporte completa
-          i_quknz                        = quknz  " Confirmaci贸n separada
+          i_squit                        = squit  " Posici髇 de orden de transporte completa
+          i_quknz                        = quknz  " Confirmaci髇 separada
 *       I_SUBST                        = ' '
 *       I_QNAME                        = SY-UNAME
 *       I_ENAME                        = SY-UNAME
@@ -546,7 +568,7 @@ class ZCL_AP_OT implementation.
           serial_number_data_missing     = 50
           to_item_split_not_allowed      = 51
           input_wrong                    = 52
-          error_message                  = 53.       " Cualquier otra excepci贸n!
+          error_message                  = 53.       " Cualquier otra excepci髇!
 
       IF sy-subrc = 3 OR sy-subrc = 0. " Item confirmed
         confirmacion_ok = 'X'.
@@ -563,7 +585,7 @@ class ZCL_AP_OT implementation.
                     sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
           ENDIF.
         ELSE.
-          message = '隆Se ha producido un error inesperado!'(sei).
+          message = 'e ha producido un error inesperado!'(sei).
         ENDIF.
       ENDIF.
     ELSE.
@@ -623,7 +645,7 @@ class ZCL_AP_OT implementation.
         confirmar_ot( EXPORTING lgnum           = lgnum
                                 tanum           = tanum
                                 quknz           = quknz
-                                squit           = ''  " Confirmar posici贸n 煤nica
+                                squit           = ''  " Confirmar posici髇 鷑ica
                                 commit_work     = commit_work
                                 dequeue_all     = dequeue_all
                       CHANGING  i_ltap_conf     = i_ltap_conf
@@ -690,13 +712,13 @@ class ZCL_AP_OT implementation.
           AND lgpla = l_pos-vlpla.
       IF sy-subrc = 0.
         IF l_lagp-skzua = 'X' OR l_lagp-skzue = 'X'.
-          CONCATENATE 'Ubicaci贸n'(ubi) l_pos-vltyp l_pos-vlpla
+          CONCATENATE 'Ubicaci髇'(ubi) l_pos-vltyp l_pos-vlpla
                       'bloqueada'(blq)
                       INTO message SEPARATED BY space.
           EXIT.
         ENDIF.
       ELSE.
-        CONCATENATE 'Ubicaci贸n'(ubi) l_pos-vltyp l_pos-vlpla 'no existe'(noe)
+        CONCATENATE 'Ubicaci髇'(ubi) l_pos-vltyp l_pos-vlpla 'no existe'(noe)
                     INTO message SEPARATED BY space.
         EXIT.
       ENDIF.
@@ -710,13 +732,13 @@ class ZCL_AP_OT implementation.
         IF    l_lagp-skzua = 'X' OR l_lagp-skzue = 'X'
            OR l_lagp-skzsa = 'X' OR l_lagp-skzse = 'X'
            OR l_lagp-skzsi = 'X'.
-          CONCATENATE 'Ubicaci贸n'(ubi) l_pos-nltyp l_pos-nlpla
+          CONCATENATE 'Ubicaci髇'(ubi) l_pos-nltyp l_pos-nlpla
                       'bloqueada'(blq)
                       INTO message SEPARATED BY space.
           EXIT.
         ENDIF.
       ELSE.
-        CONCATENATE 'Ubicaci贸n'(ubi) l_pos-nltyp l_pos-nlpla 'no existe'(noe)
+        CONCATENATE 'Ubicaci髇'(ubi) l_pos-nltyp l_pos-nlpla 'no existe'(noe)
                     INTO message SEPARATED BY space.
         EXIT.
       ENDIF.
@@ -764,7 +786,7 @@ class ZCL_AP_OT implementation.
           preallocated_stock             = 12
           partial_transfer_req_forbidden = 13
           input_error                    = 14
-          error_message                  = 999 " Cualquier otra excepci贸n!
+          error_message                  = 999 " Cualquier otra excepci髇!
           OTHERS                         = 15.
       l_subrc = sy-subrc.
       MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH
@@ -779,18 +801,18 @@ class ZCL_AP_OT implementation.
 * Crear OT a partir de NT: pantalla inicial
       o_bi->dynpro( program = 'SAPML03T' dynpro = '0131' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-      o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N煤m.almac茅n/Complejo alm.
-      o_bi->campos( campo = 'LTBK-TBNUM' valor = tbnum ). " N煤mero de necesidad de transporte
+      o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N鷐.almac閚/Complejo alm.
+      o_bi->campos( campo = 'LTBK-TBNUM' valor = tbnum ). " N鷐ero de necesidad de transporte
       o_bi->campos( campo = '*LTBP-TBPOS' valor = l_pos-tbpos ).
       o_bi->campos( campo = 'RL03T-ALAKT' valor = 'X' ). " Marcar todas las posiciones
 
 * Crear orden transp.: pantalla preparatoria para entrada mat.
       o_bi->dynpro( program = 'SAPML03T' dynpro = '0104' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
-      o_bi->campos( campo = 'RL03T-ANZL2' valor = '' ). " N煤mero de unidades de almac茅n a entrar
-      o_bi->campos( campo = 'LTAPE-ANFME(01)' valor = l_pos-anfme ). " Ctd te贸rica 'hacia' en unidad de medida alternativa
-      o_bi->campos( campo = 'LTAPE-NLTYP(01)' valor = l_pos-nltyp ). " Tipo almac茅n destino
-      o_bi->campos( campo = 'LTAPE-NLPLA(01)' valor = l_pos-nlpla ). " Ubicaci贸n de destino
+      o_bi->campos( campo = 'RL03T-ANZL2' valor = '' ). " N鷐ero de unidades de almac閚 a entrar
+      o_bi->campos( campo = 'LTAPE-ANFME(01)' valor = l_pos-anfme ). " Ctd te髍ica 'hacia' en unidad de medida alternativa
+      o_bi->campos( campo = 'LTAPE-NLTYP(01)' valor = l_pos-nltyp ). " Tipo almac閚 destino
+      o_bi->campos( campo = 'LTAPE-NLPLA(01)' valor = l_pos-nlpla ). " Ubicaci髇 de destino
 
       IF usar_bi = 'X'.
         l_mensaje = o_bi->llamar_transaccion( tcode = 'LT04' modo = 'N' ).
@@ -820,7 +842,7 @@ class ZCL_AP_OT implementation.
           WHEN 12.
             message = 'Stock preadjudicado'(stp).
           WHEN 14.
-            message = 'Error en par谩metros llamada funci贸n'(epf).
+            message = 'Error en par醡etros llamada funci髇'(epf).
           WHEN OTHERS.
             IF message IS INITIAL.
               message(4) = sy-subrc.
@@ -869,13 +891,13 @@ class ZCL_AP_OT implementation.
           AND lgpla = l_ltap-vlpla.
       IF sy-subrc = 0.
         IF l_lagp-skzua = 'X' OR l_lagp-skzsi = 'X'.
-          CONCATENATE 'Ubicaci贸n'(ubi) l_ltap-vltyp l_ltap-vlpla
+          CONCATENATE 'Ubicaci髇'(ubi) l_ltap-vltyp l_ltap-vlpla
                       'bloqueada para salidas'(bps)
                       INTO message SEPARATED BY space.
           EXIT.
         ENDIF.
       ELSE.
-        CONCATENATE 'Ubicaci贸n'(ubi) l_ltap-vltyp l_ltap-vlpla 'no existe'(noe)
+        CONCATENATE 'Ubicaci髇'(ubi) l_ltap-vltyp l_ltap-vlpla 'no existe'(noe)
                     INTO message SEPARATED BY space.
         EXIT.
       ENDIF.
@@ -891,7 +913,7 @@ class ZCL_AP_OT implementation.
           AND lgpla = l_ltap-nlpla.
       IF sy-subrc = 0.
         IF l_lagp-skzue = 'X' OR l_lagp-skzse = 'X' OR l_lagp-skzsi = 'X'.
-          CONCATENATE 'Ubicaci贸n'(ubi) l_ltap-nltyp l_ltap-nlpla
+          CONCATENATE 'Ubicaci髇'(ubi) l_ltap-nltyp l_ltap-nlpla
                       'bloqueada para entradas'(bpe)
                       INTO message SEPARATED BY space.
           EXIT.
@@ -899,15 +921,15 @@ class ZCL_AP_OT implementation.
       ELSE.
 
 *--------------------------------------------------------------------
-* En el caso de que la clase de movimiento tenga ubicaci贸n de destino
-* DIN脕MICA, no se debe enviar este mensaje.
+* En el caso de que la clase de movimiento tenga ubicaci髇 de destino
+* DIN罬ICA, no se debe enviar este mensaje.
         CLEAR l_t333.
         SELECT SINGLE * FROM t333
           INTO l_t333
          WHERE lgnum = lgnum
            AND bwlvs = bwlvs.
         IF l_t333-nkdyn IS INITIAL.
-          CONCATENATE 'Ubicaci贸n'(ubi) l_ltap-nltyp l_ltap-nlpla 'no existe'(noe)
+          CONCATENATE 'Ubicaci髇'(ubi) l_ltap-nltyp l_ltap-nlpla 'no existe'(noe)
                       INTO message SEPARATED BY space.
           EXIT.
         ENDIF.
@@ -973,7 +995,7 @@ class ZCL_AP_OT implementation.
               anfme_missing          = 36
               altme_missing          = 37
               lgort_wrong_or_missing = 38
-              error_message          = 999 " Cualquier otra excepci贸n!
+              error_message          = 999 " Cualquier otra excepci髇!
               OTHERS                 = 39.
           IF sy-subrc <> 0.
             DATA(l_sy) = sy.
@@ -989,22 +1011,22 @@ class ZCL_AP_OT implementation.
 * Anlegen Transportauftrag: Anforderdynpro
           o_bi->dynpro( program = 'SAPML03T' dynpro = '0101' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-          o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N煤m.almac茅n/Complejo alm.
-          o_bi->campos( campo = 'LTAK-BENUM' valor = benum ). " N煤mero de necesidad
+          o_bi->campos( campo = 'LTAK-LGNUM' valor = lgnum ). " N鷐.almac閚/Complejo alm.
+          o_bi->campos( campo = 'LTAK-BENUM' valor = benum ). " N鷐ero de necesidad
           o_bi->campos( campo = 'LTAK-BETYP' valor = betyp ). " Tipo de necesidad
-          o_bi->campos( campo = 'LTAK-BWLVS' valor = bwlvs ). " Cl.movim.gesti贸n almacenes
-          o_bi->campos( campo = 'LTAP-MATNR' valor = l_ltap-matnr ). " N煤mero de material
+          o_bi->campos( campo = 'LTAK-BWLVS' valor = bwlvs ). " Cl.movim.gesti髇 almacenes
+          o_bi->campos( campo = 'LTAP-MATNR' valor = l_ltap-matnr ). " N鷐ero de material
           o_bi->campos( campo = 'RL03T-ANFME' valor = l_ltap-anfme ). " Cantidad solicitada en unidad medida alternativa
           o_bi->campos( campo = 'LTAP-ALTME' valor = l_ltap-altme ). " Unidad de medida alternativa
-          o_bi->campos( campo = 'LTAP-BESTQ' valor = l_ltap-bestq ). " Diferenciaci贸n de stock en sistema de gesti贸n de almacenes
+          o_bi->campos( campo = 'LTAP-BESTQ' valor = l_ltap-bestq ). " Diferenciaci髇 de stock en sistema de gesti髇 de almacenes
           o_bi->campos( campo = 'LTAP-WERKS' valor = l_ltap-werks ). " Centro
-          o_bi->campos( campo = 'LTAP-LGORT' valor = l_ltap-lgort ). " Almac茅n
+          o_bi->campos( campo = 'LTAP-LGORT' valor = l_ltap-lgort ). " Almac閚
           o_bi->campos( campo = 'LTAP-SOBKZ' valor = l_ltap-sobkz ). " Indicador de stock especial
-          o_bi->campos( campo = 'RL03T-LSONR' valor = l_ltap-sonum ). " N煤mero de stock especial
+          o_bi->campos( campo = 'RL03T-LSONR' valor = l_ltap-sonum ). " N鷐ero de stock especial
 
 * Crear orden transp.: pantalla preparatoria p. salida stock
           IF bwlvs = '999'.
-* Crear orden transporte: pantalla de posici贸n individual
+* Crear orden transporte: pantalla de posici髇 individual
             o_bi->dynpro( program = 'SAPML03T' dynpro = '0102' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
 
@@ -1012,23 +1034,23 @@ class ZCL_AP_OT implementation.
             o_bi->campos( campo = 'LTAP-VLPLA' valor = l_ltap-vlpla ). " Ubic.proced.
             o_bi->campos( campo = 'LTAP-VLQNR' valor = l_ltap-vlqnr ). " Cuanto
             o_bi->campos( campo = 'LTAP-NLTYP' valor = l_ltap-nltyp ). " Tipo alm.procedencia
-            o_bi->campos( campo = 'LTAP-NLPLA' valor = l_ltap-nlpla ). " Ubicaci贸n de destino
+            o_bi->campos( campo = 'LTAP-NLPLA' valor = l_ltap-nlpla ). " Ubicaci髇 de destino
             o_bi->campos( campo = 'LTAP-NLQNR' valor = l_ltap-nlqnr ). " Cuanto
           ELSE.
 
             o_bi->dynpro( program = 'SAPML03T' dynpro = '0105' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=TAH2' ).
-            o_bi->campos( campo = 'LTAPA-ANFME(01)' valor = l_ltap-anfme ). " Cantidad te贸rica 'desde' en unidad-medida alternativa
+            o_bi->campos( campo = 'LTAPA-ANFME(01)' valor = l_ltap-anfme ). " Cantidad te髍ica 'desde' en unidad-medida alternativa
             o_bi->campos( campo = 'LTAPA-VLTYP(01)' valor = l_ltap-vltyp ). " Tipo alm.procedencia
-            o_bi->campos( campo = 'LTAPA-VLBER(01)' valor = '' ). " 脕rea de almac茅n de procedencia
+            o_bi->campos( campo = 'LTAPA-VLBER(01)' valor = '' ). " 羠ea de almac閚 de procedencia
             o_bi->campos( campo = 'LTAPA-VLPLA(01)' valor = l_ltap-vlpla ). " Ubic.proced.
 
-* Crear orden transporte: pantalla de posici贸n individual
+* Crear orden transporte: pantalla de posici髇 individual
             o_bi->dynpro( program = 'SAPML03T' dynpro = '0102' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
 
             o_bi->campos( campo = 'LTAP-VLQNR' valor = l_ltap-vlqnr ). " Cuanto
-            o_bi->campos( campo = 'LTAP-NLPLA' valor = l_ltap-nlpla ). " Ubicaci贸n de destino
+            o_bi->campos( campo = 'LTAP-NLPLA' valor = l_ltap-nlpla ). " Ubicaci髇 de destino
             o_bi->campos( campo = 'LTAP-NLQNR' valor = l_ltap-nlqnr ). " Cuanto
 
 * Crear orden transp.: pantalla preparatoria p. salida stock
@@ -1049,7 +1071,7 @@ class ZCL_AP_OT implementation.
 
         ENDIF.
 
-* Caso de tener m谩s de una OT, no informa TANUM
+* Caso de tener m醩 de una OT, no informa TANUM
         IF tanum IS INITIAL AND NOT i_ltak IS INITIAL.
           READ TABLE i_ltak INTO l_ltak INDEX 1.
           IF sy-subrc = 0.
@@ -1083,7 +1105,7 @@ class ZCL_AP_OT implementation.
                     l_sy-msgv1 l_sy-msgv2 l_sy-msgv3 l_sy-msgv4 INTO message.
           ENDIF.
         ELSE.
-          message = '隆Se ha producido un error inesperado!'(sei).
+          message = 'e ha producido un error inesperado!'(sei).
         ENDIF.
 
         IF tanum IS INITIAL AND message IS INITIAL.
@@ -1172,7 +1194,7 @@ class ZCL_AP_OT implementation.
             xlagp = l_lagp.
 
       CATCH cx_sy_dyn_call_illegal_type.
-        CONCATENATE 'Error al intentar crear ubicaci贸n'(ecu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
+        CONCATENATE 'Error al intentar crear ubicaci髇'(ecu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
     ENDTRY.
 
     SELECT SINGLE lgpla FROM lagp
@@ -1181,7 +1203,7 @@ class ZCL_AP_OT implementation.
        AND lgtyp = lgtyp
        AND lgpla = lgpla.
     IF sy-subrc <> 0.
-      CONCATENATE 'No se ha podido crear ubicaci贸n'(ncu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
+      CONCATENATE 'No se ha podido crear ubicaci髇'(ncu) lgnum lgtyp lgpla INTO mensaje SEPARATED BY space.
     ENDIF.
   ENDMETHOD.
   METHOD esta_bloqueada.
@@ -1475,13 +1497,13 @@ class ZCL_AP_OT implementation.
     o_bi->dynpro( program = 'SAPML01S' dynpro = '0209' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
     o_bi->campos( campo = 'RL01S-LGNUM'
-                  valor = lgnum ). " N煤m.almac茅n/Complejo alm.
+                  valor = lgnum ). " N鷐.almac閚/Complejo alm.
     o_bi->campos( campo = 'RL01S-MATNR'
-                  valor = matnr ). " N煤mero de material
+                  valor = matnr ). " N鷐ero de material
     o_bi->campos( campo = 'RL01S-WERKS'
                   valor = werks ). " Centro
     o_bi->campos( campo = 'RL01S-BESTQ'
-                  valor = '*' ). " Diferenciaci贸n de stock en sistema
+                  valor = '*' ). " Diferenciaci髇 de stock en sistema
     IF sonum IS INITIAL.
       o_bi->campos( campo = 'RL01S-SOBKZ'
                     valor = '*' ). " Indicador de stock especial

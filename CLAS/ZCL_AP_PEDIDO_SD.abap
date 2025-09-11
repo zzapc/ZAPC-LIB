@@ -191,9 +191,8 @@ CLASS zcl_ap_pedido_sd DEFINITION
       IMPORTING vbeln         TYPE vbeln_va
       RETURNING VALUE(i_komv) TYPE ty_komv.
 
-  PROTECTED SECTION.
-
-  PRIVATE SECTION.
+protected section.
+private section.
 endclass. "ZCL_AP_PEDIDO_SD definition
 class ZCL_AP_PEDIDO_SD implementation.
   METHOD bloquear_pedido.
@@ -932,7 +931,7 @@ class ZCL_AP_PEDIDO_SD implementation.
       RETURN.
     ENDIF.
 
-* Si la posicion estÃ¡ rechazada y no se ha entregado nada, se marca como RECHAZADA
+* Si la posicion está rechazada y no se ha entregado nada, se marca como RECHAZADA
     IF l_vbup-absta = 'C' AND ( l_vbup-lfsta = 'A' OR l_vbup-lfsta = '' ).
       estado = 'RE'.
       RETURN.
@@ -1004,9 +1003,9 @@ class ZCL_AP_PEDIDO_SD implementation.
 
           IF l_vbupf-fksta = 'C'.  " Estado global pedido
             l_stat = '5F'.
-          ELSEIF l_vbupf-wbsta = 'C'. " Status de movimiento de mercancÃ­as
+          ELSEIF l_vbupf-wbsta = 'C'. " Status de movimiento de mercancías
             l_stat = '4E'.
-          ELSEIF l_vbupf-kosta = 'C'. " Status de picking / Status entrada almacÃ©n
+          ELSEIF l_vbupf-kosta = 'C'. " Status de picking / Status entrada almacén
             l_stat = '3P'.
           ELSE.
             l_stat = '2C'.
@@ -1392,7 +1391,7 @@ class ZCL_AP_PEDIDO_SD implementation.
       DELETE i_pos WHERE lgort = lgort.
       IF i_pos IS INITIAL.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'No es necesario modificar el almacÃ©n' p2 = lgort p3 = 'en pedido' p4 = vbeln  msgty = 'W' ).
+          o_log->log( p1 = 'No es necesario modificar el almacen' p2 = lgort p3 = 'en pedido' p4 = vbeln  msgty = 'W' ).
         ENDIF.
       ELSE.
         order_header_inx-updateflag = 'U'.
@@ -1433,7 +1432,7 @@ class ZCL_AP_PEDIDO_SD implementation.
           o_log->set_tabla_log_from_bapiret2_t( i_return ).
         ENDIF.
       ELSE.
-        o_log->log( p1 = 'Se ha modificado el almacÃ©n del pedido' p2 = vbeln p3 = 'con' p4 = lgort msgty = 'S' ).
+        o_log->log( p1 = 'Se ha modificado el almacen del pedido' p2 = vbeln p3 = 'con' p4 = lgort msgty = 'S' ).
       ENDIF.
     ENDIF.
 

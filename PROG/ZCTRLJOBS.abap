@@ -5,7 +5,7 @@
 *                                                                      *
 * DESCRIPCION :
 *
-* AUTOR: Andr√©s Picazo                          FECHA: 30/27/2007     *
+* AUTOR: AndrÈs Picazo                          FECHA: 30/27/2007     *
 ************************************************************************
 REPORT zctrljobs.
 
@@ -35,7 +35,7 @@ DEFINE fechas.
     v_hfin = p_hfin.
   ELSE.
     CLEAR v_sel_fecha.
-* Recuperamos la fecha y de hora de √∫ltima ejecuci√≥n
+* Recuperamos la fecha y de hora de ˙ltima ejecuciÛn
     SELECT SINGLE *
       FROM zctrljobs_job_pl
      WHERE proceso = &1.
@@ -232,11 +232,11 @@ AT SELECTION-SCREEN.
 START-OF-SELECTION.
 ** Si el proceso arranca entre las 00:00:00 y las 05:00:00 no se arranca
 *  IF sy-uzeit >= '000000' AND sy-uzeit <= '050000'.
-*    MESSAGE s000(zs) WITH 'No se arranca por hora de ejecuci√≥n'.
+*    MESSAGE s000(zs) WITH 'No se arranca por hora de ejecuciÛn'.
 *    LEAVE PROGRAM.
 *  ENDIF.
 
-* Marcamos programa para evitar ejecuciones simult√°neas
+* Marcamos programa para evitar ejecuciones simult·neas
   PERFORM bloquear.
 * Determina las fecha a utilizar
   fechas c_id.
@@ -255,7 +255,7 @@ START-OF-SELECTION.
 
   PERFORM agrupar_listado.
 
-* Graba √∫ltima fecha/hora ejecuci√≥n en tabla ZCTRLJOBS_JOB_PL
+* Graba ˙ltima fecha/hora ejecuciÛn en tabla ZCTRLJOBS_JOB_PL
   graba_fechas c_id.
 
   IF p_ejec = 'X' AND p_dumps IS INITIAL.
@@ -289,16 +289,16 @@ START-OF-SELECTION.
 *&---------------------------------------------------------------------*
 *&      Form  BLOQUEAR
 *&---------------------------------------------------------------------*
-*       Comprueba si tiene que bloquear la ejecuci√≥n del programa
+*       Comprueba si tiene que bloquear la ejecuciÛn del programa
 *----------------------------------------------------------------------*
 FORM bloquear.
-  o_prog->sgpi_texto( 'Verificando que no haya otra ejecuci√≥n en curso' ).
+  o_prog->sgpi_texto( 'Verificando que no haya otra ejecuciÛn en curso' ).
   SELECT COUNT( * ) FROM tbtco
     INTO sy-tfill
    WHERE     jobname  = 'CONTROL_JOBS'
      AND NOT status  IN ( 'F', 'A', 'S' ).
   IF sy-tfill > 1.
-    MESSAGE 'Parado por existir otro job en ejecuci√≥n' TYPE 'I'.
+    MESSAGE 'Parado por existir otro job en ejecuciÛn' TYPE 'I'.
     LEAVE PROGRAM.
   ENDIF.
 ENDFORM.
@@ -359,10 +359,10 @@ FORM seleccionar_jobs.
         CONTINUE.
       ENDIF.
 
-* Si hab√≠an informado el report,
+* Si habÌan informado el report,
       IF NOT i_zctrljobs_param-report IS INITIAL.
         IF i_joblist-progname CP i_zctrljobs_param-report.
-* Intentamos averiguar en qu√© punto del job fall√≥
+* Intentamos averiguar en quÈ punto del job fallÛ
           PERFORM control_paso USING i_joblist-jobname
                                      i_joblist-jobcount
                                      i_joblist-joblog
@@ -662,7 +662,7 @@ FORM enviar_mail USING pe_popup.
           CONCATENATE l_titulo 'Finalizado' INTO l_titulo
                       SEPARATED BY space.
           IF i_listado-casoaviso = 'D'.
-            CONCATENATE l_titulo 'con status err√≥neo.' INTO l_titulo
+            CONCATENATE l_titulo 'con status errÛneo.' INTO l_titulo
                         SEPARATED BY space.
           ELSE.
             CONCATENATE l_titulo 'correctamente.' INTO l_titulo
@@ -676,7 +676,7 @@ FORM enviar_mail USING pe_popup.
           CONCATENATE l_titulo 'acabado con errores.' INTO l_titulo
                       SEPARATED BY space.
         ELSE.
-          CONCATENATE l_titulo 'finalizado con √©xito' INTO l_titulo
+          CONCATENATE l_titulo 'finalizado con Èxito' INTO l_titulo
                       SEPARATED BY space.
         ENDIF.
       WHEN 'D'.
@@ -697,14 +697,14 @@ FORM enviar_mail USING pe_popup.
 *    APPEND i_texto.
 *    CLEAR i_texto. APPEND i_texto.
 *    i_texto =
-*    'Se le env√≠a este correo porque est√° dado de alta en tabla avisos'.
+*    'Se le envÌa este correo porque est· dado de alta en tabla avisos'.
 *    APPEND i_texto.
-*    i_texto = 'con los siguientes par√°metros'.
+*    i_texto = 'con los siguientes par·metros'.
 *    APPEND i_texto.
     o_mail->add_parrafo_html(
-     '<P>Se le env√≠a este correo porque est√° dado de alta en tabla' ).
+     '<P>Se le envÌa este correo porque est· dado de alta en tabla' ).
     o_mail->add_parrafo_html(
-     'avisos con los siguientes par√°metros:</P>' ).
+     'avisos con los siguientes par·metros:</P>' ).
 
     CASE i_listado-tipocontrol.
       WHEN 'J'.
@@ -739,7 +739,7 @@ FORM enviar_mail USING pe_popup.
     o_mail->add_parrafo_html( i_texto ).
 *    CLEAR i_texto. APPEND i_texto.
     o_mail->set_text( '</br>' ).
-    i_texto = 'Documentaci√≥n:'.
+    i_texto = 'DocumentaciÛn:'.
 *    APPEND i_texto.
     o_mail->add_parrafo_html( i_texto ).
 
@@ -804,7 +804,7 @@ FORM enviar_mail USING pe_popup.
           INTO @DATA(l_udat)
          WHERE name = @i_listado-progname.
         IF sy-subrc = 0.
-          i_texto-line = |√öltima modificaci√≥n: { l_udat DATE = USER } por { i_listado-unam }|.
+          i_texto-line = |⁄ltima modificaciÛn: { l_udat DATE = USER } por { i_listado-unam }|.
           o_mail->add_parrafo_html( i_texto ).
         ENDIF.
       ENDIF.
@@ -841,15 +841,15 @@ FORM enviar_mail USING pe_popup.
             correctionhints = l_correctionhints
             internalhints   = l_internalhints.
 
-        o_mail->set_text( '<h1>Descripci√≥n breve</h1>' ).
+        o_mail->set_text( '<h1>DescripciÛn breve</h1>' ).
         o_mail->add_parrafo_html( l_shorttext ).
-        o_mail->set_text( '<h1>Explicaci√≥n</h1>' ).
+        o_mail->set_text( '<h1>ExplicaciÛn</h1>' ).
         o_mail->add_parrafo_html( l_explanation ).
         o_mail->set_text( '<h1>Consejos</h1>' ).
         o_mail->add_parrafo_html( l_userhints ).
-        o_mail->set_text( '<h1>Descripci√≥n</h1>' ).
+        o_mail->set_text( '<h1>DescripciÛn</h1>' ).
         o_mail->add_parrafo_html( l_description ).
-        o_mail->set_text( '<h1>Consejos para correcci√≥n</h1>' ).
+        o_mail->set_text( '<h1>Consejos para correcciÛn</h1>' ).
         o_mail->add_parrafo_html( l_correctionhints ).
         o_mail->set_text( '<h1>Consejos internos</h1>' ).
         o_mail->add_parrafo_html( l_internalhints ).
@@ -1024,7 +1024,7 @@ FORM seleccionar_batchinputs.
         CONTINUE.
       ENDIF.
 
-* Si hab√≠an informado el report,
+* Si habÌan informado el report,
       IF NOT i_zctrljobs_param-report IS INITIAL.
         IF i_zctrljobs_param-report = i_apqi-progid.
           CLEAR i_listado.
@@ -1174,7 +1174,7 @@ FORM seleccionar_dumps.
 
 
 
-* Si hab√≠an informado el report,
+* Si habÌan informado el report,
       IF NOT i_zctrljobs_param-report IS INITIAL.
         IF l_report CP i_zctrljobs_param-report.
           CLEAR i_listado.
@@ -1302,7 +1302,7 @@ FORM agrupar_listado.
 
     CASE i_listado-status2.
       WHEN 'X'.
-        i_listado-status2 = 'Cumple condici√≥n'.
+        i_listado-status2 = 'Cumple condiciÛn'.
       WHEN 'N'.
         i_listado-status2 = 'No ejecutado'.
       WHEN 'E'.

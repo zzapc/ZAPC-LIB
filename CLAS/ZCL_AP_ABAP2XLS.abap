@@ -401,7 +401,7 @@ class ZCL_AP_ABAP2XLS implementation.
     TRY.
         o_xls->o_worksheet->set_title( titulo ).
       CATCH zcx_excel.
-        error = 'Error modificando t√≠tulo'.
+        error = 'Error modificando tÌtulo'.
         RETURN.
     ENDTRY.
 
@@ -649,7 +649,18 @@ class ZCL_AP_ABAP2XLS implementation.
         message = zcx_excel->get_longtext( ).
     ENDTRY.
 
-    xstring = o_reader->get_fichero_desde_zip( fichero ).
+*    xstring = o_reader->get_fichero_desde_zip( fichero ).
+    TRY.
+*    xstring = o_reader->get_fichero_desde_zip( fichero ).
+        CALL METHOD o_reader->('get_fichero_desde_zip')
+          EXPORTING
+            I_FILENAME = fichero
+          RECEIVING
+            R_CONTENT = xstring.
+      CATCH cx_root INTO DATA(o_root).
+        message = o_root->get_longtext( ).
+    ENDTRY.
+
 
     IF mostrar_error = 'X' AND NOT message IS INITIAL.
       MESSAGE message TYPE 'E'.
@@ -902,7 +913,7 @@ class ZCL_AP_ABAP2XLS implementation.
                     IF     lv_rc <> 0
                        AND lv_rc <> 4.                                                   " No found error means, zero/no value in cell
                       IF lv_actual_row <> lv_max_row.
-* En la √∫ltima fila no est√°n rellenas todas las columnas si est√°n en blanco
+* En la ˙ltima fila no est·n rellenas todas las columnas si est·n en blanco
                         __concat4 lv_errormessage 'Error leyendo campo'(elc) lv_actual_col ' Fila:'(005) lv_actual_row.
                         APPEND lv_errormessage TO et_errores.
                         add_error 'Error leyendo campo'(elc).
@@ -962,11 +973,11 @@ class ZCL_AP_ABAP2XLS implementation.
                         ELSE.
                           <lv_value> = '88888888'.
                           lv_errormessage = zcl_ap_utils=>concat( p1 = lv_value
-                                                                  p2 = 'no es fecha v√°lida. (Col:'(nfv)
+                                                                  p2 = 'no es fecha v·lida. (Col:'(nfv)
                                                                   p3 = lv_actual_col
                                                                   p4 = ' Fila:'(005)
                                                                   p5 = lv_actual_row ).
-                          CONCATENATE 'Fecha'(fec) lv_value 'no v√°lida'(nva) INTO l_msg SEPARATED BY space.
+                          CONCATENATE 'Fecha'(fec) lv_value 'no v·lida'(nva) INTO l_msg SEPARATED BY space.
                           add_error l_msg.
                         ENDIF.
 
@@ -1029,11 +1040,11 @@ class ZCL_AP_ABAP2XLS implementation.
                         IF l_aux = 'X'.
                           <lv_value> = '888888'.
                           lv_errormessage = zcl_ap_utils=>concat( p1 = lv_value
-                                                                  p2 = 'no es hora v√°lida. (Col:'(nfv)
+                                                                  p2 = 'no es hora v·lida. (Col:'(nfv)
                                                                   p3 = lv_actual_col
                                                                   p4 = ' Fila:'(005)
                                                                   p5 = lv_actual_row ).
-                          CONCATENATE 'Hora'(hor) lv_value 'no v√°lida'(nva) INTO l_msg SEPARATED BY space.
+                          CONCATENATE 'Hora'(hor) lv_value 'no v·lida'(nva) INTO l_msg SEPARATED BY space.
                           add_error l_msg.
                         ELSE.
                           <lv_value> = l_hora.
@@ -1047,7 +1058,7 @@ class ZCL_AP_ABAP2XLS implementation.
                                                          IMPORTING cantidad  = <lv_value>
                                                                    mensaje   = l_msg ).
                               IF NOT l_msg IS INITIAL.
-                                CONCATENATE lv_value 'no es una cantidad v√°lida'(ncv) INTO l_msg SEPARATED BY space.
+                                CONCATENATE lv_value 'no es una cantidad v·lida'(ncv) INTO l_msg SEPARATED BY space.
                                 add_error l_msg.
                               ENDIF.
                             ELSE.
@@ -1146,7 +1157,7 @@ class ZCL_AP_ABAP2XLS implementation.
                                   when 'LGORT'.
                                     SELECT single lgort FROM T001l INTO @DATA(l_lgort) WHERE lgort = @<lv_value>.
                                     IF sy-subrc <> 0.
-                                      lv_errormessage = |Almac√©n { lv_value } no existe|.
+                                      lv_errormessage = |AlmacÈn { lv_value } no existe|.
                                       COLLECT lv_errormessage INTO et_errores.
                                       add_error lv_errormessage.
                                     ENDIF.
@@ -1565,7 +1576,7 @@ class ZCL_AP_ABAP2XLS implementation.
 
     CALL FUNCTION 'Z_POPUP_ALV_AP'
       EXPORTING
-        titulo  = 'Errores de conversi√≥n'(eco)
+        titulo  = 'Errores de conversiÛn'(eco)
         texto   = 'Se han producido errores en la carga del fichero Excel'(spe)
 *       TEXTO2  =
 *       CHECK   = ''
@@ -2177,7 +2188,7 @@ class ZCL_AP_ABAP2XLS implementation.
     TRY.
         lv_col_end = o_worksheet->get_highest_column( ).
       CATCH zcx_excel INTO zcx_excel.
-        MESSAGE 'Error obteniendo n¬∫ columnas' TYPE 'S'.
+        MESSAGE 'Error obteniendo n∫ columnas' TYPE 'S'.
     ENDTRY.
 
     lv_col = 1.

@@ -54,12 +54,12 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
           i_obj_pend TYPE TABLE OF t_obj_pend.
     DATA l_ucomm TYPE sy-ucomm.
 
-* SÃ³lo para usuario APC
+* Sólo para usuario APC
     IF sy-uname <> zcl_c=>usuario_ap.
       RETURN.
     ENDIF.
 
-* SÃ³lo en estas transacciones
+* Sólo en estas transacciones
     IF NOT ( sy-tcode = 'SE09' OR sy-tcode = 'YAP' ).
       RETURN.
     ENDIF.
@@ -71,8 +71,8 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
       ENDIF.
     ENDIF.
 
-* Si en alguna OT no queremos verificaciÃ³n ponemos esto
-    IF text CS 'Â¡!'.
+* Si en alguna OT no queremos verificación ponemos esto
+    IF text CS '¡!'.
       RETURN.
     ENDIF.
 
@@ -143,7 +143,7 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
     IF is_ok = abap_true.
       MESSAGE 'Validaciones correctas' TYPE 'S'.
     ELSE.
-*      "we only get the execution ID with this â€œdirtyâ€ cast:
+*      "we only get the execution ID with this “dirty” cast:
 *      DATA(or_result_access_int) = CAST CL_SATC_AC_RESULT_ACCESS( or_result_access ).
 
 *      or_result_access_int->display_result( ).
@@ -170,15 +170,15 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
         MESSAGE 'Errores de ATC revise objetos' TYPE 'I'.
       ENDIF.
 
-* Verificamos si hay objetos pendientes de importar en producciÃ³n
+* Verificamos si hay objetos pendientes de importar en producción
       IF NOT it_objects IS INITIAL.
         SELECT tmsbuffer~trkorr AS padre, e070~trkorr AS hijo, sysnam, owner, text FROM tmsbuffer JOIN e070 ON e070~strkorr = tmsbuffer~trkorr
           INTO TABLE @DATA(i_tms)
          WHERE sysnam <> @zcl_c=>entorno_desarrollo
-           AND impflg  = 'k' " La orden K estÃ¡ pendiente del import
+           AND impflg  = 'k' " La orden K está pendiente del import
            AND trfunc  = 'K'
            AND umodes <> 'I'
-           AND umodes <> 'FI' " Orden ya importada, pero en espera de reimportaciÃ³n
+           AND umodes <> 'FI' " Orden ya importada, pero en espera de reimportación
            AND comsys  = @sy-sysid.
 
         LOOP AT i_tms ASSIGNING FIELD-SYMBOL(<tms>).
@@ -221,9 +221,9 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
         IF NOT i_obj_pend IS INITIAL.
           CALL FUNCTION 'Z_POPUP_ALV_AP'
             EXPORTING
-              titulo  = 'Objetos en ordenes pendientes de subir a producciÃ³n'
-              texto   = 'Los siguientes objetos estÃ¡n pendientes de subir a producciÃ³n'
-              texto2  = 'Â¿EstÃ¡ seguro de querer liberar la OT?'
+              titulo  = 'Objetos en ordenes pendientes de subir a producción'
+              texto   = 'Los siguientes objetos están pendientes de subir a producción'
+              texto2  = '¿Está seguro de querer liberar la OT?'
               botones = 'OK_CANCEL'
             IMPORTING
               ucomm   = l_ucomm
@@ -236,17 +236,17 @@ class ZCL_IM_CTS_REQUEST_CHECK implementation.
       ENDIF.
 
       IF l_error = 'X'.
-        DATA(l_titulo) = 'Errores de verificaciÃ³n'.
+        DATA(l_titulo) = 'Errores de verificación'.
       ELSE.
-        l_titulo = 'Advertencias en verificaciÃ³n'.
+        l_titulo = 'Advertencias en verificación'.
       ENDIF.
 
       IF zcl_ap_popup=>confirmar( titulo = l_titulo
                                   texto  = 'Confirme si desea seguir liberando'
                                   opcion = 'N' ) = 'X'.
         IF l_error = 'X'.
-          IF zcl_ap_popup=>confirmar( titulo = 'Errores de verificaciÃ³n'
-                                      texto  = 'Â¿Realmente estÃ¡s seguro?'
+          IF zcl_ap_popup=>confirmar( titulo = 'Errores de verificación'
+                                      texto  = '¿Realmente estás seguro?'
                                       opcion = 'N' ) = ''.
             RAISE cancel.
           ENDIF.

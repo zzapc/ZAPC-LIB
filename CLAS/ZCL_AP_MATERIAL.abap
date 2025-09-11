@@ -1,4 +1,4 @@
-* Tabla cachÃ© con algunos datos importantes de material
+* Tabla caché con algunos datos importantes de material
 TYPES: BEGIN OF t_mat,
          matnr TYPE matnr,
          meins TYPE meins,
@@ -560,7 +560,7 @@ class ZCL_AP_MATERIAL implementation.
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error mapeando tabla MARC' TYPE 'E'.
     ENDIF.
 
 * Convierto a estructura de la BAPI
@@ -576,7 +576,7 @@ class ZCL_AP_MATERIAL implementation.
         OTHERS                       = 2.
 
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error mapeando tabla MARC' TYPE 'E'.
     ENDIF.
 
     determina_cambios_campos( EXPORTING original     = l_plantdata
@@ -641,7 +641,7 @@ class ZCL_AP_MATERIAL implementation.
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error mapeando tabla MBEW' TYPE 'E'.
     ENDIF.
 
     MOVE-CORRESPONDING l_bapi_mbew_ga TO l_valuationdata.
@@ -657,7 +657,7 @@ class ZCL_AP_MATERIAL implementation.
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error mapeando tabla MBEW' TYPE 'E'.
     ENDIF.
     MOVE-CORRESPONDING l_bapi_mbew_ga TO valuationdata.
 
@@ -829,7 +829,7 @@ class ZCL_AP_MATERIAL implementation.
     IF borrar = 'X'.
       LOOP AT i_marm INTO l_marm_bd WHERE ty2tq = 'D'.     "#EC CI_STDSEQ
 * Como la BAPI no permite borrado, lo hacemos a pelo
-        DELETE FROM marm
+        DELETE FROM marm "#EC AOC_STD_TABLE
          WHERE matnr = material
            AND meinh = l_marm_bd-meinh.
       ENDLOOP.
@@ -909,7 +909,7 @@ class ZCL_AP_MATERIAL implementation.
           unit_in_not_found    = 8
           unit_out_not_found   = 9.
       IF sy-subrc <> 0.
-*
+        MESSAGE 'Error convirtiendo peso' TYPE 'S'.
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -933,7 +933,7 @@ class ZCL_AP_MATERIAL implementation.
         error                = 2
         OTHERS               = 3.
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error convirtiendo unidad' TYPE 'S'.
     ENDIF.
   ENDMETHOD.
   METHOD determina_cambios_campos.
@@ -1030,7 +1030,7 @@ class ZCL_AP_MATERIAL implementation.
           class_not_valid          = 2.           " ch zu 3.0D
 
       IF sy-subrc <> 0.
-*
+        MESSAGE 'Error recuperando clasificación' TYPE 'S'.
       ENDIF.
 
       IF sy-ucomm <> 'WECH'.
@@ -1104,7 +1104,7 @@ class ZCL_AP_MATERIAL implementation.
       SELECT SINGLE klart, objek FROM inob
         INTO (@DATA(l_klart), @DATA(l_objek))
        WHERE cuobj = @<cdpos>-objectid(18)
-         AND obtab = 'MARA'.  " SÃ³lo cambios en mara
+         AND obtab = 'MARA'.  " Sólo cambios en mara
       IF sy-subrc <> 0.
         DELETE i_cdpos.
       ELSE.
@@ -1165,14 +1165,14 @@ class ZCL_AP_MATERIAL implementation.
       RETURN.
     ENDIF.
 
-* Si no encuentra el texto en el idioma dado, lo devuelve en inglÃ©s, si lo hay
+* Si no encuentra el texto en el idioma dado, lo devuelve en inglés, si lo hay
     IF maktx IS INITIAL.
       SELECT SINGLE maktx FROM  makt               "#EC CI_SEL_NESTED
         INTO maktx
        WHERE matnr = matnr
          AND spras = 'E'.
     ENDIF.
-* Sino en espaÃ±ol, si lo hay
+* Sino en español, si lo hay
     IF spras <> 'S'.
       SELECT SINGLE maktx FROM  makt               "#EC CI_SEL_NESTED
         INTO maktx
@@ -1507,7 +1507,7 @@ class ZCL_AP_MATERIAL implementation.
              haben(09)     TYPE p          DECIMALS 3, " XJD
              sollwert(09)  TYPE p          DECIMALS 2, " n497992
              habenwert(09) TYPE p          DECIMALS 2, " n497992
-             waers         TYPE t001-waers,            " WÃ¤hrungsschlÃ¼ssel
+             waers         TYPE t001-waers,            " Währungsschlüssel
            END OF t_bestand.
 
     DATA: rr_matnr TYPE range_t_matnr,
@@ -1554,7 +1554,7 @@ class ZCL_AP_MATERIAL implementation.
     SET PARAMETER ID 'ZPG' FIELD 'ZTOCK_A_FECHA' ##EXISTS.
 
     SUBMIT rm07mlbd                                        "#EC CI_SUBMIT
-       AND RETURN
+           AND RETURN
            VIA SELECTION-SCREEN
            WITH werks IN rr_werks
            WITH matnr IN rr_matnr
@@ -1565,7 +1565,7 @@ class ZCL_AP_MATERIAL implementation.
            WITH sbbst = ''
            WITH xsum  = ''
            WITH pa_sumfl = 'X'
-           WITH xchar = solo_mat_suj_lotes " SÃ³lo materiales sujetos a lote
+           WITH xchar = solo_mat_suj_lotes " Sólo materiales sujetos a lote
            WITH pa_wdzer = 'X'
            WITH pa_wdzew = 'X'
            WITH pa_wdwiz = 'X'
@@ -1642,12 +1642,12 @@ class ZCL_AP_MATERIAL implementation.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
-    SELECT peinh stprs verpr vprsv FROM mbew
+    SELECT peinh stprs verpr vprsv FROM mbew JOIN t001w ON mbew~bwkey = t001w~bwkey "#EC CI_BUFFJOIN
       INTO CORRESPONDING FIELDS OF l_mbew
       UP TO 1 ROWS
      WHERE matnr = matnr
-       AND bwkey = werks
-     ORDER BY PRIMARY KEY.
+       AND werks = werks
+     ORDER BY matnr mbew~bwkey bwtar.
     ENDSELECT.
     IF sy-subrc = 0.
       IF l_mbew-peinh <> 0.
@@ -1951,7 +1951,7 @@ class ZCL_AP_MATERIAL implementation.
         INTO tq34
        WHERE art = art.
       IF sy-subrc <> 0.
-        __concat2 message 'No existe la clase de inspecciÃ³n'(nec) art.
+        __concat2 message 'No existe la clase de inspección'(nec) art.
         RETURN.
       ELSE.
         MOVE-CORRESPONDING tq34 TO qmat.
@@ -1996,7 +1996,7 @@ class ZCL_AP_MATERIAL implementation.
           INTO tq34
          WHERE art = art2.
         IF sy-subrc <> 0.
-          __concat2 message 'No existe la clase de inspecciÃ³n'(nec) art2.
+          __concat2 message 'No existe la clase de inspección'(nec) art2.
           RETURN.
         ELSE.
           MOVE-CORRESPONDING tq34 TO qmat.
@@ -2062,6 +2062,7 @@ class ZCL_AP_MATERIAL implementation.
     ENDDO.
   ENDMETHOD.
   METHOD update.
+    CLEAR: return, messages.
     CALL FUNCTION 'BAPI_MATERIAL_SAVEDATA'
       EXPORTING
         headdata             = headdata
@@ -2069,10 +2070,10 @@ class ZCL_AP_MATERIAL implementation.
         clientdatax          = clientdatax
         plantdata            = plantdata
         plantdatax           = plantdatax
-*     FORECASTPARAMETERS   =
-*     FORECASTPARAMETERSX  =
-*     PLANNINGDATA         =
-*     PLANNINGDATAX        =
+*       FORECASTPARAMETERS   =
+*       FORECASTPARAMETERSX  =
+*       PLANNINGDATA         =
+*       PLANNINGDATAX        =
         storagelocationdata  = storagelocationdata
         storagelocationdatax = storagelocationdatax
         valuationdata        = valuationdata
@@ -2083,18 +2084,18 @@ class ZCL_AP_MATERIAL implementation.
         salesdatax           = salesdatax
         storagetypedata      = storagetypedata
         storagetypedatax     = storagetypedatax
-*     FLAG_ONLINE          = ' '
-*     FLAG_CAD_CALL        = ' '
-*     NO_DEQUEUE           = ' '
-*     NO_ROLLBACK_WORK     = ' '
+*       FLAG_ONLINE          = ' '
+*       FLAG_CAD_CALL        = ' '
+*       NO_DEQUEUE           = ' '
+*       NO_ROLLBACK_WORK     = ' '
       IMPORTING
         return               = return
       TABLES
         materialdescription  = materialdescription
         unitsofmeasure       = unitsofmeasure
         unitsofmeasurex      = unitsofmeasurex
-*     INTERNATIONALARTNOS  =
-*     MATERIALLONGTEXT     =
+*       INTERNATIONALARTNOS  =
+*       MATERIALLONGTEXT     =
         taxclassifications   = taxclassifications
         returnmessages       = messages.
 *     PRTDATA              =
@@ -2151,7 +2152,7 @@ class ZCL_AP_MATERIAL implementation.
     ENDIF.
 
     SUBMIT rmmmbestn                                     "#EC CI_SUBMIT
-       AND RETURN
+           AND RETURN
            WITH ms_matnr = matnr
            WITH ms_werks IN r_werks
            WITH ms_lgort IN r_lgort
@@ -2169,10 +2170,10 @@ class ZCL_AP_MATERIAL implementation.
 
     o_bi = NEW #( ).
 
-* Acceso: NÂº de material, clase de material, ramo etc.
+* Acceso: Nº de material, clase de material, ramo etc.
     o_bi->dynpro( program = 'SAPLMGMM' dynpro = '0060' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=AUSW' ).
-    o_bi->campos( campo = 'RMMG1-MATNR' valor = matnr ). " NÃºmero de material
+    o_bi->campos( campo = 'RMMG1-MATNR' valor = matnr ). " Número de material
 
     FREE i_bdcmm.
     CALL FUNCTION 'MATERIAL_BTCI_SELECTION_NEW'
@@ -2191,7 +2192,7 @@ class ZCL_AP_MATERIAL implementation.
         no_authority              = 6
         OTHERS                    = 7.
     IF sy-subrc <> 0.
-*
+      MESSAGE 'Error recuperando material' TYPE 'S'.
     ENDIF.
 
     CLEAR l_contvista.
@@ -2222,13 +2223,13 @@ class ZCL_AP_MATERIAL implementation.
         o_bi->campos( campo = 'RMMG1-WERKS' valor = werks ). " Centro
       ENDIF.
       IF NOT lgort IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGORT' valor = lgort ). " AlmacÃ©n
+        o_bi->campos( campo = 'RMMG1-LGORT' valor = lgort ). " Almacén
       ENDIF.
       IF NOT lgnum IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGNUM' valor = lgnum ). " NÂºAlmacÃ©n
+        o_bi->campos( campo = 'RMMG1-LGNUM' valor = lgnum ). " NºAlmacén
       ENDIF.
       IF NOT lgtyp IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGTYP' valor = lgtyp ). " Tipo AlmacÃ©n
+        o_bi->campos( campo = 'RMMG1-LGTYP' valor = lgtyp ). " Tipo Almacén
       ENDIF.
       IF NOT vkorg IS INITIAL.
         o_bi->campos( campo = 'RMMG1-VKORG' valor = vkorg ).

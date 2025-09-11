@@ -247,7 +247,7 @@ CLASS zcl_ap_docx DEFINITION
     CONSTANTS c_breaktype_column             TYPE i          VALUE 1 ##NO_TEXT.
     CONSTANTS c_breaktype_section            TYPE i          VALUE 2 ##NO_TEXT.
     CONSTANTS c_breaktype_section_continuous TYPE i          VALUE 3 ##NO_TEXT.
-    CONSTANTS c_symbol_checkbox_checked      TYPE string     VALUE 'Ã¾' ##NO_TEXT.
+    CONSTANTS c_symbol_checkbox_checked      TYPE string     VALUE 'þ' ##NO_TEXT.
     CONSTANTS c_symbol_checkbox              TYPE string     VALUE 'o' ##NO_TEXT.
     CONSTANTS c_draw_image                   TYPE i          VALUE 0 ##NO_TEXT.
     CONSTANTS c_draw_rectangle               TYPE i          VALUE 1 ##NO_TEXT.

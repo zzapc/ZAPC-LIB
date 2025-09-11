@@ -76,6 +76,7 @@ CLASS zcl_ap_dev_mant DEFINITION
 
     METHODS command_dynpro_0100
       IMPORTING o_alv         TYPE REF TO zcl_ap_alv_grid
+                comm_sel      TYPE string DEFAULT 'OT'
       CHANGING  i_listado     TYPE table
                 i_listado_ini TYPE table OPTIONAL.
 
@@ -137,8 +138,7 @@ class ZCL_AP_DEV_MANT implementation.
     ENDIF.
   ENDMETHOD.
   METHOD command_dynpro_0100.
-    DATA: l_comm_sel TYPE string VALUE 'OT',
-          l_hay_sel  TYPE c LENGTH 1.
+    DATA: l_hay_sel  TYPE c LENGTH 1.
     DATA: reg     TYPE REF TO data,
           l_key   TYPE text255,
           l_index TYPE int4.
@@ -148,7 +148,7 @@ class ZCL_AP_DEV_MANT implementation.
 
 *          l_key  TYPE c LENGTH 120.
 
-    command_dynpro( EXPORTING o_alv = o_alv seleccion = l_comm_sel
+    command_dynpro( EXPORTING o_alv = o_alv seleccion = comm_sel
                     CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
 
     CASE ucomm.
@@ -284,7 +284,7 @@ class ZCL_AP_DEV_MANT implementation.
       ENDIF.
     ENDLOOP.
 
-* Si no, el texto serÃ¡ el mismo que el del origen
+* Si no, el texto será el mismo que el del origen
     LOOP AT i_campos_alv ASSIGNING <alv> WHERE fieldname CS '_T' AND scrtext_s IS INITIAL.
       SPLIT <alv>-fieldname AT '_T' INTO DATA(l_campo) DATA(l_sufijo).
       IF l_sufijo IS INITIAL.
@@ -383,7 +383,7 @@ class ZCL_AP_DEV_MANT implementation.
 
     IF l_cont = 0.
       IF l_cont_error IS INITIAL.
-        MESSAGE 'No habÃ­a cambios' TYPE 'S'.
+        MESSAGE 'No había cambios' TYPE 'S'.
       ELSE.
         MESSAGE |Error guardando { l_cont_error } registros | TYPE 'I'.
       ENDIF.
@@ -450,7 +450,7 @@ class ZCL_AP_DEV_MANT implementation.
           o_alv->add_button( button = 'F02' text = 'Crear OT'  icon =  icon_import_transport_request ucomm = 'OT' ).
         ENDIF.
         IF comparar = 'X'.
-          o_alv->add_button( button = 'F03' text = 'Comparar con producciÃ³n'  icon =  icon_compare ucomm = 'COMP' ).
+          o_alv->add_button( button = 'F03' text = 'Comparar con producción'  icon =  icon_compare ucomm = 'COMP' ).
         ENDIF.
       ELSE.
         IF comparar = 'X'.

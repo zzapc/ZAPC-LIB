@@ -234,7 +234,7 @@ CLASS zcl_ap_dev DEFINITION
                 boton_plantilla   TYPE any                       DEFAULT '@J2@ Ejemplo fichero carga'(efc)
                 get_default_param TYPE abap_bool                 DEFAULT 'X'
                 tcode_doc         TYPE zdocumentos-tcode         DEFAULT ''
-                boton_doc_tecnica TYPE string                    DEFAULT '@19\Q*DocumentaciÃ³n tÃ©cnica@'
+                boton_doc_tecnica TYPE string                    DEFAULT '@19\Q*Documentación técnica@'
                 boton_fc05        TYPE zdocumentos-clasificacion DEFAULT ''
       CHANGING  sscrfields        TYPE sscrfields                OPTIONAL.
 
@@ -562,7 +562,7 @@ class ZCL_AP_DEV implementation.
       PERFORM get_button IN PROGRAM zap_status USING sy-ucomm CHANGING l_but.
       CASE l_but-text.
         WHEN 'Log'. l_ucomm = 'LOG'.
-        WHEN 'ParÃ¡metro' OR 'ParÃ¡metros'. l_ucomm = 'PARAM'.
+        WHEN 'Parámetro' OR 'Parámetros'. l_ucomm = 'PARAM'.
       ENDCASE.
     ENDIF.
 
@@ -1326,7 +1326,7 @@ class ZCL_AP_DEV implementation.
     IF NOT cprog IS INITIAL.
       l_cprog = cprog.
       IF zcl_ap_utils=>bloquear_programa( cprog = l_cprog ) = 'X'.
-        MESSAGE 'Saliendo debido a que el programa ya se estÃ¡ ejecutando.'(spe) TYPE 'I'.
+        MESSAGE 'Saliendo debido a que el programa ya se está ejecutando.'(spe) TYPE 'I'.
         LEAVE PROGRAM.
       ENDIF.
     ENDIF.
@@ -2541,7 +2541,7 @@ class ZCL_AP_DEV implementation.
 
     IF linea IS INITIAL.
       IF me->linea IS INITIAL.
-        message = 'No hay definido lÃ­nea'.
+        message = 'No hay definido línea'.
         RETURN.
       ELSE.
         ASSIGN COMPONENT campo OF STRUCTURE me->linea TO <fs>.
@@ -3028,7 +3028,7 @@ class ZCL_AP_DEV implementation.
       ENDLOOP.
       CONDENSE zap_textos_mail-asunto.
 
-* AÃ±adimos info adicional.
+* Añadimos info adicional.
       DATA(l_tcode) = |Transaccion: { sy-tcode }|.
       DATA(l_report) = |Report: { report }|.
       DATA(l_uname) = |Usuario: { sy-uname }|.
@@ -3658,12 +3658,36 @@ class ZCL_AP_DEV implementation.
          OR l_tabla    CS 'DEFINITION LOAD'.
         DELETE i_tabla.
       ELSE.
+      data string type string.
+         CALL FUNCTION 'SCP_REPLACE_STRANGE_CHARS'
+      EXPORTING  intext            = l_tabla
+                 replacement       = ''
+      IMPORTING  outtext           = l_tabla
+      EXCEPTIONS invalid_codepage  = 1
+                 codepage_mismatch = 2
+                 internal_error    = 3
+                 cannot_convert    = 4
+                 fields_not_type_c = 5
+                 OTHERS            = 6.
+
         SPLIT l_tabla AT ` "EC` INTO l_tabla DATA(l_aux).
         SPLIT l_tabla AT ` ##` INTO l_tabla l_aux.
         IF l_aux CS '.'.
           CONCATENATE l_tabla '.' INTO l_tabla.
         ENDIF.
-        REPLACE ALL OCCURRENCES OF 'Ã­' IN l_tabla WITH 'i'.
+        REPLACE ALL OCCURRENCES OF 'á' IN l_tabla WITH 'a'.
+        REPLACE ALL OCCURRENCES OF 'é' IN l_tabla WITH 'e'.
+        REPLACE ALL OCCURRENCES OF 'í' IN l_tabla WITH 'i'.
+        REPLACE ALL OCCURRENCES OF 'ó' IN l_tabla WITH 'o'.
+        REPLACE ALL OCCURRENCES OF 'ú' IN l_tabla WITH 'u'.
+        REPLACE ALL OCCURRENCES OF 'Á' IN l_tabla WITH 'A'.
+        REPLACE ALL OCCURRENCES OF 'É' IN l_tabla WITH 'E'.
+        REPLACE ALL OCCURRENCES OF 'Í' IN l_tabla WITH 'I'.
+        REPLACE ALL OCCURRENCES OF 'Ó' IN l_tabla WITH 'O'.
+        REPLACE ALL OCCURRENCES OF 'Ú' IN l_tabla WITH 'U'.
+        REPLACE ALL OCCURRENCES OF 'A*3' IN l_tabla WITH 'O'.
+        REPLACE ALL OCCURRENCES OF '''A?' IN l_tabla WITH '''?'.
+
         MODIFY i_tabla FROM l_tabla.
       ENDIF.
     ENDLOOP.

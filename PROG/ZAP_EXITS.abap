@@ -1,9 +1,9 @@
 ***********************************************************************
 * TIPO : LISTADO
-* TITULO : Gesti髇 exits de usuario
-* DESCRIPCION : Gesti髇 exits de usuario
+* TITULO : Gesti贸n exits de usuario
+* DESCRIPCION : Gesti贸n exits de usuario
 *
-* AUTOR: Andr閟 Picazo                                FECHA: 10/03/2018
+* AUTOR: Andr茅s Picazo                                FECHA: 10/03/2018
 *
 ***********************************************************************
 REPORT zap_exits.
@@ -114,7 +114,7 @@ CLASS lcl_event_grid IMPLEMENTATION.
           IF NOT <var>-valor IS INITIAL.
             zcl_ap_gos=>visualizar_fichero_st( <var>-valor ).
           ENDIF.
-        WHEN 'C骴igo ABAP'.
+        WHEN 'C贸digo ABAP'.
           IF NOT <var>-valor IS INITIAL.
             CALL FUNCTION 'EDITOR_PROGRAM'
               EXPORTING
@@ -252,13 +252,13 @@ CLASS lcl_alv IMPLEMENTATION.
 *         WITH view = 'ZAP_EXITS'
 *         WITH rfc_dest = l_rfc
 ** WITH RFC_DEST = GS_DYN300-RFC_DEST
-*  WITH sel = ''  "No indicar condiciones de selecci髇
+*  WITH sel = ''  "No indicar condiciones de selecci贸n
 ** WITH ADJ_000 = GS_DYN300-ADJ_000
 ** WITH MODE = GS_DYN300-MODE
 ** WITH CMP_TAB = GS_DYN300-CMP_TAB             "new 4
 ** WITH CALLTYPE = GS_DYN300-CALLTYPE
 ** WITH SEL_TYPE = GC_ST_MANUALLY
-* WITH dis_filt = 'LRMSPQ'. "S髄o modificaciones
+* WITH dis_filt = 'LRMSPQ'. "S贸lo modificaciones
 ** WITH BATCH = GS_DYN300-BATCH
 ** WITH STRU_POP = GS_DYN300-RESTRICT
 ** WITH WLID = GS_DYN300-WLID
@@ -272,14 +272,14 @@ CLASS lcl_alv IMPLEMENTATION.
 *          AND RETURN
 *         WITH view = 'ZAP_EXITS_PAR'
 *         WITH rfc_dest = l_rfc
-*         WITH sel = ''  "No indicar condiciones de selecci髇
-*         WITH dis_filt = 'LRMSPQ'. "S髄o modificaciones
+*         WITH sel = ''  "No indicar condiciones de selecci贸n
+*         WITH dis_filt = 'LRMSPQ'. "S贸lo modificaciones
       WHEN 'WORD'.
         get_seleccion( CHANGING t_tabla = o_prog->i_listado ).
         LOOP AT o_prog->i_listado ASSIGNING <listado> WHERE check = 'X'.
         ENDLOOP.
         IF sy-subrc NE 0.
-          MESSAGE 'Seleccione alg鷑 registro' TYPE 'I'.
+          MESSAGE 'Seleccione alg煤n registro' TYPE 'I'.
         ELSE.
           o_prog->generar_word( ).
         ENDIF.
@@ -433,9 +433,9 @@ CLASS zcl_report IMPLEMENTATION.
     ENDIF.
     o_grid->add_button( button = 'F01' text = 'Grabar'  icon = icon_system_save forzar = 'X' ).
     o_grid->add_button( button = 'F02' text = 'Ir a exit'  icon = icon_submit forzar = 'X' ).
-    o_grid->add_button( button = 'F03' text = 'Ir a implementaci髇'  icon =  icon_change forzar = 'X' ).
+    o_grid->add_button( button = 'F03' text = 'Ir a implementaci贸n'  icon =  icon_change forzar = 'X' ).
     o_grid->add_button( button = 'F04' text = 'Grabar en OT'  icon =  icon_transport_proposal forzar = 'X' ).
-    o_grid->add_button( button = 'F05' text = 'Log ejecuci髇'  icon =  icon_incompletion_log forzar = 'X' ).
+    o_grid->add_button( button = 'F05' text = 'Log ejecuci贸n'  icon =  icon_incompletion_log forzar = 'X' ).
     o_grid->add_button( button = 'M01' text = 'Borrar'  icon = icon_delete forzar = 'X' ).
 
     IF zap_exits_est-activa = 'U'.
@@ -809,7 +809,7 @@ CLASS zcl_report IMPLEMENTATION.
     CALL METHOD o_doc->write_toc.
 
 
-    __concat2 l_titulo 'Documentaci髇 exits' sy-datum.
+    __concat2 l_titulo 'Documentaci贸n exits' sy-datum.
     CALL METHOD o_doc->set_title( l_titulo ).
 
     SORT i_listado BY clasificacion id.
@@ -861,7 +861,7 @@ CLASS zcl_report IMPLEMENTATION.
 
 
       CLEAR lt_cle.
-      ls_cle-f1-textline                    = 'Transacci髇'.
+      ls_cle-f1-textline                    = 'Transacci贸n'.
       ls_cle-f1-style_effect-font           = 'Arial'.
       ls_cle-f1-style_effect-size           = '10'.
       ls_cle-f1-style_effect-italic         = zcl_ap_docx=>c_true.
@@ -886,7 +886,7 @@ CLASS zcl_report IMPLEMENTATION.
       ENDIF.
 
       IF NOT <listado>-modulo IS INITIAL.
-        ls_cle-f1-textline                    = 'M骴ulo'.
+        ls_cle-f1-textline                    = 'M贸dulo'.
         ls_cle-f2-textline                    = <listado>-modulo.
         APPEND ls_cle TO lt_cle.
       ENDIF.
@@ -922,13 +922,13 @@ CLASS zcl_report IMPLEMENTATION.
       ENDIF.
 
       IF NOT <listado>-metodo_exit IS INITIAL.
-        ls_cle-f1-textline                    = 'M閠odo Exit'.
+        ls_cle-f1-textline                    = 'M茅todo Exit'.
         ls_cle-f2-textline                    = <listado>-metodo_exit.
         APPEND ls_cle TO lt_cle.
       ENDIF.
 
       IF NOT <listado>-funcion IS INITIAL.
-        ls_cle-f1-textline                    = 'Funci髇'.
+        ls_cle-f1-textline                    = 'Funci贸n'.
         ls_cle-f2-textline                    = <listado>-funcion.
         APPEND ls_cle TO lt_cle.
       ENDIF.
@@ -940,13 +940,13 @@ CLASS zcl_report IMPLEMENTATION.
       ENDIF.
 
       IF NOT <listado>-implementacion IS INITIAL.
-        ls_cle-f1-textline                    = 'Implementaci髇'.
+        ls_cle-f1-textline                    = 'Implementaci贸n'.
         ls_cle-f2-textline                    = <listado>-implementacion.
         APPEND ls_cle TO lt_cle.
       ENDIF.
 
       IF NOT <listado>-badi_clasico IS INITIAL.
-        ls_cle-f1-textline                    = 'BADI Cl醩ico'.
+        ls_cle-f1-textline                    = 'BADI Cl谩sico'.
         ls_cle-f2-textline                    = <listado>-badi_clasico.
         APPEND ls_cle TO lt_cle.
       ENDIF.

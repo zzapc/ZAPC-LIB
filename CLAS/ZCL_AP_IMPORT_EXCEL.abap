@@ -336,12 +336,12 @@ method FILE_GET_NAME.
 *    Initialisierung
 *---------------------------------------------------------------------
 
-* R眉ckgabeparameter initializieren
+* R點kgabeparameter initializieren
   clear: emergency_flag,
          file_format,
          file_name.
 
-* f眉lle die Arbeitsbereiche mit dem Puffer
+* f黮le die Arbeitsbereiche mit dem Puffer
   i_filename = buf_filename.
   i_path     = buf_path.
   i_opsystem = buf_opsystem.
@@ -556,7 +556,7 @@ method FILE_GET_NAME.
     endif.
   endif.
 
-* Dateiname ab der maximalen L盲nge abschneiden
+* Dateiname ab der maximalen L鋘ge abschneiden
   assign work_file(i_filesys-namelen) to <string>.
   work_file = <string>.
 
@@ -591,7 +591,7 @@ method FILE_GET_NAME.
   file_name   = work_path.
 
 *---------------------------------------------------------------------
-*    Abschlu脽verarbeitung
+*    Abschlu遶erarbeitung
 *---------------------------------------------------------------------
 
 * aktualisiere Puffer: i_filename, buf_filename etc. evtl. modifiziert
@@ -997,7 +997,7 @@ method IMPORTAR_CSV.
 
 *  sy-tfill = STRLEN( l_fichero ).
 *  IF sy-tfill > 60.
-*    MESSAGE 'Funci贸n limitada a ruta ficheros m谩x. 60 car谩cteres' TYPE 'E'.
+*    MESSAGE 'Funci髇 limitada a ruta ficheros m醲. 60 car醕teres' TYPE 'E'.
 *  ENDIF.
 
   IF servidor IS INITIAL.
@@ -1036,9 +1036,9 @@ method IMPORTAR_CSV.
       CASE sy-subrc.
         WHEN 1. message = 'Fichero no encontrado'.
         WHEN 2. message = 'Error al cerrar fichero'.
-        WHEN 3. message = 'No hay autorizaci贸n para leer fichero'.
+        WHEN 3. message = 'No hay autorizaci髇 para leer fichero'.
         WHEN 4. message = 'Error al abrir fichero'.
-        WHEN 5. message = 'Error de conversi贸n'.
+        WHEN 5. message = 'Error de conversi髇'.
         WHEN OTHERS. message = 'Error al procesar fichero'.
       ENDCASE.
     ENDIF.
@@ -1065,12 +1065,12 @@ METHOD input_data2sap_data.
 * Die Funktion CONVERT_DATE_TO_INTERNAL erwartet das Datum analog den
 * Einstellungen in den Festwerten des Benutzers. Ist dort das Format
 * TT.MM.JJJJ eingestellt, dann muss der Routine das Datum in der
-* Form 31.12.1999 oder 31121999 眉bergeben werden.
+* Form 31.12.1999 oder 31121999 黚ergeben werden.
 * Ist bei den Benutzerfestwerten das amerikanische Format JJJJ.MM.TT
 * eingestellt, dann erwartet die Funktion das Datum in der Form
 * 1999.12.31 oder 19991231
-* Einige Excel Datumsformate haben die Eigenart, zus盲tzliche Leerzeichen
-* und Punkte in das Datum einzuf眉gen. Deshalb werden Punkte in der
+* Einige Excel Datumsformate haben die Eigenart, zus鋞zliche Leerzeichen
+* und Punkte in das Datum einzuf黦en. Deshalb werden Punkte in der
 * DO Schleife entfernt und anschliessend noch die Leerzeichen durch
 * den condense entfernt.
       DO 3 TIMES.
@@ -1231,7 +1231,7 @@ METHOD LINEA_CSV_2_DATOS.
   ELSE.
     READ TABLE <tabla> INTO datos INDEX 1.
     if sy-subrc ne 0.
-      message = 'Error en conversi贸n CSV'.
+      message = 'Error en conversi髇 CSV'.
     endif.
   ENDIF.
 
@@ -1377,7 +1377,7 @@ METHOD linea_datos_2_csv.
   ELSE.
     READ TABLE i_fichero INTO l_fichero INDEX 1.
     IF sy-subrc NE 0.
-      message = 'Error en conversi贸n CSV'.
+      message = 'Error en conversi髇 CSV'.
     ELSE.
       linea = l_fichero.
     ENDIF.

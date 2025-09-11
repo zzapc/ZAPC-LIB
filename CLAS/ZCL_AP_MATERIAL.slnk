@@ -290,7 +290,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error mapeando tabla MARC&apos; TYPE &apos;E&apos;.
     ENDIF.
 
 * Convierto a estructura de la BAPI
@@ -306,7 +306,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         OTHERS                       = 2.
 
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error mapeando tabla MARC&apos; TYPE &apos;E&apos;.
     ENDIF.
 
     determina_cambios_campos( EXPORTING original     = l_plantdata
@@ -376,7 +376,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error mapeando tabla MBEW&apos; TYPE &apos;E&apos;.
     ENDIF.
 
     MOVE-CORRESPONDING l_bapi_mbew_ga TO l_valuationdata.
@@ -392,7 +392,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         error_converting_curr_amount = 1
         OTHERS                       = 2.
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error mapeando tabla MBEW&apos; TYPE &apos;E&apos;.
     ENDIF.
     MOVE-CORRESPONDING l_bapi_mbew_ga TO valuationdata.
 
@@ -579,7 +579,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
     IF borrar = &apos;X&apos;.
       LOOP AT i_marm INTO l_marm_bd WHERE ty2tq = &apos;D&apos;.     &quot;#EC CI_STDSEQ
 * Como la BAPI no permite borrado, lo hacemos a pelo
-        DELETE FROM marm
+        DELETE FROM marm &quot;#EC AOC_STD_TABLE
          WHERE matnr = material
            AND meinh = l_marm_bd-meinh.
       ENDLOOP.
@@ -621,7 +621,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
           unit_in_not_found    = 8
           unit_out_not_found   = 9.
       IF sy-subrc &lt;&gt; 0.
-*
+        MESSAGE &apos;Error convirtiendo peso&apos; TYPE &apos;S&apos;.
       ENDIF.
     ENDIF.
   ENDMETHOD.</source>
@@ -652,7 +652,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         error                = 2
         OTHERS               = 3.
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error convirtiendo unidad&apos; TYPE &apos;S&apos;.
     ENDIF.
   ENDMETHOD.</source>
  </method>
@@ -816,7 +816,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
           class_not_valid          = 2.           &quot; ch zu 3.0D
 
       IF sy-subrc &lt;&gt; 0.
-*
+        MESSAGE &apos;Error recuperando clasificación&apos; TYPE &apos;S&apos;.
       ENDIF.
 
       IF sy-ucomm &lt;&gt; &apos;WECH&apos;.
@@ -1443,7 +1443,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
     SET PARAMETER ID &apos;ZPG&apos; FIELD &apos;ZTOCK_A_FECHA&apos; ##EXISTS.
 
     SUBMIT rm07mlbd                                        &quot;#EC CI_SUBMIT
-       AND RETURN
+           AND RETURN
            VIA SELECTION-SCREEN
            WITH werks IN rr_werks
            WITH matnr IN rr_matnr
@@ -1561,12 +1561,12 @@ TYPES: BEGIN OF t_mat_conv_ctd,
 
     FIELD-SYMBOLS &lt;fs&gt; TYPE any.
 
-    SELECT peinh stprs verpr vprsv FROM mbew
+    SELECT peinh stprs verpr vprsv FROM mbew JOIN t001w ON mbew~bwkey = t001w~bwkey &quot;#EC CI_BUFFJOIN
       INTO CORRESPONDING FIELDS OF l_mbew
       UP TO 1 ROWS
      WHERE matnr = matnr
-       AND bwkey = werks
-     ORDER BY PRIMARY KEY.
+       AND werks = werks
+     ORDER BY matnr mbew~bwkey bwtar.
     ENDSELECT.
     IF sy-subrc = 0.
       IF l_mbew-peinh &lt;&gt; 0.
@@ -1902,6 +1902,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
  </method>
  <method CLSNAME="ZCL_AP_MATERIAL" CMPNAME="UPDATE" VERSION="1" LANGU="S" DESCRIPT="Actualizar material" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
   <source>METHOD update.
+    CLEAR: return, messages.
     CALL FUNCTION &apos;BAPI_MATERIAL_SAVEDATA&apos;
       EXPORTING
         headdata             = headdata
@@ -1909,10 +1910,10 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         clientdatax          = clientdatax
         plantdata            = plantdata
         plantdatax           = plantdatax
-*     FORECASTPARAMETERS   =
-*     FORECASTPARAMETERSX  =
-*     PLANNINGDATA         =
-*     PLANNINGDATAX        =
+*       FORECASTPARAMETERS   =
+*       FORECASTPARAMETERSX  =
+*       PLANNINGDATA         =
+*       PLANNINGDATAX        =
         storagelocationdata  = storagelocationdata
         storagelocationdatax = storagelocationdatax
         valuationdata        = valuationdata
@@ -1923,18 +1924,18 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         salesdatax           = salesdatax
         storagetypedata      = storagetypedata
         storagetypedatax     = storagetypedatax
-*     FLAG_ONLINE          = &apos; &apos;
-*     FLAG_CAD_CALL        = &apos; &apos;
-*     NO_DEQUEUE           = &apos; &apos;
-*     NO_ROLLBACK_WORK     = &apos; &apos;
+*       FLAG_ONLINE          = &apos; &apos;
+*       FLAG_CAD_CALL        = &apos; &apos;
+*       NO_DEQUEUE           = &apos; &apos;
+*       NO_ROLLBACK_WORK     = &apos; &apos;
       IMPORTING
         return               = return
       TABLES
         materialdescription  = materialdescription
         unitsofmeasure       = unitsofmeasure
         unitsofmeasurex      = unitsofmeasurex
-*     INTERNATIONALARTNOS  =
-*     MATERIALLONGTEXT     =
+*       INTERNATIONALARTNOS  =
+*       MATERIALLONGTEXT     =
         taxclassifications   = taxclassifications
         returnmessages       = messages.
 *     PRTDATA              =
@@ -2143,7 +2144,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
     ENDIF.
 
     SUBMIT rmmmbestn                                     &quot;#EC CI_SUBMIT
-       AND RETURN
+           AND RETURN
            WITH ms_matnr = matnr
            WITH ms_werks IN r_werks
            WITH ms_lgort IN r_lgort
@@ -2195,7 +2196,7 @@ TYPES: BEGIN OF t_mat_conv_ctd,
         no_authority              = 6
         OTHERS                    = 7.
     IF sy-subrc &lt;&gt; 0.
-*
+      MESSAGE &apos;Error recuperando material&apos; TYPE &apos;S&apos;.
     ENDIF.
 
     CLEAR l_contvista.

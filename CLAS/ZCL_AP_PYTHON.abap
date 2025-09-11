@@ -128,7 +128,7 @@ METHOD ejecutar_frontend.
     IF sy-subrc <> 0.
       CASE sy-subrc.
         WHEN '4'.
-          message = |AplicaciÃ³n { app } no existe|.
+          message = |Aplicación { app } no existe|.
         WHEN OTHERS.
           message = |Error { sy-subrc }|.
       ENDCASE.
@@ -169,7 +169,7 @@ METHOD ejecutar_script.
         IF salida CS 'No module named'.
           SPLIT salida AT 'No module named ''' INTO DATA(l_aux) DATA(l_modulo).
           SPLIT l_modulo AT '''' INTO l_modulo l_aux.
-          IF zcl_ap_popup=>confirmar( |Â¿Quiere instalar modulo python { l_modulo }?| ).
+          IF zcl_ap_popup=>confirmar( |¿Quiere instalar modulo python { l_modulo }?| ).
             l_contenido_bat = |pip install { l_modulo }|.
             CONCATENATE l_contenido_bat 'pause' INTO l_contenido_bat SEPARATED BY cl_abap_char_utilities=>cr_lf.
             zcl_ap_ficheros=>grabar_xstring( EXPORTING string        = l_contenido_bat
@@ -179,7 +179,7 @@ METHOD ejecutar_script.
             ejecutar_frontend( EXPORTING app     = fichero_bat
                                IMPORTING message = message ).
             IF message IS INITIAL.
-              message = |Se ha instalado el mÃ³dulo { l_modulo }. Reintente lanzar el script|.
+              message = |Se ha instalado el módulo { l_modulo }. Reintente lanzar el script|.
             ENDIF.
           ENDIF.
         elseif me->borrar = 'X' and message is initial.

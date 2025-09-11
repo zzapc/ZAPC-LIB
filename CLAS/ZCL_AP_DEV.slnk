@@ -3670,12 +3670,36 @@ type-pools abap.</localImplementation>
          OR l_tabla    CS &apos;DEFINITION LOAD&apos;.
         DELETE i_tabla.
       ELSE.
+      data string type string.
+         CALL FUNCTION &apos;SCP_REPLACE_STRANGE_CHARS&apos;
+      EXPORTING  intext            = l_tabla
+                 replacement       = &apos;&apos;
+      IMPORTING  outtext           = l_tabla
+      EXCEPTIONS invalid_codepage  = 1
+                 codepage_mismatch = 2
+                 internal_error    = 3
+                 cannot_convert    = 4
+                 fields_not_type_c = 5
+                 OTHERS            = 6.
+
         SPLIT l_tabla AT ` &quot;EC` INTO l_tabla DATA(l_aux).
         SPLIT l_tabla AT ` ##` INTO l_tabla l_aux.
         IF l_aux CS &apos;.&apos;.
           CONCATENATE l_tabla &apos;.&apos; INTO l_tabla.
         ENDIF.
+        REPLACE ALL OCCURRENCES OF &apos;á&apos; IN l_tabla WITH &apos;a&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;é&apos; IN l_tabla WITH &apos;e&apos;.
         REPLACE ALL OCCURRENCES OF &apos;í&apos; IN l_tabla WITH &apos;i&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;ó&apos; IN l_tabla WITH &apos;o&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;ú&apos; IN l_tabla WITH &apos;u&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;Á&apos; IN l_tabla WITH &apos;A&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;É&apos; IN l_tabla WITH &apos;E&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;Í&apos; IN l_tabla WITH &apos;I&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;Ó&apos; IN l_tabla WITH &apos;O&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;Ú&apos; IN l_tabla WITH &apos;U&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;A*3&apos; IN l_tabla WITH &apos;O&apos;.
+        REPLACE ALL OCCURRENCES OF &apos;&apos;&apos;A?&apos; IN l_tabla WITH &apos;&apos;&apos;?&apos;.
+
         MODIFY i_tabla FROM l_tabla.
       ENDIF.
     ENDLOOP.

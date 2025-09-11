@@ -146,12 +146,12 @@ class ZCL_AP_EXITS implementation.
       activa = zap_exits-activa.
     ELSEIF zap_exits-activa = 'U'.
       IF zap_exits-usuarios_activos IS INITIAL.
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa dependiente de usuario, pero lista usuarios vac铆a'(adu) msgty = 'W' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa dependiente de usuario, pero lista usuarios vac韆'(adu) msgty = 'W' ).
       ELSEIF zcl_ap_lista=>es_elemento( lista = zap_exits-usuarios_activos elemento = uname ) = 'X'.
         activa = 'X'.
         log( p1 = 'Exit'(exi) p2 = id p3 = 'activa para los usuarios'(apu) p4 = zap_exits-usuarios_activos msgty = 'S' ).
       ELSE.
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa S脫LO para los usuarios'(asu) p4 = zap_exits-usuarios_activos msgty = 'E' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa S覮O para los usuarios'(asu) p4 = zap_exits-usuarios_activos msgty = 'E' ).
       ENDIF.
     ELSE.
       log( p1 = 'Exit'(exi) p2 = id p3 = 'inactiva'(ina) msgty = 'W' ).
@@ -166,7 +166,7 @@ class ZCL_AP_EXITS implementation.
 
     IF activa = 'X' AND NOT zap_exits-ffin IS INITIAL.
       IF NOT ( zap_exits-ffin >= sy-datum AND zap_exits-finicio <= sy-datum ).
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'no activa a fecha de hoy' p4 = 'S贸lo desde' p5 = zap_exits-finicio p6 = 'a' p7 = zap_exits-ffin msgty = 'S' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'no activa a fecha de hoy' p4 = 'S髄o desde' p5 = zap_exits-finicio p6 = 'a' p7 = zap_exits-ffin msgty = 'S' ).
         CLEAR activa.
       ENDIF.
     ENDIF.
@@ -174,7 +174,7 @@ class ZCL_AP_EXITS implementation.
     IF activa = 'X'.
       IF NOT condicion IS INITIAL.
         IF NOT line_exists( i_condiciones[ clave = condicion clave2 = valor_clave2 ] ).
-          IF line_exists( i_condiciones[ clave = condicion  ] ). " S贸lo desactivamos si hay alguna entrada para la condici贸n
+          IF line_exists( i_condiciones[ clave = condicion  ] ). " S髄o desactivamos si hay alguna entrada para la condici髇
             CLEAR activa.
           ENDIF.
         ENDIF.
@@ -253,7 +253,7 @@ class ZCL_AP_EXITS implementation.
             IF sy-subrc = 0.
               l_valor_cond = <fs>.
             ELSE.
-              log( p1 = 'Condici贸n' p2 = l_cond-clave p3 = 'desconocida' ).
+              log( p1 = 'Condici髇' p2 = l_cond-clave p3 = 'desconocida' ).
             ENDIF.
         ENDCASE.
 
@@ -285,7 +285,7 @@ class ZCL_AP_EXITS implementation.
     IF sy-subrc = 0.
       cumple = 'X'.
     ELSE.
-      SELECT SINGLE clave2 FROM zap_exits_par " Si no existe la condici贸n, tambi茅n lo doy por buena
+      SELECT SINGLE clave2 FROM zap_exits_par " Si no existe la condici髇, tambi閚 lo doy por buena
       INTO l_valor_sin_ceros
      WHERE id    = exit
        AND tipo  = 'C'

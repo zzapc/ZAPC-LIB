@@ -1,8 +1,8 @@
 ************************************************************************
 *
-* M√ìDULO      : BC                                                     *
+* M”DULO      : BC                                                     *
 * TIPO        : REPORT                                                 *
-* TITULO      : Informaci√≥n detallada modificaciones objetos
+* TITULO      : InformaciÛn detallada modificaciones objetos
 * DESCRIPCION :                                                        *
 * ...                                                                  *
 * ...                                                                  *
@@ -68,7 +68,7 @@ DATA: l_include LIKE rs38l-include,
       v_nomail.
 
 *------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME TITLE text-002. "Par√°
+SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME TITLE text-002. "Par·
 
 SELECT-OPTIONS: s_fechas FOR sy-datum DEFAULT sy-datum OBLIGATORY,
                 s_uname FOR sy-uname.
@@ -284,7 +284,7 @@ FORM actualizar_datos.
         i_zbc004-udat = i_trdir-cdat.
       ENDIF.
       i_zbc004-modstandard = 'X'.
-      i_zbc004-comentario = '¬°¬°¬°CAMBIO EN MODIFICACI√ìN AL EST√ÅNDAR!!!'.
+      i_zbc004-comentario = '°°°CAMBIO EN MODIFICACI”N AL EST¡NDAR!!!'.
       APPEND i_zbc004.
 
       t 'Se ha modificado el objecto'.
@@ -707,9 +707,9 @@ FORM enviar_mail .
                 'Objeto',
                 'Nombre',
                 'Texto',
-                'Funci√≥n',
+                'FunciÛn',
                 'Orden',
-                'Descripci√≥n'.
+                'DescripciÛn'.
 
       t '  </tr>'.
     ENDAT.
@@ -883,7 +883,7 @@ FORM descargar USING pe_mail.
         inicio_mail_html l_fichero.
         t4 '<h3>Programa:' i_ficheros-name i_ficheros-text '</h3>'.
         IF NOT i_ficheros-funcion IS INITIAL.
-          t3 '<h3>Funci√≥n:' i_ficheros-funcion '</h3>'.
+          t3 '<h3>FunciÛn:' i_ficheros-funcion '</h3>'.
         ENDIF.
         IF NOT i_ficheros-grupo IS INITIAL.
           t3 '<h3>Grupo de funciones:' i_ficheros-grupo '</h3>'.

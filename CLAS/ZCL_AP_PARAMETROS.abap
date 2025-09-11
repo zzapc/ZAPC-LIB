@@ -1037,7 +1037,7 @@ class ZCL_AP_PARAMETROS implementation.
     SELECT fieldname FROM dd03l
       INTO TABLE @DATA(i_campos)
      WHERE tabname   = 'ZPARAMETROS'
-       AND position >= '0003'  " SÃ³lo queremos los campos Ãºtiles
+       AND position >= '0003'  " Sólo queremos los campos útiles
        and not fieldname in ('AEDAT', 'AENAM', 'AEZET')
      ORDER BY position.
 
@@ -1066,7 +1066,7 @@ class ZCL_AP_PARAMETROS implementation.
         ASSIGN COMPONENT <campo> OF STRUCTURE <param> TO FIELD-SYMBOL(<valor>).
 
 
-* Si el campo destino tiene rutina de conversiÃ³n la aplicamos
+* Si el campo destino tiene rutina de conversión la aplicamos
         ASSIGN i_campos_final[ fieldname = l_campo ]-edit_mask TO FIELD-SYMBOL(<mask>).
         IF <mask>(2) = '=='.
           DATA(l_funcion) = |CONVERSION_EXIT_{ <mask>+2 }_INPUT|.
@@ -1119,7 +1119,7 @@ class ZCL_AP_PARAMETROS implementation.
         l_param_rango-campo  = zcl_ap_string=>lista2rango( l_par-campo ).
         l_param_rango-valor  = zcl_ap_string=>lista2rango( l_par-valor ).
         l_param_rango-valor2 = zcl_ap_string=>lista2rango( l_par-valor2 ).
-        DELETE l_param_rango-valor2 WHERE low = 'Â¿Â¿Â¿Â¿????'.
+        DELETE l_param_rango-valor2 WHERE low = '¿¿¿¿????'.
 
         l_param_rango-atributo1 = l_par-atributo1.
         l_param_rango-atributo2 = l_par-atributo2.

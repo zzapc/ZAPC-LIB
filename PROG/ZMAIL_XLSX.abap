@@ -1,9 +1,9 @@
 ***********************************************************************
 * TIPO : LISTADO
-* TITULO : Genera XLSX de un ALV y envío por mail
+* TITULO : Genera XLSX de un ALV y envÃ­o por mail
 * DESCRIPCION : Genera XLSX de un ALV
 *
-* AUTOR: Andrés Picazo                                FECHA: 29/10/2024
+* AUTOR: AndrÃ©s Picazo                                FECHA: 29/10/2024
 *
 ***********************************************************************
 REPORT zmail_xlsx.
@@ -73,7 +73,7 @@ AT SELECTION-SCREEN.
     ENDIF.
     IF p_ftp = 'X'.
       IF p_dftp IS INITIAL.
-        MESSAGE 'Informe dirección FTP' TYPE 'E'.
+        MESSAGE 'Informe direcciÃ³n FTP' TYPE 'E'.
       ENDIF.
       IF p_user IS INITIAL.
         MESSAGE 'Informe usuario FTP' TYPE 'E'.

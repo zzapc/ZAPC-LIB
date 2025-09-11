@@ -513,7 +513,7 @@ class ZCL_AP_ORDEN_PP implementation.
      ORDER BY PRIMARY KEY.
     ENDSELECT.
     IF sy-subrc <> 0.
-      mensaje = |Status { status } no vÃ¡lido|.
+      mensaje = |Status { status } no válido|.
       RETURN.
     ENDIF.
 
@@ -540,7 +540,7 @@ class ZCL_AP_ORDEN_PP implementation.
         OTHERS              = 4.
     IF sy-subrc <> 0 OR l_error = 'X'.
       CASE sy-subrc.
-        WHEN 1. mensaje = 'Orden errÃ³nea'.
+        WHEN 1. mensaje = 'Orden errónea'.
         WHEN 2. mensaje = 'Status inconsistente'.
         WHEN 3. mensaje = 'Status no permitido'.
         WHEN OTHERS. MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO mensaje.
@@ -599,7 +599,7 @@ class ZCL_AP_ORDEN_PP implementation.
        WHERE stsma = l_jsto-stsma
          AND spras = spras.
       IF sy-subrc <> 0.
-        CONCATENATE 'Esquema'(esq) l_jsto-stsma 'no contiene ningÃºn status'(ncn) INTO mensaje SEPARATED BY space.
+        CONCATENATE 'Esquema'(esq) l_jsto-stsma 'no contiene ningún status'(ncn) INTO mensaje SEPARATED BY space.
       ELSE.
         l_nstatus = lines( i_tj30t ).
         READ TABLE i_tj30t INTO l_tj30t WITH KEY txt04 = status.
@@ -614,14 +614,14 @@ class ZCL_AP_ORDEN_PP implementation.
              AND inact = ''.
           IF sy-subrc = 0.
 * Si el status ya esta activo no hacemos nada
-            CONCATENATE '>Orden ya estÃ¡ en estado'(oye) status 'No hacemos nada'(nhn) INTO mensaje SEPARATED BY space.
+            CONCATENATE '>Orden ya está en estado'(oye) status 'No hacemos nada'(nhn) INTO mensaje SEPARATED BY space.
           ELSE.
             IF no_permitir_anterior = 'X'.
               SELECT * FROM jest
                 INTO l_jest
                 UP TO 1 ROWS
                WHERE objnr    = l_jsto-objnr
-                 AND stat  LIKE 'E%' " SÃ³lo estatus de usuario
+                 AND stat  LIKE 'E%' " Sólo estatus de usuario
                  AND inact    = ''
                 ORDER BY PRIMARY KEY.
               ENDSELECT.
@@ -650,7 +650,7 @@ class ZCL_AP_ORDEN_PP implementation.
 ** Pantalla de acceso modificar/visualizar orden
 *          o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5110').
 *          o_bi->campos( campo = 'BDC_OKCODE' valor = '/00').
-*          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+*          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
 *
 *          o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5115').
 *          o_bi->campos( campo = 'BDC_OKCODE' valor = '=STAT').
@@ -673,7 +673,7 @@ class ZCL_AP_ORDEN_PP implementation.
 *
 *          mensaje = o_bi->llamar_transaccion( tcode = 'COR2' modo = 'E').
 
-* Vuelvo a verificar si el estatus se ha grabado con Ã©xito, y si es asÃ­, blanqueamos mensaje
+* Vuelvo a verificar si el estatus se ha grabado con éxito, y si es así, blanqueamos mensaje
 
             IF l_autyp = '40'.
               APPEND aufnr TO i_orders.
@@ -824,7 +824,7 @@ class ZCL_AP_ORDEN_PP implementation.
 * Pantalla de acceso modificar/visualizar orden
             o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5110' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-            o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+            o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
             o_bi->campos( campo = 'R62CLORD-FLG_COMPL' valor = 'X' ). " Indicador: tratar toda el grafo la orden
 
             o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5115' ).
@@ -857,7 +857,7 @@ class ZCL_AP_ORDEN_PP implementation.
 * Pantalla de acceso modificar/visualizar orden
           o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5110' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
           o_bi->campos( campo = 'R62CLORD-FLG_COMPL' valor = 'X' ). " Indicador: tratar toda el grafo la orden
 
           o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5115' ).
@@ -868,7 +868,7 @@ class ZCL_AP_ORDEN_PP implementation.
 
           message = o_bi->llamar_transaccion( tcode = 'COR2' modo = modo ).
         ELSEIF l_autyp = '20'.
-          message = 'No implementado para tipo de Ã³rdenes 20'.
+          message = 'No implementado para tipo de órdenes 20'.
         ENDIF.
         IF contiene_status( aufnr = aufnr status = 'CERR' ) = ''.
           CLEAR message.
@@ -889,9 +889,9 @@ class ZCL_AP_ORDEN_PP implementation.
       CONCATENATE 'No existe la orden'(neo) aufnr INTO mensaje SEPARATED BY space.
     ELSE.
       IF anular IS INITIAL AND contiene_status( aufnr = aufnr status = 'CTEC' ) = 'X'.
-        mensaje = '>Orden ya estaba cerrada tÃ©cnicamente'(oyc).
+        mensaje = '>Orden ya estaba cerrada técnicamente'(oyc).
       ELSEIF anular = 'X' AND contiene_status( aufnr = aufnr status = 'CTEC' ) = ''.
-        mensaje = '>Orden no estaba cerrada tÃ©cnicamente'(oct).
+        mensaje = '>Orden no estaba cerrada técnicamente'(oct).
       ELSE.
         o_bi = NEW #( ).
 
@@ -901,7 +901,7 @@ class ZCL_AP_ORDEN_PP implementation.
 * Pantalla de acceso modificar/visualizar orden
           o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5110' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
 
           o_bi->dynpro( program = 'SAPLCOKO' dynpro = '5115' ).
           IF anular IS INITIAL.
@@ -918,7 +918,7 @@ class ZCL_AP_ORDEN_PP implementation.
 * Pantalla de acceso modificar/visualizar orden
           o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0110' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+          o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
 
           o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0115' ).
           IF anular IS INITIAL.
@@ -934,9 +934,9 @@ class ZCL_AP_ORDEN_PP implementation.
         ENDIF.
 
         IF contiene_status( aufnr = aufnr status = 'CTEC' ) = 'X' AND anular IS INITIAL.
-          mensaje = '>Se ha cerrado tÃ©cnicamente la orden'(sct).
+          mensaje = '>Se ha cerrado técnicamente la orden'(sct).
         ELSEIF contiene_status( aufnr = aufnr status = 'CTEC' ) = '' AND anular = 'X'.
-          mensaje = '>Se ha anulado cierre tÃ©cnicamente la orden'(sac).
+          mensaje = '>Se ha anulado cierre técnicamente la orden'(sac).
         ENDIF.
 
       ENDIF.
@@ -1617,7 +1617,7 @@ class ZCL_AP_ORDEN_PP implementation.
       IF meins <> '' AND meins <> <mov>-meins AND <mov>-menge <> 0.
         <mov>-menge = zcl_ap_material=>convertir_unidad( matnr = <mov>-matnr unidad_origen = <mov>-meins unidad_destino = meins cantidad = <mov>-menge ).
         IF <mov>-menge = 0.
-          message = |Material { <mov>-matnr ALPHA = OUT } no tiene conversiÃ³n de { <mov>-meins } a { meins }|.
+          message = |Material { <mov>-matnr ALPHA = OUT } no tiene conversión de { <mov>-meins } a { meins }|.
         ENDIF.
       ENDIF.
       IF <mov>-shkzg = 'S'.
@@ -1767,7 +1767,7 @@ class ZCL_AP_ORDEN_PP implementation.
 *         TRIGGER_POINT =
           component     = i_component.
 *       PROD_REL_TOOL =
-    ELSEIF aufk-autyp = '10'. " Orden de fabricaciÃ³n
+    ELSEIF aufk-autyp = '10'. " Orden de fabricación
       l_obj_pp-header     = header.
       l_obj_pp-positions  = positions.
       l_obj_pp-sequences  = ''.
@@ -2086,17 +2086,17 @@ class ZCL_AP_ORDEN_PP implementation.
     o_bi->inicio( ).
 
     o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0110' okcode = '/00' ).
-    o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " NÃºmero de orden
+    o_bi->campos( campo = 'CAUFVD-AUFNR' valor = aufnr ). " Número de orden
 
     o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0115' okcode = '=STAK' ).
 
     o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0131' okcode = '=ENT1' ).
-    o_bi->campos( campo = 'RC62F-REV_SEL' valor = '' ). " Casilla de selecciÃ³n
-    o_bi->campos( campo = 'RC62F-NO_SEL' valor = 'X' ). " Casilla de selecciÃ³n
+    o_bi->campos( campo = 'RC62F-REV_SEL' valor = '' ). " Casilla de selección
+    o_bi->campos( campo = 'RC62F-NO_SEL' valor = 'X' ). " Casilla de selección
     o_bi->campos( campo = 'RC62F-NEW_ROUT' valor = 'X' ). " Indicador: seleccionar nuevamente hoja de ruta
-    o_bi->campos( campo = 'RC62F-PLAUF' valor = '31.12.2999' ). " Fecha de explosiÃ³n de hoja de ruta
+    o_bi->campos( campo = 'RC62F-PLAUF' valor = '31.12.2999' ). " Fecha de explosión de hoja de ruta
     o_bi->campos( campo = 'RC62F-NEW_BOM' valor = 'X' ). " Indicador: seleccionar nuevamente lista de materiales
-    o_bi->campos( campo = 'RC62F-AUFLD' valor = '31.12.2999' ). " Fecha de explosiÃ³n p. lista materiales y hoja de ruta
+    o_bi->campos( campo = 'RC62F-AUFLD' valor = '31.12.2999' ). " Fecha de explosión p. lista materiales y hoja de ruta
 
     o_bi->dynpro( program = 'SAPLCOKO1' dynpro = '0115' okcode = '=BU' ).
 
@@ -2131,7 +2131,7 @@ class ZCL_AP_ORDEN_PP implementation.
             TABLES
               orders          = lti_orders
               detail_return   = lti_detail_return.
-        ELSEIF l_autyp = '10'. " Orden de fabricaciÃ³n
+        ELSEIF l_autyp = '10'. " Orden de fabricación
           CALL FUNCTION 'BAPI_PRODORD_RELEASE'
             EXPORTING
               release_control = '1'
@@ -2206,7 +2206,7 @@ class ZCL_AP_ORDEN_PP implementation.
 
     CLEAR ls_afvc.
 
-* Buscamos la operaciÃ³n a notificar
+* Buscamos la operación a notificar
     SELECT afvc~vornr afvc~objnr afvc~rueck afvc~steus afpo~matnr afvc~arbid afpo~pwerk
     INTO CORRESPONDING FIELDS OF ls_afvc
       UP TO 1 ROWS
@@ -2217,11 +2217,11 @@ class ZCL_AP_ORDEN_PP implementation.
      ORDER BY vornr.
     ENDSELECT.
     IF sy-subrc <> 0.
-      CONCATENATE 'La orden'(lor) me->aufk-aufnr 'no tiene operaciÃ³n'(nto) vornr INTO mensaje SEPARATED BY space.
+      CONCATENATE 'La orden'(lor) me->aufk-aufnr 'no tiene operación'(nto) vornr INTO mensaje SEPARATED BY space.
       RETURN.
     ENDIF.
 
-* Comprobamos si el material estÃ¡ bloqueado
+* Comprobamos si el material está bloqueado
     CALL FUNCTION 'ENQUEUE_EMMARCS'
       EXPORTING
         mode_marc      = 'S'
@@ -2251,13 +2251,13 @@ class ZCL_AP_ORDEN_PP implementation.
           werks     = ls_afvc-pwerk.
     ENDIF.
 
-* Comprobamos que no estÃ© notificada
+* Comprobamos que no esté notificada
     SELECT SINGLE objnr INTO ls_afvc-objnr FROM jest
       WHERE objnr = ls_afvc-objnr
         AND stat  = 'I0009'
         AND inact = ''.
     IF sy-subrc = 0.
-      CONCATENATE 'La operaciÃ³n'(lop) ls_afvc-vornr 'de la orden'(dlo) me->aufk-aufnr 'ya estÃ¡ notificada fin'(yen)
+      CONCATENATE 'La operación'(lop) ls_afvc-vornr 'de la orden'(dlo) me->aufk-aufnr 'ya está notificada fin'(yen)
                   INTO mensaje SEPARATED BY space.
       RETURN.
     ENDIF.
@@ -2324,7 +2324,7 @@ class ZCL_AP_ORDEN_PP implementation.
           link_conf_goodsmov = i_link.
     ENDIF.
 
-* Llamamos a la funciÃ³n que crea la notificaciÃ³n
+* Llamamos a la función que crea la notificación
     CALL FUNCTION 'BAPI_PRODORDCONF_CREATE_TT'
       EXPORTING
         post_wrong_entries = '2'
@@ -2369,7 +2369,7 @@ class ZCL_AP_ORDEN_PP implementation.
 *         AND vornr = vornr.
 *      ENDSELECT.
       ELSE.
-        mensaje = 'Ha habido un error durante la notificaciÃ³n'(hen).
+        mensaje = 'Ha habido un error durante la notificación'(hen).
       ENDIF.
     ELSE.
       CALL FUNCTION 'DEQUEUE_ALL'.
@@ -2400,7 +2400,7 @@ class ZCL_AP_ORDEN_PP implementation.
 
     CLEAR ls_afvc.
 
-* Buscamos la operaciÃ³n a notificar
+* Buscamos la operación a notificar
     SELECT afvc~vornr afvc~objnr afvc~rueck afvc~steus afpo~matnr afvc~arbid afpo~pwerk
     INTO CORRESPONDING FIELDS OF ls_afvc
       UP TO 1 ROWS
@@ -2411,11 +2411,11 @@ class ZCL_AP_ORDEN_PP implementation.
      ORDER BY afvc~vornr.
     ENDSELECT.
     IF sy-subrc <> 0.
-      CONCATENATE 'La orden'(lor) me->aufk-aufnr 'no tiene operaciÃ³n'(nto) vornr INTO mensaje SEPARATED BY space.
+      CONCATENATE 'La orden'(lor) me->aufk-aufnr 'no tiene operación'(nto) vornr INTO mensaje SEPARATED BY space.
       RETURN.
     ENDIF.
 
-* Comprobamos si el material estÃ¡ bloqueado
+* Comprobamos si el material está bloqueado
     CALL FUNCTION 'ENQUEUE_EMMARCS'
       EXPORTING
         mode_marc      = 'S'
@@ -2445,13 +2445,13 @@ class ZCL_AP_ORDEN_PP implementation.
           werks     = ls_afvc-pwerk.
     ENDIF.
 
-* Comprobamos que no estÃ© notificada
+* Comprobamos que no esté notificada
     SELECT SINGLE objnr INTO ls_afvc-objnr FROM jest
       WHERE objnr = ls_afvc-objnr
         AND stat  = 'I0009'
         AND inact = ''.
     IF sy-subrc = 0.
-      CONCATENATE 'La operaciÃ³n'(lop) ls_afvc-vornr 'de la orden'(dlo) me->aufk-aufnr 'ya estÃ¡ notificada fin'(ynf)
+      CONCATENATE 'La operación'(lop) ls_afvc-vornr 'de la orden'(dlo) me->aufk-aufnr 'ya está notificada fin'(ynf)
                   INTO mensaje SEPARATED BY space.
       RETURN.
     ENDIF.
@@ -2460,9 +2460,9 @@ class ZCL_AP_ORDEN_PP implementation.
     l_timetickets-phase           = vornr.
     l_timetickets-plant           = ls_afvc-pwerk.
     l_timetickets-postg_date      = budat.
-*           NotificaciÃ³n parcial
-*           X NotificaciÃ³n final
-*           1 NotificaciÃ³n final automÃ¡tica
+*           Notificación parcial
+*           X Notificación final
+*           1 Notificación final automática
     l_timetickets-fin_conf        = parcial_final.
     l_timetickets-clear_res       = space.
     l_timetickets-yield           = cantidad.
@@ -2567,7 +2567,7 @@ class ZCL_AP_ORDEN_PP implementation.
       RETURN.
     ENDIF.
 
-* Llamamos a la funciÃ³n que crea la notificaciÃ³n
+* Llamamos a la función que crea la notificación
     CALL FUNCTION 'BAPI_PROCORDCONF_CREATE_TT'
       EXPORTING
         post_wrong_entries = '2'
@@ -2618,7 +2618,7 @@ class ZCL_AP_ORDEN_PP implementation.
 *         AND vornr = vornr.
 *      ENDSELECT.
       ELSE.
-        mensaje = 'Ha habido un error durante la notificaciÃ³n'(hen).
+        mensaje = 'Ha habido un error durante la notificación'(hen).
       ENDIF.
     ELSE.
       CALL FUNCTION 'DEQUEUE_ALL'.
@@ -2718,10 +2718,10 @@ class ZCL_AP_ORDEN_PP implementation.
 * Lista planif. nec. visual. individual: acceso
     o_bi->dynpro( program = 'SAPMM61R' dynpro = '0300' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-    o_bi->campos( campo = 'RM61R-MATNR' valor = matnr ). " NÃºmero de material
+    o_bi->campos( campo = 'RM61R-MATNR' valor = matnr ). " Número de material
     o_bi->campos( campo = 'RM61R-WERKS' valor = werks ). " Centro
-    o_bi->campos( campo = 'RM61R-DFILT' valor = '' ). " Activar filtro visualizaciÃ³n y regla selecciÃ³n
-*   o_bi->campos( campo = 'RM61R-ERGBZ' valor = 'ZAP00002'). " Regla selecciÃ³n
+    o_bi->campos( campo = 'RM61R-DFILT' valor = '' ). " Activar filtro visualización y regla selección
+*   o_bi->campos( campo = 'RM61R-ERGBZ' valor = 'ZAP00002'). " Regla selección
 
     l_mensaje = o_bi->llamar_transaccion( tcode = 'MD04' modo = 'E' ).
   ENDMETHOD.

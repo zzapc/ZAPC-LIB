@@ -2423,7 +2423,7 @@ CLASS lcl_sel_opt IMPLEMENTATION.
 
   METHOD init_fcat.
     mt_fcat = VALUE #(
-     ( fieldname = 'IND'         coltext = '№'  outputlen = 3 style = '00000003' )
+     ( fieldname = 'IND'         coltext = '#'  outputlen = 3 style = '00000003' )
      ( fieldname = 'FIELD_LABEL' coltext = 'Label'  outputlen = 30 dragdropid = i_dd_handle )
      ( fieldname = 'SIGN'        coltext = 'SIGN'   tech = abap_true )
      ( fieldname = 'OPTI'        coltext = 'Option' tech = abap_true )

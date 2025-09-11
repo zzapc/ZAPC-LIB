@@ -468,7 +468,7 @@ class ZCL_AP_FECHAS implementation.
     fecha_ddmmaaaa+4(4) = fecha_aaaammdd(4).
   ENDMETHOD.
   METHOD cl_reca_date. "#EC EMPTY_PROCEDURE
-* Recordatorio de que existe esta clase estÃ¡ndar con utilidades
+* Recordatorio de que existe esta clase estándar con utilidades
   ENDMETHOD.
   METHOD condensar_fechas.
     TYPES: BEGIN OF t_fechas_cond,
@@ -651,7 +651,7 @@ class ZCL_AP_FECHAS implementation.
       IF l_dif <= l_meses.
         si = 'X'.
       ENDIF.
-    ELSEIF l_f1(4) < l_f2(4). " Son aÃ±os diferentes
+    ELSEIF l_f1(4) < l_f2(4). " Son años diferentes
       IF l_f1+4(2) <= mes.
         si = 'X'.
       ENDIF.
@@ -876,7 +876,7 @@ class ZCL_AP_FECHAS implementation.
     ENDIF.
 
     dia = formato.
-*  'Nd, DD de nm de AAAA' -> SÃ¡bado, 25 de enero de 2014
+*  'Nd, DD de nm de AAAA' -> Sábado, 25 de enero de 2014
     IF dia CS 'ND' OR dia CS 'Nd' OR dia CS 'nd'.
       l_nombre_dia = get_nombre_numero_dia( fecha ).
       l_long = strlen( l_nombre_dia ).
@@ -936,7 +936,7 @@ class ZCL_AP_FECHAS implementation.
     IF tz = 'Z'.
       CONCATENATE fecha_ws 'Z' INTO fecha_ws.
     ELSEIF tz = 'N' OR tz = 'M'. "#EC EMPTY_IF_BRANCH
-* En este caso no queremos aÃ±adir nada a la hora
+* En este caso no queremos añadir nada a la hora
     ELSE.
       CONCATENATE fecha_ws '+01:00' INTO fecha_ws.
 
@@ -1041,7 +1041,7 @@ class ZCL_AP_FECHAS implementation.
       l_dia_fin = dia.
     ELSE.
       IF dia_fin < dia.
-        mensaje = 'DÃ­a fin no puede ser menor que dÃ­a inicial'(dfe).
+        mensaje = 'Día fin no puede ser menor que día inicial'(dfe).
         RETURN.
       ELSE.
         l_dia_fin = dia_fin.
@@ -1115,7 +1115,7 @@ class ZCL_AP_FECHAS implementation.
 
     CLEAR i_meses.
 
-    " Verificar rango de fechas vÃ¡lido
+    " Verificar rango de fechas válido
     IF fini IS INITIAL OR ffin IS INITIAL OR fini > ffin.
       RETURN.
     ENDIF.
@@ -1128,7 +1128,7 @@ class ZCL_AP_FECHAS implementation.
       " Establecer fecha de inicio para este segmento
       ls_date_range-begda = lv_current_date.
 
-      " Calcular Ãºltimo dÃ­a del mes actual
+      " Calcular último día del mes actual
       CALL FUNCTION 'RP_LAST_DAY_OF_MONTHS'
         EXPORTING
           day_in            = lv_current_date
@@ -1147,7 +1147,7 @@ class ZCL_AP_FECHAS implementation.
       " Agregar este rango de fechas a la tabla de resultados
       APPEND ls_date_range TO i_meses.
 
-      " Moverse al primer dÃ­a del siguiente mes
+      " Moverse al primer día del siguiente mes
       lv_current_date = lv_month_end + 1.
     ENDWHILE.
   ENDMETHOD.
@@ -1426,7 +1426,7 @@ class ZCL_AP_FECHAS implementation.
   ENDMETHOD.
   METHOD primer_dia_lab_desde_fecha.
 *       Si la fecha dada es laborable devuelve esa fecha,
-*       sino devuelve el primer dÃ­a laborable a partir de esa fecha
+*       sino devuelve el primer día laborable a partir de esa fecha
 
     CLEAR fecha_salida.
     CALL FUNCTION 'DATE_CONVERT_TO_FACTORYDATE' ##FM_SUBRC_OK
@@ -1570,7 +1570,7 @@ class ZCL_AP_FECHAS implementation.
     WHILE l_fecha <= l_endda.
       IF l_cont >= max_semanas.
         l_cont = max_semanas.
-        CONCATENATE 'Se utilizarÃ¡ un mÃ¡ximo de' l_cont 'semanas' INTO mensaje SEPARATED BY space.
+        CONCATENATE 'Se utilizará un máximo de' l_cont 'semanas' INTO mensaje SEPARATED BY space.
         EXIT.
       ENDIF.
       l_cont = l_cont + 1.
@@ -1782,7 +1782,7 @@ class ZCL_AP_FECHAS implementation.
     IF l_cadena CS '/'.
       IF corregir_errores = 'X'.
         SPLIT l_cadena AT '/' INTO l_aux_a l_aux_b l_aux_c.
-* SÃ³lo una barra.
+* Sólo una barra.
         IF l_aux_c IS INITIAL.
           IF l_cadena CS '.'.
             REPLACE '.' WITH '/' INTO l_cadena.
@@ -1840,8 +1840,8 @@ class ZCL_AP_FECHAS implementation.
       ENDIF.
       zcl_ap_string=>poner_ceros_c( CHANGING cadena = fecha+6(2) ).
       zcl_ap_string=>poner_ceros_c( CHANGING cadena = fecha+4(2) ).
-    ELSEIF    l_cadena(3) = 'LUN' OR l_cadena(3) = 'MAR' OR l_cadena(3) = 'MIÃ‰' OR l_cadena(4) = 'JUE'
-           OR l_cadena(3) = 'VIE' OR l_cadena(3) = 'SÃB' OR l_cadena(3) = 'DOM'.
+    ELSEIF    l_cadena(3) = 'LUN' OR l_cadena(3) = 'MAR' OR l_cadena(3) = 'MIÉ' OR l_cadena(4) = 'JUE'
+           OR l_cadena(3) = 'VIE' OR l_cadena(3) = 'SÁB' OR l_cadena(3) = 'DOM'.
       l_cadena = l_cadena+4.
       SPLIT l_cadena AT ' ' INTO l_dia l_mes.
       zcl_ap_string=>poner_ceros_c( CHANGING cadena = l_dia ).

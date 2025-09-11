@@ -553,9 +553,9 @@ class ZCL_AP_ENVIO_MAIL implementation.
                                            i_express    = urgente ).
           CATCH cx_send_req_bcs.
             IF parar_en_error = 'X'.
-              MESSAGE e398(00) WITH 'Error al a√±adir destinatario'(ead) destinatario '' ''.
+              MESSAGE e398(00) WITH 'Error al aÒadir destinatario'(ead) destinatario '' ''.
             ELSE.
-              CONCATENATE 'Error al a√±adir destinatario'(ead) destinatario INTO message SEPARATED BY space.
+              CONCATENATE 'Error al aÒadir destinatario'(ead) destinatario INTO message SEPARATED BY space.
             ENDIF.
         ENDTRY.
       ENDIF.
@@ -1344,7 +1344,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             TRY.
                 o_sender = cl_sapuser_bcs=>create( l_uname ).
               CATCH cx_bcs.
-                message = 'Error al a√±adir emisor'(eae).
+                message = 'Error al aÒadir emisor'(eae).
                 IF mostrar_info_error = 'X'.
                   MESSAGE message TYPE 'I'.
                 ENDIF.
@@ -1397,7 +1397,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         TRY.
             o_send_request->set_sender( o_sender ).
           CATCH cx_bcs.
-            message = 'Error al a√±adir emisor'(eae).
+            message = 'Error al aÒadir emisor'(eae).
             IF mostrar_info_error = 'X'.
               MESSAGE message TYPE 'I'.
             ENDIF.
@@ -1406,7 +1406,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           TRY.
               o_send_request->set_send_immediately( abap_true ).
             CATCH cx_bcs.
-              message = 'Error en env√≠o inmediato'(eei).
+              message = 'Error en envÌo inmediato'(eei).
               IF mostrar_info_error = 'X'.
                 MESSAGE message TYPE 'I'.
               ENDIF.
@@ -1444,7 +1444,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                   l_total_megas = l_total_megas + l_megas.
                   IF l_megas > <limite>.
                     DATA(l_aviso_megas) = 'X'.
-                    message = |El tama√±o en megas del fichero { l_titulo } es { l_megas }, superior al m√°ximo permitido { <limite> }|.
+                    message = |El tamaÒo en megas del fichero { l_titulo } es { l_megas }, superior al m·ximo permitido { <limite> }|.
                     IF mostrar_info_error = 'X'.
                       MESSAGE message TYPE 'I'.
                     ENDIF.
@@ -1484,7 +1484,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         ENDLOOP.
 
         IF l_limite_megas > 0 AND l_total_megas > l_limite_megas AND l_aviso_megas IS INITIAL.
-          message = |El tama√±o en megas del total de adjuntos { l_total_megas } es superior al m√°ximo permitido { <limite> }|.
+          message = |El tamaÒo en megas del total de adjuntos { l_total_megas } es superior al m·ximo permitido { <limite> }|.
           IF mostrar_info_error = 'X'.
             MESSAGE message TYPE 'I'.
           ENDIF.
@@ -1607,7 +1607,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                   OTHERS               = 2.
               IF sy-subrc <> 0.
                 error = 'X'.
-                message = 'Se ha cancelado el env√≠o del mail'.
+                message = 'Se ha cancelado el envÌo del mail'.
               ENDIF.
             ELSE.
               outlook( subject           = zap_mail_log-asunto
@@ -1620,7 +1620,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           ENDIF.
 
           IF commit = 'X'.
-* Si es un proceso en fondo, nos aseguramos que no es en UPDATE, si es as√≠, lanzamos la funcion Z_MAIL_REMOTO que lo lanza en otro hilo de ejecucion
+* Si es un proceso en fondo, nos aseguramos que no es en UPDATE, si es asÌ, lanzamos la funcion Z_MAIL_REMOTO que lo lanza en otro hilo de ejecucion
             DATA(l_upd_task) = zcl_ap_utils=>es_in_update_task( ).
             IF l_upd_task IS INITIAL.
               l_upd_task = zcl_ap_utils=>existe_en_pila( evento = 'BADI_IN_UPDATE' ).
@@ -1653,7 +1653,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                 OTHERS             = 1.
 
             IF sy-subrc <> 0.
-              message = 'Error llamando funci√≥n Z_MAIL_REMOTO'.
+              message = 'Error llamando funciÛn Z_MAIL_REMOTO'.
             ENDIF.
 
             RETURN.
@@ -1696,7 +1696,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                 IF sy-subrc = 0.
                   CASE l_soes-status.
                     WHEN '850'.
-                      message = 'Mensaje no enviado porque se ha sobrepasado el tama√±o m√°ximo de adjuntos'(mne).
+                      message = 'Mensaje no enviado porque se ha sobrepasado el tamaÒo m·ximo de adjuntos'(mne).
                   ENDCASE.
                   IF mostrar_info_error = 'X' AND NOT message IS INITIAL.
                     MESSAGE message TYPE 'I'.
@@ -1846,7 +1846,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         ENDIF.
       ENDIF.
       IF NOT plantilla-email_pruebas IS INITIAL.
-        l_texto = 'Destino al que deber√≠a haber ido el mail {mail_destino}'.
+        l_texto = 'Destino al que deberÌa haber ido el mail {mail_destino}'.
         IF plantilla-html = 'X'.
           CONCATENATE '<P><B>' l_texto '</B></P>' INTO l_texto.
         ENDIF.
@@ -1978,7 +1978,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         WHEN '672'.
           type = 'W'.
           l_icono = icon_time. " ICON_TIME
-          message = zcl_ap_utils=>concat( p1 = 'Mail en espera de env√≠o. Creado el'(mev) p2 = crdat p3 = 'a las'(ala) p4 = crtim p5 = 'por'(por) p6 = sndnam ).
+          message = zcl_ap_utils=>concat( p1 = 'Mail en espera de envÌo. Creado el'(mev) p2 = crdat p3 = 'a las'(ala) p4 = crtim p5 = 'por'(por) p6 = sndnam ).
         WHEN '751'.
           type = 'W'.
           l_icono = icon_failure. " FAILURE
@@ -1986,11 +1986,11 @@ class ZCL_AP_ENVIO_MAIL implementation.
         WHEN '850'.
           type = 'E'.
           l_icono = icon_led_red. " ICON_LED_RED
-          message = 'Mensaje no enviado porque se ha sobrepasado el tama√±o m√°ximo de adjuntos'(mta).
+          message = 'Mensaje no enviado porque se ha sobrepasado el tamaÒo m·ximo de adjuntos'(mta).
         WHEN OTHERS.
           type = 'E'.
           l_icono = icon_led_red. " ICON_LED_RED
-          message = zcl_ap_utils=>concat( p1 = 'Mail con status'(mcs) p2 = status p3 = 'no env√≠ado. Creado el'(nec) p4 = crdat p5 = 'a las'(ala) p6 = crtim p7 = 'por'(por) p8 = sndnam  ).
+          message = zcl_ap_utils=>concat( p1 = 'Mail con status'(mcs) p2 = status p3 = 'no envÌado. Creado el'(nec) p4 = crdat p5 = 'a las'(ala) p6 = crtim p7 = 'por'(por) p8 = sndnam  ).
       ENDCASE.
 
       IF add_destino = 'X' AND NOT msgv1 IS INITIAL.
@@ -2192,7 +2192,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             xstring = l_xstring ).
       ELSE.
         DESCRIBE TABLE i_tabla LINES sy-tfill.
-        IF sy-tfill > 20000. " Si tiene m√°s de 20000 l√≠neas lo m√°s securo es que casque por rendimiento, as√≠ que en lugar de enviar la tabla enviamos un mensaje diciendo que no se env√≠a
+        IF sy-tfill > 20000. " Si tiene m·s de 20000 lÌneas lo m·s securo es que casque por rendimiento, asÌ que en lugar de enviar la tabla enviamos un mensaje diciendo que no se envÌa
           l_aux = sy-tfill.
           CONCATENATE 'Tabla demasiado grande ('(tdg) l_aux '). No es posible adjuntar contenido'(npa) INTO l_texto.
           o_mail->set_text( l_texto ).
@@ -2277,7 +2277,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
     ENDIF.
 
     TRY.
-* Buscamos si existe el m√©todo especico en la clase
+* Buscamos si existe el mÈtodo especico en la clase
         CALL METHOD ('ZCL_C')=>('ES_PRODUCCION')
           EXPORTING
             sistema  = sy-sysid

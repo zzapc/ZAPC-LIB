@@ -217,7 +217,7 @@ METHOD borrar_gasto_transporte.
           l_t180    TYPE t180,
           l_retcode TYPE sy-subrc.
 
-* C贸digo basado en ROIGFQS1
+* C骴igo basado en ROIGFQS1
 
     CLEAR message.
 
@@ -410,7 +410,7 @@ METHOD contabilizar_gastos.
     ELSE.
       IF l_fbgst = 'C'.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'Transporte'(TRA) p2 = tknum p3 = 'ya ten铆a efectuado contabilizaci贸n de gastos'(YCG) msgty = 'I' ).
+          o_log->log( p1 = 'Transporte'(TRA) p2 = tknum p3 = 'ya ten韆 efectuado contabilizaci髇 de gastos'(YCG) msgty = 'I' ).
         ENDIF.
       ELSE.
         message = espera_si_bloqueado( tknum = tknum segundos_espera = segundos_espera_si_bloqueos ).
@@ -431,25 +431,25 @@ METHOD contabilizar_gastos.
 
           message = o_bi->llamar_transaccion( tcode = 'VI01' modo = modoct ). "#EC CI_USAGE_OK[2270199]
 
-          IF message CS 'ya est谩n calculados'(YEC) OR message CS 'Se graban gastos'(SGG).
+          IF message CS 'ya est醤 calculados'(YEC) OR message CS 'Se graban gastos'(SGG).
             CLEAR message.
           ENDIF.
 
           espera_si_bloqueado( tknum = tknum segundos_espera = segundos_espera_si_bloqueos ).
 
-*    FGC. Quitamos comprobaci贸n status gastos de transporte. Nueca es 'C'.
+*    FGC. Quitamos comprobaci髇 status gastos de transporte. Nueca es 'C'.
 *        CLEAR l_fbgst.
 *        SELECT SINGLE fbgst FROM vttk
 *          INTO l_fbgst
 *         WHERE tknum = tknum.
 *        IF l_fbgst = 'C'.
 *          IF NOT o_log IS INITIAL.
-*            o_log->log( p1 = 'Se ha modificado contabilizaci贸n de gastos del transporte' p2 = tknum msgty = 'S' ).
+*            o_log->log( p1 = 'Se ha modificado contabilizaci髇 de gastos del transporte' p2 = tknum msgty = 'S' ).
 *          ENDIF.
 *          CLEAR message.
 *        ELSE.
 *          IF NOT o_log IS INITIAL.
-*            o_log->log( p1 = 'Error efectuando contabilizaci贸n de gastos del transporte' p2 = tknum p3 = message msgty = 'E' ).
+*            o_log->log( p1 = 'Error efectuando contabilizaci髇 de gastos del transporte' p2 = tknum p3 = message msgty = 'E' ).
 *          ENDIF.
 *        ENDIF.
         ELSE.
@@ -561,7 +561,7 @@ METHOD get_entregas.
   DATA: i_vbeln    TYPE TABLE OF vbeln_vl,
         l_vbeln    TYPE vbeln_vl,
         l_entregas TYPE t_entregas,
-        l_tabla    TYPE string VALUE 'VBUK'. "En HANA deber铆a ser LIKP
+        l_tabla    TYPE string VALUE 'VBUK'. "En HANA deber韆 ser LIKP
 
   IF zcl_c=>hana = 'X'.
     l_tabla = 'LIKP'.
@@ -627,7 +627,7 @@ METHOD modificar_coste.
     ELSE.
       IF l_vttk-tndr_actp = coste.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'El coste de transporte'(ECT) p2 = coste  p3 = 'no var铆a'(NVA) msgty = 'W' ).
+          o_log->log( p1 = 'El coste de transporte'(ECT) p2 = coste  p3 = 'no var韆'(NVA) msgty = 'W' ).
         ENDIF.
       ELSE.
         CLEAR headerdata.
@@ -702,31 +702,31 @@ METHOD modificar_fecha_hora.
     __concat2 message 'No existe el transporte' tknum.
   ELSE.
     CASE campo_fecha.
-      WHEN 'DTDIS'. "Fecha planificaci贸n
+      WHEN 'DTDIS'. "Fecha planificaci髇
         l_campo_hora = 'UZDIS'.
-        l_time_type  = 'HDRSTPLDT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
+        l_time_type  = 'HDRSTPLDT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
       WHEN 'DPREG'. "Fecha llegada plan
         l_campo_hora = 'UPREG'.
-        l_time_type  = 'HDRSTCIPDT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
+        l_time_type  = 'HDRSTCIPDT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
       WHEN 'DAREG'. "Fecha llegada confirmada
         l_campo_hora = 'UAREG'.
         l_time_type  = 'HDRSTCIADT'.
       WHEN 'DPTEN'.
         l_campo_hora = 'UPTEN'.
-        l_time_type  = 'HDRSTSEPDT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
+        l_time_type  = 'HDRSTSEPDT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
       WHEN 'DPLEN'. "Fin Carga plan
         l_campo_hora = 'UPLEN'.
-        l_time_type  = 'HDRSTLEPDT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
+        l_time_type  = 'HDRSTLEPDT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
       WHEN 'DALEN'. "Fin Carga real
         l_campo_hora = 'UALEN'.
-        l_time_type  = 'HDRSTLEADT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
-      WHEN 'DTABF'. "Despacho expdici贸n real
+        l_time_type  = 'HDRSTLEADT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
+      WHEN 'DTABF'. "Despacho expdici髇 real
         l_campo_hora = 'UZABF'.
-        l_time_type  = 'HDRSTCADT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
+        l_time_type  = 'HDRSTCADT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
       WHEN 'DPLBG'. "Inicio de carga planificado
         l_campo_hora = 'UPLBG'.
-        l_time_type  = 'HDRSTLSPDT'. "*Ver c贸digos equivalencia en include LV56I_BAPIF03 linea 3900.
-      WHEN 'DPABF'. "Despacho expedici贸n plan
+        l_time_type  = 'HDRSTLSPDT'. "*Ver c骴igos equivalencia en include LV56I_BAPIF03 linea 3900.
+      WHEN 'DPABF'. "Despacho expedici髇 plan
         l_campo_hora = 'UPABF'.
         l_time_type  = 'HDRSTCPDT'. "Status copmlete act
       WHEN 'DATEN'. "Fin transporte real
@@ -757,7 +757,7 @@ METHOD modificar_fecha_hora.
 
       IF l_cambios IS INITIAL.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'El valor de fecha' p2 = campo_fecha p3 = fecha p4 = hora p5 = 'no var铆a' msgty = 'W' ).
+          o_log->log( p1 = 'El valor de fecha' p2 = campo_fecha p3 = fecha p4 = hora p5 = 'no var韆' msgty = 'W' ).
         ENDIF.
       ELSE.
         CLEAR headerdata.
@@ -876,7 +876,7 @@ METHOD modificar_status.
   ELSE.
     IF l_vttk-sttrg = status.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'El status del transporte'(est) p2 = tknum p3 = status p4 = 'no var铆a'(nva) msgty = 'W' ).
+        o_log->log( p1 = 'El status del transporte'(est) p2 = tknum p3 = status p4 = 'no var韆'(nva) msgty = 'W' ).
       ENDIF.
     ELSEIF l_vttk-sttrg > status AND solo_superior = 'X'.
       IF NOT o_log IS INITIAL.
@@ -898,7 +898,7 @@ METHOD modificar_status.
 *STATUS_LOAD_START  STLBG CHAR  1 0 Status para inicio de carga
           headerdata-status_load_start = ''.
           headerdataaction-status_load_start = 'D'.
-*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci贸n de carga
+*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci髇 de carga
           headerdata-status_load_end = ''.
           headerdataaction-status_load_end = 'D'.
 
@@ -909,22 +909,22 @@ METHOD modificar_status.
 *STATUS_LOAD_START  STLBG CHAR  1 0 Status para inicio de carga
           headerdata-status_load_start = ''.
           headerdataaction-status_load_start = 'D'.
-*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci贸n de carga
+*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci髇 de carga
           headerdata-status_load_end = ''.
           headerdataaction-status_load_end = 'D'.
         WHEN '3'.
 *STATUS_LOAD_START  STLBG CHAR  1 0 Status para inicio de carga
           headerdata-status_load_start = 'X'.
           headerdataaction-status_load_start = 'C'.
-*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci贸n de carga
+*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci髇 de carga
           headerdata-status_load_end = ''.
           headerdataaction-status_load_end = 'D'.
         WHEN '4'. "Fin de carga
-*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci贸n de carga
+*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci髇 de carga
           headerdata-status_load_end = 'X'.
           headerdataaction-status_load_end = 'C'.
 
-        WHEN '5'.  "Despacho expedici贸n
+        WHEN '5'.  "Despacho expedici髇
           headerdata-status_compl      = 'X'.
           headerdataaction-status_compl = 'C'.
 
@@ -938,10 +938,10 @@ METHOD modificar_status.
 
       ENDCASE.
 *STATUS_LOAD_START  STLBG CHAR  1 0 Status para inicio de carga
-*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci贸n de carga
-*STATUS_COMPL STABF CHAR  1 0 Status de despacho de expedici贸n
+*STATUS_LOAD_END  STLAD CHAR  1 0 Status para finalizaci髇 de carga
+*STATUS_COMPL STABF CHAR  1 0 Status de despacho de expedici髇
 *STATUS_SHPMNT_START  STTBG CHAR  1 0 Status para inicio de transporte
-*STATUS_SHPMNT_END  STTEN CHAR  1 0 Status para finalizaci贸n de transporte
+*STATUS_SHPMNT_END  STTEN CHAR  1 0 Status para finalizaci髇 de transporte
 
 *      CONCATENATE sy-datum sy-uzeit INTO v_time_utc.
 *      headerdeadline-time_type = ttype.
@@ -1221,7 +1221,7 @@ METHOD simular_gastos_transporte.
       ENDLOOP.
       CALL FUNCTION 'Z_POPUP_ALV_AP'
         EXPORTING
-          titulo  = |Simulaci贸n gastos transporte { tknum ALPHA = OUT }|
+          titulo  = |Simulaci髇 gastos transporte { tknum ALPHA = OUT }|
           texto   = l_texto
           texto2  = message
           botones = 'OK'

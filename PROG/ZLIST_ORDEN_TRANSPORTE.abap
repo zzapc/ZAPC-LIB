@@ -5,7 +5,7 @@
 * *
 * DESCRIPCION : Informe ordenes de transporte
 *
-* AUTOR: AndrÃ©s Picazo                                FECHA: 12/01/2012
+* AUTOR: Andrés Picazo                                FECHA: 12/01/2012
 * ANALISTA: ??<<<<<<<<
 *
 * MODIFICACIONES
@@ -132,7 +132,7 @@ CLASS lcl_alv IMPLEMENTATION.
         WHEN 'NTASK'.
           *ztemp-valor1 = l_listado-ntask.
           zcl_ap_popup=>popup_usuario( EXPORTING campo1 = 'ZTEMP-VALOR1'
-                                                 titulo = 'Informe nÂº tarea'
+                                                 titulo = 'Informe nº tarea'
                                        IMPORTING return = l_return
                                        CHANGING  valor1 = *ztemp-valor1 ).
           vbak-vbeln = *ztemp-valor1.
@@ -405,7 +405,7 @@ FORM listado .
   o_alv->set_layout( p_vari ).
 *  o_alv->set_top_of_page( ).
 
-  o_alv->set_field_text( campo = 'NTASK' valor = 'NÂº Tarea' ).
+  o_alv->set_field_text( campo = 'NTASK' valor = 'Nº Tarea' ).
   o_alv->set_orden( 'FECHA,HORA,NTASK,STRKORR,TRKORR,TRFUNCTION,TRUSER,AS4TEXT' ).
   o_alv->set_field_noout( 'CONT' ).
 
@@ -427,7 +427,7 @@ FORM leer_datos .
 
   PERFORM leer_historial_transporte USING p_fini p_hini p_ffin p_hfin.
 
-  o_sgpi->texto( 'Preparando informaciÃ³n' ).
+  o_sgpi->texto( 'Preparando información' ).
 
   DELETE i_log WHERE as4text = 'ORDEN'
                   OR as4text = 'orden'.
@@ -497,7 +497,7 @@ FORM leer_cola .
 
   PERFORM leer_historial_transporte USING p_fini p_hini p_ffin p_hfin.
 
-  o_sgpi->texto( 'Preparando informaciÃ³n' ).
+  o_sgpi->texto( 'Preparando información' ).
   LOOP AT i_request INTO l_request WHERE owner  IN s_user
                                      AND trfunc IN s_func
                                      AND trkorr IN s_korr

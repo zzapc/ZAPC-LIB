@@ -389,7 +389,7 @@ class ZCL_AP_ENTREGAS implementation.
           WHERE vbeln = pedido
             AND posnr = posnr.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1 = 'Marcamos posiciÃ³n pedido' p2 = pedido p3 = posnr p4 = 'como completa. Â¡REVISE PEDIDO!' msgty = 'W' ).
+            o_log->log( p1 = 'Marcamos posición pedido' p2 = pedido p3 = posnr p4 = 'como completa. ¡REVISE PEDIDO!' msgty = 'W' ).
           ENDIF.
         ENDIF.
 
@@ -404,7 +404,7 @@ class ZCL_AP_ENTREGAS implementation.
             AND posnr = posnr
             AND etenr = '0001'.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1 = 'Marcamos posiciÃ³n pedido' p2 = pedido p3 = posnr p4 = 'como completa' msgty = 'W' ).
+            o_log->log( p1 = 'Marcamos posición pedido' p2 = pedido p3 = posnr p4 = 'como completa' msgty = 'W' ).
           ENDIF.
         ENDIF.
       ENDIF.
@@ -421,13 +421,13 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=RAUF_T' ).
 
-* Entrega:     Popup para agrupaciÃ³n de pedidos
+* Entrega:     Popup para agrupación de pedidos
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '0105' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENT1' ).
-    o_bi->campos( campo = 'LV50C-DATBI' valor = '31.12.9999' ). " Fecha de selecciÃ³n de entrega
+    o_bi->campos( campo = 'LV50C-DATBI' valor = '31.12.9999' ). " Fecha de selección de entrega
     o_bi->campos( campo = 'LV50C-VBELN' valor = pedido ). " Pedido
-    o_bi->campos( campo = 'LV50C-ABPOS' valor = posnr ). " Desde posiciÃ³n
-    o_bi->campos( campo = 'LV50C-BIPOS' valor = posnr ). " Hasta posiciÃ³n
+    o_bi->campos( campo = 'LV50C-ABPOS' valor = posnr ). " Desde posición
+    o_bi->campos( campo = 'LV50C-BIPOS' valor = posnr ). " Hasta posición
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH_T' ).
@@ -444,11 +444,11 @@ class ZCL_AP_ENTREGAS implementation.
     IF sy-subrc = 0.
       CLEAR message.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'En en entrega' p2 = vbeln p3 = 'se ha aÃ±adido la posiciÃ³n' p4 = posnr p6 = 'del pedido' p7 = pedido p8 = 'nueva posiciÃ³n entrega' p9 = posnr_new msgty = 'S' ).
+        o_log->log( p1 = 'En en entrega' p2 = vbeln p3 = 'se ha añadido la posición' p4 = posnr p6 = 'del pedido' p7 = pedido p8 = 'nueva posición entrega' p9 = posnr_new msgty = 'S' ).
       ENDIF.
 
       IF forzar = 'X'.
-* Si la cantidad de la entrega es inferior a la del pedido (por verificaciÃ³n de disponibilidad, modificamos la entrega)
+* Si la cantidad de la entrega es inferior a la del pedido (por verificación de disponibilidad, modificamos la entrega)
         IF l_lfimg < l_vbap-kwmeng.
           o_bi->inicio( ).
 
@@ -472,7 +472,7 @@ class ZCL_AP_ENTREGAS implementation.
              AND posnr = @posnr.
           IF l_lfimg2 = l_vbap-kwmeng.
             IF NOT o_log IS INITIAL.
-              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creÃ³ por menos' p5 = l_lfimg p6 = 'se cambia a' p7 = l_vbap-kwmeng msgty = 'W' ).
+              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creó por menos' p5 = l_lfimg p6 = 'se cambia a' p7 = l_vbap-kwmeng msgty = 'W' ).
             ENDIF.
           ELSE.
             UPDATE lips "#EC AOC_STD_TABLE
@@ -480,14 +480,14 @@ class ZCL_AP_ENTREGAS implementation.
              WHERE vbeln = vbeln
                AND posnr = posnr.
             IF NOT o_log IS INITIAL.
-              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creÃ³ por menos' p5 = l_lfimg p6 = 'se fuerza a' p7 = l_vbap-kwmeng msgty = 'W' ).
+              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creó por menos' p5 = l_lfimg p6 = 'se fuerza a' p7 = l_vbap-kwmeng msgty = 'W' ).
             ENDIF.
           ENDIF.
         ENDIF.
       ENDIF.
     ELSE.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'Error' p2 = message p3 = 'aÃ±adiendo en entrega' p4 = vbeln p5 = 'la posiciÃ³n' p6 = posnr p7 = 'del pedido' p8 = pedido msgty = 'E' ).
+        o_log->log( p1 = 'Error' p2 = message p3 = 'añadiendo en entrega' p4 = vbeln p5 = 'la posición' p6 = posnr p7 = 'del pedido' p8 = pedido msgty = 'E' ).
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -595,7 +595,7 @@ class ZCL_AP_ENTREGAS implementation.
     ENDIF.
 
     IF l_lips-uecha <> posnr.
-      mensaje = 'PosiciÃ³n de la particiÃ³n no cuadra con posiciÃ³n principal'.
+      mensaje = 'Posición de la partición no cuadra con posición principal'.
       RETURN.
     ENDIF.
 
@@ -607,20 +607,20 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
     o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
 
-* Pulsamos para seleccionar posiciÃ³n
+* Pulsamos para seleccionar posición
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÃ³n
+* Entrega                Ventana   Posicionar    Posición
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-    o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " NÃºmero de posiciÃ³n del documento comercial
+    o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " Número de posición del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÃ³n de lotes
+* Marcamos la primera fila y puslsamos sobre selección de lotes
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
     o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÃ³n en dynpros de lista
+    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selección en dynpros de lista
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
@@ -629,17 +629,17 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
     o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ).
 
-* Borramos posiciÃ³n
+* Borramos posición
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÃ³n en dynpros de lista
+    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selección en dynpros de lista
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POLO_T' ).
 
 * Volvemos a la pantalla inicial (picking)
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK_T' ).
 
-* Nos aseguramos que estamos en la pestaÃƒÂ±a de picking
+* Nos aseguramos que estamos en la pestaÃ±a de picking
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=T\02' ).
 
@@ -681,14 +681,14 @@ class ZCL_AP_ENTREGAS implementation.
       INTO l_lips-posnr
      WHERE vbeln = vbeln
        AND uecha = posnr.
-* Verificamos si ya estÃ¡ asignada a entrega
+* Verificamos si ya está asignada a entrega
       SELECT SINGLE * FROM vepo JOIN vekp ON vepo~venum = vekp~venum
         INTO CORRESPONDING FIELDS OF l_vepo
        WHERE vbeln     = vbeln
          AND posnr     = l_lips-posnr
          AND vpobj    IN ( '01', '03' )
          AND vpobjkey  = vbeln.
-* Si no encuentro equivalencia en HU es que esa particiciÃ³n no tiene HU asignada
+* Si no encuentro equivalencia en HU es que esa particición no tiene HU asignada
       IF sy-subrc <> 0.
         posnr_sin_hu = l_lips-posnr.
         EXIT.
@@ -782,7 +782,7 @@ class ZCL_AP_ENTREGAS implementation.
            AND abgru = ''.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÃ³lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'Sólo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
       ELSE.
@@ -867,7 +867,7 @@ class ZCL_AP_ENTREGAS implementation.
         ENDLOOP.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÃ³lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'Sólo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
 
@@ -963,7 +963,7 @@ class ZCL_AP_ENTREGAS implementation.
            AND loekz = ''.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÃ³lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'Sólo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
       ELSE.
@@ -1045,7 +1045,7 @@ class ZCL_AP_ENTREGAS implementation.
         ENDLOOP.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÃ³lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'Sólo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
 
@@ -1071,8 +1071,8 @@ class ZCL_AP_ENTREGAS implementation.
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '4001' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-    o_bi->campos( campo = 'LIKP-VSTEL' valor = l_vstel ). " Pto.exped./depto.entrada mcÃ­a.
-    o_bi->campos( campo = 'LV50C-DATBI' valor = fecha ). " Fecha de selecciÃ³n de entrega
+    o_bi->campos( campo = 'LIKP-VSTEL' valor = l_vstel ). " Pto.exped./depto.entrada mcía.
+    o_bi->campos( campo = 'LV50C-DATBI' valor = fecha ). " Fecha de selección de entrega
     o_bi->campos( campo = 'LV50C-VBELN' valor = pedido ). " Pedido
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -1184,26 +1184,26 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=HUENTF' ).
 
     IF l_lips IS INITIAL.
-* Si la HU no tiene asignada ninguna posiciÃ³n de la entrega, grabamos
+* Si la HU no tiene asignada ninguna posición de la entrega, grabamos
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
     ELSE.
-* Si no borramos la posiciÃ³n de la entrega
+* Si no borramos la posición de la entrega
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK' ).
 
-* Pulsamos para seleccionar posiciÃ³n
+* Pulsamos para seleccionar posición
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÃ³n
+* Entrega                Ventana   Posicionar    Posición
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " NÃºmero de posiciÃ³n del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " Número de posición del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÃ³n de lotes
+* Marcamos la primera fila y puslsamos sobre selección de lotes
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÃ³n en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selección en dynpros de lista
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
@@ -1212,17 +1212,17 @@ class ZCL_AP_ENTREGAS implementation.
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
       o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ).
 
-* Borramos posiciÃ³n
+* Borramos posición
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÃ³n en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selección en dynpros de lista
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POLO_T' ).
 
 * Volvemos a la pantalla inicial (picking)
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK_T' ).
 
-* Nos aseguramos que estamos en la pestaÃƒÂ±a de picking
+* Nos aseguramos que estamos en la pestaÃ±a de picking
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=T\02' ).
 
@@ -1361,7 +1361,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND uecha <> ''.
       ENDSELECT.
       IF sy-subrc <> 0.
-        RETURN. " No hay particiÃ³n de picking.
+        RETURN. " No hay partición de picking.
       ENDIF.
 
       SELECT posnr FROM lips ##DB_FEATURE_MODE[TABLE_LEN_MAX1]
@@ -1379,7 +1379,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND uecha = posnr.
       ENDSELECT.
       IF sy-subrc <> 0.
-        RETURN. " No hay particiÃ³n de picking.
+        RETURN. " No hay partición de picking.
       ENDIF.
 
       SELECT posnr FROM lips ##DB_FEATURE_MODE[TABLE_LEN_MAX1]
@@ -1392,26 +1392,26 @@ class ZCL_AP_ENTREGAS implementation.
     LOOP AT i_lips2 INTO l_lips.
       AT FIRST.
         o_bi->inicio( ).
-* Pantalla selcciÃ³n de entrega
+* Pantalla selcción de entrega
         o_bi->dynpro( program = 'SAPMV50A' dynpro = CONV #( l_dynnr ) ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
         o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
       ENDAT.
 
-* Pulsamos para seleccionar posiciÃ³n
+* Pulsamos para seleccionar posición
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÃ³n
+* Entrega                Ventana   Posicionar    Posición
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " NÃºmero de posiciÃ³n del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " Número de posición del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÃ³n de lotes
+* Marcamos la primera fila y puslsamos sobre selección de lotes
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÃ³n en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selección en dynpros de lista
 
 * Marcamos todo
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
@@ -1464,7 +1464,7 @@ class ZCL_AP_ENTREGAS implementation.
     ELSE.
       IF l_wbstk = 'C'.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'Entrega' p2 = vbeln p3 = 'ya tenÃ­a efectuada SM' msgty = 'I' ).
+          o_log->log( p1 = 'Entrega' p2 = vbeln p3 = 'ya tenía efectuada SM' msgty = 'I' ).
         ENDIF.
       ELSE.
         message = espera_si_bloqueada( vbeln = vbeln segundos_espera = segundos_espera_si_bloqueos ).
@@ -1586,7 +1586,7 @@ class ZCL_AP_ENTREGAS implementation.
     LOOP AT i_pos ASSIGNING <hu>.
       o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-      o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÃ³n externa de la unidad de manipulaciÃ³n
+      o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificación externa de la unidad de manipulación
 
       CLEAR l_vhilm.
       SELECT COUNT( * ) FROM vekp
@@ -1606,9 +1606,9 @@ class ZCL_AP_ENTREGAS implementation.
       IF l_vhilm <> <hu>-vhilm.
         o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
       ENDIF.
-      o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " NÃºmero de material
-      o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " NÃºmero de lote
-      o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÃ³n de unidad manipulaciÃ³n
+      o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " Número de material
+      o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " Número de lote
+      o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posición de unidad manipulación
       o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
       o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
     ENDLOOP.
@@ -1633,14 +1633,14 @@ class ZCL_AP_ENTREGAS implementation.
     ENDIF.
 
     IF message IS INITIAL.
-* Verificamos que todo estÃ© ok.
+* Verificamos que todo esté ok.
       LOOP AT i_pos ASSIGNING <hu>.
         SELECT SINGLE venum FROM vekp
           INTO @l_venum
          WHERE exidv = @<hu>-exidv
            AND ( vbeln_gen = @vbeln OR vpobjkey = @vbeln ).
         IF sy-subrc <> 0.
-          message = |La SSCC { <hu>-exidv ALPHA = OUT } no estÃ¡ asignada a la entrega. Revise|.
+          message = |La SSCC { <hu>-exidv ALPHA = OUT } no está asignada a la entrega. Revise|.
         ENDIF.
       ENDLOOP.
     ENDIF.
@@ -1977,14 +1977,14 @@ class ZCL_AP_ENTREGAS implementation.
        WHERE vbeln = vbeln
          AND uecha = <lips>-posnr.
 
-* Verificamos si ya estÃ¡ asignada a entrega
+* Verificamos si ya está asignada a entrega
         SELECT SINGLE * FROM vepo JOIN vekp ON vepo~venum = vekp~venum "#EC CI_SEL_NESTED
           INTO CORRESPONDING FIELDS OF l_vepo
          WHERE vbeln     = vbeln
            AND posnr     = l_lips-posnr
            AND vpobj    IN ( '01', '03' )
            AND vpobjkey  = vbeln.
-* Si no encuentro equivalencia en HU es que esa particiciÃ³n no tiene HU asignada
+* Si no encuentro equivalencia en HU es que esa particición no tiene HU asignada
         IF sy-subrc <> 0.
           APPEND l_lips TO i_lips.
         ENDIF.
@@ -2204,10 +2204,10 @@ class ZCL_AP_ENTREGAS implementation.
       ENDIF.
 
       o_bi->campos( campo = 'LV50C-VBELN' valor = l_vbap-vbeln ). " Pedido
-      o_bi->campos( campo = 'LV50C-ABPOS' valor = l_vbap-posnr ). " Desde posiciÃ³n
-      o_bi->campos( campo = 'LV50C-BIPOS' valor = l_vbap-posnr ). " Desde posiciÃ³n
+      o_bi->campos( campo = 'LV50C-ABPOS' valor = l_vbap-posnr ). " Desde posición
+      o_bi->campos( campo = 'LV50C-BIPOS' valor = l_vbap-posnr ). " Desde posición
     ELSE.
-* AÃƒÂ±adimos una nueva posiciÃ³n a la entrega
+* AÃ±adimos una nueva posición a la entrega
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2423,7 +2423,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       IF NOT o_log IS INITIAL.
         IF i_return IS INITIAL.
-          o_log->log( p1 = 'Â¿Se ha modificado la entrega?' msgty = 'W' ).
+          o_log->log( p1 = '¿Se ha modificado la entrega?' msgty = 'W' ).
         ELSE.
           o_log->set_tabla_log_from_bapiret2_t( i_return ).
         ENDIF.
@@ -2488,7 +2488,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND posnv    = <pos>-posnr_vl
          AND vbtyp_n  = 'Q'
          AND vbeln   <> vbeln.
-      IF l_ctd_pick_ot > 0. " Si hay cantidades de pocking por OT la funciÃ³n no hace el picking correctamente.
+      IF l_ctd_pick_ot > 0. " Si hay cantidades de pocking por OT la función no hace el picking correctamente.
         IF l_ctd_pick_ot > <pos>-pikmg.
 *        <pos>-pikmg = - ( l_ctd_pick_ot - <pos>-pikmg ).
 *        <pos>-plmin = '-'.
@@ -2555,7 +2555,7 @@ class ZCL_AP_ENTREGAS implementation.
       LOOP AT i_vbpok_orig ASSIGNING <pos>.
         DATA(l_pikmg) = zcl_ap_entregas=>get_ctd_picking( vbeln = vbeln posnr = <pos>-posnr_vl select = 'X' add_subpos = '' buffer = 'N' ).
         IF l_pikmg <> <pos>-pikmg.
-          message = |No se ha realizado correctamente el picking en posiciÃ³n { <pos>-posnr_vl ALPHA = OUT }|.
+          message = |No se ha realizado correctamente el picking en posición { <pos>-posnr_vl ALPHA = OUT }|.
         ENDIF.
       ENDLOOP.
     ENDIF.
@@ -2599,7 +2599,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH_T' ).
-      o_bi->campos( campo = 'LIKP-WADAT_IST' valor = wadat ). " Fecha prevista para movimiento de mercancÃ­as
+      o_bi->campos( campo = 'LIKP-WADAT_IST' valor = wadat ). " Fecha prevista para movimiento de mercancías
 
       message = o_bi->llamar_transaccion( tcode = 'VL02N' modo = modoct ).
 
@@ -2624,7 +2624,7 @@ class ZCL_AP_ENTREGAS implementation.
             SET wadat_ist = wadat
            WHERE vbeln = vbeln.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1    = 'Se ha forzado modificaciÃ³n fecha de  SM de la entrega'
+            o_log->log( p1    = 'Se ha forzado modificación fecha de  SM de la entrega'
                         p2    = vbeln
                         p3    = 'de fecha anterior'
                         p4    = l_wadat
@@ -2728,7 +2728,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " NÃºmero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " Número de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2778,14 +2778,14 @@ class ZCL_AP_ENTREGAS implementation.
         ENDAT.
 
         IF solo_part_lotes <> 'N'.
-* Pulsamos para aÃƒÂ±adir una nueva lÃ­nbea
+* Pulsamos para aÃ±adir una nueva línbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           o_bi->campos( campo = 'LIPS-LGORT(02)' valor = l_lips-lgort ).
-          o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " NÃºmero de lote
+          o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " Número de lote
           o_bi->campos( campo = 'LIPS-LFIMG(02)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           IF NOT l_lips-vrkme IS INITIAL.
             o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_lips-vrkme ).
@@ -2888,7 +2888,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " NÃºmero de posicion del documento comercial
+            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " Número de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2899,18 +2899,18 @@ class ZCL_AP_ENTREGAS implementation.
             CLEAR l_total_pos.
           ENDAT.
 
-* Pulsamos para aÃƒÂ±adir una nueva lÃ­nbea
+* Pulsamos para aÃ±adir una nueva línbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " NÃºmero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " Número de posicion del documento comercial
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           IF NOT l_lips-lgort IS INITIAL.
-            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " NÃºmero de lote
+            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " Número de lote
           ENDIF.
           o_bi->campos( campo = 'LIPSD-PIKMG(01)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           l_total_pos = l_total_pos + l_lips-lgmng.
@@ -3055,14 +3055,14 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " NÃºmero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " Número de posicion del documento comercial
 
           DATA(l_n_particiones) = 0.
           LOOP AT i_lips TRANSPORTING NO FIELDS WHERE posnr = l_lips-posnr.
             l_n_particiones = l_n_particiones + 1.
           ENDLOOP.
           IF l_n_particiones = 1.
-* Verificamos si no tenemos una particiÃ³n previa
+* Verificamos si no tenemos una partición previa
             SELECT COUNT( * ) FROM lips
               INTO @DATA(l_part_prev)
              WHERE vbeln  = @vbeln
@@ -3121,7 +3121,7 @@ class ZCL_AP_ENTREGAS implementation.
         IF l_n_particiones = 1.
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-* Si se necesita cambiar el almacÃ©n, pero tenÃ­a lote informado, tenemos que borrarlo antes de volver a intentar ponerlo.
+* Si se necesita cambiar el almacén, pero tenía lote informado, tenemos que borrarlo antes de volver a intentar ponerlo.
           ASSIGN i_lips_orig[ posnr = l_lips2-posnr
                               charg = l_lips2-charg ] TO <lips>.
           IF sy-subrc = 0.
@@ -3152,7 +3152,7 @@ class ZCL_AP_ENTREGAS implementation.
                 <hu>-posnr = l_max_posnr.
               ENDLOOP.
             ENDIF.
-* Pulsamos para aÃ±adir una nueva lÃ­nea
+* Pulsamos para añadir una nueva línea
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
@@ -3161,7 +3161,7 @@ class ZCL_AP_ENTREGAS implementation.
             IF l_lips-lgort IS INITIAL.
               o_bi->campos( campo = 'LIPS-LGORT(02)' valor = l_lips-lgort ).
             ENDIF.
-            o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " NÃºmero de lote
+            o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " Número de lote
             o_bi->campos( campo = 'LIPS-LFIMG(02)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
             IF NOT l_lips-vrkme IS INITIAL.
               o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_lips-vrkme ).
@@ -3187,7 +3187,7 @@ class ZCL_AP_ENTREGAS implementation.
             LOOP AT i_embalaje_l ASSIGNING <hu>.
               o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
               o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-              o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÃ³n externa de la unidad de manipulaciÃ³n
+              o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificación externa de la unidad de manipulación
 
               CLEAR l_vhilm.
               SELECT COUNT( * ) FROM vekp
@@ -3205,9 +3205,9 @@ class ZCL_AP_ENTREGAS implementation.
               IF l_vhilm <> <hu>-vhilm.
                 o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
               ENDIF.
-              o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " NÃºmero de material
-              o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " NÃºmero de lote
-              o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÃ³n de unidad manipulaciÃ³n
+              o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " Número de material
+              o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " Número de lote
+              o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posición de unidad manipulación
               o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
               o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
             ENDLOOP.
@@ -3304,7 +3304,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " NÃºmero de posicion del documento comercial
+            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " Número de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -3315,18 +3315,18 @@ class ZCL_AP_ENTREGAS implementation.
             CLEAR l_total_pos.
           ENDAT.
 
-* Pulsamos para aÃƒÂ±adir una nueva lÃ­nbea
+* Pulsamos para aÃ±adir una nueva línbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " NÃºmero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " Número de posicion del documento comercial
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           IF NOT l_lips-lgort IS INITIAL.
-            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " NÃºmero de lote
+            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " Número de lote
           ENDIF.
           o_bi->campos( campo = 'LIPSD-PIKMG(01)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           l_total_pos = l_total_pos + l_lips-lgmng.
@@ -3353,7 +3353,7 @@ class ZCL_AP_ENTREGAS implementation.
               LOOP AT i_embalaje ASSIGNING <hu>.
                 o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
                 o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-                o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÃ³n externa de la unidad de manipulaciÃ³n
+                o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificación externa de la unidad de manipulación
 
                 CLEAR l_vhilm.
                 SELECT COUNT( * ) FROM vekp
@@ -3371,9 +3371,9 @@ class ZCL_AP_ENTREGAS implementation.
                 IF l_vhilm <> <hu>-vhilm.
                   o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
                 ENDIF.
-                o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " NÃºmero de material
-                o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " NÃºmero de lote
-                o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÃ³n de unidad manipulaciÃ³n
+                o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " Número de material
+                o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " Número de lote
+                o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posición de unidad manipulación
                 o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
                 o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
               ENDLOOP.
@@ -3441,7 +3441,7 @@ class ZCL_AP_ENTREGAS implementation.
      WHERE vbeln = vbeln
        AND posnr = posnr.
     IF sy-subrc <> 0.
-      mensaje = 'No existe la posiciÃ³n de la entrega'.
+      mensaje = 'No existe la posición de la entrega'.
       RETURN.
     ELSE.
       IF vrkme = l_lips-vrkme OR lfimg IS INITIAL.
@@ -3524,14 +3524,14 @@ class ZCL_AP_ENTREGAS implementation.
           ENDIF.
         ENDIF.
 
-* Pulsamos para seleccionar posiciÃ³n
+* Pulsamos para seleccionar posición
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÃ³n
+* Entrega                Ventana   Posicionar    Posición
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-        o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " NÃºmero de posiciÃ³n del documento comercial
+        o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " Número de posición del documento comercial
 
 *APC20200422 Verificamos si la entrega tiene lote informado y si viene de pedido
         DATA(l_lote_pedido) = get_lote_origen_pedido( vbeln = vbeln posnr = posnr ).
@@ -3557,7 +3557,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
           o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de seleccion en dynpros de lista
 
-* Pulsamos para aÃ±adir una nueva lÃ­nbea
+* Pulsamos para añadir una nueva línbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
@@ -3574,7 +3574,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_unidad ).
         ELSE.
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
-* Si tenÃ­a un lote informado del pedido, directamente incrementamos la cantidad de picking
+* Si tenía un lote informado del pedido, directamente incrementamos la cantidad de picking
           DATA(l_ctd_picking) = get_ctd_picking( vbeln = vbeln posnr = posnr add_subpos = '' select = 'X' ).
           l_cantidad = l_cantidad + l_ctd_picking.
 
@@ -3586,7 +3586,7 @@ class ZCL_AP_ENTREGAS implementation.
               IF l_ctd_picking = 0.
                 o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_vepo-lgort ).
               ELSE.
-                mensaje = |AlmacÃ©n de la HU es { l_vepo-lgort } diferente del de la posiciÃ³n { l_lips-lgort } que ya tiene picking|.
+                mensaje = |Almacén de la HU es { l_vepo-lgort } diferente del de la posición { l_lips-lgort } que ya tiene picking|.
                 RETURN.
               ENDIF.
             ENDIF.
@@ -3612,7 +3612,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=HU_MARKA' ).
 *
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=UE6VDIR' ).
-* Paso a pestaÃ±a Entrada individual
+* Paso a pestaña Entrada individual
 
           o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
@@ -3628,7 +3628,7 @@ class ZCL_AP_ENTREGAS implementation.
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=HU_MARKA' ).
 *
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=UE6VDIR' ).
-* Paso a pestaÃ±a Entrada individual
+* Paso a pestaña Entrada individual
 
         o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
@@ -3676,7 +3676,7 @@ class ZCL_AP_ENTREGAS implementation.
 *  ENDIF.
 
     IF l_vepo IS INITIAL.
-      mensaje = 'No se encuentra posiciÃ³n de embalaje'.
+      mensaje = 'No se encuentra posición de embalaje'.
       RETURN.
     ENDIF.
 
@@ -3701,7 +3701,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " NÃºmero de posicion del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " Número de posicion del documento comercial
 
       IF posnr <> l_vepo-posnr.
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
@@ -3710,13 +3710,13 @@ class ZCL_AP_ENTREGAS implementation.
         o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
         o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de seleccion en dynpros de lista
 
-* Pulsamos para aÃ±adir una nueva lÃ­nbea
+* Pulsamos para añadir una nueva línbea
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-        o_bi->campos( campo = 'RV50A-POSNR' valor = l_vepo-posnr ). " NÃºmero de posicion del documento comercial
+        o_bi->campos( campo = 'RV50A-POSNR' valor = l_vepo-posnr ). " Número de posicion del documento comercial
 
       ENDIF.
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -3755,7 +3755,7 @@ class ZCL_AP_ENTREGAS implementation.
      WHERE vbeln = vbeln.
     IF l_wbstk = 'C'.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'La entrega' p2 = vbeln p3 = 'ya tenÃ­a efectuada la salida de mercancÃ­as' msgty = 'W' ).
+        o_log->log( p1 = 'La entrega' p2 = vbeln p3 = 'ya tenía efectuada la salida de mercancías' msgty = 'W' ).
       ENDIF.
       RETURN.
     ELSE.
@@ -3774,7 +3774,7 @@ class ZCL_AP_ENTREGAS implementation.
 
         mensaje = o_bi->llamar_transaccion( tcode = 'VL32N' modo = modoct ).
       ELSE.
-* Pantalla selcciÃ³n de entrega
+* Pantalla selcción de entrega
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '4004' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WABU_T' ).
         o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
@@ -3794,7 +3794,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       IF NOT o_log IS INITIAL.
         IF mensaje IS INITIAL.
-          o_log->log( p1 = 'Se ha efectuado la salida de mercancÃ­as de la entrega' p2 = vbeln msgty = 'S' ).
+          o_log->log( p1 = 'Se ha efectuado la salida de mercancías de la entrega' p2 = vbeln msgty = 'S' ).
         ELSE.
           o_log->log( p1 = 'Error de SM de la entrega' p2 = vbeln p3 = mensaje msgty = 'E' ).
         ENDIF.
@@ -3909,7 +3909,7 @@ class ZCL_AP_ENTREGAS implementation.
           l_sttrg TYPE vttk-sttrg.
 
     IF tiene_sm( vbeln ) = 'X'.
-      message = 'Entrega ya tiene salida de mercancÃ­as. No es posible modificarla'.
+      message = 'Entrega ya tiene salida de mercancías. No es posible modificarla'.
     ELSE.
       l_tknum = get_transporte( vbeln ).
       IF NOT l_tknum IS INITIAL.
@@ -3917,7 +3917,7 @@ class ZCL_AP_ENTREGAS implementation.
           INTO l_sttrg
          WHERE tknum = l_tknum.
         IF l_sttrg = '7'.
-          __concat3 message 'Entrega estÃ¡ incluÃ­da en transporte finalizado' l_tknum '. No es posible modificarla'.
+          __concat3 message 'Entrega está incluída en transporte finalizado' l_tknum '. No es posible modificarla'.
         ENDIF.
       ENDIF.
     ENDIF.
@@ -4079,7 +4079,7 @@ class ZCL_AP_ENTREGAS implementation.
     ENDLOOP.
 
     IF l_npos = 0.
-      o_log->log( p1 = 'No habia ninguna posiciÃ³n con modificaciones ARE' p2 = vbeln msgty = 'S' ).
+      o_log->log( p1 = 'No habia ninguna posición con modificaciones ARE' p2 = vbeln msgty = 'S' ).
       IF confirmar_are = 'X'.
         SELECT SINGLE pdstk FROM (l_tabla)
           INTO l_pdstk

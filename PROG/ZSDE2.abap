@@ -912,7 +912,7 @@ CLASS lcl_rtti IMPLEMENTATION.
         " If have no text
         CHECK cv_label IS SUPPLIED AND cv_label IS INITIAL.
 
-        " №2
+        " #2
         SELECT SINGLE * INTO ls_dd04t
         FROM dd04t
         WHERE rollname   = lv_rollname
@@ -942,7 +942,7 @@ CLASS lcl_rtti IMPLEMENTATION.
       <ls_subfield>   TYPE         ts_field_desc,
       <ls_comp>       LIKE LINE OF lt_comp.
 
-    " №2 For select-options
+    " #2 For select-options
     IF io_range IS NOT INITIAL.
       APPEND INITIAL LINE TO lt_comp ASSIGNING <ls_comp>.
       <ls_comp>-name = 'SIGN'.
@@ -961,7 +961,7 @@ CLASS lcl_rtti IMPLEMENTATION.
       <ls_comp>-type = io_range.
     ENDIF.
 
-    " №4 Called from constructor if have in DB cluster
+    " #4 Called from constructor if have in DB cluster
     LOOP AT it_field_desc ASSIGNING <ls_field_desc>.
       " Create sub levels
       APPEND INITIAL LINE TO lt_comp ASSIGNING <ls_comp>.
@@ -981,7 +981,7 @@ CLASS lcl_rtti IMPLEMENTATION.
     " No type
     CLEAR ro_type.
 
-    " №0
+    " #0
     IF is_field_desc IS SUPPLIED.
 
       " For tables speed 1
@@ -1030,12 +1030,12 @@ CLASS lcl_rtti IMPLEMENTATION.
           IF ro_type IS INITIAL.
           ENDIF.
 
-          " Call №2 recursion
+          " Call #2 recursion
           lo_line = create_structure( io_range = ro_type ).
           ro_type = cl_abap_tabledescr=>create( p_line_type = lo_line ).
 
         WHEN mc_ui_type-table.
-          " Call №3 recursion
+          " Call #3 recursion
           IF ro_type IS INITIAL.
             ro_type = create_structure( iv_sub_fdesc = is_field_desc-sub_fdesc ).
           ENDIF.
@@ -1051,7 +1051,7 @@ CLASS lcl_rtti IMPLEMENTATION.
 
     CHECK ro_type IS INITIAL.
 
-    " №0
+    " #0
     IF iv_rollname NP '*-*'.
       cl_abap_datadescr=>describe_by_name(
        EXPORTING
@@ -1065,12 +1065,12 @@ CLASS lcl_rtti IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " №1 - Create from text
+    " #1 - Create from text
     IF ir_type IS INITIAL AND iv_rollname IS NOT INITIAL.
       CREATE DATA ir_type TYPE (iv_rollname).
     ENDIF.
 
-    " №2 - Based on incoming reference
+    " #2 - Based on incoming reference
     cl_abap_datadescr=>describe_by_data_ref(
      EXPORTING
       p_data_ref           = ir_type
@@ -2636,7 +2636,7 @@ CLASS lcl_table_viewer IMPLEMENTATION.
       CALL METHOD e_object->add_function
         EXPORTING
           fcode = 'TECH'
-          text  = 'Technical name'. "Teхническое имя
+          text  = 'Technical name'. "Te######### ###
       LOOP AT lcl_appl=>mt_lang INTO DATA(ls_lang).
         CALL METHOD e_object->add_function
           EXPORTING
@@ -2647,11 +2647,11 @@ CLASS lcl_table_viewer IMPLEMENTATION.
       CALL METHOD e_object->add_function
         EXPORTING
           fcode = 'HIDE'
-          text  = 'Hide empty columns'. "Спрятать пустые столбцы
+          text  = 'Hide empty columns'. "######## ###### #######
       CALL METHOD e_object->add_function
         EXPORTING
           fcode = 'SHOW'
-          text  = 'Show empty columns'. "Отобразить пустые столбцы
+          text  = 'Show empty columns'. "########## ###### #######
     ENDIF.
   ENDMETHOD.
 
@@ -3013,7 +3013,7 @@ CLASS lcl_sel_opt IMPLEMENTATION.
 
   METHOD init_fcat.
     mt_fcat = VALUE #(
-     ( fieldname = 'IND'         coltext = '№'  outputlen = 3 style = '00000003' )
+     ( fieldname = 'IND'         coltext = '#'  outputlen = 3 style = '00000003' )
      ( fieldname = 'FIELD_LABEL' coltext = 'Label'  outputlen = 30 dragdropid = i_dd_handle )
      ( fieldname = 'SIGN'        coltext = 'SIGN'   tech = abap_true )
      ( fieldname = 'OPTI'        coltext = 'Option' tech = abap_true )

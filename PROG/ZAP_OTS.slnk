@@ -6,16 +6,6 @@
    <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
    <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
   </language>
-  <language SPRAS="F">
-   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
-   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
-   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
-  </language>
-  <language SPRAS="I">
-   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
-   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
-   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
-  </language>
   <language SPRAS="S">
    <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
    <textElement ID="R" ENTRY="Gestión ordenes de transporte" LENGTH="29 "/>
@@ -24,7 +14,6 @@
    <textElement ID="S" KEY="P_FIN" ENTRY="        Ver OTs finalizadas" LENGTH="27 "/>
    <textElement ID="S" KEY="P_UNAME" ENTRY="D       ." LENGTH="15 "/>
    <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
-   <textElement ID="S" KEY="P_VERFOT" ENTRY="        OT con obj.verif.si en calidad" LENGTH="38 "/>
    <textElement ID="S" KEY="S_PROYEC" ENTRY="        Proyecto" LENGTH="16 "/>
    <textElement ID="S" KEY="S_TRKORR" ENTRY="D       ." LENGTH="19 "/>
   </language>
@@ -564,8 +553,8 @@ CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
     METHODS  main.
 
     METHODS: listado,
-             seleccionar_datos,
-             liberar CHANGING !list TYPE t_listado,
+      seleccionar_datos,
+      liberar CHANGING !list TYPE t_listado,
 
       activar IMPORTING sistema TYPE any
               CHANGING  !list   TYPE t_listado,
@@ -725,9 +714,9 @@ CLASS lcl_alv IMPLEMENTATION.
                   ENDIF.
                 ENDIF.
               ENDIF.
-              o_prog-&gt;importar( EXPORTING sistema = ucomm+4
+              o_prog-&gt;importar( EXPORTING sistema   = ucomm+4
                                 IMPORTING cancelado = DATA(l_cancelado)
-                                CHANGING list = &lt;listado&gt; ).
+                                CHANGING  list      = &lt;listado&gt; ).
           ENDCASE.
         ENDLOOP.
         IF sy-subrc &lt;&gt; 0.
@@ -868,11 +857,15 @@ CLASS zcl_report IMPLEMENTATION.
 
     ayer = sy-datum - p_dias.
     IF zcl_c=&gt;entorno_calidad &lt;&gt; &apos;&apos;.
-      SELECT domnam FROM tmscdom                    &quot;#EC &quot;#EC CI_BYPASS
-        INTO CORRESPONDING FIELDS OF tmscdom
-      UP TO 1 ROWS
-      ORDER BY moddat DESCENDING.
-      ENDSELECT.
+      IF sy-sysid = &apos;D40&apos;.
+        tmscdom-domnam = &apos;DOMAIN_P01&apos;.
+      ELSE.
+        SELECT domnam FROM tmscdom                  &quot;#EC &quot;#EC CI_BYPASS
+          INTO CORRESPONDING FIELDS OF tmscdom
+        UP TO 1 ROWS
+        ORDER BY moddat DESCENDING.
+        ENDSELECT.
+      ENDIF.
       system = zcl_c=&gt;entorno_calidad.
       CALL FUNCTION &apos;TMS_TM_GET_HISTORY&apos;
         EXPORTING
@@ -1383,29 +1376,36 @@ CLASS zcl_report IMPLEMENTATION.
 *  endif.
 *
     IF tmscdom-domnam IS INITIAL.
-      SELECT domnam FROM tmscdom                    &quot;#EC &quot;#EC CI_BYPASS
-        INTO CORRESPONDING FIELDS OF tmscdom
-      UP TO 1 ROWS
-      ORDER BY moddat DESCENDING.
-      ENDSELECT.
+      IF sy-sysid = &apos;D40&apos;.
+        tmscdom-domnam = &apos;DOMAIN_P01&apos;.
+      ELSE.
+        SELECT domnam FROM tmscdom                  &quot;#EC &quot;#EC CI_BYPASS
+          INTO CORRESPONDING FIELDS OF tmscdom
+        UP TO 1 ROWS
+        ORDER BY moddat DESCENDING.
+        ENDSELECT.
+      ENDIF.
     ENDIF.
+
+    DATA(requests) =
+      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
 
     CALL FUNCTION &apos;TMS_UI_IMPORT_TR_REQUEST&apos;
       EXPORTING
         iv_system             = l_system
-        iv_domain             = tmscdom-domnam
+*       iv_domain             = tmscdom-domnam
         iv_request            = list-request_number
         iv_tarcli             = sy-mandt
         iv_some_active        = &apos;X&apos;
         iv_verbose            = &apos;&apos;
         iv_expert_mode        = &apos;&apos;
         iv_check_strategy     = &apos;X&apos;
+        it_requests           = requests
       EXCEPTIONS
         cancelled_by_user     = 1
         import_request_denied = 2
         import_request_failed = 3
         OTHERS                = 4.
-
     IF sy-subrc = 0.
       COMMIT WORK AND WAIT.
       MESSAGE &apos;Se ha importado la orden&apos; TYPE &apos;S&apos;.
@@ -1419,6 +1419,51 @@ CLASS zcl_report IMPLEMENTATION.
         ENDIF.
       ENDIF.
     ENDIF.
+
+*    DATA(requests) =
+*      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
+*
+*    DATA(retcode)   = CONV stpa-retcode( space ).
+*    DATA(exception) = VALUE stmscalert( ).
+*
+*    CALL FUNCTION &apos;TMS_MGR_IMPORT_TR_REQUEST&apos;
+*      EXPORTING
+*        iv_system                  = l_system
+*        iv_request                 = list-request_number
+*        iv_client                  = sy-mandt
+*        iv_overtake                = abap_true   &quot; Leave transport request in queue
+*        iv_import_again            = abap_true   &quot; Import transport request again
+*        iv_ignore_originality      = abap_true   &quot; Overwrite originals
+*        iv_ignore_repairs          = abap_true   &quot; Overwrite objects in unconfirmed repairs
+*        iv_ignore_transtype        = abap_false  &quot; Ignore invalid transport type
+*        iv_ignore_tabletype        = abap_false  &quot; Ignore invalid table class
+*        iv_ignore_qaflag           = abap_false  &quot; ?
+*        iv_ignore_predec           = abap_false  &quot; Skip predecessior relationships
+*        iv_ignore_cvers            = abap_true   &quot; Ignore invalid component version
+*        iv_ignore_spam             = abap_false  &quot; ?
+*        iv_test_import             = &apos;&apos; &quot;test_import &quot; Test import
+*        it_requests                = requests
+*      IMPORTING
+*        ev_tp_ret_code             = retcode
+*        es_exception               = exception
+*      EXCEPTIONS
+*        read_config_failed         = 1
+*        table_of_requests_is_empty = 2
+*        OTHERS                     = 3.
+*
+*    IF sy-subrc = 0.
+*      COMMIT WORK AND WAIT.
+*      MESSAGE &apos;Se ha importado la orden&apos; TYPE &apos;S&apos;.
+*    ELSE.
+*      cancelado = &apos;X&apos;.
+*      IF sy-subrc &gt; 1.
+*        IF sy-msgty IS INITIAL.
+*          MESSAGE |Error { sy-subrc } importando orden| TYPE &apos;I&apos;.
+*        ELSE.
+*          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+*        ENDIF.
+*      ENDIF.
+*    ENDIF.
   ENDMETHOD.
 ENDCLASS.
 
@@ -1653,8 +1698,7 @@ FORM f4_se09_obj USING    objeto      TYPE any
   SORT i_textos BY obj_name DESCENDING
                    as4date DESCENDING.
 
-  o_popup = NEW #(
-    tabname = &apos;E07T&apos; ).
+  o_popup = NEW #( tabname = &apos;E07T&apos; ).
 
   o_popup-&gt;add_field( field = &apos;AS4TEXT&apos; selectflag = &apos;X&apos; ).
   o_popup-&gt;add_field( field = &apos;AS4DATE&apos; tabname = &apos;E070&apos; ).

@@ -1307,7 +1307,9 @@ METHOD grabar_xstring.
 
     l_fichero = get_fichero_var( fichero = CONV #( fichero ) ).
 
-    IF get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ) = 'L'.
+    DATA(l_tipo_ruta) = get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ).
+    IF l_tipo_ruta = 'L' OR  "Local
+       l_tipo_ruta = 'X'.    "Diálogo
       grabar( EXPORTING fichero         = l_fichero
                         tipo            = 'BIN'
                         mostrar_error   = mostrar_error

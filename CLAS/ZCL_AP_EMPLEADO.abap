@@ -5,7 +5,7 @@ class ZCL_AP_EMPLEADO definition
 public section.
 
   types:
-* Estructura importaci√≥n report rplpay00
+* Estructura importaciÛn report rplpay00
     BEGIN OF t_devengos,
         pernr             TYPE pernr-pernr,
         name              TYPE c LENGTH 35,
@@ -451,7 +451,7 @@ class ZCL_AP_EMPLEADO implementation.
     ENDIF.
 
     IF <pernr> IS INITIAL.
-      message = 'Informe n¬∫ de empleado'.
+      message = 'Informe n∫ de empleado'.
       RETURN.
     ENDIF.
 
@@ -610,7 +610,7 @@ class ZCL_AP_EMPLEADO implementation.
                       WHERE name NE 'BEGDA' AND name NE 'ENDDA'.
       ADD 1 TO l_cont.
       IF l_cont > 5.
-        MESSAGE 'S√≥lo es posible condensar 5 campos' TYPE 'E'.
+        MESSAGE 'SÛlo es posible condensar 5 campos' TYPE 'E'.
       ENDIF.
       APPEND VALUE #( key = 'CLAVE' && l_cont value = <campo>-name  ) TO i_key.
     ENDLOOP.
@@ -1496,7 +1496,7 @@ class ZCL_AP_EMPLEADO implementation.
           sequence_of_dates_not_valid = 1
           OTHERS                      = 2.
       IF sy-subrc <> 0.
-        MESSAGE 'Error calculando diferencia de a√±os'(eda) TYPE 'S'.
+        MESSAGE 'Error calculando diferencia de aÒos'(eda) TYPE 'S'.
       ENDIF.
     ENDIF.
 
@@ -1524,7 +1524,7 @@ class ZCL_AP_EMPLEADO implementation.
     ENDIF.
 
 * Si el empleado no tuviera mail, compruebo si existe un usuario
-* de SAP que s√≠ tenga
+* de SAP que sÌ tenga
     IF email IS INITIAL.
       SELECT adr6~smtp_addr INTO email
         UP TO 1 ROWS
@@ -1707,7 +1707,7 @@ class ZCL_AP_EMPLEADO implementation.
          AND endda >= begda
          AND stat2  = '3'. " Activo
       IF sy-subrc <> 0.
-* Si no est√° activo, no lo queremos
+* Si no est· activo, no lo queremos
         DELETE i_pa0002.
       ENDIF.
     ENDLOOP.
@@ -1719,7 +1719,7 @@ class ZCL_AP_EMPLEADO implementation.
         pernr = l_pa0002-pernr.
       ENDIF.
     ELSEIF sy-tfill = 0.
-      message = 'No hay ning√∫n empleado activo con este identificador'(nea).
+      message = 'No hay ning˙n empleado activo con este identificador'(nea).
     ELSEIF sy-tfill > 1.
       l_cont = sy-tfill.
       READ TABLE i_pa0002 INTO l_pa0002 INDEX 1.        "#EC CI_NOORDER
@@ -1775,8 +1775,8 @@ class ZCL_AP_EMPLEADO implementation.
 * Inicializar l_sobid y l_otype
     l_sobid = pernr.
     l_otype = otype.
-* Comprobar si el empleado est√° asignado a varias posiciones.
-* Si es as√≠, se coge la que tiene m√°s % de asignaci√≥n (PROZT).
+* Comprobar si el empleado est· asignado a varias posiciones.
+* Si es asÌ, se coge la que tiene m·s % de asignaciÛn (PROZT).
     CLEAR i_hrp1001.
     SELECT prozt sclas sobid FROM hrp1001
       INTO CORRESPONDING FIELDS OF TABLE i_hrp1001
@@ -2104,7 +2104,7 @@ class ZCL_AP_EMPLEADO implementation.
     ENDDO.
 
     IF ins_teven-pdsnr IS INITIAL.
-      message = 'Error determinando n¬∫ de fichaje'.
+      message = 'Error determinando n∫ de fichaje'.
       RETURN.
     ENDIF.
 
@@ -2321,7 +2321,7 @@ class ZCL_AP_EMPLEADO implementation.
             RECEIVING
               message = mensaje.
         CATCH cx_root INTO DATA(o_root). "#EC *
-          MESSAGE 'No implementada la opci√≥n de visualizar candidatos' TYPE 'I'.
+          MESSAGE 'No implementada la opciÛn de visualizar candidatos' TYPE 'I'.
       ENDTRY.
     ENDIF.
   ENDMETHOD.

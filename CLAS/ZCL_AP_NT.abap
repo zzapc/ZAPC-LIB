@@ -67,11 +67,11 @@ class ZCL_AP_NT implementation.
     o_bi->campos( campo = 'BDC_OKCODE'
                   valor = '/00' ).
     o_bi->campos( campo = 'LTBK-LGNUM'
-                  valor = lgnum ). " NÃºm.almacÃ©n/Complejo alm.
+                  valor = lgnum ). " Núm.almacén/Complejo alm.
     o_bi->campos( campo = 'LTBK-TBNUM'
-                  valor = tbnum ). " NÃºmero de necesidad de transpo
+                  valor = tbnum ). " Número de necesidad de transpo
     o_bi->campos( campo = 'LTBP-TBPOS'
-                  valor = tbpos ). " PosiciÃ³n de necesidad transporte
+                  valor = tbpos ). " Posición de necesidad transporte
 
 * TR Processing: Item Overview
     o_bi->dynpro( program = 'SAPML02B' dynpro = '1103' ).
@@ -136,10 +136,10 @@ class ZCL_AP_NT implementation.
 
     IF tbnum IS INITIAL AND message IS INITIAL.
       CASE l_subrc.
-        WHEN 1. message = 'Error en posiciÃ³n'.
+        WHEN 1. message = 'Error en posición'.
         WHEN 2. message = 'No entradas en tabla'.
-        WHEN 3. message = 'PosiciÃ³n sin nÂº'.
-        WHEN 4. message = 'Error actualizaciÃ³n'.
+        WHEN 3. message = 'Posición sin nº'.
+        WHEN 4. message = 'Error actualización'.
       ENDCASE.
     ENDIF.
 
@@ -176,11 +176,11 @@ class ZCL_AP_NT implementation.
     o_bi->campos( campo = 'BDC_OKCODE'
                   valor = '/00' ).
     o_bi->campos( campo = 'LTBK-LGNUM'
-                  valor = lgnum ). " NÃºm.almacÃ©n/Complejo alm.
+                  valor = lgnum ). " Núm.almacén/Complejo alm.
     o_bi->campos( campo = 'LTBK-TBNUM'
-                  valor = tbnum ). " NÃºmero de necesidad de transpo
+                  valor = tbnum ). " Número de necesidad de transpo
     o_bi->campos( campo = 'LTBP-TBPOS'
-                  valor = tbpos ). " PosiciÃ³n de necesidad transporte
+                  valor = tbpos ). " Posición de necesidad transporte
 
     o_bi->dynpro( program = 'SAPML02B' dynpro = '0102' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
@@ -212,7 +212,7 @@ class ZCL_AP_NT implementation.
       ASSIGN i_ltbc[ 1 ] TO <ltbc>.
       IF NOT (  elikz = <ltbc>-elikz
          AND menga = <ltbc>-menga ).
-* Si lo que queremos es quitar el indicador de entrega final, la funciÃ³n no funciona,
+* Si lo que queremos es quitar el indicador de entrega final, la función no funciona,
 * bien, por lo que primero actualizamos este indicador a pelo.
         IF <ltbc>-elikz = 'X' AND elikz = ''.
           UPDATE ltbp
@@ -242,10 +242,10 @@ class ZCL_AP_NT implementation.
           ASSIGN i_ltbc[ 1 ] TO <ltbc>.
           IF <ltbc>-msgid IS INITIAL.
             CASE sy-subrc.
-              WHEN 1. mensaje = 'Error de posiciÃ³n'.
-              WHEN 2. mensaje = 'Error al actualizar posiciÃ³n'.
+              WHEN 1. mensaje = 'Error de posición'.
+              WHEN 2. mensaje = 'Error al actualizar posición'.
               WHEN 3. mensaje = 'Error: no existen datos'.
-              WHEN 4. mensaje = 'Error: actualizaciÃ³n sin commit'.
+              WHEN 4. mensaje = 'Error: actualización sin commit'.
               WHEN 5. mensaje = 'Error de bloqueo'.
             ENDCASE.
           ELSE.

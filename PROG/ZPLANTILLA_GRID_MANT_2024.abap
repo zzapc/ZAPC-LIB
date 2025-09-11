@@ -79,7 +79,7 @@ SELECT-OPTIONS: s_clave FOR ztemp-clave,
 SELECTION-SCREEN SKIP.
 PARAMETERS p_vari LIKE disvariant-variant.
 SELECTION-SCREEN END OF BLOCK 001.
-PARAMETERS p_vis NO-DISPLAY. " Si queremos opciÃ³n de no editar.
+PARAMETERS p_vis NO-DISPLAY. " Si queremos opción de no editar.
 __botones_plantilla.
 
 
@@ -235,7 +235,7 @@ CLASS zcl_report IMPLEMENTATION.
 
       IF sy-sysid = zcl_c=>entorno_desarrollo.
         o_alv->add_button( button = 'F02' text = 'Crear OT'  icon =  icon_import_transport_request ucomm = 'OT' ).
-        o_alv->add_button( button = 'F03' text = 'Comparar con producciÃ³n'  icon =  icon_compare ucomm = 'COMP' ).
+        o_alv->add_button( button = 'F03' text = 'Comparar con producción'  icon =  icon_compare ucomm = 'COMP' ).
       ELSE.
         o_alv->add_button( button = 'F03' text = 'Comparar con desarrollo'  icon =  icon_compare ucomm = 'COMP' ).
       ENDIF.
@@ -310,7 +310,7 @@ CLASS zcl_report IMPLEMENTATION.
         ENDLOOP.
 
         IF l_cont = 0.
-          MESSAGE 'No habÃ­a cambios' TYPE 'S'.
+          MESSAGE 'No había cambios' TYPE 'S'.
         ELSE.
           MESSAGE |Se han grabado { l_cont } registros| TYPE 'S'.
           i_listado_ini = i_listado.

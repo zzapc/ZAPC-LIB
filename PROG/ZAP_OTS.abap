@@ -64,8 +64,8 @@ CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
     METHODS  main.
 
     METHODS: listado,
-             seleccionar_datos,
-             liberar CHANGING !list TYPE t_listado,
+      seleccionar_datos,
+      liberar CHANGING !list TYPE t_listado,
 
       activar IMPORTING sistema TYPE any
               CHANGING  !list   TYPE t_listado,
@@ -213,25 +213,25 @@ CLASS lcl_alv IMPLEMENTATION.
               IF ucomm = 'IMP_PRD'.
                 IF <listado>-retcode = '0008'.
                   IF zcl_ap_popup=>confirmar( texto = 'Se ha producido errores en calidad'
-                                              texto2 = '¿Está seguro de querer subirla a producción' opcion = 'N' ) = ''.
+                                              texto2 = 'Â¿EstÃ¡ seguro de querer subirla a producciÃ³n' opcion = 'N' ) = ''.
                     RETURN.
                   ENDIF.
                 ELSEIF <listado>-message <> 'En calidad'.
                   IF NOT zcl_c=>entorno_calidad IS INITIAL ##BOOL_OK.
                     IF zcl_ap_popup=>confirmar( texto = 'No ha verificado que la OT este en calidad sin errores'
-                                                texto2 = '¿Esta seguro de querer subirla a producción' opcion = 'N' ) = ''.
+                                                texto2 = 'Â¿Esta seguro de querer subirla a producciÃ³n' opcion = 'N' ) = ''.
                       RETURN.
                     ENDIF.
                   ENDIF.
                 ENDIF.
               ENDIF.
-              o_prog->importar( EXPORTING sistema = ucomm+4
+              o_prog->importar( EXPORTING sistema   = ucomm+4
                                 IMPORTING cancelado = DATA(l_cancelado)
-                                CHANGING list = <listado> ).
+                                CHANGING  list      = <listado> ).
           ENDCASE.
         ENDLOOP.
         IF sy-subrc <> 0.
-          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+          MESSAGE 'Seleccione algÃºn registro' TYPE 'I'.
         ELSE.
           IF l_cancelado IS INITIAL.
             DATA(i_list) = o_prog->i_listado.
@@ -283,7 +283,7 @@ CLASS lcl_alv IMPLEMENTATION.
           o_prog->activar( EXPORTING sistema = 'CAL' CHANGING list = <listado> ).
         ENDLOOP.
         IF sy-subrc <> 0.
-          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+          MESSAGE 'Seleccione algÃºn registro' TYPE 'I'.
         ELSE.
           o_prog->seleccionar_datos( ).
           refresh( ).
@@ -368,11 +368,15 @@ CLASS zcl_report IMPLEMENTATION.
 
     ayer = sy-datum - p_dias.
     IF zcl_c=>entorno_calidad <> ''.
-      SELECT domnam FROM tmscdom                    "#EC "#EC CI_BYPASS
-        INTO CORRESPONDING FIELDS OF tmscdom
-      UP TO 1 ROWS
-      ORDER BY moddat DESCENDING.
-      ENDSELECT.
+      IF sy-sysid = 'D40'.
+        tmscdom-domnam = 'DOMAIN_P01'.
+      ELSE.
+        SELECT domnam FROM tmscdom                  "#EC "#EC CI_BYPASS
+          INTO CORRESPONDING FIELDS OF tmscdom
+        UP TO 1 ROWS
+        ORDER BY moddat DESCENDING.
+        ENDSELECT.
+      ENDIF.
       system = zcl_c=>entorno_calidad.
       CALL FUNCTION 'TMS_TM_GET_HISTORY'
         EXPORTING
@@ -541,12 +545,12 @@ CLASS zcl_report IMPLEMENTATION.
           IF line_exists( i_buffer_pro[ trkorr = ls_request_header-trkorr ] ).
             IF <log>-trstep <> 'U'.
               l_color = 'V'.
-              l_listado-message = 'En producción'.
+              l_listado-message = 'En producciÃ³n'.
               l_ok = 'X'.
             ENDIF.
           ELSEIF <log>-trstep = 'U'.
             l_color = 'R'.
-            l_listado-message = 'Borrada de la cola de producción'.
+            l_listado-message = 'Borrada de la cola de producciÃ³n'.
             l_ndias = sy-datum - l_listado-fecha.
             IF l_ndias > 7.
               CONTINUE.
@@ -555,7 +559,7 @@ CLASS zcl_report IMPLEMENTATION.
           ENDIF.
           IF l_ok IS INITIAL AND zcl_c=>entorno_calidad IS INITIAL ##BOOL_OK.
             l_color = 'V'.
-            l_listado-message = 'En producción'.
+            l_listado-message = 'En producciÃ³n'.
             l_ok = 'X'.
           ENDIF.
         ENDIF.
@@ -624,7 +628,7 @@ CLASS zcl_report IMPLEMENTATION.
     DELETE ADJACENT DUPLICATES FROM i_listado COMPARING request_number.
 
     IF p_fin IS INITIAL.
-      DELETE i_listado WHERE ( message = 'En producción' OR message = 'Borrada de la cola de producción' ) AND retcode <= '0004'.
+      DELETE i_listado WHERE ( message = 'En producciÃ³n' OR message = 'Borrada de la cola de producciÃ³n' ) AND retcode <= '0004'.
     ENDIF.
     DELETE i_listado WHERE NOT proyecto IN s_proyec.
   ENDMETHOD.
@@ -637,7 +641,7 @@ CLASS zcl_report IMPLEMENTATION.
     IF zcl_c=>entorno_calidad <> ''.
       o_alv->add_button( button = 'F03' text = 'Importar en calidad' icon = icon_import ucomm = 'IMP_CAL' ).
     ENDIF.
-    o_alv->add_button( button = 'F04' text = 'Importar en producción' icon = icon_product_group ucomm = 'IMP_PRD' ).
+    o_alv->add_button( button = 'F04' text = 'Importar en producciÃ³n' icon = icon_product_group ucomm = 'IMP_PRD' ).
 *    o_alv->add_button( button = 'F05' qinfo = 'Activar'  icon = icon_activate ucomm = 'ACTIVAR' ).
     o_alv->add_button( button = 'F06' qinfo = 'Finalizadas' icon = icon_display_more ucomm = 'FIN' ).
     o_alv->add_button( button = 'F07' qinfo = 'Exportar a portapapeles' icon = icon_export ucomm = 'CLP' ).
@@ -811,7 +815,7 @@ CLASS zcl_report IMPLEMENTATION.
     DATA l_system       TYPE tmscsys-sysnam.
     DATA lt_tr_requests TYPE TABLE OF tmsbuffer.
 
-* No tenemos implementado esta opción actualmente
+* No tenemos implementado esta opciÃ³n actualmente
     RETURN.
 
     IF sistema = 'CAL'.
@@ -878,34 +882,41 @@ CLASS zcl_report IMPLEMENTATION.
 *    GS_DYN220-IGN_TYP = ''. "Ignorar_cl.transporte_no_permitida_
 *    GS_DYN220-IGN_TAB = ''. "Ignorar_clase_de_tabla_no_permitida__
 *    GS_DYN220-IGN_PRE = ''. "Ignorar_relaciones_predecesor__
-*    GS_DYN220-IGN_CVERS = 'X'. "Ignorar_versión_de_componente_no_adecuada___
+*    GS_DYN220-IGN_CVERS = 'X'. "Ignorar_versiÃ³n_de_componente_no_adecuada___
 *    WTMSU-CLIENT = sy-mandt.
 *  endif.
 *
     IF tmscdom-domnam IS INITIAL.
-      SELECT domnam FROM tmscdom                    "#EC "#EC CI_BYPASS
-        INTO CORRESPONDING FIELDS OF tmscdom
-      UP TO 1 ROWS
-      ORDER BY moddat DESCENDING.
-      ENDSELECT.
+      IF sy-sysid = 'D40'.
+        tmscdom-domnam = 'DOMAIN_P01'.
+      ELSE.
+        SELECT domnam FROM tmscdom                  "#EC "#EC CI_BYPASS
+          INTO CORRESPONDING FIELDS OF tmscdom
+        UP TO 1 ROWS
+        ORDER BY moddat DESCENDING.
+        ENDSELECT.
+      ENDIF.
     ENDIF.
+
+    DATA(requests) =
+      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
 
     CALL FUNCTION 'TMS_UI_IMPORT_TR_REQUEST'
       EXPORTING
         iv_system             = l_system
-        iv_domain             = tmscdom-domnam
+*       iv_domain             = tmscdom-domnam
         iv_request            = list-request_number
         iv_tarcli             = sy-mandt
         iv_some_active        = 'X'
         iv_verbose            = ''
         iv_expert_mode        = ''
         iv_check_strategy     = 'X'
+        it_requests           = requests
       EXCEPTIONS
         cancelled_by_user     = 1
         import_request_denied = 2
         import_request_failed = 3
         OTHERS                = 4.
-
     IF sy-subrc = 0.
       COMMIT WORK AND WAIT.
       MESSAGE 'Se ha importado la orden' TYPE 'S'.
@@ -919,6 +930,51 @@ CLASS zcl_report IMPLEMENTATION.
         ENDIF.
       ENDIF.
     ENDIF.
+
+*    DATA(requests) =
+*      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
+*
+*    DATA(retcode)   = CONV stpa-retcode( space ).
+*    DATA(exception) = VALUE stmscalert( ).
+*
+*    CALL FUNCTION 'TMS_MGR_IMPORT_TR_REQUEST'
+*      EXPORTING
+*        iv_system                  = l_system
+*        iv_request                 = list-request_number
+*        iv_client                  = sy-mandt
+*        iv_overtake                = abap_true   " Leave transport request in queue
+*        iv_import_again            = abap_true   " Import transport request again
+*        iv_ignore_originality      = abap_true   " Overwrite originals
+*        iv_ignore_repairs          = abap_true   " Overwrite objects in unconfirmed repairs
+*        iv_ignore_transtype        = abap_false  " Ignore invalid transport type
+*        iv_ignore_tabletype        = abap_false  " Ignore invalid table class
+*        iv_ignore_qaflag           = abap_false  " ?
+*        iv_ignore_predec           = abap_false  " Skip predecessior relationships
+*        iv_ignore_cvers            = abap_true   " Ignore invalid component version
+*        iv_ignore_spam             = abap_false  " ?
+*        iv_test_import             = '' "test_import " Test import
+*        it_requests                = requests
+*      IMPORTING
+*        ev_tp_ret_code             = retcode
+*        es_exception               = exception
+*      EXCEPTIONS
+*        read_config_failed         = 1
+*        table_of_requests_is_empty = 2
+*        OTHERS                     = 3.
+*
+*    IF sy-subrc = 0.
+*      COMMIT WORK AND WAIT.
+*      MESSAGE 'Se ha importado la orden' TYPE 'S'.
+*    ELSE.
+*      cancelado = 'X'.
+*      IF sy-subrc > 1.
+*        IF sy-msgty IS INITIAL.
+*          MESSAGE |Error { sy-subrc } importando orden| TYPE 'I'.
+*        ELSE.
+*          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+*        ENDIF.
+*      ENDIF.
+*    ENDIF.
   ENDMETHOD.
 ENDCLASS.
 
@@ -998,7 +1054,7 @@ AT SELECTION-SCREEN ON EXIT-COMMAND.
 START-OF-SELECTION.
   o_prog->main( ).
 
-  IF 0 = 1. " Sólo para que no salga mensaje en ATC
+  IF 0 = 1. " SÃ³lo para que no salga mensaje en ATC
     DATA header TYPE trheader.
     PERFORM f4_se09 CHANGING header.
   ENDIF.
@@ -1153,8 +1209,7 @@ FORM f4_se09_obj USING    objeto      TYPE any
   SORT i_textos BY obj_name DESCENDING
                    as4date DESCENDING.
 
-  o_popup = NEW #(
-    tabname = 'E07T' ).
+  o_popup = NEW #( tabname = 'E07T' ).
 
   o_popup->add_field( field = 'AS4TEXT' selectflag = 'X' ).
   o_popup->add_field( field = 'AS4DATE' tabname = 'E070' ).

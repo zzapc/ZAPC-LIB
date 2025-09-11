@@ -285,7 +285,7 @@ METHOD borra_infotipo.
   o_bi->campos( campo = 'PPHDR-OTYPE'
                 valor = otype ). " Tp.objeto
   o_bi->campos( campo = 'PM0D1-SEARK'
-                valor = l_seark ). " Concepto de b√∫squeda
+                valor = l_seark ). " Concepto de b˙squeda
   o_bi->campos( campo = 'PPHDR-BEGDA'
                 valor = begda ). " Fecha de inicio
   o_bi->campos( campo = 'PPHDR-ENDDA'
@@ -317,7 +317,7 @@ METHOD borra_infotipo.
 
 
       IF lines( i_hrp1001 ) > 1.
-* Si hay m√°s de un enlace a veces falla porque no se posiciona bien
+* Si hay m·s de un enlace a veces falla porque no se posiciona bien
         READ TABLE i_hrp1001 ASSIGNING FIELD-SYMBOL(<hrp1001>) WITH KEY sobid = sobid.
         IF sy-subrc = 0.
           DATA: wa_hrp1001key TYPE hripkey,
@@ -434,7 +434,7 @@ METHOD borra_relacion.
       IF sy-msgty = 'E'.
         MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
       ELSE.
-        message = 'Error borrando relaci√≥n'(ebr).
+        message = 'Error borrando relaciÛn'(ebr).
       ENDIF.
     ELSE.
       CALL FUNCTION 'HRCM_BTDB_UPDATE_DB'
@@ -444,7 +444,7 @@ METHOD borra_relacion.
           update_error = 1
           OTHERS       = 2.
       IF sy-subrc NE 0.
-        MESSAGE 'Error en UPDATE borrando relaci√≥n'(eub) TYPE 'E'.
+        MESSAGE 'Error en UPDATE borrando relaciÛn'(eub) TYPE 'E'.
       ENDIF.
     ENDIF.
 
@@ -490,7 +490,7 @@ METHOD crea_infotipo.
   o_bi->campos( campo = 'PPHDR-OTYPE'
                 valor = otype ). " Tp.objeto
   o_bi->campos( campo = 'PM0D1-SEARK'
-                valor = l_seark ). " Concepto de b√∫squeda
+                valor = l_seark ). " Concepto de b˙squeda
   o_bi->campos( campo = 'PPHDR-BEGDA'
                 valor = begda ). " Fecha de inicio
   o_bi->campos( campo = 'PPHDR-ENDDA'
@@ -591,7 +591,7 @@ METHOD crea_infotipo.
         o_bi->campos( campo = 'PT1035-BEGUZ(01)' valor = l_beguz ).
         o_bi->campos( campo = 'PT1035-ENDUZ(01)' valor = l_enduz ).
       ELSE.
-* Borramos todas las l√≠neas previas
+* Borramos todas las lÌneas previas
         o_bi->dynpro( program = 'MP103500' dynpro = '2000').
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=ADEL').
 * Creamos las nuevas
@@ -657,11 +657,11 @@ METHOD crea_relacion.
         MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
       ELSE.
         IF sy-subrc = 2.
-          message = 'Alguno de los objetos no est√° activo en esas fechas'(aoa).
+          message = 'Alguno de los objetos no est· activo en esas fechas'(aoa).
         ELSEIF sy-subrc = 5.
-          message = 'No autorizado a crear la relaci√≥n'(nac).
+          message = 'No autorizado a crear la relaciÛn'(nac).
         ELSE.
-          message = 'Error creando relaci√≥n'(ecr).
+          message = 'Error creando relaciÛn'(ecr).
         ENDIF.
       ENDIF.
     ENDIF.
@@ -1251,7 +1251,7 @@ METHOD modifica_infotipo.
   o_bi->campos( campo = 'PPHDR-OTYPE'
                 valor = otype ). " Tp.objeto
   o_bi->campos( campo = 'PM0D1-SEARK'
-                valor = l_seark ). " Concepto de b√∫squeda
+                valor = l_seark ). " Concepto de b˙squeda
   o_bi->campos( campo = 'PPHDR-BEGDA'
                 valor = begda ). " Fecha de inicio
   o_bi->campos( campo = 'PPHDR-ENDDA'
@@ -1351,7 +1351,7 @@ METHOD modifica_infotipo.
         o_bi->campos( campo = 'PT1035-BEGUZ(01)' valor = l_beguz ).
         o_bi->campos( campo = 'PT1035-ENDUZ(01)' valor = l_enduz ).
       ELSE.
-* Borramos todas las l√≠neas previas
+* Borramos todas las lÌneas previas
         o_bi->dynpro( program = 'MP103500' dynpro = '2000').
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=ADEL').
 * Creamos las nuevas
@@ -1451,7 +1451,7 @@ METHOD pp01.
   o_bi->campos( campo = 'PPHDR-OTYPE'
                 valor = otype ). " Tp.objeto
   o_bi->campos( campo = 'PM0D1-SEARK'
-                valor = objid ). " Concepto de b√∫squeda
+                valor = objid ). " Concepto de b˙squeda
   o_bi->dynpro( program = 'SAPMH5A0' dynpro = '5000').
   o_bi->campos( campo = 'BDC_OKCODE'
                 valor = '/00').
@@ -1509,10 +1509,10 @@ METHOD pp02.
   o_bi->dynpro( program = 'SAPMH5A0' dynpro = '1000').
   o_bi->campos( campo = 'PPHDR-PLVAR' valor = c_plvar ). " Variante de plan
   o_bi->campos( campo = 'PPHDR-OTYPE' valor = otype ). " Tp.objeto
-  o_bi->campos( campo = 'PM0D1-SEARK' valor = objid ). " Concepto de b√∫squeda
+  o_bi->campos( campo = 'PM0D1-SEARK' valor = objid ). " Concepto de b˙squeda
   o_bi->campos( campo = 'PPHDR-INFTY' valor = infty ). " Infotipo
   o_bi->campos( campo = 'PPHDR-subty' valor = subty ). " Infotipo
-  o_bi->campos( campo = 'PPHDR-ISTAT' valor = l_hrp1000-istat ). " Status de planificaci√≥n
+  o_bi->campos( campo = 'PPHDR-ISTAT' valor = l_hrp1000-istat ). " Status de planificaciÛn
   IF l_hrp1001 IS INITIAL.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=INSE').
 

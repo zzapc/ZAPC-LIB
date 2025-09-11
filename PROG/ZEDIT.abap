@@ -1,6 +1,6 @@
 *---------------------------------------------------------------------*
 * Programa para editar cualquier report, sin control de SAP           *
-* Â¡Se cuidadoso utilizÃ¡ndolo!                                         *
+* ¡Se cuidadoso utilizándolo!                                         *
 *---------------------------------------------------------------------*
 * http://www.sap4.com                                                 *
 *---------------------------------------------------------------------*
@@ -133,7 +133,7 @@ START-OF-SELECTION.
     MODIFY trdir.
   ENDIF.
   CALL FUNCTION 'DB_COMMIT'.
-  msg = 'LÃ­nea:'.
+  msg = 'Línea:'.
   IF trdir-subc NE 'I'.
     GENERATE REPORT programm LINE msg+10(10) MESSAGE msg+50.
     IF sy-subrc <> 0.
@@ -148,10 +148,10 @@ START-OF-SELECTION.
     ELSE.
       CALL FUNCTION 'POPUP_FOR_INTERACTION'
         EXPORTING
-          headline       = 'Programa generado con Ã©xito'
+          headline       = 'Programa generado con éxito'
           text1          = 'Se ha generado el programa'
           text2          = programm
-          text3          = 'Â¿Desea ejecutarlo ahora?'
+          text3          = '¿Desea ejecutarlo ahora?'
           ticon          = 'S'
           button_1       = 'Finalizar'
           button_2       = 'Ejecutar'
@@ -188,7 +188,7 @@ FORM editor.
   IF NOT msg IS INITIAL.
     u-txtindex = u-index - 2.
     SHIFT u-txtindex LEFT DELETING LEADING space.
-    CONCATENATE 'Error de sintaxis en lÃ­nea:' u-txtindex INTO u-txtindex
+    CONCATENATE 'Error de sintaxis en línea:' u-txtindex INTO u-txtindex
      SEPARATED BY space.
     CALL FUNCTION 'POPUP_FOR_INTERACTION'
       EXPORTING

@@ -3,7 +3,7 @@
 * TITULO : ??
 * DESCRIPCION : ??
 *
-* AUTOR: AndrÃ©s Picazo                                FECHA: 03/03/2017
+* AUTOR: Andrés Picazo                                FECHA: 03/03/2017
 * ANALISTA: ??
 *
 * Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
@@ -129,7 +129,7 @@ CLASS lcl_alv IMPLEMENTATION.
           <listado>-lights = zcl_ap_alv=>c_ico_rojo.
         ENDLOOP.
         IF sy-subrc NE 0.
-          MESSAGE 'Seleccione algÃºn registro' TYPE 'I'.
+          MESSAGE 'Seleccione algún registro' TYPE 'I'.
         ELSE.
           refresh( ).
         ENDIF.

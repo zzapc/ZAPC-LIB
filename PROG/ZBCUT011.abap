@@ -171,70 +171,70 @@ DATA: o_event        TYPE REF TO lcl_event_grid,
 *------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
 SELECTION-SCREEN BEGIN OF BLOCK blk_par WITH FRAME TITLE TEXT-001.
 
-SELECT-OPTIONS: s_tcode  FOR tstc-tcode,
-                s_report FOR trdir-name,
-                s_subc   FOR trdir-subc,
-                s_devcla FOR tadir-devclass,
-                s_estado FOR zbc003-estado,
-                s_grupo  FOR zbc003-grupo,
-                s_cdat   FOR trdir-cdat,
-                s_udat   FOR trdir-udat,
-                s_cnam   FOR trdir-cnam,
-                s_unam   FOR trdir-unam,
-                s_asign  FOR zbc003-asignado_a,
-                s_progr  FOR zbc003-probado_por,
-                s_prior  FOR zbc003-prioridad,
-                s_ot     FOR e071-trkorr.
+  SELECT-OPTIONS: s_tcode  FOR tstc-tcode,
+                  s_report FOR trdir-name,
+                  s_subc   FOR trdir-subc,
+                  s_devcla FOR tadir-devclass,
+                  s_estado FOR zbc003-estado,
+                  s_grupo  FOR zbc003-grupo,
+                  s_cdat   FOR trdir-cdat,
+                  s_udat   FOR trdir-udat,
+                  s_cnam   FOR trdir-cnam,
+                  s_unam   FOR trdir-unam,
+                  s_asign  FOR zbc003-asignado_a,
+                  s_progr  FOR zbc003-probado_por,
+                  s_prior  FOR zbc003-prioridad,
+                  s_ot     FOR e071-trkorr.
 
-SELECTION-SCREEN SKIP.
+  SELECTION-SCREEN SKIP.
 
-PARAMETERS: p_report AS CHECKBOX DEFAULT 'X',
-            p_funcio AS CHECKBOX DEFAULT ' ',
-            p_clases AS CHECKBOX DEFAULT ' ',
-            p_formul AS CHECKBOX DEFAULT ' ',
-            p_proyec AS CHECKBOX DEFAULT ' ',
-            p_badis  AS CHECKBOX DEFAULT ' ',
-            p_userex AS CHECKBOX DEFAULT ' ',
-            p_modife AS CHECKBOX DEFAULT ' ',
-            p_rutina AS CHECKBOX DEFAULT ' ',
-            p_tablas AS CHECKBOX DEFAULT ' ',
-            p_cds    AS CHECKBOX DEFAULT ' ',
-            p_enhan  AS CHECKBOX DEFAULT ' ',
-            p_bte    AS CHECKBOX DEFAULT ' ',
-            p_bsp    AS CHECKBOX DEFAULT ' ',
-            p_mime   AS CHECKBOX DEFAULT ' ',
-            p_webd   AS CHECKBOX DEFAULT '',
-            p_pdf    AS CHECKBOX DEFAULT '',
-            p_xslt   AS CHECKBOX DEFAULT '',
-            p_wf     AS CHECKBOX DEFAULT ''.
+  PARAMETERS: p_report AS CHECKBOX DEFAULT 'X',
+              p_funcio AS CHECKBOX DEFAULT ' ',
+              p_clases AS CHECKBOX DEFAULT ' ',
+              p_formul AS CHECKBOX DEFAULT ' ',
+              p_proyec AS CHECKBOX DEFAULT ' ',
+              p_badis  AS CHECKBOX DEFAULT ' ',
+              p_userex AS CHECKBOX DEFAULT ' ',
+              p_modife AS CHECKBOX DEFAULT ' ',
+              p_rutina AS CHECKBOX DEFAULT ' ',
+              p_tablas AS CHECKBOX DEFAULT ' ',
+              p_cds    AS CHECKBOX DEFAULT ' ',
+              p_enhan  AS CHECKBOX DEFAULT ' ',
+              p_bte    AS CHECKBOX DEFAULT ' ',
+              p_bsp    AS CHECKBOX DEFAULT ' ',
+              p_mime   AS CHECKBOX DEFAULT ' ',
+              p_webd   AS CHECKBOX DEFAULT '',
+              p_pdf    AS CHECKBOX DEFAULT '',
+              p_xslt   AS CHECKBOX DEFAULT '',
+              p_wf     AS CHECKBOX DEFAULT ''.
 
 SELECTION-SCREEN END OF BLOCK blk_par.
 
 SELECTION-SCREEN BEGIN OF BLOCK blk_par3 WITH FRAME TITLE TEXT-003.
-PARAMETERS: p_rfc    TYPE rfcdest,
-            p_lib    AS CHECKBOX MODIF ID zap,
-            p_solom  AS CHECKBOX MODIF ID zap,
-            p_utili  AS CHECKBOX MODIF ID zap,
-            p_numlin AS CHECKBOX MODIF ID zap,
-            p_zip    AS CHECKBOX MODIF ID zap,
-            p_outlo  AS CHECKBOX MODIF ID zap,
-            p_ftp    AS CHECKBOX MODIF ID zap,
-            p_origen DEFAULT 'L' MODIF ID zap,
-            p_dirlib TYPE string MODIF ID zap,
-            p_vivas  AS CHECKBOX MODIF ID zap,
-            p_libt   AS CHECKBOX MODIF ID zap,
-            p_hash   AS CHECKBOX MODIF ID zap,
-            p_ext    AS CHECKBOX MODIF ID zap,
-            p_open   AS CHECKBOX MODIF ID zap,
-            p_gen    AS CHECKBOX MODIF ID zap,
-            p_tmp    AS CHECKBOX MODIF ID zap,
-            p_zipl   AS CHECKBOX DEFAULT 'X' MODIF ID zap,
-            p_buscar TYPE text132,
-            p_onedr  AS CHECKBOX MODIF ID zap USER-COMMAND one,
-            p_dirto  TYPE text255 MODIF ID za2,
-            p_rutaw  TYPE text255.
-SELECTION-SCREEN SKIP.
-PARAMETERS p_vari LIKE disvariant-variant.
+  PARAMETERS: p_rfc    TYPE rfcdest,
+              p_lib    AS CHECKBOX MODIF ID zap,
+              p_solom  AS CHECKBOX MODIF ID zap,
+              p_utili  AS CHECKBOX MODIF ID zap,
+              p_numlin AS CHECKBOX MODIF ID zap,
+              p_zip    AS CHECKBOX MODIF ID zap,
+              p_outlo  AS CHECKBOX MODIF ID zap,
+              p_ftp    AS CHECKBOX MODIF ID zap,
+              p_origen DEFAULT 'L' MODIF ID zap,
+              p_dirlib TYPE string MODIF ID zap,
+              p_vivas  AS CHECKBOX MODIF ID zap,
+              p_libt   AS CHECKBOX MODIF ID zap,
+              p_hash   AS CHECKBOX MODIF ID zap,
+              p_ext    AS CHECKBOX MODIF ID zap,
+              p_open   AS CHECKBOX MODIF ID zap,
+              p_gen    AS CHECKBOX MODIF ID zap,
+              p_tmp    AS CHECKBOX MODIF ID zap,
+              p_zipl   AS CHECKBOX DEFAULT 'X' MODIF ID zap,
+              p_buscar TYPE text132,
+              p_onedr  AS CHECKBOX MODIF ID zap USER-COMMAND one,
+              p_dirto  TYPE text255 MODIF ID za2,
+              p_rutaw  TYPE text255.
+  SELECTION-SCREEN SKIP.
+  PARAMETERS p_vari LIKE disvariant-variant.
 SELECTION-SCREEN END OF BLOCK blk_par3.
 
 
@@ -339,7 +339,7 @@ START-OF-SELECTION.
       REPLACE '/LIB' IN v_directorio WITH v_aux1.
       REPLACE ALL OCCURRENCES OF '\' IN v_directorio WITH '/'.
       v_fichero_excel = |{ v_directorio }/desarrollos.xlsx|.
-      replace all occurrences of '//' in v_fichero_excel with '/'.
+      REPLACE ALL OCCURRENCES OF '//' IN v_fichero_excel WITH '/'.
     ENDIF.
   ELSE.
     IF NOT p_dirlib IS INITIAL.
@@ -374,7 +374,7 @@ START-OF-SELECTION.
   ENDIF.
 
   IF p_solom = 'X' AND p_onedr IS INITIAL.
-    i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( directory = v_directorio max_ficheros = 99999 ).
+    i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( directory = v_directorio recursivo = 'X' max_ficheros = 99999 ).
     DELETE i_ficheros WHERE filelength = 0.
     DELETE i_ficheros WHERE NOT ( filename CS '.txt' OR filename CS '.slnk' ).
   ENDIF.
@@ -1969,7 +1969,7 @@ FORM seleccionar_datos.
     ENDSELECT.
   ENDIF.
 
-  zcl_ap_sgpi=>text( 'Analizando informaciÃƒÂ³n'(ain) ).
+  zcl_ap_sgpi=>text( 'Analizando informaciÃ³n'(ain) ).
 
   LOOP AT i_listado WHERE devclass = ''.
     SELECT devclass FROM  tadir                         "#EC CI_GENBUFF
@@ -2120,29 +2120,34 @@ FORM seleccionar_datos.
     CASE <listado>-icono.
       WHEN icon_equal_green.
         zcl_ap_alv_grid=>append_color( EXPORTING colorc      = 'VERDE'
-                                CHANGING  tabla_color = <listado>-color ).
+                                       CHANGING  tabla_color = <listado>-color ).
       WHEN OTHERS.
         IF NOT <listado>-fecha_descarga IS INITIAL.
           IF <listado>-fecha_descarga = sy-datum AND <listado>-cliente_descarga = zcl_c=>cliente_tasks.
             <listado>-icono = icon_incoming_object. " Descarga
-            zcl_ap_alv_grid=>append_color( EXPORTING campo = 'CLIENTE_DESCARGA,FECHA_DESCARGA' colorc      = 'VERDE'
-                                    CHANGING  tabla_color = <listado>-color ).
+            zcl_ap_alv_grid=>append_color( EXPORTING campo       = 'CLIENTE_DESCARGA,FECHA_DESCARGA'
+                                                     colorc      = 'VERDE'
+                                           CHANGING  tabla_color = <listado>-color ).
 
           ELSEIF <listado>-icono = icon_incoming_object. " Descarga
             IF <listado>-udat >= <listado>-fecha_descarga.
-              zcl_ap_alv_grid=>append_color( EXPORTING campo = 'UDAT,FECHA_DESCARGA' colorc      = 'VERDE'
-                                      CHANGING  tabla_color = <listado>-color ).
+              zcl_ap_alv_grid=>append_color( EXPORTING campo       = 'UDAT,FECHA_DESCARGA'
+                                                       colorc      = 'VERDE'
+                                             CHANGING  tabla_color = <listado>-color ).
             ELSE.
-              zcl_ap_alv_grid=>append_color( EXPORTING campo = 'UDAT,FECHA_DESCARGA' colorc      = 'ROJO'
-                                      CHANGING  tabla_color = <listado>-color ).
+              zcl_ap_alv_grid=>append_color( EXPORTING campo       = 'UDAT,FECHA_DESCARGA'
+                                                       colorc      = 'ROJO'
+                                             CHANGING  tabla_color = <listado>-color ).
             ENDIF.
           ELSEIF <listado>-icono = icon_outgoing_object. " Subida
             IF <listado>-udat < <listado>-fecha_descarga.
-              zcl_ap_alv_grid=>append_color( EXPORTING campo = 'UDAT,FECHA_DESCARGA' colorc      = 'VERDE'
-                                      CHANGING  tabla_color = <listado>-color ).
+              zcl_ap_alv_grid=>append_color( EXPORTING campo       = 'UDAT,FECHA_DESCARGA'
+                                                       colorc      = 'VERDE'
+                                             CHANGING  tabla_color = <listado>-color ).
             ELSE.
-              zcl_ap_alv_grid=>append_color( EXPORTING campo = 'UDAT,FECHA_DESCARGA' colorc      = 'ROJO'
-                                      CHANGING  tabla_color = <listado>-color ).
+              zcl_ap_alv_grid=>append_color( EXPORTING campo       = 'UDAT,FECHA_DESCARGA'
+                                                       colorc      = 'ROJO'
+                                             CHANGING  tabla_color = <listado>-color ).
             ENDIF.
           ENDIF.
         ENDIF.
@@ -2321,7 +2326,7 @@ FORM descargar_slnk USING pe_mail.
       IF p_lib = 'X'.
         CONCATENATE '__BACKUP_' zcl_c=>empresa '_' sy-datum '_' sy-uzeit INTO v_dif.
       ELSE.
-        MESSAGE 'Â¿?' TYPE 'E'.
+        MESSAGE '¿?' TYPE 'E'.
         DATA(l_versiones) = 'X'.
         CONCATENATE '_' sy-datum '_' sy-uzeit INTO v_dif.
       ENDIF.
@@ -2394,9 +2399,9 @@ FORM descargar_slnk USING pe_mail.
   IF pe_mail = 'X' OR p_ftp = 'X'.
     IF p_lib = 'X'.
 *      CONCATENATE i_listado-object '_' _objname
-        CONCATENATE v_directorio '\' i_listado-object '\'
-                 v_dif
-                 '.slnk' INTO deffilename.
+      CONCATENATE v_directorio '\' i_listado-object '\'
+               v_dif
+               '.slnk' INTO deffilename.
     ELSE.
       CONCATENATE i_listado-object '_' _objname '_'
                  i_listado-text
@@ -2444,10 +2449,10 @@ FORM descargar_slnk USING pe_mail.
 
     ENDIF.
   ELSE.
-        CONCATENATE v_directorio '\' i_listado-object '\' l_objname
+    CONCATENATE v_directorio '\' i_listado-object '\' l_objname
 *               l_object '_' l_objname
-               v_dif
-               '.slnk' INTO deffilename.
+           v_dif
+           '.slnk' INTO deffilename.
   ENDIF.
   l_aux = deffilename.
   IF l_aux(2) <> '\\'.
@@ -2540,7 +2545,7 @@ FORM descargar_slnk USING pe_mail.
   ENDIF.
 
   IF NOT i_tabla[] IS INITIAL.
-    data l_extension TYPE string.
+    DATA l_extension TYPE string.
     l_extension = '.txt'.
     IF i_listado-object = 'PROG' OR i_listado-object = 'CLAS' OR i_listado-object = 'FUGR'.
       l_extension = '.abap'.
@@ -3067,7 +3072,7 @@ FORM comparar_ficheros.
         i_t2_255 TYPE TABLE OF text255.
   DATA abaptext_delta LIKE vxabapt255 OCCURS 0 WITH HEADER LINE.
 
-  i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( v_directorio ).
+  i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( DIRECTORY = v_directorio RECURSIVO = 'X' ).
   LOOP AT i_ficheros.
     i_ficheros-filename = to_upper( i_ficheros-filename ). "#EC TRANSLANG
     MODIFY i_ficheros.
@@ -3080,7 +3085,11 @@ FORM comparar_ficheros.
            i_tabla2.
     REFRESH: i_tabla, i_tabla2.
 
-    CONCATENATE i_listado-object '_' i_listado-name '.txt' INTO DATA(l_nf).
+    IF i_listado-object = 'PROG' OR i_listado-object = 'CLAS' OR i_listado-object = 'FUGR'.
+      CONCATENATE i_listado-object '\' i_listado-name '.abap' INTO DATA(l_nf).
+    ELSE.
+      CONCATENATE i_listado-object '\' i_listado-name '.txt' INTO l_nf.
+    ENDIF.
     IF o_ms IS INITIAL.
       IF p_rfc IS INITIAL.
         CONCATENATE v_directorio '\' l_nf INTO l_nombrefichero.
@@ -3139,8 +3148,8 @@ FORM comparar_ficheros.
       TRY.
 
           DATA(lv_conv) = cl_abap_conv_in_ce=>create(
-                              encoding = '1100'
-                              input    = l_xstring ).
+            encoding = '1100'
+            input    = l_xstring ).
 
         CATCH cx_root INTO DATA(o_root).
           l_msg = o_root->get_text( ).
@@ -3385,7 +3394,7 @@ FORM comparar_ficheros.
                 DO l_long TIMES.
                   DATA(l_inx) = sy-index - 1.
                   IF l_tabla+l_inx(1) <> i_tabla2+l_inx(1).
-                    IF l_tabla+l_inx(1) = '?' OR l_tabla+l_inx(1) = '.' OR l_tabla+l_inx(1) = 'Â¡'.
+                    IF l_tabla+l_inx(1) = '?' OR l_tabla+l_inx(1) = '.' OR l_tabla+l_inx(1) = '¡'.
                     ELSE.
                       l_dif = l_dif + 1.
                     ENDIF.
@@ -3455,7 +3464,7 @@ FORM subir_lib.
   PERFORM get_tipo USING i_listado-subc i_listado-name
           CHANGING l_tipo.
 
-  CONCATENATE l_tipo '_' i_listado-name '.slnk' INTO DATA(l_nf).
+  CONCATENATE l_tipo '\' i_listado-name '.slnk' INTO DATA(l_nf).
   IF NOT o_ms IS INITIAL AND NOT p_dirto IS INITIAL.
 
     CONCATENATE v_directorio '/' l_nf INTO l_file.
@@ -3735,7 +3744,7 @@ MODULE user_command_0100 INPUT.
     WHEN 'TCODE'.
       CLEAR tstc.
       zcl_ap_popup=>popup_usuario( EXPORTING campo1 = 'TSTC-TCODE'
-                                             titulo = 'Ejecutar transacciÃƒÂ³n'(etr)
+                                             titulo = 'Ejecutar transacciÃ³n'(etr)
                                    IMPORTING return = l_ok
                                    CHANGING  valor1 = tstc-tcode ).
       IF l_ok = ''.
@@ -3798,7 +3807,7 @@ MODULE user_command_0100 INPUT.
         CLEAR l_ok.
         IF i_listado-icono <> icon_incoming_object AND i_listado-icono <> icon_equal_green.
           l_ok = zcl_ap_popup=>confirmar( titulo = 'Descargar objeto' "#EC *
-                                          texto  = 'Â¿Esta seguro de querer descargar el objeto?' "#EC *
+                                          texto  = '¿Esta seguro de querer descargar el objeto?' "#EC *
                                           texto2 = i_listado-name ).
           sy-ucomm = 'MACHACAR'.
         ELSE.
@@ -3827,7 +3836,7 @@ MODULE user_command_0100 INPUT.
           CLEAR l_ok.
           IF i_listado-icono <> icon_outgoing_object.                      " BAJAR
             l_ok = zcl_ap_popup=>confirmar( titulo = 'Subir objeto' "#EC *
-                                            texto  = 'Â¿Esta seguro de querer subir el objeto?' "#EC *
+                                            texto  = '¿Esta seguro de querer subir el objeto?' "#EC *
                                             texto2 = i_listado-name ).
             sy-ucomm = 'SUBIR_LIB'.
           ELSE.
@@ -4148,14 +4157,15 @@ MODULE user_command_0100 INPUT.
 
         DATA(l_datosx) = zcl_ap_string=>string2xstring( json ).
         DATA(o_ws) = NEW zcl_ap_odata( host = 'http://minisap.sap4.com:934/' ).
-        o_ws->get_odata( EXPORTING servicio = 'sap/bc/ztasks_json/objeto'
-                                   entidad = '' odata_sap = ''
-                                   method = 'POST'
+        o_ws->get_odata( EXPORTING servicio        = 'sap/bc/ztasks_json/objeto'
+                                   entidad         = ''
+                                   odata_sap       = ''
+                                   method          = 'POST'
                                    popup_respuesta = ''
-                                   get_datos = 'X'
-                                   peticionx = l_datosx
-                         IMPORTING respuesta = DATA(respuesta)
-                                   message   = DATA(l_message) ).
+                                   get_datos       = 'X'
+                                   peticionx       = l_datosx
+                         IMPORTING respuesta       = DATA(respuesta)
+                                   message         = DATA(l_message) ).
         IF NOT l_message IS INITIAL.
           MESSAGE l_message TYPE 'I'.
         ENDIF.
@@ -4348,8 +4358,8 @@ MODULE status_0100 OUTPUT.
     o_alv->set_field( op = 'CHECKBOX' campo = 'LIBRERIA' ).
 
     o_alv->set_field_text( campo = 'CLIENTE_DESCARGA' valor = 'UsModOtrSist' valor2 = 'Usuario modificador en otro sistema' ).
-    o_alv->set_field_text( campo = 'FECHA_DESCARGA' valor = 'FModOtrSist' valor2 = 'Fecha modificaciÃ³n en otro sistema' ).
-    o_alv->set_field_text( campo = 'TCODE' valor = 'TransacciÃ³n' ).
+    o_alv->set_field_text( campo = 'FECHA_DESCARGA' valor = 'FModOtrSist' valor2 = 'Fecha modificación en otro sistema' ).
+    o_alv->set_field_text( campo = 'TCODE' valor = 'Transacción' ).
 
 
     o_alv->set_field( op = 'NO_OUT' campo = 'MARCA' ).
@@ -4949,7 +4959,7 @@ FORM corregir_status.
     MESSAGE 'Error leyendo status' TYPE 'E'.
   ENDIF.
 
-* Copia de cÃ³digo en ZABAPGIT
+* Copia de código en ZABAPGIT
   IF     lw_adm         IS NOT INITIAL
      AND lw_adm-actcode CO lc_num_n_space
      AND lw_adm-mencode CO lc_num_n_space

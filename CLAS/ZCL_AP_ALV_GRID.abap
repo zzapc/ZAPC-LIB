@@ -835,7 +835,7 @@ class ZCL_AP_ALV_GRID implementation.
     quitar_opciones( cl_gui_alv_grid=>mc_fc_expcrtempl ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_call_report ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_maintain_variant ).
-*FPG04/05/2011 - Se muestra el botÃ³n de filtro.
+*FPG04/05/2011 - Se muestra el botón de filtro.
 * quitar_opciones( cl_gui_alv_grid=>mc_fc_filter  ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_subtot  ).
     quitar_opciones( cl_gui_alv_grid=>mc_mb_export  ).
@@ -1017,7 +1017,7 @@ class ZCL_AP_ALV_GRID implementation.
 
     DATA l_event TYPE cntl_simple_event.
 
-* Si no se habÃ­a creado el objeto...
+* Si no se había creado el objeto...
     IF o_custom_container IS NOT INITIAL.
       RETURN.
     ENDIF.
@@ -1099,7 +1099,7 @@ class ZCL_AP_ALV_GRID implementation.
       get_catalogo_campos( ).
     ENDIF.
 
-    IF nombre_layout = 'Â¡No!'.
+    IF nombre_layout = '¡No!'.
       CONCATENATE sy-cprog(30) '-' estructura INTO variant-report.
     ELSEIF nombre_layout IS INITIAL.
       IF estructura IS INITIAL.
@@ -1642,10 +1642,10 @@ class ZCL_AP_ALV_GRID implementation.
 
     layout-cwidth_opt = 'X'.
     layout-zebra      = 'X'.
-    layout-sel_mode   = 'D'.                " Permite selecciÃ³n multiple
-    layout-no_rowmark = ''.               " Permitir selecciÃ³n de filas
+    layout-sel_mode   = 'D'.                " Permite selección multiple
+    layout-no_rowmark = ''.               " Permitir selección de filas
 *    ls_layo-info_fname = 'COLOR'.          "Campo que indica el color
-**    ls_layo-excp_fname = 'LIGHTS'.         "Campo que indica semÃ¡for
+**    ls_layo-excp_fname = 'LIGHTS'.         "Campo que indica semáfor
 *    ls_layo-stylefname = 'ESTILO_CELDA'.   "Campo que indica el estilo
     layout-no_merging = ''.               " Permite mezclar filas
     CONCATENATE sy-repid sy-dynnr INTO variant-report.
@@ -1761,7 +1761,7 @@ class ZCL_AP_ALV_GRID implementation.
       MESSAGE 'No se han recuperado campos'(nrc) TYPE 'S'.
     ENDIF.
 
-* Alguna vez, y no sÃ© por quÃ©, me han aparecido campos marcados como NOOUT por defecto
+* Alguna vez, y no sé por qué, me han aparecido campos marcados como NOOUT por defecto
     LOOP AT t_fcat ASSIGNING <fcat> WHERE no_out = 'X'.
       CLEAR <fcat>-no_out.
     ENDLOOP.
@@ -1779,7 +1779,7 @@ class ZCL_AP_ALV_GRID implementation.
 *  TRY.
 *      READ REPORT include INTO l_abap_source.
 *    CATCH cx_sy_read_src_line_too_long INTO ex_too_long.
-*      MESSAGE 'Longitud de lÃ­nea demasiado larga' type 'E'.
+*      MESSAGE 'Longitud de línea demasiado larga' type 'E'.
 *  ENDTRY.
 *  CHECK sy-subrc EQ 0.
 *
@@ -2788,13 +2788,13 @@ class ZCL_AP_ALV_GRID implementation.
     set_field( op = 'TEXTO' campo = campo valor = valor valor2 = valor2 ).
   ENDMETHOD.
   METHOD set_layout.
-* Indicador de selecciÃ³n:
+* Indicador de selección:
 * http://help.sap.com/saphelp_erp2004/helpdata/en/ef/a2e9eff88311d2b48d006094192fe3/content.htm
     " A -> Fila y columna
     " B (y blanco) Simple
-    " D -> MÃºltiple
+    " D -> Múltiple
     IF sel_mode IS SUPPLIED.
-      IF sel_mode = 'N'.          " No queremos selecciÃ³n
+      IF sel_mode = 'N'.          " No queremos selección
         layout-no_rowmark = 'X'.
       ELSE.
         layout-sel_mode = sel_mode.

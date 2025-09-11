@@ -7,8 +7,8 @@ CLASS zcl_ap_rango DEFINITION
       BEGIN OF range_c3,
         sign   TYPE char1,
         option TYPE char2,
-        low    TYPE char4,
-        high   TYPE char4,
+        low    TYPE char3,
+        high   TYPE char3,
       END OF range_c3.
     TYPES tab_range_c3 TYPE STANDARD TABLE OF range_c3 WITH KEY sign option low high.
     TYPES:
@@ -35,6 +35,14 @@ CLASS zcl_ap_rango DEFINITION
         high   TYPE char20,
       END OF range_c20.
     TYPES tab_range_c20 TYPE STANDARD TABLE OF range_c20.
+        TYPES:
+      BEGIN OF range_c12,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE char12,
+        high   TYPE char12,
+      END OF range_c12.
+    TYPES tab_range_c12 TYPE STANDARD TABLE OF range_c12.
     TYPES:
       BEGIN OF range_c30,
         sign   TYPE char1,
@@ -151,10 +159,8 @@ CLASS zcl_ap_rango DEFINITION
     CLASS-METHODS tabla_n10_to_rango_cond
       IMPORTING tabla        TYPE any
       RETURNING VALUE(rango) TYPE lxhme_range_n10_t.
-
-  PROTECTED SECTION.
-
-  PRIVATE SECTION.
+protected section.
+private section.
 endclass. "ZCL_AP_RANGO definition
 class ZCL_AP_RANGO implementation.
   METHOD assign.
@@ -526,7 +532,7 @@ class ZCL_AP_RANGO implementation.
         l_tabix = l_tabix + 1.
         ASSIGN i_tabla_n10[ l_tabix ] TO FIELD-SYMBOL(<n10_next>).
         IF sy-subrc <> 0.
-* No hay ninguno siguiente, es el Ãºltimo
+* No hay ninguno siguiente, es el último
           IF l_rango IS INITIAL.
             l_rango-option = 'EQ'.
             l_rango-sign   = 'I'.
