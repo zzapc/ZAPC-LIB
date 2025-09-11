@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZMAIL_XLSX" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="DES" ENTRY="Destino" LENGTH="17 "/>
+   <textElement ID="I" KEY="OPC" ENTRY="Opciones" LENGTH="18 "/>
+   <textElement ID="I" KEY="ORI" ENTRY="Datos origen" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Genera XLSX de un ALV y envío por mail" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_A2XLS" ENTRY="        Conversión ABAP2XLSX" LENGTH="28 "/>
+   <textElement ID="S" KEY="P_ASUNTO" ENTRY="        Asunto" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_CUERPO" ENTRY="        Cuerpo" LENGTH="14 "/>
+   <textElement ID="S" KEY="P_DFTP" ENTRY="        Dirección FTP" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_EMAIL" ENTRY="        Dirección email" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_ESTRU" ENTRY="        Estructura" LENGTH="18 "/>
+   <textElement ID="S" KEY="P_FICHE" ENTRY="        Descargar fichero" LENGTH="25 "/>
+   <textElement ID="S" KEY="P_FILE" ENTRY="        Fichero de descarga" LENGTH="27 "/>
+   <textElement ID="S" KEY="P_FILEF" ENTRY="        Fichero en FTP" LENGTH="22 "/>
+   <textElement ID="S" KEY="P_FILEM" ENTRY="        Nombre del adjunto" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_FTP" ENTRY="        Grabar en FTP" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_LAYOUT" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="P_LAYO_P" ENTRY="        Layout ALV interno" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_MAIL" ENTRY="        Enviar mail" LENGTH="19 "/>
+   <textElement ID="S" KEY="P_PASS" ENTRY="        Password" LENGTH="16 "/>
+   <textElement ID="S" KEY="P_PROGRA" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="P_SOLOC" ENTRY="        Sólo los campos" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_USER" ENTRY="        Usuario" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_VARIAN" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="P_VISUAL" ENTRY="        Previsualizar ALV" LENGTH="25 "/>
+   <textElement ID="S" KEY="P_XLSSTD" ENTRY="        Conversión XLSX estándar" LENGTH="32 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Genera XLSX de un ALV y envío por mail
+* DESCRIPCION : Genera XLSX de un ALV
+*
+* AUTOR: Andrés Picazo                                FECHA: 29/10/2024
+*
+***********************************************************************
+REPORT zmail_xlsx.
+
+DATA: v_msg      TYPE bapi_msg,
+      is_variant TYPE disvariant,
+      layout     TYPE disvariant-variant.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE text-ori.
+PARAMETERS: p_progra TYPE programm,
+            p_varian TYPE sy-slset,
+            p_layout LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+SELECTION-SCREEN BEGIN OF BLOCK b02 WITH FRAME TITLE text-des.
+PARAMETERS p_visual AS CHECKBOX.
+SELECTION-SCREEN SKIP.
+PARAMETERS p_fiche AS CHECKBOX USER-COMMAND f.
+PARAMETERS p_file TYPE text255 MODIF ID fic.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_ftp   AS CHECKBOX USER-COMMAND g,
+            p_dftp  TYPE text50 MODIF ID ftp,
+            p_user  TYPE text50 MODIF ID ftp,
+            p_pass  TYPE text50 MODIF ID ftp,
+            p_filef TYPE text255 MODIF ID ftp.
+SELECTION-SCREEN SKIP.
+PARAMETERS p_mail AS CHECKBOX USER-COMMAND m.
+PARAMETERS: p_email  TYPE text255 MODIF ID mai,
+            p_asunto TYPE text255 MODIF ID mai,
+            p_cuerpo TYPE text255 MODIF ID mai,
+            p_filem  TYPE text255 MODIF ID mai.
+SELECTION-SCREEN END OF BLOCK b02.
+SELECTION-SCREEN BEGIN OF BLOCK opc WITH FRAME TITLE text-opc.
+PARAMETERS: p_soloc  TYPE char255 MODIF ID opc,
+            p_estru  TYPE tabname MODIF ID opc,
+            p_layo_p LIKE disvariant-variant MODIF ID opc.
+SELECTION-SCREEN SKIP.
+PARAMETERS: p_xlsstd RADIOBUTTON GROUP g DEFAULT &apos;X&apos; MODIF ID opc,
+            p_a2xls  RADIOBUTTON GROUP g MODIF ID opc.
+
+SELECTION-SCREEN END OF BLOCK opc.
+PARAMETERS p_noerr TYPE char1 NO-DISPLAY.
+
+INITIALIZATION.
+  DATA(o_var) = NEW zcl_ap_variante( ).
+
+AT SELECTION-SCREEN OUTPUT.
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;FIC&apos; variable = p_fiche ).
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;MAI&apos; variable = p_mail ).
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;FTP&apos; variable = p_ftp ).
+  zcl_ap_dynpro=&gt;screen_visible( group1 = &apos;OPC&apos; variable = &apos;&apos; ).
+
+  LOOP AT SCREEN.
+    IF screen-name = &apos;P_PASS&apos;.
+      screen-invisible = &apos;1&apos;.
+      MODIFY SCREEN.
+    ENDIF.
+  ENDLOOP.
+
+AT SELECTION-SCREEN.
+  IF sy-ucomm = &apos;ONLI&apos;.
+    IF p_progra IS INITIAL.
+      MESSAGE &apos;Informe nombre de programa a ajecutar&apos; TYPE &apos;E&apos;.
+    ENDIF.
+    IF p_fiche = &apos;X&apos; AND p_file IS INITIAL.
+      MESSAGE &apos;Informe fichero destino&apos; TYPE &apos;E&apos;.
+    ENDIF.
+    IF p_ftp = &apos;X&apos;.
+      IF p_dftp IS INITIAL.
+        MESSAGE &apos;Informe dirección FTP&apos; TYPE &apos;E&apos;.
+      ENDIF.
+      IF p_user IS INITIAL.
+        MESSAGE &apos;Informe usuario FTP&apos; TYPE &apos;E&apos;.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+START-OF-SELECTION.
+  zcl_ap_utils=&gt;set_runtime_info( ).
+
+  DATA: i_sel           TYPE rsparams_tt,
+        l_fichero_final TYPE string.
+
+  IF NOT p_varian IS INITIAL.
+    IF o_var-&gt;existe( report = p_progra variant = p_varian ).
+      o_var-&gt;get_contenidos( report = p_progra variant = p_varian ).
+
+      IF NOT p_layout IS INITIAL.
+        layout = p_layout.
+      ELSE.
+        READ TABLE o_var-&gt;i_valores ASSIGNING FIELD-SYMBOL(&lt;var&gt;) WITH KEY selname = &apos;ALV_DEF&apos;.
+        IF sy-subrc = 0.
+          layout = &lt;var&gt;-low.
+        ELSE.
+          READ TABLE o_var-&gt;i_valores ASSIGNING &lt;var&gt; WITH KEY selname = &apos;P_VARI&apos;.
+          IF sy-subrc = 0.
+            layout = &lt;var&gt;-low.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ELSE.
+      MESSAGE |No existe la variante { p_varian }| TYPE &apos;E&apos;.
+    ENDIF.
+  ENDIF.
+
+  SUBMIT (p_progra)
+    AND RETURN
+         WITH SELECTION-TABLE i_sel
+         USING SELECTION-SET p_varian.
+
+  IF NOT layout IS INITIAL.
+    SELECT SINGLE report, handle, variant
+      FROM ltdx
+      INTO CORRESPONDING FIELDS OF @is_variant
+      WHERE relid = &apos;LT&apos;
+        AND report = @p_progra
+        AND variant = @layout.
+  ENDIF.
+
+  DATA lt_data_ref TYPE REF TO data.
+
+  FIELD-SYMBOLS &lt;tabla&gt; TYPE STANDARD TABLE.
+
+  TRY.
+      cl_salv_bs_runtime_info=&gt;get_data_ref(
+        IMPORTING
+          r_data            = lt_data_ref ).
+    CATCH cx_salv_bs_sc_runtime_info.
+      IF p_noerr IS INITIAL.
+        v_msg = |Error recuperando datos de report { p_progra } { p_varian }|.
+        MESSAGE v_msg TYPE &apos;E&apos;.
+      ELSE.
+        LEAVE PROGRAM.
+      ENDIF.
+  ENDTRY.
+
+  cl_salv_bs_runtime_info=&gt;clear_all( ).
+  ASSIGN lt_data_ref-&gt;* TO &lt;tabla&gt;.
+  IF sy-subrc &lt;&gt; 0.
+    IF p_noerr IS INITIAL.
+      v_msg = |Error recuperando datos de ALV { p_progra } { p_varian }|.
+      MESSAGE v_msg TYPE &apos;E&apos;.
+    ELSE.
+      LEAVE PROGRAM.
+    ENDIF.
+  ENDIF.
+
+  IF NOT p_soloc IS INITIAL.
+    DATA: datos  TYPE REF TO data,
+          datos2 TYPE REF TO data.
+    FIELD-SYMBOLS: &lt;datos&gt;  TYPE STANDARD TABLE,
+                   &lt;datos2&gt; TYPE STANDARD TABLE.
+
+    zcl_ap_fs=&gt;crea_subtabla( EXPORTING tabla_principal = &lt;tabla&gt;
+      campos = p_soloc
+      estructura = p_estru
+                              IMPORTING subtabla = datos ).
+    ASSIGN datos-&gt;* TO &lt;datos&gt;.
+    zcl_ap_fs=&gt;crea_subtabla( EXPORTING tabla_principal = &lt;datos&gt;
+      campos = p_soloc
+      estructura = p_estru
+                              IMPORTING subtabla = datos2 ).
+
+    ASSIGN datos2-&gt;* TO &lt;datos2&gt;.
+
+    CLEAR &lt;datos2&gt;.
+    LOOP AT &lt;datos&gt; ASSIGNING FIELD-SYMBOL(&lt;d&gt;).
+      COLLECT &lt;d&gt; INTO &lt;datos2&gt;.
+    ENDLOOP.
+
+    ASSIGN &lt;datos2&gt; TO &lt;tabla&gt;.
+  ENDIF.
+
+  DATA(o_alv) = NEW zcl_ap_alv( tabla = &apos;&apos; ).
+
+  IF NOT p_layo_p IS INITIAL.
+    o_alv-&gt;constructor_tabla(
+      EXPORTING
+        cprog = |ZXLSX_{ p_progra }{ p_estru }|
+        handle = &apos;ZZZZ&apos;
+       CHANGING t_tabla = &lt;tabla&gt; ).
+
+    IF NOT p_layout IS INITIAL.
+      o_alv-&gt;set_layout( p_layo_p ).
+    ENDIF.
+  ELSE.
+    o_alv-&gt;constructor_tabla(
+      EXPORTING
+        cprog = p_progra
+        handle = is_variant-handle
+       CHANGING t_tabla = &lt;tabla&gt; ).
+
+    IF NOT is_variant-variant IS INITIAL.
+      o_alv-&gt;set_layout( is_variant-variant ).
+    ENDIF.
+  ENDIF.
+
+  IF p_visual = &apos;X&apos;.
+    o_alv-&gt;show( ).
+  ENDIF.
+
+  IF p_fiche = &apos;X&apos; OR p_mail = &apos;X&apos; OR p_ftp = &apos;X&apos;.
+    IF p_a2xls = &apos;X&apos;.
+      DATA(l_xstring) = zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alv-&gt;o_alv tabla = &lt;tabla&gt; huge = &apos;X&apos; refresh_metadata = &apos;X&apos; ).
+    ELSE.
+      l_xstring = o_alv-&gt;o_alv-&gt;to_xml( xml_type = if_salv_bs_xml=&gt;c_type_xlsx ).
+    ENDIF.
+
+    IF p_fiche = &apos;X&apos;.
+      zcl_ap_ficheros=&gt;grabar_xstring( EXPORTING xstring = l_xstring fichero = p_file mostrar_error = &apos;&apos;
+                                       IMPORTING mensaje = v_msg
+                                                 fichero_final = l_fichero_final ).
+      IF NOT v_msg IS INITIAL.
+        MESSAGE v_msg TYPE &apos;I&apos;.
+      ELSE.
+        MESSAGE |Se ha grabado el fichero { l_fichero_final }| TYPE &apos;S&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF p_mail = &apos;X&apos;.
+      DATA(l_filem) = zcl_ap_ficheros=&gt;get_fichero_var( fichero = CONV #( p_filem ) ).
+      IF l_filem IS INITIAL.
+        l_filem = &apos;fichero.xlsx&apos;.
+      ENDIF.
+      zcl_ap_envio_mail=&gt;mail( EXPORTING subject              = p_asunto
+                                         direccion            = p_email
+                                         nombre_fichero_tabla = l_filem
+                                         texto                = p_cuerpo
+                                         xstring              = l_xstring
+                               IMPORTING message              = v_msg ).
+      IF v_msg IS INITIAL.
+        MESSAGE |Se ha enviado mail a { p_email }| TYPE &apos;S&apos;.
+      ELSE.
+        MESSAGE v_msg TYPE &apos;I&apos;.
+      ENDIF.
+    ENDIF.
+
+    IF p_ftp = &apos;X&apos;.
+      NEW zcl_ap_ftp( )-&gt;grabar_fichero( EXPORTING user     = p_user
+                                                   password = p_pass
+                                                   host     = p_dftp
+                                                   fichero  = p_filef
+                                                   xstring  = l_xstring
+                                         IMPORTING message = DATA(l_msg)
+                                                   fichero_final = l_fichero_final ).
+      IF NOT l_msg IS INITIAL.
+        MESSAGE l_msg TYPE &apos;I&apos;.
+      ELSE.
+        MESSAGE |Fichero { l_fichero_final } grabado en FTP| TYPE &apos;S&apos;.
+      ENDIF.
+    ENDIF.
+  ENDIF.</source>
+</PROG>

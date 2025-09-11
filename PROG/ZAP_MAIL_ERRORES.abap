@@ -1,0 +1,333 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : Mantenimiento mails errores
+* DESCRIPCION : Mantenimiento mails errores
+*
+* AUTOR: Andres Picazo                                FECHA: 22/04/2024
+*
+***********************************************************************
+REPORT zap_mail_errores.
+
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+
+*------TABLAS INTERNAS-------------------------------------------------*
+
+
+*------VARIABLES-------------------------------------------------------*
+
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*-------------------------------------------------------------------7---*
+
+CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
+  PUBLIC SECTION.
+    METHODS: data_changed          REDEFINITION,
+      data_changed_finished REDEFINITION,
+      toolbar               REDEFINITION,
+      user_command          REDEFINITION,
+      visualizar_objeto     REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF  t_listado,
+             check      TYPE xfeld,
+             lights     TYPE zico_estado_mensaje,
+             report     TYPE zap_mail_errores-report,
+             msgid      TYPE zap_mail_errores-msgid,
+             msgno      TYPE zap_mail_errores-msgno,
+             mensaje    TYPE zap_mail_errores-mensaje,
+             ind        TYPE zap_mail_errores-ind,
+             emails     TYPE zap_mail_errores-emails,
+             asunto     TYPE zap_mail_errores-asunto,
+             cuerpo     TYPE zap_mail_errores-cuerpo,
+             proceso    TYPE zap_mail_errores-proceso,
+             comentario TYPE zap_mail_errores-comentario,
+             updkz      TYPE cdpos-chngind,
+             message    TYPE bapi_msg,
+             style      TYPE lvc_t_styl,
+             color      TYPE lvc_t_scol,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+
+    DATA: i_listado     TYPE tt_listado,
+          i_listado_ini TYPE tt_listado.
+
+    DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
+          o_event TYPE REF TO lcl_event_grid.
+
+    METHODS: buscar_datos REDEFINITION,
+
+      validaciones IMPORTING !mod    TYPE abap_bool DEFAULT ''
+                   CHANGING  listado TYPE t_listado ##NEEDED,
+
+      status_dynpro_0100,
+      command_dynpro_0100.
+
+ENDCLASS.
+
+DATA o_prog           TYPE REF TO zcl_report ##NEEDED.
+
+DATA zap_mail_errores TYPE zap_mail_errores.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+SELECT-OPTIONS: s_repor FOR zap_mail_errores-report,
+                  s_msg   FOR zap_mail_errores-mensaje,
+                  s_msgid FOR zap_mail_errores-msgid.
+SELECTION-SCREEN SKIP 1.
+PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+CLASS lcl_event_grid IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    " TODO: variable is assigned but never used (ABAP cleaner)
+    DATA l_list TYPE o_prog->t_listado.
+
+    l_list = list.
+    CASE column.
+      WHEN OTHERS. message = 'No implementado'.
+    ENDCASE.
+  ENDMETHOD. " handle_double_click
+
+  METHOD toolbar.
+    super->toolbar( e_object = e_object e_interactive = e_interactive ).
+  ENDMETHOD.
+
+  METHOD user_command.
+    DATA l_listado TYPE o_prog->t_listado.
+
+    CASE e_ucomm.
+      WHEN 'NUEVO'.
+        zcl_ap_alv_grid=>append_style_edit( EXPORTING campo = 'REPORT,MSGID,MSGNO,MENSAJE,IND' CHANGING tabla_style = l_listado-style ).
+        l_listado-updkz = 'I'.
+        APPEND l_listado TO o_prog->i_listado.
+        o_alv->refrescar_grid( soft_refresh = '' ).
+      WHEN 'BORRAR'.
+        o_alv->set_marca_filas_sel( EXPORTING validar_seleccion = 'X' CHANGING t_tabla = o_prog->i_listado ).
+        LOOP AT o_prog->i_listado ASSIGNING FIELD-SYMBOL(<listado>) WHERE check = 'X'.
+          <listado>-updkz = 'D'.
+        ENDLOOP.
+        o_alv->refrescar_grid( soft_refresh = '' ).
+      WHEN OTHERS.
+        super->user_command( e_ucomm = e_ucomm ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD data_changed.
+    ini_data_changed( cambios = er_data_changed->mt_good_cells ).
+
+    LOOP AT i_cambios_celda INTO cambio_celda.
+      AT NEW row_id.
+        READ TABLE o_prog->i_listado INTO DATA(l_listado_ini) INDEX cambio_celda-row_id. "#EC CI_SUBRC
+        DATA(l_listado) = l_listado_ini.
+      ENDAT.
+
+      set_valor_mod( CHANGING datos = l_listado ).
+
+      AT END OF row_id.
+        o_prog->validaciones( EXPORTING mod = 'X' CHANGING listado = l_listado ).
+        MODIFY o_prog->i_listado FROM l_listado INDEX cambio_celda-row_id.
+        actualizar_fila( fila_ini = l_listado_ini
+                         fila_fin = l_listado er_data_changed = er_data_changed fila = cambio_celda-row_id ).
+      ENDAT.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD data_changed_finished.
+    IF NOT tabla_data_changed IS INITIAL.
+      CLEAR tabla_data_changed.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD buscar_datos.
+    sgpi_texto( 'Seleccionando datos'(sda) ).
+    CLEAR i_listado.
+    SELECT * FROM zap_mail_errores
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+      WHERE report  IN s_repor
+       AND mensaje IN s_msg
+       AND msgid   IN s_msgid
+     ORDER BY PRIMARY KEY.
+
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(<listado>).
+      validaciones( CHANGING listado = <listado> ).
+    ENDLOOP.
+
+    i_listado_ini = i_listado.
+  ENDMETHOD.                                               " seleccionar_datos
+
+  METHOD status_dynpro_0100.
+    status_dynpro( EXPORTING cprog = 'ZAP_STATUS'
+                             status = 'ST_DYN' CHANGING i_listado = i_listado ).
+    IF inicio IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    inicio = 'X'.
+    o_alv->add_button( button = 'F01' text = 'Grabar' icon = icon_system_save ucomm = 'GRABAR' ).
+    IF sy-sysid <> zcl_c=>entorno_produccion.
+      o_alv->add_button( button = 'F05' text = 'Transporte' icon = icon_ws_truck ucomm = 'OT' ).
+    ENDIF.
+
+    o_alv->registrar_mod( ).
+    o_alv->set_layout( no_rowmove = 'X' no_rowins = 'X' style = 'STYLE' colort = 'COLOR' ).
+    o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
+    o_alv->set_campos_tabint( i_listado[] ).
+    o_alv->set_field_quitar( 'CHECK,LIGHTS,MESSAGE,UPDKZ' ).
+    o_alv->set_field_hotspot( campo = 'ASUNTO,CUERPO' valor = 'TEXT_EDT' ).
+    o_alv->set_field_input( 'EMAILS,ASUNTO,CUERPO,PROCESO,COMENTARIO' ).
+    o_alv->set_field_text( 'IND,EMAILS,ASUNTO,CUERPO,MENSAJE,COMENTARIO' ).
+    o_alv->add_filtro( campo = 'UPDKZ' valor = 'D' sign = 'E' ).
+    sgpi_texto( 'Generando informe' ).
+    o_alv->show( CHANGING tabla = i_listado ).
+
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+  ENDMETHOD.
+
+  METHOD command_dynpro_0100.
+    DATA: l_hay_sel        TYPE c LENGTH 1,
+          zap_mail_errores TYPE zap_mail_errores.
+    DATA: l_key  TYPE c LENGTH 120,
+          i_keys TYPE TABLE OF string.
+
+    o_alv->comprobar_cambios( ).
+    command_dynpro( EXPORTING o_alv         = o_alv
+                              seleccion     = 'OT'
+                    CHANGING  i_listado     = i_listado
+                              i_listado_ini = i_listado_ini
+                              hay_sel       = l_hay_sel ).
+
+    CASE ucomm.
+      WHEN 'GRABAR'.
+        LOOP AT i_listado ASSIGNING FIELD-SYMBOL(<listado>) WHERE updkz = 'D'.
+          DELETE FROM zap_mail_errores WHERE report  = <listado>-report
+                                         AND msgid   = <listado>-msgid
+                                         AND msgno   = <listado>-msgno
+                                         AND mensaje = <listado>-mensaje
+                                         AND ind     = <listado>-ind.
+          DELETE i_listado.
+        ENDLOOP.
+        LOOP AT i_listado ASSIGNING <listado> WHERE updkz <> ''.
+          CLEAR zap_mail_errores.
+          MOVE-CORRESPONDING <listado> TO zap_mail_errores.
+          IF <listado>-updkz = 'U'.
+            MODIFY zap_mail_errores FROM zap_mail_errores.
+          ELSE.
+            CLEAR <listado>-style.
+            INSERT zap_mail_errores FROM zap_mail_errores.
+          ENDIF.
+        ENDLOOP.
+        i_listado_ini = i_listado.
+        MESSAGE 'Se han guardado los datos' TYPE 'S'.
+        o_alv->refrescar_grid( soft_refresh = '' ).
+
+      WHEN 'OT'.
+        LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
+          l_key(3) = sy-mandt.
+          l_key+3(40) = <listado>-report.
+          l_key+43(20) = <listado>-msgid.
+          l_key+63(3) = <listado>-msgno.
+          l_key+66 = <listado>-mensaje.
+          APPEND l_key TO i_keys.
+        ENDLOOP.
+
+        zcl_ap_utils=>grabar_tabla_en_ot( tabla  = 'ZAP_MAIL_ERRORES'
+                                          i_keys = i_keys ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD validaciones.
+    CLEAR: listado-message, listado-style, listado-color, listado-lights.
+
+    IF mod = 'X'.
+      IF listado-updkz IS INITIAL.
+        listado-updkz = 'U'.
+      ENDIF.
+    ENDIF.
+
+    set_status_list( EXPORTING message = listado-message criterio = 'V' CHANGING list = listado ).
+  ENDMETHOD.
+ENDCLASS.
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( ).
+
+
+  sscrfields-functxt_04 = icon_mail && ` Mails enviados`.
+  o_prog->initialization_i( ).
+
+  IF sy-batch IS INITIAL.
+    o_prog->o_event = NEW #( boton_refrescar = 'X'
+                             boton_excel     = 'Y'
+                             boton_nuevo     = 'X'
+                             boton_borrar    = 'X'
+                             o_prog          = o_prog ).
+    o_prog->o_event->campo_updkz = 'UPDKZ'.
+    o_prog->o_alv = NEW #( estructura = ''
+                           o_event    = o_prog->o_event ).
+
+  ENDIF.
+
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN 'FC04'.
+      SUBMIT zap_mail_log
+        AND RETURN
+       WITH s_grupo = 'ERROR'.
+  ENDCASE.
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog->buscar_datos( ).
+
+  IF sy-batch IS INITIAL.
+    CALL SCREEN 0100.
+  ELSE.
+    MESSAGE 'Este programa no se puede ejecutar en fondo'(pnf) TYPE 'E'.
+  ENDIF.
+
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+
+MODULE status_0100 OUTPUT.
+
+  o_prog->status_dynpro_0100( ).
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  o_prog->command_dynpro_0100( ).
+
+
+ENDMODULE.

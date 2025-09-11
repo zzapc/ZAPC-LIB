@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_BP" VERSION="1" LANGU="S" DESCRIPT="Business Parner" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" WITH_UNIT_TESTS="X" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <localTestClasses>*&quot;* use this source file for your ABAP unit test classes</localTestClasses>
+ <method CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" SCONAME="BP" VERSION="1" LANGU="S" DESCRIPT="Número interlocutor comercial" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BU_PARTNER"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" SCONAME="ROLE" VERSION="1" LANGU="S" DESCRIPT="Rol interlocutor comercial incluido agrupación roles" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUS_ROLES" PAROPTIONL="X"/>
+  <source>METHOD visualizar.
+    DATA:
+      lv_request   TYPE REF TO cl_bupa_navigation_request,
+      lv_options   TYPE REF TO cl_bupa_dialog_joel_options,
+      lv_start_tab TYPE bus_navigation-bupa-sub_header_tab,
+      lv_bupr_main TYPE bus_bupr_maintenance.
+
+* set start-up navigation-----------------------------------------------
+    lv_start_tab = &apos;CVIC01&apos;.
+    CREATE OBJECT lv_request.
+
+*set partner maintenance
+    CALL METHOD lv_request-&gt;set_maintenance_id
+      EXPORTING
+        iv_value = lv_request-&gt;gc_maintenance_id_partner.
+
+*set partner number to start with (in case of a guid just use the method
+*set_partner_guid)
+    CALL METHOD lv_request-&gt;set_partner_number( bp ).
+
+*set the partner role to start with
+    IF NOT role IS INITIAL.
+      CALL METHOD lv_request-&gt;set_bupa_partner_role( role ).
+    ENDIF.
+
+*set the activity you want the user to start the maintenance with
+    CALL METHOD lv_request-&gt;set_bupa_activity
+      EXPORTING
+        iv_value = lv_request-&gt;gc_activity_display.
+
+    CALL METHOD lv_request-&gt;set_bupa_sub_header_tab
+      EXPORTING
+        iv_value = lv_start_tab.
+
+*set start-up options---------------------------------------------------
+    CREATE OBJECT lv_options.
+
+*start the transaction with an invisible locator
+    CALL METHOD lv_options-&gt;set_locator_visible( space ).
+
+*don&apos;t allow navigations to other partners
+    CALL METHOD lv_options-&gt;set_navigation_disabled( abap_true ).
+    CALL METHOD lv_options-&gt;set_bupr_create_not_allowed( abap_true ).
+
+    lv_bupr_main-create_allowed = abap_true.
+    lv_bupr_main-change_allowed = abap_true.
+    lv_bupr_main-delete_allowed = abap_true.
+
+    CALL METHOD lv_options-&gt;set_bupr_maintenance( lv_bupr_main ).
+
+    CALL METHOD lv_options-&gt;set_activity_switching_off( space ).
+
+*Call the business partner maintenance----------------------------------
+*with those parameters
+    CALL METHOD cl_bupa_dialog_joel=&gt;start_with_navigation
+      EXPORTING
+        iv_request = lv_request
+        iv_options = lv_options
+      EXCEPTIONS
+        OTHERS     = 1.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

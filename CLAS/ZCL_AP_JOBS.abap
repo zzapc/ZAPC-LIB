@@ -1,0 +1,489 @@
+CLASS zcl_ap_jobs DEFINITION
+  PUBLIC FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    DATA jobname          TYPE tbtco-jobname.
+    DATA jobcount         TYPE tbtcjob-jobcount.
+    DATA estado           TYPE string.
+    DATA fin_ok           TYPE abap_bool.
+    DATA fin_ko           TYPE abap_bool.
+    DATA tbtco            TYPE tbtco.
+    DATA print_parameters TYPE pri_params.
+    DATA message          TYPE bapi_msg.
+
+    METHODS constructor
+      IMPORTING jobname TYPE any      OPTIONAL
+                !uname  TYPE sy-uname DEFAULT sy-uname
+                  PREFERRED PARAMETER jobname.
+
+    METHODS abrir
+      RETURNING VALUE(jobcount) TYPE tbtcjob-jobcount.
+
+    METHODS cerrar
+      IMPORTING inmediato       TYPE abap_bool DEFAULT 'X'
+                fecha           TYPE dats      OPTIONAL
+                hora            TYPE uzeit     OPTIONAL
+                retraso         TYPE i         OPTIONAL
+                repetir_minutos TYPE i         DEFAULT 0
+                repetir_dias    TYPE i         DEFAULT 0
+                repetir_horas   TYPE i         DEFAULT 0.
+
+    CLASS-METHODS borrar_jobs
+      IMPORTING jobname           TYPE tbtco-jobname
+                fecha             TYPE datum     DEFAULT sy-datum
+                solo_sin_spool    TYPE abap_bool DEFAULT ''
+                solo_finalizados  TYPE abap_bool DEFAULT ''
+                solo_planificados TYPE abap_bool DEFAULT ''
+                solo_liberados    TYPE abap_bool DEFAULT ''
+      EXPORTING jobs_borrados     TYPE int4
+                !message          TYPE bapi_msg.
+
+    CLASS-METHODS esta_job_pendiente
+      IMPORTING jobname       TYPE any
+      RETURNING VALUE(activo) TYPE abap_bool.
+
+    METHODS espera_fin_job.
+    METHODS estado_job.
+
+    METHODS get_log
+      RETURNING VALUE(i_log) TYPE rspc_t_joblog.
+
+    METHODS ver_log.
+
+    CLASS-METHODS ver_log_st
+      IMPORTING jobcount TYPE tbtcjob-jobcount
+                jobname  TYPE tbtco-jobname.
+
+    CLASS-METHODS num_job_activos
+      IMPORTING jobname         TYPE any
+      RETURNING VALUE(num_jobs) TYPE i.
+
+    CLASS-METHODS get_spool
+      IMPORTING jobcount       TYPE tbtcjob-jobcount
+                jobname        TYPE tbtco-jobname
+      RETURNING VALUE(spoolid) TYPE tbtc_spoolid-spoolid.
+
+    CLASS-METHODS lanzar_evento
+      IMPORTING evento    TYPE any OPTIONAL
+                parametro TYPE any DEFAULT ''
+                  PREFERRED PARAMETER evento.
+
+
+endclass. "ZCL_AP_JOBS definition
+class ZCL_AP_JOBS implementation.
+  METHOD abrir.
+    CALL FUNCTION 'JOB_OPEN'
+      EXPORTING
+        jobname          = jobname
+      IMPORTING
+        jobcount         = me->jobcount
+      EXCEPTIONS
+        cant_create_job  = 1
+        invalid_job_data = 2
+        jobname_missing  = 3
+        OTHERS           = 4.
+
+    IF NOT sy-subrc IS INITIAL.
+      CASE sy-subrc.
+        WHEN 1. message = 'No es posible crear el job'.
+        WHEN 2. message = 'Datos creación de job inválidos'.
+        WHEN 3. message = 'Falta definir nombre del job'.
+        WHEN OTHERS.
+          MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDCASE.
+    ENDIF.
+
+    jobcount = me->jobcount.
+  ENDMETHOD.
+  METHOD borrar_jobs.
+    DATA: l_fecha        TYPE d,
+          r_status       TYPE RANGE OF tbtco-status,
+          i_tbtco        TYPE TABLE OF tbtco,
+          l_tbtco        TYPE tbtco,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_tbtc_spoolid TYPE tbtc_spoolid.
+
+    CLEAR: message, jobs_borrados.
+
+    IF NOT fecha IS INITIAL.
+      l_fecha = fecha.
+    ELSE.
+      l_fecha = '99991231'.
+    ENDIF.
+
+    IF solo_finalizados = 'X'.
+      APPEND VALUE #( option = 'EQ' sign = 'I' low = 'F' ) TO r_status.
+    ENDIF.
+
+    IF solo_planificados = 'X' OR solo_liberados = 'X'.
+      IF solo_planificados = 'X'.
+        APPEND VALUE #( option = 'EQ' sign = 'I' low = 'P' ) TO r_status.
+      ENDIF.
+      IF solo_liberados = 'X'.
+        APPEND VALUE #( option = 'EQ' sign = 'I' low = 'S' ) TO r_status.
+      ENDIF.
+
+      SELECT jobname jobcount FROM tbtco
+        INTO CORRESPONDING FIELDS OF TABLE i_tbtco
+        WHERE jobname  = jobname
+          AND enddate  = '00000000'
+          AND status  IN r_status.
+    ELSE.
+      SELECT jobname jobcount FROM tbtco
+        INTO CORRESPONDING FIELDS OF TABLE i_tbtco
+        WHERE jobname  = jobname
+          AND enddate <> '00000000'
+          AND enddate  <= l_fecha
+          AND status  IN r_status.
+    ENDIF.
+
+    LOOP AT i_tbtco INTO l_tbtco.
+      IF solo_sin_spool = 'X'.
+*        SELECT SINGLE jobname FROM tbtc_spoolid
+*           INTO l_tbtc_spoolid-jobname
+*          WHERE jobname  = l_tbtco-jobname
+*            AND jobcount = l_tbtco-jobcount.
+        data t_spoollist type table of BAPIXMSPOOLID.
+        refresh t_spoollist.
+        CALL FUNCTION 'BP_JOB_READ'
+          EXPORTING
+            job_read_jobname  = l_tbtco-jobname
+            job_read_jobcount = l_tbtco-jobcount
+            job_read_opcode   = 36 "btc_xbp_all_jobdata
+*          IMPORTING
+*            job_read_jobhead  = spo_jobhead
+          TABLES
+*            job_read_steplist = t_steplist
+            spool_attributes  = t_spoollist
+          EXCEPTIONS
+            job_doesnt_exist  = 1
+            OTHERS            = 99.
+        IF sy-subrc <> 0 or not t_spoollist is initial. "Si hay spool, no borramos
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+
+      CALL FUNCTION 'BP_JOB_DELETE'
+        EXPORTING
+          jobcount                 = l_tbtco-jobcount
+          jobname                  = l_tbtco-jobname
+*         FORCEDMODE               = ' '
+*         COMMITMODE               = 'X'
+        EXCEPTIONS
+          cant_delete_event_entry  = 1
+          cant_delete_job          = 2
+          cant_delete_joblog       = 3
+          cant_delete_steps        = 4
+          cant_delete_time_entry   = 5
+          cant_derelease_successor = 6
+          cant_enq_predecessor     = 7
+          cant_enq_successor       = 8
+          cant_enq_tbtco_entry     = 9
+          cant_update_predecessor  = 10
+          cant_update_successor    = 11
+          commit_failed            = 12
+          jobcount_missing         = 13
+          jobname_missing          = 14
+          job_does_not_exist       = 15
+          job_is_already_running   = 16
+          no_delete_authority      = 17
+          OTHERS                   = 18.
+      IF sy-subrc <> 0.
+        message = |Error { sy-subrc } borrando job|.
+      ELSE.
+        jobs_borrados = jobs_borrados + 1.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD cerrar.
+    DATA: l_fecha   TYPE tbtcjob-laststrtdt, " Fecha de ejecución más tardía
+          l_hora    TYPE tbtcjob-laststrttm, " Ultima hora de ejecución para
+          l_rep_min TYPE tbtcjob-prdmins,
+          l_rep_dia TYPE tbtcjob-prddays,
+          l_rep_hor TYPE tbtcjob-prdhours.
+
+    IF inmediato = 'X' AND retraso = 0.
+      l_fecha = '        '.
+      l_hora  = '      '.
+    ELSE.
+      IF NOT retraso IS INITIAL.
+        l_fecha = sy-datum.
+        l_hora = sy-uzeit + retraso.
+      ELSEIF NOT fecha IS INITIAL AND NOT hora IS INITIAL.
+        l_fecha = fecha.
+        l_hora = hora.
+      ENDIF.
+    ENDIF.
+
+    l_rep_min = repetir_minutos.
+    l_rep_dia = repetir_dias.
+    l_rep_hor = repetir_horas.
+    IF repetir_minutos < 99.
+      l_rep_min = repetir_minutos.
+    ELSE.
+      DATA(m) = repetir_minutos.
+      DATA(d) = m DIV 1440.
+      m = m MOD 1440.
+      DATA(h) = m DIV 60.
+      m = m MOD 60.
+      l_rep_min = m.
+      l_rep_hor = l_rep_hor + h.
+      l_rep_dia = l_rep_dia + d.
+    ENDIF.
+
+    CALL FUNCTION 'JOB_CLOSE'
+      EXPORTING
+        jobcount             = jobcount
+        jobname              = jobname
+        sdlstrtdt            = l_fecha
+        sdlstrttm            = l_hora
+        strtimmed            = inmediato  " Inicio inmediato
+        prdmins              = l_rep_min
+        prdhours             = l_rep_hor
+        prddays              = l_rep_dia
+      EXCEPTIONS
+        cant_start_immediate = 1
+        invalid_startdate    = 2
+        jobname_missing      = 3
+        job_close_failed     = 4
+        job_nosteps          = 5
+        job_notex            = 6
+        lock_failed          = 7
+        OTHERS               = 8.
+
+    IF NOT sy-subrc IS INITIAL.
+      CASE sy-subrc.
+        WHEN 1. message = 'No es posible empezar inmediatanmente'.
+        WHEN 2. message = 'Fecha inicio inválida'.
+        WHEN 3. message = 'Falta nombre de job'.
+        WHEN 4. message = 'Error al cerrar job'.
+        WHEN 5. message = 'Job sin pasos'.
+        WHEN 6. message = 'Job NOTEX'.
+        WHEN 7. message = 'Fallo al bloquear job'.
+        WHEN OTHERS.
+          MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.
+  METHOD constructor.
+    me->jobname = jobname.
+
+    print_parameters = zcl_ap_usuario=>get_print_parameters( uname ).
+
+    CLEAR message.
+
+*  CREATE OBJECT o_job
+*    EXPORTING
+*      jobname = 'DESPACHO_FACT_AUTO'.
+*
+*  o_job->abrir( ).
+*
+*  IF NOT o_job->jobcount IS INITIAL.
+*    SUBMIT zgsdd418_facturar_entrega
+*       AND RETURN
+*      WITH s_vbeln = vbeln
+*      WITH p_fkart = 'ZGCO'
+*      WITH p_auto  = 'X'
+*      WITH p_mailok = l_mail_ok
+*      WITH p_mailko = l_mail_ko
+*       VIA JOB o_job->jobname NUMBER o_job->jobcount
+*       TO SAP-SPOOL SPOOL PARAMETERS o_job->print_parameters WITHOUT SPOOL DYNPRO
+*        USER 'BACHTMGR'.
+*
+*    o_job->cerrar( inmediato = 'X' ).
+*    IF NOT o_job->message IS INITIAL.
+*      message = o_job->message.
+*    ENDIF.
+*  ELSE.
+*    message = o_job->message.
+*  ENDIF.
+  ENDMETHOD.
+  METHOD espera_fin_job.
+    DO.
+      estado_job( ).
+
+      IF fin_ok = 'X' OR fin_ko = 'X'.
+        EXIT.
+      ELSE.
+        WAIT UP TO 1 SECONDS.
+        zcl_ap_sgpi=>text( estado ).
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.
+  METHOD esta_job_pendiente.
+    DATA: i_joblist   TYPE TABLE OF tbtco,
+          l_joblist   TYPE tbtco,
+          preliminary TYPE c LENGTH 1,
+          ready       TYPE c LENGTH 1,
+          running     TYPE c LENGTH 1,
+          scheduled   TYPE c LENGTH 1.
+
+    CLEAR activo.
+    SELECT jobname jobcount FROM tbtco
+      INTO CORRESPONDING FIELDS OF TABLE i_joblist
+     WHERE jobname   = jobname
+       AND authckman = sy-mandt
+       AND (    sdlstrtdt <> '00000000'
+             OR reldate   <> '00000000' )
+       AND status <> 'F'
+     ORDER BY PRIMARY KEY.
+
+    LOOP AT i_joblist INTO l_joblist.
+      CALL FUNCTION 'SHOW_JOBSTATE'
+        EXPORTING
+          jobcount         = l_joblist-jobcount  " num job
+          jobname          = l_joblist-jobname  " nombre del job
+        IMPORTING
+*         aborted          = aborted
+*         finished         = finished
+          preliminary      = preliminary
+          ready            = ready
+          running          = running
+          scheduled        = scheduled
+        EXCEPTIONS
+          jobcount_missing = 1
+          jobname_missing  = 2
+          job_notex        = 3
+          OTHERS           = 4.
+
+      IF sy-subrc = 0.
+        IF preliminary = 'X' OR ready = 'X' OR running = 'X' OR scheduled = 'X'.
+          activo = 'X'.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD estado_job.
+    CLEAR: estado, fin_ok, fin_ko.
+
+    SELECT SINGLE * FROM tbtco
+      INTO me->tbtco
+       WHERE jobname  = jobname
+         AND jobcount = jobcount.
+    IF sy-subrc <> 0.
+      estado = 'Job no existe'.
+      fin_ko = 'X'.
+    ELSE.
+      CASE tbtco-status.
+        WHEN 'X'.
+          estado = 'Status desconocido.'.
+        WHEN 'Y'.
+          estado = 'Job preparado.'.
+        WHEN 'S'.
+          estado = 'Job liberado.'.
+        WHEN 'P'.
+          estado = 'Job planificado.'.
+        WHEN 'Z'.
+          estado = 'Job suspendido.'.
+          fin_ko = 'X'.
+        WHEN 'R'.
+          estado = 'Job en ejecución'.
+        WHEN 'A'.
+          estado = 'Job cancelado'.
+          fin_ko = 'X'.
+        WHEN 'F'.
+          estado = 'Job finalizado.'.
+          fin_ok = 'X'.
+        WHEN OTHERS.
+          CONCATENATE 'Status:' tbtco-status INTO estado.
+      ENDCASE.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_log.
+    CALL FUNCTION 'BP_JOBLOG_READ'
+      EXPORTING
+        jobcount              = tbtco-jobcount
+        joblog                = tbtco-joblog
+        jobname               = tbtco-jobname
+      TABLES
+        joblogtbl             = i_log
+      EXCEPTIONS
+        cant_read_joblog      = 1
+        jobcount_missing      = 2
+        joblog_does_not_exist = 3
+        joblog_is_empty       = 4
+        joblog_name_missing   = 5
+        jobname_missing       = 6
+        job_does_not_exist    = 7.
+    IF sy-subrc <> 0.
+      MESSAGE 'Error leyendo log' TYPE 'S'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_spool.
+    SELECT spoolid FROM tbtc_spoolid
+      INTO spoolid
+      UP TO 1 ROWS
+     WHERE jobname  = jobname
+       AND jobcount = jobcount
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.
+  METHOD lanzar_evento.
+* El evento tiene que estar en tabla btcuev, transacción SM62
+
+    CALL FUNCTION 'BP_EVENT_RAISE'
+      EXPORTING
+        eventid                = evento
+        eventparm              = parametro
+*       TARGET_INSTANCE        = ' '
+*       TARGET_MODE            = ' '
+      EXCEPTIONS
+        bad_eventid            = 1
+        eventid_does_not_exist = 2
+        eventid_missing        = 3
+        raise_failed           = 4.
+
+    IF sy-subrc <> 0.
+      MESSAGE 'Error lanzando evento' TYPE 'I'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD num_job_activos.
+    DATA r_jobname TYPE RANGE OF tbtco-jobname.
+
+    CLEAR num_jobs.
+
+    IF jobname <> '*'.
+      r_jobname = VALUE #( ( option = 'EQ' sign = 'I' low = jobname ) ).
+    ENDIF.
+
+    SELECT COUNT( * ) FROM tbtco
+      INTO num_jobs
+     WHERE jobname   IN r_jobname
+       AND authckman  = sy-mandt
+       AND (    sdlstrtdt <> '00000000'
+             OR reldate   <> '00000000' )
+       AND status = 'R'. " En ejecución
+  ENDMETHOD.
+  METHOD ver_log.
+    ver_log_st( jobcount = jobcount jobname = jobname ).
+  ENDMETHOD.
+  METHOD ver_log_st.
+    CALL FUNCTION 'BP_JOBLOG_SHOW_SM37B'
+      EXPORTING
+        client                    = sy-mandt
+        jobcount                  = jobcount
+*       JOBLOGID                  = ' '
+        jobname                   = jobname
+*       LINES                     = ' '
+*       DIRECTION                 = ' '
+      EXCEPTIONS
+        error_reading_jobdata     = 1
+        error_reading_joblog_data = 2
+        jobcount_missing          = 3
+        joblog_does_not_exist     = 4
+        joblog_is_empty           = 5
+        joblog_show_canceled      = 6
+        jobname_missing           = 7
+        job_does_not_exist        = 8
+        no_joblog_there_yet       = 9
+        no_show_privilege_given   = 10.
+
+    IF sy-subrc <> 0.
+      MESSAGE 'Error mostrando log' TYPE 'S'.
+    ENDIF.
+  ENDMETHOD.

@@ -1,0 +1,590 @@
+CLASS zcl_ap_control_cambios DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    CLASS-METHODS get_cdhdr
+      IMPORTING objectclas     TYPE cdhdr-objectclas
+                objectid       TYPE any              OPTIONAL
+                username       TYPE cdhdr-username   OPTIONAL
+                udate          TYPE cdhdr-udate      OPTIONAL
+                utime          TYPE cdhdr-utime      OPTIONAL
+                tcode          TYPE cdhdr-tcode      OPTIONAL
+                change_ind     TYPE cdhdr-change_ind OPTIONAL
+      RETURNING VALUE(i_cdhdr) TYPE cdhdr_tab.
+
+    CLASS-METHODS get_cdpos
+      IMPORTING objectclas     TYPE cdhdr-objectclas
+                objectid       TYPE any              OPTIONAL
+                username       TYPE cdhdr-username   OPTIONAL
+                udate          TYPE cdhdr-udate      OPTIONAL
+                utime          TYPE cdhdr-utime      OPTIONAL
+                tcode          TYPE cdhdr-tcode      OPTIONAL
+                change_ind     TYPE cdhdr-change_ind OPTIONAL
+                tabname        TYPE cdpos-tabname    OPTIONAL
+                fname          TYPE cdpos-fname      OPTIONAL
+                chngind        TYPE cdpos-chngind    OPTIONAL
+                value_new      TYPE cdpos-value_new  OPTIONAL
+                value_old      TYPE cdpos-value_old  OPTIONAL
+      RETURNING VALUE(i_cdpos) TYPE iscdpos_tab.
+
+    CLASS-METHODS get_primer_valor_campo
+      IMPORTING objectclas       TYPE cdhdr-objectclas
+                objectid         TYPE any
+                tabname          TYPE cdpos-tabname
+                fname            TYPE cdpos-fname
+                tabkey           TYPE cdpos-tabkey OPTIONAL
+      RETURNING VALUE(value_old) TYPE cdpos-value_old.
+
+    CLASS-METHODS get_fecha_ult_cambio
+      IMPORTING objectclas       TYPE cdhdr-objectclas
+                objectid         TYPE any
+                tabname          TYPE cdpos-tabname
+                fname            TYPE cdpos-fname
+                tabkey           TYPE cdpos-tabkey OPTIONAL
+      RETURNING VALUE(value_old) TYPE cdpos-value_old.
+
+    CLASS-METHODS get_previo_valor_campo
+      IMPORTING objectclas       TYPE cdhdr-objectclas
+                objectid         TYPE any
+                tabname          TYPE cdpos-tabname
+                fname            TYPE cdpos-fname
+                tabkey           TYPE cdpos-tabkey OPTIONAL
+      RETURNING VALUE(value_old) TYPE cdpos-value_old.
+
+    CLASS-METHODS get_valor_a_fecha
+      IMPORTING objectclas   TYPE cdhdr-objectclas
+                objectid     TYPE any
+                tabname      TYPE cdpos-tabname
+                fname        TYPE cdpos-fname
+                tabkey       TYPE cdpos-tabkey OPTIONAL
+                fecha        TYPE sy-datum     DEFAULT sy-datum
+      RETURNING VALUE(valor) TYPE cdpos-value_old.
+
+    CLASS-METHODS hay_mod
+      IMPORTING objectclas        TYPE cdhdr-objectclas
+                objectid          TYPE any
+                username          TYPE cdhdr-username DEFAULT sy-uname
+                tcode             TYPE cdhdr-tcode
+                segundos          TYPE i              DEFAULT 5
+      RETURNING VALUE(change_ind) TYPE cdhdr-change_ind.
+
+    CLASS-METHODS guardar_cambios_cdhdr
+      IMPORTING tabla TYPE any.
+
+    CLASS-METHODS existe_registro
+      IMPORTING objectclas    TYPE cdhdr-objectclas
+                objectid      TYPE any
+                tabname       TYPE cdpos-tabname
+                fname         TYPE cdpos-fname
+                tabkey        TYPE cdpos-tabkey    OPTIONAL
+                value_new     TYPE cdpos-value_new DEFAULT ''
+                value_old     TYPE cdpos-value_old DEFAULT ''
+      EXPORTING i_cdpos       TYPE iscdpos_tab
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
+endclass. "ZCL_AP_CONTROL_CAMBIOS definition
+class ZCL_AP_CONTROL_CAMBIOS implementation.
+  METHOD existe_registro.
+    CLEAR: existe, i_cdpos.
+
+    IF NOT value_old IS INITIAL AND NOT value_old IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_old  = value_old
+                           value_new  = value_new ).
+    ELSEIF NOT value_new IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_new  = value_new ).
+    ELSEIF NOT value_old IS INITIAL.
+      i_cdpos = get_cdpos( objectclas = objectclas
+                           objectid   = objectid
+                           tabname    = tabname
+                           fname      = fname
+                           value_old  = value_old ).
+    ENDIF.
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey <> tabkey.
+    ENDIF.
+
+    IF NOT i_cdpos IS INITIAL.
+      existe = 'X'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_cdhdr.
+    DATA: r_objectid    TYPE RANGE OF cdhdr-objectid,
+          r_username    TYPE RANGE OF cdhdr-username,
+          r_udate       TYPE RANGE OF cdhdr-udate,
+          r_utime       TYPE RANGE OF cdhdr-utime,
+          r_tcode       TYPE RANGE OF cdhdr-tcode,
+          r_change_ind  TYPE RANGE OF cdhdr-change_ind,
+          lr_objectid   LIKE LINE OF r_objectid,
+          lr_username   LIKE LINE OF r_username,
+          lr_udate      LIKE LINE OF r_udate,
+          lr_utime      LIKE LINE OF r_utime,
+          lr_tcode      LIKE LINE OF r_tcode,
+          lr_change_ind LIKE LINE OF r_change_ind.
+
+    DEFINE add_campo.
+      IF NOT &1 IS INITIAL.
+        lr_&1-option = 'EQ'.
+        lr_&1-sign   = 'I'.
+        lr_&1-low    = &1.
+        APPEND lr_&1 TO r_&1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    add_campo: objectid, username, udate, utime, tcode,
+               change_ind.
+
+    SELECT * FROM cdhdr
+      INTO TABLE i_cdhdr
+     WHERE objectclas  = objectclas
+       AND objectid   IN r_objectid
+       AND username   IN r_username
+       AND udate      IN r_udate
+       AND utime      IN r_utime
+       AND tcode      IN r_tcode
+       AND change_ind IN r_change_ind
+     ORDER BY PRIMARY KEY.
+  ENDMETHOD.
+  METHOD get_cdpos.
+    DATA: r_tabname    TYPE RANGE OF cdpos-tabname,
+          r_fname      TYPE RANGE OF cdpos-fname,
+          r_chngind    TYPE RANGE OF cdpos-chngind,
+          r_value_new  TYPE RANGE OF cdpos-value_new,
+          r_value_old  TYPE RANGE OF cdpos-value_old,
+          i_cdhdr      TYPE cdhdr_tab,
+          l_cdpos      TYPE iscdpos,
+          l_cdhdr      TYPE cdhdr,
+          lr_tabname   LIKE LINE OF r_tabname,
+          lr_fname     LIKE LINE OF r_fname,
+          lr_chngind   LIKE LINE OF r_chngind,
+          lr_value_new LIKE LINE OF r_value_new,
+          lr_value_old LIKE LINE OF r_value_old.
+
+    DEFINE add_campo.
+      IF &1 IS SUPPLIED.
+        lr_&1-option = 'EQ'.
+        lr_&1-sign   = 'I'.
+        lr_&1-low    = &1.
+        APPEND lr_&1 TO r_&1.
+      ENDIF.
+    END-OF-DEFINITION.
+
+    add_campo: tabname, fname, chngind, value_new, value_old.
+
+    i_cdhdr = get_cdhdr( objectclas = objectclas
+               objectid   = objectid
+               username   = username
+               udate      = udate
+               utime      = utime
+               tcode      = tcode
+               change_ind = change_ind ).
+
+    IF i_cdhdr IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT * FROM  cdpos                             "#EC CI_NO_TRANSFORM
+      INTO CORRESPONDING FIELDS OF TABLE i_cdpos
+       FOR ALL ENTRIES IN i_cdhdr
+     WHERE objectclas  = i_cdhdr-objectclas
+       AND objectid    = i_cdhdr-objectid
+       AND changenr    = i_cdhdr-changenr
+       AND tabname    IN r_tabname
+       AND fname      IN r_fname
+       AND chngind    IN r_chngind
+       AND value_new  IN r_value_new
+       AND value_old  IN r_value_old
+      ORDER BY PRIMARY KEY.
+
+    LOOP AT i_cdpos INTO l_cdpos.
+      READ TABLE i_cdhdr INTO l_cdhdr
+           WITH KEY changenr = l_cdpos-changenr.
+      IF sy-subrc = 0.
+        MOVE-CORRESPONDING l_cdhdr TO l_cdpos.
+        MODIFY i_cdpos FROM l_cdpos.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD get_fecha_ult_cambio.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey <> tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    DESCRIBE TABLE i_cdpos LINES sy-tfill.
+    READ TABLE i_cdpos INTO l_cdpos INDEX sy-tfill.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-udate.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_previo_valor_campo.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cont  TYPE i,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey <> tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    l_cont = lines( i_cdpos ).
+    READ TABLE i_cdpos INTO l_cdpos INDEX l_cont.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-value_old.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_primer_valor_campo.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey <> tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY changenr.
+    READ TABLE i_cdpos INTO l_cdpos INDEX 1.
+    IF sy-subrc = 0.
+      value_old = l_cdpos-value_old.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_valor_a_fecha.
+    DATA: i_cdpos TYPE iscdpos_tab,
+          l_cdpos TYPE iscdpos.
+
+    i_cdpos = get_cdpos( objectclas = objectclas
+                         objectid   = objectid
+                         tabname    = tabname
+                         fname  = fname ).
+
+    IF NOT tabkey IS INITIAL.
+      DELETE i_cdpos WHERE tabkey <> tabkey.
+    ENDIF.
+
+    SORT i_cdpos BY udate DESCENDING utime DESCENDING.
+
+    valor = '?'.
+    LOOP AT i_cdpos INTO l_cdpos.
+      IF l_cdpos-udate > fecha.
+        valor = l_cdpos-value_old.
+      ELSE.
+        IF valor = '?'.
+          valor = l_cdpos-value_new.
+          EXIT.
+        ELSE.
+          EXIT.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD guardar_cambios_cdhdr.
+* https://blogs.sap.com/2017/05/03/change-log-for-z-table-maintenance-via-scdo/
+* Crear primero entrada mediante transacción SCDO
+* Se visualiza con CHANGEDOCU_READ o RSSCD100 o ZCONTROL_CAMBIOS
+
+    TYPES: BEGIN OF ty_tcdrp,
+             object     TYPE cdobjectcl,
+             reportname TYPE cdreport,
+           END OF   ty_tcdrp,
+           BEGIN OF ty_view_tab,
+             object  TYPE cdobjectcl,
+             tabname TYPE cdtabname,
+           END OF   ty_view_tab.
+
+    " Get tabnames
+    " DD: Interface for reading a view from the ABAP/4 Dictionary
+    DATA vim_view_name TYPE ddobjname.
+    DATA: lt_dd26v     TYPE TABLE OF dd26v,
+          lrt_tabname  TYPE RANGE OF tabname,
+          lt_obj       TYPE STANDARD TABLE OF ty_view_tab,
+          lt_tcdrp     TYPE STANDARD TABLE OF ty_tcdrp,
+          lv_fugn      TYPE funct_pool,
+          lv_namesprog TYPE namespace,
+          lv_program   TYPE progname,
+          lv_namesfunc TYPE namespace,
+          lv_funcgroup TYPE progname,
+          lv_object    TYPE cdobjectcl,
+          lv_table     TYPE cdtabname,
+          lt_ptab      TYPE STANDARD TABLE OF string,
+          lv_prog      TYPE string,
+          lv_mess      TYPE string,
+          lv_sid       TYPE string.
+
+    vim_view_name = tabla.
+    CALL FUNCTION 'DDIF_VIEW_GET'
+      EXPORTING
+        name          = vim_view_name
+      TABLES
+        dd26v_tab     = lt_dd26v
+      EXCEPTIONS
+        illegal_input = 1
+        OTHERS        = 2.
+    IF sy-subrc IS NOT INITIAL.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+    IF lt_dd26v IS INITIAL.
+      APPEND INITIAL LINE TO lrt_tabname ASSIGNING FIELD-SYMBOL(<lrs_tabname>).
+      <lrs_tabname>-sign   = 'I'.
+      <lrs_tabname>-option = 'EQ'.
+      <lrs_tabname>-low    = vim_view_name.
+    ELSE.
+      SORT lt_dd26v BY tabname.
+      DELETE ADJACENT DUPLICATES FROM lt_dd26v COMPARING tabname.
+
+      DELETE lt_dd26v WHERE tabname(1) <> 'Z'. " En vístas sólo tablas Z
+      "*-
+      LOOP AT lt_dd26v INTO DATA(ls_dd26v).
+        APPEND INITIAL LINE TO lrt_tabname ASSIGNING <lrs_tabname>.
+        <lrs_tabname>-sign   = 'I'.
+        <lrs_tabname>-option = 'EQ'.
+        <lrs_tabname>-low    = ls_dd26v-tabname.
+      ENDLOOP.
+    ENDIF.
+    " Objects for change document creation
+    SELECT object tabname FROM tcdob                    "#EC CI_GENBUFF
+      INTO TABLE lt_obj
+      WHERE tabname IN lrt_tabname
+      ORDER BY PRIMARY KEY.
+    ##WARN_OK.
+    IF sy-subrc IS NOT INITIAL.
+      " No change document objects found
+      MESSAGE i899(cd).
+      RETURN.
+    ENDIF.
+    " Information on Include Reports Generated by RSSCD000
+    SELECT object reportname
+      FROM tcdrp
+      INTO TABLE lt_tcdrp
+      FOR ALL ENTRIES IN lt_obj
+      WHERE object = lt_obj-object
+      ##WARN_OK.
+    IF sy-subrc IS NOT INITIAL.
+      " Update program does not yet exist
+      MESSAGE i446(m2).
+      RETURN.
+    ENDIF.
+    " View Directory
+    SELECT SINGLE area
+      FROM tvdir
+      INTO lv_fugn
+      WHERE tabname = vim_view_name.
+    "*-
+    LOOP AT lt_obj ASSIGNING FIELD-SYMBOL(<ls_obj>).
+      ASSIGN lt_tcdrp[ object = <ls_obj>-object ] TO FIELD-SYMBOL(<ls_tcdrp>).
+      IF sy-subrc IS NOT INITIAL.
+        CONTINUE.
+      ENDIF.
+      " Split namespace
+      CLEAR: lv_namesprog, lv_program.
+      lv_program = <ls_tcdrp>-reportname.
+      CALL FUNCTION 'RS_NAME_SPLIT_NAMESPACE'
+        EXPORTING
+          name_with_namespace    = lv_program
+        IMPORTING
+          namespace              = lv_namesprog
+          name_without_namespace = lv_program
+        EXCEPTIONS
+          delimiter_error        = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        lv_program = <ls_tcdrp>-reportname.
+      ENDIF.
+      CLEAR: lv_namesfunc, lv_funcgroup.
+      lv_funcgroup = lv_fugn.
+      CALL FUNCTION 'RS_NAME_SPLIT_NAMESPACE'
+        EXPORTING
+          name_with_namespace    = lv_funcgroup
+        IMPORTING
+          namespace              = lv_namesfunc
+          name_without_namespace = lv_funcgroup
+        EXCEPTIONS
+          delimiter_error        = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        lv_funcgroup = lv_fugn.
+      ENDIF.
+      " Namespace conversion
+      lv_object = <ls_obj>-object.
+      IF lv_object(1) = '/'.
+        SHIFT lv_object LEFT DELETING LEADING '/'.
+        REPLACE FIRST OCCURRENCE OF '/' IN lv_object WITH '_'.
+      ENDIF.
+      lv_table = <ls_obj>-tabname.
+      IF lv_table(1) = '/'.
+        SHIFT lv_table LEFT DELETING LEADING '/'.
+        REPLACE FIRST OCCURRENCE OF '/' IN lv_table WITH '_'.
+      ENDIF.
+      " Subroutine pool
+      APPEND ##NO_TEXT:
+             `PROGRAM SUBPOOL.` TO lt_ptab,
+             |  INCLUDE { lv_namesprog }F{ lv_program }CDT.| TO lt_ptab,
+             |  INCLUDE { lv_namesprog }F{ lv_program }CDC.| TO lt_ptab,
+             `  FORM f_process.` TO lt_ptab,
+             `    TYPES:  BEGIN OF total.` TO lt_ptab,
+             |            INCLUDE STRUCTURE { vim_view_name }.| TO lt_ptab,
+             `            INCLUDE STRUCTURE vimflagtab.` TO lt_ptab,
+             `    TYPES:  END OF total.` TO lt_ptab,
+             `    FIELD-SYMBOLS: <fs_total>       TYPE ANY TABLE,` TO lt_ptab,
+             `                   <fs_total_wa>    TYPE total,` TO lt_ptab,
+             `                   <fs_x_namtab>    TYPE ANY TABLE,` TO lt_ptab,
+             `                   <fs_x_namtab_wa> TYPE vimnamtab,` TO lt_ptab,
+             `                   <fs_field>       TYPE any.` TO lt_ptab,
+             |    DATA: lv_tabname(40) TYPE c VALUE '({ lv_namesfunc }SAPL{ lv_funcgroup })TOTAL[]',| TO lt_ptab,
+             `          lv_cond_line  TYPE string,` TO lt_ptab,
+             `          lv_cond_line2 TYPE string.` TO lt_ptab,
+             `    ASSIGN (lv_tabname) TO <fs_total>.` TO lt_ptab,
+             `    LOOP AT <fs_total> ASSIGNING <fs_total_wa> CASTING.` TO lt_ptab,
+             `      CASE <fs_total_wa>-action.` TO lt_ptab,
+             `        WHEN 'U'. " Update` TO lt_ptab,
+             |          lv_tabname = '({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]'.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO <fs_x_namtab>.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ 'X' AND viewfield NE 'MANDT'|.` TO lt_ptab,
+             `          LOOP AT <fs_x_namtab> ASSIGNING <fs_x_namtab_wa> WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT <fs_x_namtab_wa>-viewfield OF STRUCTURE <fs_total_wa> TO <fs_field>.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              lv_cond_line = lv_cond_line && |AND | && ` TO lt_ptab,
+             `                             <fs_x_namtab_wa>-viewfield && | EQ '| && <fs_field> && |' |.` TO lt_ptab,
+             `              objectid = objectid && <fs_field>.` TO lt_ptab,
+             `              UNASSIGN <fs_field>.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `            SHIFT lv_cond_line LEFT BY 3 PLACES.` TO lt_ptab,
+             `            SELECT SINGLE *` TO lt_ptab,
+             |              FROM { <ls_obj>-tabname }| TO lt_ptab,
+             |              INTO *{ <ls_obj>-tabname }| TO lt_ptab,
+             `              WHERE (lv_cond_line).` TO lt_ptab,
+             |            MOVE-CORRESPONDING <fs_total_wa> TO { <ls_obj>-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = 'U'.` TO lt_ptab,
+             |            upd_{ lv_table } = 'U'.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `        WHEN 'N'. " New` TO lt_ptab,
+             |          lv_tabname = '({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]'.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO <fs_x_namtab>.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ 'X' AND viewfield NE 'MANDT'|.` TO lt_ptab,
+             `          LOOP AT <fs_x_namtab> ASSIGNING <fs_x_namtab_wa> WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT <fs_x_namtab_wa>-viewfield OF STRUCTURE <fs_total_wa> TO <fs_field>.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              objectid = objectid && <fs_field>.` TO lt_ptab,
+             `              UNASSIGN <fs_field>.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             |            MOVE-CORRESPONDING <fs_total_wa> TO { <ls_obj>-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = 'I'.` TO lt_ptab,
+             |            upd_{ lv_table } = 'I'.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `        WHEN 'D'. " Delete` TO lt_ptab,
+             |          lv_tabname = '({ lv_namesfunc }SAPL{ lv_funcgroup })X_NAMTAB[]'.| TO lt_ptab,
+             `          ASSIGN (lv_tabname) TO <fs_x_namtab>.` TO lt_ptab,
+             `          lv_cond_line2 = |keyflag EQ 'X' AND viewfield NE 'MANDT'|.` TO lt_ptab,
+             `          LOOP AT <fs_x_namtab> ASSIGNING <fs_x_namtab_wa> WHERE (lv_cond_line2).` TO lt_ptab,
+             `            ASSIGN COMPONENT <fs_x_namtab_wa>-viewfield OF STRUCTURE <fs_total_wa> TO <fs_field>.` TO lt_ptab,
+             `            IF sy-subrc IS INITIAL.` TO lt_ptab,
+             `              objectid = objectid && <fs_field>.` TO lt_ptab,
+             `              UNASSIGN <fs_field>.` TO lt_ptab,
+             `            ENDIF.` TO lt_ptab,
+             `          ENDLOOP.` TO lt_ptab,
+             `          IF sy-subrc IS INITIAL.` TO lt_ptab,
+             |            MOVE-CORRESPONDING <fs_total_wa> TO *{ <ls_obj>-tabname }.| TO lt_ptab,
+             `            objectid        = objectid.` TO lt_ptab,
+             `            tcode           = sy-tcode.` TO lt_ptab,
+             `            udate           = sy-datum.` TO lt_ptab,
+             `            utime           = sy-uzeit.` TO lt_ptab,
+             `            username        = sy-uname.` TO lt_ptab,
+             `            cdoc_upd_object = 'D'.` TO lt_ptab,
+             |            upd_{ lv_table } = 'D'.| TO lt_ptab,
+             |            PERFORM cd_call_{ lv_object }.| TO lt_ptab,
+             `          ENDIF.` TO lt_ptab,
+             `      ENDCASE.` TO lt_ptab,
+             |      CLEAR: lv_cond_line, lv_cond_line2, objectid, { <ls_obj>-tabname }, *{ <ls_obj>-tabname }.| TO lt_ptab,
+             `    ENDLOOP.` TO lt_ptab,
+             `  ENDFORM.` TO lt_ptab.
+      "*-
+      GENERATE SUBROUTINE POOL lt_ptab NAME lv_prog    "#EC CI_GENERATE
+               MESSAGE lv_mess
+               SHORTDUMP-ID lv_sid.
+      IF sy-subrc = 0.
+        PERFORM ('F_PROCESS') IN PROGRAM (lv_prog) IF FOUND.
+      ELSEIF sy-subrc = 4.
+        MESSAGE lv_mess TYPE 'I'.
+      ELSEIF sy-subrc = 8.
+        MESSAGE lv_sid TYPE 'I'.
+      ENDIF.
+      CLEAR lt_ptab.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD hay_mod.
+    DATA: l_utime    TYPE sy-uzeit,
+          l_segundos TYPE i,
+          l_udate    TYPE sy-datum,
+          i_cdhdr    TYPE cdhdr_tab,
+          l_cdhdr    TYPE cdhdr.
+
+    l_utime = '000000'.
+    l_segundos = sy-uzeit - l_utime.
+    IF l_segundos > segundos.
+      l_udate = sy-datum.
+    ELSE.
+      l_udate = sy-datum - 1.
+    ENDIF.
+
+    i_cdhdr = zcl_ap_control_cambios=>get_cdhdr(
+                  objectclas = objectclas
+                  objectid   = objectid
+                  username   = username
+                  udate      = l_udate
+                  tcode      = tcode ).
+
+    SORT i_cdhdr BY udate DESCENDING utime DESCENDING.
+    READ TABLE i_cdhdr INTO l_cdhdr INDEX 1.
+    IF sy-subrc = 0.
+      l_utime = sy-uzeit - segundos.
+      IF    l_cdhdr-udate > l_udate
+         OR ( l_cdhdr-udate = l_udate AND l_cdhdr-utime >= l_utime ).
+        change_ind = l_cdhdr-change_ind.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.

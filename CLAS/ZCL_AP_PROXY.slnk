@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_PROXY" VERSION="1" LANGU="S" DESCRIPT="Gestión de proxys" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_PROXY" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_PROXY" CMPNAME="DATOS_FROM_PAYLOAD" VERSION="1" LANGU="S" DESCRIPT="Convierte payload a datos" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="DATOS_FROM_PAYLOAD" SCONAME="PAYLOAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="DATOS_FROM_PAYLOAD" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="DATOS_FROM_PAYLOAD" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD datos_from_payload.
+
+    DATA(xml) = payload.
+    DATA(ini) = zcl_ap_regexp=&gt;buscar_patron( string = xml patron = &apos;&lt;ns0:([^&gt;]+)&gt;&apos; ).
+    LOOP AT ini ASSIGNING FIELD-SYMBOL(&lt;ini&gt;).
+      REPLACE ALL OCCURRENCES OF &lt;ini&gt; IN xml WITH &apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;&lt;asx:abap xmlns:asx=&quot;http://www.sap.com/abapxml&quot; version=&quot;1.0&quot;&gt;&lt;asx:values&gt;&lt;DATOS&gt;&apos;.
+    ENDLOOP.
+
+    DATA(fin) = zcl_ap_regexp=&gt;buscar_patron( string = xml patron = &apos;&lt;/ns0:([^&gt;]+)&gt;&apos;  ).
+    LOOP AT fin ASSIGNING FIELD-SYMBOL(&lt;fin&gt;).
+      REPLACE ALL OCCURRENCES OF &lt;fin&gt; IN xml WITH &apos;&lt;/DATOS&gt;&lt;/asx:values&gt;&lt;/asx:abap&gt;&apos;.
+    ENDLOOP.
+
+    TRY.
+        CALL TRANSFORMATION id
+          SOURCE XML xml
+          RESULT datos = datos.
+      CATCH cx_root INTO DATA(o_root).
+        message = o_root-&gt;get_text( ).
+    ENDTRY.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_MSGGUID" VERSION="1" LANGU="S" DESCRIPT="Recupera MSGGUID desde memoria" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_MSGGUID" SCONAME="MSGGUID" VERSION="1" LANGU="S" DESCRIPT="GUID of a Pipeline Element" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SXMSPEGUID"/>
+  <source>METHOD get_msgguid.
+    DATA l_msgguid TYPE sxmspeguid.
+
+    CLEAR msgguid.
+    TRY.
+        ASSIGN (&apos;(SAPLSXMS_MAIN)G_MSGGUID&apos;) TO FIELD-SYMBOL(&lt;msgguid&gt;).
+        IF &lt;msgguid&gt; IS ASSIGNED.
+          msgguid = &lt;msgguid&gt;.
+        ELSE.
+* El parámetro se recupera mediante enhancement en clase CL_XMS_MESSAGE_XMB - GET_MESSAGE_ID
+          GET PARAMETER ID &apos;ZMSGGUID&apos; FIELD DATA(l_id).
+          SET PARAMETER ID &apos;ZMSGGUID&apos; FIELD &apos;&apos;.
+          msgguid = l_id.
+        ENDIF.
+      CATCH cx_root INTO DATA(o_root).
+    ENDTRY.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" VERSION="1" LANGU="S" DESCRIPT="Devuelve payload" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="MSGID" VERSION="1" LANGU="S" DESCRIPT="ID único en formato CHAR en mayúsculas" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SXMSMKEY-MSGID"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="PID" VERSION="1" LANGU="S" DESCRIPT="Integration Engine: Pipeline ID" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SXMSMKEY-PID" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="SHOW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="VERSION" VERSION="1" LANGU="S" DESCRIPT="Numc3, utilización interna" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="NUMC3" PARVALUE="&apos;000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="PAYLOAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_PROXY" CMPNAME="GET_PAYLOAD" SCONAME="PAYLOAD_STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_payload.
+    DATA: im_msgkey TYPE sxmsmkey.
+
+    CLEAR: message, payload, payload_string.
+
+    im_msgkey-msgid = msgid.
+    IF NOT pid IS INITIAL.
+      im_msgkey-pid = pid.
+    ELSE.
+      SELECT pid FROM sxmspmast
+        INTO im_msgkey-pid
+        UP TO 1 ROWS
+       WHERE msgguid = msgid
+       ORDER BY exetimest DESCENDING.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        message = &apos;No existe ese ID&apos;.
+        RETURN.
+      ENDIF.
+    ENDIF.
+    CALL FUNCTION &apos;SXMB_GET_MESSAGE_PAYLOAD&apos;
+      EXPORTING
+        im_msgkey      = im_msgkey
+        im_archive     = &apos;&apos;
+        im_version     = version
+      IMPORTING
+        ex_msg_bytes   = payload
+      EXCEPTIONS
+        not_authorized = 1
+        no_message     = 2
+        internal_error = 3
+        no_payload     = 4
+        OTHERS         = 5.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Error recuperando payload&apos;.
+      RETURN.
+    ENDIF.
+
+    IF payload_string IS SUPPLIED.
+      CALL FUNCTION &apos;ECATT_CONV_XSTRING_TO_STRING&apos;
+        EXPORTING
+          im_xstring = payload
+*         IM_ENCODING = &apos;UTF-8&apos;
+        IMPORTING
+          ex_string  = payload_string.
+    ENDIF.
+
+    IF show = &apos;X&apos;.
+      TRY.
+          CALL FUNCTION &apos;DISPLAY_XML_STRING&apos;
+            EXPORTING
+              xml_string      = payload
+*             TITLE           =
+*             STARTING_X      = 5
+*             STARTING_Y      = 5
+            EXCEPTIONS
+              no_xml_document = 1
+              OTHERS          = 2.
+          IF sy-subrc NE 0.
+            message = &apos;XML inválido&apos;.
+          ENDIF.
+        CATCH cx_root INTO DATA(o_root).
+          message = o_root-&gt;get_text( ).
+      ENDTRY.
+    ENDIF.
+
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_VARIANTE" VERSION="1" LANGU="S" DESCRIPT="Gestión variantes" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_VARIANTE" CMPNAME="TT_RSPARAMSL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="4 " SRCROW2="8 " SRCCOLUMN2="65 " TYPESRC_LENG="63 " TYPESRC="tt_rsparamsl TYPE STANDARD TABLE OF rsparamsl WITH KEY selname
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_VARIANTE" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_VARIANTE" CMPNAME="I_VALORES" VERSION="1" LANGU="S" DESCRIPT="Tabla RSPARAMS" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="RSPARAMS_TT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_VARIANTE" CMPNAME="I_VALORESL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_RSPARAMSL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_VARIANTE" CMPNAME="EXISTE" VERSION="1" LANGU="S" DESCRIPT="Existe variante" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="EXISTE" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Campo de sistema ABAP: Programa de llamada" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="EXISTE" SCONAME="VARIANT" VERSION="1" LANGU="S" DESCRIPT="ABAP: Nombre de una variante (sin nombre de programa)" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VARIANT"/>
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="EXISTE" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD existe.
+
+    CLEAR si.
+    SELECT SINGLE variant FROM vari
+      INTO @DATA(l_variant)
+     WHERE relid = &apos;VA&apos;
+       AND report = @report
+       AND variant = @variant.
+    IF sy-subrc = 0.
+      si = &apos;X&apos;.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_CONTENIDOS" VERSION="1" LANGU="S" DESCRIPT="Recupera contenidos de la variante" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_CONTENIDOS" SCONAME="REPORT" VERSION="1" LANGU="S" DESCRIPT="Report" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_CONTENIDOS" SCONAME="VARIANT" VERSION="1" LANGU="S" DESCRIPT="Variante" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD get_contenidos.
+  DATA: l_rsvar TYPE rsvar.
+
+  l_rsvar-report  = report.
+  l_rsvar-variant = variant.
+  CLEAR: me-&gt;i_valores, me-&gt;i_valoresl.
+
+  CHECK existe( report = l_rsvar-report variant = l_rsvar-variant ) = &apos;X&apos;.
+  TRY.
+      CALL FUNCTION &apos;RS_VARIANT_CONTENTS&apos;
+        EXPORTING
+          report               = l_rsvar-report
+          variant              = l_rsvar-variant
+*         MOVE_OR_WRITE        = &apos;W&apos;
+*         NO_IMPORT            = &apos; &apos;
+*         EXECUTE_DIRECT       = &apos; &apos;
+*   IMPORTING
+*         SP                   = SP
+        TABLES
+*         L_PARAMS             = L_PARAMS
+*         L_PARAMS_NONV        = L_PARAMS_NONV
+*         L_SELOP              = L_SELOP
+*         L_SELOP_NONV         = L_SELOP_NONV
+          valutab              = i_valores
+          valutabl             = i_valoresl
+*         OBJECTS              = OBJECTS
+*         FREE_SELECTIONS_DESC = FREE_SELECTIONS_DESC
+*         FREE_SELECTIONS_VALUE       = FREE_SELECTIONS_VALUE
+        EXCEPTIONS
+          variant_non_existent = 1
+          variant_obsolete     = 2
+          error_message        = 999.
+      IF sy-subrc NE 0.
+      ENDIF.
+
+    CATCH cx_root.
+  ENDTRY.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve valor del campo" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VALOR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VALOR" SCONAME="HIGH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="30 caracteres" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TVARV_VAL"/>
+  <source>method GET_VALOR.
+  DATA l_par TYPE rsparams.
+
+  CLEAR valor.
+  READ TABLE i_valores INTO l_par WITH KEY selname = campo.
+  IF sy-subrc = 0.
+    IF high IS INITIAL.
+      valor = l_par-low.
+    ELSE.
+      valor = l_par-high.
+    ENDIF.
+  ENDIF.
+
+endmethod.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VARIANTE_ACTUAL" VERSION="1" LANGU="S" DESCRIPT="Recupera contenidos variante actual" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_VARIANTE" CMPNAME="GET_VARIANTE_ACTUAL" SCONAME="REPORT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="SY-CPROG"/>
+  <source>method GET_VARIANTE_ACTUAL.
+
+  CALL FUNCTION &apos;RS_REFRESH_FROM_SELECTOPTIONS&apos;
+    EXPORTING
+      curr_report     = report
+    TABLES
+      selection_table = i_valores
+    EXCEPTIONS
+      not_found       = 1
+      no_report       = 2
+      OTHERS          = 3.
+
+endmethod.</source>
+ </method>
+</CLAS>

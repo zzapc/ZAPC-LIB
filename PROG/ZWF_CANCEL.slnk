@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZWF_CANCEL" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Cancelación WFs" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_AUTO" ENTRY="        Ejecución automática" LENGTH="28 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_FECHA" ENTRY="        Fecha" LENGTH="13 "/>
+   <textElement ID="S" KEY="S_STATUS" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_TASK" ENTRY="        Tarea" LENGTH="13 "/>
+   <textElement ID="S" KEY="S_TTASK" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_UNAME" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_WI_ID" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Chequeo WF finalizados
+* DESCRIPCION : Chequeo WF finalizados
+*
+* AUTOR: Andrés Picazo                                FECHA: 26/05/2017
+*
+***********************************************************************
+REPORT zZWF_CANCEL.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: swwuserwi, swwwihead.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check      TYPE xfeld,
+             lights     TYPE zico_estado_mensaje,
+             user_id    TYPE xubname,
+             nombre     TYPE adrp-name_text,
+             wi_id      TYPE sww_wiid,
+             task_obj   TYPE otjid,
+             wi_rhtext  TYPE swwwihead-wi_text,
+             wi_text    TYPE swwwihead-wi_text,
+             wi_cd      TYPE swwwihead-wi_cd,
+             wi_ct      TYPE swwwihead-wi_ct,
+             wi_stat    TYPE swwwihead-wi_stat,
+             top_task   TYPE swwwihead-top_task,
+             instid     TYPE sww_wi2obj-instid,
+             typeid     TYPE sww_wi2obj-typeid,
+             pernr      TYPE persno,
+             ldate      TYPE ldate,
+             accion(20),
+             analisis   TYPE string,
+             message    TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+    DATA: i_listado           TYPE tt_listado,
+          l_listado           TYPE t_listado,
+          acciones_realizadas TYPE i.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos,
+      ejecutar,
+      cancelar.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+  SELECT-OPTIONS: s_fecha FOR sy-datum DEFAULT sy-datum,
+                  s_uname FOR sy-uname,
+                  s_wi_id FOR swwwihead-wi_id,
+                  s_task  FOR swwuserwi-task_obj,
+                  s_status FOR swwwihead-wi_stat DEFAULT &apos;STARTED&apos;,
+                  s_ttask FOR swwwihead-top_task DEFAULT &apos;TS9*&apos; OPTION CP.
+  SELECTION-SCREEN: SKIP 1.
+  PARAMETERS: p_auto AS CHECKBOX.
+  SELECTION-SCREEN: SKIP 1.
+  PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    READ TABLE o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; INDEX row.
+    IF sy-subrc = 0.
+      zcl_ap_wf=&gt;visualizar( &lt;listado&gt;-wi_id ).
+    ENDIF.
+  ENDMETHOD. &quot;handle_double_click
+  METHOD handle_user_command.
+    DATA: l_row         TYPE i,
+          l_return_code TYPE sy-subrc,
+          l_new_status  TYPE  sww_wistat.
+
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    CASE e_salv_function.
+      WHEN &apos;EXCEL&apos;.
+        exportar_excel( ).
+      WHEN &apos;BORRAR&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        READ TABLE o_prog-&gt;i_listado TRANSPORTING NO FIELDS WITH KEY check = &apos;X&apos;.
+        IF sy-subrc NE 0.
+          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          o_prog-&gt;ejecutar( ).
+          o_alv-&gt;refresh( ).
+        ENDIF.
+      WHEN &apos;CANCELAR&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        READ TABLE o_prog-&gt;i_listado TRANSPORTING NO FIELDS WITH KEY check = &apos;X&apos;.
+        IF sy-subrc NE 0.
+          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          o_prog-&gt;cancelar( ).
+          o_alv-&gt;refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+
+    IF p_auto = &apos;X&apos;.
+      ejecutar( ).
+    ENDIF.
+
+    IF p_auto IS INITIAL OR acciones_realizadas &gt; 0.
+      listado( ).
+    ENDIF.
+
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD ejecutar.
+    DATA: l_row          TYPE i,
+          l_return_code  TYPE sy-subrc,
+          l_new_status   TYPE  sww_wistat,
+          l_new_status_c TYPE  swr_wistat.
+
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos; AND accion NE &apos;&apos;.
+      acciones_realizadas += 1.
+
+      CASE &lt;listado&gt;-accion.
+        WHEN &apos;CANCELAR&apos;.
+          CALL FUNCTION &apos;SAP_WAPI_ADM_WORKFLOW_CANCEL&apos;
+            EXPORTING
+              workitem_id = &lt;listado&gt;-wi_id
+            IMPORTING
+              return_code = l_return_code
+              new_status  = l_new_status_c.
+
+          l_new_status = l_new_status_c-status.
+        WHEN &apos;FINALIZAR&apos;.
+          CALL FUNCTION &apos;SAP_WAPI_WORKITEM_COMPLETE&apos;
+            EXPORTING
+              workitem_id = &lt;listado&gt;-wi_id
+*             ACTUAL_AGENT                    = SY-UNAME
+*             LANGUAGE    = SY-LANGU
+*             SET_OBSOLET = &apos; &apos;
+*             DO_COMMIT   = &apos;X&apos;
+*             DO_CALLBACK_IN_BACKGROUND       = &apos;X&apos;
+*             IFS_XML_CONTAINER               =
+*             CHECK_INBOX_RESTRICTION         = &apos; &apos;
+            IMPORTING
+              return_code = l_return_code
+              new_status  = l_new_status.
+*           TABLES
+*             SIMPLE_CONTAINER                =
+*             MESSAGE_LINES                   =
+*             MESSAGE_STRUCT                  =
+          .
+
+      ENDCASE.
+
+      IF l_return_code NE 0.
+        __concat2 &lt;listado&gt;-message &apos;Error&apos; l_return_code.
+        message( p1 = &apos;Error tratando WI&apos; p2 = &lt;listado&gt;-wi_id p3 = &apos;de usuario&apos; p4 = &lt;listado&gt;-user_id p5 = &lt;listado&gt;-typeid p6 = &lt;listado&gt;-instid solo_log = &apos;X&apos; ).
+        set_status_list_stop( CHANGING list = &lt;listado&gt; ).
+      ELSE.
+        commit WORK AND WAIT.
+        __concat2 &lt;listado&gt;-message &apos;Se ha pasado a nuevo estado&apos; l_new_status.
+        set_status_list( EXPORTING color = &apos;V&apos; icono = zcl_ap_alv=&gt;c_ico_verde CHANGING list = &lt;listado&gt; ).
+        message( p1 = &apos;Se ha marcado como completo WI&apos; p2 = &lt;listado&gt;-wi_id p3 = &apos;de usuario&apos; p4 = &lt;listado&gt;-user_id p5 = &lt;listado&gt;-typeid p6 = &lt;listado&gt;-instid solo_log = &apos;X&apos; type = &apos;S&apos; ).
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD cancelar.
+    DATA: l_row         TYPE i,
+          l_return_code TYPE sy-subrc,
+          l_new_status  TYPE  swr_wistat.
+
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+      CALL FUNCTION &apos;SAP_WAPI_ADM_WORKFLOW_CANCEL&apos;
+        EXPORTING
+          workitem_id = &lt;listado&gt;-wi_id
+*         ACTUAL_AGENT         = SY-UNAME
+*         LANGUAGE    = SY-LANGU
+*         DO_COMMIT   = &apos;X&apos;
+        IMPORTING
+          return_code = l_return_code
+          new_status  = l_new_status.
+* TABLES
+*   MESSAGE_LINES        =
+*   MESSAGE_STRUCT       =
+      .
+
+      .
+
+      IF l_return_code NE 0.
+        __concat2 &lt;listado&gt;-message &apos;Error&apos; l_return_code.
+        message( p1 = &apos;Error tratando WI&apos; p2 = &lt;listado&gt;-wi_id p3 = &apos;de usuario&apos; p4 = &lt;listado&gt;-user_id p5 = &lt;listado&gt;-typeid p6 = &lt;listado&gt;-instid solo_log = &apos;X&apos; ).
+        set_status_list_stop( CHANGING list = &lt;listado&gt; ).
+      ELSE.
+        __concat2 &lt;listado&gt;-message &apos;Se ha pasado a nuevo estado&apos; l_new_status.
+        set_status_list( EXPORTING color = &apos;V&apos; icono = zcl_ap_alv=&gt;c_ico_verde CHANGING list = &lt;listado&gt; ).
+        message( p1 = &apos;Se ha marcado como completo WI&apos; p2 = &lt;listado&gt;-wi_id p3 = &apos;de usuario&apos; p4 = &lt;listado&gt;-user_id p5 = &lt;listado&gt;-typeid p6 = &lt;listado&gt;-instid solo_log = &apos;X&apos; type = &apos;S&apos; ).
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD seleccionar_datos.
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+    DATA: rbkp   TYPE rbkp,
+          l_dias TYPE i.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+    IF s_uname[] IS INITIAL.
+      SELECT * FROM swwwihead
+     INTO CORRESPONDING FIELDS OF TABLE i_listado
+    WHERE wi_id IN s_wi_id
+      AND top_task IN s_ttask
+     AND wi_stat IN s_status
+      AND wi_cd IN s_fecha.
+    ELSE.
+      SELECT * FROM swwuserwi JOIN swwwihead ON swwuserwi~wi_id = swwwihead~wi_id
+        INTO CORRESPONDING FIELDS OF TABLE i_listado
+       WHERE swwwihead~wi_id IN s_wi_id
+         AND user_id  IN s_uname
+         AND task_obj IN s_task
+         AND top_task IN s_ttask
+        AND wi_stat IN s_status
+         AND no_sel = &apos;&apos;
+         AND wi_cd IN s_fecha.
+    ENDIF.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING &lt;listado&gt;.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+
+      &lt;listado&gt;-nombre = zcl_ap_usuario=&gt;get_nombre( &lt;listado&gt;-user_id ).
+
+      SELECT SINGLE instid typeid FROM sww_wi2obj
+        INTO (&lt;listado&gt;-instid, &lt;listado&gt;-typeid)
+       WHERE wi_id = &lt;listado&gt;-wi_id.
+
+      IF &lt;listado&gt;-wi_stat = &apos;STARTED&apos; AND &lt;listado&gt;-top_task(3) = &apos;TS9&apos;.
+        IF s_wi_id[] IS INITIAL.
+          DATA(l_segundos) = zcl_ap_fechas=&gt;get_duracion_intervalo_sec( fini = &lt;listado&gt;-wi_cd
+                                                                        hini = &lt;listado&gt;-wi_ct
+                                                                        ffin = sy-datum
+                                                                        hfin = sy-uzeit ).
+          IF l_segundos &gt; 300.
+            &lt;listado&gt;-accion = &apos;FINALIZAR&apos;.
+          ENDIF.
+        ELSE.
+          &lt;listado&gt;-accion = &apos;FINALIZAR&apos;.
+        ENDIF.
+      ENDIF.
+
+
+      IF NOT &lt;listado&gt;-accion IS INITIAL.
+        &lt;listado&gt;-check = p_auto.
+        set_status_list( EXPORTING icono = zcl_ap_alv=&gt;c_sem_ambar CHANGING list = &lt;listado&gt; ).
+      ELSE.
+        IF p_auto = &apos;X&apos;.
+          DELETE i_listado.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_noout( &apos;CHECK&apos; ).
+    o_alv-&gt;set_field_text( &apos;ANALISIS,ACCION&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = &apos;INICIO&apos;
+      get_nombre_pc = &apos;X&apos;
+      no_param      = &apos;X&apos;
+      guardar_logz  = &apos;X&apos;.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = &apos;STANDARD&apos;
+      top_of_page_auto   = &apos;X&apos;
+      top_of_page_titulo = &apos;X&apos;.
+
+  p_vari = o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

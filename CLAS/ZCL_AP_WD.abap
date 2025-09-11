@@ -1,0 +1,533 @@
+class ZCL_AP_WD definition
+  public
+  inheriting from CL_WD_COMPONENT_ASSISTANCE
+  create public .
+
+public section.
+
+  data O_CONTEXT type ref to IF_WD_CONTEXT_NODE .
+  data L_VALUE_SET type WDY_KEY_VALUE .
+  data I_VALUE_SET type WDY_KEY_VALUE_TABLE .
+  data O_VIEW type ref to IF_WD_VIEW .
+  data O_CONTROLLER type ref to IF_WD_CONTROLLER .
+
+  methods GET_ATTRIBUTE
+    importing
+      !PATH type STRING optional
+      !NODO type ANY optional
+      !CAMPO type ANY optional
+    exporting
+      value(VALUE) type DATA .
+  methods GET_ATTRIBUTES
+    importing
+      !PATH type STRING optional
+      !NODO type ANY optional
+      !CAMPO type ANY optional
+    exporting
+      !VALUES type DATA .
+  methods SET_ATTRIBUTE
+    importing
+      !PATH type STRING optional
+      !VALUE type DATA
+      !NODO type ANY optional
+      !CAMPO type ANY optional .
+  methods SET_ATTRIBUTES
+    importing
+      !PATH type STRING
+      !VALUES type DATA .
+  methods GET_STATIC_ATTRIBUTES_TABLE
+    importing
+      !PATH type STRING
+      !FROM type I default 1
+      !TO type I default 2147483647
+    exporting
+      !TABLE type ANY TABLE .
+  methods BIND_TABLE
+    importing
+      !PATH type STRING
+      !NEW_ITEMS type ANY TABLE
+      !SET_INITIAL_ELEMENTS type ABAP_BOOL default ABAP_TRUE
+      !INDEX type I optional .
+  methods IS_CHANGED_BY_CLIENT
+    importing
+      !PATH type STRING
+    returning
+      value(FLAG) type ABAP_BOOL .
+  methods GET_NODE
+    importing
+      !PATH type STRING
+    returning
+      value(RESULT) type ref to IF_WD_CONTEXT_NODE .
+  methods SET_LEAD_SELECTION
+    importing
+      !PATH type STRING
+      !ELEMENT type ref to IF_WD_CONTEXT_ELEMENT .
+  methods RESET_CHANGED_BY_CLIENT
+    importing
+      !PATH type STRING .
+  methods SET_CHANGED_BY_CLIENT
+    importing
+      !PATH type STRING
+      !FLAG type ABAP_BOOL .
+  methods SET_CONTEXT
+    importing
+      !CONTEXT type ref to IF_WD_CONTEXT_NODE .
+  methods SET_ATTRIBUTE_VALUE_SET
+    importing
+      !NODO type ANY
+      !CAMPO type ANY .
+  methods SET_VALUE_SET
+    importing
+      !KEY type ANY
+      !VALUE type ANY
+      !INIT type ABAP_BOOL default ''
+      !FIRST type ABAP_BOOL default '' .
+  class-methods GET_PATH
+    importing
+      !NODO type ANY
+      !CAMPO type ANY optional
+    returning
+      value(PATH) type STRING .
+  methods SET_ATRIBUTO
+    importing
+      !NODO type ANY
+      !CAMPO type ANY
+      !VALOR type ANY .
+  methods GET_VALOR_STRING
+    importing
+      !NODO type ANY
+      !CAMPO type ANY
+    returning
+      value(STRING) type STRING .
+  class-methods LANZAR_APP
+    importing
+      !APP type ANY
+      !INTERNAL type ABAP_BOOL default 'X' .
+  methods SET_CURSOR
+    importing
+      !CAMPO type ANY optional .
+  methods SET_VIEW
+    importing
+      !VIEW type ref to IF_WD_VIEW
+      !CONTROLLER type ref to IF_WD_CONTROLLER optional .
+  methods GET_ATTRIBUTES_TABLE
+    importing
+      !PATH type STRING optional
+      !NODO type ANY optional
+    exporting
+      !TABLA type TABLE .
+  methods MESSAGE
+    importing
+      !MESSAGE type ANY
+      !TYPE type MSGTY .
+protected section.
+private section.
+
+  methods GET_ELEMENT_PATH
+    importing
+      !PATH type STRING
+    exporting
+      !ELPATH type STRING
+      !ATTRIBUTE type DATA .
+  methods GET_ELEMENT
+    importing
+      !PATH type STRING
+    returning
+      value(ELEMENT) type ref to IF_WD_CONTEXT_ELEMENT .
+endclass. "ZCL_AP_WD definition
+class ZCL_AP_WD implementation.
+method BIND_TABLE.
+  DATA: lo_node        TYPE REF TO   if_wd_context_node.
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->bind_table( EXPORTING new_items = new_items set_initial_elements = set_initial_elements index = index ).
+
+endmethod.
+method GET_ATTRIBUTE.
+  DATA: lv_elpath    TYPE string,
+        lv_attribute TYPE string,
+        lo_element   TYPE REF TO if_wd_context_element,
+        l_path       type string.
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  IF path IS INITIAL.
+    l_path = get_path( nodo = nodo campo = campo ).
+  ELSE.
+    l_path = path.
+  ENDIF.
+
+  " Determine element path and attribute name
+  get_element_path( EXPORTING path = l_path IMPORTING elpath = lv_elpath attribute = lv_attribute ).
+
+  " Get the element
+  lo_element = get_element( lv_elpath ).
+  lo_element->get_attribute( EXPORTING name = lv_attribute IMPORTING value = value ).
+
+endmethod.
+method GET_ATTRIBUTES.
+  DATA: lo_node TYPE REF TO if_wd_context_node,
+        l_path  TYPE string.
+
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  IF path IS INITIAL.
+    l_path = get_path( nodo = nodo campo = campo ).
+  ELSE.
+    l_path = path.
+  ENDIF.
+
+
+  " Get the element
+  lo_node = get_node( l_path ).
+  lo_node->get_static_attributes( IMPORTING static_attributes = values ).
+
+endmethod.
+method GET_ATTRIBUTES_TABLE.
+  DATA: lo_node TYPE REF TO if_wd_context_node,
+        l_path  TYPE string.
+
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  IF path IS INITIAL.
+    l_path = get_path( nodo = nodo ).
+  ELSE.
+    l_path = path.
+  ENDIF.
+
+
+  " Get the element
+  lo_node = get_node( l_path ).
+  lo_node->get_static_attributes_table( importing table = tabla ).
+
+endmethod.
+method GET_ELEMENT.
+  DATA: lo_node        TYPE REF TO   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  CHECK me->o_context IS BOUND.
+
+  lo_node = get_node( path ).
+
+  element = lo_node->get_element(  ).
+
+endmethod.
+method GET_ELEMENT_PATH.
+  DATA: lv_path        TYPE          string,
+        lt_path        TYPE TABLE OF string,
+        lv_index       TYPE          i,
+        lv_length      TYPE          i,
+        lv_lengm1      TYPE          i.
+*********************************************************************
+
+  " Read the path into a table
+  SPLIT path AT '/' INTO TABLE lt_path.
+
+  " Get the path depth
+  DESCRIBE TABLE lt_path LINES lv_length.
+  lv_lengm1 = lv_length - 1.
+
+  " Follow the path
+  lv_index = 0.
+  LOOP AT lt_path INTO lv_path.
+    lv_index = lv_index + 1.
+    IF lv_index < lv_length.
+      CONCATENATE elpath lv_path INTO elpath.
+      IF lv_index < lv_lengm1.
+        CONCATENATE elpath '/' INTO elpath.
+      ENDIF.
+    ELSE.
+      attribute = lv_path.
+    ENDIF.
+  ENDLOOP.
+
+endmethod.
+method GET_NODE.
+  DATA: lv_path        TYPE          string,
+        lt_path        TYPE TABLE OF string,
+        lv_index       TYPE          i,
+        lv_length      TYPE          i,
+        lo_node        TYPE REF TO   if_wd_context_node.
+
+
+  " Validate necessary object initialisation
+  CHECK me->o_context IS BOUND.
+
+  " Read the path into a table
+  SPLIT path AT '/' INTO TABLE lt_path.
+
+  " Get the path depth
+  DESCRIBE TABLE lt_path LINES lv_length.
+
+  " Root attributes
+  IF lv_length = 0.
+    lo_node = me->o_context.
+  ENDIF.
+
+  " Follow the path
+  lv_index = 0.
+  LOOP AT lt_path INTO lv_path.
+    lv_index = lv_index + 1.
+    IF lv_index = 1.
+      " Get first node in the path
+      lo_node = me->o_context->get_child_node( lv_path ).
+    ELSE.
+      " Get next node down the path
+      lo_node = lo_node->get_child_node( lv_path ).
+    ENDIF.
+  ENDLOOP.
+
+  result = lo_node.
+
+
+endmethod.
+method GET_PATH.
+
+  IF campo IS INITIAL.
+    path = nodo.
+  ELSE.
+    CONCATENATE nodo '/' campo INTO path.
+  ENDIF.
+
+endmethod.
+method GET_STATIC_ATTRIBUTES_TABLE.
+  data: lo_node        type ref to   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  check o_context is bound.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->get_static_attributes_table( exporting from = from to = to importing table = table ).
+
+
+endmethod.
+method GET_VALOR_STRING.
+
+  get_attribute( EXPORTING nodo = nodo campo = campo
+                 IMPORTING value = string ).
+
+endmethod.
+method IS_CHANGED_BY_CLIENT.
+*********************************************************************
+  DATA: lo_node        TYPE REF TO   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  " Get the element
+  lo_node = get_node( path ).
+  flag    = lo_node->is_changed_by_client( ).
+
+endmethod.
+METHOD LANZAR_APP.
+  DATA: l_app TYPE  wdy_application_name.
+
+  l_app = app.
+  CALL FUNCTION 'WDY_EXECUTE_IN_PLACE'
+    EXPORTING
+*     PROTOCOL                  =
+      INTERNALMODE              = internal
+*     SMARTCLIENT               =
+      application               = l_app
+*     CONTAINER_NAME            =
+*     PARAMETERS                =
+*     SUPPRESS_OUTPUT           =
+*   IMPORTING
+*     OUT_URL                   =
+*   CHANGING
+*     VIEWER                    =
+   EXCEPTIONS
+     invalid_application       = 1
+     browser_not_started       = 2
+     action_cancelled          = 3
+     OTHERS                    = 4.
+
+  IF sy-subrc <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDMETHOD.
+METHOD message.
+  DATA: lo_message_manager    TYPE REF TO if_wd_message_manager,
+        l_messageid TYPE string.
+
+  CHECK NOT o_controller IS INITIAL.
+
+  CALL METHOD o_controller->get_message_manager
+    RECEIVING
+      message_manager = lo_message_manager.
+
+  CASE type.
+    WHEN 'E'.
+      CALL METHOD lo_message_manager->report_error_message
+        EXPORTING
+          message_text = message
+        RECEIVING
+          message_id   = l_messageid.
+    WHEN 'S'.
+      CALL METHOD lo_message_manager->report_success
+        EXPORTING
+          message_text = message
+        RECEIVING
+          message_id   = l_messageid.
+  ENDCASE.
+
+ENDMETHOD.
+method RESET_CHANGED_BY_CLIENT.
+  data: lo_node        type ref to   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  check o_context is bound.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->RESET_CHANGED_BY_CLIENT( ).
+
+endmethod.
+method SET_ATRIBUTO.
+  DATA: lr_node      TYPE REF TO if_wd_context_node,
+        lr_node_info TYPE REF TO if_wd_context_node_info,
+        lr_element   TYPE REF TO if_wd_context_element.
+
+  lr_node    = o_context->get_child_node( nodo ).
+  lr_element = lr_node->get_element( ).
+  lr_element->set_attribute(
+    name      = campo
+    value     = valor ).
+
+endmethod.
+method SET_ATTRIBUTE.
+  DATA: lv_elpath    TYPE string,
+        lv_attribute TYPE string,
+        lo_element   TYPE REF TO if_wd_context_element,
+        l_path       TYPE string.
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+
+  IF path IS INITIAL.
+    l_path = get_path( nodo = nodo campo = campo ).
+  ELSE.
+    l_path = path.
+  ENDIF.
+
+  " Determine element path and attribute name
+  get_element_path( EXPORTING path = l_path IMPORTING elpath = lv_elpath attribute = lv_attribute ).
+
+  " Get the element
+  lo_element = get_element( lv_elpath ).
+  lo_element->set_attribute( EXPORTING name = lv_attribute value = value ).
+
+endmethod.
+method SET_ATTRIBUTE_VALUE_SET.
+  DATA: lr_node      TYPE REF TO if_wd_context_node,
+        lr_node_info TYPE REF TO if_wd_context_node_info,
+        l_valor      TYPE string.
+
+  lr_node      = o_context->get_child_node( nodo ).
+  lr_node_info = lr_node->get_node_info( ).
+  lr_node_info->set_attribute_value_set(
+    name      = campo
+    value_set = i_value_set ).
+
+  READ TABLE i_value_set INTO l_value_set INDEX 1.
+  IF sy-subrc = 0.
+    l_valor = l_value_set-key.
+  ENDIF.
+
+  set_attribute( nodo = nodo campo = campo value = l_valor ).
+
+  CLEAR i_value_set.
+
+endmethod.
+method SET_ATTRIBUTES.
+  data: lo_node        type ref to   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  check o_context is bound.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->set_static_attributes( exporting static_attributes = values ).
+
+endmethod.
+method SET_CHANGED_BY_CLIENT.
+  data: lo_node        type ref to   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  check o_context is bound.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->SET_CHANGED_BY_CLIENT( flag ).
+
+endmethod.
+method SET_CONTEXT.
+
+  o_context = context.
+
+endmethod.
+METHOD set_cursor.
+  DATA: lo_element   TYPE REF TO IF_WD_VIEW_ELEMENT.
+
+  " Validate necessary object initialisation
+  CHECK o_context IS BOUND.
+  CHECK o_view IS BOUND.
+
+  lo_element = o_view->get_Element( id = campo ).
+  o_view->request_focus_on_view_elem( view_element = lo_element ).
+
+ENDMETHOD.
+method SET_LEAD_SELECTION.
+  data: lo_node        type ref to   if_wd_context_node.
+*********************************************************************
+
+  " Validate necessary object initialisation
+  check o_context is bound.
+
+  " Get the element
+  lo_node = get_node( path ).
+  lo_node->set_lead_selection( exporting element = element ).
+
+
+endmethod.
+method SET_VALUE_SET.
+
+  IF init = 'X'.
+    CLEAR i_value_set.
+  ENDIF.
+
+  CLEAR l_value_set.
+  l_value_set-key   = key.
+  l_value_set-value = value.
+
+  IF first IS INITIAL.
+    APPEND l_value_set TO i_value_set.
+  ELSE.
+    INSERT l_value_set INTO i_value_set INDEX 1.
+  ENDIF.
+
+endmethod.
+METHOD set_view.
+
+  me->o_view = view.
+  me->o_controller = controller.
+
+ENDMETHOD.

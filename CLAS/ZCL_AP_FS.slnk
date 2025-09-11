@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_FS" VERSION="1" LANGU="S" DESCRIPT="Manejo field symbols" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_FS" CMPNAME="TY_TYPE_DEFINITION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="11 " SRCCOLUMN1="4 " SRCROW2="17 " SRCCOLUMN2="30 " TYPESRC_LENG="190 " TYPESRC="BEGIN OF ty_type_definition,
+        level  TYPE i,
+        field  TYPE string,
+        kind   TYPE char1,
+        type   TYPE string,
+        parent TYPE i,
+      END OF ty_type_definition
+"/>
+ <types CLSNAME="ZCL_AP_FS" CMPNAME="TT_TYPE_DEFINITION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="19 " SRCCOLUMN1="4 " SRCROW2="19 " SRCCOLUMN2="63 " TYPESRC_LENG="61 " TYPESRC="tt_type_definition TYPE STANDARD TABLE OF ty_type_definition
+"/>
+ <types CLSNAME="ZCL_AP_FS" CMPNAME="TY_TYPE_REF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="21 " SRCCOLUMN1="4 " SRCROW2="26 " SRCCOLUMN2="23 " TYPESRC_LENG="167 " TYPESRC="BEGIN OF ty_type_ref,
+        level  TYPE i,
+        parent TYPE i,
+        field  TYPE string,
+        ref    TYPE REF TO cl_abap_typedescr,
+      END OF ty_type_ref
+"/>
+ <types CLSNAME="ZCL_AP_FS" CMPNAME="TT_TYPE_REF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="28 " SRCCOLUMN1="4 " SRCROW2="28 " SRCCOLUMN2="49 " TYPESRC_LENG="47 " TYPESRC="tt_type_ref TYPE STANDARD TABLE OF ty_type_ref
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="CAMPO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TEXT40" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="CONT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="NUMC2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="CPROG" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="SY-CPROG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="C_ELEMENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="2" ATTVALUE="&apos;E&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="C_STRUCTURE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="2" ATTVALUE="&apos;S&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="C_TABLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="2" ATTVALUE="&apos;T&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CHAR1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="D_TEXT_TYPE" VERSION="1" LANGU="S" EXPOSURE="1" STATE="1" EDITORDER="1 " ATTDECLTYP="1" ATTVALUE="&apos;TYPE=&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="FIN_COLUMNA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TEXT40" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="INI_COLUMNA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TEXT40" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="MT_TYPE_DES_TAB" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="1" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_TYPE_DEFINITION" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="MT_TYPE_REF" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="1" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TT_TYPE_REF" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_FS" CMPNAME="MV_MAX_LEVEL" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="1" ATTEXPVIRT="0" TYPTYPE="1" TYPE="I" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CHECK" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <exception CLSNAME="ZCL_AP_FS" CMPNAME="CHECK" SCONAME="INVALID_STRUCTURE" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD check.
+    DATA: ls_line LIKE LINE OF mt_type_des_tab,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          lr_type TYPE REF TO cl_abap_typedescr,
+          lt_temp LIKE mt_type_des_tab.
+
+    LOOP AT mt_type_des_tab INTO ls_line.
+      IF ls_line-kind &lt;&gt; c_structure AND ls_line-kind &lt;&gt; c_table AND ls_line-kind &lt;&gt; c_element.
+        RAISE invalid_structure.
+      ENDIF.
+
+      IF ls_line-kind &lt;&gt; c_element.
+        CONTINUE.
+      ENDIF.
+
+      cl_abap_typedescr=&gt;describe_by_name(
+        EXPORTING
+          p_name         = ls_line-type
+        RECEIVING
+          p_descr_ref    = lr_type
+        EXCEPTIONS
+          type_not_found = 1 ).
+      IF sy-subrc &lt;&gt; 0.
+        RAISE invalid_structure.
+      ENDIF.
+    ENDLOOP.
+
+    lt_temp = mt_type_des_tab.
+    SORT lt_temp BY level ASCENDING.
+    DELETE ADJACENT DUPLICATES FROM lt_temp COMPARING level.
+
+    DO mv_max_level TIMES.
+      READ TABLE lt_temp INTO ls_line INDEX sy-index.
+      IF ls_line-level &lt;&gt; sy-index.
+        RAISE invalid_structure.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CONSTRUCTOR" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CONSTRUCTOR" SCONAME="CPROG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CONSTRUCTOR" SCONAME="FIN_COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <source>METHOD constructor.
+    ini_columna = columna.
+    me-&gt;fin_columna = fin_columna.
+    me-&gt;cprog       = cprog.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="COPIAR_ESTRUCTURA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="COPIAR_ESTRUCTURA" SCONAME="ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="COPIAR_ESTRUCTURA" SCONAME="DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD copiar_estructura.
+    CALL FUNCTION &apos;HR_99S_COPY_STRUC1_STRUC2&apos;
+      EXPORTING
+        p_struct1 = origen
+      IMPORTING
+        p_struct2 = destino.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE" SCONAME="I_BASE_FIELDS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE" SCONAME="I_NEW_FIELDS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_T_FCAT"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE" SCONAME="E_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD create_it_fields_base.
+    DATA lo_data TYPE REF TO data.
+
+    GET REFERENCE OF i_base_fields INTO lo_data.
+
+    create_it_fields_base_ref(
+      EXPORTING
+        i_base_fields = lo_data
+        i_new_fields  = i_new_fields
+      IMPORTING
+        e_table       = e_table ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE_REF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE_REF" SCONAME="I_BASE_FIELDS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE_REF" SCONAME="I_NEW_FIELDS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_T_FCAT"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FIELDS_BASE_REF" SCONAME="E_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD create_it_fields_base_ref.
+    DATA lo_struct_ref     TYPE REF TO cl_abap_structdescr.
+    DATA lt_components     TYPE cl_abap_structdescr=&gt;component_table.
+    DATA lt_components_new TYPE cl_abap_structdescr=&gt;component_table.
+    DATA lo_new_tab        TYPE REF TO cl_abap_tabledescr.
+
+* Obtengo los componentes del tipo de datos
+    lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_data_ref( i_base_fields ).
+
+* Obtengo los componentes
+    lt_components = lo_struct_ref-&gt;get_components( ).
+
+* Convierto el fieldcat del campo en componentes
+    lt_components_new = get_component_from_fcat(
+                            i_fcat       = i_new_fields ).
+
+* Añado los nuevos componentes a los existentes
+    APPEND LINES OF lt_components_new TO lt_components.
+
+* Creo un nuevo tipo de datos con los componentes pasados.
+    lo_struct_ref = cl_abap_structdescr=&gt;create( lt_components ).
+
+* Creo que la nueva tabla interna
+    lo_new_tab = cl_abap_tabledescr=&gt;create(
+                    p_line_type  = lo_struct_ref
+                    p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+                    p_unique     = abap_false ).
+
+* Creamos el manejador de la nueva tabla
+    CREATE DATA e_table TYPE HANDLE lo_new_tab.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="I_STRUC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="I_STRUC2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="CAMPOS_ADICIONALES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CL_ABAP_STRUCTDESCR=&gt;COMPONENT_TABLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="ERROR_SI_CAMPO_NO_EXISTE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="E_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="E_WORKAREA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_IT_FROM_STRUC" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD create_it_from_struc.
+    DATA lo_struct_ref TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=&gt;component_table.
+    DATA: lt_components2 TYPE cl_abap_structdescr=&gt;component_table,
+          l_compo        TYPE abap_componentdescr,
+          i_campos       TYPE TABLE OF ash_tabfields,
+          l_campo        TYPE ash_tabfields.
+    DATA lo_new_wa    TYPE REF TO cl_abap_structdescr.
+    DATA lo_new_tab   TYPE REF TO cl_abap_tabledescr.
+    DATA lo_error     TYPE REF TO cx_sy_table_creation.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA ld_txt_error TYPE string.
+
+    CLEAR message.
+* Obtengo los componentes del tipo de datos
+    lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( i_struc ).
+
+* Obtengo los componentes
+*    lt_components = lo_struct_ref-&gt;get_components( ).
+    lt_components = recursive_get_components( lo_struct_ref ).
+
+    IF i_struc2 &lt;&gt; &apos;&apos;.
+      lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( i_struc2 ).
+      lt_components2 = lo_struct_ref-&gt;get_components( ).
+      LOOP AT lt_components2 INTO l_compo.
+        APPEND l_compo TO lt_components.
+      ENDLOOP.
+    ENDIF.
+
+    DELETE lt_components WHERE name = &apos;&apos;.
+
+    IF NOT solo_campos IS INITIAL.
+      SPLIT solo_campos AT &apos;,&apos; INTO TABLE i_campos.
+      LOOP AT lt_components INTO l_compo.
+        IF NOT line_exists( i_campos[ reftab = l_compo-name ] ).
+          DELETE lt_components.
+        ENDIF.
+      ENDLOOP.
+
+      lt_components2 = lt_components.
+      CLEAR lt_components.
+      LOOP AT i_campos INTO l_campo.
+        READ TABLE lt_components2 INTO l_compo WITH KEY name = l_campo-reftab.
+        IF sy-subrc = 0.
+          APPEND l_compo TO lt_components.
+        ELSE.
+          message = |No existe el campo { l_campo-reftab } en { i_struc }|.
+          IF error_si_campo_no_existe = &apos;X&apos;.
+            MESSAGE message TYPE &apos;E&apos;.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT campos_adicionales IS INITIAL.
+      APPEND LINES OF campos_adicionales TO lt_components.
+    ENDIF.
+
+* Creo un nuevo tipo de datos con los componentes pasados.
+    lo_new_wa = cl_abap_structdescr=&gt;create( lt_components ).
+
+* Creo que la nueva tabla interna
+    TRY.
+        lo_new_tab = cl_abap_tabledescr=&gt;create(
+          p_line_type  = lo_new_wa
+          p_table_kind = cl_abap_tabledescr=&gt;tablekind_std
+          p_unique     = abap_false ).
+
+* Creamos el manejador de la nueva tabla
+        CREATE DATA e_table TYPE HANDLE lo_new_tab.
+
+* Y su cabecera
+        CREATE DATA e_workarea TYPE HANDLE lo_new_wa.
+
+      CATCH cx_sy_table_creation INTO lo_error.
+        ld_txt_error = lo_error-&gt;get_text( ).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_VARIABLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_VARIABLE" SCONAME="IT_DES_TAB" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_TYPE_DEFINITION"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_VARIABLE" SCONAME="ER_REF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <exception CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_VARIABLE" SCONAME="INVALID_STRUCTURE" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD create_variable.
+* http://scn.sap.com/community/abap/blog/2014/02/28/a-handy-rttc-tool
+
+    DATA ls_line LIKE LINE OF mt_type_des_tab.
+
+    CLEAR: mt_type_des_tab, mt_type_ref, mv_max_level.
+    mt_type_des_tab = it_des_tab.
+
+    SORT mt_type_des_tab BY level DESCENDING.
+    IF mt_type_des_tab IS INITIAL.
+      RETURN.
+    ENDIF.
+    READ TABLE mt_type_des_tab INTO ls_line INDEX 1.
+    mv_max_level = ls_line-level.
+
+    check(
+      EXCEPTIONS
+        invalid_structure = 1 ).
+    IF sy-subrc &lt;&gt; 0.
+      RAISE invalid_structure.
+    ENDIF.
+
+    LOOP AT mt_type_des_tab INTO ls_line.
+      IF ls_line-kind = c_element.
+        fill_element_ref( ls_line ).
+      ELSEIF ls_line-kind = c_structure.
+        fill_struct_ref( ls_line ).
+      ELSEIF ls_line-kind = c_table.
+        fill_table_ref( ls_line ).
+      ENDIF.
+    ENDLOOP.
+
+    generate_variable( IMPORTING er_ref = er_ref ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_WA_FROM_STRUC" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_WA_FROM_STRUC" SCONAME="I_STRUC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREATE_WA_FROM_STRUC" SCONAME="E_WORKAREA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD create_wa_from_struc.
+    DATA lo_struct_ref TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=&gt;component_table.
+    DATA lo_wa         TYPE REF TO cl_abap_structdescr.
+    DATA lo_error      TYPE REF TO cx_sy_struct_creation.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA d_txt_error   TYPE string.
+
+* Obtengo los componentes del tipo de datos
+    lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( i_struc ).
+
+* Obtengo los componentes
+    lt_components = lo_struct_ref-&gt;get_components( ).
+
+* Creo un nuevo tipo de datos con los componentes pasados.
+    TRY.
+        lo_wa = cl_abap_structdescr=&gt;create( lt_components ).
+
+* Creamos el manejador de la nueva tabla
+        CREATE DATA e_workarea TYPE HANDLE lo_wa.
+
+      CATCH cx_sy_struct_creation INTO lo_error.
+        d_txt_error = lo_error-&gt;get_text( ).
+
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="CREA_SUBTABLA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREA_SUBTABLA" SCONAME="TABLA_PRINCIPAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREA_SUBTABLA" SCONAME="CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREA_SUBTABLA" SCONAME="ESTRUCTURA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="CREA_SUBTABLA" SCONAME="SUBTABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD crea_subtabla.
+    DATA lo_struct_ref TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=&gt;component_table.
+    DATA:
+*        i_wa     TYPE REF TO data,
+      l_campos TYPE string,
+      l_wa     TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;fs&gt;                  TYPE any,
+                   &lt;subtabla&gt;            TYPE STANDARD TABLE,
+                   &lt;reg_tabla_principal&gt; TYPE any,
+                   &lt;reg_subtabla&gt;        TYPE any.
+
+    IF campos = &apos;!SOLO_INFORMADOS&apos;.
+      lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( estructura ).
+      lt_components = lo_struct_ref-&gt;get_components( ).
+
+      LOOP AT lt_components ASSIGNING FIELD-SYMBOL(&lt;comp&gt;) WHERE name &lt;&gt; &apos;&apos;.
+        DATA(l_valor) = &apos;&apos;.
+        LOOP AT tabla_principal ASSIGNING FIELD-SYMBOL(&lt;tabla&gt;).
+          ASSIGN COMPONENT &lt;comp&gt;-name OF STRUCTURE &lt;tabla&gt; TO &lt;fs&gt;.
+          IF sy-subrc = 0.
+            IF NOT &lt;fs&gt; IS INITIAL.
+              l_valor = &apos;X&apos;.
+              EXIT.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        IF l_valor = &apos;X&apos;.
+          IF l_campos IS INITIAL.
+            l_campos = &lt;comp&gt;-name.
+          ELSE.
+            CONCATENATE l_campos &lt;comp&gt;-name INTO l_campos SEPARATED BY &apos;,&apos;.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ELSE.
+      l_campos = campos.
+    ENDIF.
+
+    create_it_from_struc( EXPORTING i_struc = estructura
+                                     solo_campos = l_campos
+*                                   IMPORTING e_table = i_wa
+                                     IMPORTING e_table = subtabla
+                                               e_workarea = l_wa ).
+
+    ASSIGN subtabla-&gt;* TO &lt;subtabla&gt;.
+    LOOP AT tabla_principal ASSIGNING &lt;reg_tabla_principal&gt;.
+      ASSIGN l_wa-&gt;* TO &lt;reg_subtabla&gt;.
+      MOVE-CORRESPONDING &lt;reg_tabla_principal&gt; TO &lt;reg_subtabla&gt;.
+      APPEND &lt;reg_subtabla&gt; TO &lt;subtabla&gt;.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="ES_INICIAL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="ES_INICIAL" SCONAME="CPROG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="ES_INICIAL" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="ES_INICIAL" SCONAME="INICIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_inicial.
+    DATA l_campo TYPE c LENGTH 80.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CONCATENATE &apos;(&apos; cprog &apos;)&apos; campo INTO l_campo.
+    ASSIGN (l_campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      IF &lt;fs&gt; IS INITIAL.
+        inicial = &apos;X&apos;.
+      ENDIF.
+    ELSE.
+      inicial = &apos;?&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="FILL_ELEMENT_REF" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="FILL_ELEMENT_REF" SCONAME="IV_ELE_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TY_TYPE_DEFINITION"/>
+  <source>METHOD fill_element_ref.
+    DATA: lr_type TYPE REF TO cl_abap_typedescr,
+          ls_ref  LIKE LINE OF mt_type_ref.
+
+    lr_type = cl_abap_typedescr=&gt;describe_by_name( iv_ele_type-type ).
+
+    ls_ref-level   = iv_ele_type-level.
+    ls_ref-parent  = iv_ele_type-parent.
+    ls_ref-field   = iv_ele_type-field.
+    ls_ref-ref    ?= lr_type.
+    APPEND ls_ref TO mt_type_ref.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="FILL_STRUCT_REF" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="FILL_STRUCT_REF" SCONAME="IV_STRUCT_REF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TY_TYPE_DEFINITION"/>
+  <source>METHOD fill_struct_ref.
+    DATA: ls_type_line  LIKE LINE OF mt_type_des_tab,
+          ls_comp       TYPE abap_componentdescr,
+          ls_ref        LIKE LINE OF mt_type_ref,
+          lt_components TYPE abap_component_tab,
+          lr_type       TYPE REF TO cl_abap_typedescr.
+
+    LOOP AT mt_type_des_tab INTO ls_type_line WHERE parent = iv_struct_ref-level.
+      CLEAR ls_comp.
+      ls_comp-name = ls_type_line-field.
+      READ TABLE mt_type_ref INTO ls_ref WITH KEY level = ls_type_line-level parent = ls_type_line-parent
+          field = ls_type_line-field.
+      ASSERT sy-subrc = 0.
+      ls_comp-type ?= ls_ref-ref.
+      APPEND ls_comp TO lt_components.
+    ENDLOOP.
+
+    lr_type ?= cl_abap_structdescr=&gt;create( lt_components ).
+
+    CLEAR ls_ref.
+    ls_ref-level   = iv_struct_ref-level.
+    ls_ref-parent  = iv_struct_ref-parent.
+    ls_ref-ref    ?= lr_type.
+    APPEND ls_ref TO mt_type_ref.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="FILL_TABLE_REF" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="FILL_TABLE_REF" SCONAME="IV_TABLE_REF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TY_TYPE_DEFINITION"/>
+  <exception CLSNAME="ZCL_AP_FS" CMPNAME="FILL_TABLE_REF" SCONAME="INVALID_STRUCTURE" VERSION="1" LANGU="S" MTDTYPE="0" EDITORDER="1 "/>
+  <source>METHOD fill_table_ref.
+    DATA: ls_type_line  LIKE LINE OF mt_type_des_tab,
+          ls_ref        LIKE LINE OF mt_type_ref,
+          lr_struct_ref TYPE REF TO cl_abap_structdescr,
+          lr_type       TYPE REF TO cl_abap_typedescr.
+
+    LOOP AT mt_type_des_tab INTO ls_type_line WHERE parent = iv_table_ref-level.
+      READ TABLE mt_type_ref INTO ls_ref WITH KEY level = ls_type_line-level parent = ls_type_line-parent.
+      ASSERT sy-subrc = 0.
+      IF ls_type_line-kind = c_structure.
+        EXIT.
+      ELSE.
+        RAISE invalid_structure.
+      ENDIF.
+    ENDLOOP.
+
+    lr_struct_ref ?= ls_ref-ref.
+    IF lr_struct_ref IS NOT INITIAL.
+      lr_type ?= cl_abap_tabledescr=&gt;create( lr_struct_ref ).
+    ELSE.
+      READ TABLE mt_type_des_tab INTO ls_type_line WITH KEY level = iv_table_ref-level field = iv_table_ref-field.
+      ASSERT sy-subrc = 0.
+      lr_type ?= cl_abap_typedescr=&gt;describe_by_name( ls_type_line-type ).
+    ENDIF.
+
+    CLEAR ls_ref.
+    ls_ref-level   = iv_table_ref-level.
+    ls_ref-parent  = iv_table_ref-parent.
+    ls_ref-field   = iv_table_ref-field.
+    ls_ref-ref    ?= lr_type.
+    APPEND ls_ref TO mt_type_ref.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GENERATE_VARIABLE" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GENERATE_VARIABLE" SCONAME="ER_REF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <source>METHOD generate_variable.
+    DATA: ls_type       LIKE LINE OF mt_type_des_tab,
+          ls_comp       TYPE abap_componentdescr,
+          ls_ref        LIKE LINE OF mt_type_ref,
+          lt_components TYPE abap_component_tab,
+          lr_root       TYPE REF TO cl_abap_structdescr.
+
+    LOOP AT mt_type_des_tab INTO ls_type WHERE parent = 0.
+      CLEAR ls_comp.
+      ls_comp-name = ls_type-field.
+      READ TABLE mt_type_ref INTO ls_ref WITH KEY level = ls_type-level parent = ls_type-parent.
+      ls_comp-type ?= ls_ref-ref.
+      APPEND ls_comp TO lt_components.
+    ENDLOOP.
+
+    lr_root = cl_abap_structdescr=&gt;create( lt_components ).
+    CREATE DATA er_ref TYPE HANDLE lr_root.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="NO_INITIAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="CAMPO_CHECK" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="COLLECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COL_TABLA" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
+  <source>METHOD get_col_tabla.
+    FIELD-SYMBOLS: &lt;linea&gt; TYPE any,
+                   &lt;valor&gt; TYPE any.
+
+    CLEAR lista.
+    LOOP AT tabla ASSIGNING &lt;linea&gt;.
+      IF NOT campo_check IS INITIAL.
+        IF get_vals( campo = campo_check linea = &lt;linea&gt; ) = &apos;&apos;.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+      ASSIGN COMPONENT campo OF STRUCTURE &lt;linea&gt; TO &lt;valor&gt;.
+      IF sy-subrc = 0.
+        IF no_initial = &apos;X&apos; AND &lt;valor&gt; IS INITIAL.
+        ELSE.
+          APPEND &lt;valor&gt; TO lista.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    IF collect = &apos;X&apos;.
+      SORT lista.
+      DELETE ADJACENT DUPLICATES FROM lista.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_COMPONENT_FROM_FCAT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COMPONENT_FROM_FCAT" SCONAME="I_FCAT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LVC_T_FCAT"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_COMPONENT_FROM_FCAT" SCONAME="R_COMPONENTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CL_ABAP_STRUCTDESCR=&gt;COMPONENT_TABLE"/>
+  <source>METHOD get_component_from_fcat.
+    DATA le_component TYPE LINE OF cl_abap_structdescr=&gt;component_table.
+    DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
+    DATA ld_type_elem TYPE string.
+
+    FIELD-SYMBOLS &lt;ls_fcat&gt; TYPE LINE OF lvc_t_fcat.
+
+    CLEAR r_components.
+
+    LOOP AT i_fcat ASSIGNING &lt;ls_fcat&gt;.
+
+      le_component-name = &lt;ls_fcat&gt;-fieldname.
+
+* Obtengo la información del elementos de datos
+      lo_typedescr = cl_abap_elemdescr=&gt;describe_by_name( &lt;ls_fcat&gt;-rollname ).
+
+      ld_type_elem = lo_typedescr-&gt;type_kind.
+
+      CASE ld_type_elem.
+
+        WHEN cl_abap_elemdescr=&gt;typekind_char.
+          le_component-type = cl_abap_elemdescr=&gt;get_c( p_length   = lo_typedescr-&gt;length ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_packed.
+* Obtengo el tipo de datos segun el componente
+          le_component-type = cl_abap_elemdescr=&gt;get_p( p_length   = lo_typedescr-&gt;length
+                                                        p_decimals = lo_typedescr-&gt;decimals ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_num.
+          le_component-type = cl_abap_elemdescr=&gt;get_n( p_length   = lo_typedescr-&gt;length ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_date.
+          le_component-type = cl_abap_elemdescr=&gt;get_d( ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_string.
+          le_component-type = cl_abap_elemdescr=&gt;get_string( ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_int.
+          le_component-type = cl_abap_elemdescr=&gt;get_i( ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_struct1. &quot; Estructura diccionario
+
+          le_component-type ?= cl_abap_typedescr=&gt;describe_by_name( &lt;ls_fcat&gt;-rollname ).
+
+        WHEN cl_abap_elemdescr=&gt;typekind_table. &quot; Tabla interna
+
+          le_component-type ?= cl_abap_typedescr=&gt;describe_by_name( &lt;ls_fcat&gt;-rollname ).
+
+*    when cl_abap_elemdescr=&gt;TYPEKIND_struct2.
+*    when cl_abap_elemdescr=&gt;TYPEKIND_INT1
+*    when cl_abap_elemdescr=&gt;TYPEKIND_CLASS.
+
+      ENDCASE.
+      IF le_component IS NOT INITIAL.
+        APPEND le_component TO r_components.
+        CLEAR le_component.
+        FREE lo_typedescr.
+      ENDIF.
+
+    ENDLOOP.
+
+*    DATA lo_typedescr  TYPE REF TO cl_abap_elemdescr.
+*  DATA le_component TYPE LINE OF cl_abap_structdescr=&gt;component_table.
+*
+*  FIELD-SYMBOLS &lt;ls_fcat&gt; TYPE LINE OF lvc_t_fcat.
+*
+*  CLEAR r_components.
+*
+*  LOOP AT i_fcat ASSIGNING &lt;ls_fcat&gt;.
+*
+*    le_component-name = &lt;ls_fcat&gt;-fieldname.
+*
+** Obtengo la información del elementos de datos
+*    lo_typedescr ?= cl_abap_elemdescr=&gt;describe_by_name( &lt;ls_fcat&gt;-rollname ).
+*
+**    TYPE_KIND
+*case
+** Obtengo el tipo de datos segun el componente
+*    le_component-type = cl_abap_elemdescr=&gt;get_p( p_length   = lo_typedescr-&gt;length
+*                                                  p_decimals = lo_typedescr-&gt;decimals ).
+*
+*    APPEND le_component TO r_components.
+*    CLEAR le_component.
+*    FREE lo_typedescr.
+*
+*  ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_INT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_INT" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_INT" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_INT" SCONAME="INT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="I"/>
+  <source>METHOD get_fs_int.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CONCATENATE ini_columna columna fin_columna INTO campo.
+
+    IF datos IS SUPPLIED.
+      CONCATENATE &apos;DATOS-&apos; campo INTO campo.
+    ELSE.
+      IF NOT cprog IS INITIAL.
+        CONCATENATE &apos;(&apos; cprog &apos;)&apos; campo INTO campo.
+      ENDIF.
+    ENDIF.
+
+    ASSIGN (campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      int = &lt;fs&gt;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_STRING" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_STRING" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_FS_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_fs_string.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CONCATENATE ini_columna columna fin_columna INTO campo.
+
+    IF NOT cprog IS INITIAL.
+      CONCATENATE &apos;(&apos; cprog &apos;)&apos; campo INTO campo.
+    ENDIF.
+
+    ASSIGN (campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      string = &lt;fs&gt;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_LISTA_CAMPOS_DIF" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_LISTA_CAMPOS_DIF" SCONAME="VAR1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_LISTA_CAMPOS_DIF" SCONAME="SOLO_CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_LISTA_CAMPOS_DIF" SCONAME="VAR2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_LISTA_CAMPOS_DIF" SCONAME="CAMPOS_DIF" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_lista_campos_dif.
+    FIELD-SYMBOLS: &lt;fs1&gt; TYPE any,
+                   &lt;fs2&gt; TYPE any.
+
+    CLEAR campos_dif.
+
+    DATA(i_campos1) = zcl_ap_dev=&gt;get_fieldcatalog( linea = var1 ).
+    DATA(i_campos2) = zcl_ap_dev=&gt;get_fieldcatalog( linea = var2 ).
+    DELETE i_campos1 WHERE name = &apos;&apos;.
+    DELETE i_campos2 WHERE name = &apos;&apos;.
+
+    IF NOT solo_campos IS INITIAL.
+      SPLIT solo_campos AT &apos;,&apos; INTO TABLE DATA(i_campos).
+      LOOP AT i_campos1 INTO DATA(l_campo).
+        IF NOT line_exists( i_campos[ table_line = l_campo-name ] ).
+          DELETE i_campos1.
+        ENDIF.
+      ENDLOOP.
+      LOOP AT i_campos2 INTO l_campo.
+        IF NOT line_exists( i_campos[ table_line = l_campo-name ] ).
+          DELETE i_campos2.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    LOOP AT i_campos1 INTO l_campo.
+      ASSIGN COMPONENT l_campo-name OF STRUCTURE var1 TO &lt;fs1&gt;.
+      IF sy-subrc = 0.
+        ASSIGN COMPONENT l_campo-name OF STRUCTURE var2 TO &lt;fs2&gt;.
+        IF sy-subrc = 0.
+          IF &lt;fs1&gt; &lt;&gt; &lt;fs2&gt;.
+            __add_lista campos_dif l_campo-name.
+          ENDIF.
+        ELSE.
+          __add_lista campos_dif l_campo-name.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_NAME_OF_TYPE" VERSION="1" LANGU="S" EXPOSURE="1" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_NAME_OF_TYPE" SCONAME="I_ABSOLUTE_NAME" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_ABSTYPENAME"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_NAME_OF_TYPE" SCONAME="R_NAME_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_name_of_type.
+    DATA ld_pos TYPE i.
+
+    CLEAR r_name_type.
+
+* Busco donde empieza el literal TYPE=.
+    FIND FIRST OCCURRENCE OF d_text_type IN i_absolute_name MATCH OFFSET ld_pos.
+    IF sy-subrc = 0.
+
+* Obtengo el literal desde la posición donde esta el valor DE TYPE=
+      r_name_type = i_absolute_name+ld_pos.
+
+* Eliminio el TYPE= para quedarme con el nombre
+      REPLACE ALL OCCURRENCES OF d_text_type IN r_name_type WITH space.
+
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="CAMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="WHERE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="GET_JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="GET_XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="SOLO_CAMPOS_INDICADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="GET_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="3" TYPE="DATA"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ZXSTRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_TABLA" SCONAME="TABLA_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_tabla.
+    DATA: i_campos  TYPE TABLE OF string,
+          l_where   TYPE string,
+          o_root    TYPE REF TO cx_root,
+          l_message TYPE bapi_msg.
+
+    FIELD-SYMBOLS &lt;tabla&gt; TYPE STANDARD TABLE.
+
+    SPLIT campos AT &apos;,&apos; INTO TABLE i_campos.
+
+    IF solo_campos_indicados IS INITIAL.
+      create_it_from_struc( EXPORTING i_struc = tabla
+                            IMPORTING e_table = datos ).
+    ELSE.
+      create_it_from_struc( EXPORTING i_struc = tabla
+                                      solo_campos = campos
+                            IMPORTING e_table = datos ).
+    ENDIF.
+
+    IF NOT where IS INITIAL.
+      l_where = where.
+      REPLACE ALL OCCURRENCES OF &apos;|&apos; IN l_where WITH &apos;&apos;&apos;&apos;.
+      REPLACE ALL OCCURRENCES OF &apos;!!&apos; IN l_where WITH &apos;%&apos;.
+    ENDIF.
+
+    ASSIGN datos-&gt;* TO &lt;tabla&gt;.
+    TRY.
+        SELECT (i_campos) FROM (tabla)
+          INTO CORRESPONDING FIELDS OF TABLE &lt;tabla&gt;
+         WHERE (l_where)
+         ORDER BY PRIMARY KEY.
+      CATCH cx_root INTO o_root.
+        message = o_root-&gt;get_text( ).
+        RETURN.
+    ENDTRY.
+
+    IF get_tabla = &apos;X&apos;.
+      tabla_datos = &lt;tabla&gt;.
+    ENDIF.
+
+    IF get_xml = &apos;X&apos;.
+      xml = zcl_ap_string=&gt;transform_object_to_rawstring( tabla = &lt;tabla&gt; comprimir = &apos;&apos; ).
+    ENDIF.
+
+    IF get_json = &apos;X&apos;.
+      zcl_ap_segw=&gt;tabla2json( EXPORTING tabla   = &lt;tabla&gt;
+                               IMPORTING json    = json
+                                         message = l_message ).
+      message = l_message.
+    ENDIF.
+
+*      DATA datos TYPE REF TO data.
+*      FIELD-SYMBOLS: &lt;tabla&gt; TYPE STANDARD TABLE,
+*                     &lt;linea&gt; TYPE any,
+*                     &lt;fs&gt;    TYPE any.
+*
+*      zcl_ap_fs=&gt;get_tabla( EXPORTING tabla = &apos;T001&apos; campos = &apos;BUTXT&apos; where = l_where solo_campos_indicados = &apos;X&apos;
+*                            IMPORTING message = message datos = datos ).
+*
+*      ASSIGN datos-&gt;* TO &lt;tabla&gt;.
+*      LOOP AT &lt;tabla&gt; ASSIGNING &lt;linea&gt;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_VAL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VAL" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VAL" SCONAME="LINEA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VAL" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VAL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_val.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    ASSIGN COMPONENT campo OF STRUCTURE linea TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      valor = &lt;fs&gt;.
+    ELSE.
+      message = |Estructura { linea } no contiene campo { campo }|.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" SCONAME="ESTRUCTURA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALOR_FROM_STRUC" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_valor_from_struc.
+    DATA lo_struct_ref TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=&gt;component_table.
+    DATA lo_wa         TYPE REF TO cl_abap_structdescr.
+    DATA e_workarea    TYPE REF TO data.
+    DATA lo_error      TYPE REF TO cx_sy_struct_creation.
+
+    FIELD-SYMBOLS: &lt;datos&gt; TYPE any,
+                   &lt;dato&gt;  TYPE any.
+
+* Obtengo los componentes del tipo de datos
+    lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( estructura ).
+
+* Obtengo los componentes
+    lt_components = lo_struct_ref-&gt;get_components( ).
+
+* Creo un nuevo tipo de datos con los componentes pasados.
+    TRY.
+        lo_wa = cl_abap_structdescr=&gt;create( lt_components ).
+
+* Creamos el manejador de la nueva tabla
+        CREATE DATA e_workarea TYPE HANDLE lo_wa.
+
+        ASSIGN e_workarea-&gt;* TO &lt;datos&gt;.
+        &lt;datos&gt; = datos.
+        ASSIGN COMPONENT campo OF STRUCTURE &lt;datos&gt; TO &lt;dato&gt;.
+        IF sy-subrc = 0.
+          valor = &lt;dato&gt;.
+        else.
+          message = |No existe el campo { campo } en la estructura|.
+        ENDIF.
+
+      CATCH cx_sy_struct_creation INTO lo_error.
+        message = lo_error-&gt;get_text( ).
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALS" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALS" SCONAME="LINEA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="GET_VALS" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_vals.
+    get_val( EXPORTING campo = campo
+                       linea = linea
+             IMPORTING valor = valor
+                       &quot; TODO: variable is assigned but never used (ABAP cleaner)
+                       message = DATA(l_message) ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="OP_COLUMNAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="OP_COLUMNAS" SCONAME="OP1" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="OP_COLUMNAS" SCONAME="OP2" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="OP_COLUMNAS" SCONAME="OPERACION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR1" PARVALUE="&apos;+&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="OP_COLUMNAS" SCONAME="RESUL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD op_columnas.
+    DATA: i_campos TYPE abap_component_tab,
+          l_c1     TYPE string,
+          l_c2     TYPE string,
+          l_r      TYPE string.
+
+    FIELD-SYMBOLS: &lt;campo&gt; TYPE abap_componentdescr,
+                   &lt;c1&gt;    TYPE any,
+                   &lt;c2&gt;    TYPE any,
+                   &lt;r&gt;     TYPE any.
+
+    i_campos = zcl_ap_dev=&gt;get_fieldcatalog( linea = resul
+                                             solo_tipos = &apos;P&apos; ).
+
+    LOOP AT i_campos ASSIGNING &lt;campo&gt;.
+      CONCATENATE &apos;OP1-&apos; &lt;campo&gt;-name INTO l_c1.
+      ASSIGN (l_c1) TO &lt;c1&gt;.
+      CONCATENATE &apos;OP2-&apos; &lt;campo&gt;-name INTO l_c2.
+      ASSIGN (l_c2) TO &lt;c2&gt;.
+      CONCATENATE &apos;RESUL-&apos; &lt;campo&gt;-name INTO l_r.
+      ASSIGN (l_r) TO &lt;r&gt;.
+
+      CASE operacion.
+        WHEN &apos;+&apos;.
+          &lt;r&gt; = &lt;c1&gt; + &lt;c2&gt;.
+        WHEN &apos;-&apos;.
+          &lt;r&gt; = &lt;c1&gt; - &lt;c2&gt;.
+        WHEN &apos;/&apos;.
+          IF &lt;c2&gt; = 0.
+            &lt;r&gt; = 0.
+          ELSE.
+            &lt;r&gt; = &lt;c1&gt; / &lt;c2&gt;.
+          ENDIF.
+        WHEN &apos;%&apos;.
+          IF &lt;c2&gt; = 0.
+            &lt;r&gt; = 0.
+          ELSE.
+            &lt;r&gt; = ( 100 * &lt;c1&gt; ) / &lt;c2&gt;.
+          ENDIF.
+      ENDCASE.
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" SCONAME="I_PIVOT_PATTERN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" SCONAME="I_MOVE_FIELD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" SCONAME="I_ITAB_SOURCE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" SCONAME="I_PIVOT_FIELD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="PIVOT_TABLE" SCONAME="C_PIVOT_TABLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="STANDARD TABLE"/>
+  <source>METHOD pivot_table.
+    DATA le_pivot TYPE REF TO data.
+    DATA ld_field TYPE string.
+
+    FIELD-SYMBOLS &lt;le_pivot&gt;       TYPE any.
+    FIELD-SYMBOLS &lt;le_source&gt;      TYPE any.
+    FIELD-SYMBOLS &lt;le_field&gt;       TYPE any.
+    FIELD-SYMBOLS &lt;le_pivot_field&gt; TYPE any.
+    FIELD-SYMBOLS &lt;le_move_field&gt;  TYPE any.
+
+* Creo la workarea de la tabla pivote
+    CREATE DATA le_pivot LIKE LINE OF c_pivot_table.
+    ASSIGN le_pivot-&gt;* TO &lt;le_pivot&gt;.
+
+* Recorro la tabla de origen
+    LOOP AT i_itab_source ASSIGNING &lt;le_source&gt;.
+
+* Muevo los campos comunes
+      MOVE-CORRESPONDING &lt;le_source&gt; TO &lt;le_pivot&gt;.
+
+* Obtengo el valor del campo que se va pivotar
+      ASSIGN COMPONENT i_pivot_field OF STRUCTURE &lt;le_source&gt; TO &lt;le_field&gt;.
+
+      IF sy-subrc &lt;&gt; 0.
+        CONTINUE.
+      ENDIF.
+
+* Creo el campo donde se pondra el valor en la tabla pivote.
+      CONCATENATE &apos;&lt;LE_PIVOT&gt;-&apos; i_pivot_pattern &lt;le_field&gt; INTO ld_field.
+      ASSIGN (ld_field) TO &lt;le_pivot_field&gt;.
+
+      IF sy-subrc = 0.
+
+* Obtengo el valor del campo que se va mover su valor al del
+* campo de la tabla pivote.
+        CONCATENATE &apos;&lt;LE_SOURCE&gt;-&apos; i_move_field INTO ld_field.
+        ASSIGN (ld_field) TO &lt;le_move_field&gt;.
+        IF sy-subrc = 0.
+
+          &lt;le_pivot_field&gt; = &lt;le_move_field&gt;.
+          COLLECT &lt;le_pivot&gt; INTO c_pivot_table.
+          CLEAR &lt;le_pivot&gt;.
+
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="RECURSIVE_GET_COMPONENTS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="RECURSIVE_GET_COMPONENTS" SCONAME="IO_STRUCTDESCR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="CL_ABAP_STRUCTDESCR"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="RECURSIVE_GET_COMPONENTS" SCONAME="RT_COMPONENTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_COMPONENT_TAB"/>
+  <source>METHOD recursive_get_components.
+    DATA:
+      lt_incl_comp TYPE abap_component_tab,
+      lo_incl_stru TYPE REF TO cl_abap_structdescr,
+      l_curr_index TYPE i.
+
+    FIELD-SYMBOLS: &lt;comp&gt;      LIKE LINE OF rt_components,
+                   &lt;incl_comp&gt; LIKE LINE OF lt_incl_comp.
+
+    rt_components = io_structdescr-&gt;get_components( ).
+
+    LOOP AT rt_components ASSIGNING &lt;comp&gt;.
+      IF &lt;comp&gt;-as_include = &apos;X&apos;.
+        lo_incl_stru ?= &lt;comp&gt;-type.  &quot; not the include struc type
+        l_curr_index = sy-tabix.      &quot; and the index it is to be included
+        DELETE rt_components INDEX l_curr_index.
+
+        lt_incl_comp = recursive_get_components( io_structdescr =  lo_incl_stru  ).
+        LOOP AT lt_incl_comp ASSIGNING &lt;incl_comp&gt;.
+          INSERT &lt;incl_comp&gt; INTO rt_components INDEX l_curr_index.
+          l_curr_index = l_curr_index + 1.
+        ENDLOOP.
+      ENDIF.
+
+    ENDLOOP.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="SET" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET" SCONAME="SUFIJO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET" SCONAME="CPROG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-CPROG" PARVALUE="SY-CPROG"/>
+  <source>METHOD set.
+    DATA l_campo TYPE c LENGTH 80.
+
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    IF NOT sufijo IS INITIAL.
+      CONCATENATE campo sufijo INTO l_campo.
+    ENDIF.
+
+    IF NOT cprog IS INITIAL.
+      CONCATENATE &apos;(&apos; cprog &apos;)&apos; l_campo INTO l_campo.
+    ENDIF.
+
+    ASSIGN (campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      &lt;fs&gt; = valor.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS" SCONAME="INCREMENTAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD set_fs.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CONCATENATE ini_columna columna INTO campo.
+    IF NOT cprog IS INITIAL.
+      CONCATENATE &apos;(&apos; cprog &apos;)&apos; campo INTO campo.
+    ENDIF.
+
+    ASSIGN (campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      IF incrementar IS INITIAL.
+        &lt;fs&gt; = valor.
+      ELSE.
+        &lt;fs&gt; = &lt;fs&gt; + valor.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS_STRING" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS_STRING" SCONAME="COLUMNA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_FS" CMPNAME="SET_FS_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD set_fs_string.
+    FIELD-SYMBOLS &lt;fs&gt; TYPE any.
+
+    CONCATENATE ini_columna columna fin_columna INTO campo.
+    IF NOT cprog IS INITIAL.
+      CONCATENATE &apos;(&apos; cprog &apos;)&apos; campo INTO campo.
+    ENDIF.
+
+    ASSIGN (campo) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      &lt;fs&gt; = string.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,1522 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_MGRAPH" VERSION="1" LANGU="S" DESCRIPT="Uso API Microsoft Graph" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_ATTACHMENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="16 " SRCCOLUMN1="4 " SRCROW2="28 " SRCCOLUMN2="29 " TYPESRC_LENG="590 " TYPESRC="BEGIN OF t_attachment,
+             odata_type             TYPE string,
+             odata_mediacontenttype TYPE string,
+             id                     TYPE string,
+             lastmodifieddatetime   TYPE string,
+             name                   TYPE string,
+             contenttype            TYPE string,
+             size                   TYPE int4,
+             isinline               TYPE xfeld,
+             contentid              TYPE string,
+             contentlocation        TYPE string,
+             contentbytes           TYPE string,
+           END OF t_attachment
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_ATTACHMENTS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="30 " SRCCOLUMN1="4 " SRCROW2="30 " SRCCOLUMN2="65 " TYPESRC_LENG="63 " TYPESRC="tt_attachments TYPE STANDARD TABLE OF t_attachment WITH KEY id
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_APPLICATION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="32 " SRCCOLUMN1="4 " SRCROW2="35 " SRCCOLUMN2="24 " TYPESRC_LENG="126 " TYPESRC="BEGIN OF t_application,
+             id          TYPE string,
+             displayname TYPE string,
+     END OF t_application
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_USER" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="37 " SRCCOLUMN1="4 " SRCROW2="41 " SRCCOLUMN2="18 " TYPESRC_LENG="151 " TYPESRC="BEGIN OF t_user,
+             email       TYPE string,
+             id          TYPE string,
+             displayname TYPE string,
+      END OF t_user
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_APP_USER" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="43 " SRCCOLUMN1="4 " SRCROW2="46 " SRCCOLUMN2="22 " TYPESRC_LENG="128 " TYPESRC="BEGIN OF t_app_user,
+             application TYPE t_application,
+             user        TYPE t_user,
+      END OF t_app_user
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_FILE_REFERENCE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="6 " TYPTYPE="4" SRCROW1="48 " SRCCOLUMN1="4 " SRCROW2="54 " SRCCOLUMN2="28 " TYPESRC_LENG="237 " TYPESRC="BEGIN OF t_file_reference,
+             drivetype TYPE string,
+             driveid   TYPE string,
+             id        TYPE string,
+             path      TYPE string,
+             siteid    TYPE string,
+      END OF t_file_reference
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_HASHES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " TYPTYPE="4" SRCROW1="56 " SRCCOLUMN1="4 " SRCROW2="58 " SRCCOLUMN2="20 " TYPESRC_LENG="79 " TYPESRC="BEGIN OF t_hashes,
+            quickxorhash TYPE string,
+      END OF t_hashes
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_HASHES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " TYPTYPE="4" SRCROW1="60 " SRCCOLUMN1="4 " SRCROW2="60 " SRCCOLUMN2="66 " TYPESRC_LENG="64 " TYPESRC="tt_hashes TYPE STANDARD TABLE OF t_hashes WITH KEY quickxorhash
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_FILE_MIME" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="9 " TYPTYPE="4" SRCROW1="62 " SRCCOLUMN1="4 " SRCROW2="65 " SRCCOLUMN2="23 " TYPESRC_LENG="120 " TYPESRC="BEGIN OF t_file_mime,
+             mimetype TYPE string,
+             hashes   TYPE tt_hashes,
+      END OF t_file_mime
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_FILESYSTEMINFO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="10 " TYPTYPE="4" SRCROW1="67 " SRCCOLUMN1="4 " SRCROW2="70 " SRCCOLUMN2="28 " TYPESRC_LENG="151 " TYPESRC="BEGIN OF t_filesysteminfo,
+             createddatetime      TYPE string,
+             lastmodifieddatetime TYPE string,
+      END OF t_filesysteminfo
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_INFO_FICHERO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="11 " TYPTYPE="4" SRCROW1="72 " SRCCOLUMN1="4 " SRCROW2="86 " SRCCOLUMN2="26 " TYPESRC_LENG="693 " TYPESRC="BEGIN OF t_info_fichero,
+             createddatetime      TYPE string,
+             etag                 TYPE string,
+             id                   TYPE string,
+             lastmodifieddatetime TYPE string,
+             name                 TYPE string,
+             weburl               TYPE string,
+             ctag                 TYPE string,
+             size                 TYPE string,
+             createdby            TYPE t_app_user,
+             lastmodifiedby       TYPE t_user,
+             parentreference      TYPE t_file_reference,
+             file                 TYPE t_file_mime,
+             filesysteminfo       TYPE t_filesysteminfo,
+      END OF t_info_fichero
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_INFO_XLSX" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="12 " TYPTYPE="4" SRCROW1="88 " SRCCOLUMN1="4 " SRCROW2="93 " SRCCOLUMN2="23 " TYPESRC_LENG="193 " TYPESRC="BEGIN OF t_info_xlsx,
+             id         TYPE string,
+             name       TYPE string,
+             position   TYPE int4,
+             visibility TYPE string,
+      END OF t_info_xlsx
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_INFO_XLSX" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="13 " TYPTYPE="4" SRCROW1="95 " SRCCOLUMN1="4 " SRCROW2="95 " SRCCOLUMN2="62 " TYPESRC_LENG="60 " TYPESRC="tt_info_xlsx TYPE STANDARD TABLE OF t_info_xlsx WITH KEY id
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_INFO_XLSX_T" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " TYPTYPE="4" SRCROW1="97 " SRCCOLUMN1="4 " SRCROW2="99 " SRCCOLUMN2="25 " TYPESRC_LENG="88 " TYPESRC="BEGIN OF t_info_xlsx_t,
+            value TYPE tt_info_xlsx,
+      END OF t_info_xlsx_t
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="ABAP_BOOL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="15 " TYPTYPE="1" TYPE="XFELD" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_TOKEN_DATA" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="16 " TYPTYPE="4" SRCROW1="102 " SRCCOLUMN1="4 " SRCROW2="107 " SRCCOLUMN2="24 " TYPESRC_LENG="209 " TYPESRC="BEGIN OF t_token_data,
+             token_type     TYPE string,
+             expires_in     TYPE int4,
+             ext_expires_in TYPE int4,
+             access_token   TYPE string,
+      END OF t_token_data
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_INNERERROR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="17 " TYPTYPE="4" SRCROW1="109 " SRCCOLUMN1="4 " SRCROW2="113 " SRCCOLUMN2="24 " TYPESRC_LENG="175 " TYPESRC="BEGIN OF t_innererror,
+             date            TYPE string,
+             requestid       TYPE string,
+             clientrequestid TYPE string,
+      END OF t_innererror
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_ERROR_COD" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="18 " TYPTYPE="4" SRCROW1="115 " SRCCOLUMN1="4 " SRCROW2="119 " SRCCOLUMN2="23 " TYPESRC_LENG="164 " TYPESRC="BEGIN OF t_error_cod,
+             code       TYPE string,
+             message    TYPE string,
+             innererror TYPE t_innererror,
+      END OF t_error_cod
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_ERROR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="19 " TYPTYPE="4" SRCROW1="121 " SRCCOLUMN1="4 " SRCROW2="123 " SRCCOLUMN2="19 " TYPESRC_LENG="75 " TYPESRC="BEGIN OF t_error,
+            error TYPE t_error_cod,
+      END OF t_error
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_EMAIL_ADD" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="20 " TYPTYPE="4" SRCROW1="125 " SRCCOLUMN1="4 " SRCROW2="128 " SRCCOLUMN2="23 " TYPESRC_LENG="115 " TYPESRC="BEGIN OF t_email_add,
+             name    TYPE string,
+             address TYPE string,
+      END OF t_email_add
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_EMAIL_ADDRESS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="21 " TYPTYPE="4" SRCROW1="130 " SRCCOLUMN1="4 " SRCROW2="132 " SRCCOLUMN2="27 " TYPESRC_LENG="98 " TYPESRC="BEGIN OF t_email_address,
+            emailaddress TYPE t_email_add,
+      END OF t_email_address
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_EMAIL_ADDRESS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="22 " TYPTYPE="4" SRCROW1="134 " SRCCOLUMN1="4 " SRCROW2="134 " SRCCOLUMN2="80 " TYPESRC_LENG="78 " TYPESRC="tt_email_address TYPE STANDARD TABLE OF t_email_address WITH KEY emailaddress
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_BODY" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="23 " TYPTYPE="4" SRCROW1="136 " SRCCOLUMN1="4 " SRCROW2="139 " SRCCOLUMN2="18 " TYPESRC_LENG="113 " TYPESRC="BEGIN OF t_body,
+             contenttype TYPE string,
+             content     TYPE string,
+      END OF t_body
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_DATETIME" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="24 " TYPTYPE="4" SRCROW1="141 " SRCCOLUMN1="4 " SRCROW2="144 " SRCCOLUMN2="22 " TYPESRC_LENG="115 " TYPESRC="BEGIN OF t_datetime,
+             datetime TYPE string,
+             timezone TYPE string,
+      END OF t_datetime
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_FLAG_STATUS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="25 " TYPTYPE="4" SRCROW1="146 " SRCCOLUMN1="4 " SRCROW2="149 " SRCCOLUMN2="25 " TYPESRC_LENG="164 " TYPESRC='BEGIN OF t_flag_status,
+             flagstatus        TYPE string,  &quot;flagged / compleet
+             completeddatetime TYPE t_datetime,
+      END OF t_flag_status
+'/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_EMAIL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="26 " TYPTYPE="4" SRCROW1="151 " SRCCOLUMN1="4 " SRCROW2="181 " SRCCOLUMN2="19 " TYPESRC_LENG="1651 " TYPESRC="BEGIN OF t_email,
+             id                         TYPE string,
+             createddatetime            TYPE string,
+             lastmodifieddatetime       TYPE string,
+             changekey                  TYPE string,
+             categories                 TYPE table_of_strings,
+             receiveddatetime           TYPE string,
+             sentdatetime               TYPE string,
+             internetmessageid          TYPE string,
+             subject                    TYPE string,
+             bodypreview                TYPE string,
+             importance                 TYPE string,
+             parentfolderid             TYPE string,
+             conversationid             TYPE string,
+             conversationindex          TYPE string,
+             isdeliveryreceiptrequested TYPE abap_bool,
+             isreadreceiptrequested     TYPE abap_bool,
+             hasattachments             TYPE abap_bool,
+             idread                     TYPE abap_bool,
+             isdraft                    TYPE string,
+             weblink                    TYPE string,
+             body                       TYPE t_body,
+             sender                     TYPE t_email_address,
+             from                       TYPE t_email_address,
+             torecipients               TYPE tt_email_address,
+             ccrecipients               TYPE tt_email_address,
+             bcrecipients               TYPE tt_email_address,
+             flag                       TYPE t_flag_status,
+             fecha_creacion             TYPE erdat,
+             hora_creacion              TYPE erzet,
+      END OF t_email
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_EMAIL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " TYPTYPE="4" SRCROW1="183 " SRCCOLUMN1="4 " SRCROW2="183 " SRCCOLUMN2="54 " TYPESRC_LENG="52 " TYPESRC="tt_email TYPE STANDARD TABLE OF t_email WITH KEY id
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_WORKBOOK_RANGE" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="28 " TYPTYPE="4" SRCROW1="185 " SRCCOLUMN1="4 " SRCROW2="203 " SRCCOLUMN2="28 " TYPESRC_LENG="808 " TYPESRC="BEGIN OF t_workbook_range,
+             address        TYPE string,
+             address_local  TYPE string,
+             column_count   TYPE i,
+             cell_count     TYPE i,
+             column_hidden  TYPE abap_bool,
+             row_hidden     TYPE abap_bool,
+             number_format  TYPE table_of_strings,
+             column_index   TYPE i,
+             text           TYPE table_of_strings,
+             formulas       TYPE table_of_strings,
+             formulas_local TYPE table_of_strings,
+             formulas_r1c1  TYPE table_of_strings,
+             hidden         TYPE abap_bool,
+             row_count      TYPE i,
+             row_index      TYPE i,
+             value_types    TYPE table_of_strings,
+             values         TYPE table_of_strings,
+      END OF t_workbook_range
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="T_WORKBOOK_VALUES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="29 " TYPTYPE="4" SRCROW1="205 " SRCCOLUMN1="4 " SRCROW2="209 " SRCCOLUMN2="29 " TYPESRC_LENG="157 " TYPESRC="BEGIN OF t_workbook_values,
+             fila    TYPE int4,
+             columna TYPE int4,
+             valor   TYPE string,
+      END OF t_workbook_values
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_WORKBOOK_VALUES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="30 " TYPTYPE="4" SRCROW1="211 " SRCCOLUMN1="4 " SRCROW2="211 " SRCCOLUMN2="84 " TYPESRC_LENG="82 " TYPESRC="tt_workbook_values TYPE STANDARD TABLE OF t_workbook_values WITH KEY fila columna
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_RESPONSESTATUS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="31 " TYPTYPE="4" SRCROW1="213 " SRCCOLUMN1="4 " SRCROW2="216 " SRCCOLUMN2="29 " TYPESRC_LENG="129 " TYPESRC="BEGIN OF ty_responsestatus,
+             response TYPE string,
+             time     TYPE string,
+      END OF ty_responsestatus
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_EMAILADDRESS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="32 " TYPTYPE="4" SRCROW1="218 " SRCCOLUMN1="4 " SRCROW2="221 " SRCCOLUMN2="27 " TYPESRC_LENG="123 " TYPESRC="BEGIN OF ty_emailaddress,
+             name    TYPE string,
+             address TYPE string,
+      END OF ty_emailaddress
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_ATTENDEES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="33 " TYPTYPE="4" SRCROW1="223 " SRCCOLUMN1="4 " SRCROW2="227 " SRCCOLUMN2="24 " TYPESRC_LENG="186 " TYPESRC="BEGIN OF ty_attendees,
+             type         TYPE string,
+             status       TYPE ty_responsestatus,
+             emailaddress TYPE ty_emailaddress,
+      END OF ty_attendees
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_ATTENDEES" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="34 " TYPTYPE="4" SRCROW1="229 " SRCCOLUMN1="4 " SRCROW2="229 " SRCCOLUMN2="76 " TYPESRC_LENG="74 " TYPESRC="tt_attendees TYPE STANDARD TABLE OF ty_attendees WITH NON-UNIQUE KEY type
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_LOCATION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="35 " TYPTYPE="4" SRCROW1="231 " SRCCOLUMN1="4 " SRCROW2="236 " SRCCOLUMN2="23 " TYPESRC_LENG="203 " TYPESRC="BEGIN OF ty_location,
+             displayname  TYPE string,
+             locationtype TYPE string,
+             uniqueid     TYPE string,
+             uniqueidtype TYPE string,
+      END OF ty_location
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_LOCATION" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="36 " TYPTYPE="4" SRCROW1="238 " SRCCOLUMN1="4 " SRCROW2="238 " SRCCOLUMN2="81 " TYPESRC_LENG="79 " TYPESRC="tt_location TYPE STANDARD TABLE OF ty_location WITH NON-UNIQUE KEY displayname
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_EVENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="37 " TYPTYPE="4" SRCROW1="240 " SRCCOLUMN1="4 " SRCROW2="286 " SRCCOLUMN2="20 " TYPESRC_LENG="2485 " TYPESRC="BEGIN OF ty_event,
+             etag                       TYPE string,
+             id                         TYPE string,
+             createddatetime            TYPE string,
+             lastmodifieddatetime       TYPE string,
+             changekey                  TYPE string,
+             categories                 TYPE table_of_strings,
+             transactionid              TYPE string,
+             originalstarttimezone      TYPE string,
+             originalendtimezone        TYPE string,
+             icaluid                    TYPE string,
+             uid                        TYPE string,
+             reminderminutesbeforestart TYPE i,
+             isreminderon               TYPE abap_bool,
+             hasattachments             TYPE abap_bool,
+             subject                    TYPE string,
+             bodypreview                TYPE string,
+             importance                 TYPE string,
+             sensitivity                TYPE string,
+             isallday                   TYPE abap_bool,
+             iscancelled                TYPE abap_bool,
+             isorganizer                TYPE abap_bool,
+             responserequested          TYPE abap_bool,
+             seriesmasterid             TYPE string,
+             showas                     TYPE string,
+             type                       TYPE string,
+             weblink                    TYPE string,
+             onlinemeetingurl           TYPE string,
+             isonlinemeeting            TYPE abap_bool,
+             onlinemeetingprovider      TYPE string,
+             allownewtimeproposals      TYPE abap_bool,
+             occurrenceid               TYPE string,
+             isdraft                    TYPE abap_bool,
+             hideattendees              TYPE abap_bool,
+             responsestatus             TYPE ty_responsestatus,
+             body                       TYPE string,
+             start                      TYPE t_datetime,
+      end                        TYPE t_datetime,
+             location                   TYPE ty_location,
+             locations                  TYPE tt_location,
+             recurrence                 TYPE string,
+             attendees                  TYPE tt_attendees,
+             fecha_inicio               TYPE begda,
+             hora_inicio                TYPE beguz,
+             fecha_fin                  TYPE endda,
+             hora_fin                   TYPE enduz,
+      END OF ty_event
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TT_EVENT" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="38 " TYPTYPE="4" SRCROW1="288 " SRCCOLUMN1="4 " SRCROW2="288 " SRCCOLUMN2="66 " TYPESRC_LENG="64 " TYPESRC="tt_event TYPE STANDARD TABLE OF ty_event WITH NON-UNIQUE KEY id
+"/>
+ <types CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TY_CALENDARVIEW" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="39 " TYPTYPE="4" SRCROW1="290 " SRCCOLUMN1="4 " SRCROW2="293 " SRCCOLUMN2="27 " TYPESRC_LENG="125 " TYPESRC="BEGIN OF ty_calendarview,
+             context TYPE string,
+             value   TYPE tt_event,
+      END OF ty_calendarview
+"/>
+ <localImplementation>*&quot;* use this source file for the definition and implementation of
+*&quot;* local helper classes, interface definitions and type
+*&quot;* declarations</localImplementation>
+ <localTypes>*&quot;* use this source file for any type of declarations (class
+*&quot;* definitions, interfaces or type declarations) you need for
+*&quot;* components in the private section</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_MGRAPH" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CLAVE" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELEGADO" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="O_PAR" VERSION="1" LANGU="S" DESCRIPT="Parámetros" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_PARAMETROS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="O_WS" VERSION="1" LANGU="S" DESCRIPT="Recuperar datos ODATA" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="ZCL_AP_ODATA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="TOKEN" VERSION="1" LANGU="S" DESCRIPT="Tocken" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="USAR_HTTP" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ABAP_BOOL" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="USER_ID" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_MGRAPH" CMPNAME="VERSION" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" VERSION="1" LANGU="S" DESCRIPT="Borra mail" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="BORRAR_MAIL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD borrar_mail.
+  DATA: l_peticion TYPE string,
+        l_servicio TYPE string.
+  CLEAR: respuesta, message.
+
+  format_servicio( EXPORTING servicio = &apos;messages&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+  IF NOT message IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  CONCATENATE l_servicio id INTO l_servicio SEPARATED BY &apos;/&apos;.
+  delete( EXPORTING servicio  = l_servicio
+                   popup_respuesta = popup_respuesta
+                   peticion = l_peticion
+         IMPORTING respuesta = respuesta
+                   message   = message ).
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="CATEGORIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CATEGORIZAR_MAIL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD categorizar_mail.
+  DATA: l_peticion TYPE string,
+        l_servicio TYPE string.
+
+  CONCATENATE &apos;{ &quot;categories&quot;: [  &quot;&apos; categoria &apos;&quot; ] }&apos; INTO l_peticion.
+
+  CLEAR: respuesta, message.
+
+  format_servicio( EXPORTING servicio = &apos;messages&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+  IF NOT message IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  CONCATENATE l_servicio id INTO l_servicio SEPARATED BY &apos;/&apos;.
+  patch( EXPORTING servicio  = l_servicio
+                   popup_respuesta = popup_respuesta
+                   peticion = l_peticion
+         IMPORTING respuesta = respuesta
+                   message   = message ).
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave de objeto" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="OBJKEY"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="VERSION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;v1.0&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="USAR_HTTP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="DELEGADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="USER_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="CONSTRUCTOR" SCONAME="JSON_PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="2" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+  DATA: zcache  TYPE zcache,
+        l_token TYPE zcl_ap_mgraph=&gt;t_token_data,
+        l_seg   TYPE int4,
+        l_host  TYPE string.
+
+  CLEAR message.
+  me-&gt;clave     = clave.
+  me-&gt;usar_http = usar_http.
+  IF popup_respuesta IS INITIAL.
+    SELECT SINGLE fecha hora aux1 string FROM zcache
+      INTO CORRESPONDING FIELDS OF zcache
+     WHERE report = &apos;TOKEN_MGRAPH&apos;
+       AND clave = clave.
+    IF NOT zcache-string IS INITIAL AND zcache-aux1 CO &apos;0123456789 &apos;.
+      GET TIME.
+      l_seg = zcl_ap_fechas=&gt;get_duracion_intervalo_sec( fini = zcache-fecha hini = zcache-hora
+                                                         ffin = sy-datum hfin = sy-uzeit ).
+      IF l_seg &gt;= zcache-aux1.
+        CLEAR zcache-string.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  CREATE OBJECT o_par
+    EXPORTING
+      clave        = clave
+      fichero_json = json_parametros.
+
+  IF NOT zcache-string IS INITIAL.
+    l_token-access_token = zcache-string.
+  ELSE.
+    refrescar_token( EXPORTING popup_respuesta = popup_respuesta
+                     IMPORTING token_data = l_token
+                               message    = message ).
+    IF l_token IS INITIAL AND NOT message IS INITIAL.
+      RETURN.
+    ENDIF.
+  ENDIF.
+
+  IF l_token IS INITIAL.
+    message = &apos;No existe el token&apos;.
+    RETURN.
+  ENDIF.
+
+  me-&gt;version  = version.
+  me-&gt;delegado = delegado.
+  IF delegado IS INITIAL.
+    IF user_id IS INITIAL.
+      me-&gt;user_id = o_par-&gt;get_atr1( campo = &apos;USER_ID&apos; ).
+    ELSE.
+      me-&gt;user_id = user_id.
+    ENDIF.
+  ENDIF.
+
+  IF usar_http IS INITIAL.
+    l_host = &apos;https://graph.microsoft.com&apos;.
+  ELSE.
+    l_host = &apos;http://graph.microsoft.com&apos;.
+  ENDIF.
+
+  CREATE OBJECT o_ws
+    EXPORTING
+      host = l_host
+      auth = l_token-access_token.
+
+* https://developer.microsoft.com/en-us/graph/graph-explorer
+* https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" VERSION="1" LANGU="S" DESCRIPT="Delete" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" SCONAME="PETICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="DELETE" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD delete.
+
+  CLEAR: respuesta, message.
+  peticion( EXPORTING method    = &apos;DELETE&apos;
+                      popup_respuesta = popup_respuesta
+                      servicio  = servicio
+                      peticion  = peticion
+            IMPORTING respuesta = respuesta
+                      message   = message ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" VERSION="1" LANGU="S" DESCRIPT="Obtiene prefijo usuario" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" SCONAME="USER_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" SCONAME="SERVICIO_FORZADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="FORMAT_SERVICIO" SCONAME="SERVICIO_FINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD format_servicio.
+  DATA l_prefix TYPE string.
+
+  CLEAR: servicio_final, message.
+
+  IF NOT servicio_forzado IS INITIAL.
+    servicio_final = servicio_forzado.
+  ELSE.
+    IF servicio IS INITIAL.
+      message = &apos;Debe indicar servicio&apos;.
+    ELSE.
+      get_user_prefix( EXPORTING user_id = user_id
+                       IMPORTING prefix  = l_prefix
+                                 message = message ).
+      IF NOT message IS INITIAL.
+        RETURN.
+      ENDIF.
+      IF servicio(1) = &apos;/&apos;.
+        CONCATENATE l_prefix servicio INTO servicio_final.
+      ELSE.
+        CONCATENATE l_prefix &apos;/&apos; servicio INTO servicio_final.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" VERSION="1" LANGU="S" DESCRIPT="Recupera lectura" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="TOP" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="SELECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="ORDERBY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="SEARCH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="PARAMETRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD get.
+
+  CLEAR: respuesta, message.
+  peticion( EXPORTING method    = &apos;GET&apos;
+                      popup_respuesta = popup_respuesta
+                      servicio  = servicio
+                      filter    = filter
+                      top       = top
+                      select    = select
+                      orderby   = orderby
+                      search    = search
+                      parametro = parametro
+            IMPORTING respuesta = respuesta
+                      message   = message
+                      xstring   = xstring ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" VERSION="1" LANGU="S" DESCRIPT="Recupera adjuntos a un mail" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ATTACHMENTS" SCONAME="I_ATTACHMENTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ATTACHMENTS"/>
+  <source>METHOD get_attachments.
+  DATA: l_json      TYPE string,
+        l_aux       TYPE string,
+        l_long      TYPE i,
+        l_msg2      TYPE bapi_msg,
+        l_excepcion TYPE REF TO cx_root,
+        l_servicio  TYPE string.
+
+  FIELD-SYMBOLS &lt;mail&gt; TYPE t_email.
+
+  CLEAR: respuesta, message, i_attachments.
+
+  format_servicio( EXPORTING servicio = &apos;messages&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+  IF NOT message IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  IF NOT id IS INITIAL.
+    CONCATENATE l_servicio &apos;/&apos; id &apos;/attachments&apos; INTO l_servicio.
+  ENDIF.
+
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+       IMPORTING respuesta = respuesta
+                 message   = message ).
+
+  IF NOT respuesta IS INITIAL AND message IS INITIAL.
+    TRY.
+        SPLIT respuesta AT &apos;&quot;value&quot;:[&apos; INTO l_aux l_json.
+        l_long = STRLEN( l_json ) - 1.
+        CONCATENATE &apos;[&apos; l_json(l_long) INTO l_json.
+        replace all OCCURRENCES OF &apos;@odata.type&apos; in l_json with &apos;odata_type&apos;.
+        replace all OCCURRENCES OF &apos;@odata.mediaContentType&apos; in l_json with &apos;odata_mediaContentType&apos;.
+
+        json2tabla( EXPORTING json = l_json IMPORTING tabla = i_attachments message = message ).
+
+
+      CATCH cx_root  INTO l_excepcion.
+        message = l_excepcion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = l_excepcion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" VERSION="1" LANGU="S" DESCRIPT="Recupera calendario" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="SELECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="ORDERBY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;createdDateTime desc&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="QUITAR_CANCELADOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="SEARCH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="PARAMETRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CALENDARIO" SCONAME="I_EVENTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_EVENT"/>
+  <source>METHOD get_calendario.
+  DATA: l_json      TYPE string,
+        l_aux       TYPE string,
+        l_long      TYPE i,
+        l_msg2      TYPE bapi_msg,
+        l_excepcion TYPE REF TO cx_root,
+        l_servicio  TYPE string.
+
+  FIELD-SYMBOLS &lt;evento&gt; TYPE ty_event.
+
+  CLEAR: respuesta, message, i_eventos.
+
+  format_servicio( EXPORTING servicio = &apos;calendarview&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+  IF NOT message IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+                 filter    = filter
+                 parametro = parametro
+                 select    = select
+                 orderby   = orderby
+                 search    = search
+       IMPORTING respuesta = respuesta
+                 message   = message ).
+
+  IF NOT respuesta IS INITIAL AND message IS INITIAL.
+    TRY.
+        SPLIT respuesta AT &apos;&quot;value&quot;:[&apos; INTO l_aux l_json.
+        l_long = STRLEN( l_json ) - 1.
+        CONCATENATE &apos;[&apos; l_json(l_long) INTO l_json.
+
+        json2tabla( EXPORTING json = l_json IMPORTING tabla = i_eventos message = message ).
+
+        IF quitar_cancelados = &apos;X&apos;.
+          DELETE i_eventos WHERE iscancelled = &apos;X&apos;.
+        ENDIF.
+
+
+        LOOP AT i_eventos ASSIGNING &lt;evento&gt;.
+          zcl_ap_fechas=&gt;datetimews_2_fechahora( EXPORTING fecha_ws = &lt;evento&gt;-start-datetime
+                                                 IMPORTING fecha = &lt;evento&gt;-fecha_inicio hora = &lt;evento&gt;-hora_inicio ).
+          zcl_ap_fechas=&gt;datetimews_2_fechahora( EXPORTING fecha_ws = &lt;evento&gt;-end-datetime
+                                                 IMPORTING fecha = &lt;evento&gt;-fecha_fin hora = &lt;evento&gt;-hora_fin ).
+          IF &lt;evento&gt;-start-timezone = &apos;UTC&apos;.
+            &lt;evento&gt;-hora_inicio = &lt;evento&gt;-hora_inicio + 3600.
+            &lt;evento&gt;-hora_fin    = &lt;evento&gt;-hora_fin + 3600.
+          ENDIF.
+        ENDLOOP.
+
+      CATCH cx_root  INTO l_excepcion.
+        message = l_excepcion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = l_excepcion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido de fichero" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="CONTENIDO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_CONTENIDO_FICHERO" SCONAME="TABLA_XLSX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD get_contenido_fichero.
+  DATA: l_peticion TYPE string,
+        l_servicio TYPE string.
+
+  CLEAR: respuesta, message, contenido.
+
+
+  IF NOT id IS INITIAL.
+    format_servicio( EXPORTING servicio = &apos;drive/items&apos; user_id = user_id servicio_forzado = servicio
+                     IMPORTING servicio_final = l_servicio
+                               message = message ).
+    CONCATENATE l_servicio id INTO l_servicio SEPARATED BY &apos;/&apos;.
+  ELSEIF NOT nombre IS INITIAL.
+    format_servicio( EXPORTING servicio = &apos;drive/root:&apos; user_id = user_id servicio_forzado = servicio
+                     IMPORTING servicio_final = l_servicio
+                               message = message ).
+    CONCATENATE l_servicio nombre INTO l_servicio SEPARATED BY &apos;/&apos;.
+    CONCATENATE l_servicio &apos;:&apos; INTO l_servicio.
+  ELSE.
+    message = &apos;Debe indicar ID o nombre fichero&apos;.
+  ENDIF.
+
+
+  CONCATENATE l_servicio id &apos;content&apos; INTO l_servicio SEPARATED BY &apos;/&apos;.
+
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+       IMPORTING respuesta = respuesta
+                 xstring   = contenido
+                 message   = message ).
+
+  IF tabla_xlsx IS SUPPLIED AND NOT contenido IS INITIAL.
+    DATA: o_xls TYPE REF TO zcl_ap_abap2xls,
+          l_msg2 type bapi_msg.
+
+    CREATE OBJECT o_xls.
+    o_xls-&gt;lee_fichero( EXPORTING xstring = contenido
+                                  mostrar_error = &apos;&apos;
+                        IMPORTING message = l_msg2 ).
+    IF NOT l_msg2 IS INITIAL.
+      message = l_msg2.
+    ELSE.
+      o_xls-&gt;get_tabla( IMPORTING et_table = tabla_xlsx ).
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" VERSION="1" LANGU="S" DESCRIPT="Recupera id de hoja de calculo" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="HOJA" VERSION="1" LANGU="S" DESCRIPT="Nombre hoja (si blanco, la primera)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="INFO_XLSX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_INFO_XLSX"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_ID_WORKSHEET" SCONAME="ID_WORKSHEET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_id_worksheet.
+  DATA: l_peticion     TYPE string,
+        l_servicio     TYPE string,
+        l_excepcion    TYPE REF TO cx_root,
+        l_info_fichero TYPE t_info_fichero,
+        l_respuesta    TYPE string,
+        l_info_xlsx    TYPE t_info_xlsx,
+        l_info         TYPE t_info_xlsx_t.
+
+  CLEAR: respuesta, message, id_worksheet, info_xlsx.
+
+  CALL METHOD get_info_fichero
+    EXPORTING
+      servicio        = &apos;&apos;
+      popup_respuesta = popup_respuesta
+      id              = id
+      nombre          = nombre
+    IMPORTING
+      respuesta       = l_respuesta
+      message         = message
+      info_fichero    = l_info_fichero.
+
+  CHECK message IS INITIAL.
+
+
+  format_servicio( EXPORTING servicio = &apos;drive/root:&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+
+  CHECK message IS INITIAL.
+  CONCATENATE l_servicio nombre INTO l_servicio SEPARATED BY &apos;/&apos;.
+  CONCATENATE l_servicio &apos;:/workbook/worksheets&apos; INTO l_servicio.
+
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+       IMPORTING respuesta = respuesta
+                 message   = message ).
+
+  IF NOT respuesta IS INITIAL AND message IS INITIAL.
+    TRY.
+        json2datos( EXPORTING json = respuesta IMPORTING datos = l_info message = message ).
+        info_xlsx = l_info-value.
+
+        IF NOT nombre IS INITIAL.
+          READ TABLE info_xlsx INTO l_info_xlsx WITH KEY name = hoja.
+          IF sy-subrc = 0.
+            id_worksheet = l_info_xlsx-id.
+          ELSE.
+            CONCATENATE &apos;No existe la hoja&apos; hoja INTO message SEPARATED BY space.
+          ENDIF.
+        ELSE.
+          READ TABLE info_xlsx INTO l_info_xlsx INDEX 1.
+          IF sy-subrc = 0.
+            id_worksheet = l_info_xlsx-id.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root  INTO l_excepcion.
+        message = l_excepcion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = l_excepcion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Recupera información de fichero" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_INFO_FICHERO" SCONAME="INFO_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T_INFO_FICHERO"/>
+  <source>METHOD get_info_fichero.
+    DATA: l_peticion  TYPE string,
+          l_servicio  TYPE string,
+          l_excepcion TYPE REF TO cx_root.
+
+    CLEAR: respuesta, message, info_fichero.
+
+    IF NOT id IS INITIAL.
+      format_servicio( EXPORTING servicio = &apos;drive/items&apos; user_id = user_id servicio_forzado = servicio
+                       IMPORTING servicio_final = l_servicio
+                                 message = message ).
+      CONCATENATE l_servicio id INTO l_servicio SEPARATED BY &apos;/&apos;.
+    ELSEIF NOT nombre IS INITIAL.
+      format_servicio( EXPORTING servicio = &apos;drive/root:&apos; user_id = user_id servicio_forzado = servicio
+                       IMPORTING servicio_final = l_servicio
+                                 message = message ).
+      CONCATENATE l_servicio nombre INTO l_servicio SEPARATED BY &apos;/&apos;.
+    ELSE.
+      message = &apos;Debe indicar ID o nombre fichero&apos;.
+    ENDIF.
+    IF NOT message IS INITIAL.
+      RETURN.
+    ENDIF.
+
+
+
+    get( EXPORTING servicio  = l_servicio
+                   popup_respuesta = popup_respuesta
+         IMPORTING respuesta = respuesta
+                   message   = message ).
+
+    IF NOT respuesta IS INITIAL AND message IS INITIAL.
+      TRY.
+          json2datos( EXPORTING json = respuesta IMPORTING datos = info_fichero message = message ).
+        CATCH cx_root  INTO l_excepcion.
+          message = l_excepcion-&gt;get_longtext( ).
+          IF message IS INITIAL.
+            message = l_excepcion-&gt;get_text( ).
+          ENDIF.
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" VERSION="1" LANGU="S" DESCRIPT="Recupera correos" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="TOP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="100" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="SELECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="ORDERBY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;receivedDateTime desc&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="QUITAR_CONFIRMACIONES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="SOLO_RECIBIDOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="BANDEJA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="SEARCH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="GET_ADJUNTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="I_EMAILS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_EMAIL"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_MAILS" SCONAME="I_ATTACHMENTS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_ATTACHMENTS"/>
+  <source>METHOD get_mails.
+  DATA: l_json      TYPE string,
+        l_aux       TYPE string,
+        l_long      TYPE i,
+        l_msg2      TYPE bapi_msg,
+        l_excepcion TYPE REF TO cx_root,
+        l_servicio  TYPE string.
+
+  FIELD-SYMBOLS &lt;mail&gt; TYPE t_email.
+
+  CLEAR: respuesta, message, i_emails, i_attachments.
+
+  format_servicio( EXPORTING servicio = &apos;messages&apos; user_id = user_id servicio_forzado = servicio
+                   IMPORTING servicio_final = l_servicio
+                             message = message ).
+  IF NOT message IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  IF NOT bandeja IS INITIAL.
+    DATA l_bandeja TYPE string.
+    CONCATENATE &apos;/mailFolders/&apos; bandeja &apos;/messages&apos; INTO l_bandeja.
+    REPLACE &apos;/messages&apos; IN l_servicio WITH l_bandeja.
+  ENDIF.
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+                 filter    = filter
+                 top       = top
+                 select    = select
+                 orderby   = orderby
+                 search    = search
+       IMPORTING respuesta = respuesta
+                 message   = message ).
+
+  IF NOT respuesta IS INITIAL AND message IS INITIAL.
+    TRY.
+        SPLIT respuesta AT &apos;&quot;value&quot;:[&apos; INTO l_aux l_json.
+        l_long = STRLEN( l_json ) - 1.
+        CONCATENATE &apos;[&apos; l_json(l_long) INTO l_json.
+
+        json2tabla( EXPORTING json = l_json IMPORTING tabla = i_emails message = message ).
+
+        IF quitar_confirmaciones = &apos;X&apos;.
+          DELETE i_emails WHERE sender-emailaddress-address CS &apos;MicrosoftExchangE&apos; AND sender-emailaddress-address CS &apos;.onmicrosoft.com&apos;
+                            AND ( subject CS &apos;Entregado:&apos; OR subject CS &apos;Recibido:&apos; OR subject CS &apos;Leído:&apos;  ).
+          DELETE i_emails WHERE ( subject CS &apos;Leído:&apos;  AND bodypreview CS &apos;El mensaje&apos; AND bodypreview CS &apos;fue leído el&apos; ).
+
+        ENDIF.
+
+
+        LOOP AT i_emails ASSIGNING &lt;mail&gt;.
+          zcl_ap_fechas=&gt;datetimews_2_fechahora( EXPORTING fecha_ws = &lt;mail&gt;-createddatetime
+                                                 IMPORTING fecha = &lt;mail&gt;-fecha_creacion hora = &lt;mail&gt;-hora_creacion ).
+        ENDLOOP.
+
+      CATCH cx_root  INTO l_excepcion.
+        message = l_excepcion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = l_excepcion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+
+  CHECK message IS INITIAL.
+
+  IF get_adjuntos = &apos;X&apos;.
+    DATA i_ata TYPE tt_attachments.
+    FIELD-SYMBOLS &lt;ata&gt; TYPE t_attachment.
+    LOOP AT i_emails ASSIGNING &lt;mail&gt; WHERE hasattachments = &apos;X&apos;.
+      CLEAR i_ata.
+      get_attachments( EXPORTING id = &lt;mail&gt;-id
+           IMPORTING i_attachments = i_ata
+                     respuesta = respuesta
+                     message   = message ).
+      LOOP AT i_ata ASSIGNING &lt;ata&gt; WHERE isinline = &apos;&apos;.
+        APPEND &lt;ata&gt; TO i_attachments.
+      ENDLOOP.
+    ENDLOOP.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" VERSION="1" LANGU="S" DESCRIPT="Recupera contenido rango hoja excel" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="RANGO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_RANGO_WORKSHEET" SCONAME="I_VALORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_WORKBOOK_VALUES"/>
+  <source>METHOD get_rango_worksheet.
+  DATA: l_peticion     TYPE string,
+        l_servicio     TYPE string,
+        l_excepcion    TYPE REF TO cx_root,
+        l_info_fichero TYPE t_info_fichero,
+        l_respuesta    TYPE string,
+        l_info_rango   TYPE t_workbook_range,
+        l_aux1         TYPE string,
+        l_valores      TYPE string,
+        i_valoresl     TYPE TABLE OF string,
+        i_columnas     TYPE TABLE OF string,
+        l_fila         TYPE int4,
+        l_col          TYPE int4,
+        l_fila_wb      TYPE t_workbook_values,
+        l_long         TYPE int4.
+
+  CLEAR: respuesta, message, i_valores.
+
+  format_servicio( EXPORTING servicio = &apos;drive/root:&apos; user_id = user_id servicio_forzado = servicio
+                  IMPORTING servicio_final = l_servicio
+                            message = message ).
+
+  CHECK message IS INITIAL.
+  CONCATENATE l_servicio nombre INTO l_servicio SEPARATED BY &apos;/&apos;.
+  CONCATENATE l_servicio &apos;:/workbook/worksheets(&apos;&apos;&apos; id &apos;&apos;&apos;)/range(address=&apos;&apos;&apos; rango &apos;&apos;&apos;)&apos; INTO l_servicio.
+
+  get( EXPORTING servicio  = l_servicio
+                 popup_respuesta = popup_respuesta
+       IMPORTING respuesta = respuesta
+                 message   = message ).
+
+  IF NOT respuesta IS INITIAL AND message IS INITIAL.
+    TRY.
+        json2datos( EXPORTING json = respuesta IMPORTING datos = l_info_rango message = message ).
+        IF NOT l_info_rango-values IS INITIAL.
+          READ TABLE l_info_rango-values INTO l_valores INDEX 1.
+          IF l_valores IS INITIAL.
+            SPLIT respuesta AT &apos;]],&quot;values&quot;:[[&apos; INTO l_aux1 l_valores.
+            SPLIT l_valores AT &apos;]]&apos; INTO l_valores l_aux1.
+            SPLIT l_valores AT &apos;],[&apos; INTO TABLE i_valoresl.
+            CLEAR l_fila.
+            LOOP AT i_valoresl INTO l_valores.
+              ADD 1 TO l_fila.
+              CLEAR l_fila_wb.
+              l_fila_wb-fila = l_fila.
+              i_columnas     = zcl_ap_regexp=&gt;buscar_patron( string = l_valores patron = &apos;&quot;([^&quot;]*)&quot;&apos; ).
+              CLEAR l_col.
+              LOOP AT i_columnas INTO l_aux1.
+                ADD 1 TO l_col.
+                l_fila_wb-columna = l_col.
+                IF l_aux1 CS &apos;&quot;&apos;.
+                  l_aux1 = l_aux1+1.
+                  IF l_aux1 CS &apos;&quot;&apos;.
+                    l_long = STRLEN( l_aux1 ) - 1.
+                    IF l_aux1+l_long(1) = &apos;&quot;&apos;.
+                      l_aux1 = l_aux1(l_long).
+                    ENDIF.
+                  ENDIF.
+                ENDIF.
+                l_fila_wb-valor = l_aux1.
+                APPEND l_fila_wb TO i_valores.
+              ENDLOOP.
+            ENDLOOP.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root  INTO l_excepcion.
+        message = l_excepcion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = l_excepcion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" VERSION="1" LANGU="S" DESCRIPT="Recupera token" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="CLIENT_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="CLIENT_SECRET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="CODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;12345&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="TENANT_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="SCOPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;https://graph.microsoft.com/.default&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="GRANT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;client_credentials&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_TOKEN" SCONAME="TOKEN_DATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T_TOKEN_DATA"/>
+  <source>METHOD get_token.
+  DATA: l_servicio TYPE string,
+        i_form     TYPE apb_lpd_t_key_value,
+        l_form     TYPE wdy_key_value,
+        l_host     TYPE string.
+
+  l_form-key = &apos;grant_type&apos;. l_form-value = grant_type. APPEND l_form TO i_form.
+  l_form-key = &apos;client_id&apos;. l_form-value = client_id. APPEND l_form TO i_form.
+  l_form-key = &apos;client_secret&apos;. l_form-value = client_secret. APPEND l_form TO i_form.
+  l_form-key = &apos;scope&apos;. l_form-value = scope. APPEND l_form TO i_form.
+
+  CLEAR: respuesta, message.
+
+  IF usar_http IS INITIAL.
+    l_host = &apos;https://login.microsoftonline.com/&apos;.
+  ELSE.
+    l_host = &apos;http://login.microsoftonline.com/&apos;.
+  ENDIF.
+
+  CREATE OBJECT o_ws
+    EXPORTING
+      host = l_host.
+
+  CONCATENATE tenant_id &apos;/oauth2/v2.0/token&apos; INTO l_servicio.
+  o_ws-&gt;get_odata( EXPORTING servicio = l_servicio
+                             entidad = &apos;&apos; odata_sap = &apos;&apos;
+                             method = &apos;POST&apos;
+                             popup_respuesta = popup_respuesta
+                             get_datos = &apos;X&apos;
+                             content_type = &apos;application/x-www-form-urlencoded&apos;
+                             i_form = i_form
+                   IMPORTING respuesta = respuesta
+                             message   = message
+                             datos     = token_data ).
+
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_USER_PREFIX" VERSION="1" LANGU="S" DESCRIPT="Obtiene prefijo usuario" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_USER_PREFIX" SCONAME="USER_ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_USER_PREFIX" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GET_USER_PREFIX" SCONAME="PREFIX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_user_prefix.
+
+  CLEAR: prefix, message.
+
+  IF delegado = &apos;X&apos;.
+    prefix = &apos;me&apos;.
+  ELSE.
+    IF user_id IS INITIAL.
+      message = &apos;No ha indicado USER_ID&apos;.
+    ELSE.
+      CONCATENATE &apos;/users/&apos; user_id INTO prefix.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" VERSION="1" LANGU="S" DESCRIPT="Recupera información de fichero" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="NOMBRE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="CONTENIDO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="CONTENIDOX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="GRABAR_FICHERO" SCONAME="INFO_FICHERO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T_INFO_FICHERO"/>
+  <source>METHOD grabar_fichero.
+    DATA: l_peticion  TYPE string,
+          l_servicio  TYPE string,
+          l_nombre    TYPE string,
+          l_excepcion TYPE REF TO cx_root.
+
+    CLEAR: respuesta, message.
+
+    IF NOT id IS INITIAL.
+      format_servicio( EXPORTING servicio = &apos;drive/items&apos; user_id = user_id servicio_forzado = servicio
+                       IMPORTING servicio_final = l_servicio
+                                 message = message ).
+      CONCATENATE l_servicio id INTO l_servicio SEPARATED BY &apos;/&apos;.
+    ELSEIF NOT nombre IS INITIAL.
+      format_servicio( EXPORTING servicio = &apos;drive/root:&apos; user_id = user_id servicio_forzado = servicio
+                       IMPORTING servicio_final = l_servicio
+                                 message = message ).
+      CONCATENATE nombre &apos;:&apos; INTO l_nombre.
+      CONCATENATE l_servicio l_nombre &apos;content&apos; INTO l_servicio SEPARATED BY &apos;/&apos;.
+    ELSE.
+      message = &apos;Debe indicar ID o nombre fichero&apos;.
+    ENDIF.
+    IF NOT message IS INITIAL.
+      RETURN.
+    ENDIF.
+
+
+
+    put( EXPORTING servicio  = l_servicio
+                   popup_respuesta = popup_respuesta
+                   peticion = contenido
+                   peticionx = contenidox
+                   content_type = content_type
+         IMPORTING respuesta = respuesta
+                   message   = message ).
+
+    IF NOT respuesta IS INITIAL AND message IS INITIAL.
+      TRY.
+          json2datos( EXPORTING json = respuesta IMPORTING datos = info_fichero message = message ).
+        CATCH cx_root  INTO l_excepcion.
+          message = l_excepcion-&gt;get_longtext( ).
+          IF message IS INITIAL.
+            message = l_excepcion-&gt;get_text( ).
+          ENDIF.
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2DATOS" VERSION="1" LANGU="S" DESCRIPT="Obtiene datos desde JSON" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2DATOS" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2DATOS" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2DATOS" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD json2datos.
+  DATA: l_clase TYPE seoclass-clsname,
+        o_root  TYPE REF TO cx_root.
+
+  CLEAR: message, datos.
+  SELECT SINGLE clsname FROM seoclass
+    INTO l_clase
+   WHERE clsname = &apos;/UI2/CL_JSON&apos;.
+  IF sy-subrc NE 0.
+    SELECT SINGLE clsname FROM seoclass
+      INTO l_clase
+     WHERE clsname = &apos;ZCL_JSON_UI2&apos;.
+  ENDIF.
+
+  IF NOT l_clase IS INITIAL.
+    TRY.
+        CALL METHOD (l_clase)=&gt;deserialize
+          EXPORTING
+            json = json
+          CHANGING
+            data = datos.
+      CATCH cx_root INTO o_root.
+        message = o_root-&gt;get_text( ).
+    ENDTRY.
+  ELSE.
+    DATA l_json2 TYPE string.
+
+    CALL FUNCTION &apos;SCP_TRANSLATE_CHARS&apos;
+      EXPORTING
+        inbuff           = json
+*       INBUFFLG         = 0
+        incode           = &apos;4110&apos;
+*       OUTBUFFLG        = 0
+        outcode          = &apos;1100&apos;
+*       CSUBST           = &apos;X&apos;
+*       SUBSTC_HASH      = &apos; &apos;
+*       SUBSTC_DOT       = &apos; &apos;
+*       SUBSTC_SPACE     = &apos; &apos;
+*       SUBSTC           = &apos;00035&apos;
+      IMPORTING
+*       INUSED           =
+        outbuff          = l_json2
+*       OUTOVERFLOW      =
+*       OUTUSED          =
+*       SUBSTED          =
+*       INPUT_ENDS_IN_CHAR       =
+*       ERRMSG           =
+      EXCEPTIONS
+        invalid_codepage = 1
+        internal_error   = 2
+        cannot_convert   = 3
+        fields_bad_type  = 4
+        OTHERS           = 5.
+
+    DATA l_msg TYPE bapi_msg.
+    zcl_ap_segw=&gt;json2datos( EXPORTING json = l_json2
+                              IMPORTING datos = datos
+                                        message = l_msg ).
+    message = l_msg.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2TABLA" VERSION="1" LANGU="S" DESCRIPT="Obtiene datos desde JSON" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2TABLA" SCONAME="JSON" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2TABLA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="JSON2TABLA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD json2tabla.
+  DATA: l_clase TYPE seoclass-clsname,
+        o_root  TYPE REF TO cx_root.
+
+  CLEAR: message, tabla.
+  SELECT SINGLE clsname FROM seoclass
+    INTO l_clase
+   WHERE clsname = &apos;/UI2/CL_JSON&apos;.
+  IF sy-subrc NE 0.
+    SELECT SINGLE clsname FROM seoclass
+      INTO l_clase
+     WHERE clsname = &apos;ZCL_JSON_UI2&apos;.
+  ENDIF.
+
+  IF NOT l_clase IS INITIAL.
+    TRY.
+        CALL METHOD (l_clase)=&gt;deserialize
+          EXPORTING
+            json = json
+          CHANGING
+            data = tabla.
+      CATCH cx_root INTO o_root.
+        message = o_root-&gt;get_text( ).
+    ENDTRY.
+  ELSE.
+    DATA l_json2 TYPE string.
+
+    CALL FUNCTION &apos;SCP_TRANSLATE_CHARS&apos;
+      EXPORTING
+        inbuff           = json
+*         INBUFFLG         = 0
+        incode           = &apos;4110&apos;
+*         OUTBUFFLG        = 0
+        outcode          = &apos;1100&apos;
+*         CSUBST           = &apos;X&apos;
+*         SUBSTC_HASH      = &apos; &apos;
+*         SUBSTC_DOT       = &apos; &apos;
+*         SUBSTC_SPACE     = &apos; &apos;
+*         SUBSTC           = &apos;00035&apos;
+      IMPORTING
+*         INUSED           =
+        outbuff          = l_json2
+*         OUTOVERFLOW      =
+*         OUTUSED          =
+*         SUBSTED          =
+*         INPUT_ENDS_IN_CHAR       =
+*         ERRMSG           =
+      EXCEPTIONS
+        invalid_codepage = 1
+        internal_error   = 2
+        cannot_convert   = 3
+        fields_bad_type  = 4
+        OTHERS           = 5.
+
+    DATA l_msg TYPE bapi_msg.
+    zcl_ap_segw=&gt;json2tabla( EXPORTING json = l_json2
+                              IMPORTING tabla = tabla
+                                        message = l_msg ).
+    message = l_msg.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" VERSION="1" LANGU="S" DESCRIPT="Patch" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" SCONAME="PETICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PATCH" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD patch.
+
+    CLEAR: respuesta, message.
+    peticion( EXPORTING method    = &apos;PATCH&apos;
+                        popup_respuesta = popup_respuesta
+                        servicio  = servicio
+                        peticion  = peticion
+              IMPORTING respuesta = respuesta
+                        message   = message ).
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" VERSION="1" LANGU="S" DESCRIPT="Realiza petición" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="METHOD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;GET&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="PETICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="FILTER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="TOP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT4" PARVALUE="0" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="SELECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="ORDERBY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="SEARCH" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" DESCRIPT="Tipo contenido de mensaje SET wake-up" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="PETICIONX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="PARAMETRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T_ERROR"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PETICION" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <source>METHOD peticion.
+  DATA: l_servicio   TYPE string,
+        l_parametros TYPE string,
+        l_aux        TYPE string.
+
+  CLEAR: respuesta, message.
+
+  IF o_ws IS INITIAL. message = &apos;No se especifico token&apos;. RETURN. ENDIF.
+
+  IF version IS INITIAL.
+    l_servicio = servicio.
+  ELSE.
+    DATA l_ini TYPE c.
+    l_ini = servicio.
+    IF l_ini = &apos;/&apos;.
+      CONCATENATE version servicio INTO l_servicio.
+    ELSE.
+      CONCATENATE version servicio INTO l_servicio SEPARATED BY &apos;/&apos;.
+    ENDIF.
+  ENDIF.
+
+  DEFINE set_par.
+    IF l_parametros IS INITIAL.
+      l_parametros = l_aux.
+    ELSE.
+      CONCATENATE l_parametros l_aux INTO l_parametros SEPARATED BY &apos;&amp;&apos;.
+    ENDIF.
+  END-OF-DEFINITION.
+
+  IF NOT parametro IS INITIAL.
+    l_aux = parametro. CONDENSE l_aux NO-GAPS.
+    set_par.
+  ENDIF.
+
+  IF NOT top IS INITIAL.
+    l_aux = top. CONDENSE l_aux NO-GAPS.
+    CONCATENATE &apos;$top=&apos; l_aux INTO l_aux.
+    set_par.
+  ENDIF.
+
+  IF NOT select IS INITIAL.
+    CONCATENATE &apos;$select=&apos; select INTO l_aux.
+    set_par.
+  ENDIF.
+
+  IF NOT orderby IS INITIAL AND search IS INITIAL.
+    CONCATENATE &apos;$orderby=&apos; orderby INTO l_aux.
+    set_par.
+  ENDIF.
+
+  IF NOT search IS INITIAL.
+    IF search(1) = &apos;&quot;&apos;.
+      CONCATENATE &apos;$search=&apos; search INTO l_aux.
+    ELSE.
+      CONCATENATE &apos;$search=&quot;&apos; search &apos;&quot;&apos; INTO l_aux.
+    ENDIF.
+    set_par.
+  ELSEIF NOT filter IS INITIAL.
+    CONCATENATE &apos;$filter=&apos; filter INTO l_aux.
+    set_par.
+  ENDIF.
+
+
+
+  o_ws-&gt;get_odata( EXPORTING servicio = l_servicio
+                             parametros = l_parametros
+                             peticion = peticion
+                             peticionx = peticionx
+                             entidad = &apos;&apos; odata_sap = &apos;&apos;
+                             method = method
+                             popup_respuesta = popup_respuesta
+                             get_datos = &apos;&apos;
+                             content_type = content_type
+                   IMPORTING respuesta = respuesta
+                             xstring = xstring
+                             message = message ).
+
+  IF NOT respuesta IS INITIAL.
+    TRY.
+        zcl_ap_segw=&gt;json2datos( EXPORTING json = respuesta
+                                 IMPORTING datos = error ).
+
+        IF message IS INITIAL AND NOT error-error-message IS INITIAL.
+          message = error-error-message.
+
+          IF popup_respuesta = &apos;E&apos;.
+            o_ws-&gt;get_odata( EXPORTING servicio = l_servicio
+                                       parametros = l_parametros
+                                       peticion = peticion
+                                       peticionx = peticionx
+                                       entidad = &apos;&apos; odata_sap = &apos;&apos;
+                                       method = method
+                                       popup_respuesta = &apos;X&apos;
+                                       get_datos = &apos;&apos;
+                                       content_type = content_type ).
+          ENDIF.
+        ENDIF.
+    ENDTRY.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" VERSION="1" LANGU="S" DESCRIPT="Put" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="PETICION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="PETICIONX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="PUT" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD put.
+
+  CLEAR: respuesta, message.
+  peticion( EXPORTING method    = &apos;PUT&apos;
+                      popup_respuesta = popup_respuesta
+                      servicio  = servicio
+                      peticion  = peticion
+                      peticionx = peticionx
+                      content_type = content_type
+            IMPORTING respuesta = respuesta
+                      message   = message ).
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="REFRESCAR_TOKEN" VERSION="1" LANGU="S" DESCRIPT="Refrescar token" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="REFRESCAR_TOKEN" SCONAME="URL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="REFRESCAR_TOKEN" SCONAME="POPUP_RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="REFRESCAR_TOKEN" SCONAME="TOKEN_DATA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T_TOKEN_DATA"/>
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="REFRESCAR_TOKEN" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Línea de mensaje para interfase de diálogo CAD" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD refrescar_token.
+  DATA: zcache          TYPE zcache,
+        l_tenant_id     TYPE string,
+        l_client_id     TYPE string,
+        l_client_secret TYPE string,
+        l_scope         TYPE string,
+        l_url           TYPE string,
+        l_respuesta     TYPE string.
+
+  l_tenant_id = o_par-&gt;get_atr1( campo = &apos;TENANT_ID&apos; ).
+  IF l_tenant_id IS INITIAL.
+    message = &apos;Falta informar TENANT_ID&apos;. RETURN.
+  ENDIF.
+  l_client_id = o_par-&gt;get_atr1( campo = &apos;CLIENT_ID&apos; ).
+  IF l_client_id IS INITIAL.
+    message = &apos;Falta informar CLIENT_ID&apos;. RETURN.
+  ENDIF.
+  l_client_secret = o_par-&gt;get_atr1( campo = &apos;CLIENT_SECRET&apos; ).
+  IF l_client_secret IS INITIAL.
+    message = &apos;Falta informar CLIENT_SECRET&apos;. RETURN.
+  ENDIF.
+  l_scope = o_par-&gt;get_atr1( campo = &apos;SCOPE&apos; ).
+  IF l_scope IS INITIAL.
+    l_scope = &apos;https://graph.microsoft.com/.default&apos;.
+  ENDIF.
+
+
+  IF url = &apos;X&apos;.
+*    l_url = |https://LOGIN.microsoftonline.com/{ l_tenant_id }/oauth2/v2.0/authorize?response_type=code&amp;client_id={ l_client_id }&amp;state=12345&amp;scope=openid%20mail.readwrite&amp;redirect_uri=https%3a%2f%2foauth.pstmn.io%2fv1%2fcallback|.
+    zcl_ap_gos=&gt;visualizar_fichero_st( l_url ).
+  ELSE.
+    get_token( EXPORTING client_id = l_client_id
+                         tenant_id = l_tenant_id
+                         client_secret = l_client_secret
+                         scope     = l_scope
+                         popup_respuesta = popup_respuesta
+               IMPORTING token_data = token_data
+                         message = message
+                         respuesta = l_respuesta ).
+
+    IF NOT token_data-access_token IS INITIAL.
+      CONCATENATE token_data-token_type token_data-access_token INTO token_data-access_token SEPARATED BY space.
+      o_ws-&gt;auth = token_data-access_token.
+      zcl_ap_cache=&gt;set_cache( report = &apos;TOKEN_MGRAPH&apos; clave = clave string = o_ws-&gt;auth aux1 = token_data-expires_in max_duracion = 720 ).
+    ELSEIF message IS INITIAL.
+      IF NOT l_respuesta IS INITIAL.
+        message = l_respuesta.
+      ELSE.
+        message = &apos;No existe el token&apos;.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_MGRAPH" CMPNAME="SAVE_TOKEN" VERSION="1" LANGU="S" DESCRIPT="Guarda Token" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_MGRAPH" CMPNAME="SAVE_TOKEN" SCONAME="CLAVE" VERSION="1" LANGU="S" DESCRIPT="Clave de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="OBJKEY"/>
+  <source>METHOD save_token.
+    DATA string TYPE string.
+
+    IF clave IS INITIAL.
+      MESSAGE &apos;Informe clave&apos; TYPE &apos;I&apos;.
+      RETURN.
+    ENDIF.
+
+    zcl_ap_string=&gt;from_clipboard( IMPORTING string = string ).
+    IF string IS INITIAL.
+      MESSAGE &apos;No se ha recuperado nada&apos; TYPE &apos;I&apos;.
+      RETURN.
+    ELSEIF strlen( string ) &lt; 1000.
+      MESSAGE &apos;Token erróneo&apos; TYPE &apos;I&apos;.
+      RETURN.
+    ENDIF.
+
+    IF string(6) NE &apos;Bearer&apos;.
+      CONCATENATE &apos;Bearer&apos; string into string SEPARATED BY space.
+    ENDIF.
+
+    zcl_ap_cache=&gt;set_cache( report = &apos;TOKEN&apos; clave = clave string = string max_duracion = 999999 ).
+    CONCATENATE &apos;Se ha grabado token&apos; string into string SEPARATED BY space.
+    MESSAGE string TYPE &apos;I&apos;.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

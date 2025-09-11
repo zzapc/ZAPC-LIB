@@ -1,0 +1,1274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_HU" VERSION="1" LANGU="S" DESCRIPT="Clase mantenimiento unidades de manipulación" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="B2D" ENTRY="de bloqueado a desguace" LENGTH="46 "/>
+   <textElement ID="I" KEY="B2L" ENTRY="de bloqueado a libre" LENGTH="40 "/>
+   <textElement ID="I" KEY="B2Q" ENTRY="de bloqueado a calidad" LENGTH="44 "/>
+   <textElement ID="I" KEY="HNE" ENTRY="HU no existe" LENGTH="22 "/>
+   <textElement ID="I" KEY="HSP" ENTRY="HU sin posiciones" LENGTH="27 "/>
+   <textElement ID="I" KEY="L2B" ENTRY="de libre a bloqueado" LENGTH="40 "/>
+   <textElement ID="I" KEY="L2D" ENTRY="de libre a desguace" LENGTH="29 "/>
+   <textElement ID="I" KEY="L2Q" ENTRY="de libre a control de calidad" LENGTH="58 "/>
+   <textElement ID="I" KEY="NDC" ENTRY="No hay datos de caja" LENGTH="40 "/>
+   <textElement ID="I" KEY="NPD" ENTRY="No hay posiciones a desembalar" LENGTH="60 "/>
+   <textElement ID="I" KEY="NPM" ENTRY="No ha sido posible hacer el movimiento" LENGTH="76 "/>
+   <textElement ID="I" KEY="NPT" ENTRY="No es posible determinar tipo mov. de" LENGTH="74 "/>
+   <textElement ID="I" KEY="Q2B" ENTRY="de calidad a bloqueado" LENGTH="44 "/>
+   <textElement ID="I" KEY="Q2D" ENTRY="de calidad a desguace" LENGTH="42 "/>
+   <textElement ID="I" KEY="Q2L" ENTRY="de calidad a libre" LENGTH="28 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_HU" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="C_TRASPASO" VERSION="1" LANGU="S" DESCRIPT="Traspaso" EXPOSURE="2" STATE="1" EDITORDER="8 " ATTDECLTYP="2" ATTVALUE="&apos;0012&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="HUWBEVENT" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="EMKPF" VERSION="1" LANGU="S" DESCRIPT="MMIM: Estructura output p.MF general p.movimiento mcía." EXPOSURE="2" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="EMKPF" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="HUHEADER" VERSION="1" LANGU="S" DESCRIPT="Tabla cabecera un.manipulación" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIHUHEADER" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="I_RETURN" VERSION="1" LANGU="S" DESCRIPT="Tabla retorno" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET2_T" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="I_VEPO" VERSION="1" LANGU="S" DESCRIPT="Tp.tabla embalar: Posición unidad manipulación (contenido)" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TAB_VEPO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="LIGHTS" VERSION="1" LANGU="S" DESCRIPT="Semáforo indicador" EXPOSURE="2" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="LIGHTS" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" EXPOSURE="2" STATE="1" EDITORDER="10 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPI_MSG" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRET2" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="VEKP" VERSION="1" LANGU="S" DESCRIPT="Tabla cabecera un.manipulación" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="VEKP" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_HU" CMPNAME="VEPO" VERSION="1" LANGU="S" DESCRIPT="Embalar: Pos.un.manipulación (conten.)" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="VEPO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="BORRAR" VERSION="1" LANGU="S" DESCRIPT="Borrar unidad de manipulación" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="BORRAR" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="BORRAR" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="BORRAR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="BORRAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar.
+    DATA l_exidv TYPE exidv.
+
+    IF NOT exidv IS INITIAL.
+      l_exidv = exidv.
+    ELSE.
+      SELECT SINGLE exidv FROM vekp
+        INTO l_exidv
+       WHERE venum = venum.
+    ENDIF.
+
+    CLEAR: i_return, message.
+
+    CALL FUNCTION &apos;BAPI_HU_DELETE&apos;
+      EXPORTING
+        hukey  = l_exidv
+*     WITHLOWERHUS       = &apos; &apos;
+*     IFPACKED           = &apos; &apos;
+      TABLES
+        return = i_return.
+
+    CLEAR return.
+    READ TABLE i_return INTO return WITH KEY type = &apos;E&apos;.
+    IF sy-subrc = 0.
+      LOOP AT i_return INTO return WHERE type = &apos;E&apos;.
+        __add_lista message return-message.
+      ENDLOOP.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+          EXPORTING
+            wait = &apos;X&apos;.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" SCONAME="HU" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR18"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" SCONAME="DIGITO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NUMC1"/>
+  <source>METHOD calc_digito_control.
+    DATA: work_string   TYPE c LENGTH 50,
+          length        TYPE i,
+          lv_first      TYPE int4        VALUE 1,
+          lv_temp       TYPE n LENGTH 1,
+          lv_sum_first  TYPE int4,
+          lv_second     TYPE int4        VALUE 2,
+          lv_sum_second TYPE int4,
+          lv_final_res  TYPE int4.
+
+    CLEAR digito.
+    work_string = hu.
+    length = strlen( work_string ).
+    SHIFT work_string LEFT DELETING LEADING space.
+
+    DO length TIMES.
+      WRITE work_string+lv_first(1) TO lv_temp.
+      lv_sum_first = lv_sum_first + lv_temp.
+      WRITE work_string+lv_second(1) TO lv_temp.
+      lv_sum_second = lv_sum_second + lv_temp.
+      lv_first = lv_first + 2.
+      lv_second = lv_second + 2.
+    ENDDO.
+
+    lv_final_res = ( lv_sum_first * 3 ) + lv_sum_second.
+
+    digito = 10 - ( lv_final_res MOD 10 ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" VERSION="1" LANGU="S" DESCRIPT="Cambia el estado de la HU" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="ESTADO_ORIGEN" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="ESTADO_DESTINO" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Código transacción actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE" PARVALUE="&apos;VLMOVE&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="XBLNR" VERSION="1" LANGU="S" DESCRIPT="Número de documento de referencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XBLNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="BKTXT" VERSION="1" LANGU="S" DESCRIPT="Texto de cabecera de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKTXT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="GRUND" VERSION="1" LANGU="S" DESCRIPT="Motivo del movimiento" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MB_GRBEW" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="EMKPF" VERSION="1" LANGU="S" DESCRIPT="MMIM: Estructura output p.MF general p.movimiento mcía." CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="EMKPF"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" SCONAME="TIPO_MOV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD cambiar_estado_hu.
+    DATA: o_hu   TYPE REF TO zcl_ap_hu,
+          l_mov  TYPE huwbevent,
+          l_aux1 TYPE c LENGTH 1,
+          l_aux2 TYPE c LENGTH 1.
+
+    CLEAR: emkpf, mensaje, tipo_mov.
+
+    o_hu = NEW #( ).
+    o_hu-&gt;get_vekp( venum = venum ).
+    IF o_hu-&gt;vekp IS INITIAL.
+      mensaje = &apos;HU no existe&apos;(hne).
+    ENDIF.
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    o_hu-&gt;get_vepo( venum = venum ).
+
+    IF o_hu-&gt;i_vepo IS INITIAL.
+      mensaje = &apos;HU sin posiciones&apos;(hsp).
+    ENDIF.
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_mov = &apos;9999&apos;.
+    CASE estado_origen.
+      WHEN &apos;&apos;.
+        CASE estado_destino.
+          WHEN &apos;S&apos;.
+            l_mov = &apos;0023&apos;.
+            tipo_mov = &apos;de libre a bloqueado&apos;(l2b).
+          WHEN &apos;Q&apos;.
+            l_mov = &apos;0004&apos;.
+            tipo_mov = &apos;de libre a control de calidad&apos;(l2q).
+          WHEN &apos;D&apos;. &quot; Desguace!!!!
+            l_mov = &apos;0014&apos;.
+            tipo_mov = &apos;de libre a desguace&apos;(l2d).
+        ENDCASE.
+      WHEN &apos;S&apos;.
+        CASE estado_destino.
+          WHEN &apos;&apos;.
+*          l_mov = &apos;0022&apos;.
+            l_mov = &apos;0003&apos;.
+            tipo_mov = &apos;de bloqueado a libre&apos;(b2l).
+          WHEN &apos;Q&apos;.
+            l_mov = &apos;0021&apos;.
+            tipo_mov = &apos;de bloqueado a calidad&apos;(b2q).
+          WHEN &apos;D&apos;. &quot; Desguace!!!!
+            l_mov = &apos;0014&apos;.
+            tipo_mov = &apos;de bloqueado a desguace&apos;(b2d).
+        ENDCASE.
+      WHEN &apos;Q&apos;.
+        CASE estado_destino.
+          WHEN &apos;&apos;.
+            l_mov = &apos;0003&apos;.
+            tipo_mov = &apos;de calidad a libre&apos;(q2l).
+          WHEN &apos;D&apos;. &quot; Desguace!!!!
+            l_mov = &apos;0014&apos;.
+            tipo_mov = &apos;de calidad a desguace&apos;(q2d).
+          WHEN &apos;S&apos;.
+            l_mov = &apos;0005&apos;.
+            tipo_mov = &apos;de calidad a bloqueado&apos;(q2b).
+        ENDCASE.
+    ENDCASE.
+
+    IF l_mov = &apos;9999&apos;.
+      l_aux1 = estado_origen.
+      l_aux2 = estado_destino.
+      CONCATENATE &apos;No es posible determinar tipo mov. de&apos;(npt) l_aux1 &apos;a&apos; l_aux2 INTO mensaje SEPARATED BY space.
+    ENDIF.
+    IF mensaje IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+* El paso de bloqueado a calidad, en un paso, da problemas, por eso lo hacemos en dos pasos
+    IF l_mov = &apos;0021&apos;.
+      o_hu-&gt;mover( huwbevent = &apos;0003&apos; tcode = tcode xblnr = xblnr bktxt = bktxt budat = budat grund = grund ).    &quot; De bloqueado a libre
+      IF NOT o_hu-&gt;emkpf-mblnr IS INITIAL.
+        o_hu-&gt;mover( huwbevent = &apos;0004&apos; tcode = tcode xblnr = xblnr bktxt = bktxt budat = budat grund = grund ).    &quot; De libre a calidad
+      ENDIF.
+    ELSE. &quot; Caso normal
+      IF l_mov = &apos;0014&apos; AND estado_origen = &apos;S&apos;. &quot; Para desguazar, hay que liberar primero
+        o_hu-&gt;mover( huwbevent = &apos;0003&apos; tcode = tcode xblnr = xblnr bktxt = bktxt budat = budat grund = grund ).    &quot; De bloqueado a libre
+      ENDIF.
+      o_hu-&gt;mover( huwbevent = l_mov tcode = tcode xblnr = xblnr bktxt = bktxt budat = budat grund = grund ).
+    ENDIF.
+
+    mensaje = o_hu-&gt;mensaje.
+    emkpf = o_hu-&gt;emkpf.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_STATUS" VERSION="1" LANGU="S" DESCRIPT="Modificar status HU" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_STATUS" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_STATUS" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_STATUS" SCONAME="STAT" VERSION="1" LANGU="S" DESCRIPT="Status individual de un objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="J_STATUS"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_STATUS" SCONAME="INACT" VERSION="1" LANGU="S" DESCRIPT="Indicador: Status inactivo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="J_INACT" PARVALUE="&apos;&apos;"/>
+  <source>METHOD cambiar_status.
+    DATA: l_venum TYPE venum,
+          l_objnr TYPE j_objnr,
+          husstat TYPE husstat.
+
+    IF venum IS INITIAL.
+      SELECT venum FROM vekp
+        INTO l_venum
+        UP TO 1 ROWS
+       WHERE exidv = exidv
+         ORDER BY venum DESCENDING.
+      ENDSELECT.
+    ELSE.
+      l_venum = venum.
+    ENDIF.
+
+    IF l_venum IS INITIAL.
+      RETURN.
+    ENDIF.
+    CONCATENATE &apos;HU&apos; l_venum INTO l_objnr.
+
+    SELECT SINGLE * FROM  husstat
+      INTO husstat
+     WHERE objnr = l_objnr
+       AND stat  = stat.
+    IF sy-subrc = 0.
+      IF husstat-inact &lt;&gt; inact.
+        UPDATE husstat
+          SET inact = inact
+         WHERE objnr = l_objnr
+           AND stat  = stat.
+      ENDIF.
+    ELSE.
+      CLEAR husstat.
+      husstat-objnr = l_objnr.
+      husstat-stat  = stat.
+      husstat-inact = inact.
+      MODIFY husstat FROM husstat.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONSTRUCTOR" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONSTRUCTOR" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <source>METHOD constructor.
+    IF NOT exidv IS INITIAL OR NOT venum IS INITIAL.
+      get_vekp( venum = venum
+                exidv = exidv ).
+      get_vepo( ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CONTIENE_STATUS" VERSION="1" LANGU="S" DESCRIPT="Verifica si contiene el status seleccionado" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONTIENE_STATUS" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONTIENE_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONTIENE_STATUS" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma del entorno de texto actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-LANGU" PARVALUE="SY-LANGU"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CONTIENE_STATUS" SCONAME="SI_CONTIENE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD contiene_status.
+    DATA: r_status  TYPE RANGE OF j_status,
+          i_status  TYPE TABLE OF j_txt04,
+          l_txt04   TYPE j_txt04,
+          l_istat   TYPE j_status,
+          lr_status LIKE LINE OF r_status,
+          l_objnr   TYPE jest-objnr.
+
+    SPLIT status AT &apos;,&apos; INTO TABLE i_status.
+    IF i_status IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_status INTO l_txt04.
+      SELECT istat FROM tj02t                            &quot;#EC CI_GENBUFF.
+        INTO l_istat
+        UP TO 1 ROWS
+       WHERE spras = spras
+         AND txt04 = l_txt04
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        CLEAR lr_status.
+        lr_status-option = &apos;EQ&apos;.
+        lr_status-sign   = &apos;I&apos;.
+        lr_status-low    = l_istat.
+        APPEND lr_status TO r_status.
+      ENDIF.
+    ENDLOOP.
+
+    IF r_status IS INITIAL.
+      EXIT.
+    ENDIF.
+
+    CONCATENATE &apos;HU&apos; venum INTO l_objnr.
+    SELECT SINGLE stat FROM  husstat
+      INTO l_istat
+     WHERE objnr  = l_objnr
+       AND stat  IN r_status
+       AND inact  = &apos;&apos;.
+    IF sy-subrc = 0.
+      si_contiene = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" VERSION="1" LANGU="S" DESCRIPT="Crear Unidad de manipulación" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="VALIDAR_EXISTENCIA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="EXIDV2" VERSION="1" LANGU="S" DESCRIPT="Identificación externa 2 de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV2" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="VEGR1" VERSION="1" LANGU="S" DESCRIPT="Tipo de caja" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VEGR1" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CREAR" SCONAME="HUKEY" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIHUKEY-HU_EXID"/>
+  <source>METHOD crear.
+    DATA l_exidv TYPE exidv.
+    DATA: l_header TYPE bapihuhdrproposal,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_venum  TYPE venum.
+
+    IF validar_existencia = &apos;X&apos;.
+      zcl_ap_string=&gt;poner_ceros( EXPORTING cadena = exidv
+                                  CHANGING  salida = l_exidv ).
+      SELECT SINGLE exidv FROM vekp
+        INTO l_exidv
+       WHERE exidv = l_exidv.
+      IF sy-subrc = 0.
+        CLEAR return.
+        return-type       = &apos;E&apos;.
+        return-id         = &apos;L3&apos;.
+        return-number     = &apos;415&apos;.
+        return-message_v1 = exidv.
+        return-message    = zcl_ap_log=&gt;get_text_message( return ).
+        APPEND return TO i_return.
+        EXIT.
+      ENDIF.
+    ENDIF.
+
+    CLEAR l_header.
+    l_header-pack_mat    = matnr.
+    l_header-hu_exid     = exidv.
+    l_header-plant       = werks.
+    l_header-stge_loc    = lgort.
+    l_header-ext_id_hu_2 = exidv2.
+    l_header-hu_grp1     = vegr1.
+
+    CLEAR: huheader, hukey, return, i_return.
+    CALL FUNCTION &apos;BAPI_HU_CREATE&apos;
+      EXPORTING
+        headerproposal       = l_header
+     IMPORTING
+       huheader             = huheader
+       hukey                = hukey
+      TABLES
+*       itemsproposal        = items
+*       ITEMSSERIALNO        =
+        return               = i_return.
+
+    IF NOT hukey IS INITIAL.
+      CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+        EXPORTING
+          wait = &apos;X&apos;.
+
+      DO 10 TIMES.
+        SELECT SINGLE venum FROM vekp
+          INTO l_venum
+         WHERE venum = huheader-hu_id.
+        IF sy-subrc = 0.
+          EXIT.
+        ENDIF.
+      ENDDO.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="ESPERA_SI_BLOQUEADA" VERSION="1" LANGU="S" DESCRIPT="Espera si bloqueada" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Contenedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="SEGUNDOS_ESPERA" VERSION="1" LANGU="S" DESCRIPT="Número entero 2 bytes (con signo)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INT2" PARVALUE="10"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESPERA_SI_BLOQUEADA" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD espera_si_bloqueada.
+    DATA bloqueada TYPE c LENGTH 1.
+
+    DO segundos_espera TIMES.
+      bloqueada = esta_bloqueada( venum = venum exidv = exidv ).
+      IF bloqueada = &apos;X&apos;.
+        message = |HU bloqueada por { sy-msgv1 }|.
+        WAIT UP TO 1 SECONDS.
+      ELSE.
+        CLEAR message.
+        EXIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_BLOQUEADA" VERSION="1" LANGU="S" DESCRIPT="Verifica si la HU está bloqueada" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_BLOQUEADA" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Contenedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_BLOQUEADA" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_BLOQUEADA" SCONAME="BLOQUEADA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD esta_bloqueada.
+    DATA(vekp) = get_vekp_st( venum = venum exidv = exidv solo_get_venum = &apos;X&apos; ).
+
+    bloqueada = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;VEKP&apos;
+                                                 clave = sy-mandt
+                                                 clave2 = vekp-venum ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" VERSION="1" LANGU="S" DESCRIPT="Verifica si el materiale está encajado" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" SCONAME="CHARG" VERSION="1" LANGU="S" DESCRIPT="Número de lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="ESTA_ENCAJADO" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="VEKP-EXIDV"/>
+  <source>METHOD esta_encajado.
+    DATA l_venum TYPE venum.
+
+    CLEAR exidv.
+
+    SELECT venum FROM vepo &quot;#EC CI_NOFIELD.
+      INTO l_venum
+      UP TO 1 ROWS
+     WHERE matnr = matnr
+       AND charg = charg
+       AND werks = werks
+       AND lgort = lgort
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      SELECT SINGLE exidv FROM vekp
+        INTO exidv
+       WHERE venum = l_venum.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GENERAR_NUM_EXIDV" VERSION="1" LANGU="S" DESCRIPT="Genera nº de HU con dígito de control" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GENERAR_NUM_EXIDV" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GENERAR_NUM_EXIDV" SCONAME="EXIDV_COMPLETA" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EXIDV"/>
+  <source>METHOD generar_num_exidv.
+    DATA l_exidv TYPE exidv.
+
+    zcl_ap_string=&gt;poner_ceros( EXPORTING cadena = exidv
+                                CHANGING salida = l_exidv ).
+
+    CALL FUNCTION &apos;LE_CHECK_DIGIT_CALCULATION&apos;
+      EXPORTING
+        if_number_wo_check_digit       = l_exidv+1(19)
+*   IF_CALC_METHOD                 = &apos;A&apos;
+*   IF_USER_CALC_METHOD            =
+*   IF_ONLY_CHECKING               = &apos; &apos;
+      IMPORTING
+        ef_number_w_check_digit        = exidv_completa
+*   EF_CHECK_DIGIT_OK              =
+*   EF_CHECK_DIGIT                 =
+      EXCEPTIONS
+        invalid_parameter              = 1
+        OTHERS                         = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_exidv ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_EXIDV" VERSION="1" LANGU="S" DESCRIPT="Devuelve el EXIDV del VENUM" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_EXIDV" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_EXIDV" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EXIDV"/>
+  <source>METHOD get_exidv.
+    CLEAR exidv.
+    SELECT SINGLE exidv FROM vekp
+      INTO exidv
+     WHERE venum = venum.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_MATERIALS" VERSION="1" LANGU="S" DESCRIPT="Recupera los materiales" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_MATERIALS" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_MATERIALS" SCONAME="I_MATERIALES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla p.materiales acumulados en una unidad de almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HUM_CUM_MATERERIAL_T"/>
+  <source>METHOD get_materials.
+    CALL FUNCTION &apos;HU_GET_MATERIALS&apos;
+     EXPORTING
+        if_identification         = exidv
+*   IF_OBJECT                 =
+*   IT_INTERNAL_NUMBERS       =
+     IMPORTING
+*   ES_HEADER                 =
+*   ET_HEADERS                =
+        et_materials              = i_materiales
+     EXCEPTIONS
+       error                     = 1
+       OTHERS                    = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando materiales&apos; TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_MAT_EMBALAJE" VERSION="1" LANGU="S" DESCRIPT="Recupera material embalaje por defecto material" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_MAT_EMBALAJE" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_MAT_EMBALAJE" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_MAT_EMBALAJE" SCONAME="VHILM" VERSION="1" LANGU="S" DESCRIPT="Material de embalaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="VHILM"/>
+  <source>METHOD get_mat_embalaje.
+    DATA: l_komgp            TYPE komgp,
+          Datos TYPE REF TO data.
+FIELD-SYMBOLS: &lt;tabla&gt; TYPE STANDARD TABLE.
+
+    l_komgp-werks = werks.
+    l_komgp-matnr = matnr.
+
+  IF zcl_c=&gt;hana IS INITIAL.
+    data(l_estructura) = &apos;ISUATO_PINSTRUCTION&apos;.
+  ELSE.
+    L_ESTRUCTURA = &apos;VHU_PINSTRUCTION&apos;.
+  ENDIF.
+
+      zcl_ap_fs=&gt;create_it_from_struc( EXPORTING i_struc = L_ESTRUCTURA
+                                       IMPORTING e_table = datos ).
+                                       ASSIGN datos-&gt;* TO &lt;tabla&gt;.
+
+    CALL FUNCTION &apos;VHUPIBAPI_BUILD_PACK_INST_INFO&apos;
+      EXPORTING
+        i_komgp       = l_komgp
+      TABLES
+        tpinstruction = &lt;tabla&gt;
+      EXCEPTIONS
+        locked        = 1
+        not_found     = 2
+        fatal_error   = 3
+        OTHERS        = 4.
+    IF sy-subrc = 0.
+      READ TABLE &lt;tabla&gt; ASSIGNING FIELD-SYMBOL(&lt;instruction&gt;) INDEX 1.
+      IF sy-subrc = 0.
+      ASSIGN COMPONENT &apos;LOADCARR&apos; OF STRUCTURE &lt;INSTRUCTION&gt; TO FIELD-SYMBOL(&lt;LOADCARR&gt;).
+        vhilm = &lt;LOADCARR&gt;.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_NUEVA_SSCC" VERSION="1" LANGU="S" DESCRIPT="Devuelve numero nº de SSCC" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_NUEVA_SSCC" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Nombre del objeto rango de números" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INRI-OBJECT" PARVALUE="&apos;LVS_LENUM&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_NUEVA_SSCC" SCONAME="RANGE" VERSION="1" LANGU="S" DESCRIPT="Nº de rango de números" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INRI-NRRANGENR" PARVALUE="&apos;01&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_NUEVA_SSCC" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EXIDV"/>
+  <source>METHOD get_nueva_sscc.
+    CLEAR exidv.
+    CALL FUNCTION &apos;NUMBER_GET_NEXT&apos;
+      EXPORTING
+        nr_range_nr             = range
+        object                  = object
+        quantity                = 1
+      IMPORTING
+        number                  = exidv
+      EXCEPTIONS
+        interval_not_found      = 1
+        number_range_not_intern = 2
+        object_not_found        = 3
+        quantity_is_0           = 4
+        quantity_is_not_1       = 5
+        interval_overflow       = 6
+        buffer_overflow         = 7
+        OTHERS                  = 8.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+*   Calculamos el dígito de control
+    __quitar_ceros exidv.
+    CALL FUNCTION &apos;LE_CHECK_DIGIT_CALCULATION&apos;
+      EXPORTING
+        if_number_wo_check_digit = exidv
+      IMPORTING
+        ef_number_w_check_digit  = exidv
+      EXCEPTIONS
+        invalid_parameter        = 1
+        OTHERS                   = 2.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+    __poner_ceros exidv.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_SIGUIENTE_N_EMB_PROP" VERSION="1" LANGU="S" DESCRIPT="Devuelve el siguiente nº de embalaje propuesto" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_SIGUIENTE_N_EMB_PROP" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_SIGUIENTE_N_EMB_PROP" SCONAME="NUM" VERSION="1" LANGU="S" DESCRIPT="Contador del rango de números" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NRIV-NRLEVEL"/>
+  <source>METHOD get_siguiente_n_emb_prop.
+    DATA: l_magrv     TYPE mara-magrv,
+          l_vhart     TYPE mara-vhart,
+          l_traty     TYPE tervh-traty,
+          l_nrverg    TYPE tvty-nrverg,
+          l_int_nkr   TYPE tvty-int_nkr,
+          l_exidv_max TYPE exidv,
+          l_exidv_min TYPE exidv,
+          l_exidv     TYPE exidv.
+
+    CLEAR num.
+* Busco grupo de material de embalaje
+    SELECT SINGLE magrv vhart FROM mara
+      INTO (l_magrv, l_vhart)
+     WHERE matnr = matnr.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+* Obtengo el tipo de material de embalaje.
+    IF l_vhart IS INITIAL.
+      SELECT traty FROM tervh
+        INTO l_traty
+        UP TO 1 ROWS
+       WHERE magrv = l_magrv
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ELSE.
+      SELECT traty FROM tervh
+        INTO l_traty
+        UP TO 1 ROWS
+       WHERE traty = l_vhart
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+    IF NOT l_traty IS INITIAL.
+* Recuperamos el nº de
+      SELECT SINGLE nrverg int_nkr FROM tvty
+        INTO (l_nrverg, l_int_nkr )
+       WHERE traty = l_traty.
+      IF sy-subrc = 0.
+        IF l_nrverg = &apos;B&apos;.
+          zcl_ap_rango_numero=&gt;info_numero( EXPORTING rango = &apos;HU_VEKP&apos;
+                                                        rango_no = l_int_nkr
+                                              IMPORTING numero = num ).
+        ELSEIF l_nrverg = &apos;&apos;.
+          zcl_ap_rango_numero=&gt;info_numero( EXPORTING rango = &apos;RV_VEKP&apos;
+                                                        rango_no = &apos;01&apos;
+                                              IMPORTING numero = num ).
+        ENDIF.
+        l_exidv_max = num.
+        l_exidv_min = num - 50.
+        zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_exidv_min ).
+        SELECT MAX( exidv ) FROM vekp
+          INTO l_exidv
+         WHERE exidv &gt;= l_exidv_min
+           AND exidv &lt;= l_exidv_max.
+        IF sy-subrc = 0 AND NOT l_exidv IS INITIAL.
+          l_exidv = l_exidv + 1.
+          zcl_ap_string=&gt;poner_ceros_c( CHANGING cadena = l_exidv ).
+          num = l_exidv.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_STATUS" VERSION="1" LANGU="S" DESCRIPT="Devuelve estado de la caja" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_STATUS" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Número de orden" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_STATUS" SCONAME="STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BSVX-STTXT"/>
+  <source>METHOD get_status.
+    DATA: l_objnr TYPE jest-objnr,
+          l_istat TYPE husstat-stat,
+          l_txt04 TYPE tj02t-txt04.
+
+    CONCATENATE &apos;HU&apos; venum INTO l_objnr.
+*  CALL FUNCTION &apos;STATUS_TEXT_EDIT&apos;
+*    EXPORTING
+*      objnr            = l_objnr
+*      FLG_USER_STAT     = &apos;X&apos;
+*      spras            = sy-langu
+*      BYPASS_BUFFER    = &apos;X&apos;
+*    IMPORTING
+*      E_STSMA          = l_stsma
+*      line             = status
+*      USER_LINE        = l_USER_LINE
+*    EXCEPTIONS
+*      object_not_found = 1
+*      OTHERS           = 2.
+
+    SELECT stat FROM  husstat
+      INTO l_istat
+     WHERE objnr = l_objnr
+       AND inact = &apos;&apos;.
+      SELECT SINGLE txt04 FROM tj02t
+        INTO l_txt04
+       WHERE spras = sy-langu
+         AND istat = l_istat.
+      IF sy-subrc = 0.
+        IF status IS INITIAL.
+          status = l_txt04.
+        ELSE.
+          CONCATENATE status l_txt04 INTO status SEPARATED BY space.
+        ENDIF.
+      ENDIF.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP" VERSION="1" LANGU="S" DESCRIPT="Recupera cabecera" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP" SCONAME="SOLO_GET_VENUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <source>METHOD get_vekp.
+    CLEAR vekp.
+
+    IF NOT venum IS INITIAL.
+      IF solo_get_venum IS INITIAL.
+        SELECT SINGLE * FROM vekp
+          INTO vekp
+         WHERE venum = venum.
+      ELSE.
+        SELECT SINGLE venum FROM vekp
+          INTO vekp-venum
+         WHERE venum = venum.
+      ENDIF.
+    ELSE.
+      IF solo_get_venum IS INITIAL.
+        SELECT * FROM vekp
+          INTO vekp
+          UP TO 1 ROWS
+         WHERE exidv = exidv
+         ORDER BY venum DESCENDING.
+        ENDSELECT.
+      ELSE.
+        SELECT venum FROM vekp
+          INTO vekp-venum
+          UP TO 1 ROWS
+         WHERE exidv = exidv
+         ORDER BY venum DESCENDING.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP_ST" VERSION="1" LANGU="S" DESCRIPT="Recupera cabecera (ESTATICO)" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP_ST" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP_ST" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP_ST" SCONAME="SOLO_GET_VENUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEKP_ST" SCONAME="VEKP" VERSION="1" LANGU="S" DESCRIPT="Tabla cabecera un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="VEKP"/>
+  <source>METHOD get_vekp_st.
+    CLEAR vekp.
+
+    IF NOT venum IS INITIAL.
+      IF solo_get_venum IS INITIAL.
+        SELECT SINGLE * FROM vekp
+          INTO vekp
+         WHERE venum = venum.
+      ELSE.
+        SELECT SINGLE venum FROM vekp
+          INTO vekp-venum
+         WHERE venum = venum.
+      ENDIF.
+    ELSE.
+      IF solo_get_venum IS INITIAL.
+        SELECT * FROM vekp
+          INTO vekp
+          UP TO 1 ROWS
+         WHERE exidv = exidv
+         ORDER BY venum DESCENDING.
+        ENDSELECT.
+      ELSE.
+        SELECT venum FROM vekp
+          INTO vekp-venum
+          UP TO 1 ROWS
+         WHERE exidv = exidv
+         ORDER BY venum DESCENDING.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_VENUM" VERSION="1" LANGU="S" DESCRIPT="Devuelve el último VENUM del EXIDV" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VENUM" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VENUM" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="VENUM"/>
+  <source>METHOD get_venum.
+    CLEAR venum.
+    SELECT venum FROM vekp
+      INTO venum
+      UP TO 1 ROWS
+     WHERE exidv = exidv
+     ORDER BY venum DESCENDING.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEPO" VERSION="1" LANGU="S" DESCRIPT="Recupera posiciones" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEPO" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="GET_VEPO" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <source>METHOD get_vepo.
+    CLEAR: i_vepo, vepo.
+
+    IF NOT venum IS INITIAL OR NOT exidv IS INITIAL.
+      get_vekp( venum = venum
+                exidv = exidv ).
+    ENDIF.
+    IF NOT vekp-venum IS INITIAL.
+      SELECT * FROM vepo
+        INTO TABLE i_vepo
+       WHERE venum = vekp-venum
+        ORDER BY PRIMARY KEY.
+
+      READ TABLE i_vepo INTO vepo INDEX 1.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" VERSION="1" LANGU="S" DESCRIPT="Insertar log HU" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Contenedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="HANDLE" VERSION="1" LANGU="S" DESCRIPT="Clave unívoca mundial VEKP-VENUM" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VEVW-HANDLE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Tipo de objeto de una clave de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VEVW-OBJECT"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="OBJKEY" VERSION="1" LANGU="S" DESCRIPT="Clave del objeto al que está asignada la unidad manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="INSERTAR_LOG_HU" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD insertar_log_hu.
+    DATA l_handle TYPE vevw-handle.
+    DATA vevw     TYPE vevw.
+
+    CLEAR message.
+
+    IF NOT handle IS INITIAL.
+      l_handle = handle.
+    ELSEIF NOT venum IS INITIAL.
+      SELECT SINGLE handle FROM vekp
+        INTO l_handle
+       WHERE venum = venum.
+    ELSE.
+      SELECT handle FROM vekp
+        INTO l_handle
+        UP TO 1 ROWS
+       WHERE exidv   = exidv
+         AND status &lt;&gt; &apos;0060&apos;
+       ORDER BY venum DESCENDING.
+      ENDSELECT.
+    ENDIF.
+
+    IF l_handle IS INITIAL.
+      message = &apos;No se ha encontrado la SSCC&apos;.
+    ELSE.
+      SELECT SINGLE handle FROM vevw
+        INTO vevw-handle
+       WHERE handle = l_handle
+         AND object = object
+         AND objkey = objkey.
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR vevw.
+        vevw-handle = l_handle.
+        vevw-object = object.
+        vevw-objkey = objkey.
+        CONVERT DATE sy-datum TIME sy-uzeit INTO TIME STAMP vevw-tstamp TIME ZONE sy-zonlo.
+        INSERT vevw FROM vevw.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="LANZAR_HUMO" VERSION="1" LANGU="S" DESCRIPT="Llama a la transacción HUMO" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="LANZAR_HUMO" SCONAME="EXIDV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="LANZAR_HUMO" SCONAME="LISTA_HUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="LANZAR_HUMO" SCONAME="MODO" VERSION="1" LANGU="S" DESCRIPT="Modo ejecución CALL TRANSACTION mediante..." CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BDC_MODE" PARVALUE="&apos;E&apos;"/>
+  <source>METHOD lanzar_humo.
+    DATA: l_exidv   TYPE exidv,
+          i_exidv   TYPE TABLE OF exidv,
+          o_bi      TYPE REF TO zcl_ap_batch_input,
+          l_rc      TYPE i,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_mensaje TYPE bapireturn1-message.
+
+    IF NOT exidv IS INITIAL.
+      l_exidv = exidv.
+    ELSEIF NOT lista_hus IS INITIAL.
+      SPLIT lista_hus AT &apos;,&apos; INTO TABLE i_exidv.
+      DESCRIBE TABLE i_exidv LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_exidv INTO l_exidv INDEX 1.
+      ENDIF.
+    ENDIF.
+
+    o_bi = NEW #( ).
+
+    o_bi-&gt;inicio( ).
+
+    IF NOT l_exidv IS INITIAL.
+      o_bi-&gt;dynpro( program = &apos;RHU_HELP&apos; dynpro = &apos;1000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ONLI&apos; ).
+      o_bi-&gt;campos( campo = &apos;SELEXIDV-LOW&apos; valor = l_exidv ).
+      o_bi-&gt;campos( campo = &apos;LSTAND&apos; valor = &apos;X&apos; ).
+    ELSEIF NOT i_exidv IS INITIAL.
+      cl_gui_frontend_services=&gt;clipboard_export(
+  IMPORTING
+    data                 = i_exidv
+  CHANGING
+    rc                   = l_rc
+  EXCEPTIONS
+    cntl_error           = 1
+    error_no_gui         = 2
+    not_supported_by_gui = 3
+*    no_authority         = 4
+    OTHERS               = 5 ).
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Error dejando exidv en portapapeles&apos; TYPE &apos;I&apos;.
+        RETURN.
+      ENDIF.
+
+      o_bi-&gt;dynpro( program = &apos;RHU_HELP&apos; dynpro = &apos;1000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=%00120100000198451&apos; ).
+      o_bi-&gt;campos( campo = &apos;SELEXIDV-LOW&apos; valor = &apos;&apos; ).
+      o_bi-&gt;campos( campo = &apos;LSTAND&apos; valor = &apos;X&apos; ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPLALDB&apos; dynpro = &apos;3000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=CLIP&apos; ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPLALDB&apos; dynpro = &apos;3000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ACPT&apos; ).
+
+      o_bi-&gt;dynpro( program = &apos;RHU_HELP&apos; dynpro = &apos;1000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=ONLI&apos; ).
+    ENDIF.
+
+    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;HUMO&apos; modo = modo ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" VERSION="1" LANGU="S" DESCRIPT="Mover caja" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="HUWBEVENT" VERSION="1" LANGU="S" DESCRIPT="Operac.que identifica unívocamente un movim.mcía." CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HUWBEVENT" PARVALUE="&apos;0010&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="BWART" VERSION="1" LANGU="S" DESCRIPT="Clase de movimiento (gestión stocks)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BWART" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="GRUND" VERSION="1" LANGU="S" DESCRIPT="Razón para valoración manual del patrimonio" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MB_GRBEW" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="KOSTL" VERSION="1" LANGU="S" DESCRIPT="Centro de coste" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KOSTL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="ESPERA_A_GRABADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="DEQUEUE_ALL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="I_CAJAS_EXT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HUM_EXIDV_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="I_DATOS_MOV" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HUM_DATA_MOVE_TO_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="I_CAJAS_INT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="12 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HUM_VENUM_T" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="TCODE" VERSION="1" LANGU="S" DESCRIPT="Código transacción actual" CMPTYPE="1" MTDTYPE="0" EDITORDER="13 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-TCODE" PARVALUE="&apos;VLMOVE&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="XBLNR" VERSION="1" LANGU="S" DESCRIPT="Número de documento de referencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="14 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XBLNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="BUDAT" VERSION="1" LANGU="S" DESCRIPT="Fecha de contabilización en el documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="15 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUDAT" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="BKTXT" VERSION="1" LANGU="S" DESCRIPT="Texto de cabecera de documento" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BKTXT" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="MOVER" SCONAME="CHARG" VERSION="1" LANGU="S" DESCRIPT="Número de lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D" PAROPTIONL="X"/>
+  <source>METHOD mover.
+    DATA gt_venum TYPE hum_venum_t.
+    DATA: gt_exidv TYPE hum_exidv_t,
+          imkpf    TYPE imkpf.
+    DATA lt_move_to TYPE hum_data_move_to_t.
+    DATA ls_venum   TYPE hum_venum.
+    DATA ls_move_to TYPE hum_data_move_to.
+    DATA ef_posted  TYPE sysubrc.
+    DATA: message    TYPE huitem_messages,
+          i_messages TYPE huitem_messages_t.
+
+*  DATA: ls_hu_items   TYPE hum_humseg.
+
+    CLEAR: emkpf, i_return, return.
+
+    REFRESH: gt_venum, gt_exidv, lt_move_to.
+
+    IF i_datos_mov IS INITIAL.
+      IF vekp IS INITIAL.
+        MESSAGE &apos;No hay datos de caja&apos;(ndc) TYPE &apos;E&apos;.
+      ENDIF.
+
+      ls_venum-venum = vekp-venum.
+      APPEND ls_venum TO gt_venum.
+
+      ls_move_to-huwbevent = huwbevent.
+      ls_move_to-matnr     = matnr.
+      IF NOT charg IS INITIAL.
+        ls_move_to-charg = charg.
+      ENDIF.
+      ls_move_to-werks = werks.
+      ls_move_to-lgort = lgort.
+      ls_move_to-bwart = bwart.
+      ls_move_to-grund = grund.
+      ls_move_to-kostl = kostl.
+
+*  LOOP AT me-&gt;i_vepo INTO vepo.
+*    ls_hu_items-venum = vekp-venum.
+*    ls_hu_items-vepos = vepo-vepos.
+*    APPEND ls_hu_items TO ls_move_to-hu_items.
+*  ENDLOOP.
+
+      APPEND ls_move_to TO lt_move_to.
+    ELSE.
+      lt_move_to = i_datos_mov.
+      gt_venum   = i_cajas_int.
+      gt_exidv   = i_cajas_ext.
+    ENDIF.
+
+    IF NOT xblnr IS INITIAL OR NOT bktxt IS INITIAL.
+      imkpf-xblnr = xblnr.
+      imkpf-budat = budat.
+      imkpf-bktxt = bktxt.
+    ENDIF.
+
+    CALL FUNCTION &apos;HU_PACKING_REFRESH&apos;.
+
+    CALL FUNCTION &apos;HU_CREATE_GOODS_MOVEMENT&apos;
+      EXPORTING
+        if_simulate    = &apos; &apos;
+        if_commit      = &apos; &apos;
+        if_tcode       = tcode
+        it_move_to     = lt_move_to
+        it_internal_id = gt_venum
+        it_external_id = gt_exidv
+        is_imkpf       = imkpf
+      IMPORTING
+        ef_posted      = ef_posted
+        es_message     = message
+        et_messages    = i_messages
+        es_emkpf       = emkpf.
+
+    IF NOT emkpf IS INITIAL.
+      COMMIT WORK AND WAIT.
+      lights = zcl_ap_alv=&gt;c_sem_verde.
+
+      IF espera_a_grabado = &apos;X&apos;.
+        DO 5 TIMES.
+          SELECT SINGLE mblnr FROM mkpf
+            INTO emkpf-mblnr
+           WHERE mblnr = emkpf-mblnr
+             AND mjahr = emkpf-mjahr.
+          IF sy-subrc = 0.
+            EXIT.
+          ELSE.
+            WAIT UP TO 1 SECONDS.
+          ENDIF.
+        ENDDO.
+      ENDIF.
+
+      IF NOT message-msgid IS INITIAL.
+        MESSAGE ID message-msgid TYPE &apos;S&apos; NUMBER message-msgno
+                WITH message-msgv1 message-msgv2 message-msgv3 message-msgv4
+                INTO mensaje.
+      ENDIF.
+    ELSE.
+      lights = zcl_ap_alv=&gt;c_sem_rojo.
+
+      IF NOT message-msgid IS INITIAL.
+        CLEAR return.
+        return-id = message-msgid.
+        IF emkpf IS INITIAL.
+          return-type = &apos;E&apos;.
+        ELSE.
+          return-type = message-msgty.
+        ENDIF.
+        return-number     = message-msgno.
+        return-message_v1 = message-msgv1.
+        return-message_v2 = message-msgv2.
+        return-message_v3 = message-msgv3.
+        return-message_v4 = message-msgv4.
+
+        MESSAGE ID message-msgid TYPE &apos;S&apos; NUMBER message-msgno
+                WITH message-msgv1 message-msgv2 message-msgv3 message-msgv4
+                INTO return-message.
+        mensaje = return-message.
+        APPEND return TO i_return.
+      ENDIF.
+
+      LOOP AT i_messages ASSIGNING FIELD-SYMBOL(&lt;MESSAGE&gt;) WHERE msgid &lt;&gt; &apos;&apos;.
+        CLEAR return.
+        return-id         = &lt;MESSAGE&gt;-msgid.
+        return-type       = &lt;MESSAGE&gt;-msgty.
+        return-number     = &lt;MESSAGE&gt;-msgno.
+        return-message_v1 = &lt;MESSAGE&gt;-msgv1.
+        return-message_v2 = &lt;MESSAGE&gt;-msgv2.
+        return-message_v3 = &lt;MESSAGE&gt;-msgv3.
+        return-message_v4 = &lt;MESSAGE&gt;-msgv4.
+
+        MESSAGE ID &lt;MESSAGE&gt;-msgid TYPE &lt;MESSAGE&gt;-msgty NUMBER &lt;MESSAGE&gt;-msgno
+                WITH &lt;MESSAGE&gt;-msgv1 &lt;MESSAGE&gt;-msgv2 &lt;MESSAGE&gt;-msgv3 &lt;MESSAGE&gt;-msgv4
+                INTO return-message.
+        APPEND return TO i_return.
+        IF mensaje IS INITIAL.
+          mensaje = return-message.
+        ENDIF.
+      ENDLOOP.
+
+      IF mensaje IS INITIAL.
+        mensaje = &apos;No ha sido posible hacer el movimiento&apos;(npm).
+      ENDIF.
+
+    ENDIF.
+
+    IF dequeue_all = &apos;X&apos;.
+      CALL FUNCTION &apos;DEQUEUE_ALL&apos;.
+    ENDIF.
+
+    IF message = &apos;S::000&apos;.
+      CLEAR message.
+    ENDIF.
+    IF mensaje = &apos;S::000&apos;.
+      CLEAR mensaje.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="PACK" VERSION="1" LANGU="S" DESCRIPT="Empacar Unidad de manipulación" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="HUKEY" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="MATNR" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MATNR"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="CHARG" VERSION="1" LANGU="S" DESCRIPT="Número de lote" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHARG_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="WERKS" VERSION="1" LANGU="S" DESCRIPT="Centro" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="WERKS_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="LGORT" VERSION="1" LANGU="S" DESCRIPT="Almacén" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LGORT_D"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="ITEM_TYPE" VERSION="1" LANGU="S" DESCRIPT="Clase de contenido de posición de unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VELIN" PARVALUE="&apos;1&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="PACK_QTY" VERSION="1" LANGU="S" DESCRIPT="Cantidad base embalada en posición de unidad manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="MEINS" VERSION="1" LANGU="S" DESCRIPT="Unidad de medida base" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="MEINS"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="BESTQ" VERSION="1" LANGU="S" DESCRIPT="Diferenciación de stock en sistema de gestión de almacenes" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BESTQ" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="PACK" SCONAME="MENSAJE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD pack.
+    DATA item TYPE bapihuitmproposal.
+
+    CLEAR item.
+    item-base_unit_qty = meins.
+    item-hu_item_type  = item_type.
+    item-material      = matnr.
+    item-batch         = charg.
+    item-plant         = werks.
+    item-stge_loc      = lgort.
+    item-pack_qty      = pack_qty.
+    item-stock_cat     = bestq.
+
+    CLEAR: return, i_return.
+    CALL FUNCTION &apos;BAPI_HU_PACK&apos;
+      EXPORTING
+        hukey               = hukey
+        itemproposal        = item
+*        IMPORTING
+*         huitem              = huitem
+*   HUHEADER            =
+      TABLES
+*   SERIALNUMBERS       =
+        return              = i_return.
+
+    IF NOT hukey IS INITIAL.
+      CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+        EXPORTING
+          wait = &apos;X&apos;.
+    ENDIF.
+
+    READ TABLE i_return INTO return WITH KEY type = &apos;E&apos;.
+    IF sy-subrc = 0.
+      mensaje = return-message.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="UNPACK" VERSION="1" LANGU="S" DESCRIPT="Desempacar Unidad de manipulación" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="UNPACK" SCONAME="HUKEY" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="UNPACK" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Número de material" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="UNPACK" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD unpack.
+    DATA: l_venum TYPE vekp-venum,
+          l_exidv TYPE vekp-exidv,
+          i_vepo  TYPE TABLE OF vepo,
+          l_item  TYPE bapihuitmunpack.
+
+    IF hukey IS INITIAL.
+      l_venum = venum.
+      SELECT SINGLE exidv FROM vekp
+        INTO l_exidv
+      WHERE venum = venum.
+    ELSE.
+      l_exidv = hukey.
+      IF venum IS INITIAL.
+        SELECT venum FROM vekp
+          INTO l_venum
+          UP TO 1 ROWS
+         WHERE exidv = hukey
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ELSE.
+        l_venum = venum.
+      ENDIF.
+    ENDIF.
+
+    SELECT velin vepos matnr charg vemng vemeh werks lgort FROM vepo
+      INTO CORRESPONDING FIELDS OF TABLE i_vepo
+     WHERE venum = l_venum
+      ORDER BY PRIMARY KEY.
+
+    LOOP AT i_vepo ASSIGNING FIELD-SYMBOL(&lt;VEPO&gt;).
+      CLEAR l_item.
+      l_item-hu_item_type   = &lt;VEPO&gt;-velin.
+      l_item-hu_item_number = &lt;VEPO&gt;-vepos.
+      l_item-material       = &lt;VEPO&gt;-matnr.
+      l_item-batch          = &lt;VEPO&gt;-charg.
+      l_item-pack_qty       = &lt;VEPO&gt;-vemng.
+      l_item-base_unit_qty  = &lt;VEPO&gt;-vemeh.
+      l_item-plant          = &lt;VEPO&gt;-werks.
+      l_item-stge_loc       = &lt;VEPO&gt;-lgort.
+
+      CLEAR: return, i_return.
+      CALL FUNCTION &apos;BAPI_HU_UNPACK&apos;
+        EXPORTING
+          hukey      = l_exidv
+          itemunpack = l_item
+        TABLES
+          return     = i_return.
+
+      READ TABLE i_return INTO return WITH KEY type = &apos;E&apos;.
+      IF sy-subrc = 0.
+        message = return-message.
+        RETURN.
+      ELSE.
+        CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+          EXPORTING
+            wait = &apos;X&apos;.
+      ENDIF.
+    ENDLOOP.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No hay posiciones a desembalar&apos;(npd).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar HU" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="VISUALIZAR" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="VISUALIZAR" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <source>METHOD visualizar.
+    DATA: l_venum TYPE venum,
+          i_venum TYPE hum_venum_t.
+
+    IF venum IS INITIAL AND NOT exidv IS INITIAL.
+      SELECT venum FROM vekp
+        INTO l_venum
+        UP TO 1 ROWS
+       WHERE exidv   = exidv
+         AND status &lt;&gt; &apos;0060&apos;
+        ORDER BY venum DESCENDING.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT venum FROM vekp
+          INTO l_venum
+          UP TO 1 ROWS
+         WHERE exidv = exidv
+          ORDER BY venum DESCENDING.
+        ENDSELECT.
+      ENDIF.
+
+    ELSE.
+      l_venum = venum.
+    ENDIF.
+
+    APPEND l_venum TO i_venum.
+    CALL FUNCTION &apos;HU_DISPLAY&apos;
+      EXPORTING
+*     IF_DISPLAY   = &apos;X&apos;
+*     IF_COMMIT    = &apos; &apos;
+        it_venum     = i_venum
+*     IF_AR_HUS    = &apos; &apos;
+*     IF_EXIDV_FOR_DELETED       = &apos; &apos;
+* IMPORTING
+*     EF_FCODE     =
+*     EF_DATA_CHANGED            =
+*     ET_MESSAGES  =
+*     ET_HEADER    =
+*     ET_ITEMS     =
+      EXCEPTIONS
+        no_hus_found = 1
+        not_allowed  = 2
+        fatal_error  = 3
+        OTHERS       = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,2300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_EMPLEADO" VERSION="1" LANGU="S" DESCRIPT="Clase empleado" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="4 " SRCROW2="41 " SRCCOLUMN2="22 " TYPESRC_LENG="1325 " TYPESRC='BEGIN OF t_devengos,
+        pernr             TYPE pernr-pernr,
+        name              TYPE c LENGTH 35,
+        job_title         TYPE c LENGTH 15,
+*tarif
+        trfar             TYPE p0008-trfar,
+        trfgb             TYPE p0008-trfgb,
+        trfgr             TYPE p0008-trfgr,
+        trfst             TYPE p0008-trfst,
+* act_pay
+        infotype          TYPE pskey-infty,
+        infotype_text     TYPE t582s-itext,
+        subty             TYPE pskey-subty,
+        subty_text        TYPE t591s-stext,
+* subty_text(20),
+        objps             TYPE pskey-objps,
+        begda             TYPE pskey-begda,
+        endda             TYPE pskey-endda,
+        reason            TYPE pshd1-preas, &quot; Reason for changes
+        reason_text       TYPE t530f-rtext,
+*--- record for pay lines in 0008
+        wage_type         TYPE p0008-lga01,
+        wage_type_text    TYPE t512t-lgtxt,
+        wage_type_amount  TYPE p0008-bet01,
+        currency          TYPE sy-waers,
+        op_ind_wage_types TYPE p0008-opk01,
+        number            TYPE p0008-anz01,
+        time_meas_unit    TYPE c LENGTH 7,
+*--- record for pay of employee
+*            indbw,
+        perc_diffr        TYPE p LENGTH 8 DECIMALS 2,
+        color             TYPE c LENGTH 3,
+      END OF t_devengos
+'/>
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="43 " SRCCOLUMN1="4 " SRCROW2="43 " SRCCOLUMN2="41 " TYPESRC_LENG="40 " TYPESRC="tt_devengos   TYPE TABLE OF t_devengos
+"/>
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_BAPI7013_1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="45 " SRCCOLUMN1="4 " SRCROW2="45 " SRCCOLUMN2="41 " TYPESRC_LENG="40 " TYPESRC="tt_bapi7013_1 TYPE TABLE OF bapi7013_1
+"/>
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="47 " SRCCOLUMN1="4 " SRCROW2="56 " SRCCOLUMN2="25 " TYPESRC_LENG="308 " TYPESRC="BEGIN OF t_cond_fechas,
+        clave1 TYPE c LENGTH 40,
+        clave2 TYPE c LENGTH 40,
+        clave3 TYPE c LENGTH 40,
+        clave4 TYPE c LENGTH 40,
+        clave5 TYPE c LENGTH 40,
+        begda  TYPE begda,
+        endda  TYPE endda,
+        linea  TYPE string,
+      END OF t_cond_fechas
+"/>
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="58 " SRCCOLUMN1="4 " SRCROW2="58 " SRCCOLUMN2="45 " TYPESRC_LENG="44 " TYPESRC="tt_cond_fechas TYPE TABLE OF t_cond_fechas
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="AAI" ENTRY="empleados activos con este identificador" LENGTH="80 "/>
+   <textElement ID="I" KEY="CAS" ENTRY="Casado" LENGTH="16 "/>
+   <textElement ID="I" KEY="DIV" ENTRY="Divorciado" LENGTH="20 "/>
+   <textElement ID="I" KEY="EDA" ENTRY="Error calculando diferencia de años" LENGTH="70 "/>
+   <textElement ID="I" KEY="ERC" ENTRY="Error recuperando cualificaciones" LENGTH="66 "/>
+   <textElement ID="I" KEY="ERE" ENTRY="Error recuperando empleado" LENGTH="52 "/>
+   <textElement ID="I" KEY="ERH" ENTRY="Error recuperando horario de trabajo" LENGTH="72 "/>
+   <textElement ID="I" KEY="ETL" ENTRY="Error recuperando time list" LENGTH="54 "/>
+   <textElement ID="I" KEY="EXI" ENTRY="Existen" LENGTH="17 "/>
+   <textElement ID="I" KEY="NEA" ENTRY="No hay ningún empleado activo con este identificador" LENGTH="104 "/>
+   <textElement ID="I" KEY="PHE" ENTRY="Pareja de hecho" LENGTH="25 "/>
+   <textElement ID="I" KEY="PLV" ENTRY="Error recuperando plvar" LENGTH="46 "/>
+   <textElement ID="I" KEY="SEP" ENTRY="Separado" LENGTH="18 "/>
+   <textElement ID="I" KEY="SOL" ENTRY="Soltero" LENGTH="17 "/>
+   <textElement ID="I" KEY="VIU" ENTRY="Viudo" LENGTH="15 "/>
+  </language>
+ </textPool>
+ <typeUsage CLSNAME="ZCL_AP_EMPLEADO" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" EXPOSURE="0" STATE="1" EDITORDER="8 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PA0000-BEGDA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="C_MOLGA" VERSION="1" LANGU="S" DESCRIPT="Agrupación de países" EXPOSURE="2" STATE="1" EDITORDER="6 " ATTDECLTYP="2" ATTVALUE="&apos;04&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="MOLGA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="C_PLVAR" VERSION="1" LANGU="S" DESCRIPT="Variante de plan" EXPOSURE="2" STATE="1" EDITORDER="5 " ATTDECLTYP="2" ATTVALUE="&apos;01&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PLVAR" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DATOS_BASICOS" VERSION="1" LANGU="S" DESCRIPT="Registro maestro de personal Infotipo 0001 (Asignac.organ.)" EXPOSURE="2" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZEST_EMPLEADO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" EXPOSURE="0" STATE="1" EDITORDER="9 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PA0000-ENDDA" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="I_P0000" VERSION="1" LANGU="S" DESCRIPT="Tabla de infotipos 0000" EXPOSURE="0" STATE="1" EDITORDER="2 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIM_P0000_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="I_P0001" VERSION="1" LANGU="S" DESCRIPT="Tabla de infotipos 0001" EXPOSURE="0" STATE="1" EDITORDER="3 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIM_P0001_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="I_P0002" VERSION="1" LANGU="S" DESCRIPT="Tabla de infotipos 0002" EXPOSURE="0" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIM_P0002_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="I_P0007" VERSION="1" LANGU="S" DESCRIPT="Tabla de infotipos 0007" EXPOSURE="0" STATE="1" EDITORDER="5 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIM_P0007_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="I_P0008" VERSION="1" LANGU="S" DESCRIPT="Tabla de infotipos 0008" EXPOSURE="0" STATE="1" EDITORDER="6 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="TIM_P0008_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="OP_CHANGE" VERSION="1" LANGU="S" DESCRIPT="Operación en infotipos" EXPOSURE="2" STATE="1" EDITORDER="3 " ATTDECLTYP="2" ATTVALUE="&apos;MOD&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PSPAR-ACTIO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="OP_CREATE" VERSION="1" LANGU="S" DESCRIPT="Operación en infotipos" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="&apos;INS&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PSPAR-ACTIO" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="O_EMPLEADO" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="3" TYPE="CL_PT_EMPLOYEE" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" EXPOSURE="0" STATE="1" EDITORDER="7 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="PA0000-PERNR" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" EXPOSURE="2" STATE="1" EDITORDER="4 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="BAPIRETURN1" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="43 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="INFTY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INFTY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="OPERATION" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PSPAR-ACTIO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="VISIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="RETURN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="KEY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIPAKEY"/>
+  <source>METHOD actualizar_infotipo.
+
+    CLEAR: key, message, return.
+
+    ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;pernr&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;INFTY&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;infty&gt;).
+    IF sy-subrc = 0.
+      &lt;infty&gt; = infty.
+    else.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;SUBTY&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;subty&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;BEGDA&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;begda&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;ENDDA&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;endda&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;OBJPS&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;objps&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+    ASSIGN COMPONENT &apos;SEQNR&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;seqnr&gt;).
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Estructura de entrada incorrecta&apos;.
+      RETURN.
+    ENDIF.
+
+    IF &lt;pernr&gt; IS INITIAL.
+      message = &apos;Informe nº de empleado&apos;.
+      RETURN.
+    ENDIF.
+
+    DATA(l_return) = zcl_ap_empleado=&gt;bloquear_empleado( &lt;pernr&gt; ).
+    IF l_return-type = &apos;E&apos;.
+      message = l_return-message.
+      return = l_return.
+      RETURN.
+    ENDIF.
+
+    IF visible = &apos;X&apos;.
+      DATA(dialog_mode) = &apos;2&apos;.
+    ENDIF.
+
+    CALL FUNCTION &apos;HR_INFOTYPE_OPERATION&apos;
+      EXPORTING
+        infty         = infty
+        number        = &lt;pernr&gt;
+        subtype       = &lt;subty&gt;
+        validityend   = &lt;endda&gt;
+        validitybegin = &lt;begda&gt;
+        objectid      = &lt;objps&gt;
+        recordnumber  = &lt;seqnr&gt;
+        record        = datos
+        operation     = operation
+        nocommit      = &apos;&apos;
+        dialog_mode   = dialog_mode
+      IMPORTING
+        key           = key
+        return        = l_return
+      EXCEPTIONS
+        error_message = 999
+        OTHERS        = 1.
+    IF sy-subrc &lt;&gt; 0.
+      IF l_return-type &lt;&gt; &apos;E&apos;.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+    ENDIF.
+    IF l_return-type = &apos;E&apos;.
+      message = l_return-message.
+      return = l_return.
+    ENDIF.
+    zcl_ap_empleado=&gt;desbloquear_empleado( &lt;pernr&gt; ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BLOQUEAR_EMPLEADO" VERSION="1" LANGU="S" DESCRIPT="Bloquea empleado" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BLOQUEAR_EMPLEADO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BLOQUEAR_EMPLEADO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1"/>
+  <source>METHOD bloquear_empleado.
+    CALL FUNCTION &apos;BAPI_EMPLOYEE_ENQUEUE&apos;
+      EXPORTING
+        number = pernr
+      IMPORTING
+        return = return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" VERSION="1" LANGU="S" DESCRIPT="Borrar calificación" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="OTYPE" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-OBJID"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fecha final" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="RATING" VERSION="1" LANGU="S" DESCRIPT="Particularidad de una escala de calidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIQUALIFIC_TAB-RATING"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_CUALIFICACION" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1"/>
+  <source>METHOD borrar_cualificacion.
+* Estructura BAPI cualificac.(tabla perfiles)
+
+    DATA: l_profile        TYPE bapiqualific_tab,
+* Estructura BAPI cualificac.(tabla perfiles)
+          i_profile_delete TYPE STANDARD TABLE OF bapiqualific_tab,
+          i_profile_add    TYPE STANDARD TABLE OF bapiqualific_tab.
+    DATA l_sobid TYPE bapiqualific-sobid. &quot; ID del objeto vinculado
+
+    CLEAR l_profile.
+    l_profile-obj_id    = objid.
+    l_profile-begda     = begda.
+    l_profile-endda     = endda.
+    l_profile-rating    = rating.
+    l_profile-user_name = sy-uname.
+    APPEND l_profile TO i_profile_delete.
+
+    l_sobid = pernr.
+
+    CALL FUNCTION &apos;BAPI_QUALIPROF_CHANGE&apos;
+      EXPORTING
+        plvar          = &apos;01&apos;
+        otype          = &apos;P&apos;
+        sobid          = l_sobid
+      IMPORTING
+        return         = return
+      TABLES
+        profile_add    = i_profile_add
+        profile_delete = i_profile_delete.
+
+    CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+      EXPORTING
+        wait = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" VERSION="1" LANGU="S" DESCRIPT="Borrar infotipo" EXPOSURE="2" STATE="1" EDITORDER="21 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="P0001-INFTY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="P0001-SUBTY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="BORRAR_INFOTIPO" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD borrar_infotipo.
+    DATA: l_tabla    TYPE c LENGTH 20,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_pernr    TYPE persno,
+          o_bi       TYPE REF TO zcl_ap_batch_input,
+          l_pantalla TYPE bdc_prog,
+          l_mensaje  TYPE bapireturn1-message.
+
+    CONCATENATE &apos;PA&apos; infty INTO l_tabla.
+    SELECT SINGLE pernr FROM (l_tabla)
+      INTO l_pernr
+     WHERE pernr = pernr
+       AND subty = subty
+       AND endda = endda
+       AND begda = begda.
+    IF sy-subrc &lt;&gt; 0.
+      CLEAR mensaje.
+    ELSE.
+      o_bi = NEW #( ).
+
+      o_bi-&gt;inicio( ).
+
+* Pantalla acceso PA30
+      o_bi-&gt;dynpro( program = &apos;SAPMP50A&apos; dynpro = &apos;1000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=DEL&apos; ).
+      o_bi-&gt;campos( campo = &apos;RP50G-PERNR&apos; valor = pernr ).
+      o_bi-&gt;campos( campo = &apos;RP50G-BEGDA&apos; valor = begda ).
+      o_bi-&gt;campos( campo = &apos;RP50G-ENDDA&apos; valor = endda ).
+      o_bi-&gt;campos( campo = &apos;RP50G-CHOIC&apos; valor = infty ).
+      o_bi-&gt;campos( campo = &apos;RP50G-SUBTY&apos; valor = subty ).
+
+      IF infty = &apos;2001&apos;.
+        l_pantalla = &apos;MP200000&apos;.
+      ELSE.
+        CONCATENATE &apos;MP&apos; infty &apos;00&apos; INTO l_pantalla.
+      ENDIF.
+      o_bi-&gt;dynpro( program = l_pantalla dynpro = &apos;2000&apos; ).
+      o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=UPDL&apos; ).
+
+      l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;PA30&apos; modo = &apos;E&apos; ).
+
+      SELECT SINGLE pernr FROM (l_tabla)
+        INTO l_pernr
+       WHERE pernr = pernr
+         AND subty = subty
+         AND endda = endda
+         AND begda = begda.
+      IF sy-subrc &lt;&gt; 0.
+        CLEAR mensaje.
+      ELSE.
+        mensaje = l_mensaje.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CAMBIAR_EMPLEADO" VERSION="1" LANGU="S" DESCRIPT="Cambia empleado en la clase" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CAMBIAR_EMPLEADO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CAMBIAR_EMPLEADO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CAMBIAR_EMPLEADO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA" PARVALUE="SY-DATUM"/>
+  <source>METHOD cambiar_empleado.
+    inicio( ).
+
+    me-&gt;pernr = pernr.
+    me-&gt;begda = begda.
+    me-&gt;endda = endda.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR" VERSION="1" LANGU="S" DESCRIPT="Unifica valores con fechas correlativas" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR" SCONAME="IT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <source>METHOD condensar.
+    DATA: i_fechas TYPE tt_cond_fechas,
+          l_fechas TYPE t_cond_fechas,
+          i_key    TYPE apb_lpd_t_key_value,
+          l_cont   TYPE char1.
+
+
+    DATA(i_campos) = zcl_ap_dev=&gt;get_fieldcatalog( tabla = it ).
+    LOOP AT i_campos ASSIGNING FIELD-SYMBOL(&lt;campo&gt;)
+                      WHERE name NE &apos;BEGDA&apos; AND name NE &apos;ENDDA&apos;.
+      ADD 1 TO l_cont.
+      IF l_cont &gt; 5.
+        MESSAGE &apos;Sólo es posible condensar 5 campos&apos; TYPE &apos;E&apos;.
+      ENDIF.
+      APPEND VALUE #( key = &apos;CLAVE&apos; &amp;&amp; l_cont value = &lt;campo&gt;-name  ) TO i_key.
+    ENDLOOP.
+    LOOP AT it ASSIGNING FIELD-SYMBOL(&lt;it&gt;).
+      CLEAR l_fechas.
+      MOVE-CORRESPONDING &lt;it&gt; TO l_fechas.
+      LOOP AT i_key ASSIGNING FIELD-SYMBOL(&lt;key&gt;).
+        ASSIGN COMPONENT &lt;key&gt;-key OF STRUCTURE l_fechas TO FIELD-SYMBOL(&lt;destino&gt;).
+        ASSIGN COMPONENT &lt;key&gt;-value OF STRUCTURE &lt;it&gt; TO FIELD-SYMBOL(&lt;origen&gt;).
+        &lt;destino&gt; = &lt;origen&gt;.
+      ENDLOOP.
+      APPEND l_fechas TO i_fechas.
+    ENDLOOP.
+    zcl_ap_empleado=&gt;condensar_fechas( CHANGING fechas = i_fechas[] ).
+    CLEAR it.
+    LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(&lt;fechas&gt;).
+      APPEND INITIAL LINE TO it ASSIGNING &lt;it&gt;.
+      MOVE-CORRESPONDING &lt;fechas&gt; TO &lt;it&gt;.
+      LOOP AT i_key ASSIGNING &lt;key&gt;.
+        ASSIGN COMPONENT &lt;key&gt;-key OF STRUCTURE &lt;fechas&gt; TO &lt;origen&gt;.
+        ASSIGN COMPONENT &lt;key&gt;-value OF STRUCTURE &lt;it&gt; TO &lt;destino&gt;.
+        &lt;destino&gt; = &lt;origen&gt;.
+      ENDLOOP.
+    ENDLOOP.
+
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Unifica valores con fechas correlativas" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR_FECHAS" SCONAME="FECHAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_COND_FECHAS"/>
+  <source>METHOD condensar_fechas.
+    DATA: i_fechas    TYPE tt_cond_fechas,
+          l_fechas    TYPE t_cond_fechas,
+          l_fecha_ant TYPE t_cond_fechas,
+          l_endda     TYPE endda.
+
+    i_fechas = fechas.
+    CLEAR fechas.
+
+    LOOP AT i_fechas INTO l_fechas.
+      IF l_fecha_ant IS INITIAL.
+        l_fecha_ant = l_fechas.
+      ELSE.
+        l_endda = l_fecha_ant-endda + 1.
+        IF    l_endda            &lt;&gt; l_fechas-begda
+           OR l_fecha_ant-clave1 &lt;&gt; l_fechas-clave1
+           OR l_fecha_ant-clave2 &lt;&gt; l_fechas-clave2
+           OR l_fecha_ant-clave3 &lt;&gt; l_fechas-clave3
+           OR l_fecha_ant-clave4 &lt;&gt; l_fechas-clave4
+           OR l_fecha_ant-clave5 &lt;&gt; l_fechas-clave5.
+          APPEND l_fecha_ant TO fechas.
+          l_fecha_ant = l_fechas.
+        ELSE.
+          l_fecha_ant-endda = l_fechas-endda.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+    IF NOT l_fecha_ant IS INITIAL.
+      APPEND l_fecha_ant TO fechas.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONSTRUCTOR" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="2" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONSTRUCTOR" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="2" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONSTRUCTOR" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="2" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-ENDDA" PARVALUE="SY-DATUM"/>
+  <source>METHOD constructor.
+    cambiar_empleado( pernr = pernr
+                      begda = begda
+                      endda = endda ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" VERSION="1" LANGU="S" DESCRIPT="Crear calificación" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="OTYPE" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-OTYPE"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="OBJID" VERSION="1" LANGU="S" DESCRIPT="ID objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-OBJID"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Fecha de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fecha final" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="HRP1000-ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="RATING" VERSION="1" LANGU="S" DESCRIPT="Particularidad de una escala de calidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIQUALIFIC_TAB-RATING"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CREAR_CUALIFICACION" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1"/>
+  <source>METHOD crear_cualificacion.
+* Estructura BAPI cualificac.(tabla perfiles)
+
+    DATA: l_profile        TYPE bapiqualific_tab,
+          i_profile_add    TYPE STANDARD TABLE OF bapiqualific_tab,
+* Estructura BAPI cualificac.(tabla perfiles)
+          i_profile_delete TYPE STANDARD TABLE OF bapiqualific_tab.
+    DATA l_sobid TYPE bapiqualific-sobid. &quot; ID del objeto vinculado
+
+    CLEAR l_profile.
+    l_profile-obj_id    = objid.
+    l_profile-begda     = begda.
+    l_profile-endda     = endda.
+    l_profile-rating    = rating.
+    l_profile-user_name = sy-uname.
+    APPEND l_profile TO i_profile_add.
+
+    l_sobid = pernr.
+
+    CALL FUNCTION &apos;BAPI_QUALIPROF_CHANGE&apos;
+      EXPORTING
+        plvar          = &apos;01&apos;
+        otype          = &apos;P&apos;
+        sobid          = l_sobid
+      IMPORTING
+        return         = return
+      TABLES
+        profile_add    = i_profile_add
+        profile_delete = i_profile_delete.
+
+    CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;
+      EXPORTING
+        wait = &apos;X&apos;.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DEL_FICHAJE" VERSION="1" LANGU="S" DESCRIPT="Borra fichaje" EXPOSURE="2" STATE="1" EDITORDER="39 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DEL_FICHAJE" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DEL_FICHAJE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DEL_FICHAJE" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DEL_FICHAJE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD del_fichaje.
+    DATA: i_del_teven      TYPE TABLE OF teven,
+          i_del_teven_more TYPE TABLE OF teven_more,
+          ins_teven        TYPE teven,
+          i_ins_teven      TYPE TABLE OF teven,
+          del_teven_more   TYPE teven_more,
+          ins_teven_more   TYPE teven_more,
+          i_ins_teven_more TYPE TABLE OF teven_more.
+
+    CLEAR message.
+
+    SELECT * FROM (&apos;TEVEN&apos;)
+      INTO CORRESPONDING FIELDS OF TABLE i_del_teven
+     WHERE pernr = pernr
+       AND ldate = fecha
+       AND ltime = hora
+       AND stokz = &apos;&apos;.
+    IF sy-subrc &lt;&gt; 0.
+      message = |No existe el fichaje { fecha DATE = USER } { hora TIME = USER }|.
+    ENDIF.
+
+    SELECT * FROM (&apos;TEVEN&apos;)
+      INTO CORRESPONDING FIELDS OF TABLE i_del_teven_more
+     WHERE pernr = pernr
+       AND ldate = fecha
+       AND ltime = hora
+       AND stokz = &apos;&apos;.
+
+    CLEAR: sy-msgid, sy-msgno, sy-msgty, sy-msgv1, sy-msgv2, sy-msgv3, sy-msgv4.
+
+    CALL FUNCTION &apos;HR_TMW_DB_UPDATE_TEVENT&apos;
+      TABLES
+        del_teven      = i_del_teven
+        ins_teven      = i_ins_teven
+        del_teven_more = i_del_teven_more
+        ins_teven_more = i_ins_teven_more
+      EXCEPTIONS
+        insert_failed  = 1
+        update_failed  = 2
+        OTHERS         = 3.
+    IF sy-subrc = 0.
+      COMMIT WORK AND WAIT.
+    ELSE.
+      IF sy-msgty IS INITIAL.
+        message = |Error borrando fichaje { fecha DATE = USER } { hora TIME = USER }|.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+      ROLLBACK WORK.                                   &quot;#EC CI_ROLLBACK
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DESBLOQUEAR_EMPLEADO" VERSION="1" LANGU="S" DESCRIPT="Desbloquea empleado" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DESBLOQUEAR_EMPLEADO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="DESBLOQUEAR_EMPLEADO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1"/>
+  <source>METHOD desbloquear_empleado.
+    CALL FUNCTION &apos;BAPI_EMPLOYEE_DEQUEUE&apos;
+      EXPORTING
+        number = pernr
+      IMPORTING
+        return = return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ELIMINAR_BLOQUEO" VERSION="1" LANGU="S" DESCRIPT="Elimina bloqueo al empleado si alguien lo está bloqueando" EXPOSURE="2" STATE="1" EDITORDER="31 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ELIMINAR_BLOQUEO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ELIMINAR_BLOQUEO" SCONAME="BLOQUEADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD eliminar_bloqueo.
+    DATA hrpersonee TYPE hrpersonee_s.
+
+    bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;PREL&apos;
+                                                 clave = sy-mandt
+                                                 clave2 = pernr
+                                                 clave3 = &apos;*&apos;
+                                                 borrar = &apos;X&apos; ).
+    CALL FUNCTION &apos;HR_PERSONEE_GETPERSON&apos;
+      EXPORTING
+        iv_employee_id    = pernr
+        iv_with_authority = space
+      IMPORTING
+        es_hrpersonee     = hrpersonee
+      EXCEPTIONS
+        error_message     = 1
+        OTHERS            = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando empleado&apos;(ere) TYPE &apos;S&apos;.
+    ENDIF.
+
+    IF NOT hrpersonee-personid IS INITIAL.
+      bloqueado = zcl_ap_utils=&gt;comprobar_bloqueo( tabla = &apos;PLOGI&apos;
+                                                   clave = sy-mandt
+                                                   clave2 = &apos;01&apos;
+                                                   clave3 = &apos;CP&apos;
+                                                   clave4 = hrpersonee-personid
+                                                   borrar = &apos;X&apos; ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" VERSION="1" LANGU="S" DESCRIPT="Empleado disponible en día/hora" EXPOSURE="2" STATE="1" EDITORDER="19 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" SCONAME="BEGUZ" VERSION="1" LANGU="S" DESCRIPT="Hora de inicio" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGUZ"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" SCONAME="ENDUZ" VERSION="1" LANGU="S" DESCRIPT="Hora final" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDUZ"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ES_DISPONIBLE_EN_HORARIO" SCONAME="DISPONIBLE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD es_disponible_en_horario.
+    DATA: i_disp         TYPE TABLE OF timelist,
+          l_abs_finicio  TYPE c LENGTH 14,
+          l_abs_ffin     TYPE c LENGTH 14,
+          l_f1           TYPE d,
+          l_time         TYPE timelist,
+          l_ini          TYPE c LENGTH 1,
+          l_fin          TYPE c LENGTH 1,
+          l_disp_finicio TYPE c LENGTH 14,
+          l_hfin         TYPE beguz,
+          l_disp_ffin    TYPE c LENGTH 14,
+          l_f2           TYPE d.
+
+    i_disp = get_disponibilidad( pernr = pernr
+                                 begda = begda
+                                 endda = begda ).
+    DELETE i_disp WHERE avail &lt;&gt; 1.
+
+    IF i_disp IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    l_abs_finicio(8) = begda.
+    l_abs_finicio+8(6) = beguz.
+    IF enduz &gt;= beguz.
+      l_abs_ffin(8) = begda.
+    ELSE.
+      l_f1 = begda + 1.
+      l_abs_ffin(8) = l_f1.
+    ENDIF.
+    l_abs_ffin+8(6) = enduz.
+
+    LOOP AT i_disp INTO l_time.
+      CLEAR: l_ini, l_fin.
+      AT FIRST.
+        l_ini = &apos;X&apos;.
+      ENDAT.
+      AT LAST.
+        l_fin = &apos;X&apos;.
+      ENDAT.
+      IF l_ini = &apos;X&apos;.
+        l_disp_finicio(8) = l_time-date.
+        l_disp_finicio+8(6) = l_time-btime.
+      ENDIF.
+
+      IF l_fin = &apos;X&apos;.
+        l_hfin = l_hfin + l_time-btime + l_time-hours * 3600 ##NUMBER_OK.
+        IF l_hfin &gt;= l_disp_finicio+8(6).
+          l_disp_ffin(8) = l_disp_finicio(8).
+        ELSE.
+          l_f1 = l_disp_finicio(8).
+          l_f2 = l_f1 + 1.
+          l_disp_ffin(8) = l_f2.
+        ENDIF.
+        l_disp_ffin+8(6) = l_hfin.
+      ENDIF.
+    ENDLOOP.
+
+    IF NOT (    l_abs_finicio &lt; l_disp_finicio
+             OR l_abs_ffin    &gt; l_disp_ffin ).
+      disponible = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CALIFICACIONES" VERSION="1" LANGU="S" DESCRIPT="Lee calificaciones" EXPOSURE="2" STATE="1" EDITORDER="23 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CALIFICACIONES" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CALIFICACIONES" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="&apos;19000101&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CALIFICACIONES" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="&apos;99991231&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CALIFICACIONES" SCONAME="I_CALIFICACIONES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla calificaciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZT_CALIFICACIONES"/>
+  <source>METHOD get_calificaciones.
+    DATA: l_empleado  TYPE hrsobid,
+          i_empleados TYPE TABLE OF hrsobid.
+
+    CLEAR l_empleado.
+    l_empleado-plvar = c_plvar.
+    l_empleado-otype = &apos;P&apos;.
+    l_empleado-sobid = pernr.
+    APPEND l_empleado TO i_empleados.
+
+    CALL FUNCTION &apos;RHPA_APPRAISEES_APP_READ&apos;
+      EXPORTING
+        begda        = begda
+        endda        = endda
+*       WITH_STEXT   = &apos;X&apos;
+*       WITH_ADD_INFO       = &apos;X&apos;
+      TABLES
+        appraisees   = i_empleados
+        appraisals   = i_calificaciones
+      EXCEPTIONS
+        no_authority = 1
+        undefined    = 2
+        OTHERS       = 3.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos de comunicación" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0105-SUBTY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_COMUNICACION_ST" SCONAME="USRID" VERSION="1" LANGU="S" DESCRIPT="Comunicación identificación larga/número" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PA0105-USRID_LONG"/>
+  <source>METHOD get_comunicacion_st.
+    DATA l_usrid TYPE pa0105-usrid.
+
+    CLEAR usrid.
+    SELECT usrid, usrid_long
+      FROM pa0105
+      INTO (@l_usrid, @usrid)
+      UP TO 1 ROWS
+      WHERE pernr  = @pernr
+        AND subty  = @subty
+        AND begda &lt;= @endda
+        AND endda &gt;= @begda
+      ORDER BY endda DESCENDING.
+    ENDSELECT.
+
+    IF usrid IS INITIAL AND NOT l_usrid IS INITIAL.
+      usrid = l_usrid.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CUALIFICACIONES" VERSION="1" LANGU="S" DESCRIPT="Lee cualificaciones" EXPOSURE="2" STATE="1" EDITORDER="25 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CUALIFICACIONES" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CUALIFICACIONES" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="&apos;19000101&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CUALIFICACIONES" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="&apos;99991231&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_CUALIFICACIONES" SCONAME="I_CUALIFICACIONES" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla calificaciones" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HRPD_PROFQ_TAB"/>
+  <source>METHOD get_cualificaciones.
+    DATA: l_empleado  TYPE hrsobid,
+          i_empleados TYPE TABLE OF hrsobid.
+
+    CLEAR l_empleado.
+    l_empleado-plvar = c_plvar.
+    l_empleado-otype = &apos;P&apos;.
+    l_empleado-sobid = pernr.
+    APPEND l_empleado TO i_empleados.
+
+    CALL FUNCTION &apos;RHPP_Q_PROFILE_READ&apos;
+      EXPORTING
+        begda            = begda
+        endda            = endda
+*       WITH_STEXT       = &apos;X&apos;
+*       WITH_QK_INFO     = &apos;X&apos;
+        check_note       = &apos;X&apos;
+      TABLES
+        objects          = i_empleados
+*       ERR_OBJECTS      =
+        profile          = i_cualificaciones
+      EXCEPTIONS
+        no_authority     = 1
+        wrong_otype      = 2
+        object_not_found = 3
+        undefined        = 4
+        OTHERS           = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando cualificaciones&apos;(erc) TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos empleado ampliados" EXPOSURE="2" STATE="1" EDITORDER="24 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" SCONAME="O_CACHE" VERSION="1" LANGU="S" DESCRIPT="Cache" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_CACHE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_AMPLIADOS" SCONAME="DATOS" VERSION="1" LANGU="S" DESCRIPT="Datos empleado (ampliados)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEST_EMPL_MAS"/>
+  <source>METHOD get_datos_ampliados.
+    DATA: l_datos_basicos TYPE zest_empleado,
+          l_pa0000        TYPE pa0000,
+          l_pa0001        TYPE pa0001,
+          l_pa0002        TYPE pa0002,
+          l_pa0006        TYPE pa0006,
+          l_pa0007        TYPE pa0007,
+          l_pa0016        TYPE pa0016,
+          l_pa0061        TYPE pa0061.
+
+    IF NOT o_cache IS INITIAL.
+      o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;DATOS_AMPL&apos; clave = pernr clave2 = begda clave3 = endda
+                              IMPORTING xstring = datos encontrado = o_cache-&gt;enc ).
+      IF NOT o_cache-&gt;enc IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    l_datos_basicos = get_datos_basicos( pernr = pernr
+                                         begda = begda
+                                         endda = endda
+                                         o_cache = o_cache ).
+    CLEAR datos.
+    MOVE-CORRESPONDING l_datos_basicos TO datos.
+
+    SELECT massg massn stat2 FROM pa0000
+    INTO CORRESPONDING FIELDS OF l_pa0000
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      datos-massn = l_pa0000-massn.
+      SELECT SINGLE mntxt FROM  t529t
+        INTO datos-mntxt
+       WHERE sprsl = sy-langu
+         AND massn = datos-massn.
+
+      datos-massg = l_pa0000-massg.
+      SELECT SINGLE mgtxt FROM  t530t
+        INTO datos-mgtxt
+       WHERE sprsl = sy-langu
+         AND massn = datos-massn
+         AND massg = datos-massg.
+
+      datos-stat2 = l_pa0000-stat2.
+      SELECT SINGLE text1 FROM  t529u
+        INTO datos-sttxt
+       WHERE sprsl = sy-langu
+         AND statn = &apos;2&apos;
+         AND statv = datos-stat2.
+    ENDIF.
+
+    SELECT ansvh FROM pa0001
+    INTO CORRESPONDING FIELDS OF l_pa0001
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      datos-ansvh = l_pa0001-ansvh.
+      SELECT SINGLE atx FROM t542t
+        INTO datos-atx
+       WHERE spras = sy-langu
+         AND molga = c_molga
+         AND ansvh = l_pa0001-ansvh.
+    ENDIF.
+
+    SELECT famst gbdat gesch nach2 nachn natio perid vorna aedtm FROM pa0002
+    INTO CORRESPONDING FIELDS OF l_pa0002
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      IF l_pa0002-aedtm &gt; datos-aedtm.
+        datos-aedtm = l_pa0002-aedtm.
+      ENDIF.
+      datos-id_type = l_pa0002-perid+19(1).
+      IF l_pa0002-perid(2) = &apos;ES&apos;.
+        datos-nif = l_pa0002-perid+2(13).
+      ELSE.
+        datos-nif = l_pa0002-perid(13).
+      ENDIF.
+      datos-gbdat = l_pa0002-gbdat.
+      datos-natio = l_pa0002-natio.
+      SELECT SINGLE natio FROM  t005t
+        INTO datos-natio_t
+       WHERE spras = sy-langu
+         AND land1 = l_pa0002-natio.
+      datos-famst = l_pa0002-famst.
+      CASE l_pa0002-famst.
+        WHEN &apos;0&apos;. datos-fatxt = &apos;Soltero&apos;(sol).
+        WHEN &apos;1&apos;. datos-fatxt = &apos;Casado&apos;(cas).
+        WHEN &apos;2&apos;. datos-fatxt = &apos;Viudo&apos;(viu).
+        WHEN &apos;3&apos;. datos-fatxt = &apos;Divorciado&apos;(div).
+        WHEN &apos;5&apos;. datos-fatxt = &apos;Separado&apos;(sep).
+        WHEN &apos;6&apos;. datos-fatxt = &apos;Pareja de hecho&apos;(phe).
+      ENDCASE.
+      datos-gesch   = l_pa0002-gesch.
+      datos-gesch_t = zcl_ap_utils=&gt;get_texto_dominio( dominio = &apos;GESCH&apos; valor = datos-gesch ).
+
+      datos-vorna   = l_pa0002-vorna.
+      datos-nachn   = l_pa0002-nachn.
+      datos-nach2   = l_pa0002-nach2.
+
+    ENDIF.
+
+    SELECT telnr FROM pa0006
+    INTO CORRESPONDING FIELDS OF l_pa0006
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      datos-telnr = l_pa0006-telnr.
+    ENDIF.
+
+    SELECT empct FROM pa0007
+    INTO CORRESPONDING FIELDS OF l_pa0007
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      datos-empct = l_pa0007-empct.
+    ENDIF.
+
+    SELECT ctedt cttyp aedtm FROM pa0016
+    INTO CORRESPONDING FIELDS OF l_pa0016
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      IF l_pa0016-aedtm &gt; datos-aedtm.
+        datos-aedtm = l_pa0016-aedtm.
+      ENDIF.
+      datos-cttyp = l_pa0016-cttyp.
+      datos-cttxt = zcl_ap_dev=&gt;get_descripcion( tabla = &apos;T547S&apos; valor = datos-cttyp ).
+      datos-ctedt = l_pa0016-ctedt.
+    ENDIF.
+
+    SELECT berkt grcot natss pesoc aedtm FROM pa0061
+    INTO CORRESPONDING FIELDS OF l_pa0061
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      datos-berkt = l_pa0061-berkt.
+      IF l_pa0061-aedtm &gt; datos-aedtm.
+        datos-aedtm = l_pa0061-aedtm.
+      ENDIF.
+
+      SELECT SINGLE ctext FROM  t5e8s
+        INTO datos-berkt_t
+       WHERE sprsl = sy-langu
+         AND mocat = &apos;01&apos;
+         AND categ = datos-berkt.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT ctext FROM  t5e8s
+          INTO datos-berkt_t
+          UP TO 1 ROWS
+         WHERE sprsl = sy-langu
+           AND categ = datos-berkt
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+
+      datos-pesoc = l_pa0061-pesoc.
+      SELECT SINGLE ttext FROM t5e2t
+        INTO datos-pesoc_t
+       WHERE sprsl = sy-langu
+         AND ticon = datos-pesoc
+         AND modal = &apos;N&apos;.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT ttext FROM t5e2t
+          INTO datos-pesoc_t
+          UP TO 1 ROWS
+         WHERE sprsl = sy-langu
+           AND ticon = datos-pesoc
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+
+      datos-grcot = l_pa0061-grcot.
+      SELECT SINGLE text FROM  t5e4jt
+        INTO datos-grcot_t
+       WHERE spras = sy-langu
+         AND tpccc = datos-pesoc
+         AND grcot = datos-grcot.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT text FROM  t5e4jt
+          UP TO 1 ROWS
+          INTO datos-grcot_t
+         WHERE spras = sy-langu
+           AND grcot = datos-grcot
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+
+      CONCATENATE l_pa0061-natss(2) &apos;/&apos; l_pa0061-natss+2(8) &apos;/&apos;
+                  l_pa0061-natss+10(2) INTO datos-ss SEPARATED BY space.
+    ENDIF.
+
+    datos-aplno = get_num_candidato( pernr = pernr ).
+
+    IF NOT o_cache IS INITIAL.
+      o_cache-&gt;set_cache_mem( tabla = &apos;DATOS_AMPL&apos; clave = pernr clave2 = begda clave3 = endda xstring = datos ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" VERSION="1" LANGU="S" DESCRIPT="Devuelve datos básicos de estructura" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-PERNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" SCONAME="O_CACHE" VERSION="1" LANGU="S" DESCRIPT="Cache" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="3" TYPE="ZCL_AP_CACHE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_BASICOS" SCONAME="DATOS_BASICOS" VERSION="1" LANGU="S" DESCRIPT="Estructura datos básicos empleado" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZEST_EMPLEADO"/>
+  <source>METHOD get_datos_basicos.
+    DATA: l_enc   TYPE c LENGTH 1,
+          l_aux   TYPE c LENGTH 40,
+          l_aedtm TYPE aedtm.
+
+    CLEAR datos_basicos.
+
+    IF NOT o_cache IS INITIAL.
+      o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;DATOS_BASICOS&apos; clave = pernr clave2 = begda clave3 = endda
+                              IMPORTING xstring = datos_basicos encontrado = o_cache-&gt;enc ).
+      IF NOT o_cache-&gt;enc IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    SELECT * FROM pa0001
+    INTO CORRESPONDING FIELDS OF datos_basicos
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    IF o_cache IS INITIAL.
+      SELECT SINGLE name1 FROM  t500p
+        INTO datos_basicos-pbtxt
+           WHERE persa = datos_basicos-werks.
+    ELSE.
+      o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T500P&apos; clave = datos_basicos-werks nombre_campo = &apos;NAME1&apos; buscar_auto = &apos;X&apos; IMPORTING valor = datos_basicos-pbtxt ).
+    ENDIF.
+
+    IF NOT datos_basicos-orgeh IS INITIAL.
+      CLEAR l_enc.
+      IF NOT o_cache IS INITIAL.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T527X&apos; clave = datos_basicos-orgeh clave2 = begda clave3 = endda
+                                  IMPORTING valor = datos_basicos-orgtx encontrado = l_enc ).
+      ENDIF.
+
+      IF l_enc IS INITIAL.
+        SELECT orgtx FROM  t527x
+          INTO datos_basicos-orgtx
+          UP TO 1 ROWS
+         WHERE sprsl  = sy-langu
+           AND orgeh  = datos_basicos-orgeh
+           AND endda &gt;= begda
+           AND begda &lt;= endda
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+        IF NOT o_cache IS INITIAL.
+          o_cache-&gt;set_cache_mem( tabla = &apos;T527X&apos; clave = datos_basicos-orgeh clave2 = begda clave3 = endda valor = datos_basicos-orgtx ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT datos_basicos-plans IS INITIAL.
+      CLEAR l_enc.
+      IF NOT o_cache IS INITIAL.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T528T&apos; clave = datos_basicos-plans clave2 = begda clave3 = endda
+                                  IMPORTING valor = datos_basicos-plstx encontrado = l_enc ).
+      ENDIF.
+      IF l_enc IS INITIAL.
+        SELECT plstx FROM  t528t
+          INTO datos_basicos-plstx
+          UP TO 1 ROWS
+         WHERE sprsl  = sy-langu
+           AND otype  = &apos;S&apos;
+           AND plans  = datos_basicos-plans
+           AND endda &gt;= begda
+           AND begda &lt;= endda
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
+        IF NOT o_cache IS INITIAL.
+          o_cache-&gt;set_cache_mem( tabla = &apos;T528T&apos; clave = datos_basicos-plans clave2 = begda clave3 = endda valor = datos_basicos-plstx ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF NOT datos_basicos-stell IS INITIAL.
+      CLEAR l_enc.
+      IF NOT o_cache IS INITIAL.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T513S&apos; clave = datos_basicos-stell clave2 = begda clave3 = endda
+                                  IMPORTING valor = datos_basicos-stltx encontrado = l_enc ).
+      ENDIF.
+
+      IF l_enc IS INITIAL.
+        IF zcl_c=&gt;cliente_tasks = &apos;VOS&apos;.
+          SELECT stext FROM hrp1000
+            INTO datos_basicos-stltx
+            UP TO 1 ROWS
+           WHERE plvar = &apos;01&apos;
+             AND otype = &apos;C&apos;
+             AND objid = datos_basicos-stell
+           ORDER BY endda DESCENDING.
+          ENDSELECT.
+          IF sy-subrc &lt;&gt; 0.
+            SELECT stltx FROM  t513s &quot;#EC CI_BYPASS
+              INTO datos_basicos-stltx
+              UP TO 1 ROWS
+             WHERE sprsl  = sy-langu
+               AND stell  = datos_basicos-stell
+               AND endda &gt;= begda
+               AND begda &lt;= endda
+              ORDER BY endda DESCENDING.
+            ENDSELECT.
+          ENDIF.
+        ELSE.
+          SELECT stltx FROM  t513s &quot;#EC CI_BYPASS
+            INTO datos_basicos-stltx
+            UP TO 1 ROWS
+           WHERE sprsl  = sy-langu
+             AND stell  = datos_basicos-stell
+             AND endda &gt;= begda
+             AND begda &lt;= endda
+            ORDER BY endda DESCENDING.
+          ENDSELECT.
+          IF sy-subrc &lt;&gt; 0.
+            SELECT stltx
+              FROM t513s
+              INTO @datos_basicos-stltx
+              UP TO 1 ROWS
+              WHERE sprsl = @sy-langu
+                AND stell = @datos_basicos-stell
+              ORDER BY PRIMARY KEY.
+            ENDSELECT.
+            IF sy-subrc &lt;&gt; 0.
+              SELECT stext FROM hrp1000
+                INTO datos_basicos-stltx
+                UP TO 1 ROWS
+               WHERE plvar = &apos;01&apos;
+                 AND otype = &apos;C&apos;
+                 AND objid = datos_basicos-stell
+               ORDER BY endda DESCENDING.
+              ENDSELECT.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        IF NOT o_cache IS INITIAL.
+          o_cache-&gt;set_cache_mem( tabla = &apos;T513S&apos; clave = datos_basicos-stell clave2 = begda clave3 = endda valor = datos_basicos-stltx ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF o_cache IS INITIAL.
+      SELECT SINGLE ptext FROM t503t
+        INTO datos_basicos-ptext
+       WHERE sprsl = sy-langu
+         AND persk = datos_basicos-persk.
+    ELSE.
+      o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T503T&apos; clave = datos_basicos-persk nombre_campo = &apos;PTEXT&apos; buscar_auto = &apos;X&apos; IMPORTING valor = datos_basicos-ptext ).
+    ENDIF.
+
+    IF o_cache IS INITIAL.
+      SELECT SINGLE ptext FROM  t501t
+        INTO datos_basicos-pgtxt
+       WHERE sprsl = sy-langu
+         AND persg = datos_basicos-persg.
+    ELSE.
+      o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T501T&apos; clave = datos_basicos-persg nombre_campo = &apos;PTEXT&apos; buscar_auto = &apos;X&apos; IMPORTING valor = datos_basicos-pgtxt ).
+    ENDIF.
+
+    IF NOT datos_basicos-kostl IS INITIAL.
+      IF o_cache IS INITIAL.
+        SELECT ktext FROM  cskt                          &quot;#EC CI_BYPASS
+          INTO datos_basicos-ktext
+          UP TO 1 ROWS
+         WHERE spras = sy-langu
+           AND kokrs = zcl_c=&gt;sociedad_co
+           AND kostl = datos_basicos-kostl
+         ORDER BY datbi DESCENDING.
+        ENDSELECT.
+      ELSE.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;CSKT&apos; clave = datos_basicos-kostl buscar_auto = &apos;X&apos; IMPORTING valor = datos_basicos-ktext ).
+      ENDIF.
+    ENDIF.
+
+    IF NOT datos_basicos-btrtl IS INITIAL.
+      CLEAR l_enc.
+      IF NOT o_cache IS INITIAL.
+        CONCATENATE datos_basicos-werks datos_basicos-btrtl INTO l_aux.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;T001P&apos; clave = l_aux clave2 = begda clave3 = endda
+                                  IMPORTING valor = datos_basicos-btext encontrado = l_enc ).
+      ENDIF.
+      IF l_enc IS INITIAL.
+        SELECT SINGLE btext FROM  t001p
+          INTO datos_basicos-btext
+         WHERE werks = datos_basicos-werks
+           AND btrtl = datos_basicos-btrtl.
+        IF NOT o_cache IS INITIAL.
+          o_cache-&gt;set_cache_mem( tabla = &apos;T001P&apos; clave = l_aux clave2 = begda clave3 = endda valor = datos_basicos-btext ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    SELECT stat2 aedtm FROM pa0000
+    INTO (datos_basicos-stat2, l_aedtm)
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+      ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF l_aedtm &gt; datos_basicos-aedtm.
+      datos_basicos-aedtm = l_aedtm.
+    ENDIF.
+    IF NOT datos_basicos-stat2 IS INITIAL.
+      CLEAR l_enc.
+      IF NOT o_cache IS INITIAL.
+        CONCATENATE datos_basicos-werks datos_basicos-btrtl INTO l_aux.
+        o_cache-&gt;get_cache_mem( EXPORTING tabla = &apos;STAT2&apos; clave = datos_basicos-stat2
+                                  IMPORTING valor = datos_basicos-sttxt encontrado = l_enc ).
+      ENDIF.
+      IF l_enc IS INITIAL.
+        SELECT SINGLE text1 FROM t529u
+          INTO datos_basicos-sttxt
+        WHERE sprsl = syst-langu
+          AND statn = &apos;2&apos;
+          AND statv = datos_basicos-stat2.
+        IF NOT o_cache IS INITIAL.
+          o_cache-&gt;set_cache_mem( tabla = &apos;STAT2&apos; clave = datos_basicos-stat2 valor = datos_basicos-sttxt ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    SELECT empct aedtm FROM pa0007
+      INTO (datos_basicos-empct, l_aedtm)
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+      ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF l_aedtm &gt; datos_basicos-aedtm.
+      datos_basicos-aedtm = l_aedtm.
+    ENDIF.
+
+    IF NOT o_cache IS INITIAL.
+      o_cache-&gt;set_cache_mem( tabla = &apos;DATOS_BASICOS&apos; clave = pernr clave2 = begda clave3 = endda xstring = datos_basicos ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_MAESTROS" VERSION="1" LANGU="S" DESCRIPT="Recupera datos maestros de personal" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_MAESTROS" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DATOS_MAESTROS" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0000-ENDDA" PARVALUE="SY-DATUM"/>
+  <source>METHOD get_datos_maestros.
+    o_empleado-&gt;get_master_data(
+      EXPORTING
+        im_begda = begda
+        im_endda = endda
+      IMPORTING
+        ex_i0000 = i_p0000
+        ex_i0001 = i_p0001
+        ex_i0002 = i_p0002
+        ex_i0007 = i_p0007
+        ex_i0008 = i_p0008 ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DEVENGOS" VERSION="1" LANGU="S" DESCRIPT="Recupera devengos y deduciones" EXPOSURE="2" STATE="1" EDITORDER="40 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DEVENGOS" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DEVENGOS" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DEVENGOS" SCONAME="LISTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DEVENGOS" SCONAME="I_DEVENGOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_DEVENGOS"/>
+  <source>METHOD get_devengos.
+    DATA r_stat2 TYPE RANGE OF pa0000-stat2.
+
+    CLEAR i_devengos.
+
+    IF lista IS INITIAL.
+      zcl_ap_utils=&gt;set_runtime_info( ).
+      SUBMIT rplpay00
+         AND RETURN
+*VIA SELECTION-SCREEN
+             WITH pnppernr = pernr
+             WITH pnpstat2 IN r_stat2
+             WITH pnpbegda = fecha
+             WITH pnpendda = fecha
+             WITH alv_list = &apos;X&apos;.
+
+      zcl_ap_utils=&gt;get_runtime_info( IMPORTING tabla = i_devengos ).
+
+    ELSE.
+      SUBMIT rplpay00
+         AND RETURN
+             WITH pnppernr = pernr
+             WITH pnpstat2 IN r_stat2
+             WITH pnpbegda = fecha
+             WITH pnpendda = fecha
+             WITH alv_list = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DISPONIBILIDAD" VERSION="1" LANGU="S" DESCRIPT="Disponibilidad del empleado" EXPOSURE="2" STATE="1" EDITORDER="18 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DISPONIBILIDAD" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Selecciones estándar p.reporting datos maestros HR" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DISPONIBILIDAD" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DISPONIBILIDAD" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_DISPONIBILIDAD" SCONAME="I_DISP" VERSION="1" LANGU="S" DESCRIPT="HR-TEM: Tipo tabla p.interfase Verificación disponibilidad" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HRTEM_TIMELIST"/>
+  <source>METHOD get_disponibilidad.
+    DATA i_pernr TYPE TABLE OF pernrtab.
+
+    APPEND pernr TO i_pernr.
+
+    CALL FUNCTION &apos;HR_PERSONAL_TIME_LIST&apos;
+      EXPORTING
+        begindate              = begda
+        enddate                = endda
+*       ORG_REQUIRED           = &apos;X&apos;
+      TABLES
+        pernrtable             = i_pernr
+        time_list              = i_disp
+      EXCEPTIONS
+        error_work_schedule    = 1
+        error_infty            = 2
+        error_permission_infty = 3
+        error_break            = 4
+        OTHERS                 = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando time list&apos;(etl) TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EDAD" VERSION="1" LANGU="S" DESCRIPT="Devuelve la edad de un empleado" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EDAD" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EDAD" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Fecha de referencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EDAD" SCONAME="EDAD" VERSION="1" LANGU="S" DESCRIPT="Edad del empleado" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EMPL_AGE"/>
+  <source>METHOD get_edad.
+    DATA: l_gbdat TYPE gbdat,
+          l_anyos TYPE char4.
+
+    SELECT gbdat FROM pa0002
+      INTO l_gbdat
+      UP TO 1 ROWS
+     WHERE pernr = pernr
+    ORDER BY endda DESCENDING.
+    ENDSELECT.
+
+    IF NOT l_gbdat IS INITIAL.
+      CALL FUNCTION &apos;EHS_CALC_YEARS_BETWEEN_DATES&apos;
+        EXPORTING
+          first_date                  = l_gbdat
+*         MODIFY_INTERVAL             = &apos; &apos;
+          second_date                 = fecha
+        IMPORTING
+          years_between_dates         = l_anyos
+        EXCEPTIONS
+          sequence_of_dates_not_valid = 1
+          OTHERS                      = 2.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Error calculando diferencia de años&apos;(eda) TYPE &apos;S&apos;.
+      ENDIF.
+    ENDIF.
+
+    edad = l_anyos.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EMAIL" VERSION="1" LANGU="S" DESCRIPT="Devuelve el email de un empleado" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EMAIL" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EMAIL" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UNAME" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_EMAIL" SCONAME="EMAIL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_email.
+    DATA l_pernr TYPE pa0001-pernr.
+
+    IF NOT pernr IS INITIAL.
+      l_pernr = pernr.
+    ELSEIF NOT uname IS INITIAL.
+      SELECT pernr FROM pa0105
+        INTO l_pernr
+        UP TO 1 ROWS
+       WHERE usrty  = &apos;0001&apos;
+         AND usrid  = uname
+         AND endda &gt;= sy-datum
+         AND begda &lt;= sy-datum
+       ORDER BY endda DESCENDING.
+      ENDSELECT.
+    ENDIF.
+
+    IF NOT l_pernr IS INITIAL.
+      email = get_comunicacion_st( pernr = l_pernr subty = &apos;0010&apos; ).
+    ENDIF.
+
+* Si el empleado no tuviera mail, compruebo si existe un usuario
+* de SAP que sí tenga
+    IF email IS INITIAL.
+      SELECT adr6~smtp_addr INTO email
+        UP TO 1 ROWS
+       FROM usr21 JOIN adr6 ON usr21~persnumber = adr6~persnumber
+       WHERE usr21~bname = uname
+        ORDER BY usr21~bname usr21~persnumber.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="41 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="PERNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="CLASE_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATAR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="PA0041" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0041"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="INDICE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="NUMC2"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_FECHA_IT0041" SCONAME="FECHA_SALIDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="DATS"/>
+  <source>METHOD get_fecha_it0041.
+    DATA l_ind TYPE numc2.
+
+    CLEAR: pa0041, indice, fecha_salida.
+
+    IF endda &gt; fecha.
+      DATA(l_endda) = endda.
+    ELSE.
+      l_endda = fecha.
+    ENDIF.
+    SELECT * FROM pa0041
+      INTO pa0041
+     UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND endda &gt;= fecha
+       AND begda &lt;= l_endda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    DO 24 TIMES.
+      l_ind = sy-index.
+      ASSIGN COMPONENT |DAR{ l_ind }| OF STRUCTURE pa0041 TO FIELD-SYMBOL(&lt;tipo&gt;).
+      IF sy-subrc = 0.
+        IF &lt;tipo&gt; = clase_fecha.
+          ASSIGN COMPONENT |DAT{ l_ind }| OF STRUCTURE pa0041 TO FIELD-SYMBOL(&lt;fecha&gt;).
+          IF sy-subrc = 0.
+            indice = l_ind.
+            fecha_salida = &lt;fecha&gt;.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO" VERSION="1" LANGU="S" DESCRIPT="Devuelve tabla con horario de trabajo" EXPOSURE="2" STATE="1" EDITORDER="20 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO" SCONAME="T_PTPSP" VERSION="1" LANGU="S" DESCRIPT="Tabla de estructuras transferencias p.PHT personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PTPSP_TAB"/>
+  <source>METHOD get_horario_trabajo.
+    CLEAR t_ptpsp.
+    CALL FUNCTION &apos;HR_PERSONAL_WORK_SCHEDULE&apos;
+      EXPORTING
+        pernr         = pernr
+        begda         = begda
+        endda         = endda
+        switch_activ  = 1
+        read_cluster  = &apos;X&apos;
+      TABLES
+        perws         = t_ptpsp
+      EXCEPTIONS
+        error_occured = 1
+        abort_occured = 2
+        OTHERS        = 3.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando horario de trabajo&apos;(erh) TYPE &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO_DETALLADO" VERSION="1" LANGU="S" DESCRIPT="Recupera horario de trabajo detallado" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO_DETALLADO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO_DETALLADO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO_DETALLADO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_HORARIO_TRABAJO_DETALLADO" SCONAME="I_HORARIO" VERSION="1" LANGU="S" DESCRIPT="Tabla planes horario trabajo: información por intervalos" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PWSDAYINT_TAB"/>
+  <source>METHOD get_horario_trabajo_detallado.
+    DATA: i_perws TYPE ptpsp_tab,
+          daygen  TYPE STANDARD TABLE OF pwsdaygen.
+
+    i_perws = get_horario_trabajo( pernr = pernr begda = begda endda = endda ).
+
+    IF i_perws IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;HR_WORK_SCHEDULE_TIMES&apos;
+      EXPORTING
+        pernr         = pernr
+        begda         = begda
+        endda         = endda
+*       KUG           = &apos; &apos;
+*       BREAK_OVERTIME                = &apos;1&apos;
+*       REFRESH_INFOTYPE_BUFFER       = &apos;X&apos;
+* IMPORTING
+*       WARNING_OCCURED               = WARNING_OCCURED
+      TABLES
+*       I0001         = I0001
+*       I0007         = I0007
+*       I2003         = I2003
+*       I0049         = I0049
+        perws         = i_perws
+        daygen        = daygen
+        dayint        = i_horario
+      EXCEPTIONS
+        error_occured = 1
+        perws_error   = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recupeando horario&apos; TYPE &apos;I&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nombre del empleado" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NOMBRE" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NOMBRE" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NOMBRE" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NOMBRE" SCONAME="NOMBRE" VERSION="1" LANGU="S" DESCRIPT="Nombre editado del empleado o candidato" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PA0001-ENAME"/>
+  <source>METHOD get_nombre.
+    SELECT ename FROM pa0001
+      INTO nombre
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY endda DESCENDING.
+    ENDSELECT.
+    IF sy-subrc &lt;&gt; 0.
+      SELECT ename FROM pa0001
+        INTO nombre
+        UP TO 1 ROWS
+       WHERE pernr = pernr
+       ORDER BY endda DESCENDING.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NUM_CANDIDATO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nº del candidato" EXPOSURE="2" STATE="1" EDITORDER="22 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NUM_CANDIDATO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NUM_CANDIDATO" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="D" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_NUM_CANDIDATO" SCONAME="APLNO" VERSION="1" LANGU="S" DESCRIPT="Nº candidato" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="APLNO"/>
+  <source>METHOD get_num_candidato.
+    CLEAR aplno.
+    SELECT aplno FROM pa0139
+      INTO aplno
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= fecha
+       AND endda &gt;= fecha
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nº de empleado a partir de NIF" EXPOSURE="2" STATE="1" EDITORDER="30 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" SCONAME="PERID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_PERID" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD get_pernr_from_perid.
+    DATA: r_perid  TYPE RANGE OF pa0002-perid,
+          l_perid  TYPE pa0002-perid,
+          lr_perid LIKE LINE OF r_perid,
+          i_pa0002 TYPE TABLE OF pa0002,
+          l_pa0002 TYPE pa0002,
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          l_pa0000 TYPE pa0000,
+          l_cont   TYPE c LENGTH 5.
+
+    l_perid = perid.
+    l_perid = to_upper( l_perid ).
+
+    CLEAR lr_perid.
+    lr_perid-option    = &apos;CP&apos;.
+    lr_perid-sign      = &apos;I&apos;.
+    lr_perid-low       = l_perid.
+    lr_perid-low+19(1) = &apos;*&apos;.
+    APPEND lr_perid TO r_perid.
+
+    CONCATENATE &apos;0&apos; l_perid INTO lr_perid-low.
+    lr_perid-low+19(1) = &apos;*&apos;.
+    APPEND lr_perid TO r_perid.
+
+    CONCATENATE &apos;ES&apos; l_perid INTO lr_perid-low.
+    lr_perid-low+19(1) = &apos;*&apos;.
+    APPEND lr_perid TO r_perid.
+
+    CONCATENATE &apos;ES0&apos; l_perid INTO lr_perid-low.
+    lr_perid-low+19(1) = &apos;*&apos;.
+    APPEND lr_perid TO r_perid.
+
+    CLEAR: pernr, message.
+
+    SELECT pernr FROM pa0002
+      INTO CORRESPONDING FIELDS OF TABLE i_pa0002
+     WHERE begda &lt;= endda
+       AND endda &gt;= begda
+       AND perid IN r_perid.
+
+    READ TABLE i_pa0002 INTO l_pa0002 INDEX 1.          &quot;#EC CI_NOORDER
+    IF sy-subrc = 0.
+      pernr = l_pa0002-pernr.
+    ENDIF.
+
+    LOOP AT i_pa0002 INTO l_pa0002.
+      SELECT SINGLE pernr FROM pa0000
+        INTO l_pa0000-pernr
+       WHERE pernr  = l_pa0002-pernr
+         AND begda &lt;= endda
+         AND endda &gt;= begda
+         AND stat2  = &apos;3&apos;. &quot; Activo
+      IF sy-subrc &lt;&gt; 0.
+* Si no está activo, no lo queremos
+        DELETE i_pa0002.
+      ENDIF.
+    ENDLOOP.
+
+    DESCRIBE TABLE i_pa0002 LINES sy-tfill.
+    IF sy-tfill = 1.
+      READ TABLE i_pa0002 INTO l_pa0002 INDEX 1.        &quot;#EC CI_NOORDER
+      IF sy-subrc = 0.
+        pernr = l_pa0002-pernr.
+      ENDIF.
+    ELSEIF sy-tfill = 0.
+      message = &apos;No hay ningún empleado activo con este identificador&apos;(nea).
+    ELSEIF sy-tfill &gt; 1.
+      l_cont = sy-tfill.
+      READ TABLE i_pa0002 INTO l_pa0002 INDEX 1.        &quot;#EC CI_NOORDER
+      IF sy-subrc = 0.
+        pernr = l_pa0002-pernr.
+      ENDIF.
+
+      CONCATENATE &apos;Existen&apos;(exi) l_cont &apos;empleados activos con este identificador&apos;(aai) INTO message SEPARATED BY space.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_UNAME" VERSION="1" LANGU="S" DESCRIPT="Devuelve el nº de empleado a partir del usuario SAP" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_UNAME" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UNAME" PARVALUE="SY-UNAME" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_UNAME" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_UNAME" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_PERNR_FROM_UNAME" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PERSNO"/>
+  <source>METHOD get_pernr_from_uname.
+    CLEAR pernr.
+    SELECT pernr FROM pa0105
+      INTO pernr
+      UP TO 1 ROWS
+     WHERE usrty  = &apos;0001&apos;
+       AND usrid  = uname
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+   ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIOR" VERSION="1" LANGU="S" DESCRIPT="Devuelve empleado superior" EXPOSURE="2" STATE="1" EDITORDER="29 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIOR" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIOR" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIOR" SCONAME="SUPERIOR" VERSION="1" LANGU="S" DESCRIPT="Nº empleado superior" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="PERSNO"/>
+  <source>METHOD get_superior.
+    DATA superiores TYPE hrobject_t.
+
+    FIELD-SYMBOLS &lt;pos&gt; TYPE hrobject.
+
+    superiores = get_superiores( pernr = pernr fecha = fecha ).
+    ASSIGN superiores[ otype = &apos;P&apos; ] TO &lt;pos&gt;.
+    IF sy-subrc = 0.
+      superior = &lt;pos&gt;-objid.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de superiores" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="CONSIDER_VAC_POS" VERSION="1" LANGU="S" DESCRIPT="Salta posiciones vacias" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="OTYPE" VERSION="1" LANGU="S" DESCRIPT="Tp.objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="OTYPE" PARVALUE="&apos;P&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="VALIDO_HOY" VERSION="1" LANGU="S" DESCRIPT="Superior válido a fecha de hoy" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_SUPERIORES" SCONAME="SUPERIORES" VERSION="1" LANGU="S" DESCRIPT="Tipo de tablas PLVAR, OTYPE; OBJID" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="HROBJECT_T"/>
+  <source>METHOD get_superiores.
+    DATA: l_plvar   TYPE objec-plvar,
+          l_sobid   TYPE hrsobid-sobid,
+          l_otype   TYPE hrsobid-otype,
+          i_hrp1001 TYPE TABLE OF hrp1001,
+          lines     TYPE i,
+          l_hrp1001 TYPE hrp1001.
+
+    FIELD-SYMBOLS &lt;pos&gt; TYPE hrobject.
+
+    CALL FUNCTION &apos;RH_GET_ACTIVE_WF_PLVAR&apos;
+      IMPORTING
+        act_plvar       = l_plvar
+      EXCEPTIONS
+        no_active_plvar = 1.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuperando plvar&apos;(plv) TYPE &apos;S&apos;.
+    ENDIF.
+* Inicializar l_sobid y l_otype
+    l_sobid = pernr.
+    l_otype = otype.
+* Comprobar si el empleado está asignado a varias posiciones.
+* Si es así, se coge la que tiene más % de asignación (PROZT).
+    CLEAR i_hrp1001.
+    SELECT prozt sclas sobid FROM hrp1001
+      INTO CORRESPONDING FIELDS OF TABLE i_hrp1001
+      WHERE otype  = otype
+        AND objid  = pernr
+        AND plvar  = l_plvar
+        AND rsign  = &apos;B&apos;
+        AND relat  = &apos;008&apos;
+        AND begda &lt;= fecha
+        AND endda &gt;= fecha.
+    SORT i_hrp1001 BY prozt DESCENDING sobid DESCENDING.
+    lines = lines( i_hrp1001 ).
+    IF lines &gt; 1.
+      READ TABLE i_hrp1001 INDEX 1 INTO l_hrp1001.
+      l_sobid = l_hrp1001-sobid.
+      l_otype = l_hrp1001-sclas.
+    ENDIF.
+
+    CALL FUNCTION &apos;RH_GET_LEADING_POSITION&apos;
+      EXPORTING
+        plvar             = l_plvar
+        otype             = l_otype
+        sobid             = l_sobid
+        date              = fecha
+        auth              = &apos; &apos;
+*       BUFFER_MODE       = &apos; &apos;
+        consider_vac_pos  = consider_vac_pos
+      TABLES
+        leading_pos       = superiores
+      EXCEPTIONS
+        no_lead_pos_found = 1
+        OTHERS            = 2.
+    IF sy-subrc = 0.
+      CLEAR l_hrp1001.
+      LOOP AT superiores ASSIGNING &lt;pos&gt;.
+        SELECT sclas sobid FROM hrp1001
+          INTO CORRESPONDING FIELDS OF l_hrp1001
+          UP TO 1 ROWS
+         WHERE otype  = &lt;pos&gt;-otype
+           AND objid  = &lt;pos&gt;-objid
+           AND plvar  = &lt;pos&gt;-plvar
+           AND rsign  = &apos;A&apos;
+           AND relat  = &apos;008&apos;
+           AND begda &lt;= fecha
+           AND endda &gt;= fecha
+           AND sclas  = &apos;P&apos;
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+        IF sy-subrc = 0.
+          &lt;pos&gt;-otype = l_hrp1001-sclas.
+          &lt;pos&gt;-objid = l_hrp1001-sobid.
+        ENDIF.
+        IF valido_hoy = abap_true.
+          &quot; TODO: variable is assigned but never used (ABAP cleaner)
+          SELECT SINGLE pernr INTO @DATA(l_pernr)
+            FROM pa0000
+           WHERE pernr  = @l_hrp1001-sobid
+             AND stat2  = &apos;3&apos;
+             AND begda &lt;= @sy-datum
+             AND endda &gt;= @sy-datum.
+          IF sy-subrc &lt;&gt; 0.
+            CLEAR &lt;pos&gt;.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+      DELETE superiores WHERE objid IS INITIAL.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" VERSION="1" LANGU="S" DESCRIPT="Recupera texto infotipo como tabla" EXPOSURE="2" STATE="1" EDITORDER="32 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INFTY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SUBTY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="ENDDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO" SCONAME="TEXT" VERSION="1" LANGU="S" DESCRIPT="Comentario p.infotipos" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="IT_NOTES"/>
+  <source>METHOD get_texto_infotipo.
+    DATA: l_tabla TYPE tabname,
+          key     TYPE pskey.
+
+* Leer notas del infotipo Medidas
+    CLEAR text.
+
+    CONCATENATE &apos;PA&apos; infty INTO l_tabla.
+    IF endda IS INITIAL.
+      SELECT SINGLE * FROM (l_tabla)
+        INTO CORRESPONDING FIELDS OF key
+       WHERE pernr  = pernr
+         AND endda &gt;= fecha
+         AND begda &lt;= fecha
+         AND subty  = subty.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT SINGLE * FROM (l_tabla)
+          INTO CORRESPONDING FIELDS OF key
+         WHERE pernr  = pernr
+           AND endda &gt;= fecha
+           AND begda &lt;= fecha.
+      ENDIF.
+    ELSE.
+      SELECT SINGLE * FROM (l_tabla)
+        INTO CORRESPONDING FIELDS OF key
+       WHERE pernr = pernr
+         AND endda = endda
+         AND begda = fecha
+         AND subty = subty.
+    ENDIF.
+
+    IF key IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    key-infty = infty.
+
+    CALL FUNCTION &apos;HR_READ_INFTY_NOTE&apos;
+      EXPORTING
+        key       = key
+        tclas     = &apos;A&apos;
+      TABLES
+        text      = text
+      EXCEPTIONS
+        not_found = 1
+        OTHERS    = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      message &apos;Error recuperando nota&apos; type &apos;S&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" VERSION="1" LANGU="S" DESCRIPT="Recupera texto infotipo como string" EXPOSURE="2" STATE="1" EDITORDER="33 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INFTY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SUBTY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="ENDDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TEXTO_INFOTIPO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="Comentario p.infotipos" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_texto_infotipo_string.
+    DATA text TYPE it_notes.
+
+    text = get_texto_infotipo( pernr = pernr fecha = fecha endda = endda infty = infty subty = subty ).
+    string = zcl_ap_string=&gt;tabla2string( text ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" VERSION="1" LANGU="S" DESCRIPT="Recupera información de trabajo del empleado" EXPOSURE="2" STATE="1" EDITORDER="37 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" SCONAME="I_RETURN" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRET2_T"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIMEOVERVIEW" SCONAME="I_TIEMPOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_BAPI7013_1"/>
+  <source>METHOD get_timeoverview.
+    DATA employees      TYPE STANDARD TABLE OF bapi7013_4.
+    DATA extapplication TYPE bapi7013_3-extapplication.
+    DATA timetypes      TYPE STANDARD TABLE OF bapi7013_5.
+    DATA timetypevalues TYPE STANDARD TABLE OF bapi7013_2.
+
+    CLEAR: i_tiempos, i_return.
+    APPEND pernr TO employees.
+    CALL FUNCTION &apos;BAPI_PTIMEOVERVIEW_GET&apos;
+      EXPORTING
+        fromdate                = begda
+        todate                  = endda
+        extapplication          = extapplication
+        refresh_infotype_buffer = &apos;X&apos;
+      TABLES
+        employees               = employees
+        timetypes               = timetypes
+        timeoverview            = i_tiempos
+        timetypevalues          = timetypevalues
+        return                  = i_return.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" VERSION="1" LANGU="S" DESCRIPT="Devuelve el tipo de contrato del empleado" EXPOSURE="2" STATE="1" EDITORDER="17 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="IDSEG" VERSION="1" LANGU="S" DESCRIPT="Clave principal de contrato" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PES_IDSEG"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="TTEXT" VERSION="1" LANGU="S" DESCRIPT="Texto de longitud 32" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="T5E2T-TTEXT"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_TIPO_CONTRATO" SCONAME="FIJO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD get_tipo_contrato.
+    CLEAR: idseg, ttext, fijo.
+
+    SELECT pesoc FROM pa0061
+      INTO idseg
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+    SELECT ttext FROM  t5e2t
+      INTO ttext
+      UP TO 1 ROWS
+     WHERE sprsl = sy-langu
+       AND ticon = idseg
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+    IF idseg(1) &gt;= &apos;1&apos; AND idseg(1) &lt;= &apos;3&apos;.
+      fijo = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_UNAME_FROM_PERNR" VERSION="1" LANGU="S" DESCRIPT="Devuelve el usuario SAP a partir del empleado" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_UNAME_FROM_PERNR" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_UNAME_FROM_PERNR" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_UNAME_FROM_PERNR" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="PERSNO" PAROPTIONL="X" PARPREFERD="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="GET_UNAME_FROM_PERNR" SCONAME="UNAME" VERSION="1" LANGU="S" DESCRIPT="Nombre de usuario" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="UNAME"/>
+  <source>METHOD get_uname_from_pernr.
+    CLEAR uname.
+    SELECT usrid FROM pa0105
+      INTO uname
+      UP TO 1 ROWS
+     WHERE pernr  = pernr
+       AND subty  = &apos;0001&apos;
+       AND begda &lt;= endda
+       AND endda &gt;= begda
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="INICIO" VERSION="1" LANGU="S" DESCRIPT="Inicializa clase" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD inicio.
+    CLEAR: o_empleado,
+           i_p0000,
+           i_p0001,
+           i_p0002,
+           i_p0007,
+           i_p0008,
+           datos_basicos,
+           pernr,
+           begda,
+           endda.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="42 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="PERNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="CLASE_FECHA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATAR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="FECHA_MOD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="INDICE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="NUMC2"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="PA0041" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0041"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FECHA_IT0041" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_fecha_it0041.
+    DATA l_p0041 TYPE p0041.
+
+    CLEAR message.
+    DATA(l_fecha) = get_fecha_it0041( EXPORTING pernr = pernr
+                                                fecha = fecha
+                                                clase_fecha = clase_fecha
+                                      IMPORTING pa0041 = pa0041
+                                                indice = indice ).
+    IF l_fecha = fecha_mod.
+      RETURN.
+    ENDIF.
+
+    IF NOT pa0041 IS INITIAL.
+      IF NOT indice IS INITIAL.
+        DATA(l_indice) = indice.
+      ELSE.
+        DO 24 TIMES.
+          indice = sy-index.
+          ASSIGN COMPONENT |DAR{ indice }| OF STRUCTURE pa0041 TO FIELD-SYMBOL(&lt;tipo&gt;).
+          IF sy-subrc = 0.
+            IF &lt;tipo&gt; IS INITIAL.
+              ASSIGN COMPONENT |DAT{ indice }| OF STRUCTURE pa0041 TO FIELD-SYMBOL(&lt;fecha&gt;).
+              IF sy-subrc = 0.
+                IF &lt;fecha&gt; IS INITIAL.
+                  l_indice = indice.
+                ENDIF.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDDO.
+        IF l_indice IS INITIAL.
+          message = &apos;No se ha encontrado hueco para poner la fecha&apos;.
+          RETURN.
+        ELSE.
+          ASSIGN COMPONENT |DAR{ l_indice }| OF STRUCTURE pa0041 TO FIELD-SYMBOL(&lt;clase&gt;).
+          &lt;clase&gt; = clase_fecha.
+        ENDIF.
+      ENDIF.
+      ASSIGN COMPONENT |DAT{ l_indice }| OF STRUCTURE pa0041 TO &lt;fecha&gt;.
+      &lt;fecha&gt; = fecha_mod.
+      MODIFY pa0041 FROM pa0041.  &quot;#EC AOC_STD_TABLE
+    ELSE.
+      l_p0041-pernr = pernr.
+      l_p0041-begda = fecha.
+      l_p0041-endda = &apos;99991231&apos;.
+      l_p0041-dar01 = clase_fecha.
+      l_p0041-dat01 = fecha_mod.
+      actualizar_infotipo( datos = l_p0041
+                           infty = &apos;0041&apos;
+                           operation = &apos;INS&apos; ).
+
+*      DATA(l_return) = zcl_ap_empleado=&gt;bloquear_empleado( pernr ).
+*      IF l_return-type = &apos;E&apos;.
+*        message = l_return-message.
+*        RETURN.
+*      ENDIF.
+*
+*      l_p0041-pernr = pernr.
+*      l_p0041-begda = fecha.
+*      l_p0041-endda = &apos;99991231&apos;.
+*      l_p0041-dar01 = clase_fecha.
+*      l_p0041-dat01 = fecha_mod.
+*      CALL FUNCTION &apos;HR_INFOTYPE_OPERATION&apos;
+*        EXPORTING
+*          infty         = &apos;0041&apos;
+*          number        = pernr
+**         subtype       = &apos;&apos;
+*          validityend   = &apos;9991231&apos;
+*          validitybegin = sy-datum
+*          record        = l_p0041
+*          operation     = &apos;INS&apos;
+*          nocommit      = &apos;&apos;
+*        IMPORTING
+*          key           = l_key
+*          return        = l_return
+*        EXCEPTIONS
+*          OTHERS        = 1.
+*
+*      IF l_return-type = &apos;E&apos;.
+*        message = l_return-message.
+*      ENDIF.
+*      zcl_ap_empleado=&gt;desbloquear_empleado( pernr ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" VERSION="1" LANGU="S" DESCRIPT="Graba fichaje" EXPOSURE="2" STATE="1" EDITORDER="38 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="HORA" VERSION="1" LANGU="S" DESCRIPT="Hora del día" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UZEIT"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="SATZA" VERSION="1" LANGU="S" DESCRIPT="Cl.de reg.del registro de comunicación p.exped.descentraliz." CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="TERID" VERSION="1" LANGU="S" DESCRIPT="ID Terminal" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="DALLF" VERSION="1" LANGU="S" DESCRIPT="Asignación de día" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;=&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_FICHAJE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_fichaje.
+    DATA: ins_teven_more   TYPE teven_more,
+          ins_teven        TYPE teven,
+          i_ins_teven      TYPE TABLE OF teven,
+          i_ins_teven_more TYPE TABLE OF teven_more,
+          i_del_teven      TYPE TABLE OF teven,
+          del_teven_more   TYPE teven_more,
+          i_del_teven_more TYPE TABLE OF teven_more.
+
+    CLEAR message.
+
+    ins_teven_more-pernr = pernr.
+    ins_teven-pernr = ins_teven_more-pernr.
+    ins_teven_more-ldate = fecha.
+    ins_teven-ldate = ins_teven_more-ldate.
+    ins_teven_more-erdat = sy-datum.
+    ins_teven-erdat = ins_teven_more-erdat.
+    ins_teven_more-ltime = hora.
+    ins_teven-ltime = ins_teven_more-ltime.
+    ins_teven_more-ertim = sy-uzeit.
+    ins_teven-ertim = ins_teven_more-ertim.
+    ins_teven_more-satza = satza.
+    ins_teven-satza = ins_teven_more-satza.
+    ins_teven_more-terid = terid.
+    ins_teven-terid = ins_teven_more-terid.
+    ins_teven_more-dallf = dallf.
+    ins_teven-dallf = ins_teven_more-dallf.
+
+    DO 30 TIMES.
+      CALL FUNCTION &apos;NUMBER_GET_NEXT&apos;
+        EXPORTING
+          nr_range_nr = &apos;01&apos;
+          object      = &apos;PD_SEQ_NR&apos;
+          quantity    = &apos;00000000000000000001&apos;
+        IMPORTING
+          number      = ins_teven-pdsnr.
+      SELECT SINGLE pdsnr FROM teven
+        &quot; TODO: variable is assigned but never used (ABAP cleaner)
+        INTO @DATA(l_pdsnr)
+       WHERE pdsnr = @ins_teven-pdsnr.
+      IF sy-subrc &lt;&gt; 0.
+        EXIT.
+      ELSE.
+        CLEAR ins_teven-pdsnr.
+      ENDIF.
+    ENDDO.
+
+    IF ins_teven-pdsnr IS INITIAL.
+      message = &apos;Error determinando nº de fichaje&apos;.
+      RETURN.
+    ENDIF.
+
+    ins_teven_more-pdsnr = ins_teven-pdsnr.
+    APPEND ins_teven TO i_ins_teven.
+    APPEND ins_teven_more TO i_ins_teven_more.
+
+    CLEAR: sy-msgid, sy-msgno, sy-msgty, sy-msgv1, sy-msgv2, sy-msgv3, sy-msgv4.
+
+    CALL FUNCTION &apos;HR_TMW_DB_UPDATE_TEVENT&apos;
+      TABLES
+        del_teven      = i_del_teven
+        ins_teven      = i_ins_teven
+        del_teven_more = i_del_teven_more
+        ins_teven_more = i_ins_teven_more
+      EXCEPTIONS
+        insert_failed  = 1
+        update_failed  = 2
+        OTHERS         = 3.
+    IF sy-subrc = 0.
+      COMMIT WORK AND WAIT.
+    ELSE.
+      IF sy-msgty IS INITIAL.
+        message = |Error insertando fichaje { fecha DATE = USER } { hora TIME = USER }|.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+      ROLLBACK WORK.                                   &quot;#EC CI_ROLLBACK
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" VERSION="1" LANGU="S" DESCRIPT="Graba texto infotipo como tabla" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INFTY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="ENDDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SUBTY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="TEXT" VERSION="1" LANGU="S" DESCRIPT="Comentario p.infotipos" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="IT_NOTES"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_texto_infotipo.
+    DATA: l_tabla TYPE tabname,
+          key     TYPE pskey,
+          l_text  LIKE LINE OF text,
+          l_hrpad TYPE hrpad_text,
+          i_hrpad TYPE hrpad_text_tab.
+
+* Leer notas del infotipo Medidas
+
+    CONCATENATE &apos;PA&apos; infty INTO l_tabla.
+    IF endda IS INITIAL.
+      SELECT SINGLE * FROM (l_tabla)
+        INTO CORRESPONDING FIELDS OF key
+       WHERE pernr  = pernr
+         AND endda &gt;= fecha
+         AND begda &lt;= fecha
+         AND subty  = subty.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT SINGLE * FROM (l_tabla)
+          INTO CORRESPONDING FIELDS OF key
+         WHERE pernr  = pernr
+           AND endda &gt;= fecha
+           AND begda &lt;= fecha.
+      ENDIF.
+    ELSE.
+      SELECT SINGLE * FROM (l_tabla)
+        INTO CORRESPONDING FIELDS OF key
+       WHERE pernr = pernr
+         AND endda = endda
+         AND begda = fecha
+         AND subty = subty.
+    ENDIF.
+
+    IF key IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    key-infty = infty.
+
+*    EXPORT text FROM text[] TO DATABASE pcl1(tx) ID key.
+*    IF sy-subrc = 0.
+*      UPDATE (l_tabla)
+*         SET itxex = &apos;X&apos;
+*       WHERE pernr = pernr
+*         and subty = key-subty
+*         and endda = key-endda
+*         and begda = key-begda.
+*      COMMIT WORK AND WAIT.
+*    ENDIF.
+
+    LOOP AT text INTO l_text.
+      l_hrpad = l_text.
+      APPEND l_hrpad TO i_hrpad.
+    ENDLOOP.
+
+    TRY.
+        cl_hrpa_text_cluster=&gt;update(
+            tclas         = &apos;A&apos;
+            pskey         = key
+            histo         = &apos;X&apos;
+            uname         = sy-uname
+            aedtm         = sy-datum
+            pgmid         = &apos;&apos;
+            text_tab      = i_hrpad
+            no_auth_check = &apos;X&apos; ).
+      CATCH cx_hrpa_missing_authorization INTO DATA(o_hrpa_missing_authorization).
+        message = o_hrpa_missing_authorization-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = o_hrpa_missing_authorization-&gt;get_text( ).
+        ENDIF.
+      CATCH cx_hrpa_violated_assertion INTO DATA(cx_hrpa_violated_assertion).
+        message = cx_hrpa_violated_assertion-&gt;get_longtext( ).
+        IF message IS INITIAL.
+          message = cx_hrpa_violated_assertion-&gt;get_text( ).
+        ENDIF.
+    ENDTRY.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" VERSION="1" LANGU="S" DESCRIPT="Graba texto infotipo como string" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="INFTY"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="FECHA" VERSION="1" LANGU="S" DESCRIPT="Campo de tipo DATS" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="ENDDA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="DATS" PARVALUE="&apos;00000000&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SUBTY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="Comentario p.infotipos" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="SET_TEXTO_INFOTIPO_STRING" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD set_texto_infotipo_string.
+    DATA text TYPE it_notes.
+
+    zcl_ap_string=&gt;string2tabla( EXPORTING string = string longitud = 72 CHANGING tabla = text ).
+    message = set_texto_infotipo( pernr = pernr fecha = fecha endda = endda infty = infty subty = subty text = text ).
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" VERSION="1" LANGU="S" DESCRIPT="¿Empleado tiene cualificación solicitada?" EXPOSURE="2" STATE="1" EDITORDER="26 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PERSNO"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" SCONAME="CUALIF" VERSION="1" LANGU="S" DESCRIPT="Cualificación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ZCUALIF"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TIENE_CUALIFICACION" SCONAME="SI" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <source>METHOD tiene_cualificacion.
+    DATA i_cualif TYPE hrpd_profq_tab.
+
+    CLEAR si.
+    i_cualif = get_cualificaciones( pernr = pernr
+                                    begda = begda
+                                    endda = endda ).
+
+    IF line_exists( i_cualif[ ttype = &apos;Q&apos;
+                              tbjid = cualif ] ).
+      si = &apos;X&apos;.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" VERSION="1" LANGU="S" DESCRIPT="Visualizar empleado con PA20" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="PERNR" VERSION="1" LANGU="S" DESCRIPT="Número de personal" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-PERNR"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="BEGDA" VERSION="1" LANGU="S" DESCRIPT="Inicio de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-BEGDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="ENDDA" VERSION="1" LANGU="S" DESCRIPT="Fin de la validez" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-ENDDA" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="INFTY" VERSION="1" LANGU="S" DESCRIPT="Infotipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="SUBTY" VERSION="1" LANGU="S" DESCRIPT="Subtipo" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="RESUMEN" VERSION="1" LANGU="S" DESCRIPT="Mostrar resumen" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="ACTUALIZAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="OBJPS" VERSION="1" LANGU="S" DESCRIPT="Identificación de objeto" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-OBJPS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="SEQNR" VERSION="1" LANGU="S" DESCRIPT="Número de un registro de infotipo para misma clave" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PA0001-SEQNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="VISUALIZAR_ST" SCONAME="MENSAJE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRETURN1-MESSAGE"/>
+  <source>METHOD visualizar_st.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA: l_pernr TYPE persno,
+          o_bi    TYPE REF TO zcl_ap_batch_input.
+    DATA l_tabla TYPE tabname.
+    DATA r_objps TYPE RANGE OF pa0001-objps.
+    DATA r_seqnr TYPE RANGE OF pa0001-seqnr.
+    DATA: l_objps TYPE pa0000-objps,
+          l_seqnr TYPE pa0000-seqnr.
+
+    IF pernr IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE pernr FROM pa0000
+      INTO l_pernr
+     WHERE pernr = pernr.
+    IF sy-subrc = 0.
+
+      o_bi = NEW #( ).
+
+      o_bi-&gt;inicio( ).
+
+* Pantalla acceso PA30
+      o_bi-&gt;dynpro( program = &apos;SAPMP50A&apos; dynpro = &apos;1000&apos; ).
+      IF resumen IS INITIAL.
+        IF actualizar IS INITIAL.
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=DIS&apos; ).
+        ELSE.
+          o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=MOD&apos; ).
+        ENDIF.
+      ELSE.
+        o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=LIST&apos; ).
+      ENDIF.
+      o_bi-&gt;campos( campo = &apos;RP50G-PERNR&apos; valor = pernr ).
+      o_bi-&gt;campos( campo = &apos;RP50G-BEGDA&apos; valor = begda ).
+      o_bi-&gt;campos( campo = &apos;RP50G-ENDDA&apos; valor = endda ).
+      o_bi-&gt;campos( campo = &apos;RP50G-CHOIC&apos; valor = infty ).
+      o_bi-&gt;campos( campo = &apos;RP50G-SUBTY&apos; valor = subty ).
+
+      l_tabla = |PA{ infty }|.
+
+      SELECT tabname
+        FROM dd02l
+        WHERE tabname = @l_tabla
+        ORDER BY PRIMARY KEY
+        INTO @l_tabla
+        UP TO 1 ROWS.
+      ENDSELECT.
+      IF sy-subrc = 0.
+        IF NOT objps IS SUPPLIED.
+          r_objps = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = objps ) ).
+        ENDIF.
+        IF NOT seqnr IS SUPPLIED.
+          r_seqnr = VALUE #( ( option = &apos;EQ&apos; sign = &apos;I&apos; low = seqnr ) ).
+        ENDIF.
+        SELECT SINGLE objps seqnr FROM (l_tabla)
+          INTO (l_objps, l_seqnr)
+         WHERE pernr  = pernr
+           AND subty  = subty
+           AND begda  = begda
+           AND endda  = endda
+           AND objps IN r_objps
+           AND seqnr IN r_seqnr.
+        IF sy-subrc = 0.
+          o_bi-&gt;campos( campo = &apos;RP50G-OBJPS&apos; valor = l_objps ).
+          o_bi-&gt;campos( campo = &apos;RP50G-SEQNR&apos; valor = l_seqnr ).
+        ENDIF.
+      ENDIF.
+
+      IF actualizar IS INITIAL.
+        mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;PA20&apos; modo = &apos;E&apos; ).
+      ELSE.
+        mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;PA30&apos; modo = &apos;E&apos; ).
+      ENDIF.
+
+      o_bi-&gt;inicio( ).
+    ELSE.
+      TRY.
+          CALL METHOD (&apos;ZCL_AP_CANDIDATO&apos;)=&gt;(&apos;VISUALIZAR_ST&apos;)
+            EXPORTING
+              aplno = pernr
+              begda = begda
+              endda = endda
+              infotipo = infty
+              subtipo  = subty
+              resumen = resumen
+            RECEIVING
+              message = mensaje.
+        CATCH cx_root INTO DATA(o_root). &quot;#EC *
+          MESSAGE &apos;No implementada la opción de visualizar candidatos&apos; TYPE &apos;I&apos;.
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

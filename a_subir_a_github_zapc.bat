@@ -1,4 +1,7 @@
 @echo off
+
+python borrar_dif.py
+
 :: Script para subir un directorio a GitHub en Windows 11
 
 :: Solicitar datos al usuario
@@ -21,6 +24,6 @@ git remote add origin https://github.com/zzapc/ZAPC-LIB.git
 
 :: Subir a la rama main
 git branch -M main
-git push -u origin main --force
+git push -u origin main  
 
 pause

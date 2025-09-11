@@ -1,0 +1,640 @@
+class ZCL_AP_LOTE definition
+  public
+  create public .
+
+public section.
+
+  data I_RETURN type BAPIRET2_T .
+  data RETURN type BAPIRET2 .
+  data MENSAJE type BAPI_MSG .
+
+  class-methods VER
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D default ''
+      !TCODE type SY-TCODE default 'MSC3N' .
+  class-methods GET_FCADUCIDAD
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D default ''
+    returning
+      value(VFDAT) type VFDAT .
+  class-methods GET_LOTE_PROVEEDOR
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+    returning
+      value(LICHA) type MCHA-LICHA .
+  methods CREAR
+    importing
+      !MATNR type ANY
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D optional
+      !VFDAT type VFDAT optional
+      !HSDAT type HSDAT default SY-DATUM
+      !LICHN type ANY default ''
+      !FVDT1 type MCHA-FVDT1 optional
+      !VERAB type VERAB optional
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !LIFNR type LIFNR optional
+    returning
+      value(ATRIBUTOS) type BAPIBATCHATT .
+  methods MODIFICAR
+    importing
+      !MATNR type ANY
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D optional
+      !VFDAT type VFDAT optional
+      !HSDAT type HSDAT optional
+      !FORZAR_SI_ERROR type ABAP_BOOL default ''
+      !LIFNR type LIFNR optional
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !QNDAT type QNPDAT optional
+      !FVDT1 type FVDAT optional
+      !O_LOG type ref to ZCL_AP_LOG optional
+    returning
+      value(ATRIBUTOS) type BAPIBATCHATT .
+  methods DETALLE
+    importing
+      !MATNR type ANY
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D optional
+    returning
+      value(ATRIBUTOS) type BAPIBATCHATT .
+  class-methods GET_CTD_TOTAL
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !LIBRE type ABAP_BOOL default 'X'
+      !BLOQUEADO type ABAP_BOOL default 'X'
+      !CALIDAD type ABAP_BOOL default 'X'
+      !BESTQ type VEPO-BESTQ default '*'
+      !OTROS type ABAP_BOOL default 'X'
+      !TRASLADO type ABAP_BOOL default 'X'
+      !WERKS type WERKS_D default ''
+      !LGORT type LGORT_D default ''
+      !MEINS type MEINS default ''
+    returning
+      value(CANTIDAD) type MCHB-CLABS .
+  class-methods MODIFICAR_ST
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D optional
+      !VFDAT type VFDAT optional
+      !HSDAT type HSDAT optional
+      !FORZAR_SI_ERROR type ABAP_BOOL default ''
+      !LIFNR type LIFNR optional
+      !COMMIT_WORK type ABAP_BOOL default 'X'
+      !QNDAT type QNPDAT optional
+      !FVDT1 type FVDAT optional
+      !O_LOG type ref to ZCL_AP_LOG optional
+    returning
+      value(ATRIBUTOS) type BAPIBATCHATT .
+  class-methods GET_FPRODUCCION
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D default ''
+    returning
+      value(HSDAT) type HSDAT .
+  class-methods GET_CTD_CADUCADA
+    importing
+      !MATNR type MATNR
+      !FECHA type DATUM default SY-DATUM
+      !WERKS type WERKS_D default ''
+      !LIBRE type ABAP_BOOL default 'X'
+      !BLOQUEADO type ABAP_BOOL default 'X'
+      !CALIDAD type ABAP_BOOL default 'X'
+      !SHOW_POPUP type ABAP_BOOL default ''
+    returning
+      value(CANTIDAD) type LABST .
+  class-methods INFO_LOTES_FCAD
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D optional
+      !LIBRE type ABAP_BOOL default 'X'
+      !BLOQUEADO type ABAP_BOOL default 'X'
+      !CALIDAD type ABAP_BOOL default 'X'
+      !R_LGORT type RANGE_T_LGORT_D optional
+      !SOLO_FCAD_INFORMADO type ABAP_BOOL default 'X'
+      !MCHA type ABAP_BOOL default ''
+    returning
+      value(I_LOTES) type ZLOTES_FCAD_T .
+protected section.
+private section.
+endclass. "ZCL_AP_LOTE definition
+class ZCL_AP_LOTE implementation.
+METHOD crear.
+  DATA: l_atributos TYPE bapibatchatt,
+        l_batch     TYPE charg_d,
+        l_material  TYPE bapibatchkey-material.
+
+  CLEAR: i_return, atributos.
+
+  CLEAR l_atributos.
+  l_atributos-expirydate = vfdat.
+  l_atributos-prod_date = hsdat.
+  l_atributos-available = verab.
+  l_atributos-vendor_no = lifnr.
+  l_atributos-vendrbatch = lichn.
+  l_atributos-free_date1 = fvdt1.
+
+  l_material = matnr.
+  CALL FUNCTION 'BAPI_BATCH_CREATE'
+    EXPORTING
+      material        = l_material
+      batch           = charg
+      plant           = werks
+      batchattributes = l_atributos
+*     BATCHCONTROLFIELDS         =
+*     BATCHSTORAGELOCATION       =
+*     INTERNALNUMBERCOM          =
+*     EXTENSION1      =
+*     MATERIAL_EVG    =
+    IMPORTING
+      batch           = l_batch
+      batchattributes = atributos
+    TABLES
+      return          = i_return.
+
+  IF NOT l_batch IS INITIAL.
+    zcl_ap_dev=>commit( ).
+  ENDIF.
+
+  CLEAR: return, mensaje.
+  READ TABLE i_return INTO return WITH KEY type = 'E'.
+  IF sy-subrc = 0.
+    mensaje = return-message.
+    IF NOT o_log IS INITIAL.
+      o_log->log( p1 = 'Error creando lote' p2 = matnr p3 = charg p4 = mensaje ).
+    ENDIF.
+  ELSE.
+    IF NOT o_log IS INITIAL.
+      o_log->log( p1 = 'Se ha creado lote' p2 = matnr p3 = charg p4 = 'F.Cad=' p5 = vfdat p6 = 'F.Prod=' p7 = hsdat msgty = 'S' ).
+    ENDIF.
+  ENDIF.
+
+
+ENDMETHOD.
+METHOD detalle.
+  DATA l_material TYPE bapibatchkey-material.
+
+  CLEAR: i_return, atributos.
+
+  l_material = matnr.
+  CALL FUNCTION 'BAPI_BATCH_GET_DETAIL'
+    EXPORTING
+      material        = l_material
+      batch           = charg
+      plant           = werks
+*     MATERIAL_EVG    =
+    IMPORTING
+      batchattributes = atributos
+*     BATCHSTATUS     =
+    TABLES
+      return          = i_return.
+
+ENDMETHOD.
+method GET_CTD_CADUCADA.
+  DATA: i_lotes TYPE zlotes_fcad_t.
+  FIELD-SYMBOLS <lote> TYPE zlotes_fcad.
+
+  i_lotes = info_lotes_fcad( matnr = matnr
+                             werks = werks
+                             libre = libre
+                             bloqueado = bloqueado
+                             calidad = calidad ).
+
+  DELETE i_lotes WHERE vfdat >= fecha.
+
+  CLEAR cantidad.
+  LOOP AT i_lotes ASSIGNING <lote>.
+    cantidad = cantidad + <lote>-clabs + <lote>-cinsm + <lote>-cspem.
+  ENDLOOP.
+
+  IF show_popup = 'X'.
+    zcl_ap_alv=>show_popup_st( CHANGING t_tabla = i_lotes ).
+  ENDIF.
+
+endmethod.
+METHOD get_ctd_total.
+  DATA: l_mchb      TYPE mchb,
+        l_libre,
+        l_bloqueado,
+        l_calidad,
+        l_traslado,
+        l_otros,
+        r_werks     TYPE RANGE OF werks_d,
+        r_lgort     TYPE RANGE OF lgort_d,
+        lr_werks    LIKE LINE OF r_werks,
+        lr_lgort    LIKE LINE OF r_lgort.
+
+
+  IF bestq = '*'.
+    l_libre = libre.
+    l_bloqueado = bloqueado.
+    l_calidad = calidad.
+    l_traslado = traslado.
+    l_otros = otros.
+  ELSEIF bestq = ''.
+    l_libre = 'X'.
+  ELSEIF bestq = 'S'.
+    l_bloqueado = 'X'.
+  ELSEIF bestq = 'Q'.
+    l_calidad = 'X'.
+  ENDIF.
+
+  IF NOT werks IS INITIAL.
+    CLEAR lr_werks.
+    lr_werks-option = 'EQ'.
+    lr_werks-sign   = 'I'.
+    lr_werks-low    = werks.
+    APPEND lr_werks TO r_werks.
+  ENDIF.
+
+  IF NOT lgort IS INITIAL.
+    CLEAR lr_lgort.
+    lr_lgort-option = 'EQ'.
+    lr_lgort-sign   = 'I'.
+    lr_lgort-low    = lgort.
+    APPEND lr_lgort TO r_lgort.
+  ENDIF.
+
+  SELECT SINGLE SUM( clabs ) SUM( cumlm ) SUM( cinsm ) SUM( ceinm ) SUM( cspem ) SUM( cretm ) FROM mchb
+    INTO (l_mchb-clabs, l_mchb-cumlm, l_mchb-cinsm, l_mchb-ceinm, l_mchb-cspem, l_mchb-cretm)
+   WHERE matnr = matnr
+     AND charg = charg
+     AND werks IN r_werks
+     AND lgort IN r_lgort.
+
+  IF l_libre = 'X'.
+    ADD l_mchb-clabs TO cantidad.
+  ENDIF.
+  IF l_calidad = 'X'.
+    ADD l_mchb-cinsm TO cantidad.
+  ENDIF.
+  IF l_bloqueado = 'X'.
+    ADD l_mchb-cspem TO cantidad.
+  ENDIF.
+  IF l_traslado = 'X'.
+    ADD l_mchb-cumlm TO cantidad.
+  ENDIF.
+  IF l_otros = 'X'.
+    cantidad = cantidad + l_mchb-ceinm + l_mchb-cretm.
+  ENDIF.
+
+  IF NOT meins IS INITIAL AND cantidad NE 0.
+    DATA(l_umb) = zcl_ap_material=>get_unidad_base( matnr ).
+    IF l_umb NE meins.
+      cantidad = zcl_ap_material=>convertir_unidad( matnr = matnr cantidad = cantidad unidad_origen = l_umb unidad_destino = meins ).
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.
+method GET_FCADUCIDAD.
+
+  IF werks IS INITIAL.
+    SELECT SINGLE vfdat FROM mch1
+      INTO vfdat
+     WHERE matnr = matnr
+       AND charg = charg.
+    IF vfdat IS INITIAL.
+      SELECT SINGLE vfdat FROM mcha
+        INTO vfdat
+       WHERE matnr = matnr
+         AND werks = werks
+         AND charg = charg.
+    ENDIF.
+  ELSE.
+    SELECT SINGLE vfdat FROM mcha
+      INTO vfdat
+     WHERE matnr = matnr
+       AND werks = werks
+       AND charg = charg.
+    IF vfdat IS INITIAL.
+      SELECT SINGLE vfdat FROM mch1
+        INTO vfdat
+       WHERE matnr = matnr
+         AND charg = charg.
+    ENDIF.
+  ENDIF.
+
+endmethod.
+method GET_FPRODUCCION.
+
+  IF werks IS INITIAL.
+    SELECT SINGLE hsdat FROM mch1
+      INTO hsdat
+     WHERE matnr = matnr
+       AND charg = charg.
+    IF hsdat IS INITIAL.
+      SELECT SINGLE hsdat FROM mcha
+        INTO hsdat
+       WHERE matnr = matnr
+         AND werks = werks
+         AND charg = charg.
+    ENDIF.
+  ELSE.
+    SELECT SINGLE hsdat FROM mcha
+      INTO hsdat
+     WHERE matnr = matnr
+       AND werks = werks
+       AND charg = charg.
+    IF hsdat IS INITIAL.
+      SELECT SINGLE hsdat FROM mch1
+        INTO hsdat
+       WHERE matnr = matnr
+         AND charg = charg.
+    ENDIF.
+  ENDIF.
+
+endmethod.
+METHOD get_lote_proveedor.
+
+  SELECT licha FROM mcha
+    INTO licha
+    UP TO 1 ROWS
+   WHERE matnr = matnr
+     AND charg = charg
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+  IF licha IS INITIAL.
+    SELECT SINGLE licha FROM mch1
+      INTO licha
+   WHERE matnr = matnr
+     AND charg = charg
+     AND licha NE ''.
+  ENDIF.
+
+ENDMETHOD.
+method INFO_LOTES_FCAD.
+  DATA: i_mchb TYPE TABLE OF mchb,
+        r_werks TYPE RANGE OF werks_d,
+        lr_werks LIKE LINE OF r_werks,
+        l_meins TYPE meins.
+
+  FIELD-SYMBOLS: <lotes> TYPE zlotes_fcad.
+
+  IF NOT werks IS INITIAL.
+    CLEAR lr_werks.
+    lr_werks-option = 'EQ'.
+    lr_werks-sign   = 'I'.
+    lr_werks-low    = werks.
+    COLLECT lr_werks INTO r_werks.
+  ENDIF.
+
+* Busco los lotes con cantidad del material
+  SELECT * FROM mchb
+    INTO CORRESPONDING FIELDS OF TABLE i_lotes
+   WHERE matnr = matnr
+     AND werks IN r_werks
+     AND lgort IN r_lgort
+     AND ( clabs > 0 OR cinsm > 0 OR cspem > 0 ).
+
+  LOOP AT i_lotes ASSIGNING <lotes>.
+    IF libre IS INITIAL.
+      <lotes>-clabs = 0.
+    ENDIF.
+    IF bloqueado IS INITIAL.
+      <lotes>-cspem = 0.
+    ENDIF.
+    IF calidad IS INITIAL.
+      <lotes>-cinsm = 0.
+    ENDIF.
+  ENDLOOP.
+
+  DELETE i_lotes WHERE clabs = 0 AND cinsm = 0 AND cspem = 0.
+
+  CHECK NOT i_lotes IS INITIAL.
+
+  l_meins = zcl_ap_material=>get_unidad_base( matnr ).
+
+  LOOP AT i_lotes ASSIGNING <lotes>.
+    <lotes>-meins = l_meins.
+
+    IF mcha IS INITIAL.
+      SELECT SINGLE vfdat hsdat FROM mch1
+        INTO (<lotes>-vfdat, <lotes>-hsdat)
+       WHERE matnr = <lotes>-matnr
+         AND charg = <lotes>-charg.
+    ELSE.
+      SELECT SINGLE vfdat hsdat FROM mcha
+        INTO (<lotes>-vfdat, <lotes>-hsdat)
+       WHERE matnr = <lotes>-matnr
+         AND charg = <lotes>-charg
+         AND werks = werks.
+    ENDIF.
+  ENDLOOP.
+
+  IF solo_fcad_informado = 'X'.
+    DELETE i_lotes WHERE vfdat IS INITIAL.
+  ENDIF.
+
+  SORT i_lotes BY vfdat.
+
+endmethod.
+METHOD modificar.
+  DATA: l_atributos     TYPE bapibatchatt,
+        l_atributosx    TYPE bapibatchattx,
+        l_atributos_old TYPE bapibatchatt,
+        l_cambios,
+        l_material      TYPE bapibatchkey-material.
+
+  CLEAR: i_return, return, atributos.
+
+  l_atributos_old = detalle( matnr = matnr charg = charg werks = werks ).
+
+  CLEAR l_atributos.
+
+  IF NOT vfdat IS INITIAL.
+    IF l_atributos_old-expirydate NE vfdat.
+      l_atributos-expirydate = vfdat.
+      l_atributosx-expirydate = 'X'.
+      l_cambios = 'X'.
+    ENDIF.
+  ENDIF.
+
+  IF NOT hsdat IS INITIAL.
+    IF l_atributos_old-prod_date NE hsdat.
+      l_atributos-prod_date = hsdat.
+      l_atributosx-prod_date = 'X'.
+      l_cambios = 'X'.
+    ENDIF.
+  ENDIF.
+
+  IF NOT lifnr IS INITIAL.
+    IF l_atributos_old-vendor_no NE lifnr.
+      l_atributos-vendor_no = lifnr.
+      l_atributosx-vendor_no = 'X'.
+      l_cambios = 'X'.
+    ENDIF.
+  ENDIF.
+
+  IF NOT qndat IS INITIAL.
+    IF l_atributos_old-nextinspec NE qndat.
+      l_atributos-nextinspec = qndat.
+      l_atributosx-nextinspec = 'X'.
+      l_cambios = 'X'.
+    ENDIF.
+  ENDIF.
+
+  IF NOT fvdt1 IS INITIAL.
+    IF l_atributos_old-free_date1 NE fvdt1.
+      l_atributos-free_date1 = fvdt1.
+      l_atributosx-free_date1 = 'X'.
+      l_cambios = 'X'.
+    ENDIF.
+  ENDIF.
+
+  IF l_cambios = 'X'.
+    l_material = matnr.
+    CALL FUNCTION 'BAPI_BATCH_CHANGE'
+      EXPORTING
+        material         = l_material
+        batch            = charg
+        plant            = werks
+        batchattributes  = l_atributos
+        batchattributesx = l_atributosx
+      IMPORTING
+        batchattributes  = atributos
+      TABLES
+        return           = i_return.
+
+
+    READ TABLE i_return INTO return WITH KEY type = 'E'.
+    IF return IS INITIAL.
+      IF NOT o_log IS INITIAL.
+        o_log->log( p1 = 'Se ha modificado lote' p2 = matnr p3 = charg p4 = 'F.Cad=' p5 = vfdat p6 = 'F.Prod=' p7 = hsdat msgty = 'S' ).
+      ENDIF.
+
+      IF commit_work = 'X'.
+        zcl_ap_dev=>commit( ).
+      ENDIF.
+    ELSE.
+      IF NOT o_log IS INITIAL.
+        o_log->log( p1 = 'Error modificando lote lote' p2 = matnr p3 = charg p4 = mensaje p5 = 'F.Cad=' p6 = vfdat p7 = 'F.Prod=' p8 = hsdat  ).
+      ENDIF.
+
+
+      IF forzar_si_error = 'X'.
+        IF l_atributosx-expirydate = 'X'.
+          IF NOT o_log IS INITIAL.
+            o_log->log( p1 = 'Se fuerza nueva fecha de caducidad' p2 = vfdat msgty = 'W' ).
+          ENDIF.
+          UPDATE mch1
+             SET vfdat = vfdat
+           WHERE matnr = matnr
+             AND charg = charg.
+          IF sy-subrc = 0.
+            UPDATE mcha
+               SET vfdat = vfdat
+             WHERE matnr = matnr
+               AND charg = charg
+               AND werks = werks.
+            atributos-expirydate = vfdat.
+          ENDIF.
+        ENDIF.
+
+        IF l_atributosx-prod_date = 'X'.
+          IF NOT o_log IS INITIAL.
+            o_log->log( p1 = 'Se ha fuerza nueva fecha de produccion' p2 = vfdat msgty = 'W' ).
+          ENDIF.
+          UPDATE mch1
+             SET hsdat = hsdat
+           WHERE matnr = matnr
+             AND charg = charg.
+          IF sy-subrc = 0.
+            UPDATE mcha
+               SET hsdat = hsdat
+             WHERE matnr = matnr
+               AND charg = charg
+               AND werks = werks.
+            atributos-prod_date = hsdat.
+          ENDIF.
+        ENDIF.
+
+        IF l_atributosx-free_date1 = 'X'.
+          UPDATE mch1
+             SET fvdt1 = fvdt1
+           WHERE matnr = matnr
+             AND charg = charg.
+          IF sy-subrc = 0.
+            UPDATE mcha
+               SET fvdt1 = fvdt1
+             WHERE matnr = matnr
+               AND charg = charg
+               AND werks = werks.
+            atributos-free_date1 = hsdat.
+          ENDIF.
+        ENDIF.
+
+        IF l_atributosx-nextinspec = 'X'.
+          UPDATE mch1
+             SET qndat = qndat
+           WHERE matnr = matnr
+             AND charg = charg.
+          IF sy-subrc = 0.
+            UPDATE mcha
+               SET qndat = qndat
+             WHERE matnr = matnr
+               AND charg = charg
+               AND werks = werks.
+            atributos-nextinspec = qndat.
+          ENDIF.
+        ENDIF.
+        IF commit_work = 'X'.
+          zcl_ap_dev=>commit( ).
+        ENDIF.
+      ELSE.
+        READ TABLE i_return INTO return WITH KEY type = 'E'.
+      ENDIF.
+    ENDIF.
+  ELSE.
+    atributos = l_atributos_old.
+  ENDIF.
+
+
+ENDMETHOD.
+METHOD modificar_st.
+  DATA o_lote TYPE REF TO zcl_ap_lote.
+
+  CREATE OBJECT o_lote.
+
+  atributos = o_lote->modificar( matnr = matnr
+                                 werks = werks
+                                 charg = charg
+                                 vfdat = vfdat
+                                 hsdat = hsdat
+                                 qndat = qndat
+                                 lifnr = lifnr
+                                 fvdt1 = fvdt1
+                                 commit_work     = commit_work
+                                 forzar_si_error = forzar_si_error
+                                 o_log = o_log ).
+
+ENDMETHOD.
+method VER.
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+  DATA l_mensaje TYPE bapireturn1-message.
+  CREATE OBJECT o_bi.
+
+  o_bi->inicio( ).
+
+  SET PARAMETER ID 'MAT' FIELD matnr.
+  SET PARAMETER ID 'CHA' FIELD charg.
+  SET PARAMETER ID 'WRK' FIELD werks.
+
+  o_bi->dynpro( program = 'SAPLCHRG' dynpro = '1000').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '/00').
+  o_bi->campos( campo = 'DFBATCH-MATNR' valor = matnr ). " Número de material
+  o_bi->campos( campo = 'DFBATCH-CHARG' valor = charg ). " Número de lote
+  o_bi->campos( campo = 'DFBATCH-WERKS' valor = werks ). " Centro
+  o_bi->campos( campo = 'DFBATCH-LGORT' valor = ''). " Almacén
+
+
+  l_mensaje = o_bi->llamar_transaccion( tcode = tcode modo = 'E').
+
+endmethod.

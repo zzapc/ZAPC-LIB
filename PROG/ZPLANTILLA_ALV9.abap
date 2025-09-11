@@ -1,0 +1,206 @@
+***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 18/04/2017
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&cliente=CCC&objeto=OOO
+**->MANUAL:http://sap4.com,http://sap4.com/edicion
+**->PLANTILLA:,http://sap4.com
+*
+* MODIFICACIONES
+* 18/04/2017 Tarea inicial: http://sap4.com/tareas?&ntask=TTT
+*
+***********************************************************************
+REPORT zplantilla_alv9.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: vbrk.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_double_click REDEFINITION.
+    METHODS: handle_user_command REDEFINITION.
+ENDCLASS.                    "lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             message TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado.
+
+    METHODS: main.
+
+    METHODS:  listado,
+      seleccionar_datos.
+
+ENDCLASS.                    "REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,                        "#EC NEEDED
+      o_alv  TYPE REF TO lcl_alv.                           "#EC NEEDED
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE text-sel.
+SELECT-OPTIONS: s_vbeln FOR vbrk-vbeln.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD handle_double_click.
+    FIELD-SYMBOLS <listado> TYPE o_prog->t_listado.
+
+    READ TABLE o_prog->i_listado ASSIGNING <listado> INDEX row.
+    IF sy-subrc = 0.                                        "#EC NEEDED
+    ENDIF.
+  ENDMETHOD. "handle_double_click
+  METHOD handle_user_command.
+    FIELD-SYMBOLS <listado> TYPE o_prog->t_listado.
+
+    CASE e_salv_function.
+      WHEN 'EXCEL'.
+        exportar_xlsx( ).
+*        exportar_excel( ).
+
+*        data o_excel TYPE REF TO zcl_ap_abap2xls.
+*        CREATE OBJECT o_excel.
+*        o_excel->set_alv( alv = o_alv tabla = o_prog->i_listado ).
+*        o_excel->mostrar_en_pantalla( ).
+
+
+      WHEN 'F01'.
+        get_seleccion( CHANGING t_tabla = o_prog->i_listado ).
+        LOOP AT o_prog->i_listado ASSIGNING <listado> WHERE check = 'X'. "#EC NEEDED
+        ENDLOOP.
+        IF sy-subrc <> 0.
+          MESSAGE i104(dlcn). "Seleccione por lo menos un registro
+        ELSE.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. "handle_USER_COMMAND
+ENDCLASS. "lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    "REPORT
+
+  METHOD seleccionar_datos.
+    FIELD-SYMBOLS <listado> TYPE t_listado.
+
+    sgpi_texto( 'Seleccionando datos'(sda) ).
+
+    o_prog->o_sgpi->get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING <listado>.
+      sgpi_texto( texto1 = 'Procesando datos'(pda) cant_porc = 100 ).
+
+      set_status_list( EXPORTING message = <listado>-message criterio = 'V' CHANGING list = <listado> ).
+    ENDLOOP.
+
+  ENDMETHOD.                    "seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( 'Generando informe'(gin) ).
+
+    o_alv->add_button( button = 'F01' text = 'Ejecutar'(eje)  icon = icon_execute_object ).
+
+    o_alv->set_layout( p_vari ).
+    o_alv->get_datos_layout( EXPORTING reordenar_tabla = 'X' CHANGING t_tabla = i_listado ).
+    o_alv->set_top_of_page( ).
+
+    o_alv->set_field( campo = 'LIGHTS' op = 'KEY' ).
+    o_alv->set_field_quitar( 'CHECK' ).
+    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv->show( ).
+
+
+  ENDMETHOD.                    "
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  CREATE OBJECT o_prog
+    EXPORTING
+      status        = 'INICIO_DYN'
+      get_nombre_pc = 'X'
+      no_param      = 'X'
+      status_prog   = 'ZAP_STATUS'.
+  PERFORM add_button IN PROGRAM zap_status USING 'M01' 'Log' '' ''.
+
+  CREATE OBJECT o_alv
+    EXPORTING
+      status             = 'STANDARD_ALV_DYN'
+      top_of_page_auto   = 'X'
+      top_of_page_titulo = 'X'
+      status_prog        = 'ZAP_STATUS'.
+
+
+  p_vari = o_alv->get_default_layout( ).
+
+  o_prog->initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+
+  p_vari = o_alv->get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog->at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog->at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog->main( ).

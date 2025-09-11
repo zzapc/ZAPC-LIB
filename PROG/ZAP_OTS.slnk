@@ -1,0 +1,1677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_OTS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="F">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="I">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Gestión ordenes de transporte" LENGTH="29 "/>
+   <textElement ID="S" KEY="P_DIAS" ENTRY="        Días tras liberación" LENGTH="28 "/>
+   <textElement ID="S" KEY="P_EXCL" ENTRY="        Ver OTs excluidas" LENGTH="25 "/>
+   <textElement ID="S" KEY="P_FIN" ENTRY="        Ver OTs finalizadas" LENGTH="27 "/>
+   <textElement ID="S" KEY="P_UNAME" ENTRY="D       ." LENGTH="15 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="P_VERFOT" ENTRY="        OT con obj.verif.si en calidad" LENGTH="38 "/>
+   <textElement ID="S" KEY="S_PROYEC" ENTRY="        Proyecto" LENGTH="16 "/>
+   <textElement ID="S" KEY="S_TRKORR" ENTRY="D       ." LENGTH="19 "/>
+  </language>
+ </textPool>
+ <pfstatus ACTCODE="000002" MENCODE="000015" PFKCODE="000002">
+  <pfstatus_sta CODE="INICIO" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="STANDARD" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="Standard für allgemeine Listausgabe im Fullscreen Grid"/>
+  <pfstatus_fun CODE="%ML" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Carpeta" PATH="A"/>
+  <pfstatus_fun CODE="%PC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPORT" ICON_ID="@49@" FUN_TEXT="Fichero local..." PATH="F"/>
+  <pfstatus_fun CODE="%SC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH" ICON_ID="@13@" FUN_TEXT="Buscar" PATH="U"/>
+  <pfstatus_fun CODE="%SC+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH_NEXT" ICON_ID="@4E@" FUN_TEXT="Continuar búsqueda" PATH="W"/>
+  <pfstatus_fun CODE="%SL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_MAIL" ICON_ID="@1S@" FUN_TEXT="Destinatario de mail" PATH="M"/>
+  <pfstatus_fun CODE="&amp;ABC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ABC" ICON_ID="@DL@" FUN_TEXT="Análisis ABC" PATH="N"/>
+  <pfstatus_fun CODE="&amp;ALL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_ALL" ICON_ID="@4B@" FUN_TEXT="Marcar todo" PATH="T"/>
+  <pfstatus_fun CODE="&amp;AQW" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_WORD_PROCESSING" ICON_ID="@DK@" FUN_TEXT="Tratamiento de textos..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;AUF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Especif.desglose totales..." PATH="S"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Grabar..." PATH="G"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_SAVE" ICON_ID="@DN@" FUN_TEXT="Grabar disposición..."/>
+  <pfstatus_fun CODE="&amp;AVR" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Valor medio" PATH="M"/>
+  <pfstatus_fun CODE="&amp;CDF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Anular fijación" PATH="I"/>
+  <pfstatus_fun CODE="&amp;CFI" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Fijar hasta columna" PATH="F"/>
+  <pfstatus_fun CODE="&amp;COUNT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Contar" PATH="C"/>
+  <pfstatus_fun CODE="&amp;DATA_SAVE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar"/>
+  <pfstatus_fun CODE="&amp;EB9" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TABLE_SETTINGS" ICON_ID="@36@" FUN_TEXT="Llamar informe..." PATH="B"/>
+  <pfstatus_fun CODE="&amp;ELP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_HELP" ICON_ID="@35@" FUN_TEXT="Ayuda"/>
+  <pfstatus_fun CODE="&amp;ERW" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Gestionar..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;ETA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Detalles"/>
+  <pfstatus_fun CODE="&amp;F03" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Atrás" PATH="A"/>
+  <pfstatus_fun CODE="&amp;F12" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar" PATH="C"/>
+  <pfstatus_fun CODE="&amp;F15" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="&amp;F4" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Entradas posibles"/>
+  <pfstatus_fun CODE="&amp;GRAPH" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_GRAPHICS" ICON_ID="@0N@" FUN_TEXT="Función gráfica" PATH="G"/>
+  <pfstatus_fun CODE="&amp;IC1" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Seleccionar"/>
+  <pfstatus_fun CODE="&amp;ILD" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER_UNDO" ICON_ID="@GD@" FUN_TEXT="Borrar filtros" PATH="L"/>
+  <pfstatus_fun CODE="&amp;ILT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER" ICON_ID="@4G@" FUN_TEXT="Fijar filtros" PATH="F"/>
+  <pfstatus_fun CODE="&amp;INFO" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Información"/>
+  <pfstatus_fun CODE="&amp;MAX" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Máximo" PATH="Á"/>
+  <pfstatus_fun CODE="&amp;MIN" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Mínimo" PATH="I"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Seleccionar..." PATH="E"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_CHOOSE" ICON_ID="@DM@" FUN_TEXT="Seleccionar disposición..."/>
+  <pfstatus_fun CODE="&amp;ODN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_DOWN" ICON_ID="@3F@" FUN_TEXT="Clasificación descendente" PATH="A"/>
+  <pfstatus_fun CODE="&amp;OL0" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANTS" ICON_ID="@LZ@" FUN_TEXT="Modificar disposición..."/>
+  <pfstatus_fun CODE="&amp;OLX" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Modificar..." PATH="M"/>
+  <pfstatus_fun CODE="&amp;OPT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ancho óptimo" PATH="P"/>
+  <pfstatus_fun CODE="&amp;OUP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_UP" ICON_ID="@3E@" FUN_TEXT="Clasificación ascendente" PATH="I"/>
+  <pfstatus_fun CODE="&amp;REFRESH" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_REFRESH" ICON_ID="@42@" FUN_TEXT="Refrescar"/>
+  <pfstatus_fun CODE="&amp;RNT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Imprimir" PATH="I"/>
+  <pfstatus_fun CODE="&amp;RNT_PREV" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_LAYOUT_CONTROL" ICON_ID="@3G@" FUN_TEXT="Presentación preliminar" PATH="R"/>
+  <pfstatus_fun CODE="&amp;SAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DESELECT_ALL" ICON_ID="@4D@" FUN_TEXT="Desmarcar todo" PATH="D"/>
+  <pfstatus_fun CODE="&amp;SUM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INTERMEDIATE_SUM" ICON_ID="@5V@" FUN_TEXT="Subtotales..." PATH="S"/>
+  <pfstatus_fun CODE="&amp;UMC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SUM" ICON_ID="@3Z@" FUN_TEXT="Total" PATH="T"/>
+  <pfstatus_fun CODE="&amp;VCRYSTAL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Crystal Reports" PATH="C"/>
+  <pfstatus_fun CODE="&amp;VEXCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XLS" ICON_ID="@J2@" FUN_TEXT="Microsoft Excel" PATH="M"/>
+  <pfstatus_fun CODE="&amp;VGRID" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="List Viewer ABAP" PATH="S"/>
+  <pfstatus_fun CODE="&amp;VLOTUS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Lotus 1-2-3" PATH="L"/>
+  <pfstatus_fun CODE="&amp;XXL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XXL" ICON_ID="@DJ@" FUN_TEXT="Hoja de cálculo..." PATH="A"/>
+  <pfstatus_fun CODE="ACTIVAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ACTIVATE" ICON_ID="@3C@" FUN_TEXT="Activar" INFO_TEXT="Activar"/>
+  <pfstatus_fun CODE="ALLS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Selecciones (todas)" PATH="L"/>
+  <pfstatus_fun CODE="CLP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPORT" ICON_ID="@49@" FUN_TEXT="Export" INFO_TEXT="Exportar a portapapeles"/>
+  <pfstatus_fun CODE="DELA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Borrar selecciones por completo" PATH="E"/>
+  <pfstatus_fun CODE="DELS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE_ROW" ICON_ID="@18@" FUN_TEXT="Borrar línea de selección" PATH="S"/>
+  <pfstatus_fun CODE="DOCU" TEXTNO="001" TYPE="H" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Documentación de programa"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Delimit.opcionales" PATH="D"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="002" TEXT_TYPE="D" TEXT_NAME="SSCRTEXTS-DYNSEL"/>
+  <pfstatus_fun CODE="E" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Atrás" PATH="A"/>
+  <pfstatus_fun CODE="ECAN" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Cancelar" PATH="C"/>
+  <pfstatus_fun CODE="ENDE" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="FC01" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_01"/>
+  <pfstatus_fun CODE="FC02" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_02"/>
+  <pfstatus_fun CODE="FC03" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_03"/>
+  <pfstatus_fun CODE="FC04" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_04"/>
+  <pfstatus_fun CODE="FC05" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_05"/>
+  <pfstatus_fun CODE="FEWS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Selecciones efectuadas" PATH="U"/>
+  <pfstatus_fun CODE="FIN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DISPLAY_MORE" ICON_ID="@1E@" FUN_TEXT="Finalizadas" INFO_TEXT="Finalizadas"/>
+  <pfstatus_fun CODE="GET" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Traer..." PATH="T"/>
+  <pfstatus_fun CODE="GET" TEXTNO="002" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Traer variante..." PATH="V"/>
+  <pfstatus_fun CODE="IMP_CAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_IMPORT" ICON_ID="@48@" FUN_TEXT="Importar en calidad" ICON_TEXT="Importar en calidad" INFO_TEXT="Importar en calidad"/>
+  <pfstatus_fun CODE="IMP_PRD" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRODUCT_GROUP" ICON_ID="@A9@" FUN_TEXT="Importar en producción" ICON_TEXT="Importar en producción" INFO_TEXT="Importar en producción"/>
+  <pfstatus_fun CODE="LIBERAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_RELEASE" ICON_ID="@5Y@" FUN_TEXT="Liberar" ICON_TEXT="Liberar" INFO_TEXT="Liberar"/>
+  <pfstatus_fun CODE="LOG" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log" PATH="L"/>
+  <pfstatus_fun CODE="LVUV" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Variables usuario..." PATH="B"/>
+  <pfstatus_fun CODE="ONLI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Ejecutar" PATH="A"/>
+  <pfstatus_fun CODE="OPTI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECTION" ICON_ID="@7X@" FUN_TEXT="Opciones de selección" PATH="O"/>
+  <pfstatus_fun CODE="PARAM" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Parametrización" PATH="P"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="REFRESCAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_REFRESH" ICON_ID="@42@" FUN_TEXT="Refrescar" ICON_TEXT="Refrescar" INFO_TEXT="Refrescar"/>
+  <pfstatus_fun CODE="SCRH" TEXTNO="001" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Ayuda imagen de selección" PATH="Y"/>
+  <pfstatus_fun CODE="SJOB" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ejecutar en proceso fondo" PATH="E"/>
+  <pfstatus_fun CODE="SPOS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar como variante..." INFO_TEXT="Grabar como variante" PATH="G"/>
+  <pfstatus_fun CODE="TAKE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Transferir" INFO_TEXT="Aplicar rol marcado"/>
+  <pfstatus_fun CODE="VDEL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Borrar..." PATH="B"/>
+  <pfstatus_fun CODE="VSHO" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Visualizar..." PATH="A"/>
+  <pfstatus_men CODE="000001" NO="01" REF_TYPE="F" REF_CODE="PARAM" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="02" REF_TYPE="F" REF_CODE="LOG" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="01" REF_TYPE="F" REF_CODE="ONLI" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="02" REF_TYPE="F" REF_CODE="PRIN" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="03" REF_TYPE="F" REF_CODE="SJOB" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000002" NO="05" REF_TYPE="F" REF_CODE="ENDE" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="01" REF_TYPE="F" REF_CODE="ALLS" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="02" REF_TYPE="F" REF_CODE="FEWS" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="04" REF_TYPE="F" REF_CODE="OPTI" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="06" REF_TYPE="F" REF_CODE="DELS" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="07" REF_TYPE="F" REF_CODE="DELA" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="09" REF_TYPE="F" REF_CODE="DYNS" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="10" REF_TYPE="S"/>
+  <pfstatus_men CODE="000003" NO="11" REF_TYPE="F" REF_CODE="ECAN" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="01" REF_TYPE="M" REF_CODE="000005"/>
+  <pfstatus_men CODE="000004" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="03" REF_TYPE="F" REF_CODE="LVUV" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="05" REF_TYPE="F" REF_CODE="SCRH" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="07" REF_TYPE="F" REF_CODE="E" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="01" REF_TYPE="F" REF_CODE="GET" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="02" REF_TYPE="F" REF_CODE="VSHO" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="03" REF_TYPE="F" REF_CODE="VDEL" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="04" REF_TYPE="F" REF_CODE="SPOS" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="01" REF_TYPE="F" REF_CODE="&amp;RNT_PREV" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="02" REF_TYPE="F" REF_CODE="&amp;RNT" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000006" NO="04" REF_TYPE="M" REF_CODE="000007"/>
+  <pfstatus_men CODE="000006" NO="05" REF_TYPE="M" REF_CODE="000008"/>
+  <pfstatus_men CODE="000006" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000006" NO="07" REF_TYPE="F" REF_CODE="&amp;F15" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="01" REF_TYPE="F" REF_CODE="&amp;AQW" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="02" REF_TYPE="F" REF_CODE="&amp;XXL" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="03" REF_TYPE="F" REF_CODE="%PC" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="01" REF_TYPE="F" REF_CODE="%SL" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="02" REF_TYPE="F" REF_CODE="%ML" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="01" REF_TYPE="F" REF_CODE="&amp;ALL" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="02" REF_TYPE="F" REF_CODE="&amp;SAL" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="04" REF_TYPE="F" REF_CODE="&amp;ILT" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="05" REF_TYPE="F" REF_CODE="&amp;ILD" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="07" REF_TYPE="F" REF_CODE="&amp;OUP" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="08" REF_TYPE="F" REF_CODE="&amp;ODN" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="09" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="10" REF_TYPE="M" REF_CODE="000010"/>
+  <pfstatus_men CODE="000009" NO="11" REF_TYPE="F" REF_CODE="&amp;SUM" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="12" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="13" REF_TYPE="F" REF_CODE="%SC" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="14" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="15" REF_TYPE="F" REF_CODE="&amp;F12" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="01" REF_TYPE="F" REF_CODE="&amp;UMC" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="02" REF_TYPE="F" REF_CODE="&amp;AVR" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="03" REF_TYPE="F" REF_CODE="&amp;MIN" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="04" REF_TYPE="F" REF_CODE="&amp;MAX" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="05" REF_TYPE="F" REF_CODE="&amp;COUNT" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="01" REF_TYPE="F" REF_CODE="&amp;ABC" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000011" NO="03" REF_TYPE="F" REF_CODE="&amp;F03" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="01" REF_TYPE="F" REF_CODE="&amp;VGRID" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="02" REF_TYPE="F" REF_CODE="&amp;VEXCEL" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="03" REF_TYPE="F" REF_CODE="&amp;VLOTUS" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="04" REF_TYPE="F" REF_CODE="&amp;VCRYSTAL" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000012" NO="06" REF_TYPE="F" REF_CODE="&amp;GRAPH" REF_NO="001"/>
+  <pfstatus_men CODE="000013" NO="01" REF_TYPE="M" REF_CODE="000014"/>
+  <pfstatus_men CODE="000013" NO="02" REF_TYPE="M" REF_CODE="000015"/>
+  <pfstatus_men CODE="000013" NO="03" REF_TYPE="F" REF_CODE="&amp;AUF" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="01" REF_TYPE="F" REF_CODE="&amp;OLX" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="02" REF_TYPE="F" REF_CODE="&amp;OAD" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000014" NO="04" REF_TYPE="F" REF_CODE="&amp;AVE" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000014" NO="06" REF_TYPE="F" REF_CODE="&amp;ERW" REF_NO="001"/>
+  <pfstatus_men CODE="000015" NO="01" REF_TYPE="F" REF_CODE="&amp;OPT" REF_NO="001"/>
+  <pfstatus_men CODE="000015" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000015" NO="03" REF_TYPE="F" REF_CODE="&amp;CFI" REF_NO="001"/>
+  <pfstatus_men CODE="000015" NO="04" REF_TYPE="F" REF_CODE="&amp;CDF" REF_NO="001"/>
+  <pfstatus_mtx CODE="000001" TEXT_TYPE="S" TEXT="Mantenimiento" PATH="M"/>
+  <pfstatus_mtx CODE="000002" TEXT_TYPE="S" TEXT="Programa" PATH="R" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000003" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000004" TEXT_TYPE="S" TEXT="Pasar a" PATH="P" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000005" TEXT_TYPE="S" TEXT="Variantes" PATH="V" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000006" TEXT_TYPE="S" TEXT="Lista" PATH="L" INT_NOTE="STANDARD_FULLSCREEN Liste"/>
+  <pfstatus_mtx CODE="000007" TEXT_TYPE="S" TEXT="Exportar" PATH="E" INT_NOTE="STANDARD Sichern"/>
+  <pfstatus_mtx CODE="000008" TEXT_TYPE="S" TEXT="Enviar a" PATH="N"/>
+  <pfstatus_mtx CODE="000009" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="STANDARD"/>
+  <pfstatus_mtx CODE="000010" TEXT_TYPE="S" TEXT="Calcular" PATH="R"/>
+  <pfstatus_mtx CODE="000011" TEXT_TYPE="S" TEXT="Pasar a" PATH="R" INT_NOTE="STANDARD"/>
+  <pfstatus_mtx CODE="000012" TEXT_TYPE="S" TEXT="Vistas" PATH="I"/>
+  <pfstatus_mtx CODE="000013" TEXT_TYPE="S" TEXT="Opciones" PATH="P" INT_NOTE="STANDARD_FULLSCREEN"/>
+  <pfstatus_mtx CODE="000014" TEXT_TYPE="S" TEXT="Layout" PATH="A" INT_NOTE="Sub STANDARD"/>
+  <pfstatus_mtx CODE="000015" TEXT_TYPE="S" TEXT="Columnas" PATH="C"/>
+  <pfstatus_act CODE="000001" NO="01" MENUCODE="000001"/>
+  <pfstatus_act CODE="000001" NO="02" MENUCODE="000002"/>
+  <pfstatus_act CODE="000001" NO="03" MENUCODE="000003"/>
+  <pfstatus_act CODE="000001" NO="04" MENUCODE="000004"/>
+  <pfstatus_act CODE="000002" NO="01" MENUCODE="000006"/>
+  <pfstatus_act CODE="000002" NO="02" MENUCODE="000009"/>
+  <pfstatus_act CODE="000002" NO="03" MENUCODE="000011"/>
+  <pfstatus_act CODE="000002" NO="04" MENUCODE="000012"/>
+  <pfstatus_act CODE="000002" NO="05" MENUCODE="000013"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="03" PFNO="16"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="04" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="05" PFNO="20"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="06" PFNO="13"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="07" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="08" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="09" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="10" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="11" PFNO="29"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="01" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="02" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="03" PFNO="09"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="04" PFNO="20"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="05" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="06" PFNO="21"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="07" PFNO="18"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="08" PFNO="39"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="09" PFNO="37"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="10" PFNO="07"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="11" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="12" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="13" PFNO="40"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="14" PFNO="29"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="15" PFNO="38"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="16" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="17" PFNO="30"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="18" PFNO="42"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="19" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="20" PFNO="46"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="21" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="22" PFNO="43"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="23" PFNO="45"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="24" PFNO="31"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="25" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="26" PFNO="47"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="27" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="28" PFNO="32"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="29" PFNO="33"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="30" PFNO="34"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="31" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="32" PFNO="36"/>
+  <pfstatus_pfk CODE="000001" PFNO="02" FUNCODE="OPTI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="E" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="ONLI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="09" FUNCODE="SJOB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="11" FUNCODE="SPOS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="ECAN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="13" FUNCODE="DOCU" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="14" FUNCODE="DELS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="ENDE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="16" FUNCODE="DYNS" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="17" FUNCODE="GET" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="18" FUNCODE="SCRH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="19" FUNCODE="ALLS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="20" FUNCODE="FEWS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="25" FUNCODE="FC01" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="26" FUNCODE="FC02" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="27" FUNCODE="FC03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="28" FUNCODE="FC04" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="29" FUNCODE="FC05" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="30" FUNCODE="LVUV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="86" FUNCODE="PRIN" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="01" FUNCODE="&amp;ELP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="02" FUNCODE="&amp;IC1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="03" FUNCODE="&amp;F03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="04" FUNCODE="&amp;F4" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="05" FUNCODE="&amp;ALL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="06" FUNCODE="&amp;SAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="07" FUNCODE="&amp;REFRESH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="08" FUNCODE="LIBERAR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="09" FUNCODE="IMP_CAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="11" FUNCODE="&amp;DATA_SAVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="12" FUNCODE="&amp;F12" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="15" FUNCODE="&amp;F15" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="17" FUNCODE="REFRESCAR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="18" FUNCODE="CLP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="19" FUNCODE="ACTIVAR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="20" FUNCODE="IMP_PRD" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="21" FUNCODE="FIN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="25" FUNCODE="&amp;ABC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="28" FUNCODE="&amp;OUP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="29" FUNCODE="&amp;ILT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="30" FUNCODE="&amp;UMC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="31" FUNCODE="%SL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="32" FUNCODE="&amp;OL0" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="33" FUNCODE="&amp;OAD" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="34" FUNCODE="&amp;AVE" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="36" FUNCODE="&amp;INFO" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="37" FUNCODE="&amp;EB9" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="38" FUNCODE="&amp;ILD" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="39" FUNCODE="&amp;ETA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="40" FUNCODE="&amp;ODN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="41" FUNCODE="&amp;VGRID" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="42" FUNCODE="&amp;SUM" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="43" FUNCODE="&amp;VEXCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="44" FUNCODE="&amp;AQW" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="45" FUNCODE="%PC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="46" FUNCODE="&amp;RNT_PREV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="47" FUNCODE="&amp;GRAPH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="48" FUNCODE="&amp;VCRYSTAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="71" FUNCODE="%SC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="84" FUNCODE="%SC+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="86" FUNCODE="&amp;RNT" FUNNO="001"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LOG"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PARAM"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%CH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%ML"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%PC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ABC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AQW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AVR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CDF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CFI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;COUNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRBATCH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRDESIG"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRTEMPL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRYSTAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DATA_SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DAU"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DOF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DON"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;EB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;EB9"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ERW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F03"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F12"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F15"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F4"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;GRAPH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;IC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;INFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;KOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;MAX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;MIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OAD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OPT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;REFRESH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;RNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;RNT_PREV"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SUM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;UMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;URL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VCRYSTAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VEXCEL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VGRID"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VLOTUS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XML"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XXL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ACTIVAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BAC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB9"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEBN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="CLP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DRUK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DSAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ENTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="GLIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="HELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="IMP_CAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="IMP_PRD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="INFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="KOMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="LIBERAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P++"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P--"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF09"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF13"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PIC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PICK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="REFRESCAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="RW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SKOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SOUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SUMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="TAKE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ZSUM"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="A"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000002" MODAL="D" INT_NOTE="Standardoberfläche              STANDARD_FULLSCREEN"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000002" MODAL="D" NORM="X" INT_NOTE="Standard maximale Interaktion STANDARD_FULLSCREEN"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000002" SUB_CODE="0001" INT_NOTE="STANDARD_FULLSCREEN"/>
+ </pfstatus>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Gestion ordenes de transporte
+* DESCRIPCION : Gestion ordenes de transporte
+*
+* AUTOR: Andres Picazo                                FECHA: 18/04/2017
+*
+***********************************************************************
+REPORT zap_ots.
+TYPE-POOLS: trwbo, sctsc.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: tmsbuffer, tmscdom.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check.
+  PUBLIC SECTION.
+    METHODS handle_user_command REDEFINITION.
+    METHODS visualizar_objeto   REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check          TYPE xfeld,
+             lights         TYPE zico_estado_mensaje,
+             request_type   TYPE snodetext-name,
+             system         TYPE snodetext-text,
+             modifiable     TYPE snodetext-name,
+             request_number TYPE tmsbuffer-trkorr,
+             as4date        TYPE as4date,
+             as4time        TYPE as4time,
+             fecha          TYPE dats,
+             hora           TYPE uzeit,
+             copy           TYPE icon_d,
+             request_owner  TYPE snodetext-name,
+             description    TYPE trwbo_request_header-as4text,
+             retcode        TYPE trretcode,
+             actflg         TYPE actflg,
+             proyecto       TYPE ztemps-valor,
+             notas          TYPE ztemps-string,
+             message        TYPE bapi_msg,
+             trstep         TYPE trtpstep,
+             paso           TYPE string,
+             color          TYPE lvc_t_scol,
+           END OF t_listado,
+           tt_listado TYPE TABLE OF t_listado.
+
+    DATA: i_listado   TYPE tt_listado,
+          l_listado   TYPE t_listado,
+          i_liberadas TYPE tt_listado.
+
+    METHODS  main.
+
+    METHODS: listado,
+             seleccionar_datos,
+             liberar CHANGING !list TYPE t_listado,
+
+      activar IMPORTING sistema TYPE any
+              CHANGING  !list   TYPE t_listado,
+
+      importar IMPORTING sistema   TYPE any
+               EXPORTING cancelado TYPE abap_bool
+               CHANGING  !list     TYPE t_listado.
+
+    METHODS fill_selections
+      RETURNING VALUE(rt_selections) TYPE trwbo_selections.
+
+ENDCLASS.
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report,
+      o_alv  TYPE REF TO lcl_alv,
+      ztemps TYPE ztemps.
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK 001 WITH FRAME TITLE TEXT-sel.
+  PARAMETERS p_uname TYPE sy-uname DEFAULT sy-uname OBLIGATORY.
+  SELECT-OPTIONS: s_trkorr FOR tmsbuffer-trkorr,
+                  s_proyec FOR ztemps-valor.
+
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS: p_fin  AS CHECKBOX,
+              p_excl AS CHECKBOX,
+              p_dias TYPE i DEFAULT 30.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK 001.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    DATA mod TYPE abap_bool.
+
+    FIELD-SYMBOLS &lt;listado&gt; TYPE o_prog-&gt;t_listado.
+
+    ASSIGN o_prog-&gt;i_listado[ row ] TO &lt;listado&gt;.
+    IF sy-subrc &lt;&gt; 0.
+      RETURN.
+    ENDIF.
+
+    CASE column.
+      WHEN &apos;COPY&apos;.
+        zcl_ap_string=&gt;to_clipboard( string = CONV #( &lt;listado&gt;-request_number ) ).
+      WHEN &apos;REQUEST_NUMBER&apos;.
+        CALL FUNCTION &apos;TR_DISPLAY_REQUEST&apos;
+          EXPORTING
+            i_trkorr    = &lt;listado&gt;-request_number
+            i_operation = &apos;EDIT&apos;.
+
+        &lt;listado&gt;-proyecto = o_prog-&gt;string.
+        IF &lt;listado&gt;-proyecto IS INITIAL AND &lt;listado&gt;-notas IS INITIAL.
+          zcl_ap_temp=&gt;delete_string_st( clave = &apos;ZAP_OTS&apos; subclave = &lt;listado&gt;-request_number ).
+        ELSE.
+          zcl_ap_temp=&gt;set_string_st( clave = &apos;ZAP_OTS&apos; subclave = &lt;listado&gt;-request_number valor = &lt;listado&gt;-proyecto string = &lt;listado&gt;-notas permanente = &apos;X&apos; ).
+        ENDIF.
+        o_alv-&gt;refresh( ).
+
+      WHEN &apos;NOTAS&apos;.
+        o_prog-&gt;string = &lt;listado&gt;-notas.
+        zcl_ap_string=&gt;popup_texto( EXPORTING titulo     = &apos;Notas&apos;
+                                              editar     = &apos;X&apos;
+                                    IMPORTING modificado = mod CHANGING
+                                              texto      = o_prog-&gt;string ).
+        IF mod = &apos;X&apos;.
+          &lt;listado&gt;-notas = o_prog-&gt;string.
+          IF &lt;listado&gt;-proyecto IS INITIAL AND &lt;listado&gt;-notas IS INITIAL.
+            zcl_ap_temp=&gt;delete_string_st( clave = &apos;ZAP_OTS&apos; subclave = &lt;listado&gt;-request_number ).
+          ELSE.
+            zcl_ap_temp=&gt;set_string_st( clave = &apos;ZAP_OTS&apos; subclave = &lt;listado&gt;-request_number valor = &lt;listado&gt;-proyecto string = &lt;listado&gt;-notas permanente = &apos;X&apos; ).
+          ENDIF.
+          o_alv-&gt;refresh( ).
+        ENDIF.
+
+      WHEN OTHERS.
+        SUBMIT zlist_orden_transporte
+          AND RETURN
+               WITH s_korr = &lt;listado&gt;-request_number
+               WITH p_fini = &apos;00000000&apos;
+               WITH p_ffin = &apos;99991231&apos;
+               WITH p_transp = &apos;&apos;
+               WITH p_pend = &apos;X&apos;
+               WITH p_detal = &apos;X&apos;.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD handle_user_command.
+    TYPES: BEGIN OF t_clp,
+             request_number TYPE tmsbuffer-trkorr,
+             description    TYPE trwbo_request_header-as4text,
+           END OF t_clp.
+
+    DATA i_clp TYPE TABLE OF t_clp.
+
+    check_ucomm_sel = &apos;LIBERAR,LIBERAR_SV,IMP_CAL,IMP_PROD&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;RESEL&apos;.
+        LEAVE TO SCREEN 0.
+      WHEN &apos;EXCEL&apos;.
+        exportar_excel( ).
+      WHEN &apos;REFRESCAR&apos;.
+        o_prog-&gt;seleccionar_datos( ).
+        refresh( ).
+      WHEN &apos;CLP&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;.
+          APPEND VALUE #( request_number = &lt;listado&gt;-request_number description = &lt;listado&gt;-description ) TO i_clp.
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE &apos;Seleccione algun registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          zcl_ap_string=&gt;to_clipboard( tabla = i_clp ).
+          MESSAGE &apos;Se han dejado datos en el portapapeles&apos; TYPE &apos;S&apos;.
+        ENDIF.
+      WHEN &apos;LIBERAR&apos; OR &apos;LIBERAR_SV&apos; OR &apos;IMP_CAL&apos; OR &apos;IMP_PRD&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+          CASE ucomm.
+            WHEN &apos;LIBERAR&apos; OR &apos;LIBERAR_SV&apos;.
+              IF ucomm = &apos;LIBERAR&apos;.
+                SET PARAMETER ID &apos;ZNO_VERIF&apos; FIELD &apos;&apos; ##EXISTS.
+              ELSE.
+                SET PARAMETER ID &apos;ZNO_VERIF&apos; FIELD &apos;X&apos; ##EXISTS.
+              ENDIF.
+              o_prog-&gt;liberar( CHANGING list = &lt;listado&gt; ).
+            WHEN &apos;IMP_CAL&apos; OR &apos;IMP_PRD&apos;.
+              IF ucomm = &apos;IMP_PRD&apos;.
+                IF &lt;listado&gt;-retcode = &apos;0008&apos;.
+                  IF zcl_ap_popup=&gt;confirmar( texto = &apos;Se ha producido errores en calidad&apos;
+                                              texto2 = &apos;¿Está seguro de querer subirla a producción&apos; opcion = &apos;N&apos; ) = &apos;&apos;.
+                    RETURN.
+                  ENDIF.
+                ELSEIF &lt;listado&gt;-message &lt;&gt; &apos;En calidad&apos;.
+                  IF NOT zcl_c=&gt;entorno_calidad IS INITIAL ##BOOL_OK.
+                    IF zcl_ap_popup=&gt;confirmar( texto = &apos;No ha verificado que la OT este en calidad sin errores&apos;
+                                                texto2 = &apos;¿Esta seguro de querer subirla a producción&apos; opcion = &apos;N&apos; ) = &apos;&apos;.
+                      RETURN.
+                    ENDIF.
+                  ENDIF.
+                ENDIF.
+              ENDIF.
+              o_prog-&gt;importar( EXPORTING sistema = ucomm+4
+                                IMPORTING cancelado = DATA(l_cancelado)
+                                CHANGING list = &lt;listado&gt; ).
+          ENDCASE.
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          IF l_cancelado IS INITIAL.
+            DATA(i_list) = o_prog-&gt;i_listado.
+            IF ucomm(7) &lt;&gt; &apos;LIBERAR&apos;.
+              WAIT UP TO 5 SECONDS.
+              cl_gui_cfw=&gt;flush( ).
+            ENDIF.
+            DO 20 TIMES.
+              CLEAR o_prog-&gt;i_listado.
+              COMMIT WORK AND WAIT.
+              WAIT UP TO 1 SECONDS.
+              COMMIT WORK AND WAIT.
+              o_prog-&gt;seleccionar_datos( ).
+              DATA(l_salir) = &apos;&apos;.
+              IF ucomm(7) = &apos;LIBERAR&apos;.
+                EXIT.
+              ENDIF.
+              LOOP AT i_list ASSIGNING FIELD-SYMBOL(&lt;list&gt;) WHERE check = &apos;X&apos;.
+                ASSIGN o_prog-&gt;i_listado[ request_number = &lt;list&gt;-request_number ] TO &lt;listado&gt;.
+                IF sy-subrc &lt;&gt; 0.
+                  l_salir = &apos;X&apos;.
+                ELSEIF &lt;listado&gt;-message &lt;&gt; &lt;list&gt;-message.
+                  l_salir = &apos;X&apos;.
+                  IF &lt;listado&gt;-retcode = &apos;0008&apos;.
+                    MESSAGE |Se han producido errores en OT { &lt;listado&gt;-request_number } { &lt;listado&gt;-description }| TYPE &apos;I&apos;.
+                  ELSE.
+                    zcl_ap_string=&gt;to_clipboard( string = CONV #( &lt;list&gt;-request_number ) ).
+                  ENDIF.
+                ENDIF.
+              ENDLOOP.
+              IF sy-subrc = 0 AND l_salir IS INITIAL.
+                MESSAGE &apos;Esperando refresco de la cola&apos; TYPE &apos;S&apos;.
+                COMMIT WORK AND WAIT.
+                WAIT UP TO 1 SECONDS.
+              ELSE.
+                EXIT.
+              ENDIF.
+            ENDDO.
+          ENDIF.
+          IF ucomm = &apos;IMP_PRD&apos;.
+            set_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+          ENDIF.
+          refresh( refresh_mode = if_salv_c_refresh=&gt;full ).
+        ENDIF.
+
+      WHEN &apos;ACTIVAR&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+          o_prog-&gt;activar( EXPORTING sistema = &apos;CAL&apos; CHANGING list = &lt;listado&gt; ).
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+        ELSE.
+          o_prog-&gt;seleccionar_datos( ).
+          refresh( ).
+        ENDIF.
+
+      WHEN &apos;CLAVED&apos; OR &apos;CLAVEQ&apos; OR &apos;CLAVEP&apos;.
+        CLEAR o_prog-&gt;string.
+        zcl_ap_string=&gt;from_clipboard( IMPORTING string = o_prog-&gt;string ).
+        IF NOT o_prog-&gt;string IS INITIAL.
+          zcl_ap_temp=&gt;set_st( clave = &apos;ZAP_OTS&apos; subclave = sy-uname &amp;&amp; ucomm valor1 = o_prog-&gt;string ).
+          MESSAGE |Nuevo { ucomm }  { o_prog-&gt;string }| TYPE &apos;S&apos;.
+        ENDIF.
+      WHEN &apos;FIN&apos;.
+        p_fin = &apos;X&apos;.
+        o_prog-&gt;seleccionar_datos( ).
+        refresh( ).
+
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot; REPORT
+
+  METHOD seleccionar_datos.
+    DATA lt_selections          TYPE trwbo_selections.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA ls_settings            TYPE ctsusrcust.
+    DATA lv_username            LIKE sy-uname.
+    DATA ls_selection           LIKE LINE OF lt_selections.
+    DATA lt_request_headers_tmp TYPE trwbo_request_headers.
+    DATA lt_request_headers     TYPE trwbo_request_headers.
+    DATA: ayer   TYPE dats,
+          system TYPE tmssysnam.
+    DATA: i_log_calidad    TYPE tmstpalogs,
+          i_log_produccion TYPE tmstpalogs.
+    DATA: i_buffer_cal TYPE TABLE OF tmsbuffer,
+          i_buffer_pro TYPE TABLE OF tmsbuffer.
+    DATA ls_request_header TYPE trwbo_request_header.
+    DATA: l_color TYPE string,
+          l_ndias TYPE int4,
+          l_int   TYPE int1.
+
+    FIELD-SYMBOLS &lt;log&gt; TYPE tmstpalog.
+
+    CLEAR i_listado.
+
+*     Read user settings
+    CALL FUNCTION &apos;TRINT_READ_USER_CUSTOMIZING&apos;
+      IMPORTING
+        es_settings = ls_settings.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+
+    lt_selections = fill_selections( ).
+
+    lv_username = p_uname. &quot; trdyse01cm-username.
+
+    LOOP AT lt_selections INTO ls_selection.
+
+      CALL FUNCTION &apos;TRINT_SELECT_REQUESTS&apos;
+        EXPORTING
+          iv_username_pattern  = lv_username
+          is_selection         = ls_selection
+          iv_complete_projects = &apos;X&apos;
+        IMPORTING
+          et_requests          = lt_request_headers_tmp.
+
+      APPEND LINES OF lt_request_headers_tmp TO lt_request_headers.
+
+    ENDLOOP.
+
+    ayer = sy-datum - p_dias.
+    IF zcl_c=&gt;entorno_calidad &lt;&gt; &apos;&apos;.
+      SELECT domnam FROM tmscdom                    &quot;#EC &quot;#EC CI_BYPASS
+        INTO CORRESPONDING FIELDS OF tmscdom
+      UP TO 1 ROWS
+      ORDER BY moddat DESCENDING.
+      ENDSELECT.
+      system = zcl_c=&gt;entorno_calidad.
+      CALL FUNCTION &apos;TMS_TM_GET_HISTORY&apos;
+        EXPORTING
+          iv_system     = system
+          iv_domain     = tmscdom-domnam
+          iv_allcli     = &apos;X&apos;
+*         IV_TRCLI      =
+*         IV_TRFUNCTION =
+*         IV_PROJECT    =
+          iv_imports    = &apos;X&apos;
+*         IV_EXPORTS    =
+          iv_all_steps  = &apos;X&apos;
+*         IV_ALL_ALOG_STEPS       =
+*         IV_TPSTAT_KEY =
+          iv_monitor    = &apos;X&apos;
+        IMPORTING
+*         EV_ALOG_LINENR          =
+          et_tmstpalog  = i_log_calidad
+*         ES_EXCEPTION  =
+        CHANGING
+          cv_start_date = ayer
+*         cv_end_date   = sy-datum
+*         cv_end_time   = sy-uzeit
+        EXCEPTIONS
+          alert         = 1
+          OTHERS        = 2.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Error recuperando historia&apos; TYPE &apos;S&apos;.
+      ENDIF.
+
+      CALL FUNCTION &apos;TMS_MGR_READ_TRANSPORT_QUEUE&apos;
+        EXPORTING
+          iv_system          = system
+          iv_domain          = tmscdom-domnam
+          iv_collect_data    = &apos;X&apos;
+          iv_count_only      = &apos;&apos;
+          iv_read_shadow     = &apos;X&apos;
+          iv_use_data_files  = &apos;&apos;
+          iv_verbose         = &apos;&apos;
+          iv_expiration_date = sy-datum
+          iv_allow_expired   = &apos;&apos;
+        TABLES
+          tt_buffer          = i_buffer_cal
+        EXCEPTIONS
+          read_config_failed = 1.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE &apos;Error leyendo cola&apos; TYPE &apos;I&apos;.
+      ENDIF.
+    ENDIF.
+
+    system = zcl_c=&gt;entorno_produccion.
+    ayer = sy-datum - p_dias.
+    CALL FUNCTION &apos;TMS_TM_GET_HISTORY&apos;
+      EXPORTING
+        iv_system         = system
+        iv_domain         = tmscdom-domnam
+        iv_allcli         = &apos;X&apos;
+*       IV_TRCLI          =
+*       IV_TRFUNCTION     =
+*       IV_PROJECT        =
+        iv_imports        = &apos;X&apos;
+*       IV_EXPORTS        =
+        iv_all_steps      = &apos;X&apos;
+        iv_all_alog_steps = &apos;&apos;
+*       IV_TPSTAT_KEY     =
+        iv_monitor        = &apos;X&apos;
+      IMPORTING
+*       EV_ALOG_LINENR    =
+        et_tmstpalog      = i_log_produccion
+*       ES_EXCEPTION      =
+      CHANGING
+        cv_start_date     = ayer
+*       cv_end_date       = sy-datum
+*       cv_end_time       = sy-uzeit
+      EXCEPTIONS
+        alert             = 1
+        OTHERS            = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error recuparando historia&apos; TYPE &apos;S&apos;.
+    ENDIF.
+
+    CALL FUNCTION &apos;TMS_MGR_READ_TRANSPORT_QUEUE&apos;
+      EXPORTING
+        iv_system          = system
+        iv_domain          = tmscdom-domnam
+        iv_collect_data    = &apos;X&apos;
+        iv_count_only      = &apos;&apos;
+        iv_read_shadow     = &apos;X&apos;
+        iv_use_data_files  = &apos;&apos;
+        iv_verbose         = &apos;&apos;
+        iv_expiration_date = sy-datum
+        iv_allow_expired   = &apos;&apos;
+      TABLES
+        tt_buffer          = i_buffer_pro
+      EXCEPTIONS
+        read_config_failed = 1.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE &apos;Error leyendo cola&apos; TYPE &apos;I&apos;.
+    ENDIF.
+*    DELETE lt_request_headers WHERE trkorr &lt; &apos;D40K908525&apos;. &quot;PRUEBA!
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( lt_request_headers[] ).
+    LOOP AT lt_request_headers INTO ls_request_header WHERE trkorr IN s_trkorr.
+      sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+      CLEAR: l_listado,
+             l_color.
+
+      l_listado-as4date        = ls_request_header-as4date.
+      l_listado-as4time        = ls_request_header-as4time.
+      l_listado-request_number = ls_request_header-trkorr.
+      IF ls_request_header-strkorr IS NOT INITIAL.
+        l_listado-request_number = ls_request_header-strkorr.
+        CONTINUE.
+      ENDIF.
+      SELECT valor, string
+        FROM ztemps
+        INTO (@l_listado-proyecto, @l_listado-notas)
+        UP TO 1 ROWS
+        WHERE clave    = &apos;ZAP_OTS&apos;
+          AND subclave = @l_listado-request_number
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      IF ls_request_header-trfunction = &apos;K&apos;.
+        l_listado-request_type = &apos;Workbench&apos;.
+      ELSEIF ls_request_header-trfunction = &apos;W&apos;.
+        l_listado-request_type = &apos;Customizing&apos;.
+      ENDIF.
+
+      IF ls_request_header-tarsystem IS INITIAL.
+        l_listado-system = `Local Change Requests`.
+        IF p_excl IS INITIAL.
+          CONTINUE.
+        ENDIF.
+      ELSE.
+        l_listado-system = ls_request_header-tarsystem.
+      ENDIF.
+
+      l_listado-request_owner = ls_request_header-as4user.
+      l_listado-description   = ls_request_header-as4text.
+
+      IF ls_request_header-trstatus = &apos;D&apos;.
+        l_listado-modifiable = `Modificable`.
+        string = l_listado-description.
+        string = to_upper( string ).
+        IF string CS &apos;!NO!&apos; OR string = &apos;BASURA&apos; OR string = &apos;BORRAR&apos; OR string CS &apos;NO TRANSPORTAR&apos; OR l_listado-notas = &apos;Excluir&apos;.
+          l_color = &apos;R&apos;.
+          l_listado-message = &apos;Prohibido liberar de momento&apos;.
+          IF p_excl IS INITIAL.
+            CONTINUE.
+          ENDIF.
+        ELSE.
+          l_color = &apos;A&apos;.
+        ENDIF.
+      ELSEIF ls_request_header-trstatus = &apos;R&apos;.
+        l_listado-modifiable = `Liberada`.
+        DATA(l_ok) = &apos;&apos;.
+        LOOP AT i_log_produccion ASSIGNING &lt;log&gt; WHERE trkorr = ls_request_header-trkorr.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          l_listado-fecha   = &lt;log&gt;-trtime(8).
+          l_listado-hora    = &lt;log&gt;-trtime+8(6).
+          l_listado-retcode = &lt;log&gt;-retcode.
+          l_listado-trstep  = &lt;log&gt;-trstep.
+
+          IF line_exists( i_buffer_pro[ trkorr = ls_request_header-trkorr ] ).
+            IF &lt;log&gt;-trstep &lt;&gt; &apos;U&apos;.
+              l_color = &apos;V&apos;.
+              l_listado-message = &apos;En producción&apos;.
+              l_ok = &apos;X&apos;.
+            ENDIF.
+          ELSEIF &lt;log&gt;-trstep = &apos;U&apos;.
+            l_color = &apos;R&apos;.
+            l_listado-message = &apos;Borrada de la cola de producción&apos;.
+            l_ndias = sy-datum - l_listado-fecha.
+            IF l_ndias &gt; 7.
+              CONTINUE.
+            ENDIF.
+            l_ok = &apos;X&apos;.
+          ENDIF.
+          IF l_ok IS INITIAL AND zcl_c=&gt;entorno_calidad IS INITIAL ##BOOL_OK.
+            l_color = &apos;V&apos;.
+            l_listado-message = &apos;En producción&apos;.
+            l_ok = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+        IF l_ok IS INITIAL.
+          LOOP AT i_log_calidad ASSIGNING &lt;log&gt; WHERE     trkorr   = ls_request_header-trkorr
+                                                      AND as4text &lt;&gt; &apos;&apos;. &quot;?
+          ENDLOOP.
+          IF sy-subrc = 0.
+            l_listado-fecha   = &lt;log&gt;-trtime(8).
+            l_listado-hora    = &lt;log&gt;-trtime+8(6).
+            l_listado-retcode = &lt;log&gt;-retcode.
+            l_listado-trstep  = &lt;log&gt;-trstep.
+            IF line_exists( i_buffer_cal[ trkorr = ls_request_header-trkorr ] ).
+              l_listado-message = &apos;En calidad&apos;.
+              l_color = &apos;AZUL&apos;.
+            ELSE.
+              l_color = &apos;R&apos;.
+              l_listado-message = &apos;Borrada de la cola de calidad&apos;.
+              l_ndias = sy-datum - l_listado-fecha.
+              IF l_ndias &gt; 7.
+                CONTINUE.
+              ENDIF.
+            ENDIF.
+
+            ASSIGN i_buffer_pro[ trkorr = ls_request_header-trkorr ] TO FIELD-SYMBOL(&lt;buf_pro&gt;).
+            IF sy-subrc = 0.
+              IF &lt;buf_pro&gt;-actflg = &apos;I&apos;.
+                l_listado-actflg = &lt;buf_pro&gt;-actflg.
+                l_int = 1.
+              ENDIF.
+            ENDIF.
+          ELSE.
+            IF line_exists( i_liberadas[ request_number = ls_request_header-trkorr ] ).
+              l_color = &apos;A&apos;.
+            ELSE.
+              l_color = &apos;N&apos;.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      IF p_excl IS INITIAL AND to_upper( l_listado-notas ) = &apos;!NO!&apos;.
+        CONTINUE.
+      ENDIF.
+
+      set_status_list( EXPORTING color = l_color int = l_int CHANGING list = l_listado ).
+
+      IF l_listado-retcode = &apos;0008&apos;.
+        set_status_list( EXPORTING color = &apos;R&apos; campos_color = &apos;RETCODE,MESSAGE&apos; CHANGING list = l_listado ).
+      ELSEIF l_listado-retcode = &apos;0004&apos;.
+        set_status_list( EXPORTING color = &apos;W&apos; campos_color = &apos;RETCODE,MESSAGE&apos; CHANGING list = l_listado ).
+      ENDIF.
+      IF l_listado-actflg = &apos;I&apos;.
+        set_status_list( EXPORTING color = &apos;R&apos; int = 1 campos_color = &apos;ACTFLG&apos; CHANGING list = l_listado ).
+      ELSEIF l_listado-actflg = &apos;X&apos;.
+        set_status_list( EXPORTING color = &apos;V&apos; campos_color = &apos;ACTFLG&apos; CHANGING list = l_listado ).
+      ENDIF.
+
+      l_listado-copy = icon_system_copy.
+      l_listado-paso = get( tabla = &apos;D TRTPSTEP&apos; clave = l_listado-trstep ).
+
+      APPEND l_listado TO i_listado.
+    ENDLOOP.
+
+    SORT i_listado BY request_number.
+    DELETE ADJACENT DUPLICATES FROM i_listado COMPARING request_number.
+
+    IF p_fin IS INITIAL.
+      DELETE i_listado WHERE ( message = &apos;En producción&apos; OR message = &apos;Borrada de la cola de producción&apos; ) AND retcode &lt;= &apos;0004&apos;.
+    ENDIF.
+    DELETE i_listado WHERE NOT proyecto IN s_proyec.
+  ENDMETHOD.
+
+  METHOD listado.
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Refrescar&apos; icon = icon_refresh ucomm = &apos;REFRESCAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Liberar&apos; icon = icon_release ucomm = &apos;LIBERAR&apos; ).
+    IF zcl_c=&gt;entorno_calidad &lt;&gt; &apos;&apos;.
+      o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Importar en calidad&apos; icon = icon_import ucomm = &apos;IMP_CAL&apos; ).
+    ENDIF.
+    o_alv-&gt;add_button( button = &apos;F04&apos; text = &apos;Importar en producción&apos; icon = icon_product_group ucomm = &apos;IMP_PRD&apos; ).
+*    o_alv-&gt;add_button( button = &apos;F05&apos; qinfo = &apos;Activar&apos;  icon = icon_activate ucomm = &apos;ACTIVAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F06&apos; qinfo = &apos;Finalizadas&apos; icon = icon_display_more ucomm = &apos;FIN&apos; ).
+    o_alv-&gt;add_button( button = &apos;F07&apos; qinfo = &apos;Exportar a portapapeles&apos; icon = icon_export ucomm = &apos;CLP&apos; ).
+    o_alv-&gt;add_button( button = &apos;F08&apos; qinfo = &apos;Reseleccionar&apos; icon = icon_interface ucomm = &apos;RESEL&apos; ).
+    o_alv-&gt;add_button( button = &apos;F09&apos; qinfo = &apos;Liberar sin verificaciones&apos; icon = icon_release ucomm = &apos;LIBERAR_SV&apos; ).
+
+    o_alv-&gt;set_field_text( &apos;PROYECTO,NOTAS&apos; ).
+    o_alv-&gt;set_field_text( campo = &apos;FECHA&apos; valor = &apos;F.Import&apos; ).
+    o_alv-&gt;set_field_text( campo = &apos;HORA&apos; valor = &apos;H.Import&apos; ).
+    o_alv-&gt;set_field_hotspot( campo = &apos;REQUEST_NUMBER,COPY&apos; auto = &apos;X&apos; ).
+    o_alv-&gt;set_field_hotspot( campo = &apos;PROYECTO,NOTAS&apos; valor = &apos;TEXT_EDT&apos; ).
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_noout( &apos;CHECK&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+  ENDMETHOD.
+
+  METHOD fill_selections.
+    DATA ls_selection   TYPE trwbo_selection.
+
+    DATA lv_system_name TYPE sy-sysid.
+    &quot; TODO: variable is assigned but never used (ABAP cleaner)
+    DATA lv_system_type TYPE sy-sysid.
+
+    DATA lv_sys_pattern TYPE e070-trkorr.
+
+    CLEAR rt_selections.
+
+    ls_selection-trkorrpattern               = space.
+    ls_selection-client                      = sy-mandt.
+
+    ls_selection-stdrequest                  = space.
+    ls_selection-connect_req_task_conditions = &apos;X&apos;.
+
+* Types of requests
+    ls_selection-reqfunctions(1)             = sctsc_type_workbench.
+    ls_selection-reqfunctions+1(1)           = sctsc_type_customizing.
+    ls_selection-reqfunctions+2(1)           = sctsc_type_transport.
+    ls_selection-reqfunctions+3(3)           = sctsc_types_relocations.
+    CONDENSE ls_selection-reqfunctions NO-GAPS.
+
+* Types of assigned tasks
+    ls_selection-taskfunctions   = sctsc_types_tasks.
+
+* Status of tasks
+*    IF trdyse01cm-sel_rt_icr = &apos; &apos;.
+*   Don&apos;t select released tasks in unreleased requests
+*      IF trdyse01cm-sel_chan = &apos;X&apos;.
+    ls_selection-taskstatus(1)   = sctsc_state_protected.
+    ls_selection-taskstatus+1(1) = sctsc_state_changeable.
+*      ENDIF.
+
+*      IF trdyse01cm-sel_rele = &apos;X&apos;.
+    ls_selection-taskstatus+2(1) = sctsc_state_released.
+    ls_selection-taskstatus+3(1) = sctsc_state_notconfirmed.
+*      ENDIF.
+    ls_selection-taskstatus+4(1) = sctsc_state_export_started.
+
+*   Free tasks are handled like tasks in requests
+    ls_selection-singletasks     = &apos;X&apos;.
+    ls_selection-freetasks_f     = ls_selection-taskfunctions.
+    ls_selection-freetasks_s     = ls_selection-taskstatus.
+
+*    ELSE.
+**   Select also released tasks in unreleased requests
+*      ls_selection-taskstatus      = sctsc_states_all.
+*
+**   Free tasks are handled like requests
+*      ls_selection-singletasks       = &apos;X&apos;.
+*      ls_selection-freetasks_f       = ls_selection-taskfunctions.
+*
+**   Status of free tasks (&apos;OPEN&apos; always)
+*      IF trdyse01cm-sel_chan = &apos;X&apos;.
+*        ls_selection-freetasks_s(1)   = sctsc_state_protected.
+*        ls_selection-freetasks_s+1(1) = sctsc_state_changeable.
+*      ENDIF.
+*      IF trdyse01cm-sel_rele = &apos;X&apos;.
+*        ls_selection-freetasks_s+2(1) = sctsc_state_released.
+*        ls_selection-freetasks_s+3(1) = sctsc_state_notconfirmed.
+*      ENDIF.
+*      ls_selection-freetasks_s+4(1)    = sctsc_state_export_started.
+*    ENDIF.
+
+* Status of requests
+*    IF  trdyse01cm-sel_chan = &apos;X&apos;
+*    AND trdyse01cm-sel_rele = &apos; &apos;.
+    ls_selection-reqstatus(1)    = sctsc_state_protected.
+    ls_selection-reqstatus+1(1)  = sctsc_state_changeable.
+    ls_selection-reqstatus+2(1)  = sctsc_state_export_started.
+    APPEND ls_selection TO rt_selections.
+*
+*    ELSEIF trdyse01cm-sel_chan = &apos; &apos;
+*    AND    trdyse01cm-sel_rele = &apos;X&apos;.
+    ls_selection-reqstatus(1)   = sctsc_state_released.
+    ls_selection-reqstatus+1(1) = sctsc_state_export_started.
+*
+*      IF NOT trdyse01cm-since_date IS INITIAL.
+*        ls_selection-fromdate = trdyse01cm-since_date.
+    ls_selection-fromdate       = sy-datum - p_dias.
+    ls_selection-todate         = sy-datum.
+*      ENDIF.
+    APPEND ls_selection TO rt_selections.
+*
+*    ELSEIF trdyse01cm-sel_chan = &apos;X&apos;
+*    AND    trdyse01cm-sel_rele = &apos;X&apos;.
+*      IF trdyse01cm-since_date IS INITIAL.
+*        ls_selection-reqstatus      = sctsc_states_all.
+*        APPEND ls_selection TO rt_selections.
+*      ELSE.
+*        ls_selection-reqstatus(1)   = sctsc_state_protected.
+*        ls_selection-reqstatus+1(1) = sctsc_state_changeable.
+*        ls_selection-reqstatus+2(1) = sctsc_state_export_started.
+*        ls_selection-freetasks_s    = ls_selection-reqstatus.
+*        APPEND ls_selection TO rt_selections.
+*
+*        ls_selection-taskstatus     = sctsc_state_released.
+*        ls_selection-reqstatus      = sctsc_state_released.
+*        ls_selection-freetasks_s    = ls_selection-reqstatus.
+*        ls_selection-fromdate       = trdyse01cm-since_date.
+*        ls_selection-todate         = sy-datum.
+*        APPEND ls_selection TO rt_selections.
+*      ENDIF.
+*    ENDIF.
+
+    CALL FUNCTION &apos;TR_SYS_PARAMS&apos;
+      IMPORTING
+        systemname = lv_system_name
+        systemtype = lv_system_type.
+
+    lv_sys_pattern(3)   = lv_system_name(3).
+    lv_sys_pattern+3(1) = &apos;%&apos;.
+
+    LOOP AT rt_selections INTO ls_selection.
+      IF     ls_selection-trkorrpattern  = space
+         AND ls_selection-reqfunctions  NA &apos;FDP&apos;.
+        ls_selection-trkorrpattern = lv_sys_pattern.
+        MODIFY rt_selections FROM ls_selection.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD liberar.
+    DATA ls_return TYPE bapiret2.
+
+    IF list-message = &apos;Prohibido liberar de momento&apos;.
+      MESSAGE list-message TYPE &apos;I&apos;.
+    ELSE.
+      CALL FUNCTION &apos;BAPI_CTREQUEST_RELEASE&apos;
+        EXPORTING
+          requestid = list-request_number
+          complete  = &apos;X&apos; &quot; Release request including tasks
+        IMPORTING
+          return    = ls_return.
+
+      IF ls_return-type IS INITIAL.
+        list-modifiable = `Liberada`.
+        APPEND list TO i_liberadas.
+        MESSAGE &apos;Se ha liberado la orden&apos; TYPE &apos;S&apos;.
+      ELSE.
+        MESSAGE ID ls_return-id TYPE ls_return-type NUMBER ls_return-number WITH ls_return-message_v1 ls_return-message_v2 ls_return-message_v3 ls_return-message_v4.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD activar.
+    DATA l_system       TYPE tmscsys-sysnam.
+    DATA lt_tr_requests TYPE TABLE OF tmsbuffer.
+
+* No tenemos implementado esta opción actualmente
+    RETURN.
+
+    IF sistema = &apos;CAL&apos;.
+      l_system = zcl_c=&gt;entorno_calidad.
+      &quot; TODO: variable is assigned but never used (ABAP cleaner)
+      DATA(l_clave) = |{ sy-uname }CLAVEQ|.
+    ELSEIF sistema = &apos;PRD&apos;.
+      l_system = zcl_c=&gt;entorno_produccion.
+      l_clave = |{ sy-uname }CLAVEP|.
+    ENDIF.
+
+    APPEND VALUE #( domnam = &apos;DOMAIN_D40&apos; sysnam = l_system trkorr = list-request_number trfunc = &apos;X&apos; actflg = &apos;X&apos; preflg = &apos;N&apos; comsys = sy-sysid srccli = sy-mandt ) TO lt_tr_requests.
+    CALL FUNCTION &apos;TMS_UI_MAINTAIN_TR_QUEUE&apos;
+      EXPORTING
+        iv_system      = l_system
+        iv_request     = list-request_number
+        iv_tarcli      = sy-mandt
+        iv_act_request = &apos;X&apos;
+        iv_verbose     = &apos;&apos;
+        iv_expert_mode = &apos;&apos;
+        it_requests    = lt_tr_requests
+      EXCEPTIONS
+        OTHERS         = 99.
+
+    IF sy-subrc = 0.
+      MESSAGE &apos;Se ha activado la orden&apos; TYPE &apos;S&apos;.
+    ELSE.
+      MESSAGE ID sy-msgid TYPE &apos;I&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD importar.
+    DATA l_system TYPE tmscsys-sysnam.
+
+    CLEAR cancelado.
+    IF sistema = &apos;CAL&apos;.
+      l_system = zcl_c=&gt;entorno_calidad.
+      DATA(l_clave) = |{ sy-uname }CLAVEQ|.
+    ELSEIF sistema = &apos;PRD&apos;.
+      l_system = zcl_c=&gt;entorno_produccion.
+      l_clave = |{ sy-uname }CLAVEP|.
+    ENDIF.
+
+    IF NOT l_clave IS INITIAL.
+
+      o_prog-&gt;string = zcl_ap_temp=&gt;get_st_valor1( clave = &apos;ZAP_OTS&apos; subclave = l_clave ).
+      IF NOT o_prog-&gt;string IS INITIAL.
+        zcl_ap_string=&gt;to_clipboard( string = o_prog-&gt;string ).
+        MESSAGE |Se copia en portapapeles clave { o_prog-&gt;string }| TYPE &apos;S&apos;.
+      ENDIF.
+    ENDIF.
+
+*    IF l_system = zcl_c=&gt;entorno_produccion OR l_system = zcl_c=&gt;entorno_calidad.
+*      activar( EXPORTING sistema = sistema CHANGING list = list ).
+*    ENDIF.
+
+*  if sy-cprog = &apos;ZAP_OTS&apos;.
+*    gs_dyn220-online = &apos;X&apos;.
+*    gs_dyn220-offline = &apos;&apos;.
+*    GS_DYN220-OVERTAKE = &apos;&apos;. &quot;Dejar_orden_transporte_en_la_cola_para_import_siguiente____
+*    GS_DYN220-IMP_AGAIN = &apos;&apos;. &quot;Importar_orden_de_transporte_otra_vez
+*    GS_DYN220-IGN_ORIG = &apos;&apos;. &quot;Sobrescribir_originales
+*    GS_DYN220-IGN_REP = &apos;&apos;. &quot;Sobrescribir_objetos_en_reparaciones_sin_confirmar
+*    GS_DYN220-IGN_TYP = &apos;&apos;. &quot;Ignorar_cl.transporte_no_permitida_
+*    GS_DYN220-IGN_TAB = &apos;&apos;. &quot;Ignorar_clase_de_tabla_no_permitida__
+*    GS_DYN220-IGN_PRE = &apos;&apos;. &quot;Ignorar_relaciones_predecesor__
+*    GS_DYN220-IGN_CVERS = &apos;X&apos;. &quot;Ignorar_versión_de_componente_no_adecuada___
+*    WTMSU-CLIENT = sy-mandt.
+*  endif.
+*
+    IF tmscdom-domnam IS INITIAL.
+      SELECT domnam FROM tmscdom                    &quot;#EC &quot;#EC CI_BYPASS
+        INTO CORRESPONDING FIELDS OF tmscdom
+      UP TO 1 ROWS
+      ORDER BY moddat DESCENDING.
+      ENDSELECT.
+    ENDIF.
+
+    CALL FUNCTION &apos;TMS_UI_IMPORT_TR_REQUEST&apos;
+      EXPORTING
+        iv_system             = l_system
+        iv_domain             = tmscdom-domnam
+        iv_request            = list-request_number
+        iv_tarcli             = sy-mandt
+        iv_some_active        = &apos;X&apos;
+        iv_verbose            = &apos;&apos;
+        iv_expert_mode        = &apos;&apos;
+        iv_check_strategy     = &apos;X&apos;
+      EXCEPTIONS
+        cancelled_by_user     = 1
+        import_request_denied = 2
+        import_request_failed = 3
+        OTHERS                = 4.
+
+    IF sy-subrc = 0.
+      COMMIT WORK AND WAIT.
+      MESSAGE &apos;Se ha importado la orden&apos; TYPE &apos;S&apos;.
+    ELSE.
+      cancelado = &apos;X&apos;.
+      IF sy-subrc &gt; 1.
+        IF sy-msgty IS INITIAL.
+          MESSAGE |Error { sy-subrc } importando orden| TYPE &apos;I&apos;.
+        ELSE.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #(
+    status        = &apos;INICIO_DYN&apos;
+    status_prog   = &apos;ZAP_STATUS&apos;
+    get_nombre_pc = &apos;X&apos;
+    no_param      = &apos;X&apos; ).
+
+  IF sy-uname = zcl_c=&gt;usuario_ap.
+    PERFORM add_button IN PROGRAM zap_status
+            USING &apos;M01&apos;
+                  &apos;Claves&apos;
+                  &apos;&apos;
+                  &apos;&apos;.
+  ENDIF.
+
+  o_alv = NEW #(
+    status             = &apos;STANDARD_ALV_DYN&apos;
+    status_prog        = &apos;ZAP_STATUS&apos;
+    top_of_page_auto   = &apos;X&apos;
+    top_of_page_titulo = &apos;X&apos;
+    color              = &apos;COLOR&apos; ).
+
+  p_vari = o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  TYPES: BEGIN OF t_cl,
+           subclave TYPE ztemp-subclave,
+           valor1   TYPE ztemp-valor1,
+         END OF t_cl.
+
+  DATA i_cl    TYPE TABLE OF t_cl.
+  DATA l_ucomm TYPE sy-ucomm.
+
+  CASE sy-ucomm.
+    WHEN &apos;M01&apos;.
+      i_cl = VALUE #( ( subclave = |{ sy-uname }CLAVED| ) ( subclave = |{ sy-uname }CLAVEQ| ) ( subclave = |{ sy-uname }CLAVEP| ) ).
+      LOOP AT i_cl ASSIGNING FIELD-SYMBOL(&lt;cl&gt;).
+        &lt;cl&gt;-valor1 = zcl_ap_temp=&gt;get_st_valor1( clave = &apos;ZAP_OTS&apos; subclave = &lt;cl&gt;-subclave ).
+      ENDLOOP.
+      CALL FUNCTION &apos;Z_POPUP_ALV_AP&apos;
+        EXPORTING
+          botones      = &apos;OK_CANCEL&apos;
+          campos_input = &apos;VALOR1&apos;
+        IMPORTING
+          ucomm        = l_ucomm
+        TABLES
+          t_datos      = i_cl.
+      IF l_ucomm = &apos;F01&apos;.
+        LOOP AT i_cl ASSIGNING &lt;cl&gt;.
+          zcl_ap_temp=&gt;set_st( clave = &apos;ZAP_OTS&apos; subclave = &lt;cl&gt;-subclave valor1 = &lt;cl&gt;-valor1 ).
+        ENDLOOP.
+      ENDIF.
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;main( ).
+
+  IF 0 = 1. &quot; Sólo para que no salga mensaje en ATC
+    DATA header TYPE trheader.
+    PERFORM f4_se09 CHANGING header.
+  ENDIF.
+
+* INCLUDE LSCTSREQFH1
+*FORM user_command_0110.
+*
+*  CASE sy-ucomm.
+*    WHEN &apos;AT_LINE_DELETE&apos;.
+*      PERFORM delete_attribute.
+*  ENDCASE.
+*
+*  if sy-ucomm = &apos;F4&apos; AND SY-UNAME = ZCL_C=&gt;USUARIO_aP.
+*    PERFORM f4_se09 IN PROGRAM ZAP_OTS CHANGING TRheader.
+*  ENDIF.
+*
+FORM f4_se09 CHANGING header TYPE trheader.
+*  DATA: o_popup TYPE REF TO zcl_ap_matchcode_z.
+*
+*  DATA: BEGIN OF i_textos OCCURS 0,
+*          as4text TYPE e07t-as4text,
+*        END OF i_textos.
+*
+*  SELECT as4text FROM e070 JOIN e07t ON e070~trkorr = e07t~trkorr
+*    UP TO 50 ROWS
+*    INTO TABLE @DATA(i_ots)
+*   WHERE as4user = @sy-uname
+*    ORDER BY as4date DESCENDING.
+*
+*  LOOP AT i_ots ASSIGNING FIELD-SYMBOL(&lt;ots&gt;).
+*    IF NOT line_exists( i_textos[ as4text = &lt;ots&gt;-as4text ] ).
+*      i_textos-as4text = &lt;ots&gt;-as4text.
+*      APPEND i_textos.
+*    ENDIF.
+*  ENDLOOP.
+*
+*
+*  CREATE OBJECT o_popup
+*    EXPORTING
+*      tabname = &apos;E07T&apos;.
+*
+*  o_popup-&gt;add_field( field = &apos;AS4TEXT&apos; selectflag = &apos;X&apos; ).
+*
+*  LOOP AT i_textos.
+*    o_popup-&gt;add_valor( i_textos-as4text ).
+*  ENDLOOP.
+*
+*  CLEAR i_textos.
+*  o_popup-&gt;matchcode( EXPORTING field   = &apos;AS4TEXT&apos;
+*                      CHANGING  valor   = i_textos ).
+*
+*  IF NOT i_textos IS INITIAL.
+*    header-as4text = i_textos.
+*  ENDIF.
+
+  PERFORM f4_se09_obj USING &apos;&apos;
+          CHANGING header-as4text.
+ENDFORM.
+
+
+*INCLUDE LSTR8F01
+*FORM user_command.
+*  DATA: lv_ok              TYPE c,
+*        lv_answer          TYPE c,
+*        lv_del_idx         TYPE i.
+*
+*  IF SY-UNAME = ZCL_C=&gt;USUARIO_AP AND KO013-AS4TEXT IS INITIAL.
+*    FIELD-SYMBOLS &lt;FS&gt;.
+*    ASSIGN (&apos;(SAPLSEDTATTR)TRDIR-NAME&apos;) TO &lt;FS&gt;.
+*    PERFORM f4_se09_OBJ IN PROGRAM ZAP_OTS USING &lt;FS&gt; CHANGING KO013-AS4TEXT.
+*  ENDIF.
+
+FORM f4_se09_obj USING    objeto      TYPE any
+                 CHANGING descripcion TYPE any.
+
+  DATA l_hoy   TYPE char10.
+  DATA o_popup TYPE REF TO zcl_ap_matchcode_z.
+
+  FIELD-SYMBOLS &lt;fs&gt;.
+
+  DATA: BEGIN OF i_ots OCCURS 0,
+          as4text  TYPE e07t-as4text,
+          as4date  TYPE e070-as4date,
+          obj_name TYPE e071-obj_name,
+        END OF i_ots.
+
+  DATA: l_objeto  TYPE string,
+        l_sistema TYPE string,
+        r_trkorr  TYPE RANGE OF e071-trkorr,
+        i_textos  LIKE i_ots OCCURS 0 WITH HEADER LINE.
+
+  IF NOT objeto IS INITIAL.
+    l_objeto = objeto.
+  ELSE.
+    ASSIGN (&apos;(SAPLSTRD)KO008-OBJ_NAME&apos;) TO &lt;fs&gt;.
+    IF sy-subrc = 0.
+      l_objeto = &lt;fs&gt;.
+    ENDIF.
+  ENDIF.
+
+  CONCATENATE sy-sysid &apos;%&apos; INTO l_sistema.
+
+  IF NOT l_objeto IS INITIAL.
+    SELECT trkorr FROM e071
+      INTO TABLE @DATA(i_ots_obj)
+      WHERE obj_name    = @l_objeto
+        AND trkorr   LIKE @l_sistema.
+    IF sy-subrc = 0.
+      LOOP AT i_ots_obj ASSIGNING FIELD-SYMBOL(&lt;obj&gt;).
+        APPEND VALUE #( option = &apos;EQ&apos; sign = &apos;I&apos; low = &lt;obj&gt;-trkorr ) TO r_trkorr.
+      ENDLOOP.
+
+      SELECT as4text as4date
+        FROM                              e070 JOIN e07t
+             ON e070~trkorr = e07t~trkorr
+        INTO CORRESPONDING FIELDS OF TABLE i_ots
+        WHERE as4user = sy-uname
+          AND (    e070~trkorr IN r_trkorr
+                OR strkorr     IN r_trkorr )
+        ORDER BY as4date DESCENDING.
+      LOOP AT i_ots ASSIGNING FIELD-SYMBOL(&lt;ots&gt;).
+        &lt;ots&gt;-obj_name = l_objeto.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+  SELECT as4text as4date
+    FROM                              e070 JOIN e07t
+         ON e070~trkorr = e07t~trkorr
+    UP TO 50 ROWS
+    APPENDING CORRESPONDING FIELDS OF TABLE i_ots
+    WHERE as4user        = sy-uname
+      AND e070~trkorr LIKE l_sistema
+    ORDER BY as4date DESCENDING.
+
+  LOOP AT i_ots ASSIGNING &lt;ots&gt;.
+    DATA(i_fechas) = zcl_ap_regexp=&gt;buscar_fechas( string = CONV #( &lt;ots&gt;-as4text ) ).
+    IF sy-subrc = 0.
+      WRITE sy-datum TO l_hoy.
+      LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(&lt;fecha&gt;).
+        REPLACE ALL OCCURRENCES OF &lt;fecha&gt; IN &lt;ots&gt;-as4text WITH l_hoy.
+      ENDLOOP.
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT i_ots ASSIGNING &lt;ots&gt;.
+    IF NOT line_exists( i_textos[ as4text = &lt;ots&gt;-as4text ] ).
+      APPEND &lt;ots&gt; TO i_textos.
+    ENDIF.
+  ENDLOOP.
+
+  SORT i_textos BY obj_name DESCENDING
+                   as4date DESCENDING.
+
+  o_popup = NEW #(
+    tabname = &apos;E07T&apos; ).
+
+  o_popup-&gt;add_field( field = &apos;AS4TEXT&apos; selectflag = &apos;X&apos; ).
+  o_popup-&gt;add_field( field = &apos;AS4DATE&apos; tabname = &apos;E070&apos; ).
+  o_popup-&gt;add_field( field = &apos;OBJ_NAME&apos; tabname = &apos;E071&apos; ).
+
+  LOOP AT i_textos.
+    o_popup-&gt;add_valor( i_textos-as4text ).
+    o_popup-&gt;add_valor( i_textos-as4date ).
+    o_popup-&gt;add_valor( i_textos-obj_name ).
+  ENDLOOP.
+
+  CLEAR i_textos.
+  o_popup-&gt;matchcode( EXPORTING field = &apos;AS4TEXT&apos;
+                      CHANGING  valor = i_textos ).
+
+  IF NOT i_textos IS INITIAL.
+    descripcion = i_textos.
+  ENDIF.
+ENDFORM.</source>
+</PROG>

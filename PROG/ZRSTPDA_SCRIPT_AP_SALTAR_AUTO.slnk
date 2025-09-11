@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZRSTPDA_SCRIPT_AP_SALTAR_AUTO" VARCL="X" DBAPL="S" SUBC="S" APPL="X" RMAND="100" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Saltar autorizaciones" LENGTH="21 "/>
+  </language>
+ </textPool>
+ <source>*&lt;SCRIPT:PERSISTENT&gt;
+* Script que permite saltar autorizaciones
+REPORT  ZRSTPDA_SCRIPT_AP_SALTAR_AUTO.
+
+*&lt;SCRIPT:HEADER&gt;
+*&lt;SCRIPTNAME&gt;RSTPDA_SCRIPT_TEMPLATE&lt;/SCRIPTNAME&gt;
+*&lt;SCRIPT_CLASS&gt;LCL_DEBUGGER_SCRIPT&lt;/SCRIPT_CLASS&gt;
+*&lt;SCRIPT_COMMENT&gt;Debugger Skript: Default Template&lt;/SCRIPT_COMMENT&gt;
+*&lt;SINGLE_STEP&gt;X&lt;/SINGLE_STEP&gt;
+
+*&lt;/SCRIPT:HEADER&gt;
+
+*&lt;SCRIPT:PRESETTINGS&gt;
+
+*&lt;/SCRIPT:PRESETTINGS&gt;
+
+*&lt;SCRIPT:SCRIPT_CLASS&gt;
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script DEFINITION INHERITING FROM  cl_tpda_script_class_super  .
+
+  PUBLIC SECTION.
+    METHODS: prologue  REDEFINITION,
+             init    REDEFINITION,
+             script  REDEFINITION,
+             end     REDEFINITION.
+
+ENDCLASS.                    &quot;lcl_debugger_script DEFINITION
+*---------------------------------------------------------------------*
+*       CLASS lcl_debugger_script IMPLEMENTATION
+*---------------------------------------------------------------------*
+*
+*---------------------------------------------------------------------*
+CLASS lcl_debugger_script IMPLEMENTATION.
+  METHOD prologue.
+*** generate abap_source (source handler for ABAP)
+    super-&gt;prologue( ).
+  ENDMETHOD.                    &quot;prolog
+
+  METHOD init.
+*** insert your initialization code here
+  ENDMETHOD.                    &quot;init
+  METHOD script.
+
+
+************************************************* debugger commands (p_command):
+* Step into(F5)   -&gt; CL_TPDA_SCRIPT_DEBUGGER_CTRL=&gt;DEBUG_STEP_INTO
+* Execute(F6)     -&gt; CL_TPDA_SCRIPT_DEBUGGER_CTRL=&gt;DEBUG_STEP_OVER
+* Return(F7)      -&gt; CL_TPDA_SCRIPT_DEBUGGER_CTRL=&gt;DEBUG_STEP_OUT
+* Continue(F8)    -&gt; CL_TPDA_SCRIPT_DEBUGGER_CTRL=&gt;DEBUG_CONTINUE
+******************************************************************************************************************
+*Interface (CLASS = CL_TPDA_SCRIPT_DEBUGGER_CTRL / METHOD = DEBUG_STEP )
+*Importing*        REFERENCE( P_COMMAND ) TYPE I
+****************************************************************
+  TRY.
+    CALL METHOD debugger_controller-&gt;debug_step
+       EXPORTING   p_command = cl_tpda_script_debugger_ctrl=&gt;debug_step_over.
+    CATCH cx_tpda_scr_rtctrl_status .
+      CATCH cx_tpda_scr_rtctrl .
+  ENDTRY.
+
+*****************************************************************
+*Interface (CLASS = CL_TPDA_SCRIPT_DATA_DESCR / METHOD = CHANGE_VALUE )
+*Importing*        REFERENCE( P_NEW_VALUE ) TYPE STRING
+*        REFERENCE( P_OFFSET ) TYPE I
+*        REFERENCE( P_LENGTH ) TYPE I
+*        REFERENCE( P_VARNAME ) TYPE STRING
+****************************************************************
+   TRY.
+     CALL METHOD cl_tpda_script_data_descr=&gt;change_value
+       EXPORTING p_new_value = &apos;0&apos;
+*                p_offset    = -1
+*                p_length    = -1
+                 p_varname   = &apos;sy-subrc&apos;.
+   CATCH cx_tpda_varname .
+     CATCH cx_tpda_scr_auth .
+   ENDTRY.
+
+  ENDMETHOD.                    &quot;script
+  METHOD end.
+*** insert your code which shall be executed at the end of the scripting (before trace is saved)
+*** here
+
+  ENDMETHOD.                    &quot;end
+ENDCLASS.                    &quot;lcl_debugger_script IMPLEMENTATION
+*&lt;/SCRIPT:SCRIPT_CLASS&gt;
+
+*&lt;/SCRIPT:PERSISTENT&gt;</source>
+</PROG>

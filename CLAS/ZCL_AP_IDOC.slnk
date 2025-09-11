@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_AP_IDOC" VERSION="1" LANGU="S" DESCRIPT="Gestión de IDOCS" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <types CLSNAME="ZCL_AP_IDOC" CMPNAME="T_CAMBIOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="10 " SRCCOLUMN1="4 " SRCROW2="14 " SRCCOLUMN2="26 " TYPESRC_LENG="153 " TYPESRC="BEGIN OF t_cambios,
+             segmento TYPE string,
+             campo    TYPE string,
+             valor    TYPE string,
+           END OF t_cambios
+"/>
+ <types CLSNAME="ZCL_AP_IDOC" CMPNAME="TT_CAMBIOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="16 " SRCCOLUMN1="4 " SRCROW2="16 " SRCCOLUMN2="70 " TYPESRC_LENG="68 " TYPESRC="tt_cambios TYPE STANDARD TABLE OF t_cambios WITH KEY segmento campo
+"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <typeUsage CLSNAME="ZCL_AP_IDOC" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
+ <forwardDeclaration>ABAP</forwardDeclaration>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="BORRAR" VERSION="1" LANGU="S" DESCRIPT="Borra" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="BORRAR" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EDIDC-DOCNUM"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="BORRAR" SCONAME="MOSTRAR_ERRORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="BORRAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar.
+    DATA l_docnum TYPE edidc-docnum.
+
+    l_docnum = docnum.
+    CALL FUNCTION &apos;EDI_DOCUMENT_DELETE&apos;
+      EXPORTING
+        document_number        = l_docnum
+      EXCEPTIONS
+        idoc_does_not_exist    = 1
+        document_foreign_lock  = 2
+        idoc_cannot_be_deleted = 3
+        not_all_tables_deleted = 4
+        OTHERS                 = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_errores = &apos;X&apos;.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+               WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="COPIAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="COPIAR" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EDIDC-DOCNUM"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="COPIAR" SCONAME="I_CAMBIOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TT_CAMBIOS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="COPIAR" SCONAME="NUEVO_IDOC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="EDIDC-DOCNUM"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="COPIAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD copiar.
+    DATA: edidc   TYPE edidc,
+          i_edidc TYPE TABLE OF edidc,
+          i_edidd TYPE TABLE OF edidd.
+
+    CLEAR: nuevo_idoc, message.
+    SELECT SINGLE * FROM edidc
+    INTO edidc
+    WHERE docnum = docnum.
+    IF sy-subrc NE 0.
+      message = &apos;No existe el IDOC origen&apos;.
+      RETURN.
+    ENDIF.
+
+    SELECT * FROM edid4
+    INTO CORRESPONDING FIELDS OF TABLE i_edidd
+    WHERE docnum = docnum.
+    IF sy-subrc NE 0.
+      message = &apos;IDOC origen sin datos&apos;.
+    ENDIF.
+
+    DATA lo_struct_ref TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=&gt;component_table.
+    DATA lo_wa TYPE REF TO cl_abap_structdescr.
+    DATA e_workarea TYPE REF TO data.
+
+    FIELD-SYMBOLS: &lt;datos&gt; TYPE any,
+                   &lt;dato&gt;  TYPE any.
+
+
+    LOOP AT i_cambios ASSIGNING FIELD-SYMBOL(&lt;cambios&gt;).
+      lo_struct_ref ?= cl_abap_typedescr=&gt;describe_by_name( &lt;cambios&gt;-segmento ).
+      lt_components = lo_struct_ref-&gt;get_components( ).
+      TRY.
+          lo_wa = cl_abap_structdescr=&gt;create( lt_components ).
+          CREATE DATA e_workarea TYPE HANDLE lo_wa.
+
+          ASSIGN e_workarea-&gt;* TO &lt;datos&gt;.
+
+          LOOP AT i_edidd ASSIGNING FIELD-SYMBOL(&lt;eddic&gt;) WHERE segnam = &lt;cambios&gt;-segmento.
+            &lt;datos&gt; = &lt;eddic&gt;-sdata.
+            ASSIGN COMPONENT &lt;cambios&gt;-campo OF STRUCTURE &lt;datos&gt; TO &lt;dato&gt;.
+            IF sy-subrc = 0.
+              &lt;dato&gt; = &lt;cambios&gt;-valor.
+              &lt;eddic&gt;-sdata = &lt;datos&gt;.
+            ENDIF.
+          ENDLOOP.
+
+        CATCH cx_sy_struct_creation INTO DATA(lo_error).
+          message = lo_error-&gt;get_text( ).
+      ENDTRY.
+    ENDLOOP.
+
+    clear: edidc-status, edidc-UPDDAT, edidc-UPDTIM.
+    edidc-CREDAT = sy-datum.
+    edidc-CRETIM = sy-uzeit.
+
+    CALL FUNCTION &apos;MASTER_IDOC_DISTRIBUTE&apos;
+      EXPORTING
+        master_idoc_control            = edidc
+      TABLES
+        communication_idoc_control     = i_edidc
+        master_idoc_data               = i_edidd
+      EXCEPTIONS
+        error_in_idoc_control          = 1
+        error_writing_idoc_status      = 2
+        error_in_idoc_data             = 3
+        sending_logical_system_unknown = 4
+        OTHERS                         = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+             WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      READ TABLE i_edidc ASSIGNING FIELD-SYMBOL(&lt;edidc&gt;) INDEX 1.
+      IF sy-subrc = 0.
+        nuevo_idoc = &lt;edidc&gt;-docnum.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="EJECUTAR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="EJECUTAR" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EDIDC-DOCNUM"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="EJECUTAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD ejecutar.
+
+    CLEAR message.
+
+    CALL FUNCTION &apos;IDOC_MANUAL_INPUT&apos;
+      EXPORTING
+        idoc_number                  = docnum
+        input_exception              = &apos;0&apos;
+        no_dialog                    = &apos;X&apos;
+      EXCEPTIONS
+        idoc_not_in_database         = 1
+        no_input_function_found      = 2
+        no_function_parameters_found = 3
+        no_status_record_found       = 4
+        no_authorization             = 5
+        OTHERS                       = 6.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      IF message = &apos;S::000&apos;. CLEAR message. ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" VERSION="1" LANGU="S" DESCRIPT="Recupera el primer valor informado" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" SCONAME="SEGMENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" SCONAME="INI_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_PRIMER_VALOR_INFORMADO" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Datos de la aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="0" TYPTYPE="1" TYPE="ANY"/>
+  <source>METHOD get_primer_valor_informado.
+    DATA: i_datos TYPE TABLE OF edid4,
+          l_dato  TYPE edid4.
+
+    CLEAR valor.
+    SELECT * FROM edid4
+      INTO TABLE i_datos
+     WHERE docnum = docnum
+       AND segnam = segmento.
+
+    LOOP AT i_datos INTO l_dato.
+      valor = zcl_ap_fs=&gt;get_valor_from_struc( estructura = segmento campo = campo datos = l_dato-sdata ).
+      IF NOT valor IS INITIAL.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO" VERSION="1" LANGU="S" DESCRIPT="Recupera segmento" EXPOSURE="2" STATE="1" EDITORDER="3 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO" SCONAME="SEGMENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO" SCONAME="INI_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO" SCONAME="DATOS" VERSION="1" LANGU="S" DESCRIPT="Datos de la aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EDID4-SDATA"/>
+  <source>METHOD get_segmento.
+    DATA: l_long TYPE i.
+    __data_set_vart edid4.
+
+    CLEAR datos.
+
+    IF ini_datos IS INITIAL.
+      SELECT SINGLE * FROM edid4
+        INTO l_edid4
+       WHERE docnum = docnum
+         AND segnam = segmento.
+      IF sy-subrc = 0.
+        datos = l_edid4-sdata.
+      ENDIF.
+    ELSE.
+      l_long = strlen( ini_datos ).
+      SELECT * FROM edid4
+        INTO TABLE i_edid4
+       WHERE docnum = docnum
+         AND segnam = segmento.
+
+      LOOP AT i_edid4 ASSIGNING &lt;edid4&gt;.
+        IF &lt;edid4&gt;-sdata(l_long) = ini_datos.
+          datos = &lt;edid4&gt;-sdata.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" VERSION="1" LANGU="S" DESCRIPT="Recupera segmento de memoria" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" SCONAME="SEGMENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" SCONAME="INI_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" SCONAME="IDOC_DATA" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla p.registro datos IDoc (EDIDD)" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="IDOC_DATA"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" SCONAME="PSGNUM" VERSION="1" LANGU="S" DESCRIPT="Número del segmento SAP superior" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EDID4-PSGNUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_SEGMENTO_MEM" SCONAME="DATOS" VERSION="1" LANGU="S" DESCRIPT="Datos de la aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="EDID4-SDATA"/>
+  <source>METHOD get_segmento_mem.
+    DATA: l_sdata  TYPE edid4-sdata,
+          r_rango  TYPE RANGE OF string,
+          lr_rango LIKE LINE OF r_rango.
+
+    FIELD-SYMBOLS &lt;data&gt; TYPE edidd.
+
+    CLEAR datos.
+
+    IF NOT ini_datos IS INITIAL.
+      CLEAR lr_rango.
+      lr_rango-option = &apos;CP&apos;.
+      lr_rango-sign = &apos;I&apos;.
+      CONCATENATE ini_datos &apos;*&apos; INTO lr_rango-low.
+      APPEND lr_rango TO r_rango.
+    ENDIF.
+
+    LOOP AT idoc_data ASSIGNING &lt;data&gt; WHERE segnam = segmento
+                                         AND psgnum   = psgnum
+                                         AND sdata    IN r_rango.
+      EXIT.
+    ENDLOOP.
+    IF sy-subrc NE 0.
+      LOOP AT idoc_data ASSIGNING &lt;data&gt; WHERE segnam = segmento
+                                           AND segnum   = psgnum
+                                           AND sdata    IN r_rango.
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+    IF &lt;data&gt; IS ASSIGNED.
+      datos = &lt;data&gt;-sdata.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" VERSION="1" LANGU="S" DESCRIPT="Recupera valor" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" SCONAME="SEGMENTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" SCONAME="INI_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="GET_VALOR" SCONAME="VALOR" VERSION="1" LANGU="S" DESCRIPT="Datos de la aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
+  <source>METHOD get_valor.
+    DATA l_datos TYPE edid4-sdata.
+
+    l_datos = get_segmento( docnum = docnum segmento = segmento ini_datos = ini_datos ).
+
+    IF NOT l_datos IS INITIAL.
+      valor = zcl_ap_fs=&gt;get_valor_from_struc( estructura = segmento campo = campo datos = l_datos ).
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_IDOC" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="VISUALIZAR" SCONAME="DOCNUM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EDIDC-DOCNUM"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="VISUALIZAR" SCONAME="MOSTRAR_ERRORES" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_IDOC" CMPNAME="VISUALIZAR" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD visualizar.
+    DATA l_docnum TYPE edidc-docnum.
+
+    l_docnum = docnum.
+
+    CALL FUNCTION &apos;EDI_DOCUMENT_DATA_DISPLAY&apos;
+      EXPORTING
+        docnum               = l_docnum
+      EXCEPTIONS
+        no_data_record_found = 1
+        OTHERS               = 2.
+
+    IF sy-subrc &lt;&gt; 0.
+      IF mostrar_errores = &apos;X&apos;.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ELSE.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+               WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
+</CLAS>

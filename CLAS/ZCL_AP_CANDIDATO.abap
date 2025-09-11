@@ -1,0 +1,582 @@
+class ZCL_AP_CANDIDATO definition
+  public
+  create public .
+
+public section.
+
+  data DATOS_BASICOS type ZEST_EMPLEADO .
+  constants OP_CREATE type PSPAR-ACTIO value 'INS' ##NO_TEXT.
+  constants OP_CHANGE type PSPAR-ACTIO value 'MOD' ##NO_TEXT.
+  data RETURN type BAPIRETURN1 .
+  constants C_MOLGA type MOLGA value '04' ##NO_TEXT.
+  data CANDIDATO type ZEST_CANDIDATO .
+
+  methods CONSTRUCTOR
+    importing
+      !PERNR type PB0001-PERNR optional
+      !BEGDA type PB0001-BEGDA default SY-DATUM
+      !ENDDA type PB0001-ENDDA default SY-DATUM .
+  class-methods GET_NOMBRE
+    importing
+      !PERNR type PA0001-PERNR
+      !BEGDA type PA0001-BEGDA default SY-DATUM
+      !ENDDA type PA0001-ENDDA default SY-DATUM
+    returning
+      value(NOMBRE) type PA0001-ENAME .
+  class-methods VISUALIZAR_ST
+    importing
+      !APLNO type PB0001-PERNR
+      !BEGDA type PA0001-BEGDA default SY-DATUM
+      !ENDDA type PA0001-ENDDA default SY-DATUM
+      !INFOTIPO type P0001-INFTY optional
+      !SUBTIPO type P0001-SUBTY optional
+      !RESUMEN type ABAP_BOOL default ''
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+  class-methods GET_COMUNICACION_ST
+    importing
+      !PERNR type PA0000-PERNR optional
+      !SUBTY type PA0105-SUBTY optional
+      !BEGDA type PA0000-BEGDA default SY-DATUM
+      !ENDDA type PA0000-ENDDA default SY-DATUM
+    preferred parameter PERNR
+    returning
+      value(USRID) type PA0105-USRID_LONG .
+  methods CREAR_CUALIFICACION
+    importing
+      !OTYPE type HRP1000-OTYPE
+      !OBJID type HRP1000-OBJID
+      !BEGDA type HRP1000-BEGDA
+      !ENDDA type HRP1000-ENDDA
+      !RATING type BAPIQUALIFIC_TAB-RATING
+    returning
+      value(RETURN) type BAPIRETURN1 .
+  class-methods GET_EMAIL
+    importing
+      !PERNR type PA0001-PERNR optional
+      !UNAME type SY-UNAME optional
+    returning
+      value(EMAIL) type STRING .
+  class-methods GET_EDAD
+    importing
+      !PERNR type PERSNO
+      !FECHA type DATS default SY-DATUM
+    returning
+      value(EDAD) type EMPL_AGE .
+  methods CAMBIAR_CANDIDATO
+    importing
+      !PERNR type PB0001-PERNR
+      !BEGDA type PB0001-BEGDA default SY-DATUM
+      !ENDDA type PB0001-ENDDA default SY-DATUM .
+  methods INICIO .
+  class-methods GET_DATOS_BASICOS
+    importing
+      !PERNR type PB0001-PERNR
+      !BEGDA type PB0001-BEGDA default SY-DATUM
+      !ENDDA type PB0001-ENDDA default SY-DATUM
+    returning
+      value(DATOS_BASICOS) type ZEST_EMPLEADO .
+  class-methods GET_DATOS_AMPLIADOS
+    importing
+      !PERNR type PB0001-PERNR
+      !BEGDA type PB0001-BEGDA default SY-DATUM
+      !ENDDA type PB0001-ENDDA default SY-DATUM
+    returning
+      value(DATOS) type ZEST_EMPL_MAS .
+  class-methods GET_NUM_EMPLEADO
+    importing
+      !FECHA type D default SY-DATUM
+      value(APLNO) type APLNO optional
+    preferred parameter APLNO
+    returning
+      value(PERNR) type PERSNO .
+  class-methods GET_DATOS_CANDIDATO_ST
+    importing
+      !APLNO type APPLICANT-APLNO
+      !FECHA type P4000-BEGDA default SY-DATUM
+    returning
+      value(CANDIDATO) type ZEST_CANDIDATO .
+  class-methods BORRAR_CANDIDATO_ST
+    importing
+      !APLNO type APPLICANT-APLNO
+    returning
+      value(MENSAJE) type BAPIRETURN1-MESSAGE .
+protected section.
+
+  class-methods GET_DESC_MEDIDA_ST
+    importing
+      !MASSN type P4000-MASSN
+    returning
+      value(MNTXT) type T751F-MNTXT .
+  class-methods GET_DESC_STATUS_ST
+    importing
+      !APSTA type P4000-APSTA
+    returning
+      value(STATX) type T751B-STATX .
+  class-methods GET_DESC_MOTIVO_ST
+    importing
+      !STREA type P4000-STREA
+    returning
+      value(REATX) type T751C-REATX .
+private section.
+
+  data O_EMPLEADO type ref to CL_PT_EMPLOYEE .
+  data I_P0000 type TIM_P0000_TAB .
+  data I_P0001 type TIM_P0001_TAB .
+  data I_P0002 type TIM_P0002_TAB .
+  data I_P0007 type TIM_P0007_TAB .
+  data I_P0008 type TIM_P0008_TAB .
+  data PERNR type PA0000-PERNR .
+  data BEGDA type PA0000-BEGDA .
+  data ENDDA type PA0000-ENDDA .
+endclass. "ZCL_AP_CANDIDATO definition
+class ZCL_AP_CANDIDATO implementation.
+METHOD borrar_candidato_st.
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+  CREATE OBJECT o_bi.
+
+* Pantalla acceso PB30
+  o_bi->dynpro( program = 'SAPMP50A' dynpro = '4000').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '=PU90').
+  o_bi->campos( campo = 'RPAPP-APLNO' valor = aplno ). " Nº candidato
+
+* Delete Personnel Number (List Screen PU00)
+  o_bi->dynpro( program = 'SAPMP50D' dynpro = '1000').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '=MARK').
+
+* Delete Personnel Number (List Screen PU00)
+  o_bi->dynpro( program = 'SAPMP50D' dynpro = '1000').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '=DEL').
+
+* POPUP_TO_CONFIRM sólo con texto de pregunta
+  o_bi->dynpro( program = 'SAPLSPO1' dynpro = '0500').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '=OPT1').
+
+* Pantalla acceso PB30
+  o_bi->dynpro( program = 'SAPMP50A' dynpro = '4000').
+  o_bi->campos( campo = 'BDC_OKCODE' valor = '/EBCK').
+
+  mensaje = o_bi->llamar_transaccion( tcode = 'PB30' modo = 'N').
+
+ENDMETHOD.
+method CAMBIAR_CANDIDATO.
+
+  inicio( ).
+
+  me->pernr = pernr.
+  me->begda = begda.
+  me->endda = endda.
+
+
+endmethod.
+method CONSTRUCTOR.
+
+  cambiar_candidato( pernr = pernr
+                     begda = begda
+                     endda = endda ).
+
+endmethod.
+method CREAR_CUALIFICACION.
+  DATA: l_return TYPE  bapireturn1,
+        l_otype  TYPE  bapiqualific-otype, "Tp.objeto
+        l_sobid  TYPE  bapiqualific-sobid. "ID del objeto vinculado
+
+* Estructura BAPI cualificac.(tabla perfiles)
+  DATA: i_profile_add TYPE STANDARD TABLE OF bapiqualific_tab,
+        l_profile TYPE bapiqualific_tab,
+* Estructura BAPI cualificac.(tabla perfiles)
+       i_profile_delete TYPE STANDARD TABLE OF bapiqualific_tab.
+
+  CLEAR: l_profile, i_profile_add.
+  l_profile-obj_id = objid.
+  l_profile-begda = begda.
+  l_profile-endda = endda.
+  l_profile-rating = rating.
+  l_profile-user_name = sy-uname.
+  APPEND l_profile TO i_profile_add.
+
+  l_sobid = me->pernr.
+
+  CALL FUNCTION 'BAPI_QUALIPROF_CHANGE'
+    EXPORTING
+      plvar          = '01'
+      otype          = 'AP'
+      sobid          = l_sobid
+    IMPORTING
+      return         = return
+    TABLES
+      profile_add    = i_profile_add
+      profile_delete = i_profile_delete.
+
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    EXPORTING
+      wait = 'X'.
+
+endmethod.
+method GET_COMUNICACION_ST.
+data l_usrid type pa0105-usrid.
+
+  CLEAR usrid.
+  SELECT SINGLE usrid USRID_LONG FROM pa0105
+    INTO (l_usrid, usrid)
+   WHERE pernr = pernr
+     AND subty = subty
+     AND begda <= endda
+     AND endda >= begda.
+
+  if usrid is initial and not l_usrid is initial.
+    usrid = l_usrid.
+  endif.
+
+endmethod.
+METHOD get_datos_ampliados.
+  DATA: l_datos_basicos TYPE zest_empleado,
+        l_pb0001        TYPE pb0001,
+        l_pb0002        TYPE pb0002,
+        l_pb0006        TYPE pb0006.
+
+  l_datos_basicos = get_datos_basicos( pernr = pernr
+                                       begda = begda
+                                       endda = endda ).
+  CLEAR datos.
+  MOVE-CORRESPONDING l_datos_basicos TO datos.
+
+  SELECT ansvh FROM pb0001
+  INTO l_pb0001-ansvh
+    UP TO 1 ROWS
+   WHERE pernr = pernr
+     AND begda <= endda
+     AND endda >= begda
+   ORDER BY endda DESCENDING.
+  ENDSELECT.
+  IF sy-subrc = 0.
+    datos-ansvh = l_pb0001-ansvh.
+    SELECT SINGLE atx FROM t542t
+      INTO datos-atx
+     WHERE spras = sy-langu
+       AND molga = c_molga
+       AND ansvh = l_pb0001-ansvh.
+  ENDIF.
+
+  SELECT famst gbdat gesch natio perid FROM pb0002
+  INTO CORRESPONDING FIELDS OF l_pb0002
+    UP TO 1 ROWS
+   WHERE pernr = pernr
+     AND begda <= endda
+     AND endda >= begda
+   ORDER BY endda DESCENDING.
+  ENDSELECT.
+  IF sy-subrc = 0.
+    datos-nif = l_pb0002-perid+2(13).
+    datos-gbdat = l_pb0002-gbdat.
+    datos-natio = l_pb0002-natio.
+    SELECT SINGLE natio FROM  t005t
+      INTO datos-natio_t
+     WHERE spras  = sy-langu
+       AND land1  = l_pb0002-natio.
+    datos-famst = l_pb0002-famst.
+    CASE l_pb0002-famst.
+      WHEN '0'. datos-fatxt = 'Soltero'(sol).
+      WHEN '1'. datos-fatxt = 'Casado'(cas).
+      WHEN '2'. datos-fatxt = 'Viudo'(viu).
+      WHEN '3'. datos-fatxt = 'Divorciado'(div).
+      WHEN '5'. datos-fatxt = 'Separado'(sep).
+      WHEN '6'. datos-fatxt = 'Pareja de hecho'(phe).
+    ENDCASE.
+    datos-gesch = l_pb0002-gesch.
+    datos-gesch_t = zcl_ap_utils=>get_texto_dominio( dominio = 'GESCH' valor = datos-gesch ).
+  ENDIF.
+
+  SELECT telnr FROM pb0006
+  INTO l_pb0006-telnr
+    UP TO 1 ROWS
+   WHERE pernr = pernr
+     AND begda <= endda
+     AND endda >= begda
+   ORDER BY endda DESCENDING.
+  ENDSELECT.
+  IF sy-subrc = 0.
+    datos-telnr = l_pb0006-telnr.
+  ENDIF.
+
+  datos-aplno = get_num_empleado( aplno = pernr ).
+
+
+ENDMETHOD.
+METHOD get_datos_basicos.
+
+  CLEAR datos_basicos.
+  SELECT * FROM pb0001
+  INTO CORRESPONDING FIELDS OF datos_basicos
+    UP TO 1 ROWS
+   WHERE pernr = pernr
+     AND begda <= endda
+     AND endda >= begda
+   ORDER BY endda DESCENDING.
+  ENDSELECT.
+  IF sy-subrc = 0.
+    SELECT SINGLE name1 FROM  t500p
+      INTO datos_basicos-pbtxt
+         WHERE  persa  = datos_basicos-werks.
+
+    SELECT orgtx FROM  t527x
+      INTO datos_basicos-orgtx
+      UP TO 1 ROWS
+           WHERE  sprsl  = sy-langu
+         AND    orgeh  = datos_basicos-orgeh
+           AND    endda  >= begda
+           AND    begda  <= endda
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+    SELECT plstx FROM  t528t
+      INTO datos_basicos-plstx
+      UP TO 1 ROWS
+     WHERE sprsl  = sy-langu
+       AND otype  = 'S'
+       AND plans  = datos_basicos-plans
+       AND endda  >= begda
+       AND begda  <= endda
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+
+    SELECT stltx FROM  t513s
+      INTO datos_basicos-stltx
+     WHERE sprsl  = sy-langu
+       AND stell  = datos_basicos-stell
+         AND endda  >= begda
+         AND begda  <= endda.
+    ENDSELECT.
+    IF sy-subrc NE 0.
+      SELECT stltx FROM  t513s
+        INTO datos_basicos-stltx
+        UP TO 1 ROWS
+       WHERE sprsl  = sy-langu
+         AND stell  = datos_basicos-stell
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+      IF sy-subrc NE 0.
+        SELECT stext FROM hrp1000
+          INTO datos_basicos-stltx
+          UP TO 1 ROWS
+         WHERE plvar = '01'
+           AND otype = 'C'
+           AND objid = datos_basicos-stell
+         ORDER BY PRIMARY KEY.
+        ENDSELECT.
+      ENDIF.
+    ENDIF.
+
+    CLEAR datos_basicos-persk.
+*    SELECT SINGLE  txtty FROM  t750f
+*          INTO datos_basicos-ptext
+*           WHERE  langu  = sy-langu
+*           AND    aptyp  = datos_basicos-persk.
+
+    SELECT SINGLE ptext FROM  t501t
+      INTO datos_basicos-pgtxt
+     WHERE sprsl  = sy-langu
+       AND persg  = datos_basicos-persg.
+
+    SELECT ktext FROM  cskt
+      INTO datos_basicos-ktext
+           WHERE  spras  = sy-langu
+           AND    kokrs  = zcl_c=>plan_cuentas
+           AND    kostl  = datos_basicos-kostl.
+    ENDSELECT.
+
+    SELECT SINGLE btext FROM  t001p
+      INTO datos_basicos-btext
+     WHERE werks  = datos_basicos-werks
+       AND btrtl  = datos_basicos-btrtl.
+
+  ENDIF.
+
+ENDMETHOD.
+method GET_DATOS_CANDIDATO_ST.
+
+  clear candidato.
+  select single pernr ename from pb0001
+    into (candidato-aplno, candidato-ename)
+   where pernr = aplno
+     and endda >= fecha
+     and begda <= fecha.
+  if sy-subrc ne 0.
+    select single pernr ename from pb0001
+      into (candidato-aplno, candidato-ename)
+     where pernr = aplno.
+  endif.
+
+  select single massn apsta strea from pb4000
+    into (candidato-massn, candidato-apsta, candidato-strea)
+   where pernr = aplno
+     and endda >= fecha
+     and begda <= fecha.
+  if sy-subrc = 0.
+    candidato-mntxt = get_desc_medida_st( candidato-massn ).
+    candidato-statx = get_desc_status_st( candidato-apsta ).
+    candidato-reatx = get_desc_motivo_st( candidato-strea ).
+  endif.
+
+
+
+endmethod.
+method GET_DESC_MEDIDA_ST.
+
+  clear MNTXT.
+  select single mntxt from  t751f
+    into mntxt
+   where sprsl  = sy-langu
+     and massn  = massn.
+
+endmethod.
+method GET_DESC_MOTIVO_ST.
+
+  clear reatx.
+  select single reatx from  t751c
+    into reatx
+   where langu  = sy-langu
+     and strea  = strea.
+
+endmethod.
+method GET_DESC_STATUS_ST.
+
+  clear statx.
+  select single statx from  t751b
+    into statx
+   where langu  = sy-langu
+     and apsta  = apsta.
+
+endmethod.
+METHOD get_edad.
+  DATA: l_gbdat TYPE gbdat,
+        l_anyos TYPE char4.
+
+  SELECT gbdat FROM pa0002
+    INTO l_gbdat
+   WHERE pernr = pernr.
+  ENDSELECT.
+
+  IF NOT l_gbdat IS INITIAL.
+    CALL FUNCTION 'EHS_CALC_YEARS_BETWEEN_DATES'
+      EXPORTING
+        first_date                  = l_gbdat
+*       MODIFY_INTERVAL             = ' '
+        second_date                 = fecha
+      IMPORTING
+        years_between_dates         = l_anyos
+      EXCEPTIONS
+        sequence_of_dates_not_valid = 1
+        OTHERS                      = 2.
+    IF sy-subrc NE 0.
+*
+    ENDIF.
+  ENDIF.
+
+  edad = l_anyos.
+
+ENDMETHOD.
+METHOD get_email.
+  DATA l_pernr TYPE pa0001-pernr.
+
+
+  IF NOT pernr IS INITIAL.
+    l_pernr = pernr.
+  ELSEIF NOT uname IS INITIAL.
+    SELECT pernr FROM pa0105                            "#EC CI_NOFIRST
+      INTO l_pernr
+      UP TO 1 ROWS
+     WHERE subty = '0001'
+       AND endda >= sy-datum
+       AND begda <= sy-datum
+       AND usrid = uname
+     ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDIF.
+
+  IF NOT l_pernr IS INITIAL.
+    email = get_comunicacion_st( pernr = l_pernr subty = '0010' ).
+  ENDIF.
+
+* Si el empleado no tuviera mail, compruebo si existe un usuario
+* de SAP que sí tenga
+  IF email IS INITIAL.
+    SELECT adr6~smtp_addr INTO email
+      UP TO 1 ROWS
+     FROM usr21 JOIN adr6 ON usr21~persnumber EQ adr6~persnumber
+     WHERE usr21~bname = uname
+     ORDER BY usr21~bname usr21~persnumber.
+    ENDSELECT.
+  ENDIF.
+
+ENDMETHOD.
+METHOD get_nombre.
+
+  SELECT ename FROM pb0001
+    INTO nombre
+    UP TO 1 ROWS
+   WHERE pernr = pernr
+     AND begda <= endda
+     AND endda >= begda
+   ORDER BY PRIMARY KEY.
+  ENDSELECT.
+
+ENDMETHOD.
+METHOD get_num_empleado.
+
+  CLEAR pernr.
+  SELECT pernr FROM pa0139
+    INTO pernr
+    UP TO 1 ROWS
+   WHERE aplno = aplno
+     AND begda <= fecha
+     AND endda >= fecha
+    ORDER BY PRIMARY KEY.
+  ENDSELECT.
+
+
+
+ENDMETHOD.
+method INICIO.
+
+  clear: o_empleado,
+         i_p0000,
+         i_p0001,
+         i_p0002,
+         i_p0007,
+         i_p0008,
+         datos_basicos,
+         pernr,
+         begda,
+         endda.
+
+endmethod.
+METHOD visualizar_st.
+  DATA o_bi TYPE REF TO zcl_ap_batch_input.
+  DATA l_mensaje TYPE bapireturn1-message.
+  CREATE OBJECT o_bi.
+
+* Pantalla acceso PB30
+  o_bi->dynpro( program = 'SAPMP50A' dynpro = '4000').
+  IF resumen IS INITIAL.
+    o_bi->campos( campo = 'BDC_OKCODE' valor = '=DIS').
+  ELSE.
+    o_bi->campos( campo = 'BDC_OKCODE' valor = '=LIST').
+  ENDIF.
+  o_bi->campos( campo = 'RPAPP-APLNO' valor = aplno ). " Nº candidato
+  o_bi->campos( campo = 'RP50G-TIMR6'
+                valor = 'X').  " Indicador determ. períodos: período
+  o_bi->campos( campo = 'RP50G-BEGDA'
+                    valor = begda ). " Inicio de la validez
+  o_bi->campos( campo = 'RP50G-ENDDA'
+                    valor = endda ). " Fin de validez
+  o_bi->campos( campo = 'RP50G-CHOIC'
+                valor = infotipo ). " Selección de infotipo
+  o_bi->campos( campo = 'RP50G-SUBTY'
+                valor = subtipo ). " Subtipo
+
+  l_mensaje = o_bi->llamar_transaccion( tcode = 'PB20'
+                      modo = 'E').
+
+ENDMETHOD.

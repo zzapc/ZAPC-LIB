@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZPLANTILLA_ALVF" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="AEN" ENTRY="Updating delivery" LENGTH="20 "/>
+   <textElement ID="I" KEY="CLN" ENTRY="Quantity of batch don&apos;t match" LENGTH="29 "/>
+   <textElement ID="I" KEY="CME" ENTRY="Picking quantity &gt; Delivery quant." LENGTH="35 "/>
+   <textElement ID="I" KEY="CUA" ENTRY="Creat. HU" LENGTH="10 "/>
+   <textElement ID="I" KEY="EUA" ENTRY="Packing UA" LENGTH="15 "/>
+   <textElement ID="I" KEY="FYE" ENTRY="File already processed" LENGTH="34 "/>
+   <textElement ID="I" KEY="LOK" ENTRY="Batch asigned" LENGTH="27 "/>
+   <textElement ID="I" KEY="LYE" ENTRY="Batch packed" LENGTH="16 "/>
+   <textElement ID="I" KEY="MNC" ENTRY="Material don&apos;t match" LENGTH="20 "/>
+   <textElement ID="I" KEY="MNS" ENTRY="Material don&apos;t batch" LENGTH="25 "/>
+   <textElement ID="I" KEY="NCS" ENTRY="Not enough quantity for packing" LENGTH="132 "/>
+   <textElement ID="I" KEY="NLG" ENTRY="Serial nº in file" LENGTH="132 "/>
+   <textElement ID="I" KEY="NMP" ENTRY="Don&apos;t exists matches with supplier material" LENGTH="48 "/>
+   <textElement ID="I" KEY="NOF" ENTRY="Serial nº already processed in file" LENGTH="35 "/>
+   <textElement ID="I" KEY="PAC" ENTRY="Item updated" LENGTH="21 "/>
+   <textElement ID="I" KEY="PAP" ENTRY="Item updated and picking finished" LENGTH="39 "/>
+   <textElement ID="I" KEY="SLO" ENTRY="with SAP bn" LENGTH="12 "/>
+   <textElement ID="R" ENTRY="Picking deliveries" LENGTH="70 "/>
+   <textElement ID="S" KEY="S_BAR_SL" ENTRY="        Siliken batch number" LENGTH="28 "/>
+   <textElement ID="S" KEY="S_BLOQUE" ENTRY="        Block" LENGTH="15 "/>
+   <textElement ID="S" KEY="S_FICHER" ENTRY="        File" LENGTH="15 "/>
+   <textElement ID="S" KEY="S_LIFNR" ENTRY="        Supplier" LENGTH="17 "/>
+   <textElement ID="S" KEY="S_BARCOD" ENTRY="D       ." LENGTH="24 "/>
+   <textElement ID="S" KEY="S_ISC" ENTRY="D       ." LENGTH="11 "/>
+   <textElement ID="S" KEY="S_LM" ENTRY="D       ." LENGTH="10 "/>
+   <textElement ID="S" KEY="S_MATNR" ENTRY="D       ." LENGTH="16 "/>
+   <textElement ID="S" KEY="S_MAT_DE" ENTRY="D       ." LENGTH="24 "/>
+   <textElement ID="S" KEY="S_MAT_PR" ENTRY="D       ." LENGTH="24 "/>
+   <textElement ID="S" KEY="S_MBLNR" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_PALET" ENTRY="D       ." LENGTH="13 "/>
+   <textElement ID="S" KEY="S_PEDIDO" ENTRY="D       ." LENGTH="25 "/>
+   <textElement ID="S" KEY="S_PM" ENTRY="D       ." LENGTH="10 "/>
+   <textElement ID="S" KEY="S_VM" ENTRY="D       ." LENGTH="10 "/>
+   <textElement ID="S" KEY="S_VOC" ENTRY="D       ." LENGTH="11 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Plantilla Importación fichero Excel" LENGTH="37 "/>
+   <textElement ID="S" KEY="P_FILE" ENTRY="        Fichero Excel" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+  </language>
+ </textPool>
+ <pfstatus>
+  <pfstatus_sta CODE="INICIO" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="INICIO_LOG" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="INICIO_PARAM" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="INICIO_PARAM_LOG" MODAL="D" ACTCODE="000002" PFKCODE="000002" BUTCODE="0001" INT_NOTE="S"/>
+  <pfstatus_sta CODE="STANDARD" MODAL="D" ACTCODE="000001" PFKCODE="000001" BUTCODE="0001" INT_NOTE="Standard für allgemeine Listausgabe im Fullscreen Grid"/>
+  <pfstatus_fun CODE="%ML" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Carpeta" PATH="A"/>
+  <pfstatus_fun CODE="%PC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPORT" ICON_ID="@49@" FUN_TEXT="Fichero local..." PATH="F"/>
+  <pfstatus_fun CODE="%SC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH" ICON_ID="@13@" FUN_TEXT="Buscar" PATH="U"/>
+  <pfstatus_fun CODE="%SC+" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SEARCH_NEXT" ICON_ID="@4E@" FUN_TEXT="Continuar búsqueda"/>
+  <pfstatus_fun CODE="%SL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_MAIL" ICON_ID="@1S@" FUN_TEXT="Destinatario de correo electrónico" PATH="D"/>
+  <pfstatus_fun CODE="&amp;ABC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ABC" ICON_ID="@DL@" FUN_TEXT="Análisis ABC" PATH="A"/>
+  <pfstatus_fun CODE="&amp;ALL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_ALL" ICON_ID="@4B@" FUN_TEXT="Marcar todo" PATH="T"/>
+  <pfstatus_fun CODE="&amp;AQW" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_WORD_PROCESSING" ICON_ID="@DK@" FUN_TEXT="Tratamiento de textos..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;AUF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Especificar desglose de totales..." PATH="S"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Grabar..." PATH="G"/>
+  <pfstatus_fun CODE="&amp;AVE" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_SAVE" ICON_ID="@DN@" FUN_TEXT="Grabar layout..."/>
+  <pfstatus_fun CODE="&amp;AVR" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Valor medio" PATH="M"/>
+  <pfstatus_fun CODE="&amp;CDF" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Anular fijación" PATH="I"/>
+  <pfstatus_fun CODE="&amp;CFI" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Fijar hasta columna" PATH="F"/>
+  <pfstatus_fun CODE="&amp;COUNT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Contar" PATH="C"/>
+  <pfstatus_fun CODE="&amp;CRB" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_LEFT" ICON_ID="@0B@" FUN_TEXT="Primera columna"/>
+  <pfstatus_fun CODE="&amp;CRE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TOTAL_RIGHT" ICON_ID="@0C@" FUN_TEXT="Última columna"/>
+  <pfstatus_fun CODE="&amp;CRL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_LEFT" ICON_ID="@0D@" FUN_TEXT="Columna izquierda"/>
+  <pfstatus_fun CODE="&amp;CRR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLUMN_RIGHT" ICON_ID="@0E@" FUN_TEXT="Columna derecha"/>
+  <pfstatus_fun CODE="&amp;DATA_SAVE" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar"/>
+  <pfstatus_fun CODE="&amp;EB9" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_TABLE_SETTINGS" ICON_ID="@36@" FUN_TEXT="Llamar informe..." PATH="B"/>
+  <pfstatus_fun CODE="&amp;ELP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_HELP" ICON_ID="@35@" FUN_TEXT="Ayuda"/>
+  <pfstatus_fun CODE="&amp;ERW" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_CHOOSE" ICON_ID="@DM@" FUN_TEXT="Gestionar..." ICON_TEXT="Admón." INFO_TEXT="Gestionar layouts..." PATH="T"/>
+  <pfstatus_fun CODE="&amp;ETA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Detalles"/>
+  <pfstatus_fun CODE="&amp;F03" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Back" PATH="K"/>
+  <pfstatus_fun CODE="&amp;F12" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar" PATH="N"/>
+  <pfstatus_fun CODE="&amp;F15" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="&amp;F4" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Entradas posibles"/>
+  <pfstatus_fun CODE="&amp;GRAPH" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_GRAPHICS" ICON_ID="@0N@" FUN_TEXT="Función gráfica" PATH="G"/>
+  <pfstatus_fun CODE="&amp;IC1" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECT_DETAIL" ICON_ID="@16@" FUN_TEXT="Seleccionar"/>
+  <pfstatus_fun CODE="&amp;ILD" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER_UNDO" ICON_ID="@GD@" FUN_TEXT="Borrar filtros" PATH="L"/>
+  <pfstatus_fun CODE="&amp;ILT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_FILTER" ICON_ID="@4G@" FUN_TEXT="Fijar filtros" PATH="F"/>
+  <pfstatus_fun CODE="&amp;INFO" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Información"/>
+  <pfstatus_fun CODE="&amp;MAX" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Máximo" PATH="Á"/>
+  <pfstatus_fun CODE="&amp;MIN" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Mínimo" PATH="I"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Seleccionar..." PATH="E"/>
+  <pfstatus_fun CODE="&amp;OAD" TEXTNO="002" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANT_CHOOSE" ICON_ID="@DM@" FUN_TEXT="Seleccionar disposición..."/>
+  <pfstatus_fun CODE="&amp;ODN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_DOWN" ICON_ID="@3F@" FUN_TEXT="Clasificación descendente" PATH="C"/>
+  <pfstatus_fun CODE="&amp;OL0" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_ALV_VARIANTS" ICON_ID="@LZ@" FUN_TEXT="Modificar disposición..."/>
+  <pfstatus_fun CODE="&amp;OLX" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Modificar..." PATH="M"/>
+  <pfstatus_fun CODE="&amp;OPT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ancho óptimo" PATH="P"/>
+  <pfstatus_fun CODE="&amp;OUP" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SORT_UP" ICON_ID="@3E@" FUN_TEXT="Clasificación ascendente" PATH="I"/>
+  <pfstatus_fun CODE="&amp;REFRESH" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_REFRESH" ICON_ID="@42@" FUN_TEXT="Refrescar"/>
+  <pfstatus_fun CODE="&amp;RNT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Imprimir" PATH="I"/>
+  <pfstatus_fun CODE="&amp;RNT_PREV" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_LAYOUT_CONTROL" ICON_ID="@3G@" FUN_TEXT="Presentación preliminar" PATH="R"/>
+  <pfstatus_fun CODE="&amp;SAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DESELECT_ALL" ICON_ID="@4D@" FUN_TEXT="Desmarcar todo" PATH="D"/>
+  <pfstatus_fun CODE="&amp;SUM" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_INTERMEDIATE_SUM" ICON_ID="@5V@" FUN_TEXT="Subtotales..." PATH="S"/>
+  <pfstatus_fun CODE="&amp;UMC" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SUM" ICON_ID="@3Z@" FUN_TEXT="Total" PATH="T"/>
+  <pfstatus_fun CODE="&amp;VCRYSTAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_REPORT_TEMPLATE" ICON_ID="@QH@" FUN_TEXT="Crystal Reports" PATH="C"/>
+  <pfstatus_fun CODE="&amp;VEXCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XLS" ICON_ID="@J2@" FUN_TEXT="Microsoft Excel" PATH="M"/>
+  <pfstatus_fun CODE="&amp;VGRID" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_LIST" ICON_ID="@3W@" FUN_TEXT="SAP List Viewer" PATH="S"/>
+  <pfstatus_fun CODE="&amp;VLOTUS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_LOTUS" ICON_ID="@JD@" FUN_TEXT="Lotus 1-2-3" PATH="L"/>
+  <pfstatus_fun CODE="&amp;XINT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Archivo ampliado de Query SAP" PATH="E"/>
+  <pfstatus_fun CODE="&amp;XML" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Exportar XML..." PATH="X"/>
+  <pfstatus_fun CODE="&amp;XXL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XXL" ICON_ID="@DJ@" FUN_TEXT="Hoja de cálculo..." PATH="A"/>
+  <pfstatus_fun CODE="ACT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Guardar valores" ICON_TEXT="Guardar valores" INFO_TEXT="Guardar valores"/>
+  <pfstatus_fun CODE="ALLS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXPAND" ICON_ID="@3S@" FUN_TEXT="Selecciones (todas)" PATH="L"/>
+  <pfstatus_fun CODE="BLOQUEAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CLIENT_BREAKPOINT" ICON_ID="@VD@" FUN_TEXT="Bloquear" ICON_TEXT="Bloquear" INFO_TEXT="Bloquear"/>
+  <pfstatus_fun CODE="BORRAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Borrar" ICON_TEXT="Borrar" INFO_TEXT="Borrar"/>
+  <pfstatus_fun CODE="CDOCU" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Mant. Documentación" PATH="M"/>
+  <pfstatus_fun CODE="CREAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Crear" ICON_TEXT="Crear documento FI" INFO_TEXT="Crear documento FI"/>
+  <pfstatus_fun CODE="DELA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE" ICON_ID="@11@" FUN_TEXT="Borrar selecciones por completo" PATH="E"/>
+  <pfstatus_fun CODE="DELS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELETE_ROW" ICON_ID="@18@" FUN_TEXT="Borrar línea de selección" PATH="S"/>
+  <pfstatus_fun CODE="DESBLOQ" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CLIENT_BREAKPOINT_DIS" ICON_ID="@VE@" FUN_TEXT="Desbloquear" ICON_TEXT="Desbloquear" INFO_TEXT="Desbloquear"/>
+  <pfstatus_fun CODE="DOCS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Documentación"/>
+  <pfstatus_fun CODE="DOCU" TEXTNO="001" TYPE="H" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Documentación de programa"/>
+  <pfstatus_fun CODE="DOC_TEC" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Doc.Técnica" PATH="D"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Delimitaciones opcionales" PATH="D"/>
+  <pfstatus_fun CODE="DYNS" TEXTNO="002" TEXT_TYPE="D" TEXT_NAME="SSCRTEXTS-DYNSEL"/>
+  <pfstatus_fun CODE="E" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Back" PATH="K"/>
+  <pfstatus_fun CODE="ECAN" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Cancelar" PATH="N"/>
+  <pfstatus_fun CODE="EMBALAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OUTBOX" ICON_ID="@FQ@" FUN_TEXT="Embalar" ICON_TEXT="Embalar" INFO_TEXT="Embalar"/>
+  <pfstatus_fun CODE="ENDE" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Finalizar" PATH="F"/>
+  <pfstatus_fun CODE="EXCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XLS" ICON_ID="@J2@" FUN_TEXT="Excel" INFO_TEXT="Exportación a Excel rápida" PATH="E"/>
+  <pfstatus_fun CODE="FC01" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_01"/>
+  <pfstatus_fun CODE="FC02" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_02"/>
+  <pfstatus_fun CODE="FC03" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_03"/>
+  <pfstatus_fun CODE="FC04" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_04"/>
+  <pfstatus_fun CODE="FC05" TEXTNO="001" TEXT_TYPE="D" TEXT_NAME="SSCRFIELDS-FUNCTXT_05"/>
+  <pfstatus_fun CODE="FEWS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_COLLAPSE" ICON_ID="@3T@" FUN_TEXT="Selecciones efectuadas" PATH="U"/>
+  <pfstatus_fun CODE="GET" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Traer..." PATH="T"/>
+  <pfstatus_fun CODE="GET" TEXTNO="002" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_VARIANTS" ICON_ID="@0R@" FUN_TEXT="Traer variante..." PATH="V"/>
+  <pfstatus_fun CODE="LOG" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Log" PATH="L"/>
+  <pfstatus_fun CODE="LVUV" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Variables usuario..." PATH="B"/>
+  <pfstatus_fun CODE="MANUAL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DISPLAY_TEXT" ICON_ID="@0P@" FUN_TEXT="Manual" INFO_TEXT="Manual usuario"/>
+  <pfstatus_fun CODE="MAT_EXT" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Equival.material" PATH="Q"/>
+  <pfstatus_fun CODE="MOVS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_DELIVERY_INBOUND" ICON_ID="@PG@" FUN_TEXT="Realizar entradasMOVS" ICON_TEXT="Realizar entradas" INFO_TEXT="Realizar entradas"/>
+  <pfstatus_fun CODE="ONLI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_EXECUTE_OBJECT" ICON_ID="@15@" FUN_TEXT="Ejecutar" PATH="A"/>
+  <pfstatus_fun CODE="OPTI" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SELECTION" ICON_ID="@7X@" FUN_TEXT="Opciones de selección" PATH="O"/>
+  <pfstatus_fun CODE="PARA" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ee" PATH="E"/>
+  <pfstatus_fun CODE="PARAM" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Configuración" PATH="C"/>
+  <pfstatus_fun CODE="PLANTILLA" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_XLS" ICON_ID="@J2@" FUN_TEXT="Plantilla" INFO_TEXT="Plantilla de carga"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="PRIN" TEXTNO="002" TEXT_TYPE="S" FUN_TEXT="Ejecutar e imprimir" PATH="U"/>
+  <pfstatus_fun CODE="SCRH" TEXTNO="001" TYPE="E" TEXT_TYPE="S" TEXT_NAME="ICON_INFORMATION" ICON_ID="@0S@" FUN_TEXT="Ayuda imagen de selección" PATH="A"/>
+  <pfstatus_fun CODE="SJOB" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Ejecutar en proceso fondo" PATH="E"/>
+  <pfstatus_fun CODE="SPOS" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_SYSTEM_SAVE" ICON_ID="@2L@" FUN_TEXT="Grabar como variante..." INFO_TEXT="Grabar como variante" PATH="G"/>
+  <pfstatus_fun CODE="TABLA" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Configuración" PATH="C"/>
+  <pfstatus_fun CODE="VDEL" TEXTNO="001" TEXT_TYPE="S" FUN_TEXT="Borrar..." PATH="B"/>
+  <pfstatus_fun CODE="VSHO" TEXTNO="001" TYPE="E" TEXT_TYPE="S" FUN_TEXT="Visualizar..." PATH="A"/>
+  <pfstatus_men CODE="000001" NO="01" REF_TYPE="F" REF_CODE="PARAM" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="02" REF_TYPE="F" REF_CODE="&amp;RNT" REF_NO="001"/>
+  <pfstatus_men CODE="000001" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000001" NO="04" REF_TYPE="M" REF_CODE="000002"/>
+  <pfstatus_men CODE="000001" NO="05" REF_TYPE="M" REF_CODE="000003"/>
+  <pfstatus_men CODE="000001" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000001" NO="07" REF_TYPE="F" REF_CODE="&amp;F15" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="01" REF_TYPE="F" REF_CODE="&amp;AQW" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="02" REF_TYPE="F" REF_CODE="&amp;XXL" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="03" REF_TYPE="F" REF_CODE="%PC" REF_NO="001"/>
+  <pfstatus_men CODE="000002" NO="04" REF_TYPE="F" REF_CODE="&amp;XINT" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="01" REF_TYPE="F" REF_CODE="%SL" REF_NO="001"/>
+  <pfstatus_men CODE="000003" NO="02" REF_TYPE="F" REF_CODE="%ML" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="01" REF_TYPE="F" REF_CODE="&amp;ALL" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="02" REF_TYPE="F" REF_CODE="&amp;SAL" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="04" REF_TYPE="F" REF_CODE="&amp;ILT" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="05" REF_TYPE="F" REF_CODE="&amp;ILD" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="07" REF_TYPE="F" REF_CODE="&amp;OUP" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="08" REF_TYPE="F" REF_CODE="&amp;ODN" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="09" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="10" REF_TYPE="M" REF_CODE="000005"/>
+  <pfstatus_men CODE="000004" NO="11" REF_TYPE="F" REF_CODE="&amp;SUM" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="12" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="13" REF_TYPE="F" REF_CODE="%SC" REF_NO="001"/>
+  <pfstatus_men CODE="000004" NO="14" REF_TYPE="S"/>
+  <pfstatus_men CODE="000004" NO="15" REF_TYPE="F" REF_CODE="&amp;F12" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="01" REF_TYPE="F" REF_CODE="&amp;UMC" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="02" REF_TYPE="F" REF_CODE="&amp;AVR" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="03" REF_TYPE="F" REF_CODE="&amp;MIN" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="04" REF_TYPE="F" REF_CODE="&amp;MAX" REF_NO="001"/>
+  <pfstatus_men CODE="000005" NO="05" REF_TYPE="F" REF_CODE="&amp;COUNT" REF_NO="001"/>
+  <pfstatus_men CODE="000006" NO="01" REF_TYPE="F" REF_CODE="&amp;F03" REF_NO="001"/>
+  <pfstatus_men CODE="000007" NO="01" REF_TYPE="M" REF_CODE="000008"/>
+  <pfstatus_men CODE="000007" NO="02" REF_TYPE="M" REF_CODE="000009"/>
+  <pfstatus_men CODE="000007" NO="03" REF_TYPE="F" REF_CODE="&amp;AUF" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="01" REF_TYPE="F" REF_CODE="&amp;OLX" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="02" REF_TYPE="F" REF_CODE="&amp;OAD" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000008" NO="04" REF_TYPE="F" REF_CODE="&amp;AVE" REF_NO="001"/>
+  <pfstatus_men CODE="000008" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000008" NO="06" REF_TYPE="F" REF_CODE="&amp;ERW" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="01" REF_TYPE="F" REF_CODE="&amp;OPT" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000009" NO="03" REF_TYPE="F" REF_CODE="&amp;CFI" REF_NO="001"/>
+  <pfstatus_men CODE="000009" NO="04" REF_TYPE="F" REF_CODE="&amp;CDF" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="01" REF_TYPE="F" REF_CODE="ONLI" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="02" REF_TYPE="F" REF_CODE="PRIN" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="03" REF_TYPE="F" REF_CODE="SJOB" REF_NO="001"/>
+  <pfstatus_men CODE="000010" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000010" NO="05" REF_TYPE="F" REF_CODE="ENDE" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="01" REF_TYPE="F" REF_CODE="ALLS" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="02" REF_TYPE="F" REF_CODE="FEWS" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="03" REF_TYPE="S"/>
+  <pfstatus_men CODE="000011" NO="04" REF_TYPE="F" REF_CODE="OPTI" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="05" REF_TYPE="S"/>
+  <pfstatus_men CODE="000011" NO="06" REF_TYPE="F" REF_CODE="DELS" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="07" REF_TYPE="F" REF_CODE="DELA" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000011" NO="09" REF_TYPE="F" REF_CODE="DYNS" REF_NO="001"/>
+  <pfstatus_men CODE="000011" NO="10" REF_TYPE="S"/>
+  <pfstatus_men CODE="000011" NO="11" REF_TYPE="F" REF_CODE="ECAN" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="01" REF_TYPE="M" REF_CODE="000013"/>
+  <pfstatus_men CODE="000012" NO="02" REF_TYPE="S"/>
+  <pfstatus_men CODE="000012" NO="03" REF_TYPE="F" REF_CODE="LVUV" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="04" REF_TYPE="S"/>
+  <pfstatus_men CODE="000012" NO="05" REF_TYPE="F" REF_CODE="SCRH" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="06" REF_TYPE="S"/>
+  <pfstatus_men CODE="000012" NO="07" REF_TYPE="F" REF_CODE="E" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="08" REF_TYPE="S"/>
+  <pfstatus_men CODE="000012" NO="09" REF_TYPE="F" REF_CODE="DOC_TEC" REF_NO="001"/>
+  <pfstatus_men CODE="000012" NO="10" REF_TYPE="F" REF_CODE="CDOCU" REF_NO="001"/>
+  <pfstatus_men CODE="000013" NO="01" REF_TYPE="F" REF_CODE="GET" REF_NO="001"/>
+  <pfstatus_men CODE="000013" NO="02" REF_TYPE="F" REF_CODE="VSHO" REF_NO="001"/>
+  <pfstatus_men CODE="000013" NO="03" REF_TYPE="F" REF_CODE="VDEL" REF_NO="001"/>
+  <pfstatus_men CODE="000013" NO="04" REF_TYPE="F" REF_CODE="SPOS" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="01" REF_TYPE="F" REF_CODE="PARAM" REF_NO="001"/>
+  <pfstatus_men CODE="000014" NO="02" REF_TYPE="F" REF_CODE="LOG" REF_NO="001"/>
+  <pfstatus_mtx CODE="000001" TEXT_TYPE="S" TEXT="Mantenimiento" PATH="N"/>
+  <pfstatus_mtx CODE="000002" TEXT_TYPE="S" TEXT="Exportar" PATH="E" INT_NOTE="STANDARD Sichern"/>
+  <pfstatus_mtx CODE="000003" TEXT_TYPE="S" TEXT="Enviar a" PATH="N"/>
+  <pfstatus_mtx CODE="000004" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="STANDARD"/>
+  <pfstatus_mtx CODE="000005" TEXT_TYPE="S" TEXT="Calcular" PATH="A"/>
+  <pfstatus_mtx CODE="000006" TEXT_TYPE="S" TEXT="Pasar a" PATH="P" INT_NOTE="Normergänzung"/>
+  <pfstatus_mtx CODE="000007" TEXT_TYPE="S" TEXT="Opciones" PATH="O" INT_NOTE="SALV_TABLE_STATUS"/>
+  <pfstatus_mtx CODE="000008" TEXT_TYPE="S" TEXT="Layout" PATH="A" INT_NOTE="Sub STANDARD"/>
+  <pfstatus_mtx CODE="000009" TEXT_TYPE="S" TEXT="Columnas" PATH="C"/>
+  <pfstatus_mtx CODE="000010" TEXT_TYPE="S" TEXT="Programa" PATH="R" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000011" TEXT_TYPE="S" TEXT="Tratar" PATH="T" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000012" TEXT_TYPE="S" TEXT="Pasar a" PATH="P" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000013" TEXT_TYPE="S" TEXT="Variantes" PATH="V" INT_NOTE="N"/>
+  <pfstatus_mtx CODE="000014" TEXT_TYPE="S" TEXT="Mantenimiento" PATH="M"/>
+  <pfstatus_act CODE="000001" NO="01" MENUCODE="000004"/>
+  <pfstatus_act CODE="000001" NO="02" MENUCODE="000010"/>
+  <pfstatus_act CODE="000001" NO="03" MENUCODE="000006"/>
+  <pfstatus_act CODE="000001" NO="04" MENUCODE="000007"/>
+  <pfstatus_act CODE="000002" NO="01" MENUCODE="000014"/>
+  <pfstatus_act CODE="000002" NO="02" MENUCODE="000010"/>
+  <pfstatus_act CODE="000002" NO="03" MENUCODE="000011"/>
+  <pfstatus_act CODE="000002" NO="04" MENUCODE="000012"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="35"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="39"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="03" PFNO="37"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="04" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="05" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="06" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="07" PFNO="05"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="08" PFNO="06"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="09" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="10" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="11" PFNO="40"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="12" PFNO="29"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="13" PFNO="38"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="14" PFNO="30"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="15" PFNO="42"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="16" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="17" PFNO="46"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="18" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="19" PFNO="41"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="20" PFNO="43"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="21" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="22" PFNO="45"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="23" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="24" PFNO="32"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="25" PFNO="33"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="26" PFNO="34"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="27" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="28" PFNO="36"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="29" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="30" PFNO="18"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="31" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="32" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000001" CODE="0001" NO="33" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="01" PFNO="08"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="02" PFNO="17"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="03" PFNO="16"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="04" PFNO="S"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="05" PFNO="19"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="06" PFNO="20"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="07" PFNO="13"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="08" PFNO="25"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="09" PFNO="26"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="10" PFNO="27"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="11" PFNO="28"/>
+  <pfstatus_but PFK_CODE="000002" CODE="0001" NO="12" PFNO="29"/>
+  <pfstatus_pfk CODE="000001" PFNO="01" FUNCODE="&amp;ELP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="02" FUNCODE="&amp;IC1" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="03" FUNCODE="&amp;F03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="04" FUNCODE="&amp;F4" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="05" FUNCODE="&amp;ALL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="06" FUNCODE="&amp;SAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="08" FUNCODE="&amp;REFRESH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="11" FUNCODE="&amp;DATA_SAVE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="12" FUNCODE="&amp;F12" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="15" FUNCODE="&amp;F15" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="17" FUNCODE="EXCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="18" FUNCODE="&amp;CRB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="19" FUNCODE="&amp;CRE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="20" FUNCODE="&amp;XML" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="21" FUNCODE="&amp;XXL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="23" FUNCODE="&amp;VLOTUS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="24" FUNCODE="&amp;VCRYSTAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="25" FUNCODE="&amp;ABC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="26" FUNCODE="&amp;CRL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="27" FUNCODE="&amp;CRR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="28" FUNCODE="&amp;OUP" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="29" FUNCODE="&amp;ILT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="30" FUNCODE="&amp;UMC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="31" FUNCODE="%SL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="32" FUNCODE="&amp;OL0" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="33" FUNCODE="&amp;OAD" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="34" FUNCODE="&amp;AVE" FUNNO="002"/>
+  <pfstatus_pfk CODE="000001" PFNO="35" FUNCODE="CREAR" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="36" FUNCODE="&amp;INFO" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="37" FUNCODE="&amp;EB9" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="38" FUNCODE="&amp;ILD" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="39" FUNCODE="&amp;ETA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="40" FUNCODE="&amp;ODN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="41" FUNCODE="&amp;VGRID" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="42" FUNCODE="&amp;SUM" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="43" FUNCODE="&amp;VEXCEL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="44" FUNCODE="&amp;AQW" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="45" FUNCODE="%PC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="46" FUNCODE="&amp;RNT_PREV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="47" FUNCODE="&amp;GRAPH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="71" FUNCODE="%SC" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="84" FUNCODE="%SC+" FUNNO="001"/>
+  <pfstatus_pfk CODE="000001" PFNO="86" FUNCODE="&amp;RNT" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="02" FUNCODE="OPTI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="03" FUNCODE="E" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="05" FUNCODE="MANUAL" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="06" FUNCODE="PLANTILLA" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="08" FUNCODE="ONLI" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="09" FUNCODE="SJOB" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="11" FUNCODE="SPOS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="12" FUNCODE="ECAN" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="13" FUNCODE="DOCU" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="14" FUNCODE="DELS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="15" FUNCODE="ENDE" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="16" FUNCODE="DYNS" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="17" FUNCODE="GET" FUNNO="002"/>
+  <pfstatus_pfk CODE="000002" PFNO="18" FUNCODE="SCRH" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="19" FUNCODE="ALLS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="20" FUNCODE="FEWS" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="25" FUNCODE="FC01" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="26" FUNCODE="FC02" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="27" FUNCODE="FC03" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="28" FUNCODE="FC04" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="29" FUNCODE="FC05" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="30" FUNCODE="LVUV" FUNNO="001"/>
+  <pfstatus_pfk CODE="000002" PFNO="86" FUNCODE="PRIN" FUNNO="002"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="CDOCU"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOCS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DOC_TEC"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="MANUAL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="MAT_EXT"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PLANTILLA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="TABLA"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="CDOCU"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DOCS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DOC_TEC"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="LOG"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="MANUAL"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="MAT_EXT"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="PLANTILLA"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="TABLA"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO_LOG" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="CDOCU"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DOCS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DOC_TEC"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="MANUAL"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="MAT_EXT"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="PARA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="PARAM"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="PLANTILLA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="TABLA"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO_PARAM" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="ALLS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="BUGA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="BUGE"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="CANC"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="CDOCU"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DELA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DELS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DOCS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DOCU"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DOC_TEC"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="DYNS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="E"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="ECAN"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="EGET"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="ENDE"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FC01"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FC02"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FC03"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FC04"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FC05"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="FEWS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="GET"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="LOG"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="LVUV"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="MANUAL"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="MAT_EXT"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="NONE"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="ONLI"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="OPTI"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="PARA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="PARAM"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="PLANTILLA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="SCRH"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="SJOB"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="SPOS"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="STKA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="STKE"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="SVUV"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="TABLA"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="VARI"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="VDEL"/>
+  <pfstatus_set STATUS="INICIO_PARAM_LOG" FUNCTION="VSHO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%CH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%ML"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%PC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SC+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="%SL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ABC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AQW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;AVR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;BS-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CDF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CFI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;COUNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRBATCH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRDESIG"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRTEMPL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;CRYSTAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DATA_SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DAU"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DOF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;DON"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;EB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;EB9"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ERW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F03"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F12"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F15"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;F4"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;GRAPH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;IC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;INFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;KOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;LIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;MAX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;MIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;NTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OAD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;ODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OPT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;OUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;REFRESH"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;RNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;RNT_PREV"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;SUM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;UMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;URL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VCRYSTAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VCRYSTRAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VEXCEL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VGRID"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;VLOTUS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XINT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XML"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="&amp;XXL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ACT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BAC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BACK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB2"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB3"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEB9"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BEBN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BLOQUEAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="BORRAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COL0"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="COLX"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="CREAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DESBLOQ"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DETA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DRUK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="DSAL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EMBALAR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ENTE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXCEL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXIT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="EXPA"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILD"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="FILT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="GLIS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="HELP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="INFO"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="KOMP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="MOVS"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P+"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P++"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P-"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="P--"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF09"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PF13"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PIC1"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PICK"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRI"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRIN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="PRNT"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="RW"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SALL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAUF"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SAVE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRB"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRE"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRL"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SCRR"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SKOM"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SODN"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SOUP"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="SUMC"/>
+  <pfstatus_set STATUS="STANDARD" FUNCTION="ZSUM"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000001" MODAL="D" INT_NOTE="A"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000001" MODAL="D" NORM="X" INT_NOTE="Standard maximale Interaktion SALV_TABLE_STANDARD"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000001" SUB_CODE="0001" INT_NOTE="SALV_TABLE_STANDARD"/>
+  <pfstatus_doc OBJ_TYPE="A" OBJ_CODE="000002" MODAL="D" INT_NOTE="A"/>
+  <pfstatus_doc OBJ_TYPE="P" OBJ_CODE="000002" MODAL="D" INT_NOTE="P"/>
+  <pfstatus_doc OBJ_TYPE="B" OBJ_CODE="000002" SUB_CODE="0001" MODAL="D" INT_NOTE="P"/>
+ </pfstatus>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : ??
+* DESCRIPCION : ??
+*
+* AUTOR: Andrés Picazo                                FECHA: 10/12/2019
+* ANALISTA: ??
+*
+* Doc. Tecnica: http://sap4.com/tareas?=&amp;cliente=CCC&amp;objeto=OOO
+**-&gt;MANUAL:http://sap4.com,http://sap4.com/edicion
+**-&gt;PLANTILLA:,http://sap4.com
+*
+***********************************************************************
+REPORT zfivv052.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS: handle_user_command REDEFINITION.
+    METHODS: visualizar_objeto REDEFINITION.
+ENDCLASS.                    &quot;lcl_alv DEFINITION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check   TYPE xfeld,
+             lights  TYPE zico_estado_mensaje,
+             bukrs   TYPE t001-bukrs,
+             butxt   TYPE t001-butxt,
+             message TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv.                    &quot;#EC NEEDED
+
+    METHODS: main.
+
+    METHODS:  listado,
+      cargar_fichero.
+
+ENDCLASS.                    &quot;REPORT DEFINITION
+
+*------VARIABLES-------------------------------------------------------*
+DATA: o_prog TYPE REF TO zcl_report. &quot;#EC NEEDED
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE text-sel.
+PARAMETERS: p_file TYPE localfile OBLIGATORY.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari type disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    DATA l_list TYPE o_prog-&gt;t_listado.
+    l_list = list.
+    CASE column.
+      WHEN &apos;XXX&apos;.
+      WHEN OTHERS. message = &apos;No implementado&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_double_click
+
+  METHOD handle_user_command.
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE UCOMM.
+      WHEN &apos;CARGA&apos;.
+        get_seleccion( CHANGING t_tabla = o_prog-&gt;i_listado ).
+        LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;. &quot;#EC NEEDED
+        ENDLOOP.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE i104(dlcn). &quot;Seleccione por lo menos un registro
+        ELSE.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD. &quot;handle_USER_COMMAND
+ENDCLASS. &quot;lcl_alv IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    cargar_fichero( ).
+    listado( ).
+  ENDMETHOD.                    &quot;REPORT
+
+  METHOD cargar_fichero.
+    TYPES: BEGIN OF t_fichero,
+             id(10),
+             fecha type dats,
+           END OF t_fichero.
+    DATA: i_fichero TYPE TABLE OF t_fichero,
+          l_listado TYPE t_listado,
+          o_excel   TYPE REF TO zcl_ap_abap2xls.
+
+    FIELD-SYMBOLS: &lt;fichero&gt; TYPE t_fichero.
+
+    o_prog-&gt;sgpi_texto( &apos;Importando fichero&apos;(imf) ).
+    CREATE OBJECT o_excel.
+    o_excel-&gt;lee_fichero( EXPORTING fichero = p_file
+*                                    hoja    = p_hojm_1
+                                    get_datos = &apos;X&apos;
+                                    huge      = &apos;&apos;
+                                    mostrar_error = &apos;X&apos;
+                                    VALIDAR_MAESTROS = &apos;X&apos;
+                          IMPORTING datos   = i_fichero ).
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_fichero[] ).
+    LOOP AT i_fichero ASSIGNING &lt;fichero&gt;.
+      data(l_row) = sy-tabix + 1.
+      CLEAR l_listado.
+      o_prog-&gt;o_sgpi-&gt;porcentaje( texto = &apos;Procesando fichero&apos;(prf) cantidad = 1000 ).
+      MOVE-CORRESPONDING &lt;fichero&gt; TO l_listado.
+     l_listado-message = o_excel-&gt;get_msg( row = l_row ).
+
+      set_status_list( EXPORTING message = l_listado-message criterio = &apos;A&apos; CHANGING list = l_listado ).
+      APPEND L_LISTADO TO I_LISTADO.
+    ENDLOOP.
+
+
+  ENDMETHOD.                    &quot;seleccionar_datos
+
+
+  METHOD listado.
+
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Ejecutar&apos;(eje)  icon = icon_execute_object UCOMM = &apos;CARGA&apos;).
+
+    o_alv-&gt;set_layout( p_vari ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_top_of_page( ).
+
+*    o_alv-&gt;set_field_hotspot( campo = &apos;EBELN&apos; auto = &apos;X&apos; ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+
+
+  ENDMETHOD.                    &quot;
+
+ENDCLASS.                    &quot;REPORT IMPLEMENTATION
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+
+  o_prog = NEW #( status   = &apos;INICIO_DYN&apos; status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param = &apos;X&apos;          guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv =  NEW #( status = &apos;STANDARD_ALV_DYN&apos; status_prog = &apos;ZAP_STATUS&apos;
+                          top_of_page_auto = &apos;X&apos;  top_of_page_titulo = &apos;X&apos;
+                          o_dev            = o_prog ).
+
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  o_prog-&gt;at_selection( ).
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_file.
+  p_file = zcl_ap_ficheros=&gt;popup_select_fichero( file_filter = zcl_ap_ficheros=&gt;C_FILTRO_XLSX ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  o_prog-&gt;main( ).</source>
+</PROG>

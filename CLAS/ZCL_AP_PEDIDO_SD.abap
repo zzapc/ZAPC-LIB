@@ -1,0 +1,1671 @@
+CLASS zcl_ap_pedido_sd DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    CONSTANTS c_pedido         TYPE vbtyp              VALUE 'C' ##NO_TEXT.
+    CONSTANTS c_devolucion     TYPE vbtyp              VALUE 'H' ##NO_TEXT.
+    CONSTANTS c_sol_abono      TYPE vbtyp              VALUE 'K' ##NO_TEXT.
+    CONSTANTS c_sol_nota_cargo TYPE vbtyp              VALUE 'L' ##NO_TEXT.
+    CONSTANTS c_pet_oferta     TYPE vbtyp              VALUE 'A' ##NO_TEXT.
+    CONSTANTS c_oferta         TYPE vbtyp              VALUE 'B' ##NO_TEXT.
+    CONSTANTS c_objeto         TYPE srgbtbrel-typeid_a VALUE 'BUS2032' ##NO_TEXT.
+    CONSTANTS c_objectclas     TYPE cdobjectcl         VALUE 'VERKBELEG' ##NO_TEXT.
+
+    CLASS-METHODS visualizar
+      IMPORTING vbeln     TYPE any OPTIONAL
+                lista     TYPE any DEFAULT ''
+                separador TYPE any DEFAULT ','
+      PREFERRED PARAMETER vbeln.
+
+    CLASS-METHODS get_status
+      IMPORTING vbeln           TYPE vbeln
+                posnr           TYPE posnr
+                only_active     TYPE abap_bool DEFAULT 'X'
+      RETURNING VALUE(i_status) TYPE ttjstat.
+
+    CLASS-METHODS get_status_activo
+      IMPORTING vbeln         TYPE vbeln
+                posnr         TYPE posnr DEFAULT '000000'
+      RETURNING VALUE(status) TYPE j_status.
+
+    CLASS-METHODS get_valor_condicion
+      IMPORTING vbeln        TYPE vbap-vbeln
+                posnr        TYPE vbap-posnr OPTIONAL
+                kschl        TYPE kschl
+                campo        TYPE string     DEFAULT 'KWERT'
+                cabecera     TYPE abap_bool  DEFAULT ''
+      RETURNING VALUE(valor) TYPE komv-kwert.
+
+    CLASS-METHODS get_estado_posicion
+      IMPORTING vbeln         TYPE vbap-vbeln
+                posnr         TYPE vbap-posnr
+      RETURNING VALUE(estado) TYPE char2.
+
+    CLASS-METHODS get_valor_condicion_char
+      IMPORTING vbeln        TYPE vbap-vbeln
+                posnr        TYPE vbap-posnr
+                kschl        TYPE kschl
+                campo        TYPE string OPTIONAL
+      RETURNING VALUE(valor) TYPE string.
+
+    CLASS-METHODS get_cantidad_entregada
+      IMPORTING vbeln        TYPE vbap-vbeln
+                posnr        TYPE vbap-posnr
+                vrkme        TYPE vbap-vrkme DEFAULT ''
+      RETURNING VALUE(lfimg) TYPE lfimg.
+
+    CLASS-METHODS get_valor_pendiente_fact
+      IMPORTING vbeln        TYPE vbap-vbeln OPTIONAL
+                posnr        TYPE vbap-posnr OPTIONAL
+                interco      TYPE abap_bool  DEFAULT ''
+      PREFERRED PARAMETER vbeln
+      RETURNING VALUE(netwr) TYPE vbap-netwr.
+
+    CLASS-METHODS get_texto_string
+      IMPORTING vbeln         TYPE vbeln_va
+                posnr         TYPE posnr_va OPTIONAL
+                !id           TYPE stxh-tdid
+                spras         TYPE spras    DEFAULT ''
+      RETURNING VALUE(string) TYPE string.
+
+    CLASS-METHODS get_destinatario
+      IMPORTING vbeln               TYPE vbeln_va
+      EXPORTING nombre_provincia    TYPE t005u-bezei
+                nombre_pais         TYPE t005t-landx
+                kunwe               TYPE kunwe
+                name1               TYPE name
+                adrc                TYPE adrc
+                tel_number          TYPE adr2-tel_number
+                nombre_destinatario TYPE kna1-name1.
+
+    CLASS-METHODS rechazar_posicion
+      IMPORTING vbeln          TYPE vbeln_vl
+                posnr          TYPE posnr
+                o_log          TYPE REF TO zcl_ap_log OPTIONAL
+                abgru          TYPE abgru
+                !commit        TYPE abap_bool         DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS copiar_posicion
+      IMPORTING vbeln              TYPE vbeln_vl
+                posnr              TYPE posnr
+                o_log              TYPE REF TO zcl_ap_log OPTIONAL
+                matnr_new          TYPE matnr             OPTIONAL
+                !commit            TYPE abap_bool         DEFAULT 'X'
+                kwmeng_new         TYPE any               DEFAULT 0
+                charg_new          TYPE any               OPTIONAL
+                kwmeng_old         TYPE vbap-kwmeng       OPTIONAL
+                abgru_old          TYPE vbap-abgru        OPTIONAL
+                copiar_cond_precio TYPE kschl             DEFAULT ''
+                posex_new          TYPE vbap-posex        OPTIONAL
+                posex_old          TYPE vbap-posex        OPTIONAL
+      EXPORTING !message           TYPE bapi_msg
+                posnr_new          TYPE posnr.
+
+    CLASS-METHODS copiar_pedido
+      IMPORTING vbeln      TYPE vbeln_va
+                simulacion TYPE abap_bool  DEFAULT ''
+                !commit    TYPE abap_bool  DEFAULT 'X'
+                auart_new  TYPE vbak-auart DEFAULT ''
+                kunnr_new  TYPE vbak-kunnr DEFAULT ''
+                pstyv_new  TYPE pstyv      DEFAULT ''
+                ettyp_new  TYPE vbep-ettyp DEFAULT ''
+      EXPORTING vbeln_new  TYPE vbeln_va
+                !message   TYPE bapi_msg
+                i_return   TYPE bapiret2_tab.
+
+    CLASS-METHODS set_texto_string
+      IMPORTING vbeln   TYPE vbeln_va
+                posnr   TYPE posnr_va OPTIONAL
+                !id     TYPE stxh-tdid
+                spras   TYPE spras    DEFAULT ''
+                !string TYPE string.
+
+    CLASS-METHODS esta_bloqueado
+      IMPORTING vbeln            TYPE vbeln_va
+      RETURNING VALUE(bloqueado) TYPE abap_bool.
+
+    CLASS-METHODS espera_si_bloqueado
+      IMPORTING vbeln           TYPE vbeln_va
+                segundos_espera TYPE int2 DEFAULT 10
+      RETURNING VALUE(message)  TYPE bapi_msg.
+
+    CLASS-METHODS get_entrega
+      IMPORTING pedido         TYPE vbeln_va
+      RETURNING VALUE(entrega) TYPE vbeln_vl.
+
+    CLASS-METHODS recalcular_condiciones
+      IMPORTING vbeln          TYPE vbeln_va
+                tipo           TYPE t683-knprs_v
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS insert_vbfa
+      IMPORTING vbeln   TYPE vbeln_vl
+                posnr   TYPE posnr
+                vbeln_n TYPE any
+                posnr_n TYPE any
+                vbtyp_n TYPE any.
+
+    CLASS-METHODS get_url_por_titulo_st
+      IMPORTING vbeln      TYPE any
+                titulo     TYPE string
+      RETURNING VALUE(url) TYPE string.
+
+    CLASS-METHODS get_tipo_objeto
+      IMPORTING vbeln       TYPE any
+      RETURNING VALUE(tipo) TYPE srgbtbrel-typeid_a.
+
+    CLASS-METHODS insertar_url_gos_st
+      IMPORTING vbeln  TYPE any
+                url    TYPE string
+                titulo TYPE string.
+
+    CLASS-METHODS get_datos_interlocutor
+      IMPORTING vbeln TYPE vbeln_va
+                parvw TYPE parvw
+      EXPORTING vbpa  TYPE vbpa
+                adrc  TYPE adrc
+                email TYPE adr6-smtp_addr.
+
+    CLASS-METHODS borrar_pedido
+      IMPORTING vbeln          TYPE vbeln_va
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS bloquear_pedido
+      IMPORTING vbeln          TYPE vbeln_vl
+                o_log          TYPE REF TO zcl_ap_log OPTIONAL
+                lifsk          TYPE vbak-lifsk
+                !commit        TYPE abap_bool         DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS modificar_almacen
+      IMPORTING vbeln          TYPE vbeln_vl
+                posnr          TYPE posnr             OPTIONAL
+                o_log          TYPE REF TO zcl_ap_log OPTIONAL
+                lgort          TYPE lgort_d
+                !commit        TYPE abap_bool         DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS get_condiciones
+      IMPORTING vbeln         TYPE vbeln_va
+      RETURNING VALUE(i_komv) TYPE ty_komv.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
+endclass. "ZCL_AP_PEDIDO_SD definition
+class ZCL_AP_PEDIDO_SD implementation.
+  METHOD bloquear_pedido.
+    DATA: l_vbak           TYPE vbak,
+          order_header_inx TYPE bapisdh1x,
+          order_header_in  TYPE bapisdh1,
+          i_return         TYPE TABLE OF bapiret2,
+          l_return         TYPE bapiret2.
+
+    CLEAR message.
+
+    SELECT SINGLE lifsk FROM vbak
+      INTO l_vbak-lifsk
+     WHERE vbeln = vbeln.
+    IF sy-subrc <> 0.
+      message = |No existe el pedido { vbeln ALPHA = OUT }|.
+    ELSE.
+      IF l_vbak-lifsk = lifsk.
+        IF NOT o_log IS INITIAL.
+          o_log->log( p1 = 'No se modifica el actual estado de bloqueo' p2 = lifsk p3 = 'del pedido'(dpe) p4 = vbeln msgty = 'W' ).
+        ENDIF.
+      ELSE.
+        order_header_inx-updateflag = 'U'.
+        order_header_in-dlv_block   = lifsk.
+        order_header_inx-dlv_block  = 'X'.
+
+        CALL FUNCTION 'BAPI_SALESORDER_CHANGE'
+          EXPORTING
+            salesdocument    = vbeln
+            order_header_in  = order_header_in
+            order_header_inx = order_header_inx
+            simulation       = ' '
+          TABLES
+            return           = i_return.
+
+        LOOP AT i_return INTO l_return WHERE type = 'E'.
+          __add_lista message l_return-message.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+
+    IF NOT o_log IS INITIAL.
+      IF NOT message IS INITIAL AND NOT o_log IS INITIAL.
+        IF i_return IS INITIAL.
+          o_log->log( p1 = message ).
+        ELSE.
+          o_log->set_tabla_log_from_bapiret2_t( i_return ).
+        ENDIF.
+      ELSE.
+        o_log->log( p1 = 'Se ha bloqueado el pedido' p2 = vbeln p3 = 'con motivo'  p4 = lifsk msgty = 'S' ).
+      ENDIF.
+    ENDIF.
+
+    IF message IS INITIAL AND commit = 'X'.
+      zcl_ap_dev=>commit( ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD borrar_pedido.
+    DATA: i_hdrx TYPE bapisdh1x,
+          i_ret  TYPE TABLE OF bapiret2.
+
+    CLEAR message.
+    i_hdrx-updateflag = 'D'.
+
+    CALL FUNCTION 'BAPI_SALESORDER_CHANGE'
+      EXPORTING
+        salesdocument    = vbeln
+        order_header_inx = i_hdrx
+      TABLES
+        return           = i_ret.
+
+    ASSIGN i_ret[ type = 'E' ] TO FIELD-SYMBOL(<ret>).
+    IF sy-subrc = 0.
+      message = <ret>-message.
+    ELSE.
+      CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD copiar_pedido.
+    DATA: l_tabla    TYPE tabname,
+          vbak       TYPE vbakkom,
+          vbakx      TYPE vbakkomx,
+          i_vbapkom  TYPE TABLE OF vbapkom,
+          l_vbapkomx TYPE vbapkomx,
+          i_vbapkomx TYPE TABLE OF vbapkomx,
+          i_vbepkom  TYPE TABLE OF vbepkom,
+          l_vbepkomx TYPE vbepkomx,
+          i_vbepkomx TYPE TABLE OF vbepkomx,
+          i_vbpakom  TYPE TABLE OF vbpakom,
+          vbak_new   TYPE vbak,
+          l_return   TYPE bapiret2.
+
+    FIELD-SYMBOLS: <vbapkom> TYPE vbapkom,
+                   <vbepkom> TYPE vbepkom,
+                   <vbpakom> TYPE vbpakom.
+
+    CLEAR: vbeln_new, message.
+
+    l_tabla = 'VBAK'.
+    SELECT SINGLE * FROM (l_tabla)
+      INTO CORRESPONDING FIELDS OF vbak
+     WHERE vbeln = vbeln.
+    IF sy-subrc <> 0.
+      __concat2 message 'No existe el pedido'(nep) vbeln.
+      RETURN.
+    ELSE.
+      SELECT SINGLE * FROM vbkd
+        INTO CORRESPONDING FIELDS OF vbak
+       WHERE vbeln = vbeln
+         AND posnr = '000000'.
+      CLEAR vbak-vbeln.
+
+      IF NOT auart_new IS INITIAL.
+        vbak-auart = auart_new.
+      ENDIF.
+
+      zcl_ap_utils=>busca_cambios_datos( EXPORTING original     = vbak ddic = 'X'
+                                         CHANGING  cambios      = vbakx ).
+      vbakx-updkz = 'I'.
+    ENDIF.
+
+    SELECT * FROM vbap
+      INTO CORRESPONDING FIELDS OF TABLE i_vbapkom
+     WHERE vbeln = vbeln
+       AND abgru = ''.
+    IF sy-subrc <> 0.
+      message = 'No existe posiciones no rechazadas'(npr).
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_vbapkom ASSIGNING <vbapkom>.
+      IF NOT pstyv_new IS INITIAL.
+        <vbapkom>-pstyv = pstyv_new.
+      ENDIF.
+      zcl_ap_material=>determina_cambios_campos( EXPORTING original     = <vbapkom> pos_ini_cambios = 1
+                                                 CHANGING  cambios      = l_vbapkomx ).
+      l_vbapkomx-updkz = 'I'.
+      APPEND l_vbapkomx TO i_vbapkomx.
+    ENDLOOP.
+
+    SELECT * FROM vbep
+      INTO CORRESPONDING FIELDS OF TABLE i_vbepkom
+     WHERE vbeln = vbeln.
+
+    LOOP AT i_vbepkom ASSIGNING <vbepkom>.
+      IF NOT ettyp_new IS INITIAL.
+        <vbepkom>-ettyp = ettyp_new.
+      ENDIF.
+      zcl_ap_material=>determina_cambios_campos( EXPORTING original     = <vbepkom> pos_ini_cambios = 1
+                                                 CHANGING  cambios      = l_vbepkomx ).
+      l_vbepkomx-updkz = 'I'.
+      APPEND l_vbepkomx TO i_vbepkomx.
+    ENDLOOP.
+
+    l_tabla = 'VBPA'.
+    SELECT * FROM (l_tabla)
+      INTO CORRESPONDING FIELDS OF TABLE i_vbpakom
+     WHERE vbeln = vbeln.
+
+    IF NOT kunnr_new IS INITIAL.
+      LOOP AT i_vbpakom ASSIGNING <vbpakom>.
+        IF <vbpakom>-parvw = 'AG'.
+          <vbpakom>-kunnr = kunnr_new.
+        ELSE.
+          SELECT kunnr FROM knvp
+            INTO vbak_new-kunnr
+            UP TO 1 ROWS
+           WHERE kunnr = kunnr_new
+             AND vkorg = vbak-vkorg
+             AND vtweg = vbak-vtweg
+             AND spart = vbak-spart
+             AND parvw = <vbpakom>-parvw
+           ORDER BY PRIMARY KEY.
+          ENDSELECT.
+          IF sy-subrc = 0.
+            <vbpakom>-kunnr = vbak_new-kunnr.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    CALL FUNCTION 'SD_SALES_DOCU_MAINTAIN'
+      EXPORTING
+        i_vbakkom   = vbak
+        i_vbakkomx  = vbakx
+        simulation  = simulacion
+*       WITH_COMMIT = ' '
+*       I_VBAKKOM_REF                   =
+*       I_POSNR     = ' '
+*       I_BWE       = ' '
+*       I_LOGIC_SWITCH                  = ' '
+*       I_CALL_BAPI = ' '
+*       I_WITHOUT_INIT                  = ' '
+*       SUPPRESS_AVAILIBILITY_DIA       = 'X'
+*       I_LOGSYS    =
+*       STATUS_BUFFER_REFRESH           = 'X'
+*       I_CRM_LOCK_MODE                 = ' '
+*       I_CALLER    = ' '
+*       CALL_ACTIVE = ' '
+      IMPORTING
+        e_vbak      = vbak_new
+*       E_VBUK      =
+      TABLES
+        ix_vbapkom  = i_vbapkom
+        ix_vbapkomx = i_vbapkomx
+        ix_vbpakom  = i_vbpakom
+*       IX_VBPA2KOM =
+*       IX_VBPA3KOM =
+*       IX_BAPIADDR1                    =
+        ix_vbepkom  = i_vbepkom
+        ix_vbepkomx = i_vbepkomx
+*       IX_KONVKOM  =
+*       IX_KONVKOMX =
+*       IX_KOMFKZM  =
+*       SALES_CFGS_REF                  =
+*       SALES_CFGS_INST                 =
+*       SALES_CFGS_PART_OF              =
+*       SALES_CFGS_VALUE                =
+*       SALES_CFGS_BLOB                 =
+*       SALES_CFGS_VK                   =
+*       SALES_CFGS_REFINST              =
+        return      = i_return.
+*       IX_TEXT_HEADER                  =
+*       IX_TEXT_ITEM                    =
+*       KEY_TABLE   =
+*       VBUVKOM_OUT =
+*       IX_MDVU     =
+*       EX_VBKD     =
+*       EX_VBAP     =
+*       EX_VBEP     =
+*       IX_ATPCS_RET                    =
+*       IX_MDVE     =
+*       IX_ATPTERM  =
+*       IX_QTVB     =
+*       EX_KONV     =
+*       IX_CUBLB    =
+*       IX_CUCFG    =
+*       IX_CUINS    =
+*       IX_CUPRT    =
+*       IX_CUVAL    =
+*       IX_CUVK     =
+*       IX_VBXDATA  =
+*       IX_VBXHEAD  =
+*       IX_BOP_XVBEP                    =
+*       IX_VBLBKOM  =
+*       IX_VBLBKOMX =
+*       EX_VBLB     =
+*       IX_VBKFZKOM =
+*       IX_VBKFZKOMX                    =
+*       EX_VBKFZ    =
+*       EX_VBPA     =
+*       EX_THEADVB  =
+*       EX_BAPITEXTLI                   =
+*       BATCH_CHARC =
+
+    IF NOT vbak_new-vbeln IS INITIAL.
+      vbeln_new = vbak_new-vbeln.
+      IF commit = 'X'.
+        zcl_ap_dev=>commit( ).
+      ENDIF.
+    ELSE.
+      LOOP AT i_return INTO l_return WHERE type = 'E'.
+        __add_lista message l_return-message.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+  METHOD copiar_posicion.
+    DATA: l_vbap            TYPE vbap,
+          order_header_inx  TYPE bapisdh1x,
+          l_item_in         TYPE bapisditm,
+          l_item_inx        TYPE bapisditmx,
+          l_schedule_lines  TYPE bapischdl,
+          i_schedule_lines  TYPE TABLE OF bapischdl,
+          l_schedule_linesx TYPE bapischdlx,
+          i_schedule_linesx TYPE TABLE OF bapischdlx,
+          i_item_in         TYPE TABLE OF bapisditm,
+          i_item_inx        TYPE TABLE OF bapisditmx,
+          l_vbep            TYPE vbep,
+          l_konv            TYPE konv,
+          l_conditions_in   TYPE bapicond,
+          i_conditions_in   TYPE TABLE OF bapicond,
+          l_conditions_inx  TYPE bapicondx,
+          i_conditions_inx  TYPE TABLE OF bapicondx,
+          logic_switch      TYPE bapisdls,
+          i_return          TYPE TABLE OF bapiret2,
+          l_return          TYPE bapiret2.
+
+    CLEAR: message, posnr_new.
+
+    IF NOT matnr_new IS INITIAL.
+      IF NOT o_log IS INITIAL.
+        o_log->log( p1 = 'Copiamos posicion'(cpo) p2 = posnr p3 = 'a nueva posicion con nuevo material'(npm) p4 = matnr_new p5 = kwmeng_new msgty = 'I' ).
+      ENDIF.
+    ENDIF.
+
+    SELECT SINGLE kwmeng matnr pstyv vrkme abgru FROM vbap
+      INTO CORRESPONDING FIELDS OF l_vbap
+     WHERE vbeln = vbeln
+       AND posnr = posnr.
+    IF sy-subrc <> 0.
+      __concat4 message 'No existe la posicion'(npp) posnr 'en el pedido '(eep) vbeln.
+    ELSE.
+      order_header_inx-updateflag = 'U'.
+
+      SELECT MAX( posnr ) FROM vbap
+        INTO posnr_new
+       WHERE vbeln = vbeln.
+      posnr_new = posnr_new + 10.
+      __poner_ceros posnr_new.
+
+      IF kwmeng_old IS SUPPLIED OR abgru_old IS SUPPLIED OR posex_old IS SUPPLIED.
+        CLEAR l_item_in.
+        l_item_inx-itm_number = posnr.
+        l_item_in-itm_number = l_item_inx-itm_number.
+        l_item_inx-updateflag = 'U'.
+
+        IF NOT kwmeng_old IS INITIAL.
+          l_item_in-target_qty = kwmeng_old.
+          l_item_inx-target_qty = 'X'.
+
+          CLEAR l_schedule_lines.
+          l_schedule_lines-itm_number = l_item_in-itm_number.
+          l_schedule_lines-sched_line = '0001'.
+          l_schedule_lines-req_qty    = kwmeng_old.
+          APPEND l_schedule_lines TO i_schedule_lines.
+
+          CLEAR l_schedule_linesx.
+          l_schedule_linesx-itm_number = l_item_in-itm_number.
+          l_schedule_linesx-sched_line = '0001'.
+          l_schedule_linesx-updateflag = 'U'.
+          l_schedule_linesx-req_qty    = 'X'.
+          APPEND l_schedule_linesx TO i_schedule_linesx.
+        ENDIF.
+
+        IF NOT abgru_old IS INITIAL.
+          l_item_in-reason_rej = abgru_old.
+          l_item_inx-reason_rej = 'X'.
+        ENDIF.
+        IF NOT posex_old IS INITIAL.
+          IF posex_old = '?'.
+            l_item_in-po_itm_no = posnr_new.
+          ELSEIF posex_old = '?O'.
+            l_item_in-po_itm_no    = posnr_new.
+            l_item_in-po_itm_no(1) = 'C'.
+          ELSE.
+            l_item_in-po_itm_no = posex_old.
+          ENDIF.
+          l_item_inx-po_itm_no = 'X'.
+        ENDIF.
+        APPEND l_item_in TO i_item_in.
+        APPEND l_item_inx TO i_item_inx.
+      ENDIF.
+
+      CLEAR l_item_in.
+      l_item_inx-itm_number = posnr_new.
+      l_item_in-itm_number = l_item_inx-itm_number.
+      IF NOT matnr_new IS INITIAL.
+        l_item_in-material      = matnr_new.
+        l_item_in-material_long = matnr_new.
+      ELSE.
+        l_item_in-material      = l_vbap-matnr.
+        l_item_in-material_long = l_vbap-matnr.
+      ENDIF.
+      IF kwmeng_new IS INITIAL.
+        l_item_in-target_qty = l_vbap-kwmeng.
+      ELSE.
+        l_item_in-target_qty = kwmeng_new.
+      ENDIF.
+      l_item_in-target_qu  = l_vbap-vrkme.
+      l_item_in-sales_unit = l_vbap-vrkme.
+      l_item_in-item_categ = l_vbap-pstyv.
+
+      IF posex_new IS SUPPLIED.
+        l_item_in-po_itm_no = posex_new.
+      ENDIF.
+
+      IF charg_new IS SUPPLIED.
+        l_item_in-batch = charg_new.
+      ENDIF.
+      APPEND l_item_in TO i_item_in.
+      l_item_inx-updateflag    = 'I'.
+      l_item_inx-material      = 'X'.
+      l_item_inx-material_long = 'X'.
+      l_item_inx-target_qty    = 'X'.
+      l_item_inx-target_qu     = 'X'.
+      l_item_inx-sales_unit    = 'X'.
+      l_item_inx-item_categ    = 'X'.
+      IF charg_new IS SUPPLIED.
+        l_item_inx-batch = 'X'.
+      ENDIF.
+      IF posex_new IS SUPPLIED.
+        l_item_inx-po_itm_no = posex_new.
+      ENDIF.
+      APPEND l_item_inx TO i_item_inx.
+
+      SELECT edatu lddat mbdat tddat wadat FROM vbep
+        INTO CORRESPONDING FIELDS OF l_vbep
+        UP TO 1 ROWS
+       WHERE vbeln = vbeln
+         AND posnr = posnr
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      CLEAR l_schedule_lines.
+      l_schedule_lines-itm_number = l_item_in-itm_number.
+      l_schedule_lines-sched_line = '0001'.
+      l_schedule_lines-req_qty    = l_item_in-target_qty.
+      l_schedule_lines-req_date   = l_vbep-edatu.
+      l_schedule_lines-tp_date    = l_vbep-tddat.
+      l_schedule_lines-ms_date    = l_vbep-mbdat.
+      l_schedule_lines-load_date  = l_vbep-lddat.
+      l_schedule_lines-gi_date    = l_vbep-wadat.
+      APPEND l_schedule_lines TO i_schedule_lines.
+
+      CLEAR l_schedule_linesx.
+      l_schedule_linesx-itm_number = l_item_in-itm_number.
+      l_schedule_linesx-sched_line = '0001'.
+      l_schedule_linesx-updateflag = 'I'.
+      l_schedule_linesx-req_qty    = 'X'.
+      l_schedule_linesx-req_date   = 'X'.
+      l_schedule_linesx-tp_date    = 'X'.
+      l_schedule_linesx-ms_date    = 'X'.
+      l_schedule_linesx-load_date  = 'X'.
+      l_schedule_linesx-gi_date    = 'X'.
+      APPEND l_schedule_linesx TO i_schedule_linesx.
+
+      IF NOT copiar_cond_precio IS INITIAL.
+        SELECT SINGLE knumv FROM vbak
+          INTO @DATA(l_knumv)
+         WHERE vbeln = @vbeln.
+
+        SELECT kbetr kpein kmein waers FROM konv
+          INTO CORRESPONDING FIELDS OF l_konv
+         WHERE knumv = l_knumv
+           AND kposn = posnr
+           AND kschl = copiar_cond_precio
+         ORDER BY PRIMARY KEY.
+          CLEAR l_conditions_in.
+          l_conditions_in-itm_number = l_item_in-itm_number.
+          l_conditions_in-cond_type  = l_konv-kschl.
+          l_conditions_in-cond_value = l_konv-kbetr.
+          l_conditions_in-cond_p_unt = l_konv-kpein.
+          l_conditions_in-cond_unit  = l_konv-kmein.
+          l_conditions_in-currency   = l_konv-waers.
+          APPEND l_conditions_in TO i_conditions_in.
+
+          CLEAR l_conditions_inx.
+          l_conditions_inx-itm_number = l_item_in-itm_number.
+          l_conditions_inx-updateflag = 'I'.
+          l_conditions_inx-cond_type  = 'X'.
+          l_conditions_inx-cond_value = 'X'.
+          l_conditions_inx-currency   = 'X'.
+          l_conditions_inx-cond_p_unt = 'X'.
+          l_conditions_inx-cond_unit  = 'X'.
+          APPEND l_conditions_inx TO i_conditions_inx.
+        ENDSELECT.
+      ENDIF.
+
+      logic_switch-cond_handl = 'X'.
+      logic_switch-pricing    = 'B'.
+
+      CALL FUNCTION 'BAPI_SALESORDER_CHANGE'
+        EXPORTING
+          salesdocument    = vbeln
+          order_header_inx = order_header_inx
+          simulation       = ' '
+          logic_switch     = logic_switch
+        TABLES
+          return           = i_return
+          order_item_in    = i_item_in
+          order_item_inx   = i_item_inx
+          schedule_lines   = i_schedule_lines
+          schedule_linesx  = i_schedule_linesx
+          conditions_in    = i_conditions_in
+          conditions_inx   = i_conditions_inx.
+
+      LOOP AT i_return INTO l_return WHERE type = 'E'.
+        __add_lista message l_return-message.
+        CLEAR posnr_new.
+      ENDLOOP.
+    ENDIF.
+
+    IF NOT o_log IS INITIAL.
+      IF NOT message IS INITIAL AND NOT o_log IS INITIAL.
+        IF i_return IS INITIAL.
+          o_log->log( p1 = message ).
+        ELSE.
+          o_log->set_tabla_log_from_bapiret2_t( i_return ).
+        ENDIF.
+      ELSE.
+        o_log->log( p1 = 'Se ha copiado la posicion'(scp) p2 = posnr p3 = 'del pedido'(dpe) p4 = vbeln p5 = 'sobre la nueva posicion'(snp) p6 = posnr_new p7 = 'material'(mat) p8 = l_item_in-material msgty = 'S' ).
+      ENDIF.
+    ENDIF.
+
+    IF message IS INITIAL AND commit = 'X'.
+      zcl_ap_dev=>commit( ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD espera_si_bloqueado.
+    DATA bloqueado TYPE c LENGTH 1.
+
+    DO segundos_espera TIMES.
+      bloqueado = esta_bloqueado( vbeln ).
+      IF bloqueado = 'X'.
+        __concat4 message 'Pedido'(ped) vbeln 'bloqueado por'(blp) sy-msgv1.
+        WAIT UP TO 1 SECONDS.
+      ELSE.
+        CLEAR message.
+        EXIT.
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.
+  METHOD esta_bloqueado.
+    bloqueado = zcl_ap_utils=>comprobar_bloqueo( tabla = 'VBAK'
+                                                 clave = sy-mandt
+                                                 clave2 = vbeln ).
+  ENDMETHOD.
+  METHOD get_cantidad_entregada.
+    DATA lips TYPE lips.
+
+    IF vrkme IS INITIAL.
+      SELECT SUM( lfimg ) FROM lips
+        INTO lfimg
+       WHERE vgbel = vbeln
+         AND vgpos = posnr.
+    ELSE.
+      SELECT lfimg vrkme FROM lips
+        INTO (lips-lfimg, lips-vrkme)
+       WHERE vgbel  = vbeln
+         AND vgpos  = posnr
+         AND lfimg <> 0.
+        IF lips-matnr <> ''.
+          lips-lfimg = zcl_ap_material=>convertir_unidad( cantidad = lips-lfimg unidad_origen = lips-vrkme unidad_destino = vrkme matnr = lips-matnr ).
+        ENDIF.
+        lfimg = lfimg + lips-lfimg.
+      ENDSELECT.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_condiciones.
+    DATA: da_xvbak       TYPE TABLE OF vbak, " Sales document header
+          da_konv_keytab TYPE TABLE OF sdcond_key, " Key table for condition records
+          us_xkonh       TYPE TABLE OF konh, " Condition record header
+          us_xkonp       TYPE TABLE OF konp, " Condition record item
+          us_xkonm       TYPE TABLE OF konm, " Condition record material
+          us_xkonw       TYPE TABLE OF konw, " Condition record plant
+          us_return      TYPE TABLE OF bapiret2. " Return structure
+
+    CLEAR i_komv.
+    SELECT  * FROM vbak
+      INTO TABLE da_xvbak
+     WHERE vbeln = vbeln.
+    IF sy-subrc = 0.
+      MOVE-CORRESPONDING da_xvbak TO da_konv_keytab.
+
+      CALL FUNCTION 'SD_KOMV_ARRAY_SELECT'
+        EXPORTING
+          read_cond                = ''
+          i_memory_read            = ''
+          i_with_header_conditions = ''
+        TABLES
+          i_komv_keytab            = da_konv_keytab
+          i_vbak                   = da_xvbak
+          e_komv                   = i_komv[]
+          e_konh                   = us_xkonh
+          e_konp                   = us_xkonp
+          e_konm                   = us_xkonm
+          e_konw                   = us_xkonw
+          return                   = us_return
+        EXCEPTIONS
+          err_no_records_requested = 1
+          err_no_records_found     = 2
+          OTHERS                   = 3.
+
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_datos_interlocutor.
+    CLEAR: vbpa, adrc, email.
+
+    SELECT kunnr, parnr, adrnr, land1, adrnp, pernr
+      FROM vbpa
+      INTO CORRESPONDING FIELDS OF @vbpa
+      UP TO 1 ROWS
+      WHERE vbeln = @vbeln
+        AND parvw = @parvw
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    IF NOT vbpa-adrnr IS INITIAL.
+      SELECT name1 name2 name3 name4 city1 city2 post_code1 street house_num1 country
+                    tel_number fax_number FROM adrc
+        INTO CORRESPONDING FIELDS OF adrc
+        UP TO 1 ROWS
+       WHERE addrnumber  = vbpa-adrnr
+         AND date_from  <= sy-datum
+         AND date_to    >= sy-datum
+        ORDER BY addrnumber DESCENDING date_from DESCENDING.
+      ENDSELECT.
+
+      SELECT smtp_addr FROM adr6
+        INTO email
+        UP TO 1 ROWS
+       WHERE addrnumber  = vbpa-adrnr
+         AND persnumber  = vbpa-adrnp
+         AND date_from  <= sy-datum
+         AND flgdefault  = 'X'
+        ORDER BY addrnumber DESCENDING date_from DESCENDING.
+      ENDSELECT.
+    ENDIF.
+
+    IF NOT vbpa-adrnp IS INITIAL.
+      SELECT name_text FROM adrp
+        INTO (adrc-name1)
+        UP TO 1 ROWS
+       WHERE persnumber  = vbpa-adrnp
+         AND date_from  <= sy-datum
+         AND date_to    >= sy-datum
+       ORDER BY date_from DESCENDING.
+      ENDSELECT.
+    ENDIF.
+
+    IF NOT vbpa-pernr IS INITIAL.
+      SELECT ename FROM pa0001
+        INTO adrc-name1
+        UP TO 1 ROWS
+       WHERE pernr  = vbpa-pernr
+         AND endda >= sy-datum
+         AND begda <= sy-datum
+        ORDER BY endda DESCENDING.
+      ENDSELECT.
+
+      IF email IS INITIAL.
+        email = zcl_ap_empleado=>get_email( vbpa-pernr ).
+      ENDIF.
+
+      IF adrc-tel_number IS INITIAL.
+        adrc-tel_number = zcl_ap_empleado=>get_comunicacion_st( pernr = vbpa-pernr subty = '0020' ).
+        CONDENSE adrc-tel_number.
+        IF adrc-tel_number IS INITIAL.
+          adrc-tel_number = zcl_ap_empleado=>get_comunicacion_st( pernr = vbpa-pernr subty = 'CELL' ).
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_destinatario.
+    DATA l_vbpa TYPE vbpa.
+
+    CLEAR: adrc, tel_number.
+
+    SELECT SINGLE adrnr kunnr FROM vbpa
+      INTO CORRESPONDING FIELDS OF l_vbpa
+       WHERE vbeln = vbeln
+         AND posnr = '000000'
+         AND parvw = 'WE'.
+
+    kunwe = l_vbpa-kunnr.
+    SELECT SINGLE name1 FROM kna1
+      INTO nombre_destinatario
+     WHERE kunnr = kunwe.
+
+    IF l_vbpa-adrnr IS INITIAL.
+      SELECT SINGLE adrnr FROM kna1
+        INTO l_vbpa-adrnr
+       WHERE kunnr = l_vbpa-kunnr.
+    ENDIF.
+
+    IF l_vbpa-adrnr IS INITIAL.
+      SELECT SINGLE name1 land1 regio stras pstlz ort01 telf1 FROM kna1
+        INTO (adrc-name1, adrc-country, adrc-region, adrc-street,
+              adrc-post_code1, adrc-city1, adrc-tel_number)
+       WHERE kunnr = kunwe.
+    ELSE.
+      SELECT * FROM adrc
+        INTO adrc
+        UP TO 1 ROWS
+       WHERE addrnumber = l_vbpa-adrnr
+       ORDER BY PRIMARY KEY.
+      ENDSELECT.
+
+      SELECT tel_number FROM adr2
+        INTO (tel_number)
+        UP TO 1 ROWS
+       WHERE addrnumber = l_vbpa-adrnr
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
+    ENDIF.
+    name1 = adrc-name1.
+
+    SELECT SINGLE landx FROM t005t
+      INTO nombre_pais
+     WHERE spras = sy-langu
+       AND land1 = adrc-country.
+
+    SELECT SINGLE bezei FROM t005u
+      INTO nombre_provincia
+     WHERE spras = sy-langu
+       AND land1 = adrc-country
+       AND bland = adrc-region.
+  ENDMETHOD.
+  METHOD get_entrega.
+    SELECT vbeln
+      FROM lips
+      INTO @entrega
+      UP TO 1 ROWS
+      WHERE vgbel = @pedido
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+  ENDMETHOD.
+  METHOD get_estado_posicion.
+    DATA: l_tabla          TYPE tabname     VALUE 'VBUP',
+          l_tabla_ent      TYPE tabname     VALUE 'VBUP',
+          l_vbup           TYPE vbup,
+          i_vbfa           TYPE TABLE OF vbfa,
+          l_mayor_stat     TYPE c LENGTH 2,
+          l_vbfa           TYPE vbfa,
+          l_vbupf          TYPE vbup,
+          l_kosta          TYPE vbup-kosta,
+          l_stat           TYPE c LENGTH 2,
+          l_no_factura     TYPE c LENGTH 1,
+          l_cant_pedida    TYPE vbap-kwmeng,
+          l_cant_entregada TYPE lips-lfimg.
+
+    IF zcl_c=>hana = 'X'.
+      l_tabla = 'VBAP'.
+      l_tabla_ent = 'LIPS'.
+    ENDIF.
+
+    SELECT SINGLE absta gbsta lfsta FROM (l_tabla)
+    INTO CORRESPONDING FIELDS OF l_vbup
+   WHERE vbeln = vbeln
+     AND posnr = posnr.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+* Si la posicion está rechazada y no se ha entregado nada, se marca como RECHAZADA
+    IF l_vbup-absta = 'C' AND ( l_vbup-lfsta = 'A' OR l_vbup-lfsta = '' ).
+      estado = 'RE'.
+      RETURN.
+    ENDIF.
+
+    IF l_vbup-gbsta = 'A'.
+* Si no se ha iniciado el proceso de la posicion, estado PENDIENTE
+      estado = ''.
+    ELSE.
+      SELECT posnn vbeln vbtyp_n FROM vbfa
+        INTO CORRESPONDING FIELDS OF TABLE i_vbfa
+       WHERE vbelv = vbeln
+         AND posnv = posnr
+         AND posnn < '900000'
+         AND stufe = '00'.
+      IF sy-subrc = 0.
+* Entregas
+        l_mayor_stat = '1'.
+        LOOP AT i_vbfa INTO l_vbfa WHERE vbtyp_n = 'J' OR vbtyp_n = 'T'.
+          SELECT SINGLE fksta kosta wbsta FROM (l_tabla_ent)
+            INTO CORRESPONDING FIELDS OF l_vbupf
+           WHERE vbeln = l_vbfa-vbeln
+             AND posnr = l_vbfa-posnn.
+
+* Busco si las posiciones inferiores tienen picking.
+          IF     l_vbupf-fksta <> 'C'
+             AND l_vbupf-wbsta <> 'C'
+             AND l_vbupf-kosta  = ''.
+            IF zcl_c=>hana IS INITIAL.
+              SELECT SINGLE vbup~kosta FROM lips JOIN vbup ON  lips~vbeln = vbup~vbeln
+                                                           AND lips~posnr = vbup~posnr
+                INTO l_kosta
+               WHERE lips~vbeln  = l_vbfa-vbeln
+                 AND uecha       = l_vbfa-posnn
+                 AND vbup~kosta IN ( 'B', 'C' ).
+            ELSE.
+              SELECT SINGLE kosta FROM (l_tabla_ent)
+                INTO l_kosta
+               WHERE vbeln  = l_vbfa-vbeln
+                 AND uecha  = l_vbfa-posnn
+                 AND kosta IN ( 'B', 'C' ).
+            ENDIF.
+            IF sy-subrc = 0.
+              IF zcl_c=>hana IS INITIAL.
+                SELECT vbup~kosta FROM lips JOIN vbup ON  lips~vbeln = vbup~vbeln
+                                                      AND lips~posnr = vbup~posnr
+                  INTO l_kosta
+                  UP TO 1 ROWS
+                 WHERE     lips~vbeln  = l_vbfa-vbeln
+                   AND     uecha       = l_vbfa-posnn
+                   AND NOT vbup~kosta IN ( 'B', 'C' )
+                  ORDER BY lips~vbeln lips~posnr.
+                ENDSELECT.
+              ELSE.
+                SELECT kosta FROM (l_tabla_ent)
+                  INTO l_kosta
+                  UP TO 1 ROWS
+                 WHERE     vbeln  = l_vbfa-vbeln
+                   AND     uecha  = l_vbfa-posnn
+                   AND NOT kosta IN ( 'B', 'C' )
+                  ORDER BY vbeln lips~posnr.
+                ENDSELECT.
+              ENDIF.
+              IF sy-subrc <> 0.
+                l_vbupf-kosta = l_kosta.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+
+          IF l_vbupf-fksta = 'C'.  " Estado global pedido
+            l_stat = '5F'.
+          ELSEIF l_vbupf-wbsta = 'C'. " Status de movimiento de mercancías
+            l_stat = '4E'.
+          ELSEIF l_vbupf-kosta = 'C'. " Status de picking / Status entrada almacén
+            l_stat = '3P'.
+          ELSE.
+            l_stat = '2C'.
+          ENDIF.
+          IF l_stat > l_mayor_stat.
+            l_mayor_stat = l_stat.
+          ENDIF.
+          IF l_vbupf-fksta <> 'C'.
+            l_no_factura = 'X'.
+          ENDIF.
+        ENDLOOP.
+
+        IF l_mayor_stat = '1'.
+          LOOP AT i_vbfa TRANSPORTING NO FIELDS WHERE    vbtyp_n = 'M'
+                                                      OR vbtyp_n = 'N'.
+            IF l_vbup-gbsta = 'C'.
+              estado = 'FT'.
+            ELSE.
+              estado = 'FP'.
+            ENDIF.
+          ENDLOOP.
+        ELSE.
+          IF l_mayor_stat = '1C'.
+* Si el estado es entrega sin picking realizado, lo dejamos en pendiente.
+            CLEAR estado.
+          ELSE.
+            IF l_vbup-gbsta = 'C'.
+              IF l_mayor_stat+1 = 'F'.
+                IF l_no_factura = 'X'.
+                  estado = 'FP'.
+                ELSE.
+                  estado = 'FT'.
+                ENDIF.
+              ELSE.
+                CONCATENATE l_mayor_stat+1 'T' INTO estado.
+              ENDIF.
+            ELSE.
+              SELECT SINGLE kwmeng FROM vbap
+                INTO l_cant_pedida
+               WHERE vbeln = vbeln
+                 AND posnr = posnr.
+
+              l_cant_entregada = get_cantidad_entregada( vbeln = vbeln
+                                                         posnr = posnr ).
+
+              IF l_cant_pedida <= l_cant_entregada.
+                CONCATENATE l_mayor_stat+1 'T' INTO estado.
+              ELSE.
+                CONCATENATE l_mayor_stat+1 'P' INTO estado.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF estado(1) = 'C'.
+      CLEAR estado.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_status.
+    DATA l_objnr TYPE jsto-objnr.
+
+    CLEAR i_status.
+    CONCATENATE 'VB' vbeln posnr INTO l_objnr.
+    CALL FUNCTION 'STATUS_READ'
+      EXPORTING
+*       CLIENT           = SY-MANDT
+        objnr            = l_objnr
+        only_active      = only_active
+      TABLES
+        status           = i_status
+      EXCEPTIONS
+        object_not_found = 1
+        OTHERS           = 2.
+    IF sy-subrc <> 0.
+      MESSAGE 'Error leyendo status' TYPE 'S'.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_status_activo.
+    DATA: i_status TYPE ttjstat,
+          l_status TYPE jstat.
+
+    i_status = get_status( vbeln = vbeln posnr = posnr only_active = 'X' ).
+
+    CLEAR status.
+    READ TABLE i_status INTO l_status INDEX 1.
+    IF sy-subrc = 0.
+      status = l_status-stat.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_texto_string.
+    IF posnr IS INITIAL.
+      string = zcl_ap_textos=>get_texto_string( id = id object = 'VBBK' name = vbeln spras = spras ).
+    ELSE.
+      string = zcl_ap_textos=>get_texto_string( id = id object = 'VBBP' name = vbeln && posnr spras = spras ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_tipo_objeto.
+    DATA l_vbtyp TYPE vbtyp.
+
+    SELECT SINGLE vbtyp FROM vbak
+      INTO l_vbtyp
+     WHERE vbeln = vbeln.
+    CASE l_vbtyp.
+      WHEN 'A'. tipo = 'BUS2030'. " Consulta
+      WHEN 'B'. tipo = 'BUS2031'. " Oferta
+      WHEN 'C'. tipo = 'BUS2032'. " Pedido
+    ENDCASE.
+  ENDMETHOD.
+  METHOD get_url_por_titulo_st.
+    DATA: l_clave TYPE srgbtbrel-instid_a,
+          l_tipo  TYPE srgbtbrel-typeid_a.
+
+    l_clave = vbeln.
+
+    l_tipo = get_tipo_objeto( vbeln ).
+
+    url = zcl_ap_gos=>get_url_por_titulo_st( tipo   = l_tipo
+                                             clave  = l_clave
+                                             titulo = titulo ).
+  ENDMETHOD.
+  METHOD get_valor_condicion.
+    TYPES: BEGIN OF t_konv,
+             kposn TYPE konv-kposn,
+             kschl TYPE konv-kschl,
+             kawrt TYPE konv-kawrt,
+             kwert TYPE konv-kwert,
+             kbetr TYPE konv-kbetr,
+             waers TYPE konv-waers,
+           END OF t_konv.
+
+    FIELD-SYMBOLS <valor> TYPE any.
+
+    DATA: r_kposn TYPE RANGE OF konv-kposn,
+          l_knumv TYPE vbak-knumv,
+          l_tabla TYPE tabname,
+          l_kposn LIKE LINE OF r_kposn,
+          i_konv  TYPE TABLE OF t_konv,
+          l_campo TYPE string,
+          l_konv  TYPE t_konv.
+
+    SELECT SINGLE knumv FROM vbak
+      INTO l_knumv
+     WHERE vbeln = vbeln.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    IF zcl_c=>hana = 'X'.
+      l_tabla = 'PRCD_ELEMENTS'.
+    ELSE.
+      l_tabla = 'KONV'.
+    ENDIF.
+
+    IF NOT posnr IS INITIAL.
+      l_kposn-option = 'EQ'.
+      l_kposn-sign   = 'I'.
+      l_kposn-low    = posnr.
+      APPEND l_kposn TO r_kposn.
+    ENDIF.
+
+    IF r_kposn IS INITIAL AND cabecera = 'X'.
+      SELECT * FROM (l_tabla)                 "#EC CI_ALL_FIELDS_NEEDED
+        INTO CORRESPONDING FIELDS OF TABLE i_konv
+       WHERE knumv = l_knumv
+         AND kposn = '000000'
+         AND kschl = kschl
+       ORDER BY PRIMARY KEY.
+    ELSE.
+      SELECT * FROM (l_tabla)                 "#EC CI_ALL_FIELDS_NEEDED
+        INTO CORRESPONDING FIELDS OF TABLE i_konv
+       WHERE knumv  = l_knumv
+         AND kposn IN r_kposn
+         AND kschl  = kschl
+       ORDER BY PRIMARY KEY.
+    ENDIF.
+
+    CONCATENATE 'L_KONV-' campo INTO l_campo.
+    ASSIGN (l_campo) TO <valor>.
+    IF sy-subrc = 0.
+      LOOP AT i_konv INTO l_konv.
+        valor = valor + <valor>.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_valor_condicion_char.
+    FIELD-SYMBOLS <valor> TYPE any.
+
+    DATA: r_kposn TYPE RANGE OF konv-kposn,
+          l_knumv TYPE vbak-knumv,
+          l_kposn LIKE LINE OF r_kposn,
+          i_konv  TYPE TABLE OF konv,
+          l_campo TYPE string,
+          l_konv  TYPE konv.
+
+    SELECT SINGLE knumv FROM vbak
+      INTO l_knumv
+     WHERE vbeln = vbeln.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    IF NOT posnr IS INITIAL.
+      l_kposn-option = 'EQ'.
+      l_kposn-sign   = 'I'.
+      l_kposn-low    = posnr.
+      APPEND l_kposn TO r_kposn.
+    ENDIF.
+
+    SELECT * FROM konv                        "#EC CI_ALL_FIELDS_NEEDED
+      INTO TABLE i_konv
+     WHERE knumv  = l_knumv
+       AND kposn IN r_kposn
+       AND kschl  = kschl
+      ORDER BY PRIMARY KEY.
+
+    CONCATENATE 'L_KONV-' campo INTO l_campo.
+    ASSIGN (l_campo) TO <valor>.
+    IF sy-subrc = 0.
+      LOOP AT i_konv INTO l_konv.
+        valor = <valor>.
+        EXIT.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+  METHOD get_valor_pendiente_fact.
+    FIELD-SYMBOLS: <vbap> TYPE vbap,
+                   <vbfa> TYPE vbfa.
+
+    DATA: r_posnr  TYPE RANGE OF vbap-posnr,
+          r_fktyp  TYPE RANGE OF vbrk-fktyp,
+          l_posnr  LIKE LINE OF r_posnr,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_vbtyp  TYPE vbtyp,
+          i_vbap   TYPE TABLE OF vbap,
+          lr_fktyp LIKE LINE OF r_fktyp,
+          i_vbfa   TYPE TABLE OF vbfa.
+
+    CLEAR netwr.
+
+    IF NOT posnr IS INITIAL.
+      l_posnr-option = 'EQ'.
+      l_posnr-sign   = 'I'.
+      l_posnr-low    = posnr.
+      APPEND l_posnr TO r_posnr.
+    ENDIF.
+
+    SELECT SINGLE vbtyp FROM vbak
+      INTO l_vbtyp
+     WHERE vbeln = vbeln.
+
+    SELECT netwr posnr FROM vbap
+      INTO CORRESPONDING FIELDS OF TABLE i_vbap
+     WHERE vbeln  = vbeln
+       AND posnr IN r_posnr
+       AND abgru  = ''.
+
+    CLEAR lr_fktyp.
+    lr_fktyp-option = 'EQ'.
+    lr_fktyp-sign   = 'I'.
+
+    IF interco IS INITIAL.
+      lr_fktyp-low = 'M'. APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'N'. APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'O'. APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'P'. APPEND lr_fktyp TO r_fktyp. "#EC *
+    ELSE.
+      lr_fktyp-low = '5'. APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = '6'. APPEND lr_fktyp TO r_fktyp.
+    ENDIF.
+
+    LOOP AT i_vbap ASSIGNING <vbap>.
+      SELECT plmin rfwrt vbtyp_n FROM vbfa
+        INTO CORRESPONDING FIELDS OF TABLE i_vbfa
+       WHERE vbelv    = vbeln
+         AND posnv    = <vbap>-posnr
+         AND vbtyp_n IN r_fktyp
+         AND stufe   IN ('00')
+         AND plmin   IN ( '+', '-' ).
+      IF sy-subrc <> 0.
+        SELECT plmin rfwrt vbtyp_n FROM vbfa
+          INTO CORRESPONDING FIELDS OF TABLE i_vbfa
+         WHERE vbelv    = vbeln
+           AND posnv    = <vbap>-posnr
+           AND vbtyp_n IN r_fktyp
+           AND stufe   IN ('01').
+        LOOP AT i_vbfa ASSIGNING <vbfa>.
+          IF <vbfa>-vbtyp_n = 'M' OR <vbfa>-vbtyp_n = 'O'.
+            <vbfa>-plmin = '+'.
+          ELSE.
+            <vbfa>-plmin = '-'.
+          ENDIF.
+        ENDLOOP.
+      ENDIF.
+
+      netwr = netwr + <vbap>-netwr.
+      LOOP AT i_vbfa ASSIGNING <vbfa>.
+        IF <vbfa>-plmin = '-'.
+          netwr = netwr + <vbfa>-rfwrt.
+        ELSE.
+          netwr = netwr - <vbfa>-rfwrt.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD insert_vbfa.
+    DATA: l_vbfa TYPE vbfavb,
+          i_vbfa TYPE TABLE OF vbfavb.
+
+    SELECT SINGLE vbeln vbtyp FROM vbak
+      INTO (l_vbfa-vbelv, l_vbfa-vbtyp_v)
+     WHERE vbeln = vbeln.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+    SELECT SINGLE posnr matnr kwmeng vrkme FROM vbap
+      INTO (l_vbfa-posnv, l_vbfa-matnr, l_vbfa-rfmng, l_vbfa-meins)
+     WHERE vbeln = vbeln
+       AND posnr = posnr.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
+
+    l_vbfa-vbeln     = vbeln_n.
+    l_vbfa-posnn     = posnr_n.
+    l_vbfa-vbtyp_n   = vbtyp_n.
+
+    l_vbfa-rfmng_flt = l_vbfa-rfmng.
+    l_vbfa-rfmng_flo = l_vbfa-rfmng_flt.
+    l_vbfa-vrkme     = l_vbfa-meins.
+    l_vbfa-updkz     = 'I'.
+    l_vbfa-erdat     = sy-datum.
+    l_vbfa-erzet     = sy-uzeit.
+    APPEND l_vbfa TO i_vbfa.
+
+    CALL FUNCTION 'RV_DOCUMENT_FLOW_ADD'
+      EXPORTING
+        f_struktur = 'VBFA'
+        f_vbeln    = vbeln
+      TABLES
+        fxtabl     = i_vbfa
+        fxvbfa     = i_vbfa.
+  ENDMETHOD.
+  METHOD insertar_url_gos_st.
+    DATA: l_clave TYPE srgbtbrel-instid_a,
+          l_tipo  TYPE srgbtbrel-typeid_a.
+
+    l_clave = vbeln.
+
+    l_tipo = get_tipo_objeto( vbeln ).
+
+    zcl_ap_gos=>insertar_url_gos_st( tipo   = l_tipo
+                                     clave  = l_clave
+                                     titulo = titulo
+                                     url    = url ).
+  ENDMETHOD.
+  METHOD modificar_almacen.
+    DATA r_posnr TYPE RANGE OF posnr.
+    DATA: order_header_inx TYPE bapisdh1x,
+          l_item_in        TYPE bapisditm,
+          l_posnr          TYPE vbap-posnr,
+          l_item_inx       TYPE bapisditmx,
+          i_item_in        TYPE TABLE OF bapisditm,
+          i_item_inx       TYPE TABLE OF bapisditmx,
+          i_return         TYPE TABLE OF bapiret2,
+          l_return         TYPE bapiret2,
+          l_vbap           TYPE vbap.
+
+    CLEAR message.
+
+    IF NOT posnr IS INITIAL.
+      r_posnr = VALUE #( ( option = 'EQ' sign = 'I' low = posnr ) ).
+    ENDIF.
+
+    SELECT posnr, lgort FROM vbap
+      INTO TABLE @DATA(i_pos)
+     WHERE vbeln  = @vbeln
+       AND posnr IN @r_posnr.
+    IF sy-subrc <> 0.
+      message = 'No existe pedido'.
+    ELSE.
+      DELETE i_pos WHERE lgort = lgort.
+      IF i_pos IS INITIAL.
+        IF NOT o_log IS INITIAL.
+          o_log->log( p1 = 'No es necesario modificar el almacén' p2 = lgort p3 = 'en pedido' p4 = vbeln  msgty = 'W' ).
+        ENDIF.
+      ELSE.
+        order_header_inx-updateflag = 'U'.
+
+        LOOP AT i_pos ASSIGNING FIELD-SYMBOL(<pos>).
+          CLEAR l_item_in.
+          l_posnr = <pos>-posnr.
+          l_item_inx-itm_number = l_posnr.
+          l_item_in-itm_number = l_item_inx-itm_number.
+          l_item_in-store_loc  = lgort.
+          APPEND l_item_in TO i_item_in.
+          l_item_inx-updateflag = 'U'.
+          l_item_inx-store_loc  = 'X'.
+          APPEND l_item_inx TO i_item_inx.
+        ENDLOOP.
+
+        CALL FUNCTION 'BAPI_SALESORDER_CHANGE'
+          EXPORTING
+            salesdocument    = vbeln
+            order_header_inx = order_header_inx
+            simulation       = ' '
+          TABLES
+            return           = i_return
+            order_item_in    = i_item_in
+            order_item_inx   = i_item_inx.
+
+        LOOP AT i_return INTO l_return WHERE type = 'E'.
+          __add_lista message l_return-message.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+
+    IF NOT o_log IS INITIAL.
+      IF NOT message IS INITIAL AND NOT o_log IS INITIAL.
+        IF i_return IS INITIAL.
+          o_log->log( p1 = message ).
+        ELSE.
+          o_log->set_tabla_log_from_bapiret2_t( i_return ).
+        ENDIF.
+      ELSE.
+        o_log->log( p1 = 'Se ha modificado el almacén del pedido' p2 = vbeln p3 = 'con' p4 = lgort msgty = 'S' ).
+      ENDIF.
+    ENDIF.
+
+    IF message IS INITIAL AND commit = 'X'.
+      zcl_ap_dev=>commit( ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD recalcular_condiciones.
+    DATA: i_docs          TYPE TABLE OF vbmtv,
+          l_function      TYPE sy-ucomm,
+          l_dynpro_fields TYPE rv45c,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_protocoll     TYPE vbfs,
+          xvbfs           TYPE TABLE OF vbfs.
+
+    FIELD-SYMBOLS: <docs> TYPE vbmtv,
+                   <vbfs> TYPE vbfs.
+
+    SELECT * FROM vbak
+      APPENDING CORRESPONDING FIELDS OF TABLE i_docs
+     WHERE vbak~vbeln = vbeln.
+
+    IF i_docs IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    LOOP AT i_docs ASSIGNING <docs>.
+      <docs>-selkz = 'X'.
+    ENDLOOP.
+
+    CONCATENATE 'Z_' tipo INTO l_function.
+
+    CALL FUNCTION 'SD_BULK_CHANGE'
+      EXPORTING
+        function             = l_function
+        dynpro_fields        = l_dynpro_fields
+        iv_suppress_messages = 'X'
+      IMPORTING
+        protokoll            = l_protocoll
+      TABLES
+        documents            = i_docs.
+
+    IMPORT xvbfs TO xvbfs FROM MEMORY ID 'SD_BULK_CHANGE'.
+
+    ASSIGN xvbfs[ vbeln = vbeln ] TO <vbfs>.
+    IF sy-subrc = 0.
+      MESSAGE ID <vbfs>-msgid TYPE 'S' NUMBER <vbfs>-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+  ENDMETHOD.
+  METHOD rechazar_posicion.
+    DATA: l_vbap            TYPE vbap,
+          order_header_inx  TYPE bapisdh1x,
+          l_item_in         TYPE bapisditm,
+          l_posnr           TYPE vbap-posnr,
+          l_item_inx        TYPE bapisditmx,
+          i_item_in         TYPE TABLE OF bapisditm,
+          i_item_inx        TYPE TABLE OF bapisditmx,
+          i_return          TYPE TABLE OF bapiret2,
+          i_schedule_lines  TYPE TABLE OF bapischdl,
+          i_schedule_linesx TYPE TABLE OF bapischdlx,
+          l_return          TYPE bapiret2.
+
+    CLEAR message.
+
+    SELECT SINGLE abgru FROM vbap
+      INTO l_vbap-abgru
+     WHERE vbeln = vbeln
+       AND posnr = posnr.
+    IF sy-subrc <> 0.
+      __concat4 message 'No existe la posicion'(npp) posnr 'en el pedido '(eep) vbeln.
+    ELSE.
+      IF l_vbap-abgru = abgru.
+        IF NOT o_log IS INITIAL.
+          o_log->log( p1 = 'No se modifica el actual estado de rechazo'(nme) p2 = abgru p3 = 'del pedido'(dpe) p4 = vbeln p5 = posnr msgty = 'W' ).
+        ENDIF.
+      ELSE.
+        order_header_inx-updateflag = 'U'.
+
+        CLEAR l_item_in.
+        l_posnr = posnr.
+        l_item_inx-itm_number = l_posnr.
+        l_item_in-itm_number = l_item_inx-itm_number.
+        l_item_in-reason_rej = abgru.
+        APPEND l_item_in TO i_item_in.
+        l_item_inx-updateflag = 'U'.
+        l_item_inx-reason_rej = 'X'.
+        APPEND l_item_inx TO i_item_inx.
+
+        CALL FUNCTION 'BAPI_SALESORDER_CHANGE'
+          EXPORTING
+            salesdocument    = vbeln
+            order_header_inx = order_header_inx
+            simulation       = ' '
+          TABLES
+            return           = i_return
+            order_item_in    = i_item_in
+            order_item_inx   = i_item_inx
+            schedule_lines   = i_schedule_lines
+            schedule_linesx  = i_schedule_linesx.
+
+        READ TABLE i_return INTO l_return WITH KEY id = 'V1' number = '739'.
+        IF sy-subrc = 0.
+          UPDATE vbap   "#EC AOC_STD_TABLE
+             SET abgru = '00'
+           WHERE vbeln = vbeln
+             AND posnr = posnr.
+          DELETE i_return WHERE type = 'E'.
+        ENDIF.
+
+        LOOP AT i_return INTO l_return WHERE type = 'E'.
+          __add_lista message l_return-message.
+        ENDLOOP.
+      ENDIF.
+    ENDIF.
+
+    IF NOT o_log IS INITIAL.
+      IF NOT message IS INITIAL AND NOT o_log IS INITIAL.
+        IF i_return IS INITIAL.
+          o_log->log( p1 = message ).
+        ELSE.
+          o_log->set_tabla_log_from_bapiret2_t( i_return ).
+        ENDIF.
+      ELSE.
+        o_log->log( p1 = 'Se ha rechazado la posicion'(srp) p2 = posnr p3 = 'del pedido'(dpe) p4 = vbeln p5 = 'con motivo'(cmo) p6 = abgru msgty = 'S' ).
+      ENDIF.
+    ENDIF.
+
+    IF message IS INITIAL AND commit = 'X'.
+      zcl_ap_dev=>commit( ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD set_texto_string.
+    IF posnr IS INITIAL.
+      zcl_ap_textos=>save_texto_string( id = id object = 'VBBK' name = vbeln spras = spras string = string ).
+    ELSE.
+      zcl_ap_textos=>save_texto_string( id = id object = 'VBBP' name = vbeln && posnr spras = spras string = string ).
+    ENDIF.
+  ENDMETHOD.
+  METHOD visualizar.
+    TYPES: BEGIN OF t_ped,
+             vbeln TYPE vbak-vbeln,
+             bstnk TYPE vbak-bstnk,
+             audat TYPE vbak-audat,
+           END OF t_ped,
+           BEGIN OF t_vbeln,
+             vbeln TYPE vbak-vbeln,
+           END OF t_vbeln.
+
+    DATA: l_entrada TYPE string,
+          l_lista   TYPE string,
+          l_vbeln   TYPE vbeln_va,
+          i_pedidos TYPE TABLE OF t_vbeln,
+          i_ped     TYPE TABLE OF t_ped,
+          l_ped     TYPE t_ped,
+          l_ok      TYPE c LENGTH 1,
+          l_fila    TYPE i,
+          l_vbtyp   TYPE vbak-vbtyp,
+          l_tcode   TYPE sy-tcode,
+          l_par     TYPE c LENGTH 3.
+
+    IF NOT vbeln IS INITIAL.
+      l_entrada = vbeln.
+      IF l_entrada(1) = '@'.
+        REPLACE ALL OCCURRENCES OF '@' IN l_entrada WITH ''.
+        l_entrada = l_entrada+5.
+      ENDIF.
+    ENDIF.
+
+    IF l_entrada CS separador AND lista IS INITIAL.
+      l_lista = l_entrada.
+      CLEAR l_vbeln.
+    ELSE.
+      l_lista = lista.
+      l_vbeln = l_entrada.
+      __poner_ceros l_vbeln.
+    ENDIF.
+
+    IF NOT l_vbeln IS INITIAL.
+      SELECT SINGLE vbeln FROM vbak
+        INTO l_vbeln
+       WHERE vbeln = l_vbeln.
+      IF sy-subrc = 0.
+        CALL FUNCTION 'RV_CALL_DISPLAY_TRANSACTION'
+          EXPORTING
+            vbeln = l_vbeln.
+      ELSE.
+        SELECT SINGLE ebeln FROM ekko
+          INTO l_vbeln
+         WHERE ebeln = l_vbeln.
+        IF sy-subrc = 0.
+          zcl_ap_pedido_mm=>visualizar( ebeln = l_vbeln ).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      i_pedidos = zcl_ap_lista=>lista2tabla_n10( lista = l_lista separador = separador ).
+      DESCRIBE TABLE i_pedidos LINES sy-tfill.
+      IF sy-tfill = 1.
+        READ TABLE i_pedidos INTO l_vbeln INDEX 1.
+        CALL FUNCTION 'RV_CALL_DISPLAY_TRANSACTION'
+          EXPORTING
+            vbeln = l_vbeln.
+      ELSEIF sy-tfill > 1.
+        SELECT * FROM vbak
+          INTO CORRESPONDING FIELDS OF TABLE i_ped
+          FOR ALL ENTRIES IN i_pedidos
+         WHERE vbeln = i_pedidos-vbeln
+         ORDER BY PRIMARY KEY.
+
+        SELECT ebeln AS vbeln bedat AS audat FROM ekko
+          APPENDING CORRESPONDING FIELDS OF TABLE i_ped
+          FOR ALL ENTRIES IN i_pedidos
+         WHERE ebeln = i_pedidos-vbeln
+         ORDER BY PRIMARY KEY.
+
+        DESCRIBE TABLE i_ped LINES sy-tfill.
+        IF sy-tfill = 1.
+          READ TABLE i_ped INTO l_ped INDEX 1.
+          IF sy-subrc = 0.
+            CALL FUNCTION 'RV_CALL_DISPLAY_TRANSACTION'
+              EXPORTING
+                vbeln = l_ped-vbeln.
+          ENDIF.
+        ELSEIF sy-tfill > 1.
+          CALL FUNCTION 'Z_POPUP_ALV_AP'
+            EXPORTING
+              titulo         = 'Seleccione pedido a visualizar'(spv)
+              campos_hotspot = 'VBELN'
+              ancho          = 40
+              botones        = 'CANCEL'
+            TABLES
+              t_datos        = i_ped.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.                    " handle_double_click
