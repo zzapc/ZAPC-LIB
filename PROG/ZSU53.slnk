@@ -1,0 +1,4243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZSU53" SQLX="X" VARCL="X" DBAPL="S" SUBC="1" APPL="S" LEVL="20A" RSTAT="T" RMAND="000" RLOAD="D" UCCHECK="X">
+ <textPool>
+  <language SPRAS="D">
+   <textElement ID="I" KEY="001" ENTRY="Auswertung der letzten fehlgeschlagenen Berechtigungsprüfung" LENGTH="70 "/>
+   <textElement ID="I" KEY="014" ENTRY="Profil" LENGTH="10 "/>
+   <textElement ID="I" KEY="015" ENTRY="Rolle" LENGTH="72 "/>
+   <textElement ID="I" KEY="016" ENTRY="Keine Berechtigungen vorhanden" LENGTH="72 "/>
+   <textElement ID="I" KEY="017" ENTRY="Beschreibung" LENGTH="132 "/>
+   <textElement ID="I" KEY="018" ENTRY="Berechtigungsobjekt" LENGTH="72 "/>
+   <textElement ID="I" KEY="019" ENTRY="Berechtigung" LENGTH="72 "/>
+   <textElement ID="I" KEY="020" ENTRY="&lt;DUMMY&gt;" LENGTH="13 "/>
+   <textElement ID="I" KEY="021" ENTRY="Referenzbenutzer" LENGTH="20 "/>
+   <textElement ID="I" KEY="022" ENTRY="Berechtigungsdaten des Benutzers" LENGTH="72 "/>
+   <textElement ID="I" KEY="023" ENTRY="Benutzer mit fehlgeschlagenen Berechtigungsprüfungen" LENGTH="72 "/>
+   <textElement ID="I" KEY="025" ENTRY="Im Benutzerpuffer, aber nicht in den Stammdaten vorhanden" LENGTH="72 "/>
+   <textElement ID="I" KEY="026" ENTRY="Initialisierung" LENGTH="40 "/>
+   <textElement ID="I" KEY="027" ENTRY="Berechtigungsdaten lesen ..." LENGTH="40 "/>
+   <textElement ID="I" KEY="028" ENTRY="Anzeige ..." LENGTH="40 "/>
+   <textElement ID="I" KEY="030" ENTRY="HR Trace lesen ..." LENGTH="40 "/>
+   <textElement ID="I" KEY="031" ENTRY="Texte lesen ..." LENGTH="24 "/>
+   <textElement ID="I" KEY="032" ENTRY="Datum" LENGTH="10 "/>
+   <textElement ID="I" KEY="033" ENTRY="Planvariante" LENGTH="16 "/>
+   <textElement ID="I" KEY="034" ENTRY="Objekttyp" LENGTH="12 "/>
+   <textElement ID="I" KEY="035" ENTRY="Objekt-Id" LENGTH="12 "/>
+   <textElement ID="I" KEY="036" ENTRY="Beginndatum" LENGTH="14 "/>
+   <textElement ID="I" KEY="037" ENTRY="Endedatum" LENGTH="12 "/>
+   <textElement ID="I" KEY="038" ENTRY="Aktion" LENGTH="12 "/>
+   <textElement ID="I" KEY="039" ENTRY="Relation" LENGTH="12 "/>
+   <textElement ID="I" KEY="040" ENTRY="Auswertung der letzten fehlgeschlagenen" LENGTH="90 "/>
+   <textElement ID="I" KEY="041" ENTRY="Objektklasse" LENGTH="18 "/>
+   <textElement ID="I" KEY="043" ENTRY="Mandant" LENGTH="10 "/>
+   <textElement ID="I" KEY="045" ENTRY="Berechtigungsprüfung des Benutzers" LENGTH="44 "/>
+   <textElement ID="I" KEY="046" ENTRY="Uhrzeit" LENGTH="10 "/>
+   <textElement ID="I" KEY="047" ENTRY="Leer" LENGTH="10 "/>
+   <textElement ID="I" KEY="048" ENTRY="User" LENGTH="10 "/>
+   <textElement ID="I" KEY="049" ENTRY="Instanz" LENGTH="10 "/>
+   <textElement ID="I" KEY="050" ENTRY="Vorige Sicherung wurde überschrieben" LENGTH="50 "/>
+   <textElement ID="I" KEY="071" ENTRY="Keine Berechtigung zur Anzeige von Berechtigungswerten" LENGTH="70 "/>
+   <textElement ID="I" KEY="072" ENTRY="Berechtigungswerte" LENGTH="25 "/>
+   <textElement ID="I" KEY="074" ENTRY="Berechtigungsprüfung fehlgeschlagen" LENGTH="40 "/>
+   <textElement ID="I" KEY="075" ENTRY="Profilparameter auth/new buffering" LENGTH="40 "/>
+   <textElement ID="I" KEY="076" ENTRY="Die letzte Berechtigungsprüfung war erfolgreich." LENGTH="60 "/>
+   <textElement ID="I" KEY="077" ENTRY="Berechtigungsfeld" LENGTH="25 "/>
+   <textElement ID="I" KEY="078" ENTRY="System" LENGTH="10 "/>
+   <textElement ID="I" KEY="079" ENTRY="Berechtigungsobjekt" LENGTH="25 "/>
+   <textElement ID="I" KEY="080" ENTRY="Benutzername" LENGTH="15 "/>
+   <textElement ID="I" KEY="082" ENTRY="In den Stammdaten, aber nicht im Benutzerpuffer vorhanden" LENGTH="70 "/>
+   <textElement ID="I" KEY="083" ENTRY="Fehlgeschlagene Prüfungen seit" LENGTH="40 "/>
+   <textElement ID="I" KEY="084" ENTRY="Gespeicherte Prüfungen" LENGTH="40 "/>
+   <textElement ID="I" KEY="085" ENTRY="Prüfung für Benutzer" LENGTH="40 "/>
+   <textElement ID="I" KEY="090" ENTRY="Typ der Anwendung" LENGTH="30 "/>
+   <textElement ID="I" KEY="091" ENTRY="Anwendung" LENGTH="30 "/>
+   <textElement ID="I" KEY="092" ENTRY="Objekt" LENGTH="30 "/>
+   <textElement ID="I" KEY="093" ENTRY="Feld 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="094" ENTRY="Wert 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="095" ENTRY="Feld 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="096" ENTRY="Wert 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="097" ENTRY="Feld 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="098" ENTRY="Wert 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="099" ENTRY="Feld 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="100" ENTRY="Wert 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="101" ENTRY="Feld 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="102" ENTRY="Wert 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="103" ENTRY="Feld 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="104" ENTRY="Wert 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="105" ENTRY="Feld 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="106" ENTRY="Wert 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="107" ENTRY="Feld 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="108" ENTRY="Wert 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="109" ENTRY="Feld 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="110" ENTRY="Wert 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="111" ENTRY="Feld 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="112" ENTRY="Wert 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="T01" ENTRY="Fehlgeschlagene HR-Strukturberechtigungen" LENGTH="60 "/>
+   <textElement ID="I" KEY="T02" ENTRY="HR-Trace: Prüfungen beim Anlegen" LENGTH="40 "/>
+   <textElement ID="R" ENTRY="Auswertung der letzten fehlgeschlagenen Berechtigungsprüfung" LENGTH="60 "/>
+  </language>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="001" ENTRY="Evaluation of the Last Failed Authorization Check" LENGTH="70 "/>
+   <textElement ID="I" KEY="014" ENTRY="Profl." LENGTH="10 "/>
+   <textElement ID="I" KEY="015" ENTRY="Role" LENGTH="72 "/>
+   <textElement ID="I" KEY="016" ENTRY="No authorizations exist" LENGTH="72 "/>
+   <textElement ID="I" KEY="017" ENTRY="Description" LENGTH="132 "/>
+   <textElement ID="I" KEY="018" ENTRY="Authorization Obj." LENGTH="72 "/>
+   <textElement ID="I" KEY="019" ENTRY="Authorizat." LENGTH="72 "/>
+   <textElement ID="I" KEY="020" ENTRY="&lt;Dummy&gt;" LENGTH="13 "/>
+   <textElement ID="I" KEY="021" ENTRY="Reference User" LENGTH="20 "/>
+   <textElement ID="I" KEY="022" ENTRY="User&apos;s Authorization Data" LENGTH="72 "/>
+   <textElement ID="I" KEY="023" ENTRY="Users with Failed Authorization Checks" LENGTH="72 "/>
+   <textElement ID="I" KEY="025" ENTRY="Exists in user buffer but not in master data" LENGTH="72 "/>
+   <textElement ID="I" KEY="026" ENTRY="Initialization" LENGTH="40 "/>
+   <textElement ID="I" KEY="027" ENTRY="Reading authorization data.." LENGTH="40 "/>
+   <textElement ID="I" KEY="028" ENTRY="Display..." LENGTH="40 "/>
+   <textElement ID="I" KEY="030" ENTRY="Reading HR trace.." LENGTH="40 "/>
+   <textElement ID="I" KEY="031" ENTRY="Reading texts..." LENGTH="24 "/>
+   <textElement ID="I" KEY="032" ENTRY="Date" LENGTH="10 "/>
+   <textElement ID="I" KEY="033" ENTRY="Plan Version" LENGTH="16 "/>
+   <textElement ID="I" KEY="034" ENTRY="Obj. Type" LENGTH="12 "/>
+   <textElement ID="I" KEY="035" ENTRY="Object ID" LENGTH="12 "/>
+   <textElement ID="I" KEY="036" ENTRY="Start Date" LENGTH="14 "/>
+   <textElement ID="I" KEY="037" ENTRY="End Date" LENGTH="12 "/>
+   <textElement ID="I" KEY="038" ENTRY="Action" LENGTH="12 "/>
+   <textElement ID="I" KEY="039" ENTRY="Relation" LENGTH="12 "/>
+   <textElement ID="I" KEY="040" ENTRY="Evaluation of Last Failed" LENGTH="90 "/>
+   <textElement ID="I" KEY="041" ENTRY="Object Class" LENGTH="18 "/>
+   <textElement ID="I" KEY="043" ENTRY="Client" LENGTH="10 "/>
+   <textElement ID="I" KEY="045" ENTRY="Authorization Check of User" LENGTH="44 "/>
+   <textElement ID="I" KEY="046" ENTRY="Time" LENGTH="10 "/>
+   <textElement ID="I" KEY="047" ENTRY="Empt" LENGTH="10 "/>
+   <textElement ID="I" KEY="048" ENTRY="User" LENGTH="10 "/>
+   <textElement ID="I" KEY="049" ENTRY="Instnce" LENGTH="10 "/>
+   <textElement ID="I" KEY="050" ENTRY="Previous backup overwritten" LENGTH="50 "/>
+   <textElement ID="I" KEY="071" ENTRY="You are not authorized to display authorization values" LENGTH="70 "/>
+   <textElement ID="I" KEY="072" ENTRY="Authorization values" LENGTH="25 "/>
+   <textElement ID="I" KEY="074" ENTRY="Authorization check failed" LENGTH="40 "/>
+   <textElement ID="I" KEY="075" ENTRY="Profile Parameter auth/new buffering" LENGTH="40 "/>
+   <textElement ID="I" KEY="076" ENTRY="The last authorization check was successful" LENGTH="60 "/>
+   <textElement ID="I" KEY="077" ENTRY="Authorization Field" LENGTH="25 "/>
+   <textElement ID="I" KEY="078" ENTRY="System" LENGTH="10 "/>
+   <textElement ID="I" KEY="079" ENTRY="Authorization Object" LENGTH="25 "/>
+   <textElement ID="I" KEY="080" ENTRY="User Name" LENGTH="15 "/>
+   <textElement ID="I" KEY="082" ENTRY="Exists in master data but not in user buffer" LENGTH="70 "/>
+   <textElement ID="I" KEY="083" ENTRY="Failed checks since" LENGTH="40 "/>
+   <textElement ID="I" KEY="084" ENTRY="Stored Checks" LENGTH="40 "/>
+   <textElement ID="I" KEY="085" ENTRY="Check for User" LENGTH="40 "/>
+   <textElement ID="I" KEY="090" ENTRY="Type of Application" LENGTH="30 "/>
+   <textElement ID="I" KEY="091" ENTRY="Application" LENGTH="30 "/>
+   <textElement ID="I" KEY="092" ENTRY="Object" LENGTH="30 "/>
+   <textElement ID="I" KEY="093" ENTRY="Field 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="094" ENTRY="Value 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="095" ENTRY="Field 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="096" ENTRY="Value 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="097" ENTRY="Field 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="098" ENTRY="Value 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="099" ENTRY="Field 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="100" ENTRY="Value 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="101" ENTRY="Field 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="102" ENTRY="Value 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="103" ENTRY="Field 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="104" ENTRY="Value 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="105" ENTRY="Field 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="106" ENTRY="Value 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="107" ENTRY="Field 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="108" ENTRY="Value 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="109" ENTRY="Field 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="110" ENTRY="Value 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="111" ENTRY="Field 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="112" ENTRY="Value 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="T01" ENTRY="Failed HR Structure Authorizations" LENGTH="60 "/>
+   <textElement ID="I" KEY="T02" ENTRY="HR Trace: Checks when Creating" LENGTH="40 "/>
+   <textElement ID="R" ENTRY="Evaluation of the Last Failed Authorization Check" LENGTH="70 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="001" ENTRY="Valoración de la última verificación de autorización fallida" LENGTH="70 "/>
+   <textElement ID="I" KEY="014" ENTRY="Perfil" LENGTH="10 "/>
+   <textElement ID="I" KEY="015" ENTRY="Rol" LENGTH="72 "/>
+   <textElement ID="I" KEY="016" ENTRY="Ninguna autorización existente" LENGTH="72 "/>
+   <textElement ID="I" KEY="017" ENTRY="Descripción" LENGTH="132 "/>
+   <textElement ID="I" KEY="018" ENTRY="Objeto autorización" LENGTH="72 "/>
+   <textElement ID="I" KEY="019" ENTRY="Autorización" LENGTH="72 "/>
+   <textElement ID="I" KEY="020" ENTRY="&lt;DUMMY&gt;" LENGTH="13 "/>
+   <textElement ID="I" KEY="021" ENTRY="Usuario de referencia" LENGTH="21 "/>
+   <textElement ID="I" KEY="022" ENTRY="Datos autorización del usuario" LENGTH="72 "/>
+   <textElement ID="I" KEY="023" ENTRY="Usuario con verificaciones de autorización fallidas" LENGTH="72 "/>
+   <textElement ID="I" KEY="025" ENTRY="En mem.interm.usuario pero no existe en datos maestros" LENGTH="72 "/>
+   <textElement ID="I" KEY="026" ENTRY="Inicialización" LENGTH="40 "/>
+   <textElement ID="I" KEY="027" ENTRY="Leyendo datos autoriz. ..." LENGTH="40 "/>
+   <textElement ID="I" KEY="028" ENTRY="Visualización" LENGTH="40 "/>
+   <textElement ID="I" KEY="030" ENTRY="Leyendo trace HR.." LENGTH="40 "/>
+   <textElement ID="I" KEY="031" ENTRY="Leer textos" LENGTH="24 "/>
+   <textElement ID="I" KEY="032" ENTRY="Fecha" LENGTH="10 "/>
+   <textElement ID="I" KEY="033" ENTRY="Var.plan" LENGTH="16 "/>
+   <textElement ID="I" KEY="034" ENTRY="Tipo obj." LENGTH="12 "/>
+   <textElement ID="I" KEY="035" ENTRY="ID objeto" LENGTH="12 "/>
+   <textElement ID="I" KEY="036" ENTRY="Fe.inicio" LENGTH="14 "/>
+   <textElement ID="I" KEY="037" ENTRY="Fe.final" LENGTH="12 "/>
+   <textElement ID="I" KEY="038" ENTRY="Acción" LENGTH="12 "/>
+   <textElement ID="I" KEY="039" ENTRY="Relación" LENGTH="12 "/>
+   <textElement ID="I" KEY="040" ENTRY="Valoración del último fallido" LENGTH="90 "/>
+   <textElement ID="I" KEY="041" ENTRY="Clase objeto" LENGTH="18 "/>
+   <textElement ID="I" KEY="043" ENTRY="Mdte." LENGTH="10 "/>
+   <textElement ID="I" KEY="045" ENTRY="Verificación de autorización del usuario" LENGTH="44 "/>
+   <textElement ID="I" KEY="046" ENTRY="Hora" LENGTH="10 "/>
+   <textElement ID="I" KEY="047" ENTRY="Vac." LENGTH="10 "/>
+   <textElement ID="I" KEY="048" ENTRY="Usu." LENGTH="10 "/>
+   <textElement ID="I" KEY="049" ENTRY="Instan." LENGTH="10 "/>
+   <textElement ID="I" KEY="050" ENTRY="Se ha sobrescrito la grabación anterior" LENGTH="50 "/>
+   <textElement ID="I" KEY="071" ENTRY="Sin autorización para visualizar los valores de autorización" LENGTH="70 "/>
+   <textElement ID="I" KEY="072" ENTRY="Valores autorización" LENGTH="25 "/>
+   <textElement ID="I" KEY="074" ENTRY="Verificación de autorización fallida" LENGTH="40 "/>
+   <textElement ID="I" KEY="075" ENTRY="Grab.mem.interm.parám.perf.aut./nvo." LENGTH="40 "/>
+   <textElement ID="I" KEY="076" ENTRY="Última verificación de autorización correcta" LENGTH="60 "/>
+   <textElement ID="I" KEY="077" ENTRY="Ámbito de autorización" LENGTH="25 "/>
+   <textElement ID="I" KEY="078" ENTRY="Sistema" LENGTH="10 "/>
+   <textElement ID="I" KEY="079" ENTRY="Objeto de autorización" LENGTH="25 "/>
+   <textElement ID="I" KEY="080" ENTRY="Usuario" LENGTH="15 "/>
+   <textElement ID="I" KEY="082" ENTRY="Existe en dat.maestros, pero no en memoria interm.usuario" LENGTH="70 "/>
+   <textElement ID="I" KEY="083" ENTRY="Verificaciones fallidas desde" LENGTH="40 "/>
+   <textElement ID="I" KEY="084" ENTRY="Verificaciones almacenadas" LENGTH="40 "/>
+   <textElement ID="I" KEY="085" ENTRY="Verificación para usuario" LENGTH="40 "/>
+   <textElement ID="I" KEY="090" ENTRY="Tipo de aplicación" LENGTH="30 "/>
+   <textElement ID="I" KEY="091" ENTRY="Aplicación" LENGTH="30 "/>
+   <textElement ID="I" KEY="092" ENTRY="Objeto" LENGTH="30 "/>
+   <textElement ID="I" KEY="093" ENTRY="Campo 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="094" ENTRY="Valor 1" LENGTH="30 "/>
+   <textElement ID="I" KEY="095" ENTRY="Campo 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="096" ENTRY="Valor 2" LENGTH="30 "/>
+   <textElement ID="I" KEY="097" ENTRY="Campo 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="098" ENTRY="Valor 3" LENGTH="30 "/>
+   <textElement ID="I" KEY="099" ENTRY="Campo 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="100" ENTRY="Valor 4" LENGTH="30 "/>
+   <textElement ID="I" KEY="101" ENTRY="Campo 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="102" ENTRY="Valor 5" LENGTH="30 "/>
+   <textElement ID="I" KEY="103" ENTRY="Campo 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="104" ENTRY="Valor 6" LENGTH="30 "/>
+   <textElement ID="I" KEY="105" ENTRY="Campo 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="106" ENTRY="Valor 7" LENGTH="30 "/>
+   <textElement ID="I" KEY="107" ENTRY="Campo 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="108" ENTRY="Valor 8" LENGTH="30 "/>
+   <textElement ID="I" KEY="109" ENTRY="Campo 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="110" ENTRY="Valor 9" LENGTH="30 "/>
+   <textElement ID="I" KEY="111" ENTRY="Campo 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="112" ENTRY="Valor 10" LENGTH="30 "/>
+   <textElement ID="I" KEY="T01" ENTRY="Autorizaciones de estructura HR fallidas" LENGTH="60 "/>
+   <textElement ID="I" KEY="T02" ENTRY="Trace HR: Verifi.al crear" LENGTH="40 "/>
+   <textElement ID="R" ENTRY="Valoración de la última verificación de autorización fallida" LENGTH="70 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report  SAPMS01G
+*&amp;---------------------------------------------------------------------*
+*&amp;---------------------------------------------------------------------*
+* SU53 (SAPMS01G)
+*      Display result of previous authorization and corresponding
+*      part of the authorization user buffer
+*
+*  01.09.2006 D034973 note 968915
+* - the transaction SU53 and SU56 will be splitted.
+* - no more list view
+* - it is possible to print the list
+*
+*  05.11.2007 D034973  note 1111145                                 46C+
+* in SAPGui for JAVA the &apos;Discription&apos; column is hidden
+*
+*  07.04.2008 D034973  note 1158207                                 46C+
+* - improve the performance
+*
+* 25.08.2009 D034973 note 1378540                                  4.6C+
+* tree for authority-check with repeated authorizations fields for
+* the same object
+*
+* 12.09.2011 D034973 note 1630282                                  4.6C+
+* - improve the performance for reading field&apos;s textes from AUTHX
+*
+* 28.06.2012 D025633 note 1671117                                  7.0+
+* - SU53 funktioniert bei WebDynpro-Anwendungen nicht
+*
+* 02.08.2012 D025633 note 1749487                                  7.0+
+* - Add name and type of external services
+*
+* 02.08.2012 D025633 note 1799242                                  7.0+
+* - Download of failed authorization checks
+*
+*----------------------------------------------------------------------*
+
+PROGRAM sapms01g MESSAGE-ID 01 NO STANDARD PAGE HEADING
+LINE-SIZE 130.
+
+INCLUDE ms01ctco.
+
+*---------------------------------------------------------------------*
+*     Global TYPES
+*---------------------------------------------------------------------*
+TYPES:  BEGIN OF ty_usr07_new
+          , mandt      TYPE usr07-mandt
+          , bname      TYPE usr07-bname
+          , timestamp  TYPE timestampl     &quot; New
+          , objct      TYPE usr07-objct
+          , fiel1      TYPE usr07-fiel0
+          , fiel2      TYPE usr07-fiel0
+          , fiel3      TYPE usr07-fiel0
+          , fiel4      TYPE usr07-fiel0
+          , fiel5      TYPE usr07-fiel0
+          , fiel6      TYPE usr07-fiel0
+          , fiel7      TYPE usr07-fiel0
+          , fiel8      TYPE usr07-fiel0
+          , fiel9      TYPE usr07-fiel0
+          , fiel0      TYPE usr07-fiel0
+          , val01      TYPE usr07-val01
+          , val02      TYPE usr07-val01
+          , val03      TYPE usr07-val01
+          , val04      TYPE usr07-val01
+          , val05      TYPE usr07-val01
+          , val06      TYPE usr07-val01
+          , val07      TYPE usr07-val01
+          , val08      TYPE usr07-val01
+          , val09      TYPE usr07-val01
+          , val10      TYPE usr07-val01
+          , tcode      TYPE usr07-tcode
+          , progname   TYPE usr07-progname
+          , cdate      TYPE usr07-cdate
+          , ctime      TYPE usr07-ctime
+          , abapline   TYPE i             &quot; New
+          , abapprog   TYPE programm      &quot; New
+          , foruser    TYPE sutrforuser   &quot; New
+          , rc         TYPE int4          &quot; New
+          , reason     TYPE char01        &quot; New
+          , p_tcode    TYPE tcode         &quot; New
+          , name       TYPE sobj_name     &quot; New
+          , type       TYPE usobtype      &quot; New
+          , instance   TYPE msxxlist-name &quot; New
+      , END OF ty_usr07_new.
+TYPES: tt_usr07_new TYPE STANDARD TABLE OF ty_usr07_new.
+
+TYPES: BEGIN OF gt_nodes_struct,
+         node_key    TYPE tm_nodekey,
+         flag(1)     TYPE c,
+         isfolder(1) TYPE c,
+         expander(1) TYPE c,
+         oclss       TYPE tobj-oclss,
+         objct       TYPE ust12-objct,
+         auth        TYPE ust12-auth,
+         profile     TYPE ust04-profile,
+         agr_name    TYPE agr_1016-agr_name,
+         refuser     TYPE usrefus-refuser,
+         field       TYPE dfies-fieldname,
+       END OF gt_nodes_struct.
+
+TYPES: BEGIN OF ls_auth_field,
+         field    LIKE authx-fieldname,
+         rollname LIKE authx-rollname,
+         ftext    LIKE dd04t-ddtext,
+       END OF ls_auth_field.
+
+TYPES: BEGIN OF ty_field_value,
+         field TYPE xufield,
+         value TYPE xuval,
+       END   OF ty_field_value.
+
+*---------------------------------------------------------------------*
+*     Global DATA
+*---------------------------------------------------------------------*
+CONSTANTS:
+      gc_last_seconds          TYPE i VALUE 10800
+    , gc_last_entries          TYPE i VALUE 100
+    .
+
+DATA: g_buffer_method(10)
+    , gv_new_kernel_avail      TYPE          abap_bool
+    , gv_save_available        TYPE          abap_bool
+    , gv_checks_since_time     TYPE          timestampl
+    , g_bname                  TYPE          usr07-bname     &quot;Current user (global variable)
+    , g_refuser                TYPE          usrefus-refuser
+    , g0010_bname              TYPE          usr07-bname     &quot;Screen fields
+    , g0010_read_from_db       TYPE          char01
+    , g_ok_code                TYPE          sy-ucomm
+    , g_datum                  TYPE          sy-datum       &quot;#EC NEEDED
+    , g_zeit                   TYPE          sy-uzeit       &quot;#EC NEEDED
+    , gt_usr07_new             TYPE          tt_usr07_new
+    , gt_range_object          TYPE RANGE OF xuobject
+    , g_result_item_key_table  TYPE          treemiks
+    , g_find_string            TYPE          string
+    , g_instance               TYPE          msxxlist-name
+    .
+
+DATA: BEGIN OF usr07key,
+        objct TYPE usr07-objct,
+        fiel1 TYPE usr07-fiel0,
+        fiel2 TYPE usr07-fiel0,
+        fiel3 TYPE usr07-fiel0,
+        fiel4 TYPE usr07-fiel0,
+        fiel5 TYPE usr07-fiel0,
+        fiel6 TYPE usr07-fiel0,
+        fiel7 TYPE usr07-fiel0,
+        fiel8 TYPE usr07-fiel0,
+        fiel9 TYPE usr07-fiel0,
+        fiel0 TYPE usr07-fiel0,
+      END OF usr07key.
+
+DATA: BEGIN OF usr07val1,
+        val01 TYPE usr07-val01,
+        val02 TYPE usr07-val01,
+        val03 TYPE usr07-val01,
+        val04 TYPE usr07-val01,
+        val05 TYPE usr07-val01,
+        val06 TYPE usr07-val01,
+      END OF usr07val1.
+
+DATA: BEGIN OF usr07val2,
+        val07 TYPE usr07-val01,
+        val08 TYPE usr07-val01,
+        val09 TYPE usr07-val01,
+        val10 TYPE usr07-val01,
+      END OF usr07val2.
+
+*---------------------------------------------------------------------*
+*       CLASS lcl_application DEFINITION
+*---------------------------------------------------------------------*
+CLASS lcl_application DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      handle_item_double_click
+      FOR EVENT item_double_click
+                    OF cl_list_tree_model
+        IMPORTING node_key item_name.                       &quot;#EC NEEDED
+ENDCLASS.                    &quot;LCL_APPLICATION DEFINITION
+
+*----------------------------------------------------------------------*
+*  Tree control
+*----------------------------------------------------------------------*
+CLASS cl_gui_cfw DEFINITION LOAD.
+
+DATA: g_application      TYPE REF TO lcl_application,
+      g_custom_container TYPE REF TO cl_gui_custom_container,
+      g_tree             TYPE REF TO cl_list_tree_model.
+
+* Store keys of nodes (which can be expanded)
+DATA: gt_nodes TYPE SORTED TABLE OF gt_nodes_struct
+      WITH UNIQUE KEY node_key.
+
+* Authorization date of the user
+DATA: BEGIN OF gt_profiles OCCURS 0,                        &quot;#EC NEEDED
+        profile        LIKE ust04-profile,
+        refuserflag(1),
+        typ            LIKE usr10-typ,
+        ptext          LIKE usr11-ptext,
+        agr_name       LIKE agr_1016-agr_name,
+        atext          LIKE agr_texts-text,
+      END OF gt_profiles.
+
+DATA: BEGIN OF gt_profiles_ref OCCURS 0,                    &quot;#EC NEEDED
+        profile        LIKE ust04-profile,
+        refuserflag(1),
+        typ            LIKE usr10-typ,
+        ptext          LIKE usr11-ptext,
+        agr_name       LIKE agr_1016-agr_name,
+        atext          LIKE agr_texts-text,
+      END OF gt_profiles_ref.
+
+DATA: BEGIN OF gt_auths OCCURS 0,                           &quot;#EC NEEDED
+        oclss          LIKE tobj-oclss,
+        objct          LIKE ust10s-objct,
+        auth           LIKE ust10s-auth,
+        profile        LIKE ust04-profile, &quot;Source of authorization
+        userbuffer(1)  TYPE c, &quot;Authorization in user buffer only
+        refuserflag(1) TYPE c,
+      END OF gt_auths.
+
+DATA: BEGIN OF g_authbuffer OCCURS 30,                      &quot;#EC NEEDED
+        bname  LIKE usr02-bname,
+        object LIKE usr12-objct,
+        auth   LIKE usr12-auth,
+      END OF g_authbuffer.
+
+DATA: BEGIN OF gt_ust12 OCCURS 0,                           &quot;#EC NEEDED
+        objct LIKE ust12-objct,
+        auth  LIKE ust12-auth,
+        field LIKE ust12-field,
+        von   LIKE ust12-von,
+        bis   LIKE ust12-bis,
+      END OF gt_ust12.
+
+DATA: BEGIN OF gt_tobj OCCURS 0,                            &quot;#EC NEEDED
+        objct LIKE tobj-objct,
+        oclss LIKE tobj-oclss,
+      END OF gt_tobj.
+
+DATA: BEGIN OF gt_oclss  OCCURS 10,                         &quot;#EC NEEDED
+        oclss LIKE tobct-oclss,
+        ctext LIKE tobct-ctext,
+      END OF gt_oclss.
+
+DATA: BEGIN OF gt_objct  OCCURS 10,                         &quot;#EC NEEDED
+        object LIKE tobjt-object,
+        ttext  LIKE tobjt-ttext,
+      END OF gt_objct.
+
+DATA: BEGIN OF gt_auth OCCURS 10,                           &quot;#EC NEEDED
+        objct LIKE usr13-objct,
+        auth  LIKE usr13-auth,
+        atext LIKE usr13-atext,
+      END OF gt_auth.
+
+DATA: BEGIN OF lt_auths OCCURS 0,                           &quot;#EC NEEDED
+        objct          LIKE ust10s-objct,
+        auth           LIKE ust10s-auth,
+        profile        LIKE ust04-profile, &quot;Source of authorization
+        userbuffer(1)  TYPE c, &quot;Authorization in user buffer only
+        refuserflag(1) TYPE c,
+      END OF lt_auths.
+
+DATA: gt_auth_field     TYPE TABLE OF ls_auth_field
+    , lt_ust12          LIKE gt_ust12 OCCURS 0              &quot;#EC NEEDED
+    , lt_auths_del      LIKE gt_auths OCCURS 0              &quot;#EC NEEDED
+    , wa_tobj           LIKE LINE OF gt_tobj
+    , usebgcolor(1) VALUE &apos; &apos; &quot; X = light grey background
+    .
+
+FIELD-SYMBOLS: &lt;lp_objct&gt;       LIKE LINE OF gt_objct,
+               &lt;lp_auth&gt;        LIKE LINE OF gt_auth,
+               &lt;lp_field&gt;       LIKE LINE OF gt_auth_field,
+               &lt;lp_auths_field&gt; LIKE LINE OF gt_ust12,      &quot;#EC NEEDED
+               &lt;lp_auth_field&gt;  LIKE LINE OF gt_auth_field, &quot;#EC NEEDED
+               &lt;lp_prof&gt;        LIKE LINE OF gt_profiles,
+               &lt;lp_prof_ref&gt;    LIKE LINE OF gt_profiles_ref,
+               &lt;lp_auths_del&gt;   LIKE LINE OF lt_auths_del,
+               &lt;lp_auths_oclss&gt; LIKE gt_auths,
+               &lt;lp_auths&gt;       LIKE gt_auths.
+
+DATA: g_node_key_value TYPE i,                              &quot;#EC NEEDED
+      g_node_key_objct TYPE i,
+      g_node_key_mess  TYPE i,
+      g_node_key_auth  TYPE i,
+      g_node_key_field TYPE i,
+      g_node_key_prof  TYPE i,
+      g_node_key_ref   TYPE i,
+      g_node_key_role  TYPE i,
+      g_node_key_oclss TYPE i,
+      g_node_key_hr1   TYPE i,
+      g_node_key_hr2   TYPE i.
+
+
+PARAMETERS: p_email  TYPE text255 NO-DISPLAY DEFAULT zcl_c=&gt;usuario_ap, &quot;APC
+            p_asunto TYPE text255 NO-DISPLAY. &quot;APC
+
+INITIALIZATION.
+  IF sy-tcode = &apos;SE38&apos;.
+    p_asunto = |Fallo aut. usuario { sy-uname } en report { sy-cprog }|.
+  ELSE.
+    p_asunto = |Fallo aut. usuario { sy-uname } en transacción { sy-tcode }|.
+  ENDIF.
+
+*---------------------------------------------------------------------*
+*       START-OF-SELECTION
+*---------------------------------------------------------------------*
+START-OF-SELECTION.
+
+  &quot;APC
+  GET PARAMETER ID &apos;XU1&apos; FIELD usr07key.
+  IF usr07key-objct = space. &quot;Sin errores de autorización, salimos
+    LEAVE PROGRAM.
+  ENDIF.
+* FIN APC
+
+  &quot; Get authorization buffer method
+  CALL &apos;C_SAPGPARAM&apos;
+       ID &apos;NAME&apos; FIELD &apos;auth/new_buffering&apos;
+       ID &apos;VALUE&apos; FIELD g_buffer_method.                  &quot;#EC CI_CCALL
+
+  &quot; Check for new kernel and table
+  PERFORM check_environment.
+
+  &quot; Get results of authorization checks
+  PERFORM get_authorization_checks USING sy-uname space.
+
+  &quot; Tree control view of SU53
+  g_bname = sy-uname.
+
+  DATA: node_table         TYPE treemlnota
+      , item_table         TYPE treemlitac
+      , nodes_to_expand    TYPE treemnotab
+      , events             TYPE cntl_simple_events
+      , event              TYPE cntl_simple_event
+      , l_hierarchy_header TYPE treemhhdr
+      , l_list_header      TYPE treemlhdr
+      .
+
+  &quot;APC
+  PERFORM build_node_and_item_table USING node_table item_table
+                                          nodes_to_expand.
+
+
+  IF NOT p_email IS INITIAL.
+    DATA l_color TYPE string.
+*    DATA i_textos TYPE rspc_t_text.
+*    LOOP AT item_table ASSIGNING FIELD-SYMBOL(&lt;item&gt;).
+*      APPEND &lt;item&gt;-text TO i_textos.
+*    ENDLOOP.
+
+*    zcl_ap_envio_mail=&gt;mail( EXPORTING subject = p_asunto
+*                             direccion = p_email
+*                             i_textos = i_textos
+*                             nombre_fichero_tabla = &apos;item.xls&apos;
+*                             CHANGING i_tabla = item_table ).
+
+    DATA(o_mail) = NEW zcl_ap_envio_mail( ).
+    o_mail-&gt;add_destinatario( destinatario = p_email ).
+
+    o_mail-&gt;cabecera_html( ).
+    o_mail-&gt;inicio_tabla_html( longitud = 1600
+                               c1 = &apos;&apos;
+                               c2 = &apos;&apos;
+                               c3 = &apos;&apos;
+                               c4 = &apos;.&apos; ).
+    LOOP AT item_table ASSIGNING FIELD-SYMBOL(&lt;item&gt;).
+      AT NEW node_key.
+        o_mail-&gt;set_text(  &apos;  &lt;tr&gt;&apos; ).
+      ENDAT.
+
+      CLEAR l_color.
+      CASE &lt;item&gt;-style.
+        WHEN 10.  l_color = &apos;339FFF&apos;. &quot;Azul
+        WHEN 8. l_color = &apos;FFCE33&apos;. &quot;Amarillo
+        WHEN 4. l_color = &apos;FF3333&apos;. &quot;&quot;Rojo
+      ENDCASE.
+
+
+      o_mail-&gt;set_text(  |     &lt;td bgcolor=&quot;{ l_color }&quot;&gt; { &lt;item&gt;-text } &lt;/td&gt;| ).
+      AT END OF node_key.
+        o_mail-&gt;set_text(  &apos;  &lt;/tr&gt;&apos; ).
+      ENDAT.
+    ENDLOOP.
+
+    o_mail-&gt;fin_tabla_html( ).
+    o_mail-&gt;set_text( &apos;&lt;/body&gt;&lt;/html&gt;&apos; ).
+
+    CALL METHOD o_mail-&gt;envio_mail
+      EXPORTING
+        subject = p_asunto
+        html    = &apos;X&apos;.
+
+  ENDIF.
+
+*FIN APC
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  PBO_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE pbo_0100 OUTPUT.
+
+  DATA: lt_excl TYPE TABLE OF sy-ucomm                      &quot;#EC NEEDED
+      .
+
+  IF gv_save_available EQ abap_false.
+    APPEND &apos;USERDB&apos; TO lt_excl.
+    APPEND &apos;SAVE&apos;   TO lt_excl.
+  ENDIF.
+
+  SET PF-STATUS &apos;TREE&apos; EXCLUDING lt_excl.
+  SET TITLEBAR &apos;USR&apos; WITH g_bname.
+  g_datum = sy-datum.
+  g_zeit  = sy-uzeit.
+  IF g_tree IS INITIAL.
+    &quot; The Tree Control has not been created yet.
+    &quot; Create a Tree Control and insert nodes into it.
+    PERFORM create_and_init_tree.
+  ENDIF.
+
+ENDMODULE.                 &quot; PBO_0100  OUTPUT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0100  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE user_command_0100 INPUT.
+
+  PERFORM user_command_0100.
+
+ENDMODULE.                    &quot;user_command_0100 INPUT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0010  OUTPUT
+*&amp;---------------------------------------------------------------------*
+MODULE status_0010 OUTPUT.
+
+  SET PF-STATUS &apos;POPUP&apos;.
+  SET TITLEBAR &apos;SEL&apos;.
+
+ENDMODULE.                 &quot; STATUS_0010  OUTPUT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  check_bname  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE check_bname INPUT.
+
+  IF sy-ucomm NE &apos;CANC&apos;.
+    PERFORM check_bname.
+  ENDIF.
+
+ENDMODULE.                    &quot;check_bname INPUT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0010  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE user_command_0010 INPUT.
+
+  CASE g_ok_code.
+    WHEN &apos;CHECK&apos;.
+    WHEN &apos;OK&apos;.
+      IF g0010_bname &lt;&gt; &apos;*&apos;.
+        g_bname = g0010_bname.
+        LEAVE TO SCREEN 0.
+      ELSE.
+        MESSAGE s124(01) WITH g0010_bname.&quot; Benutzer existiert nicht
+      ENDIF.
+    WHEN &apos;CANC&apos;.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.                 &quot; USER_COMMAND_0010  INPUT
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  usr07_bname_value_help  INPUT
+*&amp;---------------------------------------------------------------------*
+MODULE usr07_bname_value_help INPUT.
+
+  PERFORM usr07_bname_value_help.
+
+ENDMODULE.                    &quot;usr07_bname_value_help INPUT
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  check_environment
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM check_environment.
+
+  DATA: ls_dfies    TYPE dfies
+      , lv_status   TYPE char01
+      .
+
+
+  CALL METHOD cl_susr_tools_kernel=&gt;get_su53_status
+    RECEIVING
+      rv_status = lv_status.
+
+  IF lv_status NE &apos;F&apos;.
+    gv_new_kernel_avail = abap_true.
+
+    CALL FUNCTION &apos;DDIF_NAMETAB_GET&apos;
+      EXPORTING
+        tabname    = &apos;USR07&apos;
+        lfieldname = &apos;TIMESTAMP&apos;
+      IMPORTING
+        dfies_wa   = ls_dfies
+      EXCEPTIONS
+        not_found  = 0
+        OTHERS     = 0.
+
+    IF ls_dfies-fieldname EQ &apos;TIMESTAMP&apos;.
+      gv_save_available = abap_true.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot;check_environment
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  get_authorization_checks
+*&amp;---------------------------------------------------------------------*
+FORM get_authorization_checks USING iv_bname        TYPE xubname
+                                    iv_read_from_db TYPE char01.
+
+  DATA: ls_usr07_new     TYPE          ty_usr07_new
+      , lr_usr07_new     TYPE REF TO   ty_usr07_new
+      , lv_retcode       TYPE          sy-subrc
+      , lt_su53buf       TYPE          cl_susr_tools_kernel=&gt;tt_usr07p
+      , lr_su53buf       TYPE REF TO   cl_susr_tools_kernel=&gt;ty_usr07p
+      , ls_range_object  LIKE LINE OF  gt_range_object
+      , ls_usr07         TYPE          usr07
+      , lv_since_hours   TYPE          timestampl
+      , lv_lines         TYPE          i
+      .
+
+  CLEAR: gt_usr07_new
+       , gt_range_object
+       , gv_checks_since_time
+       .
+
+
+  &quot; Get local instance
+  g_instance = cl_abap_syst=&gt;get_instance_name( ).
+
+  IF gv_new_kernel_avail EQ abap_true.
+    &quot; ----  New kernel -------
+    IF iv_read_from_db EQ space.
+
+      &quot; Read last hours from shared memory
+      GET TIME STAMP FIELD gv_checks_since_time.
+
+      TRY.
+          CALL METHOD cl_abap_tstmp=&gt;subtractsecs
+            EXPORTING
+              tstmp   = gv_checks_since_time
+              secs    = gc_last_seconds
+            RECEIVING
+              r_tstmp = gv_checks_since_time.
+        CATCH cx_parameter_invalid_range cx_parameter_invalid_type.
+          GET TIME STAMP FIELD gv_checks_since_time.
+      ENDTRY.
+      lv_since_hours = gv_checks_since_time.
+
+      CALL METHOD cl_susr_tools_kernel=&gt;get_su53_buffer
+        EXPORTING
+          iv_bname         = iv_bname
+          iv_no_auth_only  = abap_true
+          iv_max_entries   = gc_last_entries
+          iv_entries_since = gv_checks_since_time
+        IMPORTING
+          et_su53_buffer   = lt_su53buf
+          ev_entries_since = gv_checks_since_time
+          ev_retcode       = lv_retcode.
+
+      IF lv_retcode EQ 0.
+        SORT lt_su53buf BY timestamp DESCENDING.
+
+        LOOP AT lt_su53buf REFERENCE INTO lr_su53buf.
+          MOVE-CORRESPONDING lr_su53buf-&gt;* TO ls_usr07_new.
+          IF lr_su53buf-&gt;authrc = &apos;A&apos;.
+            ls_usr07_new-rc = 40.
+          ELSE.
+            ls_usr07_new-rc = lr_su53buf-&gt;authrc * 4.
+          ENDIF.
+          &quot; Set instance
+          ls_usr07_new-instance = g_instance.
+          APPEND ls_usr07_new TO gt_usr07_new.
+        ENDLOOP.
+
+        &quot; Time since checks..
+        IF gv_checks_since_time LT lv_since_hours.
+          gv_checks_since_time = lv_since_hours.
+        ENDIF.
+        DESCRIBE TABLE lt_su53buf LINES lv_lines.
+        IF lv_lines EQ gc_last_entries.
+          READ TABLE lt_su53buf REFERENCE INTO lr_su53buf INDEX lv_lines.
+          IF sy-subrc EQ 0.
+            gv_checks_since_time = lr_su53buf-&gt;timestamp.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+    ELSE.
+      &quot; Read from USR07
+      SELECT * FROM usr07
+        INTO CORRESPONDING FIELDS OF TABLE gt_usr07_new ##too_many_itab_fields
+        WHERE bname EQ iv_bname.
+
+      SORT gt_usr07_new BY timestamp DESCENDING.
+
+      &quot; Get instance from database
+      READ TABLE gt_usr07_new REFERENCE INTO lr_usr07_new INDEX 1.
+      IF sy-subrc EQ 0.
+        g_instance = lr_usr07_new-&gt;instance.
+      ELSE.
+        CLEAR: g_instance.
+      ENDIF.
+    ENDIF.
+
+  ELSE.
+    &quot; ---- Old kernel with parameter ---------------
+    IF sy-uname EQ iv_bname.
+      &quot; Get result of last authorization check
+      GET PARAMETER ID &apos;XU1&apos; FIELD usr07key.                &quot;#EC EXISTS
+      GET PARAMETER ID &apos;XU2&apos; FIELD usr07val1.               &quot;#EC EXISTS
+      GET PARAMETER ID &apos;XU7&apos; FIELD usr07val2.               &quot;#EC EXISTS
+
+      &quot; Store result of last authorization check
+      CLEAR ls_usr07.
+      ls_usr07-bname = iv_bname.
+      MOVE-CORRESPONDING usr07key  TO ls_usr07.
+      MOVE-CORRESPONDING usr07val1 TO ls_usr07.
+      MOVE-CORRESPONDING usr07val2 TO ls_usr07.
+      DELETE FROM usr07 WHERE bname EQ iv_bname.
+      IF ls_usr07-objct IS NOT INITIAL.
+        &quot; Store on db
+        INSERT usr07 FROM ls_usr07.
+
+        &quot; Fill internal table
+        MOVE-CORRESPONDING ls_usr07 TO ls_usr07_new.
+        APPEND ls_usr07_new TO gt_usr07_new.
+      ENDIF.
+
+    ELSE.
+      &quot; Read from USR07
+      SELECT * FROM usr07
+        INTO CORRESPONDING FIELDS OF TABLE gt_usr07_new ##too_many_itab_fields
+        WHERE bname = iv_bname.
+      &quot; Only one entry allowed
+      DELETE gt_usr07_new WHERE timestamp IS NOT INITIAL.
+    ENDIF.
+  ENDIF.
+
+  &quot; Get objects
+  LOOP AT gt_usr07_new REFERENCE INTO lr_usr07_new.
+    CLEAR: ls_range_object.
+    ls_range_object-low    = lr_usr07_new-&gt;objct.
+    ls_range_object-sign   = &apos;I&apos;.
+    ls_range_object-option = &apos;EQ&apos;.
+    APPEND ls_range_object TO gt_range_object.
+  ENDLOOP.
+
+  SORT gt_range_object BY low.
+  DELETE ADJACENT DUPLICATES FROM gt_range_object COMPARING low.
+
+ENDFORM.                    &quot;get_authorization_checks
+
+
+*---------------------------------------------------------------------*
+*       FORM display_other_user                                       *
+*---------------------------------------------------------------------*
+FORM display_other_user.
+
+
+
+ENDFORM.                    &quot;display_other_user
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  auth_check_display_user
+*&amp;--------------------------------------------------------------------*
+FORM auth_check_display_user USING value
+                                   msgty LIKE sy-msgty
+                                   rc    LIKE sy-subrc.
+
+  &quot; Authorization check to display the user data
+  DATA: bname      LIKE usr02-bname,
+        user_class LIKE usr02-class,
+        error      LIKE sy-subrc.
+
+  bname = value.
+  CLEAR rc.
+
+  IF sy-uname NE bname.                                     &quot;#EC *
+    CLEAR user_class.
+    SELECT SINGLE class FROM usr02 INTO user_class
+      WHERE bname = bname.
+    IF sy-subrc NE 0.
+      error = 4.
+    ENDIF.
+    &quot;&lt;&lt;&lt; note 2415527
+    cl_susr_basic_tools=&gt;auth_check( EXPORTING  iv_to_be_checked  = cl_susr_basic_tools=&gt;gc_tbc_group
+                                                iv_operation      = cl_susr_basic_tools=&gt;gc_op_read
+                                                iv_class          = user_class
+                                     EXCEPTIONS auth_check_error  = 1
+                                                not_authorized    = 2
+                                                OTHERS            = 3
+                                    ).
+    IF sy-subrc &lt;&gt; 0.
+      &quot;&gt;&gt;&gt; note 2415527
+      &quot; Keine Berechtigung zum Anzeigen
+      MESSAGE  ID &apos;01&apos; TYPE msgty NUMBER &apos;512&apos; WITH user_class.
+      rc = 4.
+      EXIT.
+    ENDIF.
+
+    IF error = 4.
+      &quot; Benutzer existiert nicht
+      MESSAGE ID &apos;01&apos; TYPE msgty NUMBER &apos;124&apos; WITH bname.
+      rc = 4.
+      EXIT.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot;auth_check_display_user
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  check_bname
+*&amp;--------------------------------------------------------------------*
+FORM check_bname.
+
+  DATA: rc       LIKE sy-subrc
+      .
+
+  PERFORM auth_check_display_user USING g0010_bname &apos;E&apos; rc.
+  CHECK rc = 0.
+
+  IF gv_save_available EQ abap_false.
+    PERFORM get_authorization_checks USING g0010_bname space.
+  ELSE.
+    PERFORM get_authorization_checks USING g0010_bname g0010_read_from_db.
+  ENDIF.
+
+ENDFORM.                 &quot; check_bname  INPUT
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  usr07_bname_value_help
+*&amp;--------------------------------------------------------------------*
+FORM usr07_bname_value_help.
+
+  DATA: rc            LIKE          sy-subrc                &quot;#EC NEEDED
+      , repid         LIKE          sy-repid
+      , dynnr         LIKE          sy-dynnr
+      , dynpfields    TYPE TABLE OF dynpread WITH HEADER LINE
+      , window_title(80)
+      , BEGIN OF value_tab OCCURS 0,                        &quot;#EC NEEDED
+          bname TYPE usr07-bname,
+        END OF value_tab
+      , return_tab    TYPE TABLE OF ddshretval WITH HEADER LINE
+      , value_        LIKE          help_info-fldvalue
+      , lv_retcode    TYPE          sy-subrc
+      , lt_su53buf    TYPE          cl_susr_tools_kernel=&gt;tt_usr07p
+      , lr_su53buf    TYPE REF TO   cl_susr_tools_kernel=&gt;ty_usr07p
+      , lv_check_time TYPE          timestampl
+      .
+
+  RANGES value FOR usr07-bname.
+
+  repid = sy-repid.
+  dynnr = sy-dynnr.
+  CLEAR: dynpfields, dynpfields[].
+  dynpfields-fieldname  = &apos;G0010_BNAME&apos;.
+  APPEND dynpfields.
+
+  CALL FUNCTION &apos;DYNP_VALUES_READ&apos;
+    EXPORTING
+      dyname               = repid
+      dynumb               = dynnr
+    TABLES
+      dynpfields           = dynpfields
+    EXCEPTIONS
+      invalid_abapworkarea = 1
+      invalid_dynprofield  = 2
+      invalid_dynproname   = 3
+      invalid_dynpronummer = 4
+      invalid_request      = 5
+      no_fielddescription  = 6
+      undefind_error       = 7
+      OTHERS               = 8.
+
+  IF sy-subrc &lt;&gt; 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*         WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  READ TABLE dynpfields INDEX 1.
+
+  IF sy-subrc = 0.
+    IF dynpfields-fieldvalue IS INITIAL.
+      value-sign   = &apos;I&apos;.
+      value-option = &apos;CP&apos;.
+      value-low = &apos;*&apos;.
+      APPEND value.
+    ELSE.
+      g0010_bname = dynpfields-fieldvalue.
+      SET LOCALE LANGUAGE space.
+      TRANSLATE g0010_bname TO UPPER CASE.
+      value-sign   = &apos;I&apos;.
+      value-option = &apos;CP&apos;.
+      value-low    = g0010_bname.
+      APPEND value.
+    ENDIF.
+  ENDIF.
+
+  &quot; Read all available entries
+  IF gv_new_kernel_avail EQ abap_true  AND
+     g0010_read_from_db  EQ space.
+
+    &quot; ----  New kernel -------
+    &quot; Check last 3 hours
+    GET TIME STAMP FIELD lv_check_time.
+
+    TRY.
+        CALL METHOD cl_abap_tstmp=&gt;subtractsecs
+          EXPORTING
+            tstmp   = lv_check_time
+            secs    = gc_last_seconds
+          RECEIVING
+            r_tstmp = lv_check_time.
+      CATCH cx_parameter_invalid_range cx_parameter_invalid_type.
+        GET TIME STAMP FIELD lv_check_time.
+    ENDTRY.
+
+    CALL METHOD cl_susr_tools_kernel=&gt;get_su53_buffer
+      EXPORTING
+        iv_bname         = &apos; &apos;
+        iv_no_auth_only  = abap_true
+        iv_entries_since = lv_check_time
+      IMPORTING
+        et_su53_buffer   = lt_su53buf
+        ev_retcode       = lv_retcode.
+
+    IF lv_retcode EQ 0.
+      LOOP AT lt_su53buf REFERENCE INTO lr_su53buf.
+        IF lr_su53buf-&gt;bname CP value-low.
+          value_tab-bname = lr_su53buf-&gt;bname.
+          APPEND value_tab.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+  ELSE.
+    &quot; ----  Old kernel with parameter -------
+    SELECT DISTINCT bname FROM usr07
+       INTO TABLE value_tab
+       WHERE bname IN value
+         AND objct NE space.
+  ENDIF.
+
+  SORT value_tab.
+  DELETE ADJACENT DUPLICATES FROM value_tab COMPARING bname.
+
+  IF NOT value_tab[] IS INITIAL.
+    value_ = g0010_bname.
+
+    window_title = &apos;Users with Failed Authorization Checks&apos;(023). &quot;#EC *
+    CALL FUNCTION &apos;F4IF_INT_TABLE_VALUE_REQUEST&apos;
+      EXPORTING
+        window_title    = window_title
+        retfield        = &apos;BNAME&apos;
+        value           = value_
+        value_org       = &apos;S&apos;
+      TABLES
+        value_tab       = value_tab
+        return_tab      = return_tab
+      EXCEPTIONS
+        parameter_error = 1
+        no_values_found = 2
+        OTHERS          = 3.
+
+    IF sy-subrc &lt;&gt; 0.
+*    MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*    WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+    ENDIF.
+
+    READ TABLE return_tab INDEX 1.
+
+    IF sy-subrc EQ 0.
+      g0010_bname = return_tab-fieldval.
+      READ TABLE value_tab WITH KEY bname = g0010_bname.
+
+      repid = sy-repid.
+      dynnr = sy-dynnr.
+      CLEAR: dynpfields, dynpfields[].
+      dynpfields-fieldname  = &apos;G0010_OBJCT&apos;.
+      APPEND dynpfields.
+
+      CALL FUNCTION &apos;DYNP_VALUES_UPDATE&apos;
+        EXPORTING
+          dyname               = repid
+          dynumb               = dynnr
+        TABLES
+          dynpfields           = dynpfields
+        EXCEPTIONS
+          invalid_abapworkarea = 1
+          invalid_dynprofield  = 2
+          invalid_dynproname   = 3
+          invalid_dynpronummer = 4
+          invalid_request      = 5
+          no_fielddescription  = 6
+          undefind_error       = 7
+          OTHERS               = 8.
+
+      IF sy-subrc &lt;&gt; 0.
+*       MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*       WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+      ENDIF.
+
+    ENDIF.
+  ELSE.
+    MESSAGE  i802(dh).    &quot; Keine Werte zu dieser Selektion
+    EXIT.
+  ENDIF.
+ENDFORM.                 &quot; usr07_bname_value_help  INPUT
+
+
+
+
+*---------------------------------------------------------------------*
+*       CLASS LCL_APPLICATION IMPLEMENTATION
+*---------------------------------------------------------------------*
+CLASS lcl_application IMPLEMENTATION.
+
+  METHOD  handle_item_double_click.
+    &quot; USING node_key item_name
+    &quot; this method handles the item double click event of the tree
+    &quot; control instance
+
+    DATA: wa_node_table LIKE LINE OF gt_nodes.
+    DATA: lo_suso TYPE REF TO cl_suso_gen.
+
+    READ TABLE gt_nodes INTO wa_node_table
+            WITH KEY node_key = node_key
+                     flag     = &apos;X&apos;
+                     objct    = &apos; &apos;.
+    IF sy-subrc = 0.
+      MESSAGE s111(01) WITH wa_node_table-objct.
+      EXIT.
+    ENDIF.
+
+    READ TABLE gt_nodes INTO wa_node_table WITH KEY node_key = node_key.
+    CHECK sy-subrc = 0.
+
+    IF NOT wa_node_table-agr_name IS INITIAL.
+      &quot; Navigation to role
+      AUTHORITY-CHECK OBJECT &apos;S_USER_AGR&apos;
+               ID &apos;ACT_GROUP&apos; FIELD wa_node_table-agr_name
+               ID &apos;ACTVT&apos;     FIELD &apos;03&apos;.
+      IF sy-subrc = 0.
+        CALL FUNCTION &apos;PRGN_SHOW_EDIT_AGR&apos;
+          EXPORTING
+            agr_name      = wa_node_table-agr_name
+            screen        = &apos;5&apos; &quot;Authorization data
+          EXCEPTIONS
+            agr_not_found = 1
+            OTHERS        = 2.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE s234(s#) WITH wa_node_table-agr_name.
+        ENDIF.
+      ELSE.
+        MESSAGE s422(s#) WITH wa_node_table-agr_name.
+      ENDIF.
+
+    ELSEIF NOT wa_node_table-refuser  IS INITIAL.
+      &quot; Navigation to reference user
+
+    ELSEIF NOT wa_node_table-field    IS INITIAL.
+      &quot; Navigation to authorization field
+
+    ELSEIF NOT wa_node_table-auth     IS INITIAL.
+      &quot; Navigation to authorization
+
+    ELSEIF NOT wa_node_table-objct    IS INITIAL.
+      &quot; Navigation to authorization object
+      CREATE OBJECT lo_suso.
+      IF &apos;03&apos; = lo_suso-&gt;suso_authority_check( id_objct  = wa_node_table-objct
+                                               id_actvt  = &apos;03&apos;
+                                               id_silent = abap_false    ).
+        CALL FUNCTION &apos;SUSR_SHOW_OBJECT&apos;
+          EXPORTING
+            object  = wa_node_table-objct
+            eu_mode = &apos; &apos;.
+
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.                    &quot;HANDLE_ITEM_DOUBLE_CLICK
+
+ENDCLASS.                    &quot;LCL_APPLICATION IMPLEMENTATION
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  CREATE_AND_INIT_TREE
+*&amp;--------------------------------------------------------------------*
+* The Tree Control has not been created yet.
+* Create a Tree Control and insert nodes into it.
+*---------------------------------------------------------------------*
+FORM create_and_init_tree.
+
+  DATA: node_table         TYPE treemlnota
+      , item_table         TYPE treemlitac
+      , nodes_to_expand    TYPE treemnotab
+      , events             TYPE cntl_simple_events
+      , event              TYPE cntl_simple_event
+      , l_hierarchy_header TYPE treemhhdr
+      , l_list_header      TYPE treemlhdr
+      .
+
+  CHECK g_tree IS INITIAL.
+
+  CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+    EXPORTING
+      text = &apos;Initialization&apos;(026).                         &quot;#EC *
+
+  &quot; create the application object
+  &quot; this object is needed to handle the ABAP Objects Events of Controls
+  CREATE OBJECT g_application.
+
+  &quot; create a container for the tree control
+  CREATE OBJECT g_custom_container
+    EXPORTING
+      container_name              = &apos;TREE_CONTAINER&apos;
+    EXCEPTIONS
+      cntl_error                  = 1
+      cntl_system_error           = 2
+      create_error                = 3
+      lifetime_error              = 4
+      lifetime_dynpro_dynpro_link = 5.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+
+  l_hierarchy_header-heading   = &apos;Description&apos;(017).        &quot;#EC *
+  l_hierarchy_header-tooltip   = &apos; &apos;.
+  l_hierarchy_header-width     = 101.                    &quot;note 1111145
+  l_list_header-heading        = &apos;Authorization Values&apos;(072). &quot;#EC *
+  l_list_header-tooltip        = &apos; &apos;.
+
+  &quot; create a list tree control
+  CREATE OBJECT g_tree
+    EXPORTING
+      node_selection_mode         = cl_list_tree_model=&gt;node_sel_mode_single
+      item_selection              = &apos;X&apos;
+      with_headers                = &apos;X&apos;
+      hierarchy_header            = l_hierarchy_header
+      list_header                 = l_list_header
+    EXCEPTIONS
+      illegal_node_selection_mode = 1.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE a001.
+  ENDIF.
+
+  &quot; define the events which will be passed to the backend
+  &quot; node double click
+  event-eventid = cl_list_tree_model=&gt;eventid_node_double_click.
+  event-appl_event = &apos;X&apos;.                                   &quot;
+  APPEND event TO events.
+
+  &quot; item double click
+  event-eventid = cl_list_tree_model=&gt;eventid_item_double_click.
+  event-appl_event = &apos;X&apos;.
+  APPEND event TO events.
+
+
+  &quot; link click
+  event-eventid = cl_list_tree_model=&gt;eventid_link_click.
+  event-appl_event = &apos;X&apos;.
+  APPEND event TO events.
+
+  &quot; button click
+  event-eventid = cl_list_tree_model=&gt;eventid_button_click.
+  event-appl_event = &apos;X&apos;.
+  APPEND event TO events.
+
+  &quot; checkbox change
+  event-eventid = cl_list_tree_model=&gt;eventid_checkbox_change.
+  event-appl_event = &apos;X&apos;.
+  APPEND event TO events.
+
+  CALL METHOD g_tree-&gt;set_registered_events
+    EXPORTING
+      events                    = events
+    EXCEPTIONS
+      illegal_event_combination = 1
+      unknown_event             = 2.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+  &quot; assign event handlers in the application class to each desired event
+  SET HANDLER g_application-&gt;handle_item_double_click  FOR g_tree.
+
+  &quot; Add nodes to the tree control
+  &quot; NOTE: the tree control does not store data at the backend. If an
+  &quot; application wants to access tree data later, it must store the
+  &quot; tree data itself.
+  PERFORM build_node_and_item_table USING node_table item_table
+                                          nodes_to_expand.
+
+  CALL METHOD g_tree-&gt;add_nodes
+    EXPORTING
+      node_table          = node_table
+    EXCEPTIONS
+      error_in_node_table = 1
+      OTHERS              = 2.
+
+  CALL METHOD g_tree-&gt;add_items
+    EXPORTING
+      item_table          = item_table
+    EXCEPTIONS
+      error_in_item_table = 1
+      OTHERS              = 2.
+
+  CALL METHOD g_tree-&gt;create_tree_control
+    EXPORTING
+      parent                       = g_custom_container
+    EXCEPTIONS
+      lifetime_error               = 1
+      cntl_system_error            = 2
+      create_error                 = 3
+      failed                       = 4
+      tree_control_already_created = 5
+      OTHERS                       = 6.
+
+  &quot; Expand nodes describing errors
+  IF NOT nodes_to_expand[] IS INITIAL.
+    CALL METHOD g_tree-&gt;expand_nodes
+      EXPORTING
+        node_key_table = nodes_to_expand
+      EXCEPTIONS
+        OTHERS         = 1.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+    &quot; Scoll to top (expand_nodes scrolls to last expanded node)
+    CALL METHOD g_tree-&gt;scroll
+      EXPORTING
+        scroll_command         = cl_list_tree_model=&gt;scroll_home
+      EXCEPTIONS
+        failed                 = 1
+        illegal_scroll_command = 2
+        cntl_system_error      = 3
+        OTHERS                 = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+
+  ENDIF.
+
+  CALL METHOD g_tree-&gt;hierarchy_header_adjust_width
+    EXCEPTIONS
+      cntl_system_error = 1
+      failed            = 2
+      OTHERS            = 3.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+ENDFORM.                    &quot;CREATE_AND_INIT_TREE
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  build_node_and_item_table
+*&amp;---------------------------------------------------------------------*
+*
+* 25.08.2009 D034973 note 1378540                                  4.6C+
+* tree for authority-check with repeated authorizations fields for
+* the same object
+*----------------------------------------------------------------------*
+FORM build_node_and_item_table
+  USING
+    node_table      TYPE treemlnota
+    item_table      TYPE treemlitac
+    nodes_to_expand TYPE treemnotab.
+
+
+  DATA: node             TYPE         treemlnodt
+      , item             TYPE         treemliten
+      , wa_node_table    LIKE LINE OF gt_nodes
+      , rc               LIKE         sy-subrc
+      , g_node_key_objct TYPE         i
+      .
+
+  DATA: BEGIN OF field_value OCCURS 10,                     &quot;#EC NEEDED
+          field LIKE tobj-fiel1,
+          value LIKE usr07-val01,
+        END OF field_value.
+
+
+  &quot; Build the node table.
+
+  &quot; Caution: The nodes are inserted into the tree according to the order
+  &quot; in which they occur in the table. In consequence, a node must not
+  &quot; must not occur in the node table before its parent node.
+
+  &quot; ----------------------------------------------------------------------
+  &quot; Folder with key &apos;Header&apos;: Tree of previous authorization check
+  &quot; ----------------------------------------------------------------------
+  PERFORM header_data   USING node_table
+                              item_table.
+
+  &quot; ----------------------------------------------------------------------
+  &quot; Folder with key &apos;Root1&apos;: Tree of previous authorization check
+  &quot; ----------------------------------------------------------------------
+  PERFORM failed_auth_data CHANGING node_table
+                                    item_table
+                                    nodes_to_expand.
+
+
+  &quot; ----------------------------------------------------------------------
+  &quot; Folder with key &apos;Root2&apos;: Authorization data of the user
+  &quot; ----------------------------------------------------------------------
+  DATA: wa_profiles     LIKE LINE OF gt_profiles
+      , wa_auths        LIKE LINE OF lt_auths_del
+      , auth_node_key   TYPE         i                      &quot;#EC NEEDED
+      , field_node_key  TYPE         i                      &quot;#EC NEEDED
+      , temp1(50)       TYPE         c
+      , l_wa_node_table LIKE LINE OF gt_nodes
+      , i               TYPE         i VALUE 0              &quot;#EC NEEDED
+      , m               TYPE         i                      &quot;#EC NEEDED
+      , n               TYPE         i                      &quot;#EC NEEDED
+      , lt_ust12        LIKE         gt_ust12 OCCURS 0
+      , lt_rng_field    TYPE         susr_t_ref_2_rng
+      .
+
+  FIELD-SYMBOLS:
+    &lt;lp_ref_2_rng_field&gt; TYPE susr_s_ref_2_rng,
+    &lt;lp_rng_field&gt;       TYPE susr_t_sel_opt_field.
+
+
+  IF gt_range_object IS NOT INITIAL.
+
+    CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+      EXPORTING
+        text = &apos;Reading authorization data...&apos;(027).        &quot;#EC *
+
+    &quot; Read authorization user buffer
+    CLEAR g_authbuffer[].
+
+    &quot; we need only user&apos;s buffer but not the refuser&apos;s buffer.
+    &quot; the buffer of the refuser is the same as hes master data
+    SELECT bname objct auth FROM usrbf2 INTO TABLE g_authbuffer
+      WHERE bname = g_bname                             &quot;#EC CI_GENBUFF
+        AND objct IN gt_range_object.
+    SORT g_authbuffer.
+
+    &quot; Read profiles (master data)
+    CLEAR: gt_profiles, gt_profiles[].
+
+    &quot; Read profiles I: Get profiles of the user
+    SELECT profile FROM ust04      ##too_many_itab_fields
+        INTO TABLE gt_profiles
+        WHERE bname = g_bname.
+
+    &quot; Read profiles II: Get profiles of the reference user
+    &quot; !!! we are assumed that the reference user is from user typ
+    &quot; &apos;reference&apos;!!!
+    CLEAR: g_refuser.
+    SELECT SINGLE refuser FROM usrefus INTO g_refuser
+      WHERE bname = g_bname.
+
+    IF sy-subrc = 0 AND g_refuser NE space.
+
+      SELECT profile FROM ust04      ##too_many_itab_fields
+         INTO TABLE gt_profiles_ref
+         WHERE bname = g_refuser.
+
+      SORT gt_profiles BY profile.
+      SORT gt_profiles_ref BY profile.
+
+      LOOP AT gt_profiles_ref ASSIGNING &lt;lp_prof_ref&gt;.
+        READ TABLE gt_profiles ASSIGNING &lt;lp_prof&gt;
+         WITH KEY profile = &lt;lp_prof_ref&gt;-profile
+         BINARY SEARCH.
+        IF sy-subrc = 0.
+          &quot; if the same profile is in user and refuser we ignore the
+          &quot; profile from refuser.
+        ELSE.
+          &lt;lp_prof_ref&gt;-refuserflag = &apos;X&apos;.
+          INSERT &lt;lp_prof_ref&gt; INTO gt_profiles INDEX sy-tabix.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    &quot; Read profile attributes
+    LOOP AT gt_profiles.
+      &quot; Type of profile
+      SELECT SINGLE typ FROM usr10 INTO gt_profiles-typ
+             WHERE profn = gt_profiles-profile
+             AND   aktps  = aktivated.
+      &quot; Short text of profile
+      SELECT SINGLE ptext FROM usr11 INTO gt_profiles-ptext
+        WHERE profn = gt_profiles-profile
+        AND   aktps = aktivated
+        AND   langu = sy-langu .
+      &quot; Role of generated profile
+      IF gt_profiles-typ = generprof.
+        SELECT SINGLE agr_name FROM agr_1016 INTO gt_profiles-agr_name
+          WHERE profile = gt_profiles-profile.              &quot;#EC *
+        IF NOT gt_profiles-agr_name IS INITIAL.
+          ##too_many_itab_fields
+          SELECT SINGLE text FROM agr_texts INTO gt_profiles-atext
+          WHERE agr_name = gt_profiles-agr_name
+            AND spras    = sy-langu
+            AND line     = 0.
+        ENDIF.
+      ENDIF.
+
+      MODIFY gt_profiles.
+    ENDLOOP.
+
+    SORT gt_profiles BY profile refuserflag.
+
+    &quot; Get authorizations
+    &quot; Single profiles
+    DATA: BEGIN OF lt_s_profs OCCURS 0,                     &quot;#EC NEEDED
+            profile LIKE gt_profiles-profile,
+          END OF lt_s_profs.
+
+    &quot; Composite profiles
+    DATA: BEGIN OF lt_c_profs OCCURS 0,                     &quot;#EC NEEDED
+            profile LIKE gt_profiles-profile,
+          END OF lt_c_profs.
+
+    &quot; Sub-profiles
+    DATA: BEGIN OF lt_sub_profs OCCURS 0,                   &quot;#EC NEEDED
+            profile LIKE gt_profiles-profile,
+          END OF lt_sub_profs.
+    DATA: profile_type LIKE usr10-typ.
+
+    DATA flag(1) TYPE c.
+
+    CLEAR: gt_auths, gt_auths[].
+
+
+    LOOP AT gt_profiles.
+      &quot; Resolve composite profiles
+      CLEAR: lt_s_profs[].
+      IF gt_profiles-typ = colectprof.
+        CLEAR lt_c_profs[].
+        APPEND gt_profiles-profile TO lt_c_profs.
+        DO.
+          IF lt_c_profs[] IS INITIAL. EXIT. ENDIF.
+          SELECT subprof FROM ust10c INTO TABLE lt_sub_profs
+            FOR ALL ENTRIES IN lt_c_profs
+            WHERE profn = lt_c_profs-profile
+              AND aktps = aktivated.
+          CLEAR lt_c_profs[].
+          LOOP AT lt_sub_profs.
+            SELECT SINGLE typ FROM usr10 INTO profile_type
+               WHERE profn = lt_sub_profs-profile
+               AND   aktps  = aktivated.
+            IF profile_type = colectprof.
+              APPEND lt_sub_profs-profile TO lt_c_profs.
+            ELSE.
+              APPEND lt_sub_profs-profile TO lt_s_profs.
+            ENDIF.
+          ENDLOOP.
+        ENDDO.
+      ELSE.
+        APPEND gt_profiles-profile TO lt_s_profs.
+      ENDIF.
+      SORT lt_s_profs BY profile.
+      DELETE ADJACENT DUPLICATES FROM lt_s_profs COMPARING profile.
+      &quot; Read authorization
+      IF NOT lt_s_profs[] IS INITIAL.
+        SELECT objct auth FROM ust10s INTO lt_auths
+          FOR ALL ENTRIES IN lt_s_profs
+          WHERE profn = lt_s_profs-profile
+            AND objct IN gt_range_object. &quot;like sel_objct.
+          lt_auths-profile = gt_profiles-profile. &quot;User assigned profile
+          lt_auths-userbuffer = &apos;Y&apos;.
+          IF gt_profiles-refuserflag = &apos;X&apos;.
+            lt_auths-refuserflag    = gt_profiles-refuserflag.
+          ELSE.
+            lt_auths-refuserflag = &apos;Y&apos;.
+          ENDIF.
+*          clear gt_auths-userbuffer.
+          APPEND lt_auths.
+          MOVE-CORRESPONDING lt_auths TO gt_auths.
+          APPEND gt_auths.
+        ENDSELECT.
+      ELSE.
+        CLEAR gt_auths[].
+      ENDIF.
+    ENDLOOP.
+
+    SORT gt_auths BY objct auth profile refuserflag.
+    DELETE ADJACENT DUPLICATES FROM gt_auths
+                             COMPARING objct auth profile.
+
+    lt_auths_del[] = gt_auths[].
+    SORT lt_auths_del BY objct auth refuserflag.
+
+    &quot; if an object is in user master and refuser,
+    &quot; this object should be deleted from refuser
+    IF g_refuser IS NOT INITIAL.
+      LOOP AT gt_auths ASSIGNING &lt;lp_auths&gt;.
+        READ TABLE lt_auths_del ASSIGNING &lt;lp_auths_del&gt;
+              WITH KEY objct   = &lt;lp_auths&gt;-objct
+                       auth    = &lt;lp_auths&gt;-auth
+                       refuserflag    = &apos;Y&apos;
+              BINARY SEARCH.
+        IF sy-subrc = 0.
+          IF &lt;lp_auths&gt;-refuserflag = &apos;X&apos;.
+            DELETE TABLE gt_auths FROM &lt;lp_auths&gt;.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    &quot; Add authorizations in user buffer but not in master data
+    LOOP AT g_authbuffer.
+      READ TABLE gt_auths ASSIGNING &lt;lp_auths&gt;
+                          WITH KEY objct  = g_authbuffer-object
+                                   auth   = g_authbuffer-auth
+        BINARY SEARCH.
+      IF sy-subrc = 0.
+        &quot; in case the same auth which was in user master and refuser,
+        &quot; was remove from user master
+        IF &lt;lp_auths&gt;-refuserflag = &apos;X&apos;.
+          &lt;lp_auths&gt;-userbuffer = space.
+          &lt;lp_auths&gt;-refuserflag = &apos;X&apos;.
+        ENDIF.
+      ELSE.
+        &quot; authorization in user buffer but not in master data
+        gt_auths-objct       = g_authbuffer-object.
+        gt_auths-auth        = g_authbuffer-auth.
+        gt_auths-profile     = space.
+        gt_auths-userbuffer  = &apos;X&apos;.
+        gt_auths-refuserflag = space.
+        INSERT gt_auths INTO gt_auths INDEX sy-tabix.
+      ENDIF.
+    ENDLOOP.
+
+    SORT gt_auths BY objct auth refuserflag.
+    DELETE ADJACENT DUPLICATES FROM gt_auths
+                               COMPARING objct auth profile.
+
+    &quot; Get authorization data
+    IF NOT gt_auths[] IS INITIAL.
+      SELECT objct auth field von bis FROM ust12 INTO TABLE gt_ust12
+        FOR ALL ENTRIES IN gt_auths
+        WHERE objct = gt_auths-objct
+          AND auth  = gt_auths-auth
+          AND aktps = aktivated.
+      SORT gt_ust12 BY objct auth field von bis.
+      SELECT objct oclss FROM tobj INTO TABLE gt_tobj
+           FOR ALL ENTRIES IN gt_auths
+           WHERE objct = gt_auths-objct.
+      SORT gt_tobj BY objct.
+
+      LOOP AT gt_auths ASSIGNING &lt;lp_auths_oclss&gt;.
+        READ TABLE gt_tobj INTO wa_tobj
+          WITH KEY objct = &lt;lp_auths_oclss&gt;-objct
+          BINARY SEARCH.
+        IF sy-subrc = 0.
+          &lt;lp_auths_oclss&gt;-oclss = wa_tobj-oclss.
+        ENDIF.
+      ENDLOOP.
+
+      SORT gt_auths BY oclss objct auth.
+      DELETE ADJACENT DUPLICATES FROM gt_auths
+             COMPARING oclss objct auth profile.
+
+      SELECT oclss ctext FROM tobct                     &quot;#EC CI_NOORDER
+      INTO CORRESPONDING FIELDS OF TABLE gt_oclss
+      FOR ALL ENTRIES IN gt_auths
+         WHERE langu  = sy-langu
+         AND   oclss = gt_auths-oclss.
+      APPEND gt_oclss TO gt_oclss.
+      SORT gt_oclss.
+
+      SELECT object ttext FROM tobjt                    &quot;#EC CI_GENBUFF
+      INTO CORRESPONDING FIELDS OF TABLE gt_objct
+      FOR ALL ENTRIES IN gt_auths
+       WHERE langu  = sy-langu
+             AND   object = gt_auths-objct.
+      APPEND gt_objct TO gt_objct.
+      SORT gt_objct.
+
+      SELECT objct auth atext FROM usr13
+         INTO CORRESPONDING FIELDS OF TABLE gt_auth
+         FOR ALL ENTRIES IN gt_auths
+          WHERE langu  = sy-langu
+            AND objct = gt_auths-objct
+            AND auth   = gt_auths-auth.
+      APPEND gt_auth TO gt_auth.
+      SORT gt_auth.
+
+    ELSE.
+
+      CLEAR gt_ust12[].
+      CLEAR gt_tobj[].
+
+    ENDIF. &quot; note 1158207
+
+    CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+      EXPORTING
+        text = &apos;Reading texts...&apos;(031).                  &quot;#EC TEXT_DIFF
+
+
+    IF gt_ust12[] IS NOT INITIAL.
+
+      TRY.
+          lt_rng_field = cl_susr_basic_tools=&gt;convert_column_2_range(
+                                           it_table              = gt_ust12[]
+                                           id_column_indx        = 3
+                                           id_create_empty_table = abap_true ).
+
+        CATCH cx_susr_basic_tools.                      &quot;#EC NO_HANDLER
+      ENDTRY.
+
+      LOOP AT lt_rng_field ASSIGNING &lt;lp_ref_2_rng_field&gt;.
+
+        ASSIGN &lt;lp_ref_2_rng_field&gt;-tab_ref-&gt;* TO &lt;lp_rng_field&gt;.
+
+        SORT &lt;lp_rng_field&gt; BY low.
+        DELETE ADJACENT DUPLICATES FROM &lt;lp_rng_field&gt;.
+
+        SELECT r~fieldname r~rollname p~ddtext
+            APPENDING TABLE gt_auth_field
+             FROM ( authx AS r
+               INNER JOIN dd04t AS p
+               ON  p~rollname = r~rollname
+                   AND p~ddlanguage = sy-langu )
+            WHERE r~fieldname IN &lt;lp_rng_field&gt;.       &quot;#EC CI_BUFFJOIN
+
+      ENDLOOP.
+
+      SORT gt_auth_field.
+    ENDIF.
+
+    &quot; Folder with key &apos;Root2&apos;: Authorization data of the user
+    CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+      EXPORTING
+        text = &apos;Display...&apos;(028).                           &quot;#EC *
+
+    node-node_key  = &apos;Root2&apos;.                               &quot;#EC NOTEXT
+    node-relatkey  = &apos; &apos;.
+    &quot; Special case: A root node has no parent node
+    node-relatship = cl_list_tree_model=&gt;relat_next_sibling.
+    node-hidden    = &apos; &apos;.  &quot; The node is visible,
+    node-disabled  = &apos; &apos;.  &quot; selectable,
+    node-isfolder  = &apos;X&apos;.  &quot; a folder.
+    CLEAR node-n_image.   &quot; Folder-/ Leaf-Symbol in state &quot;closed&quot;:
+    CLEAR node-exp_image. &quot; Folder-/ Leaf-Symbol in state &quot;open&quot;:
+    CLEAR node-expander.                 &quot; see below.
+    APPEND node TO node_table.
+
+    CLEAR wa_node_table.
+    wa_node_table-node_key       = node-node_key.
+    wa_node_table-isfolder       = node-isfolder.
+    wa_node_table-expander       = node-expander.
+    INSERT wa_node_table INTO TABLE gt_nodes.
+
+    APPEND node-node_key TO nodes_to_expand.
+
+    CLEAR item.
+    item-node_key   = node-node_key.
+    item-item_name  = &apos;01&apos;.
+    item-class      = cl_list_tree_model=&gt;item_class_text. &quot; Text item
+    item-alignment  = cl_list_tree_model=&gt;align_auto.
+    item-font       = cl_list_tree_model=&gt;item_font_prop.
+    item-text       =
+      &apos;User Authorization Data&apos;(022).                       &quot;#EC *
+    temp1 = g_bname.
+    CONCATENATE item-text temp1 INTO item-text SEPARATED BY space.
+    APPEND item TO item_table.
+
+    CLEAR g_node_key_auth.
+    CLEAR g_node_key_value.
+    CLEAR g_node_key_ref.
+    CLEAR g_node_key_prof.
+    CLEAR g_node_key_role.
+    CLEAR g_node_key_field .
+    CLEAR g_node_key_oclss.
+    CLEAR g_node_key_mess .
+
+    g_node_key_auth   = 200000.
+    g_node_key_value = 100000.
+    g_node_key_ref   = 300000.
+    g_node_key_prof  = 400000.
+    g_node_key_role  = 500000.
+    g_node_key_field = 600000.
+    g_node_key_oclss = 700000.
+    g_node_key_mess  = 800000.
+
+    lt_ust12[] = gt_ust12[].
+    SORT lt_ust12.
+
+    lt_auths_del[] = gt_auths[].
+    SORT lt_auths_del.
+
+
+    LOOP AT gt_auths.
+
+      AT NEW objct.
+        &quot; items of authorization object
+        ADD 1 TO g_node_key_objct.
+        CLEAR node.
+        node-node_key   = g_node_key_objct.                 &quot;#EC NOTEXT
+        node-relatkey   = &apos;Root2&apos;.                          &quot;#EC NOTEXT
+        node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+        node-hidden     = &apos; &apos;.  &quot; The node is visible,
+        node-disabled   = &apos; &apos;.  &quot; selectable,
+        node-isfolder   = &apos;X&apos;.  &quot; a folder.
+        node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+        APPEND node TO node_table.
+
+        CLEAR wa_node_table.
+        wa_node_table-node_key       = node-node_key.
+        wa_node_table-isfolder       = node-isfolder.
+        wa_node_table-expander       = node-expander.
+        wa_node_table-oclss          = gt_auths-oclss.
+        wa_node_table-objct          = gt_auths-objct.
+        wa_node_table-flag           =&apos;X&apos;.
+        INSERT wa_node_table INTO TABLE gt_nodes.
+
+        CLEAR item.
+        item-node_key   = g_node_key_objct.
+        item-item_name  = &apos;01&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Authorization Object&apos;(079).      &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = g_node_key_objct.
+        item-item_name  = &apos;02&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 10.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-style      = cl_list_tree_model=&gt;style_emphasized_positive.
+        item-alignment  = cl_list_tree_model=&gt;align_left.
+        item-text       = gt_auths-objct.
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key  = g_node_key_objct.
+        item-item_name = &apos;03&apos;.
+        item-class     = cl_list_tree_model=&gt;item_class_text.
+        item-alignment = cl_list_tree_model=&gt;align_auto.
+        item-font      = cl_list_tree_model=&gt;item_font_prop.
+        READ TABLE gt_objct ASSIGNING &lt;lp_objct&gt;
+             WITH KEY object = gt_auths-objct
+             BINARY SEARCH.
+        IF sy-subrc &lt;&gt; 0.
+          item-text = &apos; &apos;.
+        ELSE.
+          item-text = &lt;lp_objct&gt;-ttext.
+        ENDIF.
+        APPEND item TO item_table.
+      ENDAT.
+
+      AT NEW auth.
+        &quot; Folder with authorization
+        ADD 1 TO g_node_key_auth.
+        CLEAR node.
+        node-node_key   = g_node_key_auth.
+        node-relatkey   = g_node_key_objct.
+        node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+        node-isfolder   = &apos;X&apos;.  &quot; a folder.
+        node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+        APPEND node TO node_table.
+
+        CLEAR wa_node_table.
+        wa_node_table-node_key       = node-node_key.
+        wa_node_table-isfolder       = node-isfolder.
+        wa_node_table-expander       = node-expander.
+        wa_node_table-oclss          = gt_auths-oclss.
+        wa_node_table-objct          = gt_auths-objct.
+        wa_node_table-auth           = gt_auths-auth.
+        INSERT wa_node_table INTO TABLE gt_nodes.
+
+        &quot; Items for authorization
+        CLEAR item.
+        item-node_key   = g_node_key_auth.
+        item-item_name  = &apos;01&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Authorization&apos;(019).             &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = g_node_key_auth.
+        item-item_name  = &apos;02&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 12.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-style      = cl_list_tree_model=&gt;style_emphasized_positive.
+        item-text       = gt_auths-auth.
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key  = g_node_key_auth.
+        item-item_name = &apos;03&apos;.
+        item-class     = cl_list_tree_model=&gt;item_class_text.
+        item-alignment = cl_list_tree_model=&gt;align_auto.
+        item-font      = cl_list_tree_model=&gt;item_font_prop.
+        READ TABLE gt_auth ASSIGNING &lt;lp_auth&gt;
+             WITH KEY objct = gt_auths-objct
+                      auth  = gt_auths-auth
+             BINARY SEARCH.
+        IF sy-subrc &lt;&gt; 0.
+          item-text = &apos; &apos;.
+        ELSE.
+          item-text = &lt;lp_auth&gt;-atext.
+        ENDIF.
+        APPEND item TO item_table.
+
+        &quot; Item for user buffer info
+        CLEAR item.
+        item-node_key   = g_node_key_auth.
+        item-item_name  = &apos;04&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        READ TABLE g_authbuffer WITH KEY object = gt_auths-objct
+                                         auth   = gt_auths-auth
+         BINARY SEARCH.
+        IF sy-subrc = 0.
+          &quot; gt_auths should be read again, because of the
+          &quot; at new. With at new all fileds are set to &apos;*&apos;
+          READ TABLE gt_auths WITH KEY oclss  = gt_auths-oclss
+                                       objct  = gt_auths-objct
+                                       auth   = gt_auths-auth
+                        BINARY SEARCH.
+          IF sy-subrc = 0 AND gt_auths-userbuffer = &apos;Y&apos;.
+          ELSE.
+            item-style =
+               cl_list_tree_model=&gt;style_emphasized_negative.
+            item-text  = &apos;Available in User Buffer, but not in Master Data&apos;(025). &quot;#EC *
+            APPEND item TO item_table.
+          ENDIF.
+        ELSE.
+          READ TABLE gt_auths ASSIGNING &lt;lp_auths&gt;
+          WITH KEY oclss  = gt_auths-oclss
+                                       objct  = gt_auths-objct
+                                       auth   = gt_auths-auth
+              BINARY SEARCH.
+          IF sy-subrc = 0 AND &lt;lp_auths&gt;-refuserflag &lt;&gt; &apos;X&apos;.
+            item-style = cl_list_tree_model=&gt;style_emphasized_negative.
+            item-text  = &apos;Available in master data, but not in user buffer&apos;(082). &quot;#EC *
+            APPEND item TO item_table.
+          ELSE.
+            &quot; the are some inconsistences between reference user&apos;s
+            &quot;  buffer and master data of this references data
+          ENDIF.
+        ENDIF.
+      ENDAT.
+
+      &quot; Referenzbenutzer, Profile, Role
+      CLEAR flag.
+      n = 1.
+      WHILE n = 1.
+        &quot; Nodes with profile and role
+        READ TABLE lt_auths_del INTO wa_auths
+        WITH KEY oclss = wa_node_table-oclss
+                 objct = wa_node_table-objct
+                 auth  = wa_node_table-auth
+        BINARY SEARCH.
+        &quot; only in case the auth is only in refuser.
+        IF sy-subrc = 0 AND wa_auths-userbuffer = &apos;Y&apos;.
+          READ TABLE gt_profiles INTO wa_profiles
+            WITH KEY profile = wa_auths-profile
+            BINARY SEARCH.
+          IF sy-subrc = 0.
+            &quot; Source of authorization via reference user
+            READ TABLE gt_profiles
+              TRANSPORTING NO FIELDS
+              WITH KEY profile     = wa_auths-profile
+                       refuserflag = &apos;X&apos;
+              BINARY SEARCH.
+            IF sy-subrc = 0.
+              IF flag IS INITIAL.
+                ADD 1 TO g_node_key_ref.
+                CLEAR node.
+                node-node_key   = g_node_key_ref.
+                node-relatkey   = g_node_key_auth.
+                node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+                node-n_image    = &apos;BNONE&apos;.
+                node-isfolder   = &apos; &apos;.
+                APPEND node TO node_table.
+
+                CLEAR l_wa_node_table.
+                l_wa_node_table-node_key       = node-node_key.
+                l_wa_node_table-isfolder       = node-isfolder.
+                l_wa_node_table-expander       = node-expander.
+                l_wa_node_table-refuser        = g_refuser.
+                INSERT l_wa_node_table INTO TABLE gt_nodes.
+
+                CLEAR item.
+                item-node_key   = g_node_key_ref.
+                item-item_name  = &apos;01&apos;.
+                item-class      = cl_list_tree_model=&gt;item_class_text.
+                item-alignment  = cl_list_tree_model=&gt;align_auto.
+                item-font       = cl_list_tree_model=&gt;item_font_prop.
+                item-text       = &apos;Reference User&apos;(021).    &quot;#EC *
+                APPEND item TO item_table.
+
+                CLEAR item.
+                item-node_key   = g_node_key_ref.
+                item-item_name  = &apos;02&apos;.
+                item-class      = cl_list_tree_model=&gt;item_class_text.
+                item-length     = 12.
+                item-font       = cl_list_tree_model=&gt;item_font_fixed.
+                item-usebgcolor = usebgcolor. &quot; light grey background
+                item-style      = cl_list_tree_model=&gt;style_emphasized.
+                item-text       = g_refuser.
+                APPEND item TO item_table.
+                flag = &apos;X&apos;.
+              ENDIF.
+            ENDIF.
+
+            &quot; Profile
+            ADD 1 TO g_node_key_prof.
+            CLEAR node.
+            node-node_key   = g_node_key_prof.
+            node-relatkey   = g_node_key_auth.
+            node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+            node-n_image    = &apos;BNONE&apos;.
+            node-isfolder   = &apos; &apos;.
+            APPEND node TO node_table.
+
+            CLEAR l_wa_node_table.
+            l_wa_node_table-node_key       = node-node_key.
+            l_wa_node_table-isfolder       = node-isfolder.
+            l_wa_node_table-expander       = node-expander.
+            l_wa_node_table-oclss          = gt_auths-oclss.
+            l_wa_node_table-objct          = gt_auths-objct.
+            l_wa_node_table-auth           = gt_auths-auth.
+            l_wa_node_table-profile        = wa_profiles-profile.
+            INSERT l_wa_node_table INTO TABLE gt_nodes.
+
+            CLEAR item.
+            item-node_key   = g_node_key_prof.
+            item-item_name  = &apos;01&apos;.
+            item-class      = cl_list_tree_model=&gt;item_class_text.
+            item-alignment  = cl_list_tree_model=&gt;align_auto.
+            item-font       = cl_list_tree_model=&gt;item_font_prop.
+            item-text       = &apos;Profile&apos;(014).               &quot;#EC *
+            APPEND item TO item_table.
+
+            CLEAR item.
+            item-node_key   = g_node_key_prof.
+            item-item_name  = &apos;02&apos;.
+            item-class      = cl_list_tree_model=&gt;item_class_text.
+            item-length     = 12.
+            item-font       = cl_list_tree_model=&gt;item_font_fixed.
+            item-usebgcolor = usebgcolor. &quot; light grey background
+            item-style      = cl_list_tree_model=&gt;style_emphasized.
+            item-text       = wa_profiles-profile.
+            APPEND item TO item_table.
+
+            CLEAR item.
+            item-node_key   = g_node_key_prof.
+            item-item_name  = &apos;03&apos;.
+            item-class      = cl_list_tree_model=&gt;item_class_text.
+            item-alignment  = cl_list_tree_model=&gt;align_auto.
+            item-font       = cl_list_tree_model=&gt;item_font_prop.
+            item-text       = wa_profiles-ptext.
+            APPEND item TO item_table.
+
+            &quot; Role
+            IF NOT wa_profiles-agr_name IS INITIAL.
+
+              ADD 1 TO g_node_key_role.
+              CLEAR node.
+              node-node_key   = g_node_key_role.
+              node-relatkey   = g_node_key_auth.
+              node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+              node-n_image    = &apos;BNONE&apos;.
+              node-isfolder   = &apos; &apos;.
+              APPEND node TO node_table.
+
+              CLEAR l_wa_node_table.
+              l_wa_node_table-node_key       = node-node_key.
+              l_wa_node_table-isfolder       = node-isfolder.
+              l_wa_node_table-expander       = node-expander.
+              l_wa_node_table-oclss          = gt_auths-oclss.
+              l_wa_node_table-objct          = gt_auths-objct.
+              l_wa_node_table-auth           = gt_auths-auth.
+
+              l_wa_node_table-profile        = wa_profiles-profile.
+              l_wa_node_table-agr_name       = wa_profiles-agr_name.
+              l_wa_node_table-flag           = &apos;X&apos;.
+              INSERT l_wa_node_table INTO TABLE gt_nodes.
+
+              CLEAR item.
+              item-node_key   = g_node_key_role.
+              item-item_name  = &apos;01&apos;.
+              item-class      = cl_list_tree_model=&gt;item_class_text.
+              item-alignment  = cl_list_tree_model=&gt;align_auto.
+              item-font       = cl_list_tree_model=&gt;item_font_prop.
+              item-text       = &apos;Role&apos;(015).                &quot;#EC *
+              APPEND item TO item_table.
+
+              CLEAR item.
+              item-node_key   = g_node_key_role.
+              item-item_name  = &apos;02&apos;.
+              item-class      = cl_list_tree_model=&gt;item_class_text.
+              item-alignment  = cl_list_tree_model=&gt;align_auto.
+              item-font       = cl_list_tree_model=&gt;item_font_fixed.
+              item-usebgcolor = usebgcolor. &quot; light grey background
+              item-style      = cl_list_tree_model=&gt;style_emphasized.
+              item-text       = wa_profiles-agr_name.
+              APPEND item TO item_table.
+
+              CLEAR item.
+              item-node_key   = g_node_key_role.
+              item-item_name  = &apos;03&apos;.
+              item-class      = cl_list_tree_model=&gt;item_class_text.
+              item-alignment  = cl_list_tree_model=&gt;align_auto.
+              item-font       = cl_list_tree_model=&gt;item_font_prop.
+              item-text       = wa_profiles-atext.
+              APPEND item TO item_table.
+            ENDIF.
+            DELETE TABLE lt_auths_del FROM wa_auths.
+          ELSE.
+            n = 0.
+          ENDIF.
+        ELSE.
+          n = 0.
+        ENDIF.
+      ENDWHILE.
+
+      &quot; Authorization check
+      IF    NOT wa_node_table-objct IS INITIAL
+        AND NOT wa_node_table-auth  IS INITIAL.
+
+        &quot; Authorization check
+        CLEAR rc.
+        IF sy-uname NE g_bname.                            &quot;#EC USER_OK
+          AUTHORITY-CHECK OBJECT &apos;S_USER_AUT&apos;
+                  ID &apos;OBJECT&apos; FIELD wa_node_table-objct
+                  ID &apos;AUTH&apos;   FIELD wa_node_table-auth
+                  ID &apos;ACTVT&apos;  FIELD &apos;03&apos;.
+          rc = sy-subrc.
+        ENDIF.
+        IF rc NE 0.
+*         Only the last message would be displayed
+*         MESSAGE s510(01) WITH l_auth l_objct.
+          ADD 1 TO g_node_key_mess.
+          CLEAR node.
+          node-node_key   = g_node_key_mess.
+          node-relatkey   = g_node_key_auth.
+          node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+          node-n_image    = &apos;BNONE&apos;.
+          node-isfolder   = &apos; &apos;.
+          APPEND node TO node_table.
+
+          CLEAR item.
+          item-node_key   = g_node_key_mess.
+          item-item_name  = &apos;01&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-alignment  = cl_list_tree_model=&gt;align_auto.
+          item-font       = cl_list_tree_model=&gt;item_font_prop.
+          item-text       = &apos;You are not authorized to display authorization values&apos;(071). &quot;#EC *
+          APPEND item TO item_table.
+        ELSE.
+
+          &quot; Authorization check is ok
+          &quot; Authorization data
+          DATA old_field LIKE gt_ust12-field.
+          DATA wa_ust12 LIKE LINE OF gt_ust12.
+
+          DATA: ltext_von  TYPE string,                     &quot;#EC NEEDED
+                ltext_bis  TYPE string,                     &quot;#EC NEEDED
+                ltext_to   TYPE string,
+                ltext      TYPE string,
+                ltext_part TYPE string,
+                lcomma(2)  TYPE c.
+
+          DATA: maxlinelng TYPE i VALUE 78,
+                vonlng     TYPE p,
+                bislng     TYPE p,
+                vollng     TYPE p,
+                actlng     TYPE i.
+
+          CLEAR old_field.
+          CLEAR ltext_von.
+          CLEAR ltext_bis.
+          CLEAR ltext.
+          lcomma = &apos;, &apos;.
+          n = 1.
+          WHILE n = 1.
+            READ TABLE lt_ust12
+                 WITH KEY objct  = gt_auths-objct
+                          auth   = gt_auths-auth
+                 INTO wa_ust12
+                 BINARY SEARCH.
+            IF sy-subrc = 0.
+              IF wa_ust12-field NE old_field.
+                IF old_field IS NOT INITIAL.
+                  PERFORM write_to_list TABLES node_table item_table
+                                        USING ltext.
+                  CLEAR ltext.
+                ENDIF.
+                old_field = wa_ust12-field.
+                &quot; Folder with authorization field name
+                ADD 1 TO g_node_key_field.
+                &quot; field_node_key = g_node_key_field.
+                CLEAR node.
+                node-node_key = g_node_key_field.
+                node-relatkey = g_node_key_auth.
+                node-relatship = cl_list_tree_model=&gt;relat_last_child.
+                node-n_image = &apos;BNONE&apos;.
+                node-isfolder = &apos;X&apos;.
+                APPEND node TO node_table.
+
+                CLEAR wa_node_table.
+                wa_node_table-node_key       = node-node_key.
+                wa_node_table-isfolder       = node-isfolder.
+                wa_node_table-expander       = node-expander.
+                wa_node_table-field          = wa_ust12-field.
+                INSERT wa_node_table INTO TABLE gt_nodes.
+
+                &quot; Item of authorization field name
+                CLEAR item.
+                item-node_key = g_node_key_field.
+                item-item_name = &apos;01&apos;.
+                item-class = cl_list_tree_model=&gt;item_class_text.
+                item-alignment = cl_list_tree_model=&gt;align_auto.
+                item-font = cl_list_tree_model=&gt;item_font_prop.
+                item-text      = &apos;Authorization Field&apos;(077). &quot;#EC *
+                APPEND item TO item_table.
+
+                CLEAR item.
+                item-node_key = g_node_key_field.
+                item-item_name = &apos;02&apos;.
+                item-class = cl_list_tree_model=&gt;item_class_text.
+                item-length    = 10.
+                item-alignment = cl_list_tree_model=&gt;align_left. &quot;auto.
+                item-font = cl_list_tree_model=&gt;item_font_fixed.
+                item-usebgcolor = usebgcolor. &quot; light grey background
+                item-style = cl_list_tree_model=&gt;style_emphasized_positive.
+                item-text      = wa_ust12-field.
+                APPEND item TO item_table.
+
+                CLEAR item.
+                item-node_key = g_node_key_field.
+                item-item_name = &apos;03&apos;.
+                item-class = cl_list_tree_model=&gt;item_class_text.
+                item-alignment = cl_list_tree_model=&gt;align_auto.
+                item-font = cl_list_tree_model=&gt;item_font_prop.
+                READ TABLE gt_auth_field ASSIGNING &lt;lp_field&gt;
+                     WITH KEY field = wa_ust12-field
+                     BINARY SEARCH.
+                IF sy-subrc &lt;&gt; 0.
+                  item-text = &apos; &apos;.
+                ELSE.
+                  item-text = &lt;lp_field&gt;-ftext.
+                ENDIF.
+                APPEND item TO item_table.
+              ENDIF.
+
+              vonlng = strlen( wa_ust12-von ).
+              bislng = strlen( wa_ust12-bis ).
+              vollng = strlen( ltext ).
+              actlng = 0.
+              actlng = vollng + vonlng + bislng.
+
+              IF actlng  &gt;= maxlinelng.
+                CONCATENATE ltext lcomma INTO ltext.
+                PERFORM write_to_list TABLES node_table item_table
+                                      USING ltext.
+                CLEAR ltext.
+              ENDIF.
+
+              IF NOT wa_ust12-bis IS INITIAL.
+                ltext_to = &apos;-&apos;.
+                IF ltext IS INITIAL.
+                  CONCATENATE wa_ust12-von ltext_to wa_ust12-bis
+                              INTO ltext.
+                  DELETE TABLE lt_ust12 FROM wa_ust12.
+                ELSE.
+                  CONCATENATE wa_ust12-von ltext_to wa_ust12-bis
+                              INTO ltext_part.
+                  CONCATENATE ltext ltext_part INTO ltext
+                              SEPARATED BY lcomma.
+                  DELETE TABLE lt_ust12 FROM wa_ust12.
+                ENDIF.
+              ELSE.
+                IF ltext IS INITIAL.
+                  CONCATENATE wa_ust12-von space INTO ltext.
+                  DELETE TABLE lt_ust12 FROM wa_ust12.
+                ELSE.
+                  CONCATENATE ltext wa_ust12-von INTO ltext
+                              SEPARATED BY lcomma.
+                  DELETE TABLE lt_ust12 FROM wa_ust12.
+                ENDIF.
+              ENDIF.
+            ELSE.
+              n = 0.
+              IF ltext IS NOT INITIAL.
+                PERFORM write_to_list TABLES node_table item_table
+                                      USING ltext.
+              ENDIF.
+            ENDIF.
+          ENDWHILE.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+
+    IF sy-subrc NE 0.
+      &quot; Node &apos;No authorization&apos;
+      CLEAR node.
+      node-node_key   = &apos;NoAuth&apos;.
+      node-relatkey   = &apos;Root2&apos;.                            &quot;#EC NOTEXT
+      node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+      node-n_image    = &apos;BNONE&apos;.
+      node-isfolder   = &apos; &apos;.
+      APPEND node TO node_table.
+
+      CLEAR item.
+      item-node_key   = node-node_key.
+      item-item_name  = &apos;01&apos;.
+      item-class      = cl_list_tree_model=&gt;item_class_text.
+      item-alignment  = cl_list_tree_model=&gt;align_auto.
+      item-font       = cl_list_tree_model=&gt;item_font_prop.
+      item-text       = &apos;No authorizations available&apos;(016). &quot;#EC *
+      APPEND item TO item_table.
+    ENDIF.
+  ENDIF.
+
+  &quot; ----------------------------------------------------------------------
+  &quot; Folders with keys &apos;Root3&apos; and &apos;Root4&apos;: HR-Trace
+  &quot; ----------------------------------------------------------------------
+  DATA l_item_text TYPE scrpcha72.
+
+  g_node_key_hr1 = 80000000.
+  g_node_key_hr2 = 90000000.
+
+  &quot; Check HR-Trace
+  CALL METHOD cl_hr_system_authority_trace=&gt;is_trace_available &quot;XMK...
+    EXPORTING
+      uname              = g_bname
+    EXCEPTIONS
+      no_trace_available = 1
+      OTHERS             = 2.
+  IF sy-subrc = 0.
+
+    CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+      EXPORTING
+        text = &apos;Reading HR trace ...&apos;(030).                 &quot;#EC *
+
+    FIELD-SYMBOLS: &lt;trace&gt; TYPE LINE OF hrtb_trace1,
+                   &lt;hyper&gt; TYPE LINE OF hrtb_trace2.
+
+    DATA: lt_trace TYPE hrtb_trace1,
+          lt_hyper TYPE hrtb_trace2.
+
+    &quot; Read trace file for user
+    CALL METHOD cl_hr_system_authority_trace=&gt;trace_file_read
+      EXPORTING
+        uname              = g_bname
+      IMPORTING
+        trace_tab          = lt_trace
+        trace_hyper_tab    = lt_hyper
+      EXCEPTIONS
+        no_trace_available = 1
+        OTHERS             = 2.
+    IF sy-subrc = 0.
+
+      &quot; Trace output: Step 1 Structural checks (VIEW)
+      LOOP AT lt_trace ASSIGNING &lt;trace&gt;.
+
+        AT FIRST.
+          CLEAR node.
+          node-node_key = &apos;Root3&apos;.                          &quot;#EC NOTEXT
+          node-relatkey  = &apos; &apos;.
+          &quot; Special case: A root node has no parent node
+          node-relatship = cl_list_tree_model=&gt;relat_next_sibling.
+          node-hidden    = &apos; &apos;.        &quot; The node is visible,
+          node-disabled  = &apos; &apos;.        &quot; selectable,
+          node-isfolder  = &apos;X&apos;.        &quot; a folder,
+          node-expander  = space.      &quot; and a subtree.
+          node-n_image   = &apos;BNONE&apos;.    &quot; Folder-Symbol in state &quot;closed&quot;
+          node-exp_image = &apos;BNONE&apos;.    &quot; Folder-Symbol in state &quot;open&quot;
+          APPEND node TO node_table.
+
+          CLEAR wa_node_table.
+          wa_node_table-node_key       = node-node_key.
+          wa_node_table-isfolder       = node-isfolder.
+          wa_node_table-expander       = node-expander.
+          INSERT wa_node_table INTO TABLE gt_nodes.
+
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;01&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-alignment  = cl_list_tree_model=&gt;align_auto.
+          item-font       = cl_list_tree_model=&gt;item_font_prop.
+          item-text       =
+            &apos;Failed HR Structure Authorizations&apos;(t01).      &quot;#EC *
+          APPEND item TO item_table.
+        ENDAT.
+
+        ADD 1 TO g_node_key_hr1.
+        CLEAR node.
+        node-node_key   = g_node_key_hr1.
+        node-relatkey   = &apos;Root3&apos;.                          &quot;#EC NOTEXT
+        node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+        node-hidden     = &apos; &apos;.  &quot; The node is visible,
+        node-disabled   = &apos; &apos;.  &quot; selectable,
+        node-isfolder   = &apos;X&apos;.  &quot; a folder.
+        node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+        APPEND node TO node_table.
+
+        CLEAR wa_node_table.
+        wa_node_table-node_key       = node-node_key.
+        wa_node_table-isfolder       = node-isfolder.
+        wa_node_table-expander       = node-expander.
+        INSERT wa_node_table INTO TABLE gt_nodes.
+
+        &quot; Item: timestamp
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;01&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Date&apos;(032).                      &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;02&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 19.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        WRITE  &lt;trace&gt;-timestamp TIME ZONE sy-zonlo
+          TO l_item_text.
+        item-text       =  l_item_text.
+        APPEND item TO item_table.
+
+        &quot; Item: plvar
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;03&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Plan Version&apos;(033).              &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;04&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 2.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;trace&gt;-plvar.
+        APPEND item TO item_table.
+
+        &quot; Item: otype
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;05&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Object Type&apos;(034).               &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;06&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 2.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;trace&gt;-otype.
+        APPEND item TO item_table.
+
+        &quot; Item: objid
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;07&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Object ID&apos;(035).                 &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;08&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 8.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;trace&gt;-objid.
+        APPEND item TO item_table.
+
+        &quot; Item: begda
+        IF NOT &lt;trace&gt;-begda IS INITIAL.
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;09&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-alignment  = cl_list_tree_model=&gt;align_auto.
+          item-font       = cl_list_tree_model=&gt;item_font_prop.
+          item-text       = &apos;Start Date&apos;(036).              &quot;#EC *
+          APPEND item TO item_table.
+
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;10&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-length     = 10.
+          item-font       = cl_list_tree_model=&gt;item_font_fixed.
+          item-usebgcolor = usebgcolor. &quot; light grey background
+          WRITE &lt;trace&gt;-begda DD/MM/YYYY TO l_item_text.
+          item-text =  l_item_text.
+          APPEND item TO item_table.
+        ENDIF.
+
+        &quot; Item: endda
+        IF NOT &lt;trace&gt;-endda IS INITIAL.
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;11&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-alignment  = cl_list_tree_model=&gt;align_auto.
+          item-font       = cl_list_tree_model=&gt;item_font_prop.
+          item-text       = &apos;End Date&apos;(037).                &quot;#EC *
+          APPEND item TO item_table.
+
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;12&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-length     = 10.
+          item-font       = cl_list_tree_model=&gt;item_font_fixed.
+          item-usebgcolor = usebgcolor. &quot; light grey background
+          WRITE &lt;trace&gt;-endda DD/MM/YYYY TO l_item_text.
+          item-text       = l_item_text.
+          APPEND item TO item_table.
+        ENDIF.
+
+        &quot; Item: action
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;13&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Action&apos;(038).                    &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;14&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 12.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;trace&gt;-action.
+        APPEND item TO item_table.
+      ENDLOOP.
+
+      &quot; Trace output: Step 2 Object creation checks (HYPERVIEW)
+      LOOP AT lt_hyper ASSIGNING &lt;hyper&gt;.
+
+        AT FIRST.
+          CLEAR node.
+          node-node_key = &apos;Root4&apos;.                          &quot;#EC NOTEXT
+          node-relatkey  = &apos; &apos;.
+          &quot; Special case: A root node has no parent node
+          node-relatship = cl_list_tree_model=&gt;relat_next_sibling.
+          node-hidden    = &apos; &apos;.        &quot; The node is visible,
+          node-disabled  = &apos; &apos;.        &quot; selectable,
+          node-isfolder  = &apos;X&apos;.        &quot; a folder,
+          node-expander  = space.      &quot; and a subtree.
+          node-n_image   = &apos;BNONE&apos;.    &quot; Folder-Symbol in state &quot;closed&quot;
+          node-exp_image = &apos;BNONE&apos;.    &quot; Folder-Symbol in state &quot;open&quot;
+          APPEND node TO node_table.
+
+          CLEAR wa_node_table.
+          wa_node_table-node_key       = node-node_key.
+          wa_node_table-isfolder       = node-isfolder.
+          wa_node_table-expander       = node-expander.
+          INSERT wa_node_table INTO TABLE gt_nodes.
+
+          CLEAR item.
+          item-node_key   = node-node_key.
+          item-item_name  = &apos;01&apos;.
+          item-class      = cl_list_tree_model=&gt;item_class_text.
+          item-alignment  = cl_list_tree_model=&gt;align_auto.
+          item-font       = cl_list_tree_model=&gt;item_font_prop.
+          item-text       = &apos;HR Trace: Checks when Creating&apos;(t02).
+                                                            &quot;#EC *
+          APPEND item TO item_table.
+        ENDAT.
+
+        ADD 1 TO g_node_key_hr2.
+        CLEAR node.
+        node-node_key   = g_node_key_hr2.
+        node-relatkey   = &apos;Root4&apos;.                          &quot;#EC NOTEXT
+        node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+        node-hidden     = &apos; &apos;.  &quot; The node is visible,
+        node-disabled   = &apos; &apos;.  &quot; selectable,
+        node-isfolder   = &apos;X&apos;.  &quot; a folder.
+        node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+        APPEND node TO node_table.
+
+        CLEAR wa_node_table.
+        wa_node_table-node_key       = node-node_key.
+        wa_node_table-isfolder       = node-isfolder.
+        wa_node_table-expander       = node-expander.
+        INSERT wa_node_table INTO TABLE gt_nodes.
+
+        &quot; Item: timestamp
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;01&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Date&apos;(032).                      &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;02&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 19.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        WRITE  &lt;hyper&gt;-timestamp TIME ZONE sy-zonlo
+          TO l_item_text.
+        item-text       = l_item_text.
+        APPEND item TO item_table.
+
+        &quot; Item: plvar
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;03&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Plan Version&apos;(033).              &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;04&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 2.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;hyper&gt;-plvar.
+        APPEND item TO item_table.
+
+        &quot; Item: otype
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;05&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Object Type&apos;(034).               &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;06&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 2.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;hyper&gt;-otype.
+        APPEND item TO item_table.
+
+        &quot; Item: relation
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;07&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Relation&apos;(039).                  &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;08&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 4.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        l_item_text+0(1) = &lt;hyper&gt;-rsign.
+        l_item_text+1(3) = &lt;hyper&gt;-relat.
+        item-text        = l_item_text.
+        APPEND item TO item_table.
+
+        &quot; Item: sclas
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;09&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-alignment  = cl_list_tree_model=&gt;align_auto.
+        item-font       = cl_list_tree_model=&gt;item_font_prop.
+        item-text       = &apos;Object Type&apos;(034).               &quot;#EC *
+        APPEND item TO item_table.
+
+        CLEAR item.
+        item-node_key   = node-node_key.
+        item-item_name  = &apos;10&apos;.
+        item-class      = cl_list_tree_model=&gt;item_class_text.
+        item-length     = 2.
+        item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        item-usebgcolor = usebgcolor. &quot; light grey background
+        item-text = &lt;hyper&gt;-sclas.
+        APPEND item TO item_table.
+      ENDLOOP.
+
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                               &quot; build_node_and_item_table
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  user_command_0100
+*&amp;---------------------------------------------------------------------*
+FORM user_command_0100.
+  DATA: return_code      TYPE i,
+        sel_node_key     TYPE tm_nodekey,                   &quot;#EC NEEDED
+        collapse_subtree TYPE as4flag.                      &quot;#EC NEEDED
+
+  DATA p_tcode LIKE tstc-tcode.
+
+  &quot; CL_GUI_CFW=&gt;DISPATCH must be called if events are registered
+  &quot; that trigger PAI
+  &quot; this method calls the event handler method of an event
+  CALL METHOD cl_gui_cfw=&gt;dispatch
+    IMPORTING
+      return_code = return_code.
+  IF return_code &lt;&gt; cl_gui_cfw=&gt;rc_noevent.
+    &quot; a control event occured =&gt; exit PAI
+    CLEAR g_ok_code.
+    EXIT.
+  ENDIF.
+
+
+  CASE g_ok_code.
+    WHEN &apos;BACK&apos; OR &apos;RW&apos; OR &apos;CANC&apos;. &quot; Finish program
+      &quot; Back
+      IF NOT g_custom_container IS INITIAL.
+        &quot; destroy tree container (detroys contained tree control, too)
+        CALL METHOD g_custom_container-&gt;free
+          EXCEPTIONS
+            cntl_system_error = 1
+            cntl_error        = 2.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+        CLEAR g_custom_container.
+        CLEAR g_tree.
+      ENDIF.
+      LEAVE PROGRAM.
+
+    WHEN &apos;USER&apos; OR &apos;USERDB&apos;.
+      IF g_ok_code EQ &apos;USERDB&apos;.
+        g0010_read_from_db = &apos;X&apos;.
+      ELSE.
+        CLEAR: g0010_read_from_db.
+      ENDIF.
+
+      &quot; Other user / auth. object
+      AUTHORITY-CHECK OBJECT &apos;S_USER_GRP&apos;
+           ID &apos;CLASS&apos; DUMMY
+           ID &apos;ACTVT&apos; FIELD &apos;03&apos;.
+      IF sy-subrc NE 0.
+        MESSAGE e495. &quot; Keine Berechtigung zum Anzeigen
+      ENDIF.
+
+      PERFORM display_other_user.
+
+      IF g_ok_code = &apos;OK&apos;.
+        IF NOT g_custom_container IS INITIAL.
+          &quot; destroy tree container (detroys contained tree control, too)
+          CALL METHOD g_custom_container-&gt;free
+            EXCEPTIONS
+              cntl_system_error = 1
+              cntl_error        = 2.
+          IF sy-subrc &lt;&gt; 0.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ENDIF.
+          CLEAR g_custom_container.
+          CLEAR g_tree.
+          CLEAR gt_nodes[].
+        ENDIF.
+      ENDIF.
+
+    WHEN &apos;SAVE&apos;.
+      PERFORM save.
+
+    WHEN &apos;DOWN&apos;.
+      DATA: lt_html TYPE sdydo_html_table.
+
+      PERFORM download USING space CHANGING lt_html.
+
+    WHEN &apos;EXPAND&apos;.
+      &quot; Expand subtree
+      DATA isfolder(1).                                     &quot;#EC NEEDED
+      PERFORM expand_node.
+
+    WHEN &apos;COLLAPSE&apos;.
+      &quot; Collapse subtree
+      PERFORM collapse_node.
+
+    WHEN &apos;RESET&apos;.
+      &quot; Reset user buffer
+      CALL FUNCTION &apos;SUSR_USER_BUFFER_AFTER_CHANGE&apos;
+        EXPORTING
+          username = g_bname
+        IMPORTING
+          subrc    = return_code.
+      IF return_code = 0.
+        MESSAGE s055(01). &quot;Benutzerpuffer erfolgreich zurückgesetzt.
+      ELSE.
+        MESSAGE s056(01). &quot;Fehler beim Rücksetzen der Benutzerpuffer.
+      ENDIF.
+
+    WHEN &apos;PRI&apos;.
+      PERFORM print_tree USING &apos; &apos;.
+
+    WHEN &apos;TRAN&apos;.
+      p_tcode = &apos;SU56&apos;.
+
+      CALL FUNCTION &apos;AUTHORITY_CHECK_TCODE&apos;
+        EXPORTING
+          tcode  = p_tcode
+        EXCEPTIONS
+          ok     = 1
+          not_ok = 2
+          OTHERS = 3.
+      IF sy-subrc = 1.
+        CALL TRANSACTION p_tcode.
+      ELSE.
+        &quot; No authorisation rights to run the transaction
+        MESSAGE e172(00) WITH p_tcode.
+      ENDIF.
+
+    WHEN &apos;%SC&apos;.
+      PERFORM find.
+
+    WHEN &apos;%SC+&apos;.
+      PERFORM find_next.
+
+    WHEN &apos;PREVIEW&apos;.
+      PERFORM print_tree USING &apos;X&apos;.
+  ENDCASE.
+
+  CLEAR g_ok_code.
+ENDFORM.                 &quot; USER_COMMAND_0100  INPUT
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  save
+*&amp;---------------------------------------------------------------------*
+FORM save.
+
+  DATA: lt_usr07      TYPE TABLE OF usr07
+      , ls_usr07      TYPE          usr07
+      , lr_usr07_new  TYPE REF TO   ty_usr07_new
+      .
+
+  IF gv_save_available EQ abap_false.
+    RETURN.
+  ENDIF.
+
+  IF gt_usr07_new IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  &quot; Delete old entries
+  DELETE FROM usr07 WHERE bname EQ g_bname.
+
+  &quot; Insert new
+  LOOP AT gt_usr07_new REFERENCE INTO lr_usr07_new.
+    MOVE-CORRESPONDING lr_usr07_new-&gt;* TO ls_usr07.
+    APPEND ls_usr07 TO lt_usr07.
+  ENDLOOP.
+
+  INSERT usr07 FROM TABLE lt_usr07.
+
+  MESSAGE s319(01) WITH &apos;Data was saved&apos;(050).           &quot;#EC TEXT_DIFF
+
+ENDFORM.                    &quot;save
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  get_selected_node
+*&amp;--------------------------------------------------------------------*
+FORM get_selected_node
+  USING l_sel_node_key TYPE tm_nodekey
+        l_isfolder.
+
+  DATA: wa_node_table TYPE gt_nodes_struct.
+
+  CLEAR: l_sel_node_key, l_isfolder.
+
+  CALL METHOD g_tree-&gt;get_selected_item
+    IMPORTING
+      node_key          = l_sel_node_key
+    EXCEPTIONS
+      failed            = 1
+      cntl_system_error = 2
+      no_item_selection = 3
+      OTHERS            = 4.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+  IF l_sel_node_key IS INITIAL.
+    CALL METHOD g_tree-&gt;get_selected_node
+      IMPORTING
+        node_key                   = l_sel_node_key
+      EXCEPTIONS
+        failed                     = 1
+        single_node_selection_only = 2
+        cntl_system_error          = 3
+        OTHERS                     = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDIF.
+
+  &quot; CHECK NOT l_sel_node_key IS INITIAL.
+  IF l_sel_node_key IS INITIAL.
+    MESSAGE i141(1x).
+    EXIT.
+  ENDIF.
+
+  READ TABLE gt_nodes INTO wa_node_table
+    WITH KEY node_key = l_sel_node_key.
+  IF sy-subrc = 0 AND wa_node_table-isfolder = &apos;X&apos;.
+    l_isfolder = &apos;X&apos;.
+  ENDIF.
+
+ENDFORM.                    &quot;get_selected_node
+
+
+*&amp;--------------------------------------------------------------------*
+*&amp;      Form  print_tree
+*&amp;--------------------------------------------------------------------*
+FORM print_tree USING p_preview TYPE as4flag.
+
+  DATA: l_title   TYPE string,
+        l_datum   TYPE char10,                              &quot;#EC NEEDED
+        temp0(50) TYPE c,
+        temp1(50) TYPE c.
+
+  l_title = &apos;Evaluation of the Last Failed&apos;(040).           &quot;#EC *
+
+  temp0 = &apos;Authorization Checks for User&apos;(045).             &quot;#EC *
+
+  temp1 = g_bname.
+
+  CONCATENATE l_title temp0 temp1 INTO l_title SEPARATED BY space.
+
+  CALL METHOD g_tree-&gt;print_tree
+    EXPORTING
+      all_nodes            = &apos;X&apos;
+      title                = l_title
+      preview              = p_preview
+    EXCEPTIONS
+      control_not_existing = 1
+      control_dead         = 2
+      cntl_system_error    = 3
+      failed               = 4
+      OTHERS               = 5.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+             WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+ENDFORM.                    &quot; print_tree
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  find
+*&amp;---------------------------------------------------------------------*
+FORM find.
+  DATA:
+    l_result_type              TYPE i,                      &quot;#EC NEEDED
+    l_result_item_key_table    TYPE treemiks,
+    l_result_item_key          TYPE treemikey,
+    l_result_expander_node_key TYPE tm_nodekey,             &quot;#EC NEEDED
+    l_find_string              TYPE string,
+    l_pattern                  TYPE as4flag,
+    l_canceled                 TYPE as4flag.
+
+  CLEAR: g_result_item_key_table,
+         g_find_string.
+
+  CALL FUNCTION &apos;TREEM_SHOW_FIND_POPUP&apos;
+    IMPORTING
+      find_string = l_find_string
+      pattern     = l_pattern
+      canceled    = l_canceled.
+
+  IF l_canceled IS INITIAL.
+    CALL METHOD g_tree-&gt;find_all
+      EXPORTING
+        search_string            = l_find_string
+        pattern_search           = l_pattern
+      IMPORTING
+        result_type              = l_result_type
+        result_item_key_table    = l_result_item_key_table
+        result_expander_node_key = l_result_expander_node_key
+      EXCEPTIONS
+        start_node_not_found     = 1
+        OTHERS                   = 2.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                 WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      EXIT.
+    ENDIF.
+
+    READ TABLE l_result_item_key_table INTO l_result_item_key INDEX 1.
+    IF sy-subrc EQ 0.
+      g_result_item_key_table = l_result_item_key_table.
+      g_find_string = l_find_string.
+      CALL METHOD g_tree-&gt;select_item
+        EXPORTING
+          node_key          = l_result_item_key-node_key
+          item_name         = l_result_item_key-item_name
+        EXCEPTIONS
+          no_item_selection = 1
+          node_not_found    = 2
+          item_not_found    = 3
+          OTHERS            = 4.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                   WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ELSE.
+        DELETE g_result_item_key_table INDEX 1.
+      ENDIF.
+    ELSE.
+      MESSAGE s469(s#) WITH l_find_string.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot; find_string
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  find_next
+*&amp;---------------------------------------------------------------------*
+FORM find_next .
+
+  DATA l_result_item_key        TYPE treemikey.
+
+  READ TABLE g_result_item_key_table INTO l_result_item_key INDEX 1.
+  IF sy-subrc EQ 0.
+    CALL METHOD g_tree-&gt;select_item
+      EXPORTING
+        node_key          = l_result_item_key-node_key
+        item_name         = l_result_item_key-item_name
+      EXCEPTIONS
+        no_item_selection = 1
+        node_not_found    = 2
+        item_not_found    = 3
+        OTHERS            = 4.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                 WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      DELETE g_result_item_key_table INDEX 1.
+    ENDIF.
+  ELSE.
+    MESSAGE s186(oo) WITH g_find_string.
+  ENDIF.
+ENDFORM.                    &quot; find_next
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  header_data
+*&amp;---------------------------------------------------------------------*
+FORM header_data   USING node_table      TYPE treemlnota
+                         item_table      TYPE treemlitac.
+
+
+  DATA: l_text1           TYPE tm_itemtxt
+      , l_text2           TYPE tm_itemtxt
+      , l_text3           TYPE tm_itemtxt
+      , l_text4           TYPE tm_itemtxt
+      , l_item_table      TYPE treemlitac
+      , l_node_table      TYPE treemlnota
+      , l_nodes_to_expand TYPE treemnotab
+      , l_node            TYPE treemlnodt
+      , l_item            TYPE treemliten
+      , date_long         TYPE c LENGTH 10
+      , time_long         TYPE c LENGTH 10
+      , lv_date           TYPE d
+      , lv_time           TYPE t
+      , ls_usr07_new      TYPE ty_usr07_new
+      .
+
+
+  l_node-node_key  = &apos;Blank&apos;(047).                          &quot;#EC *
+  l_node-hidden    = &apos; &apos;.  &quot; The node is visible,
+  l_node-disabled  = &apos; &apos;.  &quot; selectable,
+  l_node-isfolder  = &apos;X&apos;.  &quot; a folder.
+  l_node-n_image   = &apos;BNONE&apos;.
+  l_node-expander  = space.      &quot; and a subtree.
+  l_node-exp_image = &apos;BNONE&apos;.   &quot; Folder in state &quot;open&quot;
+  APPEND l_node TO l_node_table.
+
+  CLEAR l_item.
+  l_item-node_key   = l_node-node_key.
+  l_item-item_name  = &apos;01&apos;.
+  l_item-class      = cl_list_tree_model=&gt;item_class_text.
+  l_item-length     = 95.
+  l_item-font       = cl_list_tree_model=&gt;item_font_default.
+  l_item-text       = &apos;---------------------------------------------------------------------&apos;.
+  l_text1           = &apos;---------------------------------------------------------------------&apos;.
+  l_text2           = &apos;---------------------------------&apos;.
+  CONCATENATE l_item-text l_text1 l_text2 INTO l_item-text.
+  APPEND l_item TO l_item_table.
+  node_table = l_node_table.
+  item_table = l_item_table.
+
+  CLEAR l_text1.
+  CLEAR l_text2.
+  CLEAR l_text3.
+  CLEAR l_text4.
+  l_text1 = &apos;Instance&apos;(049).                                &quot;#EC *
+  l_text2 = g_instance.
+  l_text3 = &apos;Profile parameter auth/new buffering&apos;(075).    &quot;#EC *
+  l_text4 = g_buffer_method.
+  l_node-node_key = &apos;Instance&apos;(049).                        &quot;#EC *
+
+  PERFORM header USING l_node l_text1 l_text2 l_text3 l_text4
+                  l_node_table l_item_table l_nodes_to_expand.
+
+  node_table = l_node_table.
+  item_table = l_item_table.
+
+  CLEAR l_text1.
+  CLEAR l_text2.
+  CLEAR l_text3.
+  CLEAR l_text4.
+  l_text1 = &apos;Date&apos;(032).                                    &quot;#EC *
+  WRITE sy-datum TO date_long.
+  l_text2 = date_long.
+  l_text3 = &apos;Time&apos;(046).                                    &quot;#EC *
+  WRITE sy-uzeit TO time_long.
+  l_text4 = time_long.
+  l_node-node_key = &apos;Date&apos;(032).                            &quot;#EC *
+
+  PERFORM header USING l_node l_text1 l_text2 l_text3 l_text4
+                  l_node_table l_item_table l_nodes_to_expand.
+
+  node_table = l_node_table.
+  item_table = l_item_table.
+
+  CLEAR l_text1.
+  CLEAR l_text2.
+  CLEAR l_text3.
+  CLEAR l_text4.
+  l_text1 = &apos;System&apos;(078).                                  &quot;#EC *
+  l_text2 = sy-sysid.
+  l_text3 = &apos;Client&apos;(043).                                  &quot;#EC *
+  l_text4 = sy-mandt.
+  l_node-node_key = &apos;System&apos;(078).                          &quot;#EC *
+
+  PERFORM header USING l_node l_text1 l_text2 l_text3 l_text4
+                  l_node_table l_item_table l_nodes_to_expand.
+
+  node_table = l_node_table.
+  item_table = l_item_table.
+
+  CLEAR l_text1.
+  CLEAR l_text2.
+  CLEAR l_text3.
+  CLEAR l_text4.
+  l_text1 = &apos;User name&apos;(080).                               &quot;#EC *
+  l_text2 = g_bname.
+
+  IF gv_new_kernel_avail EQ abap_true.
+    IF g0010_read_from_db EQ space.
+      CONVERT TIME STAMP gv_checks_since_time TIME ZONE sy-zonlo
+         INTO DATE lv_date TIME lv_time.
+      l_text3 = &apos;Failed authorization checks since&apos;(083).   &quot;#EC *
+      WRITE lv_date TO date_long.
+      WRITE lv_time TO time_long.
+      CONCATENATE date_long time_long INTO l_text4 SEPARATED BY space.
+    ELSE.
+      l_text3 = &apos;Saved authorization checks&apos;(084).          &quot;#EC *
+      CLEAR: date_long, time_long.
+    ENDIF.
+    l_node-node_key = &apos;User&apos;(048).                          &quot;#EC *
+  ELSE.
+    READ TABLE gt_usr07_new INTO ls_usr07_new INDEX 1.  &quot;#EC CI_NOORDER
+    l_text3 = &apos;Authorization Object&apos;(079).                  &quot;#EC *
+    l_text4 = ls_usr07_new-objct.
+    l_node-node_key = &apos;User&apos;(048).                          &quot;#EC *
+  ENDIF.
+
+  PERFORM header USING l_node l_text1 l_text2 l_text3 l_text4
+                  l_node_table l_item_table l_nodes_to_expand.
+
+  node_table = l_node_table.
+  item_table = l_item_table.
+
+ENDFORM.                    &quot; header_data
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  header
+*&amp;---------------------------------------------------------------------*
+FORM header  USING    p_l_node TYPE treemlnodt
+                      p_l_text1
+                      p_l_text2
+                      p_l_text3
+                      p_l_text4
+                      p_l_node_table TYPE treemlnota
+                      p_l_item_table TYPE treemlitac
+                      p_l_nodes_to_expand TYPE treemnotab.  &quot;#EC NEEDED
+
+
+
+  DATA: wa_node_table LIKE LINE OF gt_nodes,                &quot;#EC NEEDED
+        l_node        TYPE treemlnodt,
+        l_item        TYPE treemliten.
+
+  CLEAR l_node.
+  l_node-node_key = p_l_node-node_key.                      &quot;#EC NOTEXT
+  l_node-hidden    = &apos; &apos;.        &quot; The node is visible,
+  l_node-disabled  = &apos; &apos;.        &quot; selectable,
+  l_node-isfolder  = &apos;X&apos;.        &quot; a folder,
+  l_node-n_image   = &apos;BNONE&apos;.
+  l_node-expander  = space.      &quot; and a subtree.
+  l_node-exp_image = &apos;BNONE&apos;.    &quot; Folder-/ Leaf-Symbol in state &quot;open&quot;
+  APPEND l_node TO p_l_node_table.
+
+
+  CLEAR l_item.
+  l_item-node_key   = l_node-node_key.
+  l_item-item_name  = &apos;01&apos;.
+  l_item-class      = cl_list_tree_model=&gt;item_class_text.
+  l_item-length     = 20. &quot;30.
+  l_item-font       = cl_list_tree_model=&gt;item_font_default.
+  l_item-text       = p_l_text1.
+  APPEND l_item TO p_l_item_table.
+
+
+  CLEAR l_item.
+  l_item-node_key   = l_node-node_key.
+  l_item-item_name  = &apos;02&apos;.
+  l_item-class      = cl_list_tree_model=&gt;item_class_text.
+  l_item-length     = 25. &quot;12.
+  l_item-font       = cl_list_tree_model=&gt;item_font_default.
+  l_item-usebgcolor = usebgcolor. &quot; light grey background
+  IF NOT p_l_text2 IS INITIAL.
+    l_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+  ENDIF.
+  l_item-text       = p_l_text2.
+  APPEND l_item TO p_l_item_table.
+
+  IF NOT p_l_text3 IS INITIAL.
+    CLEAR l_item.
+    l_item-node_key   = l_node-node_key.
+    l_item-item_name  = &apos;03&apos;.
+    l_item-class      = cl_list_tree_model=&gt;item_class_text.
+    l_item-length     = 40.
+    l_item-font       = cl_list_tree_model=&gt;item_font_default.
+    l_item-text       = p_l_text3.
+    APPEND l_item TO p_l_item_table.
+
+    CLEAR l_item.
+    l_item-node_key   = l_node-node_key.
+    l_item-item_name  = &apos;04&apos;.
+    l_item-class      = cl_list_tree_model=&gt;item_class_text.
+    l_item-length     = 20. &quot;12.
+    l_item-font       = cl_list_tree_model=&gt;item_font_default.
+    l_item-usebgcolor = usebgcolor. &quot; light grey background
+    l_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+    l_item-text       = p_l_text4.
+    APPEND l_item TO p_l_item_table.
+  ENDIF.
+
+ENDFORM.                    &quot; header
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  failed_auth_data
+*&amp;---------------------------------------------------------------------*
+FORM failed_auth_data CHANGING ct_node_table      TYPE treemlnota
+                               ct_item_table      TYPE treemlitac
+                               ct_nodes_to_expand TYPE treemnotab.
+
+  DATA: ls_node                 TYPE          treemlnodt
+      , ls_item                 TYPE          treemliten
+      , ls_node_table           LIKE LINE OF  gt_nodes
+      , ls_usr07_new            TYPE          ty_usr07_new
+      , lt_field_value          TYPE TABLE OF ty_field_value
+      , ls_field_value          TYPE          ty_field_value
+      , lv_field                TYPE          xufield
+      , lv_counter              TYPE          i
+      , ls_dfies                TYPE          dfies
+      , lv_auth_key             TYPE          tm_nodekey
+      , lv_time_key             TYPE          tm_nodekey
+      , lv_auth_counter(4)      TYPE          n
+      , lv_field_counter(4)     TYPE          n
+      , lv_date_long            TYPE          c LENGTH 10
+      , lv_time_long            TYPE          c LENGTH 10
+      , lv_date                 TYPE          d
+      , lv_time                 TYPE          t
+      , lv_typetext             TYPE          usobtypeinfo_text-text
+      , lv_disp_name            TYPE          usobxname
+      .
+
+
+  &quot; Root node for failes auhtorizations
+  &quot;
+  ls_node-node_key  = &apos;Root1&apos;.                              &quot;#EC NOTEXT
+  ls_node-relatkey  = &apos; &apos;.  &quot; Special case: A root node has no parent node
+  ls_node-relatship = cl_list_tree_model=&gt;relat_next_sibling.
+  ls_node-hidden    = &apos; &apos;.        &quot; The node is visible,
+  ls_node-disabled  = &apos; &apos;.        &quot; selectable,
+  ls_node-isfolder  = &apos;X&apos;.        &quot; a folder,
+  ls_node-n_image   = &apos;BNONE&apos;.
+  ls_node-expander  = space.      &quot; and a subtree.
+  ls_node-exp_image = &apos;BNONE&apos;.    &quot; Folder-/ Leaf-Symbol in state &quot;open&quot;
+  APPEND ls_node TO ct_node_table.
+
+  CLEAR ls_node_table.
+  ls_node_table-node_key       = ls_node-node_key.
+  ls_node_table-isfolder       = ls_node-isfolder.
+  ls_node_table-expander       = ls_node-expander.
+  INSERT ls_node_table INTO TABLE gt_nodes.
+
+  APPEND ls_node-node_key TO ct_nodes_to_expand.
+
+
+  &quot; No failed authorization
+  IF gt_usr07_new IS INITIAL.
+
+    CLEAR: ls_item.
+    ls_item-node_key  = ls_node-node_key.
+    ls_item-item_name = &apos;01&apos;.
+    ls_item-class     = cl_list_tree_model=&gt;item_class_text.
+    CALL FUNCTION &apos;ICON_CREATE&apos;
+      EXPORTING
+        name                  = &apos;ICON_CHECKED&apos;
+        text                  = &apos; &apos;
+        info                  = &apos; &apos;
+        add_stdinf            = &apos; &apos;
+      IMPORTING
+        result                = ls_item-t_image
+      EXCEPTIONS
+        icon_not_found        = 1
+        outputfield_too_short = 2
+        OTHERS                = 3.
+    IF sy-subrc NE 0.
+      ls_item-t_image = &apos;@01@&apos;.               &quot; okay
+    ENDIF.
+    APPEND ls_item TO ct_item_table.
+
+    CLEAR ls_item.
+    ls_item-node_key   = ls_node-node_key.
+    ls_item-item_name  = &apos;02&apos;.
+    ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+    ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+    ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+    ls_item-text       = &apos;The last authorization check was successful&apos;(076). &quot;#EC *
+    APPEND ls_item TO ct_item_table.
+
+    RETURN.
+  ENDIF.
+
+
+  &quot; Failed authorization checks
+  CLEAR ls_item.
+  ls_item-node_key  = ls_node-node_key.
+  ls_item-item_name = &apos;01&apos;.
+  ls_item-class     = cl_list_tree_model=&gt;item_class_text.
+  CALL FUNCTION &apos;ICON_CREATE&apos;
+    EXPORTING
+      name                  = &apos;ICON_FAILURE&apos;
+      text                  = &apos; &apos;
+      info                  = &apos; &apos;
+      add_stdinf            = &apos; &apos;
+    IMPORTING
+      result                = ls_item-t_image
+    EXCEPTIONS
+      icon_not_found        = 1
+      outputfield_too_short = 2
+      OTHERS                = 3.
+  IF sy-subrc NE 0.
+    ls_item-t_image = &apos;@03@&apos;.               &quot; error
+  ENDIF.
+  ls_item-text = &apos;Authorization check failed&apos;(074).         &quot;#EC *
+  ls_item-txtisqinfo = &apos;X&apos;.
+  APPEND ls_item TO ct_item_table.
+
+  CLEAR ls_item.
+  ls_item-node_key  = ls_node-node_key.
+  ls_item-item_name = &apos;02&apos;.
+  ls_item-class     = cl_list_tree_model=&gt;item_class_text. &quot; Text Item
+  ls_item-alignment = cl_list_tree_model=&gt;align_auto.      &quot; the with of the item is adjusted to its content (text)
+  ls_item-font      = cl_list_tree_model=&gt;item_font_prop.  &quot; use proportional font for the item
+  ls_item-text      = &apos;Authorization check failed&apos;(074).    &quot;#EC *
+  APPEND ls_item TO ct_item_table.
+
+
+  &quot; Append all failed authorizations
+  LOOP AT gt_usr07_new INTO ls_usr07_new.
+
+    WRITE sy-tabix TO lv_auth_counter.
+
+    &quot; --- Time level ---------------
+    IF ls_usr07_new-timestamp IS NOT INITIAL.
+      CLEAR ls_node.
+      CONCATENATE &apos;Time&apos; lv_auth_counter INTO lv_time_key.  &quot;#EC NOTEXT
+      ls_node-node_key   = lv_time_key.
+      ls_node-relatkey   = &apos;Root1&apos;.                         &quot;#EC NOTEXT
+      ls_node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+      ls_node-hidden     = &apos; &apos;.  &quot; The node is visible,
+      ls_node-disabled   = &apos; &apos;.  &quot; selectable,
+      ls_node-isfolder   = &apos;X&apos;.  &quot; a folder.
+      ls_node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+      APPEND ls_node TO ct_node_table.
+
+      &quot; Expand only 5 nodes
+      IF lv_auth_counter LE 5.
+        APPEND ls_node-node_key TO ct_nodes_to_expand.
+      ENDIF.
+
+      CONVERT TIME STAMP ls_usr07_new-timestamp TIME ZONE sy-zonlo
+         INTO DATE lv_date TIME lv_time.
+      WRITE lv_date TO lv_date_long.
+      WRITE lv_time TO lv_time_long.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;01&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+      ls_item-text       = &apos;Date&apos;(032).
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;02&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+      ls_item-text       = lv_date_long.
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;03&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+      ls_item-text       = &apos;Time&apos;(046).
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;04&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+      ls_item-text       = lv_time_long.
+      APPEND ls_item TO ct_item_table.
+
+      &quot; --- Application ---------------
+      CALL METHOD cl_su2x_f4=&gt;get_display_name_and_type
+        EXPORTING
+          iv_type      = ls_usr07_new-type
+          iv_name      = ls_usr07_new-name
+        IMPORTING
+          ev_typetext  = lv_typetext
+          ev_disp_name = lv_disp_name.
+
+      IF lv_typetext IS NOT INITIAL.
+        CLEAR ls_item.
+        ls_item-node_key   = ls_node-node_key.
+        ls_item-item_name  = &apos;05&apos;.
+        ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+        ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+        ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+        ls_item-text       = lv_typetext.
+        APPEND ls_item TO ct_item_table.
+
+        CLEAR ls_item.
+        ls_item-node_key   = ls_node-node_key.
+        ls_item-item_name  = &apos;06&apos;.
+        ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+        ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+        ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+        &quot; ls_item-usebgcolor = usebgcolor. &quot; light grey background
+        ls_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+        ls_item-text       = lv_disp_name. &quot;ls_usr07_new-name.
+        APPEND ls_item TO ct_item_table.
+      ENDIF.
+    ENDIF.
+
+
+    &quot; --- Object level ---------------
+    CLEAR ls_node.
+    CONCATENATE &apos;Object&apos; lv_auth_counter INTO lv_auth_key.  &quot;#EC NOTEXT
+    ls_node-node_key   = lv_auth_key.
+    IF ls_usr07_new-timestamp IS NOT INITIAL.
+      ls_node-relatkey  = lv_time_key.
+    ELSE.
+      ls_node-relatkey = &apos;Root1&apos;.                           &quot;#EC NOTEXT
+    ENDIF.
+    ls_node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+    ls_node-hidden     = &apos; &apos;.  &quot; The node is visible,
+    ls_node-disabled   = &apos; &apos;.  &quot; selectable,
+    ls_node-isfolder   = &apos;X&apos;.  &quot; a folder.
+    ls_node-n_image    = &apos;BNONE&apos;.  &quot;no icon
+    APPEND ls_node TO ct_node_table.
+
+    &quot; Expand only 5 nodes
+    IF lv_auth_counter LE 5.
+      APPEND ls_node-node_key TO ct_nodes_to_expand.
+    ENDIF.
+
+    CLEAR ls_node_table.
+    ls_node_table-node_key = ls_node-node_key.
+    ls_node_table-isfolder = ls_node-isfolder.
+    ls_node_table-expander = ls_node-expander.
+    ls_node_table-objct    = ls_usr07_new-objct.
+    INSERT ls_node_table INTO TABLE gt_nodes.
+
+    CLEAR ls_item.
+    ls_item-node_key   = ls_node-node_key.
+    ls_item-item_name  = &apos;01&apos;.
+    ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+    ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+    ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+    ls_item-text       = &apos;Authorization Object&apos;(018).       &quot;#EC *
+    APPEND ls_item TO ct_item_table.
+
+    CLEAR ls_item.
+    ls_item-node_key   = ls_node-node_key.
+    ls_item-item_name  = &apos;03&apos;.
+    ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+    ls_item-length     = 10.
+    ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+    ls_item-usebgcolor = usebgcolor. &quot; light grey background
+    ls_item-style      = cl_list_tree_model=&gt;style_emphasized_c.
+    ls_item-alignment  = cl_list_tree_model=&gt;align_left. &quot;auto.
+    ls_item-length     = 10.
+    ls_item-text       = ls_usr07_new-objct.
+    APPEND ls_item TO ct_item_table.
+
+    CLEAR ls_item.
+    ls_item-node_key  = ls_node-node_key.
+    ls_item-item_name = &apos;05&apos;.
+    ls_item-class     = cl_list_tree_model=&gt;item_class_text.
+    ls_item-alignment = cl_list_tree_model=&gt;align_auto.
+    ls_item-font      = cl_list_tree_model=&gt;item_font_prop.
+    SELECT SINGLE ttext FROM tobjt INTO ls_item-text
+           WHERE langu  = sy-langu
+           AND   object = ls_usr07_new-objct.
+    APPEND ls_item TO ct_item_table.
+
+
+    &quot; --- Authorization fields ---------------
+    &quot; Get fields and values of authorization checks
+    CLEAR: lt_field_value, ls_field_value, lv_counter, lv_field.
+
+    DO 10 TIMES VARYING lv_field FROM ls_usr07_new-fiel1 NEXT ls_usr07_new-fiel2.
+      IF lv_field NE space.
+        lv_counter           = lv_counter + 1.
+        ls_field_value-field = lv_field.
+        CASE lv_counter.
+          WHEN 1.
+            ls_field_value-value = ls_usr07_new-val01.
+          WHEN 2.
+            ls_field_value-value = ls_usr07_new-val02.
+          WHEN 3.
+            ls_field_value-value = ls_usr07_new-val03.
+          WHEN 4.
+            ls_field_value-value = ls_usr07_new-val04.
+          WHEN 5.
+            ls_field_value-value = ls_usr07_new-val05.
+          WHEN 6.
+            ls_field_value-value = ls_usr07_new-val06.
+          WHEN 7.
+            ls_field_value-value = ls_usr07_new-val07.
+          WHEN 8.
+            ls_field_value-value = ls_usr07_new-val08.
+          WHEN 9.
+            ls_field_value-value = ls_usr07_new-val09.
+          WHEN 10.
+            ls_field_value-value = ls_usr07_new-val10.
+        ENDCASE.
+        APPEND ls_field_value TO lt_field_value.
+      ENDIF.
+    ENDDO.
+    SORT lt_field_value BY field.
+
+    &quot; Node with authorization field name and value
+    LOOP AT lt_field_value INTO ls_field_value.
+      CLEAR: ls_dfies.
+      CALL FUNCTION &apos;AUTH_FIELD_GET_INFO&apos;
+        EXPORTING
+          fieldname = ls_field_value-field
+        IMPORTING
+          datel     = ls_dfies-rollname
+          lng       = ls_dfies-outputlen
+          text      = ls_dfies-fieldtext
+          inttype   = ls_dfies-inttype.
+
+      CLEAR ls_node.
+      ADD 1 TO lv_field_counter. &quot;Unique for all auth
+      CONCATENATE &apos;F_&apos; ls_field_value-field lv_field_counter INTO ls_node-node_key. &quot;#EC NOTEXT
+      ls_node-relatkey   = lv_auth_key.
+      ls_node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+      ls_node-n_image    = &apos;BNONE&apos;.
+      ls_node-last_hitem = &apos;03&apos;.
+      ls_node-isfolder   = &apos; &apos;.
+      APPEND ls_node TO ct_node_table.
+
+      CLEAR ls_node_table.
+      ls_node_table-node_key = ls_node-node_key.
+      ls_node_table-isfolder = ls_node-isfolder.
+      ls_node_table-expander = ls_node-expander.
+      INSERT ls_node_table INTO TABLE gt_nodes.
+
+      &quot; append ls_node-node_key to ct_nodes_to_expand.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;01&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+      ls_item-text       = &apos;Authorization Field&apos;(077).      &quot;#EC *
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;02&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_left. &quot;auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+      ls_item-usebgcolor = usebgcolor. &quot; light grey background
+      ls_item-style      = cl_list_tree_model=&gt;style_emphasized_c.
+      ls_item-length     = 10.
+      ls_item-text       = ls_field_value-field.
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;03&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+      ls_item-text       = ls_dfies-fieldtext.
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;04&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+      ls_item-usebgcolor = usebgcolor. &quot; light grey background
+      IF ls_field_value-value NE space.
+        ls_item-style    = cl_list_tree_model=&gt;style_emphasized_negative.
+        ls_item-text     = ls_field_value-value.
+      ELSE.
+        ls_item-text     = &apos;&lt;DUMMY&gt;&apos;(020).                  &quot;#EC *
+      ENDIF.
+      APPEND ls_item TO ct_item_table.
+    ENDLOOP.
+
+    &quot; --- For User level ---------------
+    IF ls_usr07_new-foruser NE ls_usr07_new-bname AND
+       ls_usr07_new-foruser IS NOT INITIAL.
+      CLEAR ls_node.
+      CONCATENATE &apos;FORUS_&apos; lv_field_counter INTO ls_node-node_key. &quot;#EC NOTEXT
+      ls_node-relatkey   = lv_auth_key.
+      ls_node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+      ls_node-n_image    = &apos;BNONE&apos;.
+      ls_node-last_hitem = &apos;03&apos;.
+      ls_node-isfolder   = &apos; &apos;.
+      APPEND ls_node TO ct_node_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;01&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_prop.
+      ls_item-text       = &apos;Check for User&apos;(085).
+      APPEND ls_item TO ct_item_table.
+
+      CLEAR ls_item.
+      ls_item-node_key   = ls_node-node_key.
+      ls_item-item_name  = &apos;02&apos;.
+      ls_item-class      = cl_list_tree_model=&gt;item_class_text.
+      ls_item-font       = cl_list_tree_model=&gt;item_font_fixed.
+      ls_item-alignment  = cl_list_tree_model=&gt;align_auto.
+      ls_item-style      = cl_list_tree_model=&gt;style_emphasized_a.
+      ls_item-text       = ls_usr07_new-foruser.
+      APPEND ls_item TO ct_item_table.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.                    &quot;failed_auth_data
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  write_to_list
+*&amp;---------------------------------------------------------------------*
+FORM write_to_list  TABLES   p_node_table TYPE treemlnota
+                             p_item_table TYPE treemlitac
+                    USING    p_ltext      TYPE string.
+
+  DATA:
+    l_item_table TYPE treemlitac,
+    l_node_table TYPE treemlnota,
+    l_node       TYPE treemlnodt,
+    l_item       TYPE treemliten.
+
+  &quot; nodes with authorization field values
+  ADD 1 TO g_node_key_value.
+  CLEAR l_node.
+  l_node-node_key   = g_node_key_value.
+  l_node-relatkey   = g_node_key_field.
+  l_node-relatship  = cl_list_tree_model=&gt;relat_last_child.
+  l_node-last_hitem = &apos;1&apos;.
+  l_node-n_image    = &apos;BNONE&apos;.
+  l_node-isfolder   = &apos; &apos;.
+  APPEND l_node TO l_node_table.
+
+  &quot; Items of authorization field values
+  CLEAR l_item.
+  l_item-node_key  = g_node_key_value.
+  l_item-item_name = &apos;01&apos;.
+  l_item-hidden    = &apos;X&apos;.
+  l_item-class     = cl_list_tree_model=&gt;item_class_text.
+  l_item-alignment = cl_list_tree_model=&gt;align_auto.
+  l_item-font      = cl_list_tree_model=&gt;item_font_prop.
+  APPEND l_item TO l_item_table.
+
+  CLEAR l_item.
+  l_item-node_key  = g_node_key_value.
+  l_item-item_name = &apos;02&apos;.
+  l_item-class     = cl_list_tree_model=&gt;item_class_text.
+  l_item-alignment = cl_list_tree_model=&gt;align_auto.
+  l_item-font      = cl_list_tree_model=&gt;item_font_fixed.
+  l_item-text =  p_ltext.
+  APPEND l_item TO l_item_table.
+
+  APPEND LINES OF l_node_table TO p_node_table.
+  APPEND LINES OF l_item_table TO p_item_table.
+
+ENDFORM.                    &quot; write_to_list
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  expand_node
+*&amp;---------------------------------------------------------------------*
+FORM expand_node.
+
+  DATA: return_code      TYPE i,                            &quot;#EC NEEDED
+        collapse_subtree TYPE as4flag,                      &quot;#EC NEEDED
+        sel_node_key     TYPE tm_nodekey,
+        l_node_key       TYPE tm_nodekey,                   &quot;#EC NEEDED
+        isfolder(1).
+
+  PERFORM get_selected_node USING sel_node_key isfolder.
+  CHECK ( NOT sel_node_key IS INITIAL ) AND isfolder = &apos;X&apos;.
+
+  CALL FUNCTION &apos;SAPGUI_PROGRESS_INDICATOR&apos;
+    EXPORTING
+      text = &apos;Display...&apos;(028).                             &quot;#EC *
+
+  DATA: sel_node_table LIKE LINE OF gt_nodes,
+        wa_node_table  LIKE LINE OF gt_nodes,
+        node_table     TYPE treemlnota,
+        item_table     TYPE treemlitac.
+
+  CLEAR sel_node_table.
+  READ TABLE gt_nodes INTO sel_node_table
+    WITH KEY node_key = sel_node_key. &quot;Sorted table
+
+  CLEAR: node_table[], item_table[].
+
+  LOOP AT gt_nodes INTO wa_node_table
+    WHERE isfolder = &apos;X&apos;
+      AND expander = &apos;X&apos;
+      AND NOT objct IS INITIAL
+      AND NOT auth  IS INITIAL.                         &quot;#EC CI_SORTSEQ
+
+    CHECK sel_node_key = &apos;Root2&apos;
+       OR (    wa_node_table-objct = sel_node_table-objct
+           AND sel_node_table-auth IS INITIAL )
+       OR (    wa_node_table-objct = sel_node_table-objct
+           AND wa_node_table-auth  = sel_node_table-auth  )
+           .
+
+    CLEAR wa_node_table-expander.
+    MODIFY gt_nodes FROM wa_node_table.
+
+  ENDLOOP.
+
+  IF NOT node_table[] IS INITIAL.
+    CALL METHOD g_tree-&gt;add_nodes
+      EXPORTING
+        node_table          = node_table
+      EXCEPTIONS
+        error_in_node_table = 1
+        OTHERS              = 2.
+
+    CALL METHOD g_tree-&gt;add_items
+      EXPORTING
+        item_table          = item_table
+      EXCEPTIONS
+        error_in_item_table = 1
+        OTHERS              = 2.
+
+    CALL METHOD g_tree-&gt;create_tree_control
+      EXPORTING
+        parent                       = g_custom_container
+      EXCEPTIONS
+        lifetime_error               = 1
+        cntl_system_error            = 2
+        create_error                 = 3
+        failed                       = 4
+        tree_control_already_created = 5
+        OTHERS                       = 6.
+
+  ENDIF.
+
+  &quot; Expand subtree
+  CALL METHOD g_tree-&gt;expand_node
+    EXPORTING
+      node_key       = sel_node_key
+      expand_subtree = &apos;X&apos;
+    EXCEPTIONS
+      node_not_found = 1
+      OTHERS         = 2.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+          WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+ENDFORM.                    &quot; expand_node
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  collapse_node
+*&amp;---------------------------------------------------------------------*
+FORM collapse_node.
+
+  DATA: sel_node_key TYPE tm_nodekey,
+        l_node_key   TYPE tm_nodekey,                       &quot;#EC NEEDED
+        isfolder(1).
+
+  PERFORM get_selected_node USING sel_node_key isfolder.
+  CHECK ( NOT sel_node_key IS INITIAL ) AND isfolder = &apos;X&apos;.
+
+  CALL METHOD g_tree-&gt;collapse_node
+    EXPORTING
+      node_key         = sel_node_key
+      collapse_subtree = &apos;X&apos;
+    EXCEPTIONS
+      node_not_found   = 1
+      OTHERS           = 2.
+  IF sy-subrc &lt;&gt; 0.
+    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+          WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+  ENDIF.
+
+ENDFORM.                    &quot; collapse_node
+
+
+*&amp;---------------------------------------------------------------------*
+*&amp;      Form  download
+*&amp;---------------------------------------------------------------------*
+FORM download
+  USING    iv_get_html TYPE char01
+  CHANGING ct_html     TYPE sdydo_html_table.
+
+  DATA: lr_document             TYPE REF TO   cl_dd_document
+      , lv_text                 TYPE          sdydo_text_element
+      , lr_tarea                TYPE REF TO   cl_dd_table_area
+      , lr_telem                TYPE REF TO   cl_dd_table_element
+      , ls_usr07_new            TYPE          ty_usr07_new
+      , lv_date                 TYPE          d
+      , lv_time                 TYPE          t
+      , lv_date_long            TYPE c LENGTH 10
+      , lv_time_long            TYPE c LENGTH 10
+      , lv_typetext             TYPE          usobtypeinfo_text-text
+      , lv_disp_name            TYPE          usobxname
+      , lt_field_value          TYPE TABLE OF ty_field_value
+      , ls_field_value          TYPE          ty_field_value
+      , lv_field                TYPE          xufield
+      , lv_counter              TYPE          i
+      .
+
+
+  &quot; Create dynamic document
+  CREATE OBJECT lr_document.
+  lr_document-&gt;initialize_document( ).
+
+  &quot; Header line
+  lv_text = &apos;Evaluation of the Last Failed Authorization Check&apos;(001).
+  lr_document-&gt;add_text_as_heading( EXPORTING text = lv_text ).
+
+  &quot; Add header
+  CALL METHOD lr_document-&gt;add_table
+    EXPORTING
+      no_of_columns = 4
+      border        = &apos;1&apos;
+      width         = &apos;50%&apos;
+    IMPORTING
+      tablearea     = lr_tarea
+      table         = lr_telem
+    EXCEPTIONS
+      OTHERS        = 2.
+
+  lr_telem-&gt;set_column_style( EXPORTING col_no = 1 sap_style = cl_dd_area=&gt;key ).
+  lr_telem-&gt;set_column_style( EXPORTING col_no = 3 sap_style = cl_dd_area=&gt;key ).
+
+
+  &quot; 1. line
+  lv_text = &apos;User name&apos;(080).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = g_bname.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+  IF gv_new_kernel_avail EQ abap_true.
+    IF g0010_read_from_db EQ space.
+      lv_text = &apos;Failed authorization checks since&apos;(083).
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      CONVERT TIME STAMP gv_checks_since_time TIME ZONE sy-zonlo
+         INTO DATE lv_date TIME lv_time.
+      WRITE lv_date TO lv_date_long.
+      WRITE lv_time TO lv_time_long.
+    ELSE.
+      lv_text = &apos;Saved authorization checks&apos;(084).
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+      CLEAR: lv_date_long, lv_time_long.
+    ENDIF.
+    CONCATENATE lv_date_long lv_time_long INTO lv_text SEPARATED BY space.
+    lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  ELSE.
+    READ TABLE gt_usr07_new INTO ls_usr07_new INDEX 1.  &quot;#EC CI_NOORDER
+    lv_text = &apos;Authorization Object&apos;(079).
+    lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+    lv_text = ls_usr07_new-objct.
+    lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  ENDIF.
+
+  CALL METHOD lr_tarea-&gt;new_row.
+
+  &quot; 2. line
+  lv_text = &apos;System&apos;(078).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = sy-sysid.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = &apos;Client&apos;(043).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = sy-mandt.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+  CALL METHOD lr_tarea-&gt;new_row.
+
+  &quot; 3. line
+  lv_text = &apos;Date&apos;(032).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  WRITE sy-datum TO lv_text.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = &apos;Time&apos;(046).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  WRITE sy-uzeit TO lv_text.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+  CALL METHOD lr_tarea-&gt;new_row.
+
+  &quot; 4. line
+  lv_text = &apos;Instance&apos;(049).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = g_instance.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = &apos;Profile parameter auth/new buffering&apos;(075).
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+  lv_text = g_buffer_method.
+  lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+  CALL METHOD lr_tarea-&gt;new_row.
+
+  lr_document-&gt;new_line( EXPORTING repeat = 1 ).
+
+  &quot; No failed authorization
+  IF gt_usr07_new IS INITIAL.
+
+    lv_text = &apos;The last authorization check was successful&apos;(076).
+    lr_document-&gt;add_text( EXPORTING text = lv_text ).
+
+  ELSE.
+    &quot; Failed authorizations
+    CALL METHOD lr_document-&gt;add_table
+      EXPORTING
+        no_of_columns               = 25
+        cell_background_transparent = space
+      IMPORTING
+        tablearea                   = lr_tarea
+        table                       = lr_telem
+      EXCEPTIONS
+        OTHERS                      = 2.
+
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 1 sap_style = cl_dd_area=&gt;key ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 2 sap_style = cl_dd_area=&gt;key ).
+
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Date&apos;(032) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Time&apos;(046) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Type of Application&apos;(090) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Application&apos;(091) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Object&apos;(092) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 1&apos;(093) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 1&apos;(094) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 2&apos;(095) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 2&apos;(096) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 3&apos;(097) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 3&apos;(098) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 4&apos;(099) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 4&apos;(100) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 5&apos;(101) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 5&apos;(102) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 6&apos;(103) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 6&apos;(104) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 7&apos;(105) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 7&apos;(106) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 8&apos;(107) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 8&apos;(108) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 9&apos;(109) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 9&apos;(110) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Field 10&apos;(111) ).
+    lr_tarea-&gt;add_heading( EXPORTING text = &apos;Value 10&apos;(112) ).
+
+    CALL METHOD lr_tarea-&gt;new_row.
+
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 6  sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 8  sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 10 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 12 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 14 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 16 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 18 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 20 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 22 sap_color = cl_dd_area=&gt;list_normal_int ).
+    lr_telem-&gt;set_column_style( EXPORTING col_no = 24 sap_color = cl_dd_area=&gt;list_normal_int ).
+
+    LOOP AT gt_usr07_new INTO ls_usr07_new.
+
+      &quot; Timestamp
+      CONVERT TIME STAMP ls_usr07_new-timestamp TIME ZONE sy-zonlo
+         INTO DATE lv_date TIME lv_time.
+
+      WRITE lv_date TO lv_text.
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      WRITE lv_time TO lv_text.
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      &quot; Application
+      CALL METHOD cl_su2x_f4=&gt;get_display_name_and_type
+        EXPORTING
+          iv_type      = ls_usr07_new-type
+          iv_name      = ls_usr07_new-name
+        IMPORTING
+          ev_typetext  = lv_typetext
+          ev_disp_name = lv_disp_name.
+
+      lv_text = lv_typetext.
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      lv_text = lv_disp_name.
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      &quot; Object
+      lv_text = ls_usr07_new-objct.
+      lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+
+      &quot; Fields
+      CLEAR: lt_field_value, ls_field_value, lv_counter, lv_field.
+
+      DO 10 TIMES VARYING lv_field FROM ls_usr07_new-fiel1 NEXT ls_usr07_new-fiel2.
+        IF lv_field NE space.
+          lv_counter           = lv_counter + 1.
+          ls_field_value-field = lv_field.
+          CASE lv_counter.
+            WHEN 1.
+              ls_field_value-value = ls_usr07_new-val01.
+            WHEN 2.
+              ls_field_value-value = ls_usr07_new-val02.
+            WHEN 3.
+              ls_field_value-value = ls_usr07_new-val03.
+            WHEN 4.
+              ls_field_value-value = ls_usr07_new-val04.
+            WHEN 5.
+              ls_field_value-value = ls_usr07_new-val05.
+            WHEN 6.
+              ls_field_value-value = ls_usr07_new-val06.
+            WHEN 7.
+              ls_field_value-value = ls_usr07_new-val07.
+            WHEN 8.
+              ls_field_value-value = ls_usr07_new-val08.
+            WHEN 9.
+              ls_field_value-value = ls_usr07_new-val09.
+            WHEN 10.
+              ls_field_value-value = ls_usr07_new-val10.
+          ENDCASE.
+          APPEND ls_field_value TO lt_field_value.
+        ENDIF.
+      ENDDO.
+      SORT lt_field_value BY field.
+
+      DO 10 TIMES.
+        READ TABLE lt_field_value INTO ls_field_value INDEX sy-index.
+        IF sy-subrc NE 0.
+          CLEAR: ls_field_value.
+        ENDIF.
+        lv_text = ls_field_value-field.
+        lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+        lv_text = ls_field_value-value.
+        lr_tarea-&gt;add_text( EXPORTING text = lv_text ).
+      ENDDO.
+
+      CALL METHOD lr_tarea-&gt;new_row.
+    ENDLOOP.
+  ENDIF.
+
+  CALL METHOD lr_document-&gt;merge_document.
+
+  IF iv_get_html EQ &apos;X&apos;.
+    ct_html = lr_document-&gt;html_table.
+  ELSE.
+    CALL METHOD lr_document-&gt;export_document
+      EXCEPTIONS
+        export_error = 1
+        OTHERS       = 2.
+    IF sy-subrc NE 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+         WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.                    &quot;download
+
+FORM get_own_su53_ext
+  CHANGING ct_html TYPE sdydo_html_table.
+
+  &quot; Get authorization buffer method
+  CALL &apos;C_SAPGPARAM&apos;
+       ID &apos;NAME&apos; FIELD &apos;auth/new_buffering&apos;
+       ID &apos;VALUE&apos; FIELD g_buffer_method.                  &quot;#EC CI_CCALL
+
+  &quot; Check for new kernel and table
+  PERFORM check_environment.
+
+  &quot; Get results of authorization checks
+  PERFORM get_authorization_checks USING sy-uname space.
+
+  PERFORM download USING &apos;X&apos; CHANGING ct_html.
+
+ENDFORM.</source>
+</PROG>

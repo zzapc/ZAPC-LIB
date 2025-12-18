@@ -444,7 +444,7 @@ method get_fila_activa.
 *  i_rows = o_selections->get_selected_rows( ).
 *  READ TABLE i_rows INTO fila INDEX 1.
 
-*... Â§5.2 get the currently selected item
+*... §5.2 get the currently selected item
     data: lr_item type ref to cl_salv_item,
           ls_node type salv_s_nodes.
 
@@ -536,12 +536,12 @@ method inicializa_objetos.
     o_columns = o_alv->get_columns( ).
     o_columns->set_optimize( optimize ).
 
-*... Â§ 2.1 build the hierarchy header
+*... § 2.1 build the hierarchy header
     data: settings type ref to cl_salv_tree_settings.
 
     settings = o_alv->get_tree_settings( ).
-    settings->set_hierarchy_header( 'JerarquÃ­a'(jer) ).
-    settings->set_hierarchy_tooltip( 'JerarquÃ­a'(jer) ).
+    settings->set_hierarchy_header( 'Jerarquía'(jer) ).
+    settings->set_hierarchy_tooltip( 'Jerarquía'(jer) ).
     settings->set_hierarchy_size( 30 ).
 
     data: title type salv_de_tree_text.

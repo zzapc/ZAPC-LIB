@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PROG NAME="ZAP_EXITS" VARCL="X" SUBC="1" RMAND="600" RLOAD="S" FIXPT="X" UCCHECK="X">
  <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="BOR" ENTRY="        Delete" LENGTH="14 "/>
+   <textElement ID="I" KEY="GEO" ENTRY="        Record to OT" LENGTH="20 "/>
+   <textElement ID="I" KEY="GI1" ENTRY="        Generating report" LENGTH="25 "/>
+   <textElement ID="I" KEY="GRA" ENTRY="        Save" LENGTH="12 "/>
+   <textElement ID="I" KEY="IAE" ENTRY="        Go to exit" LENGTH="18 "/>
+   <textElement ID="I" KEY="IAI" ENTRY="        Go to implementation" LENGTH="28 "/>
+   <textElement ID="I" KEY="LE1" ENTRY="        View Execution Log" LENGTH="26 "/>
+   <textElement ID="I" KEY="PD1" ENTRY="        Processing Data" LENGTH="23 "/>
+   <textElement ID="I" KEY="SAR" ENTRY="        Please select a record" LENGTH="30 "/>
+   <textElement ID="I" KEY="SD1" ENTRY="        Selecting data" LENGTH="22 "/>
+   <textElement ID="I" KEY="SHG" ENTRY="        The exit has been recorded" LENGTH="34 "/>
+   <textElement ID="I" KEY="TIP" ENTRY="        Type" LENGTH="12 "/>
+   <textElement ID="R" ENTRY="        User exits management" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_BUSL" ENTRY="        Free Search" LENGTH="38 "/>
+   <textElement ID="S" KEY="S_ID" ENTRY="        Id.Exit" LENGTH="38 "/>
+   <textElement ID="S" KEY="S_TICKET" ENTRY="        Ticket" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_ACTIVA" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_CLASIF" ENTRY="D       ." LENGTH="21 "/>
+   <textElement ID="S" KEY="S_MODULO" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_RESPON" ENTRY="D       ." LENGTH="19 "/>
+   <textElement ID="S" KEY="S_TCODE" ENTRY="D       ." LENGTH="26 "/>
+   <textElement ID="S" KEY="S_TIPO" ENTRY="D       ." LENGTH="17 "/>
+  </language>
   <language SPRAS="S">
    <textElement ID="R" ENTRY="Gestión exits de usuario" LENGTH="24 "/>
    <textElement ID="S" KEY="P_BUSL" ENTRY="        Búsqueda libre" LENGTH="22 "/>
@@ -13,6 +38,18 @@
    <textElement ID="S" KEY="S_TCODE" ENTRY="D       ." LENGTH="26 "/>
    <textElement ID="S" KEY="S_TICKET" ENTRY="        Ticket" LENGTH="14 "/>
    <textElement ID="S" KEY="S_TIPO" ENTRY="D       ." LENGTH="17 "/>
+   <textElement ID="I" KEY="SAR" ENTRY="Seleccione algún registro" LENGTH="25 "/>
+   <textElement ID="I" KEY="IAE" ENTRY="Ir a exit" LENGTH="9 "/>
+   <textElement ID="I" KEY="IAI" ENTRY="Ir a implementación" LENGTH="19 "/>
+   <textElement ID="I" KEY="GEO" ENTRY="Grabar en OT" LENGTH="12 "/>
+   <textElement ID="I" KEY="LE1" ENTRY="Log ejecución" LENGTH="13 "/>
+   <textElement ID="I" KEY="SHG" ENTRY="Se ha grabado la exit" LENGTH="21 "/>
+   <textElement ID="I" KEY="BOR" ENTRY="Borrar" LENGTH="6 "/>
+   <textElement ID="I" KEY="GI1" ENTRY="Generando informe" LENGTH="17 "/>
+   <textElement ID="I" KEY="PD1" ENTRY="Procesando datos" LENGTH="16 "/>
+   <textElement ID="I" KEY="GRA" ENTRY="Grabar" LENGTH="6 "/>
+   <textElement ID="I" KEY="SD1" ENTRY="Seleccionando datos" LENGTH="19 "/>
+   <textElement ID="I" KEY="TIP" ENTRY="Tipo" LENGTH="4 "/>
   </language>
  </textPool>
  <dynpros>
@@ -386,7 +423,7 @@ CLASS lcl_alv IMPLEMENTATION.
         LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
         ENDLOOP.
         IF sy-subrc NE 0.
-          MESSAGE &apos;Seleccione algún registro&apos; TYPE &apos;I&apos;.
+          MESSAGE &apos;Seleccione algún registro&apos;(SAR) TYPE &apos;I&apos;.
         ELSE.
           o_prog-&gt;generar_word( ).
         ENDIF.
@@ -428,7 +465,7 @@ CLASS zcl_report IMPLEMENTATION.
       ENDIF.
 
     ELSE.
-      sgpi_texto( &apos;Seleccionando datos&apos; ).
+      sgpi_texto( &apos;Seleccionando datos&apos;(SD1) ).
       SELECT * FROM zap_exits
         INTO CORRESPONDING FIELDS OF TABLE i_listado
        WHERE id IN s_id
@@ -463,7 +500,7 @@ CLASS zcl_report IMPLEMENTATION.
 
       o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
       LOOP AT i_listado ASSIGNING &lt;listado&gt;.
-        sgpi_texto( texto1 = &apos;Procesando datos&apos; cant_porc = 100 ).
+        sgpi_texto( texto1 = &apos;Procesando datos&apos;(PD1) cant_porc = 100 ).
 
         CASE &lt;listado&gt;-activa.
           WHEN &apos;X&apos;.
@@ -489,7 +526,7 @@ CLASS zcl_report IMPLEMENTATION.
 
   METHOD listado.
 
-    sgpi_texto( &apos;Generando informe&apos; ).
+    sgpi_texto( &apos;Generando informe&apos;(GI1) ).
 
 *    o_alv-&gt;set_layout( p_vari ).
     o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; CHANGING t_tabla = i_listado ).
@@ -528,22 +565,22 @@ CLASS zcl_report IMPLEMENTATION.
       o_grid-&gt;quitar_opciones( cl_gui_alv_grid=&gt;mc_fc_refresh ).
       o_grid-&gt;set_campos_tabint( i_var[] ).
       o_grid-&gt;set_field_input( &apos;VALOR,VALOR2,VALOR3,VALOR4,COMENTARIO&apos; ).
-      o_grid-&gt;set_field_text( campo = &apos;TIPO_T&apos; valor = &apos;Tipo&apos; ).
+      o_grid-&gt;set_field_text( campo = &apos;TIPO_T&apos; valor = &apos;Tipo&apos;(TIP) ).
       o_grid-&gt;set_field_dropdown( campo = &apos;TIPO_T&apos;  valor = &apos;1&apos; dominio = &apos;ZTIPO_PARAMETRO_EXIT&apos; ).
 
-      sgpi_texto( &apos;Generando informe&apos; ).
+      sgpi_texto( &apos;Generando informe&apos;(GI1) ).
       o_grid-&gt;show( CHANGING tabla = i_var ).
       o_grid-&gt;actualiza_campos_grid( campos_borrar = &apos;CHECK,TIPO&apos; ).
       o_grid-&gt;set_seleccion( CHANGING t_tabla = i_var ).
     ELSE.
       o_grid-&gt;refrescar_grid( ).
     ENDIF.
-    o_grid-&gt;add_button( button = &apos;F01&apos; text = &apos;Grabar&apos;  icon = icon_system_save forzar = &apos;X&apos; ).
-    o_grid-&gt;add_button( button = &apos;F02&apos; text = &apos;Ir a exit&apos;  icon = icon_submit forzar = &apos;X&apos; ).
-    o_grid-&gt;add_button( button = &apos;F03&apos; text = &apos;Ir a implementación&apos;  icon =  icon_change forzar = &apos;X&apos; ).
-    o_grid-&gt;add_button( button = &apos;F04&apos; text = &apos;Grabar en OT&apos;  icon =  icon_transport_proposal forzar = &apos;X&apos; ).
-    o_grid-&gt;add_button( button = &apos;F05&apos; text = &apos;Log ejecución&apos;  icon =  icon_incompletion_log forzar = &apos;X&apos; ).
-    o_grid-&gt;add_button( button = &apos;M01&apos; text = &apos;Borrar&apos;  icon = icon_delete forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;F01&apos; text = &apos;Grabar&apos;(GRA)  icon = icon_system_save forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;F02&apos; text = &apos;Ir a exit&apos;(IAE)  icon = icon_submit forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;F03&apos; text = &apos;Ir a implementación&apos;(IAI)  icon =  icon_change forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;F04&apos; text = &apos;Grabar en OT&apos;(GEO)  icon =  icon_transport_proposal forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;F05&apos; text = &apos;Log ejecución&apos;(LE1)  icon =  icon_incompletion_log forzar = &apos;X&apos; ).
+    o_grid-&gt;add_button( button = &apos;M01&apos; text = &apos;Borrar&apos;(BOR)  icon = icon_delete forzar = &apos;X&apos; ).
 
     IF zap_exits_est-activa = &apos;U&apos;.
       zcl_ap_dynpro=&gt;screen_visible( campo = &apos;ZAP_EXITS_EST-USUARIOS_ACTIVOS&apos; variable = &apos;X&apos; ).
@@ -841,7 +878,7 @@ CLASS zcl_report IMPLEMENTATION.
 
 
     i_var_ini = i_var.
-    MESSAGE &apos;Se ha grabado la exit&apos; TYPE &apos;S&apos;.
+    MESSAGE &apos;Se ha grabado la exit&apos;(SHG) TYPE &apos;S&apos;.
   ENDMETHOD.
 
   METHOD ir_a_detalle.

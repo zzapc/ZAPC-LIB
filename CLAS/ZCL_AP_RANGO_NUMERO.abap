@@ -1,4 +1,4 @@
-class ZCL_AP_RANGO_NUMERO definition
+ï»¿class ZCL_AP_RANGO_NUMERO definition
   public
   final
   create public .
@@ -49,7 +49,7 @@ endclass. "ZCL_AP_RANGO_NUMERO definition
 class ZCL_AP_RANGO_NUMERO implementation.
 method DEFINIR_RANGO.
 
-* El rango se define llamando a la transacción SNRO
+* El rango se define llamando a la transacciÃ³n SNRO
 
 endmethod.
 METHOD info_numero.
@@ -90,16 +90,16 @@ METHOD mantener_rango.
 
   o_bi->inicio( ).
 
-* Menú acceso a actual.objetos rango de números
+* MenÃº acceso a actual.objetos rango de nÃºmeros
   o_bi->dynpro( program = 'SAPMSNRO' dynpro = '0150').
   o_bi->campos( campo = 'BDC_OKCODE' valor = '=IUPD').
-  o_bi->campos( campo = 'NRIV-OBJECT' valor = rango ). " Nombre del objeto rango de números
+  o_bi->campos( campo = 'NRIV-OBJECT' valor = rango ). " Nombre del objeto rango de nÃºmeros
 
-* Imagen inicial rangos de números
+* Imagen inicial rangos de nÃºmeros
   o_bi->dynpro( program = 'SAPMSNUM' dynpro = '0100').
   o_bi->campos( campo = 'BDC_OKCODE' valor = '=LUPD').
 
-* Actualizar intervalos rango de números, sin año, con número
+* Actualizar intervalos rango de nÃºmeros, sin aÃ±o, con nÃºmero
   o_bi->dynpro( program = 'SAPLSNR0' dynpro = '0503').
 
   l_mensaje = o_bi->llamar_transaccion( tcode = 'SNRO' modo = 'E').
@@ -136,14 +136,14 @@ METHOD siguiente_numero.
         WHEN ' '.
         WHEN '1'.
           MESSAGE w398(00) WITH
-            'El rango de números' rango 'está a punto de agotarse'.
+            'El rango de nÃºmeros' rango 'estÃ¡ a punto de agotarse'.
         WHEN '2'.
-          message = |El rango de números { rango }  está agotado|.
+          message = |El rango de nÃºmeros { rango }  estÃ¡ agotado|.
           IF parar_en_error = 'X'.
             MESSAGE message TYPE 'E'.
           ENDIF.
         WHEN OTHERS.
-          message = |Error en rango de nº { rango }|.
+          message = |Error en rango de nÂº { rango }|.
 
           IF parar_en_error = 'X'.
             MESSAGE message TYPE 'E'.
@@ -151,7 +151,7 @@ METHOD siguiente_numero.
       ENDCASE.
     ELSE.
       IF crear_si_no_existe IS INITIAL.
-        MESSAGE e398(00) WITH 'Error en rango de nº' rango rango_no.
+        MESSAGE e398(00) WITH 'Error en rango de nÂº' rango rango_no.
       ELSE.
 * If range does not exist, create a new one.
         IF sy-subrc = 1.
@@ -184,7 +184,7 @@ METHOD siguiente_numero.
               ENDIF.
           ENDCASE.
         ELSE.
-          message =  |Error en rango de nº { rango }|.
+          message =  |Error en rango de nÂº { rango }|.
           IF parar_en_error = 'X'.
             MESSAGE message TYPE 'E'.
           ENDIF.

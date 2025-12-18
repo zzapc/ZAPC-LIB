@@ -1,3 +1,4 @@
+ï»¿
 CLASS zcl_ap_docmat DEFINITION
   PUBLIC
   CREATE PUBLIC.
@@ -190,7 +191,6 @@ CLASS zcl_ap_docmat DEFINITION
                 vbeln            TYPE vbeln_vl   OPTIONAL
                 posnr            TYPE posnr      OPTIONAL
                 bwtar            TYPE mseg-bwtar OPTIONAL
-                lifnr            type lifnr      OPTIONAL
                 opc              TYPE string     OPTIONAL
                 lgtyp            TYPE lgtyp      OPTIONAL
                 paobjnr          TYPE rkeobjnr   OPTIONAL
@@ -216,7 +216,9 @@ class ZCL_AP_DOCMAT implementation.
     " TODO: parameter OPCIONES is never used (ABAP cleaner)
 
     DATA: l_budat      TYPE budat,
-          l_matdocitem TYPE TABLE OF bapi2017_gm_item_04.
+          l_matdocitem TYPE TABLE OF bapi2017_gm_item_04,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_mkpf       TYPE mkpf.
 
     CLEAR: i_return,
            smbln,
@@ -225,9 +227,9 @@ class ZCL_AP_DOCMAT implementation.
            salida.
 
     IF popup_fecha = 'X'.
-      l_budat = zcl_ap_fechas=>popup_fecha( titulo = 'Fecha anulación' ) ##NO_TEXT.
+      l_budat = zcl_ap_fechas=>popup_fecha( titulo = 'Fecha anulaciÃ³n' ) ##NO_TEXT.
       IF l_budat IS INITIAL.
-        mensaje = 'Debe indicar fecha de anulación' ##NO_TEXT.
+        mensaje = 'Debe indicar fecha de anulaciÃ³n' ##NO_TEXT.
         RETURN.
       ENDIF.
     ELSEIF budat IS INITIAL.
@@ -260,9 +262,9 @@ class ZCL_AP_DOCMAT implementation.
       IF espera_a_grabado = 'X'.
         DO 5 TIMES.
           SELECT SINGLE mblnr FROM mkpf
-            INTO @data(l_mblnr)
-           WHERE mblnr = @smbln
-             AND mjahr = @sjahr.
+            INTO l_mkpf-mblnr
+           WHERE mblnr = smbln
+             AND mjahr = sjahr.
           IF sy-subrc = 0.
             EXIT.
           ELSE.
@@ -275,7 +277,7 @@ class ZCL_AP_DOCMAT implementation.
         mensaje = return-message.
       ENDLOOP.
 
-      IF ( mensaje CS 'period' OR mensaje CS 'períod' ) AND popup_fecha = 'Y'.
+      IF ( mensaje CS 'period' OR mensaje CS 'perÃ­od' ) AND popup_fecha = 'Y'.
         anular_doc( EXPORTING espera_a_grabado = espera_a_grabado
                               mblnr            = mblnr
                               mjahr            = mjahr
@@ -424,7 +426,7 @@ class ZCL_AP_DOCMAT implementation.
 
     fecha_abierta = fecha.
 
-* Hay que verificar que el periodo actual esté abierto. En caso contra-
+* Hay que verificar que el periodo actual estÃ© abierto. En caso contra-
 * rio, se contabiliza con fecha 01 del periodo abierto
     SELECT SINGLE * FROM marv
       INTO l_marv
@@ -576,16 +578,16 @@ class ZCL_AP_DOCMAT implementation.
 * Pantalla inicial: crear documento de invent.
     o_bi->dynpro( program = 'SAPMM07I' dynpro = '0700' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-    o_bi->campos( campo = 'RM07I-ZLDAT' valor = fecha ). " Fecha del último recuento
+    o_bi->campos( campo = 'RM07I-ZLDAT' valor = fecha ). " Fecha del Ãºltimo recuento
     o_bi->campos( campo = 'RM07I-BLDAT' valor = fecha ). " Fecha de documento en documento
     o_bi->campos( campo = 'IKPF-WERKS' valor = werks ). " Centro
-    o_bi->campos( campo = 'IKPF-LGORT' valor = lgort ). " Almacén
+    o_bi->campos( campo = 'IKPF-LGORT' valor = lgort ). " AlmacÃ©n
 
 * Posiciones: crear recuento de inventario
     o_bi->dynpro( program = 'SAPMM07I' dynpro = '0731' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=BU' ).
-    o_bi->campos( campo = 'ISEG-MATNR(01)' valor = matnr ). " Número de material
-    o_bi->campos( campo = 'ISEG-CHARG(01)' valor = charg ).  " Número de lote
+    o_bi->campos( campo = 'ISEG-MATNR(01)' valor = matnr ). " NÃºmero de material
+    o_bi->campos( campo = 'ISEG-CHARG(01)' valor = charg ).  " NÃºmero de lote
     o_bi->campos( campo = 'ISEG-ERFMG(01)' valor = l_ctd ). " Ctd.en unidad de medida de entrada (inventario)
     o_bi->campos( campo = 'ISEG-ERFME(01)' valor = l_meins ). " Unidad medida de entrada (inventario)
 
@@ -656,7 +658,6 @@ class ZCL_AP_DOCMAT implementation.
                          vbeln     = vbeln
                          posnr     = posnr
                          bwtar     = bwtar
-                         lifnr     = lifnr
                          lgtyp     = lgtyp
                          paobjnr   = paobjnr
                          opc       = opc ).

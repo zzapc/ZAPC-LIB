@@ -1,349 +1,307 @@
-class ZCL_AP_FICHEROS definition
-  public
-  create public .
+﻿CLASS zcl_ap_ficheros DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
 
-public section.
+  PUBLIC SECTION.
+    CONSTANTS c_filtro_xls  TYPE string VALUE 'Excel |*.XLS*' ##NO_TEXT.
+    CONSTANTS c_filtro_txt  TYPE string VALUE 'Texto |*.TXT' ##NO_TEXT.
+    CONSTANTS c_filtro_xlsx TYPE string VALUE 'Excel |*.XLSX' ##NO_TEXT.
 
-  constants C_FILTRO_XLS type STRING value 'Excel |*.XLS*' ##NO_TEXT.
-  constants C_FILTRO_TXT type STRING value 'Texto |*.TXT' ##NO_TEXT.
-  constants C_FILTRO_XLSX type STRING value 'Excel |*.XLSX' ##NO_TEXT.
+    CLASS-METHODS lista_ficheros
+      IMPORTING !directory        TYPE any
+                !filter           TYPE any       DEFAULT '*.*'
+                recursivo         TYPE abap_bool DEFAULT ''
+                max_ficheros      TYPE i         DEFAULT 9999
+      RETURNING VALUE(file_table) TYPE rstt_t_files.
 
-  class-methods LISTA_FICHEROS
-    importing
-      !DIRECTORY type ANY
-      !FILTER type ANY default '*.*'
-      !RECURSIVO type ABAP_BOOL default ''
-      !MAX_FICHEROS type I default 9999
-    returning
-      value(FILE_TABLE) type RSTT_T_FILES .
-  class-methods GET_EXTENSION
-    importing
-      !FICHERO type ANY
-    returning
-      value(EXTENSION) type STRING .
-  class-methods GET_NOMBRE_FICHERO
-    importing
-      !FICHERO type ANY optional
-      !CON_EXTENSION type ANY default ''
-    preferred parameter FICHERO
-    returning
-      value(NOMBRE) type STRING .
-  class-methods GET_DIRECTORIO_FICHERO
-    importing
-      !FICHERO type ANY optional
-    preferred parameter FICHERO
-    returning
-      value(DIRECTORIO) type STRING .
-  class-methods LEE_FICH_SERVIDOR
-    importing
-      !FICHERO type ANY
-      !MODO_TEXTO type ABAP_BOOL default 'X'
-      !MOSTRAR_MENSAJES type ABAP_BOOL default ''
-      !LEGACY type ABAP_BOOL default ''
-      !CODEPAGE type ABAP_ENCODING default ''
-    exporting
-      !LONGITUD type I
-      !MENSAJE type BAPI_MSG
-    changing
-      !TABLA type TABLE .
-  class-methods LIMPIAR_FICHERO
-    importing
-      !FICHERO type STRING
-    returning
-      value(SALIDA) type STRING .
-  class-methods ULTIMA_LETRA_RUTA
-    importing
-      !DIRECTORIO type STRING
-    returning
-      value(LETRA) type CHAR1 .
-  class-methods CONCAT_RUTA
-    importing
-      !DIRECTORIO type ANY default ''
-      !FICHERO type ANY
-      !EXTENSION type ANY optional
-      !DIRECTORIO_TEMPORAL type ABAP_BOOL default ''
-    returning
-      value(RUTA) type STRING .
-  class-methods LEE_FICHEROS_SERVIDOR
-    importing
-      !DIR_NAME type ANY
-      !FILE_MASK type ANY optional
-      !RECURSION type ABAP_BOOL default ''
-      !SOLO_DIR type ZT_LISTA_FICHEROS optional
-      !MAX_FICHEROS type I default 9999
-      !MAYUSCULAS type ABAP_BOOL default 'X'
-    changing
-      !DIR_LIST type ZT_LISTA_FICHEROS
-    exceptions
-      READ_DIRECTORY_FAILED
-      EMPTY_DIRECTORY_LIST .
-  class-methods GRABAR
-    importing
-      !FICHERO type ANY
-      !TIPO type CHAR10 default 'ASC'
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !DIALOGO type ABAP_BOOL default ''
-      !TRUNC type ABAP_BOOL default 'X'
-      !BIN_FILESIZE type I default 0
-      !CODEPAGE type ANY default ''
-      !WRITE_LF_AFTER_LAST_LINE type ABAP_BOOL default 'X'
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type ANY
-    changing
-      !TABLA type TABLE
-      !FICHERO_DIALOGO type ANY default '' .
-  class-methods GRABAR_XML
-    importing
-      !FICHERO type ANY
-      !STRING type STRING optional
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !CODEPAGE type ANY default ZCL_C=>CODEPAGE
-      !DIALOGO type ABAP_BOOL default ''
-      !XSTRING type XSTRING optional
-      !PARTIR_XML type ABAP_BOOL default ''
-      !LOCAL type ABAP_BOOL default ''
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG
-      !FICHERO_DIALOGO type ANY .
-  class-methods LEER
-    importing
-      !FICHERO type ANY
-      !TIPO type CHAR10 default 'ASC'
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !CODEPAGE type ANY default ''
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG
-      !FILELENGTH type I
-    changing
-      !TABLA type TABLE .
-  class-methods LEER_XML
-    importing
-      !FICHERO type ANY
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-    exporting
-      !STRING type STRING
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG .
-  class-methods POPUP_SELECT_FICHERO
-    importing
-      !DEFAULT_EXTENSION type STRING optional
-      !INITIAL_DIRECTORY type STRING optional
-      !FILE_FILTER type STRING optional
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(FICHERO) type STRING .
-  class-methods GRABA_FICH_SERVIDOR
-    importing
-      !FICHERO type ANY
-      !MODO_TEXTO type ABAP_BOOL default 'X'
-      !MOSTRAR_MENSAJES type ABAP_BOOL default ''
-      !UNICODE type ABAP_BOOL default ''
-      !BIN_FILESIZE type I default 0
-      !STRING type STRING optional
-      !CODEPAGE type ABAP_ENCODING default 'UTF-8'
-      !TABLA_BIN type ABAP_BOOL default ''
-      !XSTRING type XSTRING optional
-    exporting
-      !MENSAJE type BAPI_MSG
-    changing
-      !TABLA type TABLE optional
-    exceptions
-      ERROR_ABRIR_FICHERO
-      ERROR_TRANSFER
-      ERROR_CERRAR_FICHERO .
-  class-methods EXISTE_DIRECTORIO
-    importing
-      !FICHERO type ANY
-    returning
-      value(EXISTE) type ABAP_BOOL .
-  class-methods VER_FICHERO_TEXTO
-    importing
-      !FICHERO type ANY
-      !EXTENSION type ANY default '' .
-  class-methods GRABAR_FICHERO
-    importing
-      !FICHERO type ANY
-      !MODO_TEXTO type ABAP_BOOL default 'X'
-      !MOSTRAR_MENSAJES type ABAP_BOOL default ''
-      !UNICODE type ABAP_BOOL default 'X'
-      !TRUNC type ABAP_BOOL default ''
-      !BINARIO type ABAP_BOOL default ''
-      !BIN_FILESIZE type I default 0
-      !STRING type STRING optional
-      !TABLA_BIN type ABAP_BOOL default ''
-      !XSTRING type XSTRING optional
-      !DESC_FRONT type ABAP_BOOL default ''
-      !CODEPAGE type ABAP_ENCODING default ''
-    exporting
-      !MENSAJE type BAPI_MSG
-    changing
-      !TABLA type TABLE optional .
-  class-methods GET_DIRECTORIO_TEMPORAL
-    importing
-      !FICHERO type ANY default ''
-      !NUEVO_SI_EXISTE type ABAP_BOOL default ''
-    returning
-      value(DIRECTORIO) type STRING .
-  class-methods LISTA_FICHEROS_COMUN
-    importing
-      !DIRECTORY type ANY
-      !FILTER type ANY default '*.*'
-      !RECURSIVO type ABAP_BOOL default ''
-      !SERVIDOR type ABAP_BOOL default ''
-      !MAX_FICHEROS type I default 9999
-      !MAYUSCULAS type ABAP_BOOL default 'X'
-      !MASK type ANY default ''
-    returning
-      value(FILE_TABLE) type RSTT_T_FILES .
-  class-methods LEER_FICHERO
-    importing
-      !FICHERO type ANY
-      !TIPO type CHAR10 default 'ASC'
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !CODEPAGE type ANY default ''
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG
-      !FILELENGTH type I
-    changing
-      !TABLA type TABLE .
-  class-methods DIALOGO_GRABAR_FICHERO
-    importing
-      !FICHERO_INICIAL type ANY
-      !MOSTRAR_ERROR type ABAP_BOOL default ''
-    exporting
-      !RUTA type STRING
-      !MENSAJE type ANY
-      !NUM_EXCEPCION type I .
-  class-methods GRABAR_XSTRING
-    importing
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !CODEPAGE type ABAP_ENCODING default '4102'
-      !XSTRING type XSTRING optional
-      !FICHERO type ANY optional
-      !DIALOGO type ABAP_BOOL default ''
-      !STRING type STRING optional
-      !BIN_FILESIZE type I default 0
-      !SERVIDOR type ABAP_BOOL default ''
-      !LOCAL type ABAP_BOOL default ''
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG
-      !FICHERO_FINAL type ANY .
-  class-methods EXISTE_DIR
-    importing
-      !DIRECTORIO type ANY
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(EXISTE) type ABAP_BOOL .
-  class-methods LEER_XSTRING
-    importing
-      !FICHERO type ANY optional
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !GET_STRING type ABAP_BOOL default ''
-      !GET_TABLA type ABAP_BOOL default ''
-      !SERVIDOR type ABAP_BOOL default ''
-      !LOCAL type ABAP_BOOL default ''
-      !POPUP_SELECT_FICHERO type ABAP_BOOL default ''
-    exporting
-      !STRING type STRING
-      !NUM_EXCEPCION type I
-      !XSTRING type XSTRING
-      !MESSAGE type BAPI_MSG
-      !LONGITUD type I
-      !I_TABLA_TXT type TABLE
-      !FICHERO_SALIDA type ANY .
-  class-methods BORRAR_FICHERO
-    importing
-      !FICHERO type ANY
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(MENSAJE) type BAPI_MSG .
-  class-methods COPIA_SERV_2_LOCAL
-    importing
-      !FICHERO_ORIGEN type ANY
-      !FICHERO_DESTINO type ANY
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-    returning
-      value(ERROR) type ABAP_BOOL .
-  class-methods COPIA_LOCAL_2_SERV
-    importing
-      !FICHERO_ORIGEN type ANY
-      !FICHERO_DESTINO type ANY
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-    returning
-      value(ERROR) type ABAP_BOOL .
-  class-methods BUSCAR_RUTA_FICHERO
-    importing
-      !RUTAS type ANY
-      !FICHERO type ANY default ''
-    returning
-      value(RUTA) type STRING .
-  class-methods EXISTE
-    importing
-      !FICHERO type ANY
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(EXISTE) type ABAP_BOOL .
-  class-methods MOVER
-    importing
-      !FICHERO type ANY
-      !MOSTRAR_ERROR type ABAP_BOOL default 'X'
-      !DIRECTORIO_DESTINO type ANY
-      !SERVIDOR_ORIG type ABAP_BOOL default ''
-      !SERVIDOR_DEST type ABAP_BOOL default ''
-      !CREAR_DIR_DEST_SERV type ABAP_BOOL default 'X'
-    exporting
-      !NUM_EXCEPCION type I
-      !MENSAJE type BAPI_MSG .
-  class-methods POPUP_SELECT_DIRECTORIO
-    importing
-      !INITIAL_DIRECTORY type STRING default 'C:\'
-      !TITULO type STRING default ''
-      !SERVIDOR type ABAP_BOOL default ''
-    changing
-      value(DIRECTORIO) type ANY .
-  class-methods VISUALIZAR
-    importing
-      !FICHERO type ANY
-      !DIRECTORIO type ANY default ''
-      !SERVIDOR type ABAP_BOOL default ''
-      !XSTRING type XSTRING optional
-      !BIN_FILESIZE type I default 0
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods BORRAR_DIRECTORIO
-    importing
-      !DIRECTORIO type ANY
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(MENSAJE) type BAPI_MSG .
-  class-methods CREAR_DIRECTORIO_SERV
-    importing
-      !DIR type ANY
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods GET_TIPO_RUTA
-    importing
-      !FICHERO type STRING
-      !DIALOGO type ABAP_BOOL default ''
-      !LOCAL type ABAP_BOOL default ''
-      !SERVIDOR type ABAP_BOOL default ''
-    returning
-      value(TIPO) type CHAR1 .
-  class-methods GET_FICHERO_VAR
-    importing
-      !FICHERO type STRING
-    returning
-      value(SALIDA) type STRING .
-protected section.
-private section.
+    CLASS-METHODS get_extension
+      IMPORTING fichero          TYPE any
+      RETURNING VALUE(extension) TYPE string.
+
+    CLASS-METHODS get_nombre_fichero
+      IMPORTING fichero       TYPE any OPTIONAL
+                con_extension TYPE any DEFAULT ''
+          PREFERRED PARAMETER fichero
+      RETURNING VALUE(nombre) TYPE string.
+
+    CLASS-METHODS get_directorio_fichero
+      IMPORTING fichero           TYPE any OPTIONAL
+          PREFERRED PARAMETER fichero
+      RETURNING VALUE(directorio) TYPE string.
+
+    CLASS-METHODS lee_fich_servidor
+      IMPORTING fichero          TYPE any
+                modo_texto       TYPE abap_bool     DEFAULT 'X'
+                mostrar_mensajes TYPE abap_bool     DEFAULT ''
+                !legacy          TYPE abap_bool     DEFAULT ''
+                codepage         TYPE abap_encoding DEFAULT ''
+      EXPORTING longitud         TYPE i
+                mensaje          TYPE bapi_msg
+      CHANGING  tabla            TYPE table.
+
+    CLASS-METHODS limpiar_fichero
+      IMPORTING fichero       TYPE string
+      RETURNING VALUE(salida) TYPE string.
+
+    CLASS-METHODS ultima_letra_ruta
+      IMPORTING directorio   TYPE string
+      RETURNING VALUE(letra) TYPE char1.
+
+    CLASS-METHODS concat_ruta
+      IMPORTING directorio          TYPE any       DEFAULT ''
+                fichero             TYPE any
+                !extension          TYPE any       OPTIONAL
+                directorio_temporal TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(ruta)         TYPE string.
+
+    CLASS-METHODS lee_ficheros_servidor
+      IMPORTING  dir_name     TYPE any
+                 file_mask    TYPE any               OPTIONAL
+                 recursion    TYPE abap_bool         DEFAULT ''
+                 solo_dir     TYPE zt_lista_ficheros OPTIONAL
+                 max_ficheros TYPE i                 DEFAULT 9999
+                 mayusculas   TYPE abap_bool         DEFAULT 'X'
+      CHANGING   dir_list     TYPE zt_lista_ficheros
+      EXCEPTIONS read_directory_failed
+                 empty_directory_list.
+
+    CLASS-METHODS grabar
+      IMPORTING fichero                  TYPE any
+                tipo                     TYPE char10    DEFAULT 'ASC'
+                mostrar_error            TYPE abap_bool DEFAULT 'X'
+                dialogo                  TYPE abap_bool DEFAULT ''
+                trunc                    TYPE abap_bool DEFAULT 'X'
+                bin_filesize             TYPE i         DEFAULT 0
+                codepage                 TYPE any       DEFAULT ''
+                write_lf_after_last_line TYPE abap_bool DEFAULT 'X'
+                write_bom                TYPE abap_bool DEFAULT 'X'
+      EXPORTING num_excepcion            TYPE i
+                mensaje                  TYPE any
+      CHANGING  tabla                    TYPE table
+                fichero_dialogo          TYPE any       DEFAULT ''.
+
+    CLASS-METHODS grabar_xml
+      IMPORTING fichero         TYPE any
+                !string         TYPE string    OPTIONAL
+                mostrar_error   TYPE abap_bool DEFAULT 'X'
+                codepage        TYPE any       DEFAULT zcl_c=>codepage
+                dialogo         TYPE abap_bool DEFAULT ''
+                xstring         TYPE xstring   OPTIONAL
+                partir_xml      TYPE abap_bool DEFAULT ''
+                !local          TYPE abap_bool DEFAULT ''
+      EXPORTING num_excepcion   TYPE i
+                mensaje         TYPE bapi_msg
+                fichero_dialogo TYPE any.
+
+    CLASS-METHODS leer
+      IMPORTING fichero       TYPE any
+                tipo          TYPE char10    DEFAULT 'ASC'
+                mostrar_error TYPE abap_bool DEFAULT 'X'
+                codepage      TYPE any       DEFAULT ''
+      EXPORTING num_excepcion TYPE i
+                mensaje       TYPE bapi_msg
+                filelength    TYPE i
+      CHANGING  tabla         TYPE table.
+
+    CLASS-METHODS leer_xml
+      IMPORTING fichero       TYPE any
+                mostrar_error TYPE abap_bool DEFAULT 'X'
+      EXPORTING !string       TYPE string
+                num_excepcion TYPE i
+                mensaje       TYPE bapi_msg.
+
+    CLASS-METHODS popup_select_fichero
+      IMPORTING default_extension TYPE string    OPTIONAL
+                initial_directory TYPE string    OPTIONAL
+                file_filter       TYPE string    OPTIONAL
+                servidor          TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(fichero)    TYPE string.
+
+    CLASS-METHODS graba_fich_servidor
+      IMPORTING  fichero          TYPE any
+                 modo_texto       TYPE abap_bool     DEFAULT 'X'
+                 mostrar_mensajes TYPE abap_bool     DEFAULT ''
+                 !unicode         TYPE abap_bool     DEFAULT ''
+                 bin_filesize     TYPE i             DEFAULT 0
+                 !string          TYPE string        OPTIONAL
+                 codepage         TYPE abap_encoding DEFAULT 'UTF-8'
+                 tabla_bin        TYPE abap_bool     DEFAULT ''
+                 xstring          TYPE xstring       OPTIONAL
+      EXPORTING  mensaje          TYPE bapi_msg
+      CHANGING   tabla            TYPE table         OPTIONAL
+      EXCEPTIONS error_abrir_fichero
+                 error_transfer
+                 error_cerrar_fichero.
+
+    CLASS-METHODS existe_directorio
+      IMPORTING fichero       TYPE any
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+    CLASS-METHODS ver_fichero_texto
+      IMPORTING fichero    TYPE any
+                !extension TYPE any DEFAULT ''.
+
+    CLASS-METHODS grabar_fichero
+      IMPORTING fichero          TYPE any
+                modo_texto       TYPE abap_bool     DEFAULT 'X'
+                mostrar_mensajes TYPE abap_bool     DEFAULT ''
+                !unicode         TYPE abap_bool     DEFAULT 'X'
+                trunc            TYPE abap_bool     DEFAULT ''
+                binario          TYPE abap_bool     DEFAULT ''
+                bin_filesize     TYPE i             DEFAULT 0
+                !string          TYPE string        OPTIONAL
+                tabla_bin        TYPE abap_bool     DEFAULT ''
+                xstring          TYPE xstring       OPTIONAL
+                desc_front       TYPE abap_bool     DEFAULT ''
+                codepage         TYPE abap_encoding DEFAULT ''
+      EXPORTING mensaje          TYPE bapi_msg
+      CHANGING  tabla            TYPE table         OPTIONAL.
+
+    CLASS-METHODS get_directorio_temporal
+      IMPORTING fichero           TYPE any       DEFAULT ''
+                nuevo_si_existe   TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(directorio) TYPE string.
+
+    CLASS-METHODS lista_ficheros_comun
+      IMPORTING !directory        TYPE any
+                !filter           TYPE any       DEFAULT '*.*'
+                recursivo         TYPE abap_bool DEFAULT ''
+                servidor          TYPE abap_bool DEFAULT ''
+                max_ficheros      TYPE i         DEFAULT 9999
+                mayusculas        TYPE abap_bool DEFAULT 'X'
+                !mask             TYPE any       DEFAULT ''
+      RETURNING VALUE(file_table) TYPE rstt_t_files.
+
+    CLASS-METHODS leer_fichero
+      IMPORTING fichero       TYPE any
+                tipo          TYPE char10    DEFAULT 'ASC'
+                mostrar_error TYPE abap_bool DEFAULT 'X'
+                codepage      TYPE any       DEFAULT ''
+      EXPORTING num_excepcion TYPE i
+                mensaje       TYPE bapi_msg
+                filelength    TYPE i
+      CHANGING  tabla         TYPE table.
+
+    CLASS-METHODS dialogo_grabar_fichero
+      IMPORTING fichero_inicial TYPE any
+                mostrar_error   TYPE abap_bool DEFAULT ''
+      EXPORTING ruta            TYPE string
+                mensaje         TYPE any
+                num_excepcion   TYPE i.
+
+    CLASS-METHODS grabar_xstring
+      IMPORTING mostrar_error TYPE abap_bool     DEFAULT 'X'
+                codepage      TYPE abap_encoding DEFAULT '4102'
+                xstring       TYPE xstring       OPTIONAL
+                fichero       TYPE any           OPTIONAL
+                dialogo       TYPE abap_bool     DEFAULT ''
+                !string       TYPE string        OPTIONAL
+                bin_filesize  TYPE i             DEFAULT 0
+                servidor      TYPE abap_bool     DEFAULT ''
+                !local        TYPE abap_bool     DEFAULT ''
+      EXPORTING num_excepcion TYPE i
+                mensaje       TYPE bapi_msg
+                fichero_final TYPE any.
+
+    CLASS-METHODS existe_dir
+      IMPORTING directorio    TYPE any
+                servidor      TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+    CLASS-METHODS leer_xstring
+      IMPORTING fichero              TYPE any       OPTIONAL
+                mostrar_error        TYPE abap_bool DEFAULT 'X'
+                get_string           TYPE abap_bool DEFAULT ''
+                get_tabla            TYPE abap_bool DEFAULT ''
+                servidor             TYPE abap_bool DEFAULT ''
+                !local               TYPE abap_bool DEFAULT ''
+                popup_select_fichero TYPE abap_bool DEFAULT ''
+      EXPORTING !string              TYPE string
+                num_excepcion        TYPE i
+                xstring              TYPE xstring
+                !message             TYPE bapi_msg
+                longitud             TYPE i
+                i_tabla_txt          TYPE table
+                fichero_salida       TYPE any.
+
+    CLASS-METHODS borrar_fichero
+      IMPORTING fichero        TYPE any
+                servidor       TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(mensaje) TYPE bapi_msg.
+
+    CLASS-METHODS copia_serv_2_local
+      IMPORTING fichero_origen  TYPE any
+                fichero_destino TYPE any
+                mostrar_error   TYPE abap_bool DEFAULT 'X'
+      EXPORTING !message        TYPE bapi_msg
+      RETURNING VALUE(error)    TYPE abap_bool.
+
+    CLASS-METHODS copia_local_2_serv
+      IMPORTING fichero_origen  TYPE any
+                fichero_destino TYPE any
+                mostrar_error   TYPE abap_bool DEFAULT 'X'
+      RETURNING VALUE(error)    TYPE abap_bool.
+
+    CLASS-METHODS buscar_ruta_fichero
+      IMPORTING rutas       TYPE any
+                fichero     TYPE any DEFAULT ''
+      RETURNING VALUE(ruta) TYPE string.
+
+    CLASS-METHODS existe
+      IMPORTING fichero       TYPE any
+                servidor      TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(existe) TYPE abap_bool.
+
+    CLASS-METHODS mover
+      IMPORTING fichero             TYPE any
+                mostrar_error       TYPE abap_bool DEFAULT 'X'
+                directorio_destino  TYPE any
+                servidor_orig       TYPE abap_bool DEFAULT ''
+                servidor_dest       TYPE abap_bool DEFAULT ''
+                crear_dir_dest_serv TYPE abap_bool DEFAULT 'X'
+      EXPORTING num_excepcion       TYPE i
+                mensaje             TYPE bapi_msg.
+
+    CLASS-METHODS popup_select_directorio
+      IMPORTING initial_directory TYPE string    DEFAULT 'C:\'
+                titulo            TYPE string    DEFAULT ''
+                servidor          TYPE abap_bool DEFAULT ''
+      CHANGING  VALUE(directorio) TYPE any.
+
+    CLASS-METHODS visualizar
+      IMPORTING fichero        TYPE any
+                directorio     TYPE any       DEFAULT ''
+                servidor       TYPE abap_bool DEFAULT ''
+                xstring        TYPE xstring   OPTIONAL
+                bin_filesize   TYPE i         DEFAULT 0
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS borrar_directorio
+      IMPORTING directorio     TYPE any
+                servidor       TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(mensaje) TYPE bapi_msg.
+
+    CLASS-METHODS crear_directorio_serv
+      IMPORTING dir            TYPE any
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS get_tipo_ruta
+      IMPORTING fichero     TYPE string
+                dialogo     TYPE abap_bool DEFAULT ''
+                !local      TYPE abap_bool DEFAULT ''
+                servidor    TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(tipo) TYPE char1.
+
+    CLASS-METHODS get_fichero_var
+      IMPORTING fichero       TYPE string
+      RETURNING VALUE(salida) TYPE string.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
 endclass. "ZCL_AP_FICHEROS definition
 class ZCL_AP_FICHEROS implementation.
-METHOD borrar_directorio.
+  METHOD borrar_directorio.
     DATA: l_directorio TYPE string,
           l_servidor   TYPE abap_bool,
           l_rc         TYPE i.
@@ -384,7 +342,7 @@ METHOD borrar_directorio.
       ENDIF.                                                "#EC *
     ENDIF.
   ENDMETHOD.
-METHOD borrar_fichero.
+  METHOD borrar_fichero.
     DATA: l_fichero  TYPE string,
           l_servidor TYPE abap_bool,
           l_rc       TYPE i.
@@ -423,7 +381,7 @@ METHOD borrar_fichero.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD buscar_ruta_fichero.
+  METHOD buscar_ruta_fichero.
     DATA i_rutas TYPE TABLE OF string.
 
     FIELD-SYMBOLS <ruta> TYPE string.
@@ -448,7 +406,7 @@ METHOD buscar_ruta_fichero.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
-METHOD concat_ruta.
+  METHOD concat_ruta.
     DATA: l_dir_temp   TYPE string,
           l_directorio TYPE string,
           l_separador  TYPE c LENGTH 1,
@@ -491,7 +449,7 @@ METHOD concat_ruta.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD copia_local_2_serv.
+  METHOD copia_local_2_serv.
     DATA: path       TYPE sapb-sappfad,
           targetpath TYPE sapb-sappfad.
 
@@ -511,7 +469,7 @@ METHOD copia_local_2_serv.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD copia_serv_2_local.
+  METHOD copia_serv_2_local.
     DATA: path       TYPE sapb-sappfad,
           targetpath TYPE sapb-sappfad.
 
@@ -525,17 +483,22 @@ METHOD copia_serv_2_local.
       EXCEPTIONS
         error_file = 1.
     IF sy-subrc <> 0.
+      IF sy-msgty = 'E'.
+        MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ELSE.
+        message = |Error al copiar { path } a { targetpath }|.
+      ENDIF.
       error = 'X'.
       IF mostrar_error = 'X'.
-        MESSAGE e398(00) WITH 'Error al copiar'(eac) path 'a'(aaa) targetpath.
+        MESSAGE e398(00) WITH message.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD crear_directorio_serv.
+  METHOD crear_directorio_serv.
     DATA: l_cmd   TYPE text255,
           l_lines TYPE TABLE OF char255.
 
-    CONCATENATE 'mkdir' dir INTO l_cmd SEPARATED BY space.
+    CONCATENATE 'mkdir' dir INTO l_cmd SEPARATED BY space ##NO_TEXT.
     TRY.
         CALL 'SYSTEM' ID 'COMMAND' FIELD l_cmd            "#EC CI_CCALL
              ID 'TAB' FIELD l_lines.
@@ -547,7 +510,7 @@ METHOD crear_directorio_serv.
         message = 'Error creando directorio'(ecd).
     ENDTRY.
   ENDMETHOD.
-METHOD dialogo_grabar_fichero.
+  METHOD dialogo_grabar_fichero.
     DATA: l_fichero    TYPE string,
           l_extension  TYPE string,
           l_directorio TYPE string,
@@ -555,25 +518,27 @@ METHOD dialogo_grabar_fichero.
           l_fullpath   TYPE string.
     DATA l_txt TYPE text1024.
 
+    CLEAR: ruta, mensaje, num_excepcion.
+
     l_fichero = fichero_inicial.
     l_extension = get_extension( l_fichero ).
     l_directorio = get_directorio_fichero( l_fichero ).
     l_fichero = get_nombre_fichero( l_fichero ).
     cl_gui_frontend_services=>file_save_dialog(
       EXPORTING
-*     window_title         =
+*       window_title         =
         default_extension    = l_extension
         default_file_name    = l_fichero
-*     with_encoding        =
-*     file_filter          =
+*       with_encoding        =
+*       file_filter          =
         initial_directory    = l_directorio
-*     prompt_on_overwrite  = 'X'
+*       prompt_on_overwrite  = 'X'
       CHANGING
         filename             = l_fichero
         path                 = l_path
         fullpath             = l_fullpath
-*     user_action          =
-*     file_encoding        =
+*       user_action          =
+*       file_encoding        =
       EXCEPTIONS
         cntl_error           = 1
         error_no_gui         = 2
@@ -609,7 +574,7 @@ METHOD dialogo_grabar_fichero.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD existe.
+  METHOD existe.
     DATA l_file TYPE string.
 
     l_file = fichero.
@@ -659,7 +624,7 @@ METHOD existe.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD existe_dir.
+  METHOD existe_dir.
     DATA: l_dir      TYPE string,
           l_name     TYPE salfile-longname,
           i_file_tbl TYPE TABLE OF salfldir.
@@ -698,7 +663,7 @@ METHOD existe_dir.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD existe_directorio.
+  METHOD existe_directorio.
     DATA l_file TYPE string.
 
     l_file = fichero.
@@ -729,7 +694,7 @@ METHOD existe_directorio.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD get_directorio_fichero.
+  METHOD get_directorio_fichero.
     DATA i_path TYPE text1024.
     DATA e_path TYPE string.
 
@@ -740,7 +705,7 @@ METHOD get_directorio_fichero.
       IMPORTING
         e_path = directorio.
   ENDMETHOD.
-METHOD get_directorio_temporal.
+  METHOD get_directorio_temporal.
     DATA: l_fichero   TYPE string,
           l_extension TYPE string,
           l_index     TYPE int4.
@@ -794,7 +759,7 @@ METHOD get_directorio_temporal.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD get_extension.
+  METHOD get_extension.
     DATA: l_filename  TYPE c LENGTH 1000,
           l_extension TYPE c LENGTH 30.
 
@@ -818,9 +783,8 @@ METHOD get_extension.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD get_fichero_var.
-    DATA: l_fecha TYPE c LENGTH 10,
-          l_hora  TYPE c LENGTH 8.
+  METHOD get_fichero_var.
+    DATA l_fecha TYPE c LENGTH 10.
 
     salida = fichero.
     DATA(var) = zcl_ap_regexp=>buscar_llaves( fichero ).
@@ -843,7 +807,7 @@ METHOD get_fichero_var.
       ENDCASE.
     ENDLOOP.
   ENDMETHOD.
-METHOD get_nombre_fichero.
+  METHOD get_nombre_fichero.
     DATA: iv_path      TYPE string,
           ev_filename  TYPE string,
           ev_extension TYPE string.
@@ -862,7 +826,7 @@ METHOD get_nombre_fichero.
       CONCATENATE ev_filename ev_extension INTO nombre SEPARATED BY '.'.
     ENDIF.
   ENDMETHOD.
-METHOD get_tipo_ruta.
+  METHOD get_tipo_ruta.
     DATA l_local           TYPE char1.
     DATA lv_update_process TYPE sy-subrc.
 
@@ -892,7 +856,7 @@ METHOD get_tipo_ruta.
           ELSE.
             tipo = 'S'.
           ENDIF.
-        CATCH cx_root INTO DATA(o_root).                    "#EC * " TODO: variable is assigned but never used (ABAP cleaner)
+        CATCH cx_root INTO DATA(o_root). "#EC * " TODO: variable is assigned but never used (ABAP cleaner)
           IF fichero CS '/'.
             tipo = 'S'.
           ELSE.
@@ -908,7 +872,7 @@ METHOD get_tipo_ruta.
       ENDTRY.
     ENDIF.
   ENDMETHOD.
-METHOD graba_fich_servidor.
+  METHOD graba_fich_servidor.
     DATA: mess          TYPE string,
           l_dir         TYPE string,
           l_xstring     TYPE xstring,
@@ -975,7 +939,7 @@ METHOD graba_fich_servidor.
           TRY.
               cvto_utf8->write( data = l_string ).
             CATCH cx_sy_conversion_codepage.
-              mensaje = 'Error de conversión'(erc).
+              mensaje = 'Error de conversion'(erc).
           ENDTRY.
 
           l_xstring = cvto_utf8->get_buffer( ).
@@ -1056,12 +1020,14 @@ METHOD graba_fich_servidor.
       RAISE error_cerrar_fichero.
     ENDIF.
   ENDMETHOD.
-METHOD grabar.
+  METHOD grabar.
     DATA: l_fichero      TYPE string,
           l_bin_filesize TYPE i,
           l_dat_mode     TYPE c LENGTH 1,
           l_codepage     TYPE abap_encoding,
           lx_root        TYPE REF TO cx_root.
+
+    CLEAR: mensaje, num_excepcion.
 
     l_fichero = fichero.
     IF dialogo = 'X'.
@@ -1088,31 +1054,31 @@ METHOD grabar.
     TRY.
         cl_gui_frontend_services=>gui_download(
           EXPORTING
-             bin_filesize              = l_bin_filesize
-             filename                  = l_fichero
-             filetype                  = tipo
-*      append                    = SPACE
-*      write_field_separator     = SPACE
-*      header                    = '00'
-*      trunc_trailing_blanks     = space
-*      write_lf                  = 'X'
-*      col_select                = SPACE
-*      col_select_mask           = SPACE
-             dat_mode                  = l_dat_mode
-*      confirm_overwrite         = SPACE
-*      no_auth_check             = SPACE
-             codepage                  = l_codepage
-*      ignore_cerr               = ABAP_TRUE
-*      replacement               = '#'
-*      write_bom                 = SPACE
-             trunc_trailing_blanks_eol = trunc
-             write_lf_after_last_line  = write_lf_after_last_line
-*      wk1_n_format              = SPACE
-*      wk1_n_size                = SPACE
-*      wk1_t_format              = SPACE
-*      wk1_t_size                = SPACE
+            bin_filesize              = l_bin_filesize
+            filename                  = l_fichero
+            filetype                  = tipo
+*           append                    = SPACE
+*           write_field_separator     = SPACE
+*           header                    = '00'
+*           trunc_trailing_blanks     = space
+*           write_lf                  = 'X'
+*           col_select                = SPACE
+*           col_select_mask           = SPACE
+            dat_mode                  = l_dat_mode
+*           confirm_overwrite         = SPACE
+*           no_auth_check             = SPACE
+            codepage                  = l_codepage
+*           ignore_cerr               = ABAP_TRUE
+*           replacement               = '#'
+            write_bom                 = write_bom
+            trunc_trailing_blanks_eol = trunc
+            write_lf_after_last_line  = write_lf_after_last_line
+*           wk1_n_format              = SPACE
+*           wk1_n_size                = SPACE
+*           wk1_t_format              = SPACE
+*           wk1_t_size                = SPACE
 *    IMPORTING
-*      filelength                =
+*           filelength                =
           CHANGING
             data_tab                  = tabla
           EXCEPTIONS
@@ -1168,7 +1134,7 @@ METHOD grabar.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD grabar_fichero.
+  METHOD grabar_fichero.
     DATA: l_tipo       TYPE c LENGTH 10,
           l_modo_texto TYPE c LENGTH 1.
 
@@ -1182,11 +1148,11 @@ METHOD grabar_fichero.
     IF get_tipo_ruta( fichero = CONV #( fichero ) local = desc_front   ) = 'L'.
       IF NOT xstring IS INITIAL.
         grabar_xstring( EXPORTING fichero       = fichero
-                          mostrar_error = mostrar_mensajes
-                          bin_filesize  = bin_filesize
-                          xstring       = xstring
-                          codepage      = codepage
-                IMPORTING mensaje       = mensaje ).
+                                  mostrar_error = mostrar_mensajes
+                                  bin_filesize  = bin_filesize
+                                  xstring       = xstring
+                                  codepage      = codepage
+                        IMPORTING mensaje       = mensaje ).
       ELSE.
         grabar( EXPORTING fichero       = fichero
                           mostrar_error = mostrar_mensajes
@@ -1207,11 +1173,11 @@ METHOD grabar_fichero.
                                       xstring              = xstring
                                       tabla_bin            = tabla_bin
                            IMPORTING  mensaje              = mensaje
-                           CHANGING   tabla   = tabla
+                           CHANGING   tabla                = tabla
                            EXCEPTIONS error_abrir_fichero  = 1
                                       error_transfer       = 2
                                       error_cerrar_fichero = 3
-                                     OTHERS               = 4 ).
+                                      OTHERS               = 4 ).
       IF sy-subrc <> 0.
         IF mensaje IS INITIAL.
           mensaje = |Error grabando fichero { fichero }|.
@@ -1219,13 +1185,15 @@ METHOD grabar_fichero.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD grabar_xml.
+  METHOD grabar_xml.
     DATA: tempstring     TYPE string,
           l_long         TYPE i,
           temptable_char TYPE table_of_strings,
           l_unicode      TYPE c LENGTH 1.
 
     FIELD-SYMBOLS <string> TYPE string.
+
+    CLEAR: num_excepcion, mensaje, fichero_dialogo.
 
     IF NOT string IS INITIAL.
       tempstring = string.
@@ -1253,27 +1221,27 @@ METHOD grabar_xml.
     ENDIF.
 
     IF fichero CS ':' OR dialogo = 'X' OR local = 'X'.
-      grabar( EXPORTING fichero       = fichero
-                        tipo          = 'DAT'
-                        mostrar_error = 'X'
-                        codepage      = codepage
-                        dialogo       = dialogo
-              IMPORTING num_excepcion = num_excepcion
-              CHANGING  tabla = temptable_char
+      grabar( EXPORTING fichero         = fichero
+                        tipo            = 'DAT'
+                        mostrar_error   = 'X'
+                        codepage        = codepage
+                        dialogo         = dialogo
+              IMPORTING num_excepcion   = num_excepcion
+              CHANGING  tabla           = temptable_char
                         fichero_dialogo = fichero_dialogo ).
     ELSE.
       IF codepage = '4110'.
         l_unicode = 'X'.
       ENDIF.
-      zcl_ap_ficheros=>grabar_fichero( EXPORTING fichero = fichero
-                                                 binario = 'X'
+      zcl_ap_ficheros=>grabar_fichero( EXPORTING fichero      = fichero
+                                                 binario      = 'X'
                                                  bin_filesize = l_long
-                                                 unicode = l_unicode
-                                       IMPORTING mensaje = mensaje
-                                       CHANGING  tabla   = temptable_char ).
+                                                 unicode      = l_unicode
+                                       IMPORTING mensaje      = mensaje
+                                       CHANGING  tabla        = temptable_char ).
     ENDIF.
   ENDMETHOD.
-METHOD grabar_xstring.
+  METHOD grabar_xstring.
     DATA: l_xstring    TYPE xstring,
           l_filelength TYPE i,
           i_tabla      TYPE STANDARD TABLE OF x255,
@@ -1286,6 +1254,8 @@ METHOD grabar_xstring.
           l_last       TYPE c LENGTH 1,
           l_long       TYPE i,
           l_servidor   TYPE abap_bool.
+
+    CLEAR: mensaje, num_excepcion, fichero_final.
 
     IF NOT xstring IS INITIAL.
       l_xstring = xstring.
@@ -1308,8 +1278,8 @@ METHOD grabar_xstring.
     l_fichero = get_fichero_var( fichero = CONV #( fichero ) ).
 
     DATA(l_tipo_ruta) = get_tipo_ruta( fichero = CONV #( fichero ) servidor = servidor local = local dialogo = dialogo ).
-    IF l_tipo_ruta = 'L' OR  "Local
-       l_tipo_ruta = 'X'.    "Diálogo
+    IF    l_tipo_ruta = 'L'  " Local
+       OR l_tipo_ruta = 'X'.    " Diálogo
       grabar( EXPORTING fichero         = l_fichero
                         tipo            = 'BIN'
                         mostrar_error   = mostrar_error
@@ -1390,10 +1360,11 @@ METHOD grabar_xstring.
       MESSAGE e153(14) WITH l_fichero.
     ENDIF.
   ENDMETHOD.
-METHOD lee_fich_servidor.
+  METHOD lee_fich_servidor.
     DATA: l_long  TYPE i,
           l_linea TYPE c LENGTH 65535.
 
+    CLEAR : mensaje, longitud.
     IF modo_texto = 'X'.
       IF legacy IS INITIAL.
         IF codepage = '4110'.
@@ -1452,7 +1423,7 @@ METHOD lee_fich_servidor.
           ELSE.
             APPEND l_linea TO tabla.
             longitud = longitud + l_long.
-            mensaje = 'Problemas conversión codepage'(pcc).
+            mensaje = 'Problemas conversion codepage'(pcc).
           ENDIF.
       ENDTRY.
     ENDDO.
@@ -1466,7 +1437,7 @@ METHOD lee_fich_servidor.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD lee_ficheros_servidor.
+  METHOD lee_ficheros_servidor.
     DATA file_counter TYPE i.
     DATA: i_dir      TYPE zt_lista_ficheros,
           l_dir_list TYPE zt_lista_ficheros.
@@ -1615,7 +1586,7 @@ METHOD lee_ficheros_servidor.
       ENDLOOP.
     ENDIF.
   ENDMETHOD.
-METHOD leer.
+  METHOD leer.
     DATA: l_tipo    TYPE char10,
           l_sep     TYPE c LENGTH 1,
           l_fichero TYPE string.
@@ -1632,16 +1603,16 @@ METHOD leer.
         filename                = l_fichero
         filetype                = l_tipo
         has_field_separator     = l_sep
-*     header_length           = 0
-*     read_by_line            = 'X'
+*       header_length           = 0
+*       read_by_line            = 'X'
         dat_mode                = l_sep
         codepage                = codepage
-*     ignore_cerr             = ABAP_TRUE
-*     replacement             = '#'
-*     virus_scan_profile      =
+*       ignore_cerr             = ABAP_TRUE
+*       replacement             = '#'
+*       virus_scan_profile      =
       IMPORTING
         filelength              = filelength
-*     header                  =
+*       header                  =
       CHANGING
         data_tab                = tabla
       EXCEPTIONS
@@ -1690,52 +1661,52 @@ METHOD leer.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD leer_fichero.
+  METHOD leer_fichero.
     DATA l_modo_texto TYPE c LENGTH 1.
 
     IF get_tipo_ruta( fichero = CONV #( fichero ) ) = 'L'.
-      leer( EXPORTING fichero  = fichero
-                      tipo     = tipo
-                      codepage = codepage
+      leer( EXPORTING fichero       = fichero
+                      tipo          = tipo
+                      codepage      = codepage
                       mostrar_error = mostrar_error
             IMPORTING num_excepcion = num_excepcion
                       mensaje       = mensaje
                       filelength    = filelength
-            CHANGING  tabla = tabla ).
+            CHANGING  tabla         = tabla ).
     ELSE.
       IF tipo <> 'BIN'.
         l_modo_texto = 'X'.
       ENDIF.
-      lee_fich_servidor( EXPORTING fichero = fichero
-                                   modo_texto = l_modo_texto
+      lee_fich_servidor( EXPORTING fichero          = fichero
+                                   modo_texto       = l_modo_texto
                                    mostrar_mensajes = mostrar_error
-                                   codepage      = codepage
-                         IMPORTING mensaje       = mensaje
-                                   longitud      = filelength
-                         CHANGING  tabla = tabla ).
+                                   codepage         = codepage
+                         IMPORTING mensaje          = mensaje
+                                   longitud         = filelength
+                         CHANGING  tabla            = tabla ).
       IF mensaje CS 'codepage'.
         CLEAR mensaje.
-        lee_fich_servidor( EXPORTING fichero = fichero
-                                     modo_texto = l_modo_texto
+        lee_fich_servidor( EXPORTING fichero          = fichero
+                                     modo_texto       = l_modo_texto
                                      mostrar_mensajes = mostrar_error
-                                     codepage = '4110'
-                           IMPORTING mensaje       = mensaje
-                                     longitud      = filelength
-                            CHANGING tabla = tabla ).
+                                     codepage         = '4110'
+                           IMPORTING mensaje          = mensaje
+                                     longitud         = filelength
+                           CHANGING  tabla            = tabla ).
         IF mensaje CS 'codepage' AND l_modo_texto = 'X'.
           CLEAR l_modo_texto.
           CLEAR mensaje.
-          lee_fich_servidor( EXPORTING fichero = fichero
-                                       modo_texto = l_modo_texto
+          lee_fich_servidor( EXPORTING fichero          = fichero
+                                       modo_texto       = l_modo_texto
                                        mostrar_mensajes = mostrar_error
-                             IMPORTING mensaje       = mensaje
-                                       longitud      = filelength
-                              CHANGING tabla = tabla ).
+                             IMPORTING mensaje          = mensaje
+                                       longitud         = filelength
+                             CHANGING  tabla            = tabla ).
         ENDIF.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD leer_xml.
+  METHOD leer_xml.
     DATA: temptable  TYPE table_of_strings,
           tempstring TYPE string,
           l_last     TYPE c LENGTH 1.
@@ -1743,16 +1714,16 @@ METHOD leer_xml.
     CLEAR string.
 
     IF fichero CS ':'.
-      leer( EXPORTING fichero = fichero
-                      tipo    = 'DAT'
+      leer( EXPORTING fichero       = fichero
+                      tipo          = 'DAT'
                       mostrar_error = mostrar_error
-              IMPORTING num_excepcion = num_excepcion
-              CHANGING  tabla = temptable ).
+            IMPORTING num_excepcion = num_excepcion
+            CHANGING  tabla         = temptable ).
     ELSE.
-      leer_fichero( EXPORTING fichero = fichero
+      leer_fichero( EXPORTING fichero       = fichero
                               mostrar_error = mostrar_error
-                    IMPORTING mensaje = mensaje
-                     CHANGING  tabla = temptable ).
+                    IMPORTING mensaje       = mensaje
+                    CHANGING  tabla         = temptable ).
     ENDIF.
 
     LOOP AT temptable INTO tempstring.
@@ -1767,10 +1738,7 @@ METHOD leer_xml.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
-METHOD leer_xstring.
-    " TODO: parameter SERVIDOR is never used (ABAP cleaner)
-    " TODO: parameter LOCAL is never used (ABAP cleaner)
-
+  METHOD leer_xstring.
     DATA: l_fichero  TYPE string,
           l_serv     TYPE abap_bool,
           i_tabla    TYPE STANDARD TABLE OF x255,
@@ -1778,7 +1746,7 @@ METHOD leer_xstring.
           l_err_root TYPE REF TO cx_root,
           i_solix    TYPE solix_tab.
 
-    CLEAR string.
+    CLEAR: string, num_excepcion, xstring, message, longitud, i_tabla_txt, fichero_salida.
 
     IF popup_select_fichero = 'X'.
       l_fichero = popup_select_fichero( ).
@@ -1803,19 +1771,21 @@ METHOD leer_xstring.
           l_serv = 'X'.
         ENDIF.
       ENDIF.
-    ELSEIF get_tipo_ruta( fichero = l_fichero  ) = 'S'.
+    ELSEIF get_tipo_ruta( fichero  = l_fichero
+                          local    = local
+                          servidor = servidor  ) = 'S'.
       l_serv = 'X'.
     ENDIF.
 
     fichero_salida = l_fichero.
 
     IF l_serv IS INITIAL.
-      leer( EXPORTING fichero = l_fichero
-                      tipo    = 'BIN'
+      leer( EXPORTING fichero       = l_fichero
+                      tipo          = 'BIN'
                       mostrar_error = mostrar_error
-              IMPORTING num_excepcion = num_excepcion
-                        filelength = longitud
-              CHANGING  tabla = i_tabla ).
+            IMPORTING num_excepcion = num_excepcion
+                      filelength    = longitud
+            CHANGING  tabla         = i_tabla ).
 
       CALL FUNCTION 'SCMS_BINARY_TO_XSTRING'
         EXPORTING
@@ -1896,25 +1866,20 @@ METHOD leer_xstring.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD limpiar_fichero.
+  METHOD limpiar_fichero.
     DATA l_linea TYPE c LENGTH 10000.
 
     l_linea = fichero.
     REPLACE '\\' WITH '\' INTO l_linea+1.
     salida = l_linea.
   ENDMETHOD.
-METHOD lista_ficheros.
+  METHOD lista_ficheros.
     DATA: l_dir         TYPE string,
           l_filter      TYPE string,
           i_directorios TYPE TABLE OF file_info,
           l_count       TYPE i,
           l_fichero     TYPE file_info,
-          l_dir_aux     TYPE string,
-          l_files_aux   TYPE TABLE OF file_info,
-          l_cont        TYPE i,
-          l_directorio  TYPE file_info,
-          l_file        TYPE c LENGTH 1000,
-          i_ficheros    TYPE TABLE OF file_info.
+          l_cont        TYPE i.
 
     REFRESH file_table.
 
@@ -1940,7 +1905,7 @@ METHOD lista_ficheros.
                     INTO l_fichero-filename.
         REPLACE '\\' WITH '\' INTO l_fichero-filename+2.
         APPEND l_fichero TO file_table.
-        ADD 1 TO l_count.
+        l_count = l_count + 1.
         IF max_ficheros > 0 AND l_cont > max_ficheros.
           RETURN.
         ENDIF.
@@ -1949,12 +1914,12 @@ METHOD lista_ficheros.
       IF recursivo = 'X'.
         LOOP AT i_directorios INTO l_fichero WHERE isdir = 1.
           DATA(l_max) = max_ficheros - l_count.
-          IF l_max > 0 or max_ficheros = 0.
+          IF l_max > 0 OR max_ficheros = 0.
             CONCATENATE directory '\' l_fichero-filename
                         INTO l_fichero-filename.
-            DATA(i_fich) = lista_ficheros( directory = l_fichero-filename
-                                           recursivo = recursivo
-                                           filter    = filter
+            DATA(i_fich) = lista_ficheros( directory    = l_fichero-filename
+                                           recursivo    = recursivo
+                                           filter       = filter
                                            max_ficheros = l_max ).
             APPEND LINES OF i_fich TO file_table.
           ENDIF.
@@ -1962,7 +1927,7 @@ METHOD lista_ficheros.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD lista_ficheros_comun.
+  METHOD lista_ficheros_comun.
     DATA: l_dir      TYPE text255,
           i_dir_list TYPE zt_lista_ficheros,
           l_file     TYPE file_info.
@@ -1971,7 +1936,6 @@ METHOD lista_ficheros_comun.
           l_file_mask TYPE string,
           l_p1        TYPE string,
           l_p2        TYPE string,
-          " TODO: variable is assigned but never used (ABAP cleaner)
           l_p3        TYPE string,
           l_ext_file  TYPE string,
           l_file_file TYPE string.
@@ -1981,10 +1945,10 @@ METHOD lista_ficheros_comun.
     SET PARAMETER ID 'ZLF_MSG' FIELD '' ##EXISTS.
 
     IF servidor IS INITIAL.
-      file_table = lista_ficheros( directory = directory
-                                   filter    = filter
+      file_table = lista_ficheros( directory    = directory
+                                   filter       = filter
                                    max_ficheros = max_ficheros
-                                   recursivo = recursivo ).
+                                   recursivo    = recursivo ).
     ELSE.
       l_dir = directory.
       IF mayusculas = 'X'.
@@ -1998,7 +1962,7 @@ METHOD lista_ficheros_comun.
           recursion             = recursivo
           max_ficheros          = max_ficheros
           mayusculas            = mayusculas
-*       solo_dir              =
+*         solo_dir              =
         CHANGING
           dir_list              = i_dir_list
         EXCEPTIONS
@@ -2045,13 +2009,13 @@ METHOD lista_ficheros_comun.
           DELETE file_table.
         ELSEIF NOT l_p2 IS INITIAL AND NOT l_file_file CS l_p2.
           DELETE file_table.
-        ELSEIF NOT l_p2 IS INITIAL AND NOT l_file_file CS l_p2.
+        ELSEIF NOT l_p3 IS INITIAL AND NOT l_file_file CS l_p3.
           DELETE file_table.
         ENDIF.
       ENDLOOP.
     ENDIF.
   ENDMETHOD.
-METHOD mover.
+  METHOD mover.
     DATA: l_serv_orig TYPE c LENGTH 1,
           l_serv_dest TYPE c LENGTH 1,
           l_file      TYPE string,
@@ -2122,10 +2086,10 @@ METHOD mover.
     ENDIF.
 
     mensaje = borrar_fichero(
-                  fichero  = fichero
-                  servidor = l_serv_orig ).
+      fichero  = fichero
+      servidor = l_serv_orig ).
   ENDMETHOD.
-METHOD popup_select_directorio.
+  METHOD popup_select_directorio.
     DATA l_dir TYPE string.
 
     IF servidor IS INITIAL.
@@ -2163,7 +2127,7 @@ METHOD popup_select_directorio.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD popup_select_fichero.
+  METHOD popup_select_fichero.
     DATA: l_rc       TYPE i,
           i_ficheros TYPE filetable,
           l_fichero  TYPE file_table,
@@ -2174,11 +2138,13 @@ METHOD popup_select_fichero.
 
     IF servidor IS INITIAL.
       cl_gui_frontend_services=>file_open_dialog(
-                     EXPORTING default_extension = default_extension
-                               initial_directory = initial_directory
-                               file_filter       = file_filter
-                     CHANGING  rc = l_rc
-                               file_table = i_ficheros ).
+        EXPORTING
+          default_extension = default_extension
+          initial_directory = initial_directory
+          file_filter       = file_filter
+        CHANGING
+          rc                = l_rc
+          file_table        = i_ficheros ).
 
       READ TABLE i_ficheros INTO l_fichero INDEX 1.
       IF sy-subrc = 0.
@@ -2205,7 +2171,7 @@ METHOD popup_select_fichero.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-METHOD ultima_letra_ruta.
+  METHOD ultima_letra_ruta.
     DATA: l_char TYPE c LENGTH 1000,
           l_lon  TYPE i.
 
@@ -2216,7 +2182,7 @@ METHOD ultima_letra_ruta.
     ENDIF.
     letra = l_char+l_lon(1).
   ENDMETHOD.
-METHOD ver_fichero_texto.
+  METHOD ver_fichero_texto.
     DATA: l_fichero   TYPE string,
           i_tabla     TYPE TABLE OF string,
           l_documento TYPE zdocumentos.
@@ -2234,11 +2200,11 @@ METHOD ver_fichero_texto.
       l_documento-fichero = fichero.
       l_fichero = zcl_ap_documentos=>get_nombre_fichero_temporal( l_documento ).
       grabar( EXPORTING fichero = l_fichero
-              CHANGING tabla   = i_tabla ).
+              CHANGING  tabla   = i_tabla ).
     ENDIF.
     zcl_ap_gos=>visualizar_fichero_st( fichero = l_fichero extension = extension ).
   ENDMETHOD.
-METHOD visualizar.
+  METHOD visualizar.
     DATA: l_fichero TYPE string,
           l_xstring TYPE xstring,
           l_ruta    TYPE string.
@@ -2246,9 +2212,9 @@ METHOD visualizar.
     CLEAR message.
     IF xstring IS INITIAL.
       l_fichero = concat_ruta( fichero = fichero directorio = directorio ).
-      leer_xstring( EXPORTING fichero       = l_fichero
-                              servidor      = servidor
-                    IMPORTING xstring       = l_xstring ).
+      leer_xstring( EXPORTING fichero  = l_fichero
+                              servidor = servidor
+                    IMPORTING xstring  = l_xstring ).
     ELSE.
       l_xstring = xstring.
     ENDIF.
@@ -2262,10 +2228,10 @@ METHOD visualizar.
     ENDIF.
     l_fichero = get_nombre_fichero( fichero = fichero con_extension = 'X' ).
     l_fichero = concat_ruta( fichero = l_fichero directorio = l_ruta ).
-    grabar_xstring( EXPORTING xstring       = l_xstring
-                              fichero       = l_fichero
-                              bin_filesize  = bin_filesize
-                    IMPORTING mensaje = message ).
+    grabar_xstring( EXPORTING xstring      = l_xstring
+                              fichero      = l_fichero
+                              bin_filesize = bin_filesize
+                    IMPORTING mensaje      = message ).
     IF message IS NOT INITIAL.
       RETURN.
     ENDIF.

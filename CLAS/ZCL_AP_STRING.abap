@@ -1,300 +1,358 @@
-CLASS zcl_ap_string DEFINITION
-  PUBLIC
-  CREATE PUBLIC.
+﻿class ZCL_AP_STRING definition
+  public
+  create public .
 
-  PUBLIC SECTION.
-    CONSTANTS c_error_float TYPE qmittelwrt VALUE '-99999.99999' ##NO_TEXT.
+public section.
 
-    CLASS-METHODS tabla2string
-      IMPORTING tabla               TYPE table
-                separar_con_espacio TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(string)       TYPE string.
+  constants C_ERROR_FLOAT type QMITTELWRT value '-99999.99999' ##NO_TEXT.
 
-    CLASS-METHODS string2tabla
-      IMPORTING !string               TYPE string
-                longitud              TYPE i         DEFAULT 132
-                forzar_enter          TYPE abap_bool DEFAULT ''
-                partir_solo_en_blanco TYPE abap_bool DEFAULT ''
-      CHANGING  tabla                 TYPE table.
-
-    CLASS-METHODS editor_popup_string
-      IMPORTING !string       TYPE string OPTIONAL
-                titulo        TYPE string DEFAULT ''
-      PREFERRED PARAMETER string
-      RETURNING VALUE(salida) TYPE string.
-
-    CLASS-METHODS comprimir_string
-      IMPORTING !string        TYPE string
-      RETURNING VALUE(xstring) TYPE xstring.
-
-    CLASS-METHODS descomprimir_string
-      IMPORTING xstring       TYPE xstring
-      RETURNING VALUE(string) TYPE string.
-
-    CLASS-METHODS string2xstring
-      IMPORTING !string        TYPE string
-                comprimir      TYPE abap_bool DEFAULT ''
-                !encoding      TYPE any       DEFAULT 'DEFAULT'
-      RETURNING VALUE(xstring) TYPE xstring.
-
-    CLASS-METHODS xstring2string
-      IMPORTING xstring       TYPE xstring
-                !encoding     TYPE any       DEFAULT 'DEFAULT'
-                descomprimir  TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(string) TYPE string.
-
-    CLASS-METHODS quitar_caracteres_extranos
-      IMPORTING !replacement TYPE any DEFAULT 46
-      CHANGING  !string      TYPE string.
-
-    CLASS-METHODS limpiar_nombre_fichero
-      CHANGING !string TYPE string.
-
-    CLASS-METHODS busca_numeros
-      IMPORTING !string       TYPE any
-                cualquiera    TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(numero) TYPE string.
-
-    CLASS-METHODS poner_ceros
-      IMPORTING cadena        TYPE any
-      CHANGING  VALUE(salida) TYPE any.
-
-    CLASS-METHODS string_estandar
-      IMPORTING entrada       TYPE string
-      RETURNING VALUE(salida) TYPE string.
-
-    CLASS-METHODS tline2string
-      IMPORTING tabla              TYPE tlinetab
-                blancos_son_saltos TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(string)      TYPE string.
-
-    CLASS-METHODS string2tline
-      IMPORTING !string TYPE string
-      CHANGING  tabla   TYPE tlinetab.
-
-    CLASS-METHODS formatear_tline
-      CHANGING tabla TYPE tlinetab.
-
-    CLASS-METHODS ultimo_caracter
-      IMPORTING texto       TYPE any
-                num_car     TYPE i DEFAULT 1
-      RETURNING VALUE(char) TYPE string.
-
-    CLASS-METHODS justificar_string2tabla
-      IMPORTING !string  TYPE string
-                longitud TYPE i DEFAULT 132
-      CHANGING  tabla    TYPE table.
-
-    CLASS-METHODS condensar_tabla
-      IMPORTING longitud TYPE i DEFAULT 132
-      CHANGING  tabla    TYPE table.
-
-    CLASS-METHODS quitar_ceros
-      IMPORTING cadena        TYPE any
-      CHANGING  VALUE(salida) TYPE any.
-
-    CLASS-METHODS quitar_ceros_c
-      CHANGING cadena TYPE any.
-
-    CLASS-METHODS string2tablastring
-      IMPORTING !string  TYPE string
-                longitud TYPE i DEFAULT 132
-      CHANGING  tabla    TYPE table.
-
-    CLASS-METHODS right
-      IMPORTING entrada       TYPE any
-                !long         TYPE i
-      RETURNING VALUE(salida) TYPE string.
-
-    CLASS-METHODS poner_ceros_c
-      CHANGING cadena TYPE any.
-
-    CLASS-METHODS string2importe
-      IMPORTING !string        TYPE any
-      RETURNING VALUE(importe) TYPE awkgr.
-
-    CLASS-METHODS limpia_numeros
-      IMPORTING !string       TYPE any
-      RETURNING VALUE(numero) TYPE string.
-
-    CLASS-METHODS get_text_from_url
-      IMPORTING url            TYPE saeuri
-                mostrar_error  TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(i_texto) TYPE soli_tab.
-
-    CLASS-METHODS string_to_binary_tab
-      IMPORTING !string     TYPE string
-      RETURNING VALUE(itab) TYPE solix_tab.
-
-    CLASS-METHODS string_pot_2importe
-      IMPORTING !string        TYPE any
-      RETURNING VALUE(importe) TYPE dec_16_05_s.
-
-    CLASS-METHODS string2cantidad
-      IMPORTING !string        TYPE any
-      RETURNING VALUE(importe) TYPE bbbtr.
-
-    CLASS-METHODS lista2rango
-      IMPORTING lista          TYPE any
-                separador      TYPE any       DEFAULT ','
-                !option        TYPE any       DEFAULT 'EQ'
-                conv_asterisco TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(rango)   TYPE rstt_t_range_string.
-
-    CLASS-METHODS siguiente_letra
-      IMPORTING letra            TYPE c
-      RETURNING VALUE(siguiente) TYPE char1.
-
-    CLASS-METHODS es_numero
-      IMPORTING cadena    TYPE any
-      RETURNING VALUE(si) TYPE abap_bool.
-
-    CLASS-METHODS string2float
-      IMPORTING !string      TYPE any
-      RETURNING VALUE(float) TYPE qmittelwrt.
-
-    CLASS-METHODS get_string_from_url
-      IMPORTING url             TYPE any
-                mostrar_error   TYPE abap_bool DEFAULT ''
-                !convert        TYPE abap_bool DEFAULT ''
-      EXPORTING !size           TYPE i
-                content_bin_255 TYPE bapidoccontentab
-      RETURNING VALUE(string)   TYPE string.
-
-    CLASS-METHODS convert_html_chars
-      CHANGING !string TYPE any.
-
-    CLASS-METHODS es_numerop
-      IMPORTING cadena    TYPE any
-      RETURNING VALUE(si) TYPE abap_bool.
-
-    CLASS-METHODS transform_object_to_rawstring
-      IMPORTING  objeto         TYPE REF TO if_serializable_object OPTIONAL
-                 comprimir      TYPE abap_bool                     DEFAULT 'X'
-                 tabla          TYPE table                         OPTIONAL
-                 variable       TYPE any                           OPTIONAL
-                 json           TYPE abap_bool                     DEFAULT ''
-      RETURNING  VALUE(xstring) TYPE xstring
-      EXCEPTIONS transformation_failed.
-
-    CLASS-METHODS transform_rawstring_to_object
-      IMPORTING  descomprimir         TYPE abap_bool                     DEFAULT 'X'
-                 xstring              TYPE xstring                       OPTIONAL
-                 get_objeto           TYPE abap_bool                     DEFAULT ''
-                 get_tabla            TYPE abap_bool                     DEFAULT ''
-                 get_variable         TYPE abap_bool                     DEFAULT ''
-                 !string              TYPE any                           DEFAULT ''
-                 codepage             TYPE any                           DEFAULT '1100'
-                 json                 TYPE abap_bool                     DEFAULT ''
-                 visualizar_xml       TYPE abap_bool                     DEFAULT ''
-      EXPORTING  xstring_decompressed TYPE xstring
-      CHANGING   objeto               TYPE REF TO if_serializable_object OPTIONAL
-                 tabla                TYPE table                         OPTIONAL
-                 variable             TYPE any                           OPTIONAL
-      EXCEPTIONS transformation_failed.
-
-    CLASS-METHODS es_numero_coma
-      IMPORTING cadena    TYPE any
-      RETURNING VALUE(si) TYPE abap_bool.
-
-    CLASS-METHODS string2ctd
-      IMPORTING ctd_texto TYPE any
-      EXPORTING cantidad  TYPE any
-                mensaje   TYPE any.
-
-    CLASS-METHODS split_left
-      IMPORTING !string   TYPE any
-                separador TYPE any
-      EXPORTING izquierda TYPE any
-                derecha   TYPE any.
-
-    CLASS-METHODS convierte_codificacion
-      IMPORTING cadena          TYPE any       OPTIONAL
-                incode          TYPE any       DEFAULT zcl_c=>codepage_html
-                outcode         TYPE any       DEFAULT zcl_c=>codepage
-                mostrar_error   TYPE abap_bool DEFAULT ''
-                conv_caract_in  TYPE any       OPTIONAL
-                conv_caract_out TYPE any       OPTIONAL
-      PREFERRED PARAMETER cadena
-      RETURNING VALUE(salida)   TYPE string.
-
-    CLASS-METHODS get_string_from_url_fondo
-      IMPORTING url           TYPE any
-                mostrar_error TYPE abap_bool DEFAULT ''
-                !convert      TYPE abap_bool DEFAULT ''
-      EXPORTING !message      TYPE bapi_msg
-      RETURNING VALUE(string) TYPE string.
-
-    CLASS-METHODS eliminar_caract_no_validos
-      IMPORTING cadena        TYPE any
-      RETURNING VALUE(salida) TYPE string.
-
-    CLASS-METHODS to_clipboard
-      IMPORTING !string  TYPE string    OPTIONAL
-                show_msg TYPE abap_bool DEFAULT 'X'
-                tabla    TYPE table     OPTIONAL
-      PREFERRED PARAMETER string.
-
-    CLASS-METHODS from_clipboard
-      IMPORTING show_msg   TYPE abap_bool DEFAULT 'X'
-                get_tabla  TYPE abap_bool DEFAULT ''
-                get_string TYPE abap_bool DEFAULT 'X'
-      EXPORTING tabla      TYPE table
-                !string    TYPE string.
-
-    CLASS-METHODS xstring2base64
-      IMPORTING xstring       TYPE xstring
-      RETURNING VALUE(base64) TYPE string.
-
-    CLASS-METHODS numero2string
-      IMPORTING numero               TYPE any
-                quitar_ceros_derecha TYPE abap_bool DEFAULT 'X'
-      RETURNING VALUE(string)        TYPE string.
-
-    CLASS-METHODS popup_texto
-      IMPORTING titulo             TYPE any    DEFAULT ''
-                editar             TYPE any    DEFAULT ''
-                intro              TYPE any    DEFAULT ''
-                max_cols           TYPE i      DEFAULT 132
-                titulo_texto_corto TYPE string DEFAULT ''
-      EXPORTING modificado         TYPE any
-                cancelado          TYPE any
-      CHANGING  texto              TYPE any
-                texto_corto        TYPE any    OPTIONAL.
-
-    CLASS-METHODS get_hash
-      IMPORTING datos       TYPE any       OPTIONAL
-                algoritmo   TYPE string    DEFAULT 'MD5'
-                b64         TYPE abap_bool DEFAULT 'X'
-                tabla       TYPE table     OPTIONAL
-      PREFERRED PARAMETER datos
-      RETURNING VALUE(hash) TYPE string.
-
-    CLASS-METHODS ctd2string
-      IMPORTING ctd              TYPE any
-                quitar_decimales TYPE abap_bool DEFAULT 'X'
-                max_decimales    TYPE i         DEFAULT 9999
-                condensar        TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(string)    TYPE string.
-
-    CLASS-METHODS encrypt
-      IMPORTING !string        TYPE any
-      RETURNING VALUE(encrypt) TYPE string.
-
-    CLASS-METHODS decrypt
-      IMPORTING !string        TYPE any
-      RETURNING VALUE(decrypt) TYPE string.
-
-    CLASS-METHODS escape_url
-      IMPORTING !string    TYPE any
-      RETURNING VALUE(url) TYPE string.
-
-    CLASS-METHODS get_guid
-      RETURNING VALUE(guid) TYPE edoc_guid.
-
-    CLASS-METHODS base642xstring
-      IMPORTING base64         TYPE string
-      RETURNING VALUE(xstring) TYPE xstring.
+  class-methods TABLA2STRING
+    importing
+      !TABLA type TABLE
+      !SEPARAR_CON_ESPACIO type ABAP_BOOL default ''
+    returning
+      value(STRING) type STRING .
+  class-methods STRING2TABLA
+    importing
+      !STRING type STRING
+      !LONGITUD type I default 132
+      !FORZAR_ENTER type ABAP_BOOL default ''
+      !PARTIR_SOLO_EN_BLANCO type ABAP_BOOL default ''
+    changing
+      !TABLA type TABLE .
+  class-methods EDITOR_POPUP_STRING
+    importing
+      !STRING type STRING optional
+      !TITULO type STRING default ''
+    preferred parameter STRING
+    returning
+      value(SALIDA) type STRING .
+  class-methods COMPRIMIR_STRING
+    importing
+      !STRING type STRING
+    returning
+      value(XSTRING) type XSTRING .
+  class-methods DESCOMPRIMIR_STRING
+    importing
+      !XSTRING type XSTRING
+    returning
+      value(STRING) type STRING .
+  class-methods STRING2XSTRING
+    importing
+      !STRING type STRING
+      !COMPRIMIR type ABAP_BOOL default ''
+      !ENCODING type ANY default 'DEFAULT'
+    returning
+      value(XSTRING) type XSTRING .
+  class-methods XSTRING2STRING
+    importing
+      !XSTRING type XSTRING
+      !ENCODING type ANY default 'DEFAULT'
+      !DESCOMPRIMIR type ABAP_BOOL default ''
+    returning
+      value(STRING) type STRING .
+  class-methods QUITAR_CARACTERES_EXTRANOS
+    importing
+      !REPLACEMENT type ANY default 46
+    changing
+      !STRING type STRING .
+  class-methods LIMPIAR_NOMBRE_FICHERO
+    changing
+      !STRING type STRING .
+  class-methods BUSCA_NUMEROS
+    importing
+      !STRING type ANY
+      !CUALQUIERA type ABAP_BOOL default ''
+    returning
+      value(NUMERO) type STRING .
+  class-methods PONER_CEROS
+    importing
+      !CADENA type ANY
+    changing
+      value(SALIDA) type ANY .
+  class-methods STRING_ESTANDAR
+    importing
+      !ENTRADA type STRING
+    returning
+      value(SALIDA) type STRING .
+  class-methods TLINE2STRING
+    importing
+      !TABLA type TLINETAB
+      !BLANCOS_SON_SALTOS type ABAP_BOOL default ''
+    returning
+      value(STRING) type STRING .
+  class-methods STRING2TLINE
+    importing
+      !STRING type STRING
+    changing
+      !TABLA type TLINETAB .
+  class-methods FORMATEAR_TLINE
+    changing
+      !TABLA type TLINETAB .
+  class-methods ULTIMO_CARACTER
+    importing
+      !TEXTO type ANY
+      !NUM_CAR type I default 1
+    returning
+      value(CHAR) type STRING .
+  class-methods JUSTIFICAR_STRING2TABLA
+    importing
+      !STRING type STRING
+      !LONGITUD type I default 132
+    changing
+      !TABLA type TABLE .
+  class-methods CONDENSAR_TABLA
+    importing
+      !LONGITUD type I default 132
+    changing
+      !TABLA type TABLE .
+  class-methods QUITAR_CEROS
+    importing
+      !CADENA type ANY
+    changing
+      value(SALIDA) type ANY .
+  class-methods QUITAR_CEROS_C
+    changing
+      !CADENA type ANY .
+  class-methods STRING2TABLASTRING
+    importing
+      !STRING type STRING
+      !LONGITUD type I default 132
+    changing
+      !TABLA type TABLE .
+  class-methods RIGHT
+    importing
+      !ENTRADA type ANY
+      !LONG type I
+    returning
+      value(SALIDA) type STRING .
+  class-methods PONER_CEROS_C
+    changing
+      !CADENA type ANY .
+  class-methods STRING2IMPORTE
+    importing
+      !STRING type ANY
+    returning
+      value(IMPORTE) type AWKGR .
+  class-methods LIMPIA_NUMEROS
+    importing
+      !STRING type ANY
+    returning
+      value(NUMERO) type STRING .
+  class-methods GET_TEXT_FROM_URL
+    importing
+      !URL type SAEURI
+      !MOSTRAR_ERROR type ABAP_BOOL default ''
+    returning
+      value(I_TEXTO) type SOLI_TAB .
+  class-methods STRING_TO_BINARY_TAB
+    importing
+      !STRING type STRING
+    returning
+      value(ITAB) type SOLIX_TAB .
+  class-methods STRING_POT_2IMPORTE
+    importing
+      !STRING type ANY
+    returning
+      value(IMPORTE) type DEC_16_05_S .
+  class-methods STRING2CANTIDAD
+    importing
+      !STRING type ANY
+    returning
+      value(IMPORTE) type BBBTR .
+  class-methods LISTA2RANGO
+    importing
+      !LISTA type ANY
+      !SEPARADOR type ANY default ','
+      !OPTION type ANY default 'EQ'
+      !CONV_ASTERISCO type ABAP_BOOL default ''
+    returning
+      value(RANGO) type RSTT_T_RANGE_STRING .
+  class-methods SIGUIENTE_LETRA
+    importing
+      !LETRA type C
+    returning
+      value(SIGUIENTE) type CHAR1 .
+  class-methods ES_NUMERO
+    importing
+      !CADENA type ANY
+    returning
+      value(SI) type ABAP_BOOL .
+  class-methods STRING2FLOAT
+    importing
+      !STRING type ANY
+    returning
+      value(FLOAT) type QMITTELWRT .
+  class-methods GET_STRING_FROM_URL
+    importing
+      !URL type ANY
+      !MOSTRAR_ERROR type ABAP_BOOL default ''
+      !CONVERT type ABAP_BOOL default ''
+    exporting
+      !SIZE type I
+      !CONTENT_BIN_255 type BAPIDOCCONTENTAB
+    returning
+      value(STRING) type STRING .
+  class-methods CONVERT_HTML_CHARS
+    changing
+      !STRING type ANY .
+  class-methods ES_NUMEROP
+    importing
+      !CADENA type ANY
+    returning
+      value(SI) type ABAP_BOOL .
+  class-methods TRANSFORM_OBJECT_TO_RAWSTRING
+    importing
+      !OBJETO type ref to IF_SERIALIZABLE_OBJECT optional
+      !COMPRIMIR type ABAP_BOOL default 'X'
+      !TABLA type TABLE optional
+      !VARIABLE type ANY optional
+      !JSON type ABAP_BOOL default ''
+    returning
+      value(XSTRING) type XSTRING
+    exceptions
+      TRANSFORMATION_FAILED .
+  class-methods TRANSFORM_RAWSTRING_TO_OBJECT
+    importing
+      !DESCOMPRIMIR type ABAP_BOOL default 'X'
+      !XSTRING type XSTRING optional
+      !GET_OBJETO type ABAP_BOOL default ''
+      !GET_TABLA type ABAP_BOOL default ''
+      !GET_VARIABLE type ABAP_BOOL default ''
+      !STRING type ANY default ''
+      !CODEPAGE type ANY default '1100'
+      !JSON type ABAP_BOOL default ''
+      !VISUALIZAR_XML type ABAP_BOOL default ''
+    exporting
+      !XSTRING_DECOMPRESSED type XSTRING
+    changing
+      !OBJETO type ref to IF_SERIALIZABLE_OBJECT optional
+      !TABLA type TABLE optional
+      !VARIABLE type ANY optional
+    exceptions
+      TRANSFORMATION_FAILED .
+  class-methods ES_NUMERO_COMA
+    importing
+      !CADENA type ANY
+    returning
+      value(SI) type ABAP_BOOL .
+  class-methods STRING2CTD
+    importing
+      !CTD_TEXTO type ANY
+    exporting
+      !CANTIDAD type ANY
+      !MENSAJE type ANY .
+  class-methods SPLIT_LEFT
+    importing
+      !STRING type ANY
+      !SEPARADOR type ANY
+    exporting
+      !IZQUIERDA type ANY
+      !DERECHA type ANY .
+  class-methods CONVIERTE_CODIFICACION
+    importing
+      !CADENA type ANY optional
+      !INCODE type ANY default ZCL_C=>CODEPAGE_HTML
+      !OUTCODE type ANY default ZCL_C=>CODEPAGE
+      !MOSTRAR_ERROR type ABAP_BOOL default ''
+      !CONV_CARACT_IN type ANY optional
+      !CONV_CARACT_OUT type ANY optional
+    preferred parameter CADENA
+    returning
+      value(SALIDA) type STRING .
+  class-methods GET_STRING_FROM_URL_FONDO
+    importing
+      !URL type ANY
+      !MOSTRAR_ERROR type ABAP_BOOL default ''
+      !CONVERT type ABAP_BOOL default ''
+    exporting
+      !MESSAGE type BAPI_MSG
+    returning
+      value(STRING) type STRING .
+  class-methods ELIMINAR_CARACT_NO_VALIDOS
+    importing
+      !CADENA type ANY
+    returning
+      value(SALIDA) type STRING .
+  class-methods TO_CLIPBOARD
+    importing
+      !STRING type STRING optional
+      !SHOW_MSG type ABAP_BOOL default 'X'
+      !TABLA type TABLE optional
+    preferred parameter STRING .
+  class-methods FROM_CLIPBOARD
+    importing
+      !SHOW_MSG type ABAP_BOOL default 'X'
+      !GET_TABLA type ABAP_BOOL default ''
+      !GET_STRING type ABAP_BOOL default 'X'
+    exporting
+      !TABLA type TABLE
+      !STRING type STRING .
+  class-methods XSTRING2BASE64
+    importing
+      !XSTRING type XSTRING
+    returning
+      value(BASE64) type STRING .
+  class-methods NUMERO2STRING
+    importing
+      !NUMERO type ANY
+      !QUITAR_CEROS_DERECHA type ABAP_BOOL default 'X'
+    returning
+      value(STRING) type STRING .
+  class-methods POPUP_TEXTO
+    importing
+      !TITULO type ANY default ''
+      !EDITAR type ANY default ''
+      !INTRO type ANY default ''
+      !MAX_COLS type I default 132
+      !TITULO_TEXTO_CORTO type STRING default ''
+      !HTML type ABAP_BOOL default ''
+    exporting
+      !MODIFICADO type ANY
+      !CANCELADO type ANY
+    changing
+      !TEXTO type ANY
+      !TEXTO_CORTO type ANY optional .
+  class-methods GET_HASH
+    importing
+      !DATOS type ANY optional
+      !ALGORITMO type STRING default 'MD5'
+      !B64 type ABAP_BOOL default 'X'
+      !TABLA type TABLE optional
+    preferred parameter DATOS
+    returning
+      value(HASH) type STRING .
+  class-methods CTD2STRING
+    importing
+      !CTD type ANY
+      !QUITAR_DECIMALES type ABAP_BOOL default 'X'
+      !MAX_DECIMALES type I default 9999
+      !CONDENSAR type ABAP_BOOL default ''
+    returning
+      value(STRING) type STRING .
+  class-methods ENCRYPT
+    importing
+      !STRING type ANY
+    returning
+      value(ENCRYPT) type STRING .
+  class-methods DECRYPT
+    importing
+      !STRING type ANY
+    returning
+      value(DECRYPT) type STRING .
+  class-methods ESCAPE_URL
+    importing
+      !STRING type ANY
+    returning
+      value(URL) type STRING .
+  class-methods GET_GUID
+    returning
+      value(GUID) type EDOC_GUID .
+  class-methods BASE642XSTRING
+    importing
+      !BASE64 type STRING
+    returning
+      value(XSTRING) type XSTRING .
 
 
 endclass. "ZCL_AP_STRING definition
@@ -415,35 +473,35 @@ class ZCL_AP_STRING implementation.
     ENDLOOP.
   ENDMETHOD.
   METHOD convert_html_chars.
-    REPLACE ALL OCCURRENCES OF '\u00e1' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00ed' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00f3' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00fa' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00f1' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00e1' IN string WITH 'á'.
+    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH 'é'.
+    REPLACE ALL OCCURRENCES OF '\u00ed' IN string WITH 'í'.
+    REPLACE ALL OCCURRENCES OF '\u00f3' IN string WITH 'ó'.
+    REPLACE ALL OCCURRENCES OF '\u00fa' IN string WITH 'ú'.
+    REPLACE ALL OCCURRENCES OF '\u00f1' IN string WITH 'ñ'.
 
-    REPLACE ALL OCCURRENCES OF '\u00e0' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00ec' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00f2' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00f9' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00e0' IN string WITH 'á'.
+    REPLACE ALL OCCURRENCES OF '\u00e9' IN string WITH 'é'.
+    REPLACE ALL OCCURRENCES OF '\u00ec' IN string WITH 'í'.
+    REPLACE ALL OCCURRENCES OF '\u00f2' IN string WITH 'ó'.
+    REPLACE ALL OCCURRENCES OF '\u00f9' IN string WITH 'ú'.
 
-    REPLACE ALL OCCURRENCES OF '\u00fc' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00fc' IN string WITH 'ü'.
 
-    REPLACE ALL OCCURRENCES OF '\u00c1' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00c9' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00cd' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00d3' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00da' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00d1' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00c1' IN string WITH 'Á'.
+    REPLACE ALL OCCURRENCES OF '\u00c9' IN string WITH 'É'.
+    REPLACE ALL OCCURRENCES OF '\u00cd' IN string WITH 'Í'.
+    REPLACE ALL OCCURRENCES OF '\u00d3' IN string WITH 'Ó'.
+    REPLACE ALL OCCURRENCES OF '\u00da' IN string WITH 'Ú'.
+    REPLACE ALL OCCURRENCES OF '\u00d1' IN string WITH 'Ñ'.
 
-    REPLACE ALL OCCURRENCES OF '\u00c0' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00c8' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00cc' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00d2' IN string WITH '�'.
-    REPLACE ALL OCCURRENCES OF '\u00d9' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00c0' IN string WITH 'À'.
+    REPLACE ALL OCCURRENCES OF '\u00c8' IN string WITH 'È'.
+    REPLACE ALL OCCURRENCES OF '\u00cc' IN string WITH 'Ì'.
+    REPLACE ALL OCCURRENCES OF '\u00d2' IN string WITH 'Ò'.
+    REPLACE ALL OCCURRENCES OF '\u00d9' IN string WITH 'Ù'.
 
-    REPLACE ALL OCCURRENCES OF '\u00bf' IN string WITH '�'.
+    REPLACE ALL OCCURRENCES OF '\u00bf' IN string WITH '¿'.
     REPLACE ALL OCCURRENCES OF '\n' IN string WITH ' '.
     REPLACE ALL OCCURRENCES OF '\/' IN string WITH '/'.
 
@@ -489,7 +547,7 @@ class ZCL_AP_STRING implementation.
 
     IF sy-subrc <> 0.
       IF mostrar_error = 'X'.
-        MESSAGE e398(00) WITH 'Error'(err) sy-subrc 'en conversi�n'(enc) ''.
+        MESSAGE e398(00) WITH 'Error'(err) sy-subrc 'en conversión'(enc) ''.
       ELSE.
         salida = cadena.
       ENDIF.
@@ -814,7 +872,7 @@ class ZCL_AP_STRING implementation.
              proxy         TYPE ole2_parameter, " Proxy (incl. Port)
              proxyuser     TYPE ole2_parameter, " User am Proxy
              proxypassword TYPE ole2_parameter, " Password am Proxy
-             scrambled     TYPE c LENGTH 1,     " Flag ob verschl�sselt
+             scrambled     TYPE c LENGTH 1,     " Flag ob verschlüsselt
            END OF cndp_user_info.
 
     DATA: l_url     TYPE saeuri,
@@ -898,13 +956,13 @@ class ZCL_AP_STRING implementation.
                  OTHERS                      = 8.
     IF sy-subrc <> 0.
       CASE sy-subrc.
-        WHEN 1. message = 'Error de conexi�n'(ecn).
+        WHEN 1. message = 'Error de conexión'(ecn).
         WHEN 2. message = 'TimeOut'(tmo).
         WHEN 3. message = 'Error interno'(ein).
         WHEN 4. message = 'Error de TCPIP'(tcp).
         WHEN 5. message = 'Error de datos'(eda).
         WHEN 6. message = 'Fallo de sistema'(fsi).
-        WHEN 7. message = 'Fallo de comunicaci�n'(fco).
+        WHEN 7. message = 'Fallo de comunicación'(fco).
         WHEN OTHERS.
           message = 'Error llamando a HTTP_GET'(ehg).
       ENDCASE.
@@ -1031,7 +1089,7 @@ class ZCL_AP_STRING implementation.
     REPLACE ALL OCCURRENCES OF '>' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '<' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '?' IN string WITH ''.
-    REPLACE ALL OCCURRENCES OF '�' IN string WITH ''.
+    REPLACE ALL OCCURRENCES OF '¿' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '%' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '$' IN string WITH ''.
     REPLACE ALL OCCURRENCES OF '&' IN string WITH ''.
@@ -1073,7 +1131,7 @@ class ZCL_AP_STRING implementation.
       CLEAR l_rango.
       l_rango-option = 'EQ'.
       l_rango-sign   = 'I'.
-      l_rango-low    = '����????'.
+      l_rango-low    = '¿¿¿¿????'.
       APPEND l_rango TO rango.
     ENDIF.
   ENDMETHOD.
@@ -1141,19 +1199,23 @@ class ZCL_AP_STRING implementation.
 
     l_string = texto.
     CALL FUNCTION 'Z_POPUP_EDIT_TEXT'
-      EXPORTING titulo       = l_titulo
-                texto        = intro
-*                INI_X        = 5
-*                INI_Y        = 3
-*                FIN_X        = 140
-*                FIN_Y        = 24
-                max_cols     = max_cols
-                display_mode = l_display
-                titulo_texto_corto = titulo_texto_corto
-      IMPORTING modificado   = l_mod
-                cancelado    = l_canc
-      CHANGING  string       = l_string
-                texto_corto  = texto_corto.
+      EXPORTING
+        titulo             = l_titulo
+        texto              = intro
+*       INI_X              = 5
+*       INI_Y              = 3
+*       FIN_X              = 140
+*       FIN_Y              = 24
+        max_cols           = max_cols
+        display_mode       = l_display
+        titulo_texto_corto = titulo_texto_corto
+        html               = html
+      IMPORTING
+        modificado         = l_mod
+        cancelado          = l_canc
+      CHANGING
+        string             = l_string
+        texto_corto        = texto_corto.
 
     modificado = l_mod.
     cancelado = l_canc.
@@ -1185,10 +1247,10 @@ class ZCL_AP_STRING implementation.
                  OTHERS            = 6.
 
     IF sy-subrc <> 0.
-      MESSAGE 'Error reemplazando car�cteres'(erc) TYPE 'S'.
+      MESSAGE 'Error reemplazando carácteres'(erc) TYPE 'S'.
     ELSE.
-      IF string CS '�'.
-        REPLACE ALL OCCURRENCES OF '�' IN string WITH 'EUR'.
+      IF string CS '€'.
+        REPLACE ALL OCCURRENCES OF '€' IN string WITH 'EUR'.
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -1338,13 +1400,13 @@ class ZCL_AP_STRING implementation.
             cantidad = lv_cell_value.
           CATCH cx_sy_conversion_no_number.
             lv_value = lv_cell_value.
-            CONCATENATE 'Error de conversi�n'(eco) lv_value INTO mensaje SEPARATED BY space.
+            CONCATENATE 'Error de conversión'(eco) lv_value INTO mensaje SEPARATED BY space.
           CATCH cx_sy_conversion_overflow.
             lv_value = lv_cell_value.
             CONCATENATE 'Cantidad'(ctd) lv_value 'es demasiado grande para variable de salida'(dts) INTO mensaje SEPARATED BY space.
           CATCH cx_root. "#EC *
             lv_value = lv_cell_value.
-            CONCATENATE 'Cantidad indeterminado en conversi�n'(cic) lv_value INTO mensaje SEPARATED BY space.
+            CONCATENATE 'Cantidad indeterminado en conversión'(cic) lv_value INTO mensaje SEPARATED BY space.
         ENDTRY.
         RETURN.
       ENDIF.
@@ -1377,7 +1439,7 @@ class ZCL_AP_STRING implementation.
                 ifeld        = l_cantidad
                 messg        = l_message.
 *                MSGLN        = MSGLN
-    IF l_message-msgty = 'E' AND l_message-msgid = 'CH' AND l_message-msgno = '142'. " S�lo se permiten '3 ' decimales
+    IF l_message-msgty = 'E' AND l_message-msgid = 'CH' AND l_message-msgno = '142'. " Sólo se permiten '3 ' decimales
       CLEAR: l_error,
              l_message.
       SPLIT l_ctd_texto AT '.' INTO l_cantidad l_decimales.
@@ -1409,13 +1471,13 @@ class ZCL_AP_STRING implementation.
           cantidad = l_cantidad.
         CATCH cx_sy_conversion_no_number.
           lv_value = lv_cell_value.
-          CONCATENATE 'Error de conversi�n'(eco) lv_value INTO mensaje SEPARATED BY space.
+          CONCATENATE 'Error de conversión'(eco) lv_value INTO mensaje SEPARATED BY space.
         CATCH cx_sy_conversion_overflow.
           lv_value = lv_cell_value.
           CONCATENATE 'Cantidad'(ctd) lv_value 'es demasiado grande para variable de salida'(dts) INTO mensaje SEPARATED BY space.
         CATCH cx_root. "#EC *
           lv_value = lv_cell_value.
-          CONCATENATE 'Cantidad indeterminado en conversi�n'(cic) lv_value INTO mensaje SEPARATED BY space.
+          CONCATENATE 'Cantidad indeterminado en conversión'(cic) lv_value INTO mensaje SEPARATED BY space.
       ENDTRY.
     ENDIF.
   ENDMETHOD.
@@ -1492,10 +1554,10 @@ class ZCL_AP_STRING implementation.
     ENDTRY.
   ENDMETHOD.
   METHOD string2tabla.
-* Divide una línea que llega con sáltos de página a un formato que puede
-* introducirse directamente con la función SAVE_TEXT, convirtiendo el
-* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
-* texto tuviera más de 132 carácteres lo parte.
+* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
 ************************************************************************
 
     DATA: l_long   TYPE i,
@@ -1589,11 +1651,11 @@ class ZCL_AP_STRING implementation.
 *      OTHERS                           = 2.
   ENDMETHOD.
   METHOD string2tablastring.
-*Divide una línea que llega con sáltos de página a un formato que
+*Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que
 *puede
-* introducirse directamente con la función SAVE_TEXT, convirtiendo el
-* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
-* texto tuviera más de 132 carácteres lo parte.
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
 ************************************************************************
 
     DATA l_lin TYPE c LENGTH 10000.
@@ -1680,10 +1742,10 @@ class ZCL_AP_STRING implementation.
 *      OTHERS                           = 2.
   ENDMETHOD.
   METHOD string2tline.
-* Divide una línea que llega con sáltos de página a un formato que puede
-* introducirse directamente con la función SAVE_TEXT, convirtiendo el
-* carácter retorno de carro 0D0A en una nueva línea, así mismo si el
-* texto tuviera más de 132 carácteres lo parte.
+* Divide una lÃ­nea que llega con sÃ¡ltos de pÃ¡gina a un formato que puede
+* introducirse directamente con la funciÃ³n SAVE_TEXT, convirtiendo el
+* carÃ¡cter retorno de carro 0D0A en una nueva lÃ­nea, asÃ­ mismo si el
+* texto tuviera mÃ¡s de 132 carÃ¡cteres lo parte.
 ************************************************************************
 
     DATA l_lin TYPE c LENGTH 10000.

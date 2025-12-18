@@ -1,4 +1,4 @@
-TYPES: BEGIN OF t_param_rangos,
+ï»¿TYPES: BEGIN OF t_param_rangos,
          campo  TYPE rstt_t_range_string,
          valor  TYPE rstt_t_range_string,
          valor2 TYPE rstt_t_range_string,
@@ -43,16 +43,18 @@ CLASS zcl_ap_parametros DEFINITION
       PREFERRED PARAMETER campo.
 
     CLASS-METHODS get_atributo1
-      IMPORTING clave            TYPE any
-                campo            TYPE any
-                valor            TYPE any       DEFAULT ''
-                valor2           TYPE any       DEFAULT ''
-                valor3           TYPE any       DEFAULT ''
-                valor4           TYPE any       DEFAULT ''
-                n10              TYPE abap_bool DEFAULT ''
-                ctd              TYPE any       DEFAULT ''
-                quitar_ceros     TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(atributo1) TYPE zatrib_param.
+      IMPORTING clave              TYPE any
+                campo              TYPE any
+                valor              TYPE any       DEFAULT ''
+                valor2             TYPE any       DEFAULT ''
+                valor3             TYPE any       DEFAULT ''
+                valor4             TYPE any       DEFAULT ''
+                n10                TYPE abap_bool DEFAULT ''
+                ctd                TYPE any       DEFAULT ''
+                quitar_ceros       TYPE abap_bool DEFAULT ''
+                error_si_no_Existe TYPE abap_bool DEFAULT ''
+                atributo           TYPE string    DEFAULT 'ATRIBUTO1'
+      RETURNING VALUE(atributo1)   TYPE zatrib_param.
 
     METHODS get_atr1
       IMPORTING campo            TYPE any
@@ -206,14 +208,17 @@ CLASS zcl_ap_parametros DEFINITION
       RETURNING VALUE(atributo3) TYPE zatrib_param.
 
     CLASS-METHODS get_atributo2
-      IMPORTING clave            TYPE any
-                campo            TYPE any
-                valor            TYPE any       DEFAULT ''
-                valor2           TYPE any       DEFAULT ''
-                n10              TYPE abap_bool DEFAULT ''
-                ctd              TYPE any       DEFAULT ''
-                quitar_ceros     TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(atributo2) TYPE zatrib_param.
+      IMPORTING clave              TYPE any
+                campo              TYPE any
+                valor              TYPE any       DEFAULT ''
+                valor2             TYPE any       DEFAULT ''
+                valor3             TYPE any       DEFAULT ''
+                valor4             TYPE any       DEFAULT ''
+                n10                TYPE abap_bool DEFAULT ''
+                ctd                TYPE any       DEFAULT ''
+                quitar_ceros       TYPE abap_bool DEFAULT ''
+                error_si_no_Existe TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(atributo2)   TYPE zatrib_param.
 
     METHODS get_lista_atr1
       IMPORTING campo         TYPE any
@@ -238,14 +243,15 @@ CLASS zcl_ap_parametros DEFINITION
       RETURNING VALUE(par_sc) TYPE zparametros.
 
     CLASS-METHODS get_parametro
-      IMPORTING clave             TYPE any
-                campo             TYPE any
-                valor             TYPE any       DEFAULT ''
-                valor2            TYPE any       DEFAULT ''
-                valor3            TYPE any       DEFAULT ''
-                valor4            TYPE any       DEFAULT ''
-                quitar_ceros      TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(parametros) TYPE zparametros.
+      IMPORTING clave              TYPE any
+                campo              TYPE any
+                valor              TYPE any       DEFAULT ''
+                valor2             TYPE any       DEFAULT ''
+                valor3             TYPE any       DEFAULT ''
+                valor4             TYPE any       DEFAULT ''
+                quitar_ceros       TYPE abap_bool DEFAULT ''
+                error_si_no_Existe TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(parametros)  TYPE zparametros.
 
 
   PRIVATE SECTION.
@@ -280,21 +286,15 @@ class ZCL_AP_PARAMETROS implementation.
     inicio( fichero_json = fichero_json ).
   ENDMETHOD.
   METHOD exist.
-    " TODO: variable is assigned but never used (ABAP cleaner)
-    DATA l_param TYPE zparametros.
-
     CLEAR si.
-    SELECT SINGLE clave FROM  zparametros
-      INTO l_param-clave
-     WHERE clave  = clave
-       AND campo  = campo
-       AND valor  = valor
-       AND valor2 = valor2
-       AND valor3 = valor3
-       AND valor4 = valor4.
-    IF sy-subrc = 0.
-      si = 'X'.
-    ENDIF.
+    SELECT SINGLE @abap_true FROM  zparametros
+      INTO @si
+     WHERE clave  = @clave
+       AND campo  = @campo
+       AND valor  = @valor
+       AND valor2 = @valor2
+       AND valor3 = @valor3
+       AND valor4 = @valor4.
   ENDMETHOD.
   METHOD existe.
     DATA l_param TYPE zparametros.
@@ -565,15 +565,13 @@ class ZCL_AP_PARAMETROS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD get_atr_rango.
-    DATA l_param_rango TYPE t_param_rangos.
-
-    LOOP AT i_par_rangos INTO l_param_rango.
-      IF     campo  IN l_param_rango-campo
-         AND valor  IN l_param_rango-valor
-         AND valor2 IN l_param_rango-valor2.
-        atributo1 = l_param_rango-atributo1.
-        atributo2 = l_param_rango-atributo2.
-        atributo3 = l_param_rango-atributo3.
+    LOOP AT i_par_rangos ASSIGNING FIELD-SYMBOL(<param_rango>).
+      IF     campo  IN <param_rango>-campo
+         AND valor  IN <param_rango>-valor
+         AND valor2 IN <param_rango>-valor2.
+        atributo1 = <param_rango>-atributo1.
+        atributo2 = <param_rango>-atributo2.
+        atributo3 = <param_rango>-atributo3.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
@@ -584,7 +582,7 @@ class ZCL_AP_PARAMETROS implementation.
           l_ctd     TYPE mengev,
           l_mensaje TYPE bapi_msg.
 
-    SELECT SINGLE atributo1 FROM  zparametros
+    SELECT SINGLE (atributo) FROM  zparametros
       INTO atributo1
      WHERE clave  = clave
        AND campo  = campo
@@ -603,7 +601,7 @@ class ZCL_AP_PARAMETROS implementation.
         l_param-valor4 = valor4.
         DATA(l_par_sc) = claves_sin_ceros(  l_param ).
       ENDIF.
-      SELECT SINGLE atributo1 FROM  zparametros
+      SELECT SINGLE (atributo) FROM  zparametros
         INTO atributo1
        WHERE clave  = clave
          AND campo  = l_par_sc-campo
@@ -630,6 +628,8 @@ class ZCL_AP_PARAMETROS implementation.
           CONDENSE atributo1 NO-GAPS.
         ENDIF.
       ENDIF.
+    ELSEIF error_si_no_existe = abap_true.
+      MESSAGE |No hay definido parÃ¡metro para { clave } { campo } { valor } { valor2 } { valor3 } { valor4 }| TYPE 'E'.
     ENDIF.
   ENDMETHOD.
   METHOD get_atributo1_usr.
@@ -657,65 +657,18 @@ class ZCL_AP_PARAMETROS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD get_atributo2.
-    DATA: l_campo_sin_ceros  TYPE zparametros-valor,
-          l_valor_sin_ceros  TYPE zparametros-valor,
-          l_valor2_sin_ceros TYPE zparametros-valor2,
-          l_ok               TYPE c LENGTH 1,
-          l_n10              TYPE n LENGTH 10,
-          l_ctd              TYPE mengev,
-          l_mensaje          TYPE bapi_msg.
-
-    IF quitar_ceros = 'X'.
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
-    ENDIF.
-
-    SELECT atributo2
-      FROM zparametros
-      WHERE clave  = @clave
-        AND campo  = @campo
-        AND valor  = @valor
-        AND valor2 = @valor2
-      ORDER BY PRIMARY KEY
-      INTO @atributo2
-      UP TO 1 ROWS.
-    ENDSELECT.
-    IF sy-subrc = 0.
-      l_ok = 'X'.
-    ELSEIF quitar_ceros = 'X'.
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = campo  CHANGING  salida = l_campo_sin_ceros ).
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = valor  CHANGING  salida = l_valor_sin_ceros ).
-      zcl_ap_string=>quitar_ceros( EXPORTING cadena = valor2 CHANGING  salida = l_valor2_sin_ceros ).
-      SELECT atributo2
-        FROM zparametros
-        WHERE clave  = @clave
-          AND campo  = @l_campo_sin_ceros
-          AND valor  = @l_valor_sin_ceros
-          AND valor2 = @l_valor2_sin_ceros
-        ORDER BY PRIMARY KEY
-        INTO @atributo2
-        UP TO 1 ROWS.
-      ENDSELECT.
-      IF sy-subrc = 0.
-        l_ok = 'X'.
-      ENDIF.
-    ENDIF.
-
-    IF l_ok = 'X'.
-      IF n10 = 'X'.
-        l_n10 = atributo2.
-        zcl_ap_string=>poner_ceros_c( CHANGING cadena = l_n10 ).
-        atributo2 = l_n10.
-      ELSEIF ctd = 'X'.
-        zcl_ap_string=>string2ctd( EXPORTING ctd_texto = atributo2
-                                   IMPORTING cantidad  = l_ctd
-                                             mensaje   = l_mensaje ).
-        IF l_mensaje IS INITIAL.
-          atributo2 = l_ctd.
-        ENDIF.
-      ENDIF.
-    ENDIF.
+    atributo2 = get_atributo1(
+        clave              = clave
+        campo              = campo
+        valor              = valor
+        valor2             = valor2
+        valor3             = valor3
+        valor4             = valor4
+        n10                = n10
+        ctd                = ctd
+        quitar_ceros       = quitar_ceros
+        error_si_no_existe = error_si_no_existe
+        atributo           = 'ATRIBUTO2' ).
   ENDMETHOD.
   METHOD get_lista.
     DATA l_ok TYPE c LENGTH 1.
@@ -776,7 +729,6 @@ class ZCL_AP_PARAMETROS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD get_parametro.
-    " TODO: variable is assigned but never used (ABAP cleaner)
     DATA: l_ok    TYPE abap_bool,
           l_param TYPE zparametros.
 
@@ -811,6 +763,10 @@ class ZCL_AP_PARAMETROS implementation.
       IF sy-subrc = 0.
         l_ok = 'X'.
       ENDIF.
+    ENDIF.
+
+    IF error_si_no_existe = abap_true AND l_ok = abap_false.
+      MESSAGE |No hay definido parÃ¡metro para { clave } { campo } { valor } { valor2 } { valor3 } { valor4 }| TYPE 'E'.
     ENDIF.
   ENDMETHOD.
   METHOD get_rango_tabla_campo.
@@ -901,7 +857,6 @@ class ZCL_AP_PARAMETROS implementation.
   ENDMETHOD.
   METHOD get_rango_tabla_campo_n10.
     DATA: r_rango     TYPE rstt_t_range_string,
-          l_linea     TYPE rstt_s_range_string,
           l_linea_n10 TYPE lxhme_range_n10.
 
     IF valor IS SUPPLIED.
@@ -938,13 +893,13 @@ class ZCL_AP_PARAMETROS implementation.
                                        valor_filtro_por_campo = valor_filtro_por_campo ).
     ENDIF.
 
-    LOOP AT r_rango INTO l_linea.
+    LOOP AT r_rango ASSIGNING FIELD-SYMBOL(<linea>).
       CLEAR l_linea_n10.
-      MOVE-CORRESPONDING l_linea TO l_linea_n10.
-      IF NOT l_linea-low IS INITIAL.
+      MOVE-CORRESPONDING <linea> TO l_linea_n10.
+      IF NOT <linea>-low IS INITIAL.
         zcl_ap_string=>poner_ceros_c( CHANGING  cadena =  l_linea_n10-low ).
       ENDIF.
-      IF NOT l_linea-high IS INITIAL.
+      IF NOT <linea>-high IS INITIAL.
         zcl_ap_string=>poner_ceros_c( CHANGING  cadena =  l_linea_n10-high ).
       ENDIF.
       APPEND l_linea_n10 TO r_rango_n10.
@@ -952,7 +907,6 @@ class ZCL_AP_PARAMETROS implementation.
   ENDMETHOD.
   METHOD get_rango_tabla_campo_n18.
     DATA: r_rango     TYPE rstt_t_range_string,
-          l_linea     TYPE rstt_s_range_string,
           l_linea_n18 TYPE range_s_matnr.
 
     IF valor IS SUPPLIED.
@@ -989,13 +943,13 @@ class ZCL_AP_PARAMETROS implementation.
                                        valor_filtro_por_campo = valor_filtro_por_campo ).
     ENDIF.
 
-    LOOP AT r_rango INTO l_linea.
+    LOOP AT r_rango ASSIGNING FIELD-SYMBOL(<linea>).
       CLEAR l_linea_n18.
-      MOVE-CORRESPONDING l_linea TO l_linea_n18.
-      IF NOT l_linea-low IS INITIAL.
+      MOVE-CORRESPONDING <linea> TO l_linea_n18.
+      IF NOT <linea>-low IS INITIAL.
         zcl_ap_string=>poner_ceros_c( CHANGING  cadena =  l_linea_n18-low ).
       ENDIF.
-      IF NOT l_linea-high IS INITIAL.
+      IF NOT <linea>-high IS INITIAL.
         zcl_ap_string=>poner_ceros_c( CHANGING  cadena =  l_linea_n18-high ).
       ENDIF.
       APPEND l_linea_n18 TO r_rango_n18.
@@ -1036,9 +990,9 @@ class ZCL_AP_PARAMETROS implementation.
 
     SELECT fieldname FROM dd03l
       INTO TABLE @DATA(i_campos)
-     WHERE tabname   = 'ZPARAMETROS'
-       AND position >= '0003'  " Sólo queremos los campos útiles
-       and not fieldname in ('AEDAT', 'AENAM', 'AEZET')
+     WHERE     tabname    = 'ZPARAMETROS'
+       AND     position  >= '0003'  " SÃ³lo queremos los campos Ãºtiles
+       AND NOT fieldname IN ( 'AEDAT', 'AENAM', 'AEZET' )
      ORDER BY position.
 
     DATA(i_campos_final) = zcl_ap_dev=>get_fieldcatalog_tabla_alv( tabla ).
@@ -1065,8 +1019,7 @@ class ZCL_AP_PARAMETROS implementation.
 
         ASSIGN COMPONENT <campo> OF STRUCTURE <param> TO FIELD-SYMBOL(<valor>).
 
-
-* Si el campo destino tiene rutina de conversión la aplicamos
+* Si el campo destino tiene rutina de conversiÃ³n la aplicamos
         ASSIGN i_campos_final[ fieldname = l_campo ]-edit_mask TO FIELD-SYMBOL(<mask>).
         IF <mask>(2) = '=='.
           DATA(l_funcion) = |CONVERSION_EXIT_{ <mask>+2 }_INPUT|.
@@ -1076,20 +1029,19 @@ class ZCL_AP_PARAMETROS implementation.
                   input  = <valor>
                 IMPORTING
                   output = <dato>.
-            CATCH cx_root into data(o_root). "#EC *
+            CATCH cx_root INTO DATA(o_root). "#EC *
               message = |Error formateando campo { l_campo } { o_root->get_text( ) }|.
           ENDTRY.
         ELSEIF i_campos_final[ fieldname = l_campo ]-datatype = 'DATS'.
           <dato> = zcl_ap_fechas=>string2fecha( <valor> ).
-        else.
+        ELSE.
           <dato> = <valor>.
         ENDIF.
       ENDLOOP.
     ENDLOOP.
   ENDMETHOD.
   METHOD inicio.
-    DATA: l_par         TYPE zparametros,
-          l_param_rango TYPE t_param_rangos.
+    DATA l_param_rango TYPE t_param_rangos.
 
     IF NOT fichero_json IS INITIAL.
       zcl_ap_ficheros=>leer_xstring( EXPORTING fichero = fichero_json get_string = 'X'
@@ -1114,16 +1066,16 @@ class ZCL_AP_PARAMETROS implementation.
 
     IF rangos = 'X'.
       CLEAR i_par_rangos.
-      LOOP AT i_par INTO l_par.
+      LOOP AT i_par ASSIGNING FIELD-SYMBOL(<par>).
         CLEAR l_param_rango.
-        l_param_rango-campo  = zcl_ap_string=>lista2rango( l_par-campo ).
-        l_param_rango-valor  = zcl_ap_string=>lista2rango( l_par-valor ).
-        l_param_rango-valor2 = zcl_ap_string=>lista2rango( l_par-valor2 ).
-        DELETE l_param_rango-valor2 WHERE low = '¿¿¿¿????'.
+        l_param_rango-campo  = zcl_ap_string=>lista2rango( <par>-campo ).
+        l_param_rango-valor  = zcl_ap_string=>lista2rango( <par>-valor ).
+        l_param_rango-valor2 = zcl_ap_string=>lista2rango( <par>-valor2 ).
+        DELETE l_param_rango-valor2 WHERE low = 'Â¿Â¿Â¿Â¿????'.
 
-        l_param_rango-atributo1 = l_par-atributo1.
-        l_param_rango-atributo2 = l_par-atributo2.
-        l_param_rango-atributo3 = l_par-atributo3.
+        l_param_rango-atributo1 = <par>-atributo1.
+        l_param_rango-atributo2 = <par>-atributo2.
+        l_param_rango-atributo3 = <par>-atributo3.
         APPEND l_param_rango TO i_par_rangos.
       ENDLOOP.
     ENDIF.
@@ -1195,14 +1147,14 @@ class ZCL_AP_PARAMETROS implementation.
     ELSE.
       IF action = 'U'.
         SUBMIT zparametros
-          AND RETURN
+               AND RETURN
                WITH p_clave = clave
                WITH p_campo = l_campo
                WITH p_valor = l_valor
                WITH p_vis = ''.
       ELSEIF action = 'S'.
         SUBMIT zparametros
-          AND RETURN
+               AND RETURN
                WITH p_clave = clave
                WITH p_campo = l_campo
                WITH p_valor = l_valor
@@ -1248,14 +1200,14 @@ class ZCL_AP_PARAMETROS implementation.
     ELSE.
       IF action = 'U'.
         SUBMIT zparametros
-          AND RETURN
+               AND RETURN
                WITH p_clave = clave
                WITH p_campo = campo
                WITH p_valor = valor
                WITH p_vis = ''.
       ELSEIF action = 'S'.
         SUBMIT zparametros
-          AND RETURN
+               AND RETURN
                WITH p_clave = clave
                WITH p_campo = campo
                WITH p_valor = valor
@@ -1289,7 +1241,6 @@ class ZCL_AP_PARAMETROS implementation.
   ENDMETHOD.
   METHOD send_mail.
     DATA: o_mail    TYPE REF TO zcl_ap_envio_mail,
-          " TODO: variable is assigned but never used (ABAP cleaner)
           l_subject TYPE string,
           l_ok      TYPE c LENGTH 1.
 
@@ -1319,7 +1270,7 @@ class ZCL_AP_PARAMETROS implementation.
     ENDLOOP.
 
     IF l_ok = 'X'.
-      o_mail->envio_mail( subject = subject
+      o_mail->envio_mail( subject = l_subject
                           urgente = urgente
                           html    = html
                           commit  = commit

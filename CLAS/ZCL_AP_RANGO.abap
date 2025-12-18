@@ -35,7 +35,7 @@ CLASS zcl_ap_rango DEFINITION
         high   TYPE char20,
       END OF range_c20.
     TYPES tab_range_c20 TYPE STANDARD TABLE OF range_c20.
-        TYPES:
+    TYPES:
       BEGIN OF range_c12,
         sign   TYPE char1,
         option TYPE char2,
@@ -51,6 +51,15 @@ CLASS zcl_ap_rango DEFINITION
         high   TYPE char30,
       END OF range_c30.
     TYPES tab_range_c30 TYPE STANDARD TABLE OF range_c30.
+
+    TYPES:
+      BEGIN OF range_n10,
+        sign   TYPE char1,
+        option TYPE char2,
+        low    TYPE numc10,
+        high   TYPE numc10,
+      END OF range_n10.
+    TYPES tab_range_n10 TYPE STANDARD TABLE OF range_n10.
 
     DATA rango        TYPE rstt_t_range_string.
     DATA rango_fechas TYPE tpmy_r_date.
@@ -159,8 +168,10 @@ CLASS zcl_ap_rango DEFINITION
     CLASS-METHODS tabla_n10_to_rango_cond
       IMPORTING tabla        TYPE any
       RETURNING VALUE(rango) TYPE lxhme_range_n10_t.
-protected section.
-private section.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
 endclass. "ZCL_AP_RANGO definition
 class ZCL_AP_RANGO implementation.
   METHOD assign.
@@ -220,7 +231,7 @@ class ZCL_AP_RANGO implementation.
       CLEAR l_hay_hasta.
       ASSIGN ('<FS>-LOW') TO <low>.
       IF sy-subrc = 0.
-        WRITE <low> TO l_valor.
+        WRITE <low> TO l_valor. "#EC *
         IF quitar_ceros = 'X'.
           zcl_ap_string=>quitar_ceros_c( CHANGING  cadena = l_valor ).
         ENDIF.
@@ -229,7 +240,7 @@ class ZCL_AP_RANGO implementation.
       ASSIGN ('<FS>-HIGH') TO <high>.
       IF sy-subrc = 0.
         IF NOT <high> IS INITIAL.
-          WRITE <high> TO l_hasta.
+          WRITE <high> TO l_hasta. "#EC *
 
           IF quitar_ceros = 'X'.
             zcl_ap_string=>quitar_ceros_c( CHANGING  cadena = l_hasta ).
@@ -396,9 +407,8 @@ class ZCL_AP_RANGO implementation.
         empty        = 2
         x_message    = 3.
     IF sy-subrc = 0.
-      LOOP AT rango_interseccion ASSIGNING FIELD-SYMBOL(<rango>) WHERE sign = 'E'.
-        IF line_exists( rango_interseccion[ sign = 'I' opt = <rango>-opt low = <rango>-low high = <rango>-high ] ).
-*        DELETE rango_interseccion WHERE sign = 'I' AND option = <rango>-option AND low = <rango>-low AND high = <rango>-high.
+      LOOP AT rango_interseccion ASSIGNING FIELD-SYMBOL(<rango>) WHERE sign = 'E'. "#EC *
+        IF line_exists( rango_interseccion[ sign = 'I' opt = <rango>-opt low = <rango>-low high = <rango>-high ] ). "#EC *
           exclusion = 'X'.
           RETURN.
         ENDIF.

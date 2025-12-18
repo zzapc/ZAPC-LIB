@@ -1,4 +1,4 @@
-***********************************************************************
+﻿***********************************************************************
 * TIPO : LISTADO
 * TITULO : Gestión exits de usuario
 * DESCRIPCION : Gestión exits de usuario
@@ -279,7 +279,7 @@ CLASS lcl_alv IMPLEMENTATION.
         LOOP AT o_prog->i_listado ASSIGNING <listado> WHERE check = 'X'.
         ENDLOOP.
         IF sy-subrc NE 0.
-          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+          MESSAGE 'Seleccione algún registro'(SAR) TYPE 'I'.
         ELSE.
           o_prog->generar_word( ).
         ENDIF.
@@ -321,7 +321,7 @@ CLASS zcl_report IMPLEMENTATION.
       ENDIF.
 
     ELSE.
-      sgpi_texto( 'Seleccionando datos' ).
+      sgpi_texto( 'Seleccionando datos'(SD1) ).
       SELECT * FROM zap_exits
         INTO CORRESPONDING FIELDS OF TABLE i_listado
        WHERE id IN s_id
@@ -356,7 +356,7 @@ CLASS zcl_report IMPLEMENTATION.
 
       o_prog->o_sgpi->get_filas_tabla( i_listado[] ).
       LOOP AT i_listado ASSIGNING <listado>.
-        sgpi_texto( texto1 = 'Procesando datos' cant_porc = 100 ).
+        sgpi_texto( texto1 = 'Procesando datos'(PD1) cant_porc = 100 ).
 
         CASE <listado>-activa.
           WHEN 'X'.
@@ -382,7 +382,7 @@ CLASS zcl_report IMPLEMENTATION.
 
   METHOD listado.
 
-    sgpi_texto( 'Generando informe' ).
+    sgpi_texto( 'Generando informe'(GI1) ).
 
 *    o_alv->set_layout( p_vari ).
     o_alv->get_datos_layout( EXPORTING reordenar_tabla = 'X' CHANGING t_tabla = i_listado ).
@@ -421,22 +421,22 @@ CLASS zcl_report IMPLEMENTATION.
       o_grid->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
       o_grid->set_campos_tabint( i_var[] ).
       o_grid->set_field_input( 'VALOR,VALOR2,VALOR3,VALOR4,COMENTARIO' ).
-      o_grid->set_field_text( campo = 'TIPO_T' valor = 'Tipo' ).
+      o_grid->set_field_text( campo = 'TIPO_T' valor = 'Tipo'(TIP) ).
       o_grid->set_field_dropdown( campo = 'TIPO_T'  valor = '1' dominio = 'ZTIPO_PARAMETRO_EXIT' ).
 
-      sgpi_texto( 'Generando informe' ).
+      sgpi_texto( 'Generando informe'(GI1) ).
       o_grid->show( CHANGING tabla = i_var ).
       o_grid->actualiza_campos_grid( campos_borrar = 'CHECK,TIPO' ).
       o_grid->set_seleccion( CHANGING t_tabla = i_var ).
     ELSE.
       o_grid->refrescar_grid( ).
     ENDIF.
-    o_grid->add_button( button = 'F01' text = 'Grabar'  icon = icon_system_save forzar = 'X' ).
-    o_grid->add_button( button = 'F02' text = 'Ir a exit'  icon = icon_submit forzar = 'X' ).
-    o_grid->add_button( button = 'F03' text = 'Ir a implementación'  icon =  icon_change forzar = 'X' ).
-    o_grid->add_button( button = 'F04' text = 'Grabar en OT'  icon =  icon_transport_proposal forzar = 'X' ).
-    o_grid->add_button( button = 'F05' text = 'Log ejecución'  icon =  icon_incompletion_log forzar = 'X' ).
-    o_grid->add_button( button = 'M01' text = 'Borrar'  icon = icon_delete forzar = 'X' ).
+    o_grid->add_button( button = 'F01' text = 'Grabar'(GRA)  icon = icon_system_save forzar = 'X' ).
+    o_grid->add_button( button = 'F02' text = 'Ir a exit'(IAE)  icon = icon_submit forzar = 'X' ).
+    o_grid->add_button( button = 'F03' text = 'Ir a implementación'(IAI)  icon =  icon_change forzar = 'X' ).
+    o_grid->add_button( button = 'F04' text = 'Grabar en OT'(GEO)  icon =  icon_transport_proposal forzar = 'X' ).
+    o_grid->add_button( button = 'F05' text = 'Log ejecución'(LE1)  icon =  icon_incompletion_log forzar = 'X' ).
+    o_grid->add_button( button = 'M01' text = 'Borrar'(BOR)  icon = icon_delete forzar = 'X' ).
 
     IF zap_exits_est-activa = 'U'.
       zcl_ap_dynpro=>screen_visible( campo = 'ZAP_EXITS_EST-USUARIOS_ACTIVOS' variable = 'X' ).
@@ -734,7 +734,7 @@ CLASS zcl_report IMPLEMENTATION.
 
 
     i_var_ini = i_var.
-    MESSAGE 'Se ha grabado la exit' TYPE 'S'.
+    MESSAGE 'Se ha grabado la exit'(SHG) TYPE 'S'.
   ENDMETHOD.
 
   METHOD ir_a_detalle.

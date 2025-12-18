@@ -1,12 +1,11 @@
-class ZCL_AP_EMPLEADO definition
-  public
-  create public .
+CLASS zcl_ap_empleado DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
 
-public section.
-
-  types:
+  PUBLIC SECTION.
+    TYPES:
 * Estructura importación report rplpay00
-    BEGIN OF t_devengos,
+      BEGIN OF t_devengos,
         pernr             TYPE pernr-pernr,
         name              TYPE c LENGTH 35,
         job_title         TYPE c LENGTH 15,
@@ -38,13 +37,11 @@ public section.
 *            indbw,
         perc_diffr        TYPE p LENGTH 8 DECIMALS 2,
         color             TYPE c LENGTH 3,
-      END OF t_devengos .
-  types:
-    tt_devengos   TYPE TABLE OF t_devengos .
-  types:
-    tt_bapi7013_1 TYPE TABLE OF bapi7013_1 .
-  types:
-    BEGIN OF t_cond_fechas,
+      END OF t_devengos.
+    TYPES tt_devengos   TYPE TABLE OF t_devengos.
+    TYPES tt_bapi7013_1 TYPE TABLE OF bapi7013_1.
+    TYPES:
+      BEGIN OF t_cond_fechas,
         clave1 TYPE c LENGTH 40,
         clave2 TYPE c LENGTH 40,
         clave3 TYPE c LENGTH 40,
@@ -53,347 +50,311 @@ public section.
         begda  TYPE begda,
         endda  TYPE endda,
         linea  TYPE string,
-      END OF t_cond_fechas .
-  types:
-    tt_cond_fechas TYPE TABLE OF t_cond_fechas .
+      END OF t_cond_fechas.
+    TYPES tt_cond_fechas TYPE TABLE OF t_cond_fechas.
 
-  data DATOS_BASICOS type ZEST_EMPLEADO .
-  constants OP_CREATE type PSPAR-ACTIO value 'INS' ##NO_TEXT.
-  constants OP_CHANGE type PSPAR-ACTIO value 'MOD' ##NO_TEXT.
-  data RETURN type BAPIRETURN1 .
-  constants C_PLVAR type PLVAR value '01' ##NO_TEXT.
-  constants C_MOLGA type MOLGA value '04' ##NO_TEXT.
+    DATA datos_basicos TYPE zest_empleado.
 
-  methods CONSTRUCTOR
-    importing
-      !PERNR type PA0000-PERNR optional
-      !BEGDA type PA0000-BEGDA default SY-DATUM
-      !ENDDA type PA0000-ENDDA default SY-DATUM .
-  methods GET_DATOS_MAESTROS
-    importing
-      !BEGDA type PA0000-BEGDA default SY-DATUM
-      !ENDDA type PA0000-ENDDA default SY-DATUM .
-  class-methods GET_NOMBRE
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA default SY-DATUM
-      !ENDDA type PA0001-ENDDA default SY-DATUM
-    returning
-      value(NOMBRE) type PA0001-ENAME .
-  class-methods GET_DATOS_BASICOS
-    importing
-      !PERNR type PA0000-PERNR optional
-      !BEGDA type PA0000-BEGDA default SY-DATUM
-      !ENDDA type PA0000-ENDDA default SY-DATUM
-      !O_CACHE type ref to ZCL_AP_CACHE optional
-    preferred parameter PERNR
-    returning
-      value(DATOS_BASICOS) type ZEST_EMPLEADO .
-  class-methods VISUALIZAR_ST
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA default SY-DATUM
-      !ENDDA type PA0001-ENDDA default SY-DATUM
-      !INFTY type ANY default ''
-      !SUBTY type ANY default ''
-      !RESUMEN type ABAP_BOOL default ''
-      !ACTUALIZAR type ABAP_BOOL default ''
-      !OBJPS type PA0001-OBJPS optional
-      !SEQNR type PA0001-SEQNR optional
-    returning
-      value(MENSAJE) type BAPIRETURN1-MESSAGE .
-  class-methods GET_COMUNICACION_ST
-    importing
-      !PERNR type PA0000-PERNR optional
-      !SUBTY type PA0105-SUBTY optional
-      !BEGDA type PA0000-BEGDA default SY-DATUM
-      !ENDDA type PA0000-ENDDA default SY-DATUM
-    preferred parameter PERNR
-    returning
-      value(USRID) type PA0105-USRID_LONG .
-  methods CREAR_CUALIFICACION
-    importing
-      !OTYPE type HRP1000-OTYPE
-      !OBJID type HRP1000-OBJID
-      !BEGDA type HRP1000-BEGDA
-      !ENDDA type HRP1000-ENDDA
-      !RATING type BAPIQUALIFIC_TAB-RATING
-    returning
-      value(RETURN) type BAPIRETURN1 .
-  methods INICIO .
-  methods CAMBIAR_EMPLEADO
-    importing
-      !PERNR type PA0001-PERNR optional
-      !BEGDA type PA0001-BEGDA default SY-DATUM
-      !ENDDA type PA0001-ENDDA default SY-DATUM
-    preferred parameter PERNR .
-  class-methods BLOQUEAR_EMPLEADO
-    importing
-      !PERNR type PA0000-PERNR
-    returning
-      value(RETURN) type BAPIRETURN1 .
-  class-methods DESBLOQUEAR_EMPLEADO
-    importing
-      !PERNR type PA0000-PERNR
-    returning
-      value(RETURN) type BAPIRETURN1 .
-  class-methods GET_PERNR_FROM_UNAME
-    importing
-      !UNAME type UNAME default SY-UNAME
-      !BEGDA type BEGDA default SY-DATUM
-      !ENDDA type ENDDA default SY-DATUM
-    preferred parameter UNAME
-    returning
-      value(PERNR) type PERSNO .
-  class-methods GET_UNAME_FROM_PERNR
-    importing
-      !BEGDA type BEGDA default SY-DATUM
-      !ENDDA type ENDDA default SY-DATUM
-      value(PERNR) type PERSNO optional
-    preferred parameter PERNR
-    returning
-      value(UNAME) type UNAME .
-  methods BORRAR_CUALIFICACION
-    importing
-      !OTYPE type HRP1000-OTYPE
-      !OBJID type HRP1000-OBJID
-      !BEGDA type HRP1000-BEGDA
-      !ENDDA type HRP1000-ENDDA
-      !RATING type BAPIQUALIFIC_TAB-RATING
-    returning
-      value(RETURN) type BAPIRETURN1 .
-  class-methods GET_EMAIL
-    importing
-      !PERNR type PA0001-PERNR optional
-      !UNAME type SY-UNAME optional
-    preferred parameter PERNR
-    returning
-      value(EMAIL) type STRING .
-  class-methods GET_EDAD
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS default SY-DATUM
-    returning
-      value(EDAD) type EMPL_AGE .
-  class-methods GET_TIPO_CONTRATO
-    importing
-      !BEGDA type BEGDA default SY-DATUM
-      !ENDDA type ENDDA default SY-DATUM
-      !PERNR type PERSNO
-    exporting
-      !IDSEG type PES_IDSEG
-      !TTEXT type T5E2T-TTEXT
-      !FIJO type ABAP_BOOL .
-  class-methods GET_DISPONIBILIDAD
-    importing
-      !PERNR type PERSNO
-      !BEGDA type BEGDA
-      !ENDDA type ENDDA
-    returning
-      value(I_DISP) type HRTEM_TIMELIST .
-  class-methods ES_DISPONIBLE_EN_HORARIO
-    importing
-      !PERNR type PERSNO
-      !BEGDA type BEGDA
-      !BEGUZ type BEGUZ
-      !ENDUZ type ENDUZ
-    returning
-      value(DISPONIBLE) type ABAP_BOOL .
-  class-methods GET_HORARIO_TRABAJO
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA
-      !ENDDA type PA0001-ENDDA
-    returning
-      value(T_PTPSP) type PTPSP_TAB .
-  class-methods BORRAR_INFOTIPO
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA default SY-DATUM
-      !ENDDA type PA0001-ENDDA default SY-DATUM
-      !INFTY type P0001-INFTY optional
-      !SUBTY type P0001-SUBTY optional
-    returning
-      value(MENSAJE) type BAPIRETURN1-MESSAGE .
-  class-methods GET_NUM_CANDIDATO
-    importing
-      !PERNR type PERSNO
-      !FECHA type D default SY-DATUM
-    returning
-      value(APLNO) type APLNO .
-  class-methods GET_CALIFICACIONES
-    importing
-      !PERNR type PERSNO
-      !BEGDA type BEGDA default '19000101'
-      !ENDDA type ENDDA default '99991231'
-    returning
-      value(I_CALIFICACIONES) type ZT_CALIFICACIONES .
-  class-methods GET_DATOS_AMPLIADOS
-    importing
-      !PERNR type PA0000-PERNR optional
-      !BEGDA type PA0000-BEGDA default SY-DATUM
-      !ENDDA type PA0000-ENDDA default SY-DATUM
-      !O_CACHE type ref to ZCL_AP_CACHE optional
-    preferred parameter PERNR
-    returning
-      value(DATOS) type ZEST_EMPL_MAS .
-  class-methods GET_CUALIFICACIONES
-    importing
-      !PERNR type PERSNO
-      !BEGDA type BEGDA default '19000101'
-      !ENDDA type ENDDA default '99991231'
-    returning
-      value(I_CUALIFICACIONES) type HRPD_PROFQ_TAB .
-  class-methods TIENE_CUALIFICACION
-    importing
-      !PERNR type PERSNO
-      !BEGDA type BEGDA default SY-DATUM
-      !ENDDA type ENDDA default SY-DATUM
-      !CUALIF type ZCUALIF
-    returning
-      value(SI) type ABAP_BOOL .
-  class-methods CONDENSAR_FECHAS
-    changing
-      !FECHAS type TT_COND_FECHAS .
-  class-methods GET_SUPERIORES
-    importing
-      !PERNR type PERSNO optional
-      !FECHA type DATS default SY-DATUM
-      !CONSIDER_VAC_POS type ABAP_BOOL default 'X'
-      !OTYPE type OTYPE default 'P'
-      !VALIDO_HOY type ABAP_BOOL optional
-    returning
-      value(SUPERIORES) type HROBJECT_T .
-  class-methods GET_SUPERIOR
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS default SY-DATUM
-    returning
-      value(SUPERIOR) type PERSNO .
-  class-methods GET_PERNR_FROM_PERID
-    importing
-      !PERID type ANY optional
-      !BEGDA type BEGDA default SY-DATUM
-      !ENDDA type ENDDA default SY-DATUM
-    exporting
-      value(PERNR) type PERSNO
-      !MESSAGE type BAPI_MSG .
-  class-methods ELIMINAR_BLOQUEO
-    importing
-      !PERNR type PERSNO
-    returning
-      value(BLOQUEADO) type ABAP_BOOL .
-  class-methods GET_TEXTO_INFOTIPO
-    importing
-      !PERNR type PERSNO
-      !INFTY type INFTY
-      !FECHA type DATS default SY-DATUM
-      !SUBTY type SUBTY default ''
-      !ENDDA type DATS default '00000000'
-    returning
-      value(TEXT) type IT_NOTES .
-  class-methods GET_TEXTO_INFOTIPO_STRING
-    importing
-      !PERNR type PERSNO
-      !INFTY type INFTY
-      !FECHA type DATS default SY-DATUM
-      !SUBTY type SUBTY default ''
-      !ENDDA type DATS default '00000000'
-    returning
-      value(STRING) type STRING .
-  class-methods GET_HORARIO_TRABAJO_DETALLADO
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA
-      !ENDDA type PA0001-ENDDA
-    returning
-      value(I_HORARIO) type PWSDAYINT_TAB .
-  class-methods SET_TEXTO_INFOTIPO_STRING
-    importing
-      !PERNR type PERSNO
-      !INFTY type INFTY
-      !FECHA type DATS default SY-DATUM
-      !ENDDA type DATS default '00000000'
-      !SUBTY type SUBTY default ''
-      !STRING type STRING default ''
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods SET_TEXTO_INFOTIPO
-    importing
-      !PERNR type PERSNO
-      !INFTY type INFTY
-      !FECHA type DATS default SY-DATUM
-      !ENDDA type DATS default '00000000'
-      !SUBTY type SUBTY default ''
-      !TEXT type IT_NOTES
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods GET_TIMEOVERVIEW
-    importing
-      !PERNR type PA0001-PERNR
-      !BEGDA type PA0001-BEGDA
-      !ENDDA type PA0001-ENDDA
-    exporting
-      !I_RETURN type BAPIRET2_T
-      !I_TIEMPOS type TT_BAPI7013_1 .
-  class-methods SET_FICHAJE
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS
-      !HORA type UZEIT
-      !SATZA type ANY default ''
-      !TERID type ANY default ''
-      !DALLF type ANY default '='
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods DEL_FICHAJE
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS
-      !HORA type UZEIT
-    returning
-      value(MESSAGE) type BAPI_MSG .
-  class-methods GET_DEVENGOS
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS default SY-DATUM
-      !LISTA type ABAP_BOOL default ''
-    exporting
-      !I_DEVENGOS type TT_DEVENGOS .
-  class-methods GET_FECHA_IT0041
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS default SY-DATUM
-      !CLASE_FECHA type DATAR
-      !ENDDA type ENDDA optional
-    exporting
-      !PA0041 type PA0041
-      !INDICE type NUMC2
-    returning
-      value(FECHA_SALIDA) type DATS .
-  class-methods SET_FECHA_IT0041
-    importing
-      !PERNR type PERSNO
-      !FECHA type DATS default SY-DATUM
-      !CLASE_FECHA type DATAR
-      !FECHA_MOD type DATS
-    exporting
-      !INDICE type NUMC2
-      !PA0041 type PA0041
-      !MESSAGE type BAPI_MSG .
-  class-methods ACTUALIZAR_INFOTIPO
-    importing
-      !DATOS type ANY
-      !INFTY type INFTY
-      !OPERATION type PSPAR-ACTIO
-      !VISIBLE type ABAP_BOOL default ''
-    exporting
-      !MESSAGE type BAPI_MSG
-      !RETURN type BAPIRETURN1
-      !KEY type BAPIPAKEY .
-  class-methods CONDENSAR
-    changing
-      !IT type TABLE .
+    CONSTANTS op_create TYPE pspar-actio VALUE 'INS' ##NO_TEXT.
+    CONSTANTS op_change TYPE pspar-actio VALUE 'MOD' ##NO_TEXT.
+
+    DATA return TYPE bapireturn1.
+
+    CONSTANTS c_plvar TYPE plvar VALUE '01' ##NO_TEXT.
+    CONSTANTS c_molga TYPE molga VALUE '04' ##NO_TEXT.
+
+    METHODS constructor
+      IMPORTING pernr TYPE pa0000-pernr OPTIONAL
+                begda TYPE pa0000-begda DEFAULT sy-datum
+                endda TYPE pa0000-endda DEFAULT sy-datum.
+
+    METHODS get_datos_maestros
+      IMPORTING begda TYPE pa0000-begda DEFAULT sy-datum
+                endda TYPE pa0000-endda DEFAULT sy-datum.
+
+    CLASS-METHODS get_nombre
+      IMPORTING pernr         TYPE pa0001-pernr
+                begda         TYPE pa0001-begda DEFAULT sy-datum
+                endda         TYPE pa0001-endda DEFAULT sy-datum
+      RETURNING VALUE(nombre) TYPE pa0001-ename.
+
+    CLASS-METHODS get_datos_basicos
+      IMPORTING pernr                TYPE pa0000-pernr        OPTIONAL
+                begda                TYPE pa0000-begda        DEFAULT sy-datum
+                endda                TYPE pa0000-endda        DEFAULT sy-datum
+                o_cache              TYPE REF TO zcl_ap_cache OPTIONAL
+      PREFERRED PARAMETER pernr
+      RETURNING VALUE(datos_basicos) TYPE zest_empleado.
+
+    CLASS-METHODS visualizar_st
+      IMPORTING pernr          TYPE pa0001-pernr
+                begda          TYPE pa0001-begda DEFAULT sy-datum
+                endda          TYPE pa0001-endda DEFAULT sy-datum
+                infty          TYPE any          DEFAULT ''
+                subty          TYPE any          DEFAULT ''
+                resumen        TYPE abap_bool    DEFAULT ''
+                actualizar     TYPE abap_bool    DEFAULT ''
+                objps          TYPE pa0001-objps OPTIONAL
+                seqnr          TYPE pa0001-seqnr OPTIONAL
+      RETURNING VALUE(mensaje) TYPE bapireturn1-message.
+
+    CLASS-METHODS get_comunicacion_st
+      IMPORTING pernr        TYPE pa0000-pernr OPTIONAL
+                subty        TYPE pa0105-subty OPTIONAL
+                begda        TYPE pa0000-begda DEFAULT sy-datum
+                endda        TYPE pa0000-endda DEFAULT sy-datum
+      PREFERRED PARAMETER pernr
+      RETURNING VALUE(usrid) TYPE pa0105-usrid_long.
+
+    METHODS crear_cualificacion
+      IMPORTING otype         TYPE hrp1000-otype
+                objid         TYPE hrp1000-objid
+                begda         TYPE hrp1000-begda
+                endda         TYPE hrp1000-endda
+                rating        TYPE bapiqualific_tab-rating
+      RETURNING VALUE(return) TYPE bapireturn1.
+
+    METHODS inicio.
+
+    METHODS cambiar_empleado
+      IMPORTING pernr TYPE pa0001-pernr OPTIONAL
+                begda TYPE pa0001-begda DEFAULT sy-datum
+                endda TYPE pa0001-endda DEFAULT sy-datum
+      PREFERRED PARAMETER pernr.
+
+    CLASS-METHODS bloquear_empleado
+      IMPORTING pernr         TYPE pa0000-pernr
+      RETURNING VALUE(return) TYPE bapireturn1.
+
+    CLASS-METHODS desbloquear_empleado
+      IMPORTING pernr         TYPE pa0000-pernr
+      RETURNING VALUE(return) TYPE bapireturn1.
+
+    CLASS-METHODS get_pernr_from_uname
+      IMPORTING !uname       TYPE uname DEFAULT sy-uname
+                begda        TYPE begda DEFAULT sy-datum
+                endda        TYPE endda DEFAULT sy-datum
+      PREFERRED PARAMETER uname
+      RETURNING VALUE(pernr) TYPE persno.
+
+    CLASS-METHODS get_uname_from_pernr
+      IMPORTING begda        TYPE begda  DEFAULT sy-datum
+                endda        TYPE endda  DEFAULT sy-datum
+                VALUE(pernr) TYPE persno OPTIONAL
+      PREFERRED PARAMETER pernr
+      RETURNING VALUE(uname) TYPE uname.
+
+    METHODS borrar_cualificacion
+      IMPORTING otype         TYPE hrp1000-otype
+                objid         TYPE hrp1000-objid
+                begda         TYPE hrp1000-begda
+                endda         TYPE hrp1000-endda
+                rating        TYPE bapiqualific_tab-rating
+      RETURNING VALUE(return) TYPE bapireturn1.
+
+    CLASS-METHODS get_email
+      IMPORTING pernr        TYPE pa0001-pernr OPTIONAL
+                !uname       TYPE sy-uname     OPTIONAL
+      PREFERRED PARAMETER pernr
+      RETURNING VALUE(email) TYPE string.
+
+    CLASS-METHODS get_edad
+      IMPORTING pernr       TYPE persno
+                fecha       TYPE dats DEFAULT sy-datum
+      RETURNING VALUE(edad) TYPE empl_age.
+
+    CLASS-METHODS get_tipo_contrato
+      IMPORTING begda TYPE begda DEFAULT sy-datum
+                endda TYPE endda DEFAULT sy-datum
+                pernr TYPE persno
+      EXPORTING idseg TYPE pes_idseg
+                ttext TYPE t5e2t-ttext
+                fijo  TYPE abap_bool.
+
+    CLASS-METHODS get_disponibilidad
+      IMPORTING pernr         TYPE persno
+                begda         TYPE begda
+                endda         TYPE endda
+      RETURNING VALUE(i_disp) TYPE hrtem_timelist.
+
+    CLASS-METHODS es_disponible_en_horario
+      IMPORTING pernr             TYPE persno
+                begda             TYPE begda
+                beguz             TYPE beguz
+                enduz             TYPE enduz
+      RETURNING VALUE(disponible) TYPE abap_bool.
+
+    CLASS-METHODS get_horario_trabajo
+      IMPORTING pernr          TYPE pa0001-pernr
+                begda          TYPE pa0001-begda
+                endda          TYPE pa0001-endda
+      RETURNING VALUE(t_ptpsp) TYPE ptpsp_tab.
+
+    CLASS-METHODS borrar_infotipo
+      IMPORTING pernr          TYPE pa0001-pernr
+                begda          TYPE pa0001-begda DEFAULT sy-datum
+                endda          TYPE pa0001-endda DEFAULT sy-datum
+                infty          TYPE p0001-infty  OPTIONAL
+                subty          TYPE p0001-subty  OPTIONAL
+      RETURNING VALUE(mensaje) TYPE bapireturn1-message.
+
+    CLASS-METHODS get_num_candidato
+      IMPORTING pernr        TYPE persno
+                fecha        TYPE d DEFAULT sy-datum
+      RETURNING VALUE(aplno) TYPE aplno.
+
+    CLASS-METHODS get_calificaciones
+      IMPORTING pernr                   TYPE persno
+                begda                   TYPE begda DEFAULT '19000101'
+                endda                   TYPE endda DEFAULT '99991231'
+      RETURNING VALUE(i_calificaciones) TYPE zt_calificaciones.
+
+    CLASS-METHODS get_datos_ampliados
+      IMPORTING pernr        TYPE pa0000-pernr        OPTIONAL
+                begda        TYPE pa0000-begda        DEFAULT sy-datum
+                endda        TYPE pa0000-endda        DEFAULT sy-datum
+                o_cache      TYPE REF TO zcl_ap_cache OPTIONAL
+      PREFERRED PARAMETER pernr
+      RETURNING VALUE(datos) TYPE zest_empl_mas.
+
+    CLASS-METHODS get_cualificaciones
+      IMPORTING pernr                    TYPE persno
+                begda                    TYPE begda DEFAULT '19000101'
+                endda                    TYPE endda DEFAULT '99991231'
+      RETURNING VALUE(i_cualificaciones) TYPE hrpd_profq_tab.
+
+    CLASS-METHODS tiene_cualificacion
+      IMPORTING pernr     TYPE persno
+                begda     TYPE begda DEFAULT sy-datum
+                endda     TYPE endda DEFAULT sy-datum
+                cualif    TYPE zcualif
+      RETURNING VALUE(si) TYPE abap_bool.
+
+    CLASS-METHODS condensar_fechas
+      CHANGING fechas TYPE tt_cond_fechas.
+
+    CLASS-METHODS get_superiores
+      IMPORTING pernr             TYPE persno    OPTIONAL
+                fecha             TYPE dats      DEFAULT sy-datum
+                consider_vac_pos  TYPE abap_bool DEFAULT 'X'
+                otype             TYPE otype     DEFAULT 'P'
+                valido_hoy        TYPE abap_bool OPTIONAL
+      RETURNING VALUE(superiores) TYPE hrobject_t.
+
+    CLASS-METHODS get_superior
+      IMPORTING pernr           TYPE persno
+                fecha           TYPE dats DEFAULT sy-datum
+      RETURNING VALUE(superior) TYPE persno.
+
+    CLASS-METHODS get_pernr_from_perid
+      IMPORTING perid        TYPE any   OPTIONAL
+                begda        TYPE begda DEFAULT sy-datum
+                endda        TYPE endda DEFAULT sy-datum
+      EXPORTING VALUE(pernr) TYPE persno
+                !message     TYPE bapi_msg.
+
+    CLASS-METHODS eliminar_bloqueo
+      IMPORTING pernr            TYPE persno
+      RETURNING VALUE(bloqueado) TYPE abap_bool.
+
+    CLASS-METHODS get_texto_infotipo
+      IMPORTING pernr       TYPE persno
+                infty       TYPE infty
+                fecha       TYPE dats  DEFAULT sy-datum
+                subty       TYPE subty DEFAULT ''
+                endda       TYPE dats  DEFAULT '00000000'
+      RETURNING VALUE(text) TYPE it_notes.
+
+    CLASS-METHODS get_texto_infotipo_string
+      IMPORTING pernr         TYPE persno
+                infty         TYPE infty
+                fecha         TYPE dats  DEFAULT sy-datum
+                subty         TYPE subty DEFAULT ''
+                endda         TYPE dats  DEFAULT '00000000'
+      RETURNING VALUE(string) TYPE string.
+
+    CLASS-METHODS get_horario_trabajo_detallado
+      IMPORTING pernr            TYPE pa0001-pernr
+                begda            TYPE pa0001-begda
+                endda            TYPE pa0001-endda
+      RETURNING VALUE(i_horario) TYPE pwsdayint_tab.
+
+    CLASS-METHODS set_texto_infotipo_string
+      IMPORTING pernr          TYPE persno
+                infty          TYPE infty
+                fecha          TYPE dats   DEFAULT sy-datum
+                endda          TYPE dats   DEFAULT '00000000'
+                subty          TYPE subty  DEFAULT ''
+                !string        TYPE string DEFAULT ''
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS set_texto_infotipo
+      IMPORTING pernr          TYPE persno
+                infty          TYPE infty
+                fecha          TYPE dats  DEFAULT sy-datum
+                endda          TYPE dats  DEFAULT '00000000'
+                subty          TYPE subty DEFAULT ''
+                !text          TYPE it_notes
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS get_timeoverview
+      IMPORTING pernr     TYPE pa0001-pernr
+                begda     TYPE pa0001-begda
+                endda     TYPE pa0001-endda
+      EXPORTING i_return  TYPE bapiret2_t
+                i_tiempos TYPE tt_bapi7013_1.
+
+    CLASS-METHODS set_fichaje
+      IMPORTING pernr          TYPE persno
+                fecha          TYPE dats
+                hora           TYPE uzeit
+                satza          TYPE any DEFAULT ''
+                terid          TYPE any DEFAULT ''
+                dallf          TYPE any DEFAULT '='
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS del_fichaje
+      IMPORTING pernr          TYPE persno
+                fecha          TYPE dats
+                hora           TYPE uzeit
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS get_devengos
+      IMPORTING pernr      TYPE persno
+                fecha      TYPE dats      DEFAULT sy-datum
+                lista      TYPE abap_bool DEFAULT ''
+      EXPORTING i_devengos TYPE tt_devengos.
+
+    CLASS-METHODS get_fecha_it0041
+      IMPORTING pernr               TYPE persno
+                fecha               TYPE dats  DEFAULT sy-datum
+                clase_fecha         TYPE datar
+                endda               TYPE endda OPTIONAL
+      EXPORTING pa0041              TYPE pa0041
+                indice              TYPE numc2
+      RETURNING VALUE(fecha_salida) TYPE dats.
+
+    CLASS-METHODS set_fecha_it0041
+      IMPORTING pernr       TYPE persno
+                fecha       TYPE dats DEFAULT sy-datum
+                clase_fecha TYPE datar
+                fecha_mod   TYPE dats
+      EXPORTING indice      TYPE numc2
+                pa0041      TYPE pa0041
+                !message    TYPE bapi_msg.
+
+    CLASS-METHODS actualizar_infotipo
+      IMPORTING datos     TYPE any
+                infty     TYPE infty
+                operation TYPE pspar-actio
+                !visible  TYPE abap_bool DEFAULT ''
+      EXPORTING !message  TYPE bapi_msg
+                !return   TYPE bapireturn1
+                !key      TYPE bapipakey.
+
+    CLASS-METHODS condensar
+      CHANGING it TYPE table.
+
   PROTECTED SECTION.
 
   PRIVATE SECTION.
@@ -409,7 +370,6 @@ public section.
 endclass. "ZCL_AP_EMPLEADO definition
 class ZCL_AP_EMPLEADO implementation.
   METHOD actualizar_infotipo.
-
     CLEAR: key, message, return.
 
     ASSIGN COMPONENT 'PERNR' OF STRUCTURE datos TO FIELD-SYMBOL(<pernr>).
@@ -417,10 +377,16 @@ class ZCL_AP_EMPLEADO implementation.
       message = 'Estructura de entrada incorrecta'.
       RETURN.
     ENDIF.
+    DATA(l_infty) = infty.
     ASSIGN COMPONENT 'INFTY' OF STRUCTURE datos TO FIELD-SYMBOL(<infty>).
     IF sy-subrc = 0.
-      <infty> = infty.
-    else.
+      IF l_infty IS INITIAL.
+        l_infty = <infty>.
+      ELSEIF l_infty <> <infty> AND <infty> <> ''.
+        mESSAGE = 'Incoherencia en infotipos'.
+        RETURN.
+      ENDIF.
+    ELSE.
       message = 'Estructura de entrada incorrecta'.
       RETURN.
     ENDIF.
@@ -468,7 +434,7 @@ class ZCL_AP_EMPLEADO implementation.
 
     CALL FUNCTION 'HR_INFOTYPE_OPERATION'
       EXPORTING
-        infty         = infty
+        infty         = l_infty
         number        = <pernr>
         subtype       = <subty>
         validityend   = <endda>
@@ -599,20 +565,19 @@ class ZCL_AP_EMPLEADO implementation.
     me->endda = endda.
   ENDMETHOD.
   METHOD condensar.
-    DATA: i_fechas TYPE tt_cond_fechas,
-          l_fechas TYPE t_cond_fechas,
+    DATA: l_cont   TYPE char1,
           i_key    TYPE apb_lpd_t_key_value,
-          l_cont   TYPE char1.
-
+          l_fechas TYPE t_cond_fechas,
+          i_fechas TYPE tt_cond_fechas.
 
     DATA(i_campos) = zcl_ap_dev=>get_fieldcatalog( tabla = it ).
     LOOP AT i_campos ASSIGNING FIELD-SYMBOL(<campo>)
-                      WHERE name NE 'BEGDA' AND name NE 'ENDDA'.
-      ADD 1 TO l_cont.
+         WHERE name <> 'BEGDA' AND name <> 'ENDDA'.
+      l_cont = l_cont + 1.
       IF l_cont > 5.
         MESSAGE 'Sólo es posible condensar 5 campos' TYPE 'E'.
       ENDIF.
-      APPEND VALUE #( key = 'CLAVE' && l_cont value = <campo>-name  ) TO i_key.
+      APPEND VALUE #( key = |CLAVE{ l_cont }| value = <campo>-name  ) TO i_key.
     ENDLOOP.
     LOOP AT it ASSIGNING FIELD-SYMBOL(<it>).
       CLEAR l_fechas.
@@ -624,7 +589,7 @@ class ZCL_AP_EMPLEADO implementation.
       ENDLOOP.
       APPEND l_fechas TO i_fechas.
     ENDLOOP.
-    zcl_ap_empleado=>condensar_fechas( CHANGING fechas = i_fechas[] ).
+    zcl_ap_empleado=>condensar_fechas( CHANGING fechas = i_fechas ).
     CLEAR it.
     LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(<fechas>).
       APPEND INITIAL LINE TO it ASSIGNING <it>.
@@ -635,8 +600,6 @@ class ZCL_AP_EMPLEADO implementation.
         <destino> = <origen>.
       ENDLOOP.
     ENDLOOP.
-
-
   ENDMETHOD.
   METHOD condensar_fechas.
     DATA: i_fechas    TYPE tt_cond_fechas,
@@ -1036,13 +999,18 @@ class ZCL_AP_EMPLEADO implementation.
        WHERE spras = sy-langu
          AND land1 = l_pa0002-natio.
       datos-famst = l_pa0002-famst.
-      CASE l_pa0002-famst.
-        WHEN '0'. datos-fatxt = 'Soltero'(sol).
-        WHEN '1'. datos-fatxt = 'Casado'(cas).
-        WHEN '2'. datos-fatxt = 'Viudo'(viu).
-        WHEN '3'. datos-fatxt = 'Divorciado'(div).
-        WHEN '5'. datos-fatxt = 'Separado'(sep).
-        WHEN '6'. datos-fatxt = 'Pareja de hecho'(phe).
+
+      SELECT SINGLE ftext FROM t502t
+        INTO datos-fatxt
+       WHERE sprsl = sy-langu
+         AND famst = datos-famst.
+      CASE datos-fatxt.
+        WHEN 'sol.'. datos-fatxt = 'Soltero'(sol).
+        WHEN 'cas.'. datos-fatxt = 'Casado'(cas).
+        WHEN 'viu.'. datos-fatxt = 'Viudo'(viu).
+        WHEN 'div.'. datos-fatxt = 'Divorciado'(div).
+        WHEN 'sep.'. datos-fatxt = 'Separado'(sep).
+        WHEN 'Par.H.'. datos-fatxt = 'Pareja de hecho'(phe).
       ENDCASE.
       datos-gesch   = l_pa0002-gesch.
       datos-gesch_t = zcl_ap_utils=>get_texto_dominio( dominio = 'GESCH' valor = datos-gesch ).
@@ -1429,7 +1397,7 @@ class ZCL_AP_EMPLEADO implementation.
     IF lista IS INITIAL.
       zcl_ap_utils=>set_runtime_info( ).
       SUBMIT rplpay00
-         AND RETURN
+             AND RETURN
 *VIA SELECTION-SCREEN
              WITH pnppernr = pernr
              WITH pnpstat2 IN r_stat2
@@ -1441,7 +1409,7 @@ class ZCL_AP_EMPLEADO implementation.
 
     ELSE.
       SUBMIT rplpay00
-         AND RETURN
+             AND RETURN
              WITH pnppernr = pernr
              WITH pnpstat2 IN r_stat2
              WITH pnpbegda = fecha
@@ -1893,7 +1861,7 @@ class ZCL_AP_EMPLEADO implementation.
         OTHERS    = 2.
 
     IF sy-subrc <> 0.
-      message 'Error recuperando nota' type 'S'.
+      MESSAGE 'Error recuperando nota' TYPE 'S'.
     ENDIF.
   ENDMETHOD.
   METHOD get_texto_infotipo_string.
@@ -2320,7 +2288,7 @@ class ZCL_AP_EMPLEADO implementation.
               resumen = resumen
             RECEIVING
               message = mensaje.
-        CATCH cx_root INTO DATA(o_root). "#EC *
+        CATCH cx_root INTO DATA(o_root). "#EC * " TODO: variable is assigned but never used (ABAP cleaner)
           MESSAGE 'No implementada la opción de visualizar candidatos' TYPE 'I'.
       ENDTRY.
     ENDIF.

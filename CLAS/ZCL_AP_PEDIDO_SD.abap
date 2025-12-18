@@ -116,11 +116,12 @@ CLASS zcl_ap_pedido_sd DEFINITION
                 i_return   TYPE bapiret2_tab.
 
     CLASS-METHODS set_texto_string
-      IMPORTING vbeln   TYPE vbeln_va
-                posnr   TYPE posnr_va OPTIONAL
-                !id     TYPE stxh-tdid
-                spras   TYPE spras    DEFAULT ''
-                !string TYPE string.
+      IMPORTING vbeln          TYPE vbeln_va
+                posnr          TYPE posnr_va OPTIONAL
+                !id            TYPE stxh-tdid
+                spras          TYPE spras    DEFAULT ''
+                !string        TYPE string
+      RETURNING VALUE(message) TYPE bapi_msg.
 
     CLASS-METHODS esta_bloqueado
       IMPORTING vbeln            TYPE vbeln_va
@@ -191,8 +192,9 @@ CLASS zcl_ap_pedido_sd DEFINITION
       IMPORTING vbeln         TYPE vbeln_va
       RETURNING VALUE(i_komv) TYPE ty_komv.
 
-protected section.
-private section.
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
 endclass. "ZCL_AP_PEDIDO_SD definition
 class ZCL_AP_PEDIDO_SD implementation.
   METHOD bloquear_pedido.
@@ -299,7 +301,7 @@ class ZCL_AP_PEDIDO_SD implementation.
       __concat2 message 'No existe el pedido'(nep) vbeln.
       RETURN.
     ELSE.
-      SELECT SINGLE * FROM vbkd
+      SELECT SINGLE * FROM vbkd "#EC CI_ALL_FIELDS_NEEDED
         INTO CORRESPONDING FIELDS OF vbak
        WHERE vbeln = vbeln
          AND posnr = '000000'.
@@ -314,7 +316,7 @@ class ZCL_AP_PEDIDO_SD implementation.
       vbakx-updkz = 'I'.
     ENDIF.
 
-    SELECT * FROM vbap
+    SELECT * FROM vbap "#EC CI_ALL_FIELDS_NEEDED
       INTO CORRESPONDING FIELDS OF TABLE i_vbapkom
      WHERE vbeln = vbeln
        AND abgru = ''.
@@ -333,7 +335,7 @@ class ZCL_AP_PEDIDO_SD implementation.
       APPEND l_vbapkomx TO i_vbapkomx.
     ENDLOOP.
 
-    SELECT * FROM vbep
+    SELECT * FROM vbep "#EC CI_ALL_FIELDS_NEEDED
       INTO CORRESPONDING FIELDS OF TABLE i_vbepkom
      WHERE vbeln = vbeln.
 
@@ -741,31 +743,38 @@ class ZCL_AP_PEDIDO_SD implementation.
           us_return      TYPE TABLE OF bapiret2. " Return structure
 
     CLEAR i_komv.
-    SELECT  * FROM vbak
+    SELECT  * FROM vbak  "#EC CI_ALL_FIELDS_NEEDED
       INTO TABLE da_xvbak
      WHERE vbeln = vbeln.
-    IF sy-subrc = 0.
-      MOVE-CORRESPONDING da_xvbak TO da_konv_keytab.
+    IF sy-subrc <> 0.
+      RETURN.
+    ENDIF.
 
-      CALL FUNCTION 'SD_KOMV_ARRAY_SELECT'
-        EXPORTING
-          read_cond                = ''
-          i_memory_read            = ''
-          i_with_header_conditions = ''
-        TABLES
-          i_komv_keytab            = da_konv_keytab
-          i_vbak                   = da_xvbak
-          e_komv                   = i_komv[]
-          e_konh                   = us_xkonh
-          e_konp                   = us_xkonp
-          e_konm                   = us_xkonm
-          e_konw                   = us_xkonw
-          return                   = us_return
-        EXCEPTIONS
-          err_no_records_requested = 1
-          err_no_records_found     = 2
-          OTHERS                   = 3.
+    MOVE-CORRESPONDING da_xvbak TO da_konv_keytab.
 
+    CALL FUNCTION 'SD_KOMV_ARRAY_SELECT'
+      EXPORTING
+        read_cond                = ''
+        i_memory_read            = ''
+        i_with_header_conditions = ''
+      TABLES
+        i_komv_keytab            = da_konv_keytab
+        i_vbak                   = da_xvbak
+        e_komv                   = i_komv[]
+        e_konh                   = us_xkonh
+        e_konp                   = us_xkonp
+        e_konm                   = us_xkonm
+        e_konw                   = us_xkonw
+        return                   = us_return
+      EXCEPTIONS
+        err_no_records_requested = 1
+        err_no_records_found     = 2
+        OTHERS                   = 3.
+
+    IF sy-subrc <> 0.
+      CLEAR i_komv.
+      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
     ENDIF.
   ENDMETHOD.
   METHOD get_datos_interlocutor.
@@ -1269,13 +1278,19 @@ class ZCL_AP_PEDIDO_SD implementation.
     lr_fktyp-sign   = 'I'.
 
     IF interco IS INITIAL.
-      lr_fktyp-low = 'M'. APPEND lr_fktyp TO r_fktyp.
-      lr_fktyp-low = 'N'. APPEND lr_fktyp TO r_fktyp.
-      lr_fktyp-low = 'O'. APPEND lr_fktyp TO r_fktyp.
-      lr_fktyp-low = 'P'. APPEND lr_fktyp TO r_fktyp. "#EC *
+      lr_fktyp-low = 'M'.
+      APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'N'.
+      APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'O'.
+      APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = 'P'.
+      APPEND lr_fktyp TO r_fktyp. "#EC *
     ELSE.
-      lr_fktyp-low = '5'. APPEND lr_fktyp TO r_fktyp.
-      lr_fktyp-low = '6'. APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = '5'.
+      APPEND lr_fktyp TO r_fktyp.
+      lr_fktyp-low = '6'.
+      APPEND lr_fktyp TO r_fktyp.
     ENDIF.
 
     LOOP AT i_vbap ASSIGNING <vbap>.
@@ -1566,9 +1581,9 @@ class ZCL_AP_PEDIDO_SD implementation.
   ENDMETHOD.
   METHOD set_texto_string.
     IF posnr IS INITIAL.
-      zcl_ap_textos=>save_texto_string( id = id object = 'VBBK' name = vbeln spras = spras string = string ).
+      message = zcl_ap_textos=>save_texto_string( id = id object = 'VBBK' name = vbeln spras = spras string = string ).
     ELSE.
-      zcl_ap_textos=>save_texto_string( id = id object = 'VBBP' name = vbeln && posnr spras = spras string = string ).
+      message = zcl_ap_textos=>save_texto_string( id = id object = 'VBBP' name = vbeln && posnr spras = spras string = string ).
     ENDIF.
   ENDMETHOD.
   METHOD visualizar.

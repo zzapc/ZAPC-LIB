@@ -2275,6 +2275,11 @@
       ENDIF.
     ENDIF.
 
+*APC20251015 El caracter &amp; da problemas
+    IF l_valor CS &apos;&amp;&apos;.
+      REPLACE ALL OCCURRENCES OF &apos;&amp;&apos; IN l_valor WITH ` `.
+    ENDIF.
+
     IF todas IS INITIAL.
       IF NOT doc IS INITIAL.
         REPLACE l_var IN doc WITH l_valor IGNORING CASE.

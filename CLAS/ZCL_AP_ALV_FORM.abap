@@ -1,4 +1,4 @@
-CLASS zcl_ap_alv_form DEFINITION
+ÔªøCLASS zcl_ap_alv_form DEFINITION
   PUBLIC FINAL
   CREATE PUBLIC.
 
@@ -80,7 +80,7 @@ class ZCL_AP_ALV_FORM implementation.
     IF endda IS INITIAL OR begda = endda.
       WRITE begda TO l_fila-valor.
       IF texto IS INITIAL.
-        l_fila-titulo = 'Fecha de selecciÛn'.
+        l_fila-titulo = 'Fecha de selecci√≥n'.
       ENDIF.
     ELSE.
       WRITE begda TO l_f1.
@@ -88,7 +88,7 @@ class ZCL_AP_ALV_FORM implementation.
 
       CONCATENATE l_f1 'a' l_f2 INTO l_fila-valor SEPARATED BY space.
       IF texto IS INITIAL.
-        l_fila-titulo = 'Fechas de selecciÛn'.
+        l_fila-titulo = 'Fechas de selecci√≥n'.
       ENDIF.
     ENDIF.
 
@@ -315,41 +315,41 @@ class ZCL_AP_ALV_FORM implementation.
     add_parametro: 'P_BUKRS' 'Sociedad'(soc) 'T001' 'BUTXT' '',
                    'P_GJAHR' 'Ejercicio'(eje) '' '' '',
                    'P_MONAT' 'Periodo'(per) '' '' '',
-                   'P_SERNR' 'N∫ de serie'(nse) '' '' '',
+                   'P_SERNR' 'N¬∫ de serie'(nse) '' '' '',
                    'P_PERIO' 'Periodo'(per) '' '' '',
                    'P_WERKS' 'Centro'(cen)  'T001W' 'NAME1' '',
                    'P_KUNNR' 'Cliente'(cli) 'KNA1' 'NAME1' 'X',
                    'P_LIFNR' 'Proveedor'(pro) 'LFA1' 'NAME1' 'X',
                    'P_FILE'  'Fichero'(fic) '' '' '',
-                   'P_BUDAT' 'F.ContabilizaciÛn'(fct) '' '' '',
-                   'P_LGNUM' 'N˙mero almacÈn'(nal) 'T300T' 'LNUMT' '',
+                   'P_BUDAT' 'F.Contabilizaci√≥n'(fct) '' '' '',
+                   'P_LGNUM' 'N√∫mero almac√©n'(nal) 'T300T' 'LNUMT' '',
                    'P_MATNR' 'Material'(mat) 'MAKT' 'MAKTX' '',
-                   'P_VKORG' 'OrganizaciÛn ventas'(ove) 'TVKOT' 'VTEXT' '',
+                   'P_VKORG' 'Organizaci√≥n ventas'(ove) 'TVKOT' 'VTEXT' '',
                    'P_FECHA' 'Fecha'(fec) '' '' ''.
 
     add_rango: 'hasta'(has) 'Cuentas'(cue) '' '' 'X',
                'S_GJAHR' 'Ejercicio'(eje) '' '' '',
                'S_MONAT' 'Mes'(mes) '' '' '',
-               'S_BUDAT' 'F.ContabilizaciÛn'(fct) '' '' '',
+               'S_BUDAT' 'F.Contabilizaci√≥n'(fct) '' '' '',
                'S_CPUDT' 'F.Registro'(frg) '' '' '',
                'S_BUKRS' 'Sociedad'(soc) 'T001' 'BUTXT' '',
-               'S_BELNR' 'N∫ Documento'(ndt) '' '' 'X',
+               'S_BELNR' 'N¬∫ Documento'(ndt) '' '' 'X',
                'S_MWSKZ' 'Indicador IVA'(iva) '' '' '',
                'S_WERKS' 'Centros'(cen) 'T001W' 'NAME1' '',
                'S_LGORT' 'Almacenes'(alm) '' '' '',
                'S_ORGEH' 'Unidad Org.'(uor) 'T527X' 'ORGTX' 'X',
                'S_PERNR' 'Empleados'(emp) 'PA0001' 'ENAME' 'X',
-               'S_LGNUM' 'N∫ AlmacÈn'(nal) 'T300T' 'LNUMT' '',
+               'S_LGNUM' 'N¬∫ Almac√©n'(nal) 'T300T' 'LNUMT' '',
                'S_LIFNR' 'Proveedor'(pro) 'LFA1' 'NAME1' '',
                'S_LAUFD' 'Fecha prop.pago'(fpp) '' '' '',
                'S_LAUFI' 'ID. de pago'(idp) '' '' '',
                'S_MATNR' 'Material'(mat) 'MAKT' 'MAKTX' '',
                'S_CHARG' 'Lotes'(lot) '' '' '',
-               'S_VSTEL' 'Puesto expediciÛn'(pex) 'TVSTT' 'VTEXT' '',
+               'S_VSTEL' 'Puesto expedici√≥n'(pex) 'TVSTT' 'VTEXT' '',
                'S_LFDAT' 'Fecha de entrega'(fen) '' '' '',
-               'S_WADAT' 'Fecha salida mercancÌas'(fsm) '' '' '',
-               'S_LAND1' 'PaÌs'(pai) 'T005T' 'LANDX' '',
-               'S_MATKL' 'Grupo artÌculos'(gar) 'T023T' 'WGBEZ' '',
+               'S_WADAT' 'Fecha salida mercanc√≠as'(fsm) '' '' '',
+               'S_LAND1' 'Pa√≠s'(pai) 'T005T' 'LANDX' '',
+               'S_MATKL' 'Grupo art√≠culos'(gar) 'T023T' 'WGBEZ' '',
                'S_BWART' 'Clase movimiento'(clm) 'T156T' 'BTEXT' '',
                'S_AUFNR' 'Orden'(ord) '' '' '',
                'S_FECHA' 'Fecha'(fec) '' '' '',
@@ -357,11 +357,11 @@ class ZCL_AP_ALV_FORM implementation.
                'S_AUDAT' 'Fecha pedido'(fep) '' '' '',
                'S_HORA'  'Hora'(hor) '' '' '',
                'S_MTART' 'Tipo material'(tpm) 'T134T' 'MTBEZ' '',
-               'S_SERNR' 'N∫ de serie'(nse) '' '' '',
-               'S_QMNUM' 'N∫ aviso'(nav) '' '' 'X',
-               'S_ERDAT' 'Fecha creaciÛn'(fcr) '' '' '',
-               'S_ERSDA' 'Fecha creaciÛn'(fcr) '' '' '',
-               'S_EQUNR' 'N∫ equipo'(neq) 'EQKT' 'EQKTX' 'X',
+               'S_SERNR' 'N¬∫ de serie'(nse) '' '' '',
+               'S_QMNUM' 'N¬∫ aviso'(nav) '' '' 'X',
+               'S_ERDAT' 'Fecha creaci√≥n'(fcr) '' '' '',
+               'S_ERSDA' 'Fecha creaci√≥n'(fcr) '' '' '',
+               'S_EQUNR' 'N¬∫ equipo'(neq) 'EQKT' 'EQKTX' 'X',
                'S_BLART' 'Clase documento'(cld) 'T003T' 'LTEXT' '',
                'S_SPWOC' 'Semana'(sem) '' '' '',
                'S_DISPO' 'Planificador necesidades'(pne) 'T024D' 'DSNAM' '',
@@ -371,37 +371,37 @@ class ZCL_AP_ALV_FORM implementation.
                'S_PERIO' 'Periodo'(per) '' '' '',
                'S_KUNNR' 'Cliente'(cli) 'KNA1' 'NAME1' 'X',
                'S_KUNAG' 'Solicitante'(sol) 'KNA1' 'NAME1' 'X',
-               'S_KUNWE' 'Dest.MercancÌa'(dsm) 'KNA1' 'NAME1' 'X',
+               'S_KUNWE' 'Dest.Mercanc√≠a'(dsm) 'KNA1' 'NAME1' 'X',
                'S_VDATU' 'Fecha pref.entrega'(fpe) '' '' '',
                'S_GSTRP' 'Fecha inicio extrema'(fie) '' '' '',
                'S_AUARTO' 'Clase de orden'(cor) 'T003P' 'TXT' '',
-               'S_FRGGR' 'Grupo de liberaciÛn'(glb) 'T16FH' 'FRGGT' '',
-               'S_FRGSX' 'Estrategia liberaciÛn'(elb) 'T16FT' 'FRGXT' '',
+               'S_FRGGR' 'Grupo de liberaci√≥n'(glb) 'T16FH' 'FRGGT' '',
+               'S_FRGSX' 'Estrategia liberaci√≥n'(elb) 'T16FT' 'FRGXT' '',
                'S_BSARK' 'Clase de pedido'(cpe) 'T176T' 'VTEXT' '',
                'S_HKONT' 'Cuenta contable'(ccc) '' '' '',
                'S_KSTAR' 'Clase de coste'(cco) 'CSKU' 'KTEXT' '',
-               'S_VKORG' 'OrganizaciÛn ventas'(ove) 'TVKOT' 'VTEXT' '',
+               'S_VKORG' 'Organizaci√≥n ventas'(ove) 'TVKOT' 'VTEXT' '',
                'S_VTWEG' 'Canal'(can) 'TVTWT' 'VTEXT' '',
                'S_FKART' 'Clase factura'(cfa) 'TVFKT' 'VTEXT' '',
                'S_FKDAT' 'Fecha factura'(ffa) '' '' '',
                'S_FAEDT' 'Fecha vencimiento'(fve) '' '' '',
-               'S_ZLSCH' 'VÌa de pago'(vpa) '' '' '',
+               'S_ZLSCH' 'V√≠a de pago'(vpa) '' '' '',
                'S_QMART' 'Clase de aviso'(cla) 'TQ80_T' 'QMARTX' '',
                'S_ARBPL' 'Puesto de trabajo'(ptt) '' '' '',
-               'S_STAWN' 'N∫Estad.MercancÌa'(nem) '' '' '',
+               'S_STAWN' 'N¬∫Estad.Mercanc√≠a'(nem) '' '' '',
                'S_EKGRP' 'Grupo de compras'(gco) 'T024' 'EKNAM' '',
                'S_BSART' 'Clase de pedido'(clp) '' '' '',
-               'S_EXTWG' 'Grupo artÌculos externo'(gae) 'TWEWT' 'EWBEZ' ''.
+               'S_EXTWG' 'Grupo art√≠culos externo'(gae) 'TWEWT' 'EWBEZ' ''.
 
-    add_rango_c 'S_FRGCO' 'CÛdigo de liberaciÛn'(cli) 'T16FD' 'FRGCT' '' 'FRGCO'.
+    add_rango_c 'S_FRGCO' 'C√≥digo de liberaci√≥n'(cli) 'T16FD' 'FRGCT' '' 'FRGCO'.
 
     add_rango: 'S_FRGOT' 'Tipo del objeto a liberar'(tlb) '' '' '',
-               'S_KZEAR' 'OperaciÛn'(ope) '' '' '',
-               'S_LGTKZ' 'In.Tipo AlmacÈn'(ita) 'T305T' 'LTKZT' '',
-               'S_LGTYP' 'Tipo almacÈn'(tal) 'T301T' 'LTYPT' '',
-               'S_LGBKZ' 'In.·rea almacÈn'(ial) '' '' '',
-               'S_LGBER' '¡rea almacenamiento'(aal) '' '' '',
-               'S_EXIDV' 'Unidad manipulaciÛn'(uma) '' '' '',
+               'S_KZEAR' 'Operaci√≥n'(ope) '' '' '',
+               'S_LGTKZ' 'In.Tipo Almac√©n'(ita) 'T305T' 'LTKZT' '',
+               'S_LGTYP' 'Tipo almac√©n'(tal) 'T301T' 'LTYPT' '',
+               'S_LGBKZ' 'In.√°rea almac√©n'(ial) '' '' '',
+               'S_LGBER' '√Årea almacenamiento'(aal) '' '' '',
+               'S_EXIDV' 'Unidad manipulaci√≥n'(uma) '' '' '',
                'S_EINDT' 'Fecha de entrega'(fen) '' '' '',
                'S_EDATU' 'Fecha Reparto'(fre) '' '' ''.
 
@@ -411,12 +411,12 @@ class ZCL_AP_ALV_FORM implementation.
     ASSIGN (l_campo) TO <valor>.
     IF sy-subrc = 0.
       add_rango: 'R_PNPPERNR' 'Empleados'(emp) 'PA0001' 'ENAME' 'X',
-                 'PNPABKRS' '¡rea de nÛmina'(ano) '' '' '',
-                 'PNPPERSK' '¡rea de personal'(ape) 'T503T' 'PTEXT' '',
-                 'PNPWERKS' 'DivisiÛn de personal'(dvp) 'T500P' 'NAME1' '',
-                 'PNPBTRTL' 'SubdivisiÛn de personal'(sdp) '' '' ''.
+                 'PNPABKRS' '√Årea de n√≥mina'(ano) '' '' '',
+                 'PNPPERSK' '√Årea de personal'(ape) 'T503T' 'PTEXT' '',
+                 'PNPWERKS' 'Divisi√≥n de personal'(dvp) 'T500P' 'NAME1' '',
+                 'PNPBTRTL' 'Subdivisi√≥n de personal'(sdp) '' '' ''.
 
-      add_parametro_2 'PN-BEGDA' 'PN-ENDDA' 'Fechas selecciÛn'(fse) '' '' ''.
+      add_parametro_2 'PN-BEGDA' 'PN-ENDDA' 'Fechas selecci√≥n'(fse) '' '' ''.
     ENDIF.
   ENDMETHOD.
   METHOD constructor.
@@ -435,7 +435,7 @@ class ZCL_AP_ALV_FORM implementation.
 *        o_grid_txt TYPE REF TO cl_salv_form_layout_grid.
 
     IF maximo_lineas <> 0.
-      DELETE i_filtros FROM maximo_lineas. " CÛmo m·ximo 6 filas de selecciÛn
+      DELETE i_filtros FROM maximo_lineas. " C√≥mo m√°ximo 6 filas de selecci√≥n
     ENDIF.
     l_filas = LINES( i_filtros ).
     IF l_filas <= 0.
@@ -444,7 +444,7 @@ class ZCL_AP_ALV_FORM implementation.
 
     IF l_filas = 1.
       READ TABLE i_filtros INTO l_filtro-titulo INDEX 1.
-      IF l_filtro = 'Filtros para ejecuciÛn:'.
+      IF l_filtro = 'Filtros para ejecuci√≥n:'.
         DELETE i_filtros INDEX 1.
         EXIT.
       ENDIF.

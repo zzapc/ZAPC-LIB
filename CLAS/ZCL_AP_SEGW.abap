@@ -1,4 +1,4 @@
-
+ï»¿
 DEFINE get_rango_may_ceros.
   DATA: &1 TYPE /iwbep/t_cod_select_options.
   &1 = get_filter( log = v_log
@@ -999,7 +999,7 @@ class ZCL_AP_SEGW implementation.
 *        MOVE-CORRESPONDING l_respuesta TO er_entity.
 *      WHEN OTHERS.
 *        er_entity-type = 'E'.
-*        er_entity-message = |Acción { er_entity-valor } no reconocida|.
+*        er_entity-message = |AcciÃ³n { er_entity-valor } no reconocida|.
 *    ENDCASE.
 *
   ENDMETHOD.
@@ -1346,7 +1346,7 @@ class ZCL_AP_SEGW implementation.
 *    get_rango_so: aufnr, qmnum, gstrp, gstri, gltri, equnr.
 *
 *    IF r_qmnum IS INITIAL AND r_equnr IS INITIAL AND NOT l_sql CS 'EQUNR'.
-*      o_segw->raise_message( io_context = me->mo_context message = 'Debe filtrar por nº de equipo' ).
+*      o_segw->raise_message( io_context = me->mo_context message = 'Debe filtrar por nÂº de equipo' ).
 *    ENDIF.
 *
 *    TRY.
@@ -1428,7 +1428,7 @@ class ZCL_AP_SEGW implementation.
 
     IF r_clave IS INITIAL.
       IF sy-sysid <> zcl_c=>entorno_desarrollo.
-        message = 'No ha definido clave acceso parámetros'.
+        message = 'No ha definido clave acceso parÃ¡metros'.
         set_log( p1 = message ).
         RETURN.
       ENDIF.
@@ -1983,7 +1983,7 @@ class ZCL_AP_SEGW implementation.
     CLEAR: datos, message.
 
     IF json IS INITIAL.
-      message = 'JSON vacío'.
+      message = 'JSON vacÃ­o'.
       RETURN.
     ENDIF.
 
@@ -2009,7 +2009,7 @@ class ZCL_AP_SEGW implementation.
     CLEAR: tabla, message.
 
     IF json IS INITIAL.
-      message = 'JSON vacío'.
+      message = 'JSON vacÃ­o'.
       RETURN.
     ENDIF.
 
@@ -2184,7 +2184,7 @@ class ZCL_AP_SEGW implementation.
     IF iv_filter_string IS NOT INITIAL.
       lv_input = iv_filter_string.
 
-* *— get rid of )( & ' and make AND's uppercase
+* *â€” get rid of )( & ' and make AND's uppercase
       REPLACE ALL OCCURRENCES OF ')' IN lv_input WITH ''.
       REPLACE ALL OCCURRENCES OF '(' IN lv_input WITH ''.
       REPLACE ALL OCCURRENCES OF `'` IN lv_input WITH ''.
@@ -2194,7 +2194,7 @@ class ZCL_AP_SEGW implementation.
       REPLACE ALL OCCURRENCES OF ' eq ' IN lv_input WITH ' EQ '.
       SPLIT lv_input AT ` AND ` INTO TABLE lt_filter_string.
 
-* *— build a table of key value pairs based on filter string
+* *â€” build a table of key value pairs based on filter string
       LOOP AT lt_filter_string INTO ls_filter_string.
         CLEAR: ls_select_options, ls_filter_select_options, lt_select_options.
         APPEND INITIAL LINE TO lt_key_value ASSIGNING <fs_key_value>.

@@ -1,5 +1,4 @@
-type-pools abap.
-CLASS zcl_ap_dev DEFINITION
+ÔªøCLASS zcl_ap_dev DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -220,6 +219,10 @@ CLASS zcl_ap_dev DEFINITION
                 tabla_ref     TYPE string    DEFAULT ''
       RETURNING VALUE(campos) TYPE lvc_t_fcat.
 
+    CLASS-METHODS get_comp_datos
+      IMPORTING datos         TYPE any
+      RETURNING VALUE(i_comp) TYPE abap_component_tab.
+
     CLASS-METHODS salir_si_no_cambios
       IMPORTING t1                     TYPE table
                 t2                     TYPE table
@@ -234,7 +237,7 @@ CLASS zcl_ap_dev DEFINITION
                 boton_plantilla   TYPE any                       DEFAULT '@J2@ Ejemplo fichero carga'(efc)
                 get_default_param TYPE abap_bool                 DEFAULT 'X'
                 tcode_doc         TYPE zdocumentos-tcode         DEFAULT ''
-                boton_doc_tecnica TYPE string                    DEFAULT '@19\Q*DocumentaciÛn tÈcnica@'
+                boton_doc_tecnica TYPE string                    DEFAULT '@19\Q*Documentaci√≥n t√©cnica@'
                 boton_fc05        TYPE zdocumentos-clasificacion DEFAULT ''
       CHANGING  sscrfields        TYPE sscrfields                OPTIONAL.
 
@@ -442,7 +445,7 @@ CLASS zcl_ap_dev DEFINITION
                 k4               TYPE any               DEFAULT cl_abap_objectdescr=>exporting
                 i_par            TYPE abap_parmbind_tab OPTIONAL
       EXPORTING VALUE(returning) TYPE any
-                message   TYPE bapi_msg.
+                !message         TYPE bapi_msg.
 
     METHODS get_val
       IMPORTING campo    TYPE any OPTIONAL
@@ -475,11 +478,11 @@ CLASS zcl_ap_dev DEFINITION
       RETURNING VALUE(ok) TYPE abap_bool.
 
     CLASS-METHODS dif_valores_campos
-      IMPORTING VALUE(tabla)     TYPE any
-                VALUE(var1)      TYPE any
-                VALUE(var2)      TYPE any
-                campos_no        TYPE string DEFAULT ''
-      RETURNING VALUE(dif)       TYPE string.
+      IMPORTING VALUE(tabla) TYPE any
+                VALUE(var1)  TYPE any
+                VALUE(var2)  TYPE any
+                campos_no    TYPE string DEFAULT ''
+      RETURNING VALUE(dif)   TYPE string.
 
     METHODS command_dynpro_m
       IMPORTING ucomm  TYPE sy-ucomm
@@ -562,7 +565,7 @@ class ZCL_AP_DEV implementation.
       PERFORM get_button IN PROGRAM zap_status USING sy-ucomm CHANGING l_but.
       CASE l_but-text.
         WHEN 'Log'. l_ucomm = 'LOG'.
-        WHEN 'Par·metro' OR 'Par·metros'. l_ucomm = 'PARAM'.
+        WHEN 'Par√°metro' OR 'Par√°metros'. l_ucomm = 'PARAM'.
       ENDCASE.
     ENDIF.
 
@@ -606,7 +609,7 @@ class ZCL_AP_DEV implementation.
         ENDIF.
       WHEN 'CDOCU'.
         SUBMIT zdocumentos                               "#EC CI_SUBMIT
-          AND RETURN
+               AND RETURN
                WITH s_tcode = sy-cprog.
       WHEN 'DOC_TEC'.
         IF zcl_ap_documentos=>visualizar_documento( nombre = 'Documentacion Tecnica'(dtc) ) = ''.
@@ -657,7 +660,7 @@ class ZCL_AP_DEV implementation.
         zcl_ap_documentos=>popup_list( ).
       WHEN 'CDOCU'.
         SUBMIT zdocumentos                               "#EC CI_SUBMIT
-          AND RETURN
+               AND RETURN
                WITH s_tcode = sy-cprog.
       WHEN 'DOC_TEC'.
         IF zcl_ap_documentos=>visualizar_documento( nombre = 'Documentacion Tecnica'(dtc) ) = ''.
@@ -1326,7 +1329,7 @@ class ZCL_AP_DEV implementation.
     IF NOT cprog IS INITIAL.
       l_cprog = cprog.
       IF zcl_ap_utils=>bloquear_programa( cprog = l_cprog ) = 'X'.
-        MESSAGE 'Saliendo debido a que el programa ya se est· ejecutando.'(spe) TYPE 'I'.
+        MESSAGE 'Saliendo debido a que el programa ya se est√° ejecutando.'(spe) TYPE 'I'.
         LEAVE PROGRAM.
       ENDIF.
     ENDIF.
@@ -1367,9 +1370,9 @@ class ZCL_AP_DEV implementation.
           l_texto TYPE string,
           l_param TYPE zv_parametros.
 
-    if o_par IS INITIAL.
-      return.
-    endif.
+    IF o_par IS INITIAL.
+      RETURN.
+    ENDIF.
 
     i_tabla = o_par->get_tabla_campo( campo ).
 
@@ -1546,6 +1549,15 @@ class ZCL_AP_DEV implementation.
       CATCH cx_root INTO DATA(o_root). "#EC *
         MESSAGE |Error { o_root->get_text( ) }| TYPE 'S'.
     ENDTRY.
+  ENDMETHOD.
+  METHOD get_comp_datos.
+    DATA: lr_data     TYPE REF TO data,
+          lo_tabdescr TYPE REF TO cl_abap_structdescr.
+
+    CLEAR i_comp.
+    GET REFERENCE OF datos INTO lr_data.
+    lo_tabdescr ?= cl_abap_structdescr=>describe_by_data_ref( lr_data ).
+    i_comp = lo_tabdescr->get_components( ).
   ENDMETHOD.
   METHOD get_default_variant.
     DATA h_repid            TYPE rsvar-report.
@@ -1759,13 +1771,13 @@ class ZCL_AP_DEV implementation.
 
         IF l_nombre_campo_texto IS INITIAL.
           READ TABLE i_campos INTO l_campo WITH KEY rollname = 'CVTEXT'.
-          IF sy-subrc ne 0.
+          IF sy-subrc = 0.
             l_nombre_campo_texto = l_campo-fieldname.
           ELSE.
-            READ TABLE i_campos INTO data(l_campo2) INDEX 2.
-            if sy-subrc = 0.
-            l_nombre_campo_texto = l_campo2-fieldname.
-            endif.
+            READ TABLE i_campos INTO DATA(l_campo2) INDEX 2.
+            IF sy-subrc = 0.
+              l_nombre_campo_texto = l_campo2-fieldname.
+            ENDIF.
           ENDIF.
         ENDIF.
       ENDIF.
@@ -2145,12 +2157,12 @@ class ZCL_AP_DEV implementation.
           l_tabla TYPE text255.
     DATA: l_trdir TYPE t_trdir,
           l_dd40l TYPE dd40l.
-    DATA o_bi      TYPE REF TO zcl_ap_batch_input.
-    DATA xml       TYPE string.
+    DATA o_bi TYPE REF TO zcl_ap_batch_input.
+    DATA xml  TYPE string.
 
-    if nombre IS INITIAL.
-    return.
-    endif.
+    IF nombre IS INITIAL.
+      RETURN.
+    ENDIF.
 
     CLEAR i_tabla.
     CASE tipo.
@@ -2541,7 +2553,7 @@ class ZCL_AP_DEV implementation.
 
     IF linea IS INITIAL.
       IF me->linea IS INITIAL.
-        message = 'No hay definido lÌnea'.
+        message = 'No hay definido l√≠nea'.
         RETURN.
       ELSE.
         ASSIGN COMPONENT campo OF STRUCTURE me->linea TO <fs>.
@@ -3028,7 +3040,7 @@ class ZCL_AP_DEV implementation.
       ENDLOOP.
       CONDENSE zap_textos_mail-asunto.
 
-* AÒadimos info adicional.
+* A√±adimos info adicional.
       DATA(l_tcode) = |Transaccion: { sy-tcode }|.
       DATA(l_report) = |Report: { report }|.
       DATA(l_uname) = |Usuario: { sy-uname }|.
@@ -3211,7 +3223,9 @@ class ZCL_AP_DEV implementation.
       zlog-msgv2    = msgv2.
       zlog-msgv3    = msgv3.
       zlog-msgv4    = msgv4.
-      IF type = 'Y'. zlog-msgty = 'E'. ENDIF.
+      IF type = 'Y'.
+        zlog-msgty = 'E'.
+      ENDIF.
       APPEND zlog TO o_log->i_log.
     ENDIF.
   ENDMETHOD.
@@ -3658,33 +3672,32 @@ class ZCL_AP_DEV implementation.
          OR l_tabla    CS 'DEFINITION LOAD'.
         DELETE i_tabla.
       ELSE.
-      data string type string.
-         CALL FUNCTION 'SCP_REPLACE_STRANGE_CHARS'
-      EXPORTING  intext            = l_tabla
-                 replacement       = ''
-      IMPORTING  outtext           = l_tabla
-      EXCEPTIONS invalid_codepage  = 1
-                 codepage_mismatch = 2
-                 internal_error    = 3
-                 cannot_convert    = 4
-                 fields_not_type_c = 5
-                 OTHERS            = 6.
+        CALL FUNCTION 'SCP_REPLACE_STRANGE_CHARS'
+     EXPORTING  intext            = l_tabla
+                replacement       = ''
+     IMPORTING  outtext           = l_tabla
+     EXCEPTIONS invalid_codepage  = 1
+                codepage_mismatch = 2
+                internal_error    = 3
+                cannot_convert    = 4
+                fields_not_type_c = 5
+                OTHERS            = 6.
 
         SPLIT l_tabla AT ` "EC` INTO l_tabla DATA(l_aux).
         SPLIT l_tabla AT ` ##` INTO l_tabla l_aux.
         IF l_aux CS '.'.
           CONCATENATE l_tabla '.' INTO l_tabla.
         ENDIF.
-        REPLACE ALL OCCURRENCES OF '·' IN l_tabla WITH 'a'.
-        REPLACE ALL OCCURRENCES OF 'È' IN l_tabla WITH 'e'.
-        REPLACE ALL OCCURRENCES OF 'Ì' IN l_tabla WITH 'i'.
-        REPLACE ALL OCCURRENCES OF 'Û' IN l_tabla WITH 'o'.
-        REPLACE ALL OCCURRENCES OF '˙' IN l_tabla WITH 'u'.
-        REPLACE ALL OCCURRENCES OF '¡' IN l_tabla WITH 'A'.
-        REPLACE ALL OCCURRENCES OF '…' IN l_tabla WITH 'E'.
-        REPLACE ALL OCCURRENCES OF 'Õ' IN l_tabla WITH 'I'.
-        REPLACE ALL OCCURRENCES OF '”' IN l_tabla WITH 'O'.
-        REPLACE ALL OCCURRENCES OF '⁄' IN l_tabla WITH 'U'.
+        REPLACE ALL OCCURRENCES OF '√°' IN l_tabla WITH 'a'.
+        REPLACE ALL OCCURRENCES OF '√©' IN l_tabla WITH 'e'.
+        REPLACE ALL OCCURRENCES OF '√≠' IN l_tabla WITH 'i'.
+        REPLACE ALL OCCURRENCES OF '√≥' IN l_tabla WITH 'o'.
+        REPLACE ALL OCCURRENCES OF '√∫' IN l_tabla WITH 'u'.
+        REPLACE ALL OCCURRENCES OF '√Å' IN l_tabla WITH 'A'.
+        REPLACE ALL OCCURRENCES OF '√â' IN l_tabla WITH 'E'.
+        REPLACE ALL OCCURRENCES OF '√ç' IN l_tabla WITH 'I'.
+        REPLACE ALL OCCURRENCES OF '√ì' IN l_tabla WITH 'O'.
+        REPLACE ALL OCCURRENCES OF '√ö' IN l_tabla WITH 'U'.
         REPLACE ALL OCCURRENCES OF 'A*3' IN l_tabla WITH 'O'.
         REPLACE ALL OCCURRENCES OF '''A?' IN l_tabla WITH '''?'.
 

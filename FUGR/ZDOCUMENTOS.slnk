@@ -104,15 +104,19 @@ PROCESS AFTER INPUT.
    <pfstatus_fun CODE="CANCEL" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar" ICON_TEXT="Cancelar" INFO_TEXT="Cancelar"/>
    <pfstatus_fun CODE="CANCELAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_CANCEL" ICON_ID="@0W@" FUN_TEXT="Cancelar" ICON_TEXT="Cancelar" INFO_TEXT="Cancelar" PATH="N"/>
    <pfstatus_fun CODE="CONFIRMAR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OKAY" ICON_ID="@0V@" FUN_TEXT="Confirmar" ICON_TEXT="Aceptar" INFO_TEXT="Aceptar"/>
+   <pfstatus_fun CODE="HTML" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_URL" ICON_ID="@8S@" FUN_TEXT="Ver HTML" ICON_TEXT="Ver HTML" INFO_TEXT="Ver HTML"/>
    <pfstatus_fun CODE="IMPRIMIR" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_PRINT" ICON_ID="@0X@" FUN_TEXT="Imprimir" ICON_TEXT="Imprimir" INFO_TEXT="Imprimir"/>
    <pfstatus_fun CODE="OK" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_OKAY" ICON_ID="@0V@" FUN_TEXT="Continuar"/>
+   <pfstatus_fun CODE="TXT" TEXTNO="001" TEXT_TYPE="S" TEXT_NAME="ICON_MESSAGE_TYPE" ICON_ID="@W0@" FUN_TEXT="Ver código fuente" ICON_TEXT="Ver código fuente" INFO_TEXT="Código"/>
    <pfstatus_but PFK_CODE="000001" CODE="0001" NO="01" PFNO="08"/>
    <pfstatus_but PFK_CODE="000001" CODE="0001" NO="02" PFNO="12"/>
    <pfstatus_but PFK_CODE="000002" CODE="0001" NO="01" PFNO="08"/>
    <pfstatus_but PFK_CODE="000003" CODE="0001" NO="01" PFNO="08"/>
    <pfstatus_but PFK_CODE="000003" CODE="0001" NO="02" PFNO="12"/>
    <pfstatus_but PFK_CODE="000004" CODE="0001" NO="01" PFNO="08"/>
-   <pfstatus_but PFK_CODE="000004" CODE="0001" NO="02" PFNO="12"/>
+   <pfstatus_but PFK_CODE="000004" CODE="0001" NO="02" PFNO="19"/>
+   <pfstatus_but PFK_CODE="000004" CODE="0001" NO="03" PFNO="20"/>
+   <pfstatus_but PFK_CODE="000004" CODE="0001" NO="04" PFNO="12"/>
    <pfstatus_but PFK_CODE="000005" CODE="0001" NO="01" PFNO="08"/>
    <pfstatus_but PFK_CODE="000005" CODE="0001" NO="02" PFNO="18"/>
    <pfstatus_but PFK_CODE="000005" CODE="0001" NO="03" PFNO="12"/>
@@ -128,6 +132,8 @@ PROCESS AFTER INPUT.
    <pfstatus_pfk CODE="000003" PFNO="12" FUNCODE="CANCELAR" FUNNO="001"/>
    <pfstatus_pfk CODE="000004" PFNO="08" FUNCODE="ACEPTAR" FUNNO="001"/>
    <pfstatus_pfk CODE="000004" PFNO="12" FUNCODE="CANCEL" FUNNO="001"/>
+   <pfstatus_pfk CODE="000004" PFNO="19" FUNCODE="TXT" FUNNO="001"/>
+   <pfstatus_pfk CODE="000004" PFNO="20" FUNCODE="HTML" FUNNO="001"/>
    <pfstatus_pfk CODE="000005" PFNO="08" FUNCODE="CONFIRMAR" FUNNO="001"/>
    <pfstatus_pfk CODE="000005" PFNO="12" FUNCODE="CANCELAR" FUNNO="001"/>
    <pfstatus_pfk CODE="000005" PFNO="18" FUNCODE="IMPRIMIR" FUNNO="001"/>
@@ -143,6 +149,8 @@ PROCESS AFTER INPUT.
    <pfstatus_set STATUS="ST_0400" FUNCTION="CONFIRMAR"/>
    <pfstatus_set STATUS="ST_0500" FUNCTION="ACEPTAR"/>
    <pfstatus_set STATUS="ST_0500" FUNCTION="CANCEL"/>
+   <pfstatus_set STATUS="ST_0500" FUNCTION="HTML"/>
+   <pfstatus_set STATUS="ST_0500" FUNCTION="TXT"/>
    <pfstatus_set STATUS="ST_0600" FUNCTION="CANCELAR"/>
    <pfstatus_set STATUS="ST_0600" FUNCTION="CONFIRMAR"/>
    <pfstatus_set STATUS="ST_0600" FUNCTION="IMPRIMIR"/>
@@ -300,6 +308,17 @@ MODULE user_command_0500 INPUT.
     WHEN &apos;CANCEL&apos;.
       v_cancel = &apos;X&apos;.
       LEAVE TO SCREEN 0.
+    WHEN &apos;TXT&apos;.
+      o_texto-&gt;get_editor( IMPORTING string = v_string ).
+      o_texto-&gt;destroy( ).
+      v_html_op = &apos;T&apos;.
+      CLEAR: v_html, o_texto.
+    WHEN &apos;HTML&apos;.
+      o_texto-&gt;get_editor( IMPORTING string = v_string ).
+      o_texto-&gt;destroy( ).
+      v_html_op = &apos;X&apos;.
+      v_html = &apos;X&apos;.
+      CLEAR: o_texto.
   ENDCASE.
 
 ENDMODULE.                 &quot; USER_COMMAND_0500  INPUT
@@ -448,13 +467,20 @@ ENDMODULE.                 &quot; STATUS_0300  OUTPUT
 *&amp;---------------------------------------------------------------------*
 MODULE status_0500 OUTPUT.
 
-  SET PF-STATUS &apos;ST_0500&apos;.
-  SET TITLEBAR &apos;500&apos; WITH v_titulo.
+  IF v_html_op IS INITIAL.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;HTML,TXT&apos;.
+  ELSEif v_html_op = &apos;X&apos;.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;HTML&apos;.
+  ELSEif v_html_op = &apos;T&apos;.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;TXT&apos;.
+  ENDIF.
 
   IF o_texto IS INITIAL.
+    DATA(l_texto_simple) = SWITCH abap_bool( v_html WHEN &apos;&apos; THEN &apos;X&apos; ELSE &apos;&apos; ).
     CREATE OBJECT o_texto
       EXPORTING
-        controlname = &apos;TEXTO&apos;.
+        controlname  = &apos;TEXTO&apos;
+        texto_simple = l_texto_simple.
 
     o_texto-&gt;set_editor( string = v_string max_cols = v_max_cols display_mode = v_display_mode ).
 
@@ -634,13 +660,20 @@ ENDMODULE.                 &quot; STATUS_0300  OUTPUT
 *&amp;---------------------------------------------------------------------*
 MODULE status_0500 OUTPUT.
 
-  SET PF-STATUS &apos;ST_0500&apos;.
-  SET TITLEBAR &apos;500&apos; WITH v_titulo.
+  IF v_html_op IS INITIAL.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;HTML,TXT&apos;.
+  ELSEif v_html_op = &apos;X&apos;.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;HTML&apos;.
+  ELSEif v_html_op = &apos;T&apos;.
+    SET PF-STATUS &apos;ST_0500&apos; EXCLUDING &apos;TXT&apos;.
+  ENDIF.
 
   IF o_texto IS INITIAL.
+    DATA(l_texto_simple) = SWITCH abap_bool( v_html WHEN &apos;&apos; THEN &apos;X&apos; ELSE &apos;&apos; ).
     CREATE OBJECT o_texto
       EXPORTING
-        controlname = &apos;TEXTO&apos;.
+        controlname  = &apos;TEXTO&apos;
+        texto_simple = l_texto_simple.
 
     o_texto-&gt;set_editor( string = v_string max_cols = v_max_cols display_mode = v_display_mode ).
 
@@ -768,7 +801,7 @@ DATA: v_hay_objeto,
       v_display_mode,
       v_ok,
       v_ocultar_col_valor,
-      o_texto TYPE REF TO zcl_ap_control_texto,
+      o_texto TYPE REF TO zcl_ap_control_texto_btf,
       v_cancel,
       v_max_cols TYPE i,
       v_inicio,
@@ -783,7 +816,9 @@ DATA: v_hay_objeto,
       v_toolbar,
       V_UCOMM TYPE SY-UCOMM,
       v_campos_noout  type string,
-      v_texto_corto type string.
+      v_texto_corto type string,
+      v_html type abap_bool,
+      V_html_op type char1.
 
 FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
 
@@ -983,6 +1018,7 @@ ENDCLASS. &quot;lcl_alv IMPLEMENTATION</include_source>
    <importing PARAMETER="MAX_COLS" DEFAULT="132" OPTIONAL="X" REFERENCE="X" TYP="I"/>
    <importing PARAMETER="DISPLAY_MODE" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="C"/>
    <importing PARAMETER="TITULO_TEXTO_CORTO" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="STRING"/>
+   <importing PARAMETER="HTML" DEFAULT="&apos;&apos;" OPTIONAL="X" REFERENCE="X" TYP="ABAP_BOOL"/>
    <exporting PARAMETER="MODIFICADO" REFERENCE="X" TYP="ABAP_BOOL"/>
    <exporting PARAMETER="CANCELADO" REFERENCE="X" TYP="ABAP_BOOL"/>
    <changing PARAMETER="STRING" REFERENCE="X" TYP="ANY"/>
@@ -996,10 +1032,11 @@ ENDCLASS. &quot;lcl_alv IMPLEMENTATION</include_source>
    <documentation PARAMETER="MAX_COLS" KIND="P" INDEX=" 007"/>
    <documentation PARAMETER="DISPLAY_MODE" KIND="P" INDEX=" 008"/>
    <documentation PARAMETER="TITULO_TEXTO_CORTO" KIND="P" INDEX=" 009"/>
-   <documentation PARAMETER="MODIFICADO" KIND="P" INDEX=" 010"/>
-   <documentation PARAMETER="CANCELADO" KIND="P" INDEX=" 011"/>
-   <documentation PARAMETER="STRING" KIND="P" INDEX=" 012"/>
-   <documentation PARAMETER="TEXTO_CORTO" KIND="P" INDEX=" 013"/>
+   <documentation PARAMETER="HTML" KIND="P" INDEX=" 010"/>
+   <documentation PARAMETER="MODIFICADO" KIND="P" INDEX=" 011"/>
+   <documentation PARAMETER="CANCELADO" KIND="P" INDEX=" 012"/>
+   <documentation PARAMETER="STRING" KIND="P" INDEX=" 013"/>
+   <documentation PARAMETER="TEXTO_CORTO" KIND="P" INDEX=" 014"/>
    <fm_source>CLEAR: o_texto, v_cancel, modificado, ztemp.
   v_texto  = texto.
   v_titulo = titulo.
@@ -1007,6 +1044,8 @@ ENDCLASS. &quot;lcl_alv IMPLEMENTATION</include_source>
   v_display_mode = display_mode.
   v_max_cols = max_cols.
   v_texto_corto = titulo_texto_corto.
+  v_HTML = html.
+  v_html_op = html.
   ztemp-texto = texto_corto.
 
   CALL SCREEN 0500 STARTING AT ini_x ini_y ENDING AT fin_x fin_y.

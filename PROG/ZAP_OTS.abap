@@ -1,4 +1,4 @@
-***********************************************************************
+﻿***********************************************************************
 * TIPO : LISTADO
 * TITULO : Gestion ordenes de transporte
 * DESCRIPCION : Gestion ordenes de transporte
@@ -11,6 +11,8 @@ TYPE-POOLS: trwbo, sctsc.
 
 *------TABLAS/ESTRUCTURAS----------------------------------------------*
 TABLES: tmsbuffer, tmscdom.
+
+
 
 *------TABLAS INTERNAS-------------------------------------------------*
 *----------------------------------------------------------------------*
@@ -141,7 +143,7 @@ CLASS lcl_alv IMPLEMENTATION.
 
       WHEN 'NOTAS'.
         o_prog->string = <listado>-notas.
-        zcl_ap_string=>popup_texto( EXPORTING titulo     = 'Notas'
+        zcl_ap_string=>popup_texto( EXPORTING titulo     = 'Notas'(NOT)
                                               editar     = 'X'
                                     IMPORTING modificado = mod CHANGING
                                               texto      = o_prog->string ).
@@ -193,10 +195,10 @@ CLASS lcl_alv IMPLEMENTATION.
           APPEND VALUE #( request_number = <listado>-request_number description = <listado>-description ) TO i_clp.
         ENDLOOP.
         IF sy-subrc <> 0.
-          MESSAGE 'Seleccione algun registro' TYPE 'I'.
+          MESSAGE 'Seleccione algun registro'(SAR) TYPE 'I'.
         ELSE.
           zcl_ap_string=>to_clipboard( tabla = i_clp ).
-          MESSAGE 'Se han dejado datos en el portapapeles' TYPE 'S'.
+          MESSAGE 'Se han dejado datos en el portapapeles'(SHD) TYPE 'S'.
         ENDIF.
       WHEN 'LIBERAR' OR 'LIBERAR_SV' OR 'IMP_CAL' OR 'IMP_PRD'.
         get_seleccion( CHANGING t_tabla = o_prog->i_listado ).
@@ -212,14 +214,14 @@ CLASS lcl_alv IMPLEMENTATION.
             WHEN 'IMP_CAL' OR 'IMP_PRD'.
               IF ucomm = 'IMP_PRD'.
                 IF <listado>-retcode = '0008'.
-                  IF zcl_ap_popup=>confirmar( texto = 'Se ha producido errores en calidad'
-                                              texto2 = '¿Está seguro de querer subirla a producción' opcion = 'N' ) = ''.
+                  IF zcl_ap_popup=>confirmar( texto = 'Se ha producido errores en calidad'(SHP)
+                                              texto2 = '¿Está seguro de querer subirla a producción'(QSD) opcion = 'N' ) = ''.
                     RETURN.
                   ENDIF.
-                ELSEIF <listado>-message <> 'En calidad'.
+                ELSEIF <listado>-message <> 'En calidad'(EC1).
                   IF NOT zcl_c=>entorno_calidad IS INITIAL ##BOOL_OK.
-                    IF zcl_ap_popup=>confirmar( texto = 'No ha verificado que la OT este en calidad sin errores'
-                                                texto2 = '¿Esta seguro de querer subirla a producción' opcion = 'N' ) = ''.
+                    IF zcl_ap_popup=>confirmar( texto = 'No ha verificado que la OT este en calidad sin errores'(NHV)
+                                                texto2 = '¿Esta seguro de querer subirla a producción'(QS1) opcion = 'N' ) = ''.
                       RETURN.
                     ENDIF.
                   ENDIF.
@@ -231,7 +233,7 @@ CLASS lcl_alv IMPLEMENTATION.
           ENDCASE.
         ENDLOOP.
         IF sy-subrc <> 0.
-          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+          MESSAGE 'Seleccione algún registro'(SA1) TYPE 'I'.
         ELSE.
           IF l_cancelado IS INITIAL.
             DATA(i_list) = o_prog->i_listado.
@@ -263,7 +265,7 @@ CLASS lcl_alv IMPLEMENTATION.
                 ENDIF.
               ENDLOOP.
               IF sy-subrc = 0 AND l_salir IS INITIAL.
-                MESSAGE 'Esperando refresco de la cola' TYPE 'S'.
+                MESSAGE 'Esperando refresco de la cola'(ERD) TYPE 'S'.
                 COMMIT WORK AND WAIT.
                 WAIT UP TO 1 SECONDS.
               ELSE.
@@ -283,7 +285,7 @@ CLASS lcl_alv IMPLEMENTATION.
           o_prog->activar( EXPORTING sistema = 'CAL' CHANGING list = <listado> ).
         ENDLOOP.
         IF sy-subrc <> 0.
-          MESSAGE 'Seleccione algún registro' TYPE 'I'.
+          MESSAGE 'Seleccione algún registro'(SA1) TYPE 'I'.
         ELSE.
           o_prog->seleccionar_datos( ).
           refresh( ).
@@ -320,14 +322,13 @@ CLASS zcl_report IMPLEMENTATION.
 
   METHOD seleccionar_datos.
     DATA lt_selections          TYPE trwbo_selections.
-    " TODO: variable is assigned but never used (ABAP cleaner)
     DATA ls_settings            TYPE ctsusrcust.
     DATA lv_username            LIKE sy-uname.
     DATA ls_selection           LIKE LINE OF lt_selections.
     DATA lt_request_headers_tmp TYPE trwbo_request_headers.
-    DATA lt_request_headers     TYPE trwbo_request_headers.
     DATA: ayer   TYPE dats,
           system TYPE tmssysnam.
+    DATA lt_request_headers     TYPE trwbo_request_headers.
     DATA: i_log_calidad    TYPE tmstpalogs,
           i_log_produccion TYPE tmstpalogs.
     DATA: i_buffer_cal TYPE TABLE OF tmsbuffer,
@@ -339,14 +340,14 @@ CLASS zcl_report IMPLEMENTATION.
 
     FIELD-SYMBOLS <log> TYPE tmstpalog.
 
-    CLEAR i_listado.
+    CLEAR: i_listado, lt_request_headers.
 
 *     Read user settings
     CALL FUNCTION 'TRINT_READ_USER_CUSTOMIZING'
       IMPORTING
         es_settings = ls_settings.
 
-    sgpi_texto( 'Seleccionando datos' ).
+    sgpi_texto( 'Seleccionando datos'(SD1) ).
 
     lt_selections = fill_selections( ).
 
@@ -368,15 +369,11 @@ CLASS zcl_report IMPLEMENTATION.
 
     ayer = sy-datum - p_dias.
     IF zcl_c=>entorno_calidad <> ''.
-      IF sy-sysid = 'D40'.
-        tmscdom-domnam = 'DOMAIN_P01'.
-      ELSE.
-        SELECT domnam FROM tmscdom                  "#EC "#EC CI_BYPASS
-          INTO CORRESPONDING FIELDS OF tmscdom
-        UP TO 1 ROWS
-        ORDER BY moddat DESCENDING.
-        ENDSELECT.
-      ENDIF.
+      SELECT domnam FROM tmscdom                    "#EC "#EC CI_BYPASS
+        INTO CORRESPONDING FIELDS OF tmscdom
+      UP TO 1 ROWS
+      ORDER BY moddat DESCENDING.
+      ENDSELECT.
       system = zcl_c=>entorno_calidad.
       CALL FUNCTION 'TMS_TM_GET_HISTORY'
         EXPORTING
@@ -404,7 +401,7 @@ CLASS zcl_report IMPLEMENTATION.
           alert         = 1
           OTHERS        = 2.
       IF sy-subrc <> 0.
-        MESSAGE 'Error recuperando historia' TYPE 'S'.
+        MESSAGE 'Error recuperando historia'(ERH) TYPE 'S'.
       ENDIF.
 
       CALL FUNCTION 'TMS_MGR_READ_TRANSPORT_QUEUE'
@@ -423,7 +420,7 @@ CLASS zcl_report IMPLEMENTATION.
         EXCEPTIONS
           read_config_failed = 1.
       IF sy-subrc <> 0.
-        MESSAGE 'Error leyendo cola' TYPE 'I'.
+        MESSAGE 'Error leyendo cola'(ELC) TYPE 'I'.
       ENDIF.
     ENDIF.
 
@@ -455,7 +452,7 @@ CLASS zcl_report IMPLEMENTATION.
         alert             = 1
         OTHERS            = 2.
     IF sy-subrc <> 0.
-      MESSAGE 'Error recuparando historia' TYPE 'S'.
+      MESSAGE 'Error recuparando historia'(ER1) TYPE 'S'.
     ENDIF.
 
     CALL FUNCTION 'TMS_MGR_READ_TRANSPORT_QUEUE'
@@ -474,13 +471,13 @@ CLASS zcl_report IMPLEMENTATION.
       EXCEPTIONS
         read_config_failed = 1.
     IF sy-subrc <> 0.
-      MESSAGE 'Error leyendo cola' TYPE 'I'.
+      MESSAGE 'Error leyendo cola'(ELC) TYPE 'I'.
     ENDIF.
 *    DELETE lt_request_headers WHERE trkorr < 'D40K908525'. "PRUEBA!
 
     o_prog->o_sgpi->get_filas_tabla( lt_request_headers[] ).
     LOOP AT lt_request_headers INTO ls_request_header WHERE trkorr IN s_trkorr.
-      sgpi_texto( texto1 = 'Procesando datos' cant_porc = 100 ).
+      sgpi_texto( texto1 = 'Procesando datos'(PD1) cant_porc = 100 ).
       CLEAR: l_listado,
              l_color.
 
@@ -501,9 +498,9 @@ CLASS zcl_report IMPLEMENTATION.
       ENDSELECT.
 
       IF ls_request_header-trfunction = 'K'.
-        l_listado-request_type = 'Workbench'.
+        l_listado-request_type = 'Workbench'(WOR).
       ELSEIF ls_request_header-trfunction = 'W'.
-        l_listado-request_type = 'Customizing'.
+        l_listado-request_type = 'Customizing'(CUS).
       ENDIF.
 
       IF ls_request_header-tarsystem IS INITIAL.
@@ -522,9 +519,9 @@ CLASS zcl_report IMPLEMENTATION.
         l_listado-modifiable = `Modificable`.
         string = l_listado-description.
         string = to_upper( string ).
-        IF string CS '!NO!' OR string = 'BASURA' OR string = 'BORRAR' OR string CS 'NO TRANSPORTAR' OR l_listado-notas = 'Excluir'.
+        IF string CS '!NO!' OR string = 'BASURA' OR string = 'BORRAR' OR string CS 'NO TRANSPORTAR' OR l_listado-notas = 'Excluir'(EXC).
           l_color = 'R'.
-          l_listado-message = 'Prohibido liberar de momento'.
+          l_listado-message = 'Prohibido liberar de momento'(PLD).
           IF p_excl IS INITIAL.
             CONTINUE.
           ENDIF.
@@ -545,12 +542,12 @@ CLASS zcl_report IMPLEMENTATION.
           IF line_exists( i_buffer_pro[ trkorr = ls_request_header-trkorr ] ).
             IF <log>-trstep <> 'U'.
               l_color = 'V'.
-              l_listado-message = 'En producción'.
+              l_listado-message = 'En producción'(EP1).
               l_ok = 'X'.
             ENDIF.
           ELSEIF <log>-trstep = 'U'.
             l_color = 'R'.
-            l_listado-message = 'Borrada de la cola de producción'.
+            l_listado-message = 'Borrada de la cola de producción'(BDL).
             l_ndias = sy-datum - l_listado-fecha.
             IF l_ndias > 7.
               CONTINUE.
@@ -559,7 +556,7 @@ CLASS zcl_report IMPLEMENTATION.
           ENDIF.
           IF l_ok IS INITIAL AND zcl_c=>entorno_calidad IS INITIAL ##BOOL_OK.
             l_color = 'V'.
-            l_listado-message = 'En producción'.
+            l_listado-message = 'En producción'(EP1).
             l_ok = 'X'.
           ENDIF.
         ENDIF.
@@ -573,11 +570,11 @@ CLASS zcl_report IMPLEMENTATION.
             l_listado-retcode = <log>-retcode.
             l_listado-trstep  = <log>-trstep.
             IF line_exists( i_buffer_cal[ trkorr = ls_request_header-trkorr ] ).
-              l_listado-message = 'En calidad'.
+              l_listado-message = 'En calidad'(EC1).
               l_color = 'AZUL'.
             ELSE.
               l_color = 'R'.
-              l_listado-message = 'Borrada de la cola de calidad'.
+              l_listado-message = 'Borrada de la cola de calidad'(BD1).
               l_ndias = sy-datum - l_listado-fecha.
               IF l_ndias > 7.
                 CONTINUE.
@@ -634,23 +631,23 @@ CLASS zcl_report IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD listado.
-    sgpi_texto( 'Generando informe' ).
+    sgpi_texto( 'Generando informe'(GI1) ).
 
-    o_alv->add_button( button = 'F01' text = 'Refrescar' icon = icon_refresh ucomm = 'REFRESCAR' ).
-    o_alv->add_button( button = 'F02' text = 'Liberar' icon = icon_release ucomm = 'LIBERAR' ).
+    o_alv->add_button( button = 'F01' text = 'Refrescar'(REF) icon = icon_refresh ucomm = 'REFRESCAR' ).
+    o_alv->add_button( button = 'F02' text = 'Liberar'(LIB) icon = icon_release ucomm = 'LIBERAR' ).
     IF zcl_c=>entorno_calidad <> ''.
-      o_alv->add_button( button = 'F03' text = 'Importar en calidad' icon = icon_import ucomm = 'IMP_CAL' ).
+      o_alv->add_button( button = 'F03' text = 'Importar en calidad'(IEC) icon = icon_import ucomm = 'IMP_CAL' ).
     ENDIF.
-    o_alv->add_button( button = 'F04' text = 'Importar en producción' icon = icon_product_group ucomm = 'IMP_PRD' ).
-*    o_alv->add_button( button = 'F05' qinfo = 'Activar'  icon = icon_activate ucomm = 'ACTIVAR' ).
-    o_alv->add_button( button = 'F06' qinfo = 'Finalizadas' icon = icon_display_more ucomm = 'FIN' ).
-    o_alv->add_button( button = 'F07' qinfo = 'Exportar a portapapeles' icon = icon_export ucomm = 'CLP' ).
-    o_alv->add_button( button = 'F08' qinfo = 'Reseleccionar' icon = icon_interface ucomm = 'RESEL' ).
-    o_alv->add_button( button = 'F09' qinfo = 'Liberar sin verificaciones' icon = icon_release ucomm = 'LIBERAR_SV' ).
+    o_alv->add_button( button = 'F04' text = 'Importar en producción'(IEP) icon = icon_product_group ucomm = 'IMP_PRD' ).
+*    o_alv->add_button( button = 'F05' qinfo = 'Activar'(ACT)  icon = icon_activate ucomm = 'ACTIVAR' ).
+    o_alv->add_button( button = 'F06' qinfo = 'Finalizadas'(FIN) icon = icon_display_more ucomm = 'FIN' ).
+    o_alv->add_button( button = 'F07' qinfo = 'Exportar a portapapeles'(EAP) icon = icon_export ucomm = 'CLP' ).
+    o_alv->add_button( button = 'F08' qinfo = 'Reseleccionar'(RES) icon = icon_interface ucomm = 'RESEL' ).
+    o_alv->add_button( button = 'F09' qinfo = 'Liberar sin verificaciones'(LSV) icon = icon_release ucomm = 'LIBERAR_SV' ).
 
     o_alv->set_field_text( 'PROYECTO,NOTAS' ).
-    o_alv->set_field_text( campo = 'FECHA' valor = 'F.Import' ).
-    o_alv->set_field_text( campo = 'HORA' valor = 'H.Import' ).
+    o_alv->set_field_text( campo = 'FECHA' valor = 'F.Import'(FPI) ).
+    o_alv->set_field_text( campo = 'HORA' valor = 'H.Import'(HPI) ).
     o_alv->set_field_hotspot( campo = 'REQUEST_NUMBER,COPY' auto = 'X' ).
     o_alv->set_field_hotspot( campo = 'PROYECTO,NOTAS' valor = 'TEXT_EDT' ).
     o_alv->set_layout( p_vari ).
@@ -791,7 +788,7 @@ CLASS zcl_report IMPLEMENTATION.
   METHOD liberar.
     DATA ls_return TYPE bapiret2.
 
-    IF list-message = 'Prohibido liberar de momento'.
+    IF list-message = 'Prohibido liberar de momento'(PLD).
       MESSAGE list-message TYPE 'I'.
     ELSE.
       CALL FUNCTION 'BAPI_CTREQUEST_RELEASE'
@@ -804,7 +801,7 @@ CLASS zcl_report IMPLEMENTATION.
       IF ls_return-type IS INITIAL.
         list-modifiable = `Liberada`.
         APPEND list TO i_liberadas.
-        MESSAGE 'Se ha liberado la orden' TYPE 'S'.
+        MESSAGE 'Se ha liberado la orden'(SHL) TYPE 'S'.
       ELSE.
         MESSAGE ID ls_return-id TYPE ls_return-type NUMBER ls_return-number WITH ls_return-message_v1 ls_return-message_v2 ls_return-message_v3 ls_return-message_v4.
       ENDIF.
@@ -841,7 +838,7 @@ CLASS zcl_report IMPLEMENTATION.
         OTHERS         = 99.
 
     IF sy-subrc = 0.
-      MESSAGE 'Se ha activado la orden' TYPE 'S'.
+      MESSAGE 'Se ha activado la orden'(SHA) TYPE 'S'.
     ELSE.
       MESSAGE ID sy-msgid TYPE 'I' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
     ENDIF.
@@ -887,49 +884,51 @@ CLASS zcl_report IMPLEMENTATION.
 *  endif.
 *
     IF tmscdom-domnam IS INITIAL.
-      IF sy-sysid = 'D40'.
-        tmscdom-domnam = 'DOMAIN_P01'.
-      ELSE.
-        SELECT domnam FROM tmscdom                  "#EC "#EC CI_BYPASS
-          INTO CORRESPONDING FIELDS OF tmscdom
-        UP TO 1 ROWS
-        ORDER BY moddat DESCENDING.
-        ENDSELECT.
-      ENDIF.
+      SELECT domnam FROM tmscdom                    "#EC "#EC CI_BYPASS
+        INTO CORRESPONDING FIELDS OF tmscdom
+      UP TO 1 ROWS
+      ORDER BY moddat DESCENDING.
+      ENDSELECT.
     ENDIF.
 
-    DATA(requests) =
-      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
+*    DATA(requests) =
+*      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
+    DATA: requests TYPE stms_tr_requests.
 
-    CALL FUNCTION 'TMS_UI_IMPORT_TR_REQUEST'
-      EXPORTING
-        iv_system             = l_system
-*       iv_domain             = tmscdom-domnam
-        iv_request            = list-request_number
-        iv_tarcli             = sy-mandt
-        iv_some_active        = 'X'
-        iv_verbose            = ''
-        iv_expert_mode        = ''
-        iv_check_strategy     = 'X'
-        it_requests           = requests
-      EXCEPTIONS
-        cancelled_by_user     = 1
-        import_request_denied = 2
-        import_request_failed = 3
-        OTHERS                = 4.
-    IF sy-subrc = 0.
-      COMMIT WORK AND WAIT.
-      MESSAGE 'Se ha importado la orden' TYPE 'S'.
-    ELSE.
-      cancelado = 'X'.
-      IF sy-subrc > 1.
-        IF sy-msgty IS INITIAL.
-          MESSAGE |Error { sy-subrc } importando orden| TYPE 'I'.
-        ELSE.
-          MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    SELECT * FROM tmsbuffer
+      INTO CORRESPONDING FIELDS OF table requests
+     WHERE trkorr = list-request_number
+       and sysnam = l_system.
+
+      CALL FUNCTION 'TMS_UI_IMPORT_TR_REQUEST'
+        EXPORTING
+          iv_system             = l_system
+*         iv_domain             = tmscdom-domnam
+          iv_request            = list-request_number
+          iv_tarcli             = sy-mandt
+          iv_some_active        = 'X'
+          iv_verbose            = ''
+          iv_expert_mode        = ''
+          iv_check_strategy     = 'X'
+          it_requests           = requests
+        EXCEPTIONS
+          cancelled_by_user     = 1
+          import_request_denied = 2
+          import_request_failed = 3
+          OTHERS                = 4.
+      IF sy-subrc = 0.
+        COMMIT WORK AND WAIT.
+        MESSAGE 'Se ha importado la orden'(SHI) TYPE 'S'.
+      ELSE.
+        cancelado = 'X'.
+        IF sy-subrc > 1.
+          IF sy-msgty IS INITIAL.
+            MESSAGE |Error { sy-subrc } importando orden| TYPE 'I'.
+          ELSE.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ENDIF.
         ENDIF.
       ENDIF.
-    ENDIF.
 
 *    DATA(requests) =
 *      VALUE stms_tr_requests( ( trkorr = list-request_number ) ).
@@ -964,7 +963,7 @@ CLASS zcl_report IMPLEMENTATION.
 *
 *    IF sy-subrc = 0.
 *      COMMIT WORK AND WAIT.
-*      MESSAGE 'Se ha importado la orden' TYPE 'S'.
+*      MESSAGE 'Se ha importado la orden'(SHI) TYPE 'S'.
 *    ELSE.
 *      cancelado = 'X'.
 *      IF sy-subrc > 1.
@@ -975,7 +974,7 @@ CLASS zcl_report IMPLEMENTATION.
 *        ENDIF.
 *      ENDIF.
 *    ENDIF.
-  ENDMETHOD.
+    ENDMETHOD.
 ENDCLASS.
 
 *----------------------------------------------------------------------*
@@ -991,7 +990,7 @@ INITIALIZATION.
   IF sy-uname = zcl_c=>usuario_ap.
     PERFORM add_button IN PROGRAM zap_status
             USING 'M01'
-                  'Claves'
+                  'Claves'(CLA)
                   ''
                   ''.
   ENDIF.
@@ -1162,70 +1161,71 @@ FORM f4_se09_obj USING    objeto      TYPE any
       INTO TABLE @DATA(i_ots_obj)
       WHERE obj_name    = @l_objeto
         AND trkorr   LIKE @l_sistema.
-    IF sy-subrc = 0.
-      LOOP AT i_ots_obj ASSIGNING FIELD-SYMBOL(<obj>).
-        APPEND VALUE #( option = 'EQ' sign = 'I' low = <obj>-trkorr ) TO r_trkorr.
-      ENDLOOP.
+      IF sy-subrc = 0.
+        LOOP AT i_ots_obj ASSIGNING FIELD-SYMBOL(<obj>).
+          APPEND VALUE #( option = 'EQ' sign = 'I' low = <obj>-trkorr ) TO r_trkorr.
+        ENDLOOP.
+
+        SELECT as4text as4date
+          FROM                              e070 JOIN e07t
+               ON e070~trkorr = e07t~trkorr
+          INTO CORRESPONDING FIELDS OF TABLE i_ots
+          WHERE as4user = sy-uname
+            AND (    e070~trkorr IN r_trkorr
+                  OR strkorr     IN r_trkorr )
+          ORDER BY as4date DESCENDING.
+          LOOP AT i_ots ASSIGNING FIELD-SYMBOL(<ots>).
+            <ots>-obj_name = l_objeto.
+          ENDLOOP.
+        ENDIF.
+      ENDIF.
 
       SELECT as4text as4date
         FROM                              e070 JOIN e07t
              ON e070~trkorr = e07t~trkorr
-        INTO CORRESPONDING FIELDS OF TABLE i_ots
-        WHERE as4user = sy-uname
-          AND (    e070~trkorr IN r_trkorr
-                OR strkorr     IN r_trkorr )
+        UP TO 50 ROWS
+        APPENDING CORRESPONDING FIELDS OF TABLE i_ots
+        WHERE as4user        = sy-uname
+          AND e070~trkorr LIKE l_sistema
         ORDER BY as4date DESCENDING.
-      LOOP AT i_ots ASSIGNING FIELD-SYMBOL(<ots>).
-        <ots>-obj_name = l_objeto.
-      ENDLOOP.
-    ENDIF.
-  ENDIF.
 
-  SELECT as4text as4date
-    FROM                              e070 JOIN e07t
-         ON e070~trkorr = e07t~trkorr
-    UP TO 50 ROWS
-    APPENDING CORRESPONDING FIELDS OF TABLE i_ots
-    WHERE as4user        = sy-uname
-      AND e070~trkorr LIKE l_sistema
-    ORDER BY as4date DESCENDING.
+        LOOP AT i_ots ASSIGNING <ots>.
+          DATA(i_fechas) = zcl_ap_regexp=>buscar_fechas( string = CONV #( <ots>-as4text ) ).
+          IF sy-subrc = 0.
+            WRITE sy-datum TO l_hoy.
+            LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(<fecha>).
+              REPLACE ALL OCCURRENCES OF <fecha> IN <ots>-as4text WITH l_hoy.
+            ENDLOOP.
+          ENDIF.
+        ENDLOOP.
 
-  LOOP AT i_ots ASSIGNING <ots>.
-    DATA(i_fechas) = zcl_ap_regexp=>buscar_fechas( string = CONV #( <ots>-as4text ) ).
-    IF sy-subrc = 0.
-      WRITE sy-datum TO l_hoy.
-      LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(<fecha>).
-        REPLACE ALL OCCURRENCES OF <fecha> IN <ots>-as4text WITH l_hoy.
-      ENDLOOP.
-    ENDIF.
-  ENDLOOP.
+        LOOP AT i_ots ASSIGNING <ots>.
+          IF NOT line_exists( i_textos[ as4text = <ots>-as4text ] ).
+            APPEND <ots> TO i_textos.
+          ENDIF.
+        ENDLOOP.
 
-  LOOP AT i_ots ASSIGNING <ots>.
-    IF NOT line_exists( i_textos[ as4text = <ots>-as4text ] ).
-      APPEND <ots> TO i_textos.
-    ENDIF.
-  ENDLOOP.
+        SORT i_textos BY obj_name DESCENDING
+                         as4date DESCENDING.
 
-  SORT i_textos BY obj_name DESCENDING
-                   as4date DESCENDING.
+        o_popup = NEW #(
+          tabname = 'E07T' ).
 
-  o_popup = NEW #( tabname = 'E07T' ).
+        o_popup->add_field( field = 'AS4TEXT' selectflag = 'X' ).
+        o_popup->add_field( field = 'AS4DATE' tabname = 'E070' ).
+        o_popup->add_field( field = 'OBJ_NAME' tabname = 'E071' ).
 
-  o_popup->add_field( field = 'AS4TEXT' selectflag = 'X' ).
-  o_popup->add_field( field = 'AS4DATE' tabname = 'E070' ).
-  o_popup->add_field( field = 'OBJ_NAME' tabname = 'E071' ).
+        LOOP AT i_textos.
+          o_popup->add_valor( i_textos-as4text ).
+          o_popup->add_valor( i_textos-as4date ).
+          o_popup->add_valor( i_textos-obj_name ).
+        ENDLOOP.
 
-  LOOP AT i_textos.
-    o_popup->add_valor( i_textos-as4text ).
-    o_popup->add_valor( i_textos-as4date ).
-    o_popup->add_valor( i_textos-obj_name ).
-  ENDLOOP.
+        CLEAR i_textos.
+        o_popup->matchcode( EXPORTING field = 'AS4TEXT'
+                            CHANGING  valor = i_textos ).
 
-  CLEAR i_textos.
-  o_popup->matchcode( EXPORTING field = 'AS4TEXT'
-                      CHANGING  valor = i_textos ).
-
-  IF NOT i_textos IS INITIAL.
-    descripcion = i_textos.
-  ENDIF.
+        IF NOT i_textos IS INITIAL.
+          descripcion = i_textos.
+        ENDIF.
 ENDFORM.

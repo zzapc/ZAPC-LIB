@@ -1,88 +1,281 @@
-class ZCL_AP_CLIENTE definition
-  public
-  create public .
+CLASS zcl_ap_cliente DEFINITION
+  PUBLIC
+  CREATE PUBLIC.
 
-public section.
+  PUBLIC SECTION.
+    CLASS-METHODS urls_gos_st
+      IMPORTING kunnr        TYPE kunnr
+      RETURNING VALUE(tabla) TYPE ztab_url_gos.
 
-  class-methods URLS_GOS_ST
-    importing
-      !KUNNR type KUNNR
-    returning
-      value(TABLA) type ZTAB_URL_GOS .
-  class-methods INSERTAR_URL_GOS_ST
-    importing
-      !KUNNR type KUNNR
-      !URL type STRING
-      !TITULO type STRING .
-  class-methods VISUALIZAR_CLIENTE_ST
-    importing
-      !KUNNR type KUNNR .
-  class-methods GET_URL_POR_TITULO_ST
-    importing
-      !KUNNR type KUNNR
-      !TITULO type STRING
-    returning
-      value(URL) type STRING .
-  class-methods GET_EMAILS
-    importing
-      !KUNNR type KUNNR
-      !REMARK type ANY default ''
-    returning
-      value(EMAILS) type ISU_ADSMTP_TAB .
-  class-methods GET_EMAIL
-    importing
-      !KUNNR type KUNNR
-      !LISTA type ABAP_BOOL default ''
-      !REMARK type ANY default ''
-      !FLGDEFAULT type ABAP_BOOL default ''
-    returning
-      value(EMAIL) type AD_SMTPADR .
-  class-methods GET_NOMBRE
-    importing
-      !KUNNR type KUNNR
-    returning
-      value(NAME1) type NAME1 .
-  class-methods GET_DIRECCION
-    importing
-      !KUNNR type KUNNR optional
-      !ADRNR type ADRNR optional
-    returning
-      value(DIRECCION) type ADDR1_DATA .
-  methods GET_KNA1
-    importing
-      !KUNNR type KUNNR
-    returning
-      value(KNA1) type KNA1 .
-  methods GET_NOMBRE_KNA1
-    importing
-      !KUNNR type KUNNR
-    returning
-      value(NAME1) type KNA1-NAME1 .
-  class-methods GET_EMAILS_LISTA
-    importing
-      !KUNNR type KUNNR
-      !REMARK type ANY default ''
-    returning
-      value(EMAIL) type STRING .
-  class-methods GET_TEXTO_STRING
-    importing
-      !KUNNR type KUNNR
-      !ID type STXH-TDID
-      !SPRAS type SPRAS default SY-LANGU
-    returning
-      value(STRING) type STRING .
-  class-methods SET_TEXTO_STRING
-    importing
-      !KUNNR type KUNNR
-      !ID type STXH-TDID
-      !SPRAS type SPRAS default ''
-      !STRING type STRING .
+    CLASS-METHODS insertar_url_gos_st
+      IMPORTING kunnr  TYPE kunnr
+                url    TYPE string
+                titulo TYPE string.
+
+    CLASS-METHODS visualizar_cliente_st
+      IMPORTING kunnr TYPE kunnr.
+
+    CLASS-METHODS get_url_por_titulo_st
+      IMPORTING kunnr      TYPE kunnr
+                titulo     TYPE string
+      RETURNING VALUE(url) TYPE string.
+
+    CLASS-METHODS get_emails
+      IMPORTING kunnr         TYPE kunnr
+                remark        TYPE any DEFAULT ''
+      RETURNING VALUE(emails) TYPE isu_adsmtp_tab.
+
+    CLASS-METHODS get_email
+      IMPORTING kunnr        TYPE kunnr
+                lista        TYPE abap_bool DEFAULT ''
+                remark       TYPE any       DEFAULT ''
+                flgdefault   TYPE abap_bool DEFAULT ''
+      RETURNING VALUE(email) TYPE ad_smtpadr.
+
+    CLASS-METHODS get_nombre
+      IMPORTING kunnr        TYPE kunnr
+      RETURNING VALUE(name1) TYPE name1.
+
+    CLASS-METHODS get_direccion
+      IMPORTING kunnr            TYPE kunnr OPTIONAL
+                adrnr            TYPE adrnr OPTIONAL
+      RETURNING VALUE(direccion) TYPE addr1_data.
+
+    METHODS get_kna1
+      IMPORTING kunnr       TYPE kunnr
+      RETURNING VALUE(kna1) TYPE kna1.
+
+    METHODS get_nombre_kna1
+      IMPORTING kunnr        TYPE kunnr
+      RETURNING VALUE(name1) TYPE kna1-name1.
+
+    CLASS-METHODS get_emails_lista
+      IMPORTING kunnr        TYPE kunnr
+                remark       TYPE any DEFAULT ''
+      RETURNING VALUE(email) TYPE string.
+
+    CLASS-METHODS get_texto_string
+      IMPORTING kunnr         TYPE kunnr
+                !id           TYPE stxh-tdid
+                spras         TYPE spras DEFAULT sy-langu
+      RETURNING VALUE(string) TYPE string.
+
+    CLASS-METHODS set_texto_string
+      IMPORTING kunnr   TYPE kunnr
+                !id     TYPE stxh-tdid
+                spras   TYPE spras DEFAULT ''
+                !string TYPE string.
+
+    CLASS-METHODS borrar_interlocutor
+      IMPORTING kunnr          TYPE kunnr
+                vkorg          TYPE vkorg
+                vtweg          TYPE vtweg
+                spart          TYPE spart
+                parvw          TYPE parvw
+                parza          TYPE knvp-parza OPTIONAL
+                lifnr          TYPE lifnr      OPTIONAL
+                !commit        TYPE abap_bool  DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS modificar_interlocutor
+      IMPORTING kunnr          TYPE kunnr
+                vkorg          TYPE vkorg
+                vtweg          TYPE vtweg
+                spart          TYPE spart
+                parvw          TYPE parvw
+                parza          TYPE knvp-parza OPTIONAL
+                lifnr_old      TYPE lifnr      OPTIONAL
+                lifnr_new      TYPE lifnr      OPTIONAL
+                !commit        TYPE abap_bool  DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
+    CLASS-METHODS crear_interlocutor
+      IMPORTING kunnr          TYPE kunnr
+                vkorg          TYPE vkorg
+                vtweg          TYPE vtweg
+                spart          TYPE spart
+                parvw          TYPE parvw
+                lifnr_new      TYPE lifnr OPTIONAL
+                !commit        TYPE abap_bool DEFAULT 'X'
+      RETURNING VALUE(message) TYPE bapi_msg.
+
   PROTECTED SECTION.
 
   PRIVATE SECTION.
     DATA i_kna1 TYPE cif_kna1_tab.
 endclass. "ZCL_AP_CLIENTE definition
 class ZCL_AP_CLIENTE implementation.
+  METHOD borrar_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          r_parza TYPE RANGE OF knvp-parza,
+          yknvp   TYPE TABLE OF fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr IS INITIAL.
+      r_lifnr = VALUE #( ( sign = 'I' option = 'EQ' low = lifnr ) ).
+    ENDIF.
+    IF NOT parzA IS INITIAL.
+      r_parzA = VALUE #( ( sign = 'I' option = 'EQ' low = parzA ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        "#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND parza IN r_parza
+      AND lifnr IN r_lifnr
+     order BY PRIMARY KEY.
+    IF sy-subrc <> 0.
+      message = |No existe el interlocutor { parvw } { lifnr } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+
+    SELECT SINGLE * FROM kna1  "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv   "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION 'SD_CUSTOMER_MAINTAIN_ALL'
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = 'X'
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = 'X'.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+  METHOD crear_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          yknvp   TYPE TABLE OF fknvp,
+          l_knvp  TYPE fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr_new IS INITIAL.
+      r_lifnr = VALUE #( ( sign = 'I' option = 'EQ' low = lifnr_new ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        "#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND lifnr IN r_lifnr
+     ORDER BY PRIMARY KEY.
+    IF sy-subrc = 0.
+      message = |Ya existe el interlocutor { parvw } { lifnr_new } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+    l_knvp-kunnr = kunnr.
+    l_knvp-vkorg = vkorg.
+    l_knvp-vtweg = vtweg.
+    l_knvp-spart = spart.
+    l_knvp-parvw = parvw.
+    IF NOT lifnr_new IS INITIAL.
+      l_knvp-lifnr = lifnr_new.
+    ENDIF.
+    l_knvp-kz = 'I'.
+    APPEND l_knvp TO xknvp.
+
+*
+    SELECT SINGLE * FROM kna1        "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv         "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION 'SD_CUSTOMER_MAINTAIN_ALL'
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = 'X'
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = 'X'.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
   METHOD get_direccion.
     DATA l_adrnr TYPE adrnr.
 
@@ -127,11 +320,11 @@ class ZCL_AP_CLIENTE implementation.
     CLEAR email.
     i_emails = get_emails( kunnr = kunnr remark = remark ).
 
-    LOOP AT i_emails INTO l_email.
+    LOOP AT i_emails ASSIGNING FIELD-SYMBOL(<email>).
       IF email IS INITIAL.
-        email = l_email-smtp_addr.
+        email = <email>-smtp_addr.
       ELSE.
-        CONCATENATE email ',' l_email-smtp_addr INTO email.
+        CONCATENATE email ',' <email>-smtp_addr INTO email.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
@@ -181,10 +374,99 @@ class ZCL_AP_CLIENTE implementation.
                                   titulo = titulo
                                   url    = url ).
   ENDMETHOD.
+  METHOD modificar_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          r_parza TYPE RANGE OF knvp-parza,
+          yknvp   TYPE TABLE OF fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr_old IS INITIAL.
+      r_lifnr = VALUE #( ( sign = 'I' option = 'EQ' low = lifnr_old ) ).
+    ENDIF.
+    IF NOT parzA IS INITIAL.
+      r_parzA = VALUE #( ( sign = 'I' option = 'EQ' low = parzA ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        "#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND parza IN r_parza
+      AND lifnr IN r_lifnr
+     ORDER BY PRIMARY KEY.
+    IF sy-subrc <> 0.
+      message = |No existe el interlocutor { parvw } { lifnr_old } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+    READ TABLE yknvp INTO DATA(l_knvp) INDEX 1.
+    l_knvp-kz = 'D'.
+    APPEND l_knvp TO xknvp.
+    IF NOT lifnr_new IS INITIAL.
+      l_knvp-lifnr = lifnr_new.
+    ENDIF.
+    l_knvp-kz = 'I'.
+    APPEND l_knvp TO xknvp.
+
+*
+    SELECT SINGLE * FROM kna1       "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv        "#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION 'SD_CUSTOMER_MAINTAIN_ALL'
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = 'X'
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = 'X'.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
   METHOD set_texto_string.
-
     zcl_ap_textos=>save_texto_string( id = id object = 'KNA1' name = kunnr spras = spras string = string ).
-
   ENDMETHOD.
   METHOD urls_gos_st.
     DATA l_clave TYPE srgbtbrel-instid_a.

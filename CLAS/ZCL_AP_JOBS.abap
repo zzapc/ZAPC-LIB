@@ -1,4 +1,4 @@
-CLASS zcl_ap_jobs DEFINITION
+﻿CLASS zcl_ap_jobs DEFINITION
   PUBLIC FINAL
   CREATE PUBLIC.
 
@@ -209,6 +209,7 @@ class ZCL_AP_JOBS implementation.
       l_hora  = '      '.
     ELSE.
       IF NOT retraso IS INITIAL.
+        get time.
         l_fecha = sy-datum.
         l_hora = sy-uzeit + retraso.
       ELSEIF NOT fecha IS INITIAL AND NOT hora IS INITIAL.

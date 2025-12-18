@@ -80,36 +80,34 @@
     ENDIF.
   ENDMETHOD.</source>
  </method>
- <method CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
-  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" SCONAME="HU" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR18"/>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" VERSION="0" LANGU="S" DESCRIPT="Calcula dígito de control" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" SCONAME="HU" VERSION="1" LANGU="S" DESCRIPT="Campo longitud 17" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="CHAR17"/>
   <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CALC_DIGITO_CONTROL" SCONAME="DIGITO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="NUMC1"/>
   <source>METHOD calc_digito_control.
-    DATA: work_string   TYPE c LENGTH 50,
-          length        TYPE i,
-          lv_first      TYPE int4        VALUE 1,
-          lv_temp       TYPE n LENGTH 1,
-          lv_sum_first  TYPE int4,
-          lv_second     TYPE int4        VALUE 2,
-          lv_sum_second TYPE int4,
-          lv_final_res  TYPE int4.
+    DATA: lv_len   TYPE i,
+          lv_digit TYPE i,
+          lv_pos   TYPE i,
+          lv_sum   TYPE i,
+          lv_mult  TYPE i.
 
     CLEAR digito.
-    work_string = hu.
-    length = strlen( work_string ).
-    SHIFT work_string LEFT DELETING LEADING space.
+    lv_len = strlen( hu ).
+    lv_sum = 0.
 
-    DO length TIMES.
-      WRITE work_string+lv_first(1) TO lv_temp.
-      lv_sum_first = lv_sum_first + lv_temp.
-      WRITE work_string+lv_second(1) TO lv_temp.
-      lv_sum_second = lv_sum_second + lv_temp.
-      lv_first = lv_first + 2.
-      lv_second = lv_second + 2.
+    &quot; Recorremos de derecha a izquierda
+    DO lv_len TIMES.
+      lv_pos = lv_len - sy-index.
+      lv_digit = hu+lv_pos(1).
+      &quot; Alternar multiplicador: derecha primero con 3
+      IF ( sy-index MOD 2 ) = 1.
+        lv_mult = 3.
+      ELSE.
+        lv_mult = 1.
+      ENDIF.
+      lv_sum = lv_sum + ( lv_digit * lv_mult ).
     ENDDO.
 
-    lv_final_res = ( lv_sum_first * 3 ) + lv_sum_second.
-
-    digito = 10 - ( lv_final_res MOD 10 ).
+    digito = ( 10 - ( lv_sum MOD 10 ) ) MOD 10.
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIAR_ESTADO_HU" VERSION="1" LANGU="S" DESCRIPT="Cambia el estado de la HU" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
@@ -261,6 +259,74 @@
       husstat-inact = inact.
       MODIFY husstat FROM husstat.
     ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIA_MATERIAL_EMBALAJE" VERSION="1" LANGU="S" DESCRIPT="Modifica material embalaje" EXPOSURE="2" STATE="1" EDITORDER="28 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIA_MATERIAL_EMBALAJE" SCONAME="VENUM" VERSION="1" LANGU="S" DESCRIPT="Núm.interno de un.manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VENUM" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIA_MATERIAL_EMBALAJE" SCONAME="EXIDV" VERSION="1" LANGU="S" DESCRIPT="Identificación externa de la unidad de manipulación" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="EXIDV" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIA_MATERIAL_EMBALAJE" SCONAME="VHILM" VERSION="1" LANGU="S" DESCRIPT="Material de embalaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VHILM"/>
+  <parameter CLSNAME="ZCL_AP_HU" CMPNAME="CAMBIA_MATERIAL_EMBALAJE" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD cambia_material_embalaje.
+    DATA: lt_fields TYPE vsep_t_changed,
+          g_hus     TYPE hum_exidv_t,
+          g_venum   TYPE hum_venum_t.
+
+
+    DATA(l_vekp) = get_vekp_st( venum = venum exidv = exidv ).
+    IF l_vekp IS INITIAL.
+      message = &apos;No existe la HU&apos;.
+      RETURN.
+    ENDIF.
+
+    IF l_vekp-vhilm = vhilm.
+* El material de embalaje ya es el correcto
+      RETURN.
+    ENDIF.
+
+    APPEND l_vekp-exidv TO g_hus.
+    APPEND l_vekp-venum TO g_venum.
+
+    CALL FUNCTION &apos;HU_GET_HUS&apos;
+      EXPORTING
+        if_lock_hus = &apos;X&apos;
+        if_no_loop  = &apos;X&apos;
+        it_hus      = g_hus
+        it_venum    = g_venum
+      EXCEPTIONS
+        hus_locked  = 1
+        no_hu_found = 2
+        fatal_error = 3
+        OTHERS      = 4.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;No se pudo bloquear/leer la HU&apos;.
+      RETURN.
+    ENDIF.
+
+    lt_fields = VALUE #( ( changed_f = &apos;VHILM&apos;
+                           f_value = vhilm ) ).
+
+    CALL FUNCTION &apos;V51F_HU_HEADER_UPDATE&apos;
+      EXPORTING
+        if_with_update      = &apos;U&apos;
+        if_venum            = l_vekp-venum
+        it_changed_fields   = lt_fields
+      EXCEPTIONS
+        not_found           = 1
+        exidv_already_exist = 2
+        not_possible        = 3
+        overloading_w       = 4
+        overloading_v       = 5
+        fatal_error         = 6
+        OTHERS              = 7.
+    IF sy-subrc &lt;&gt; 0.
+      message = &apos;Error al actualizar cabecera HU&apos;.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION &apos;HU_POST&apos;
+      EXPORTING
+        if_commit = &apos;X&apos;.
+
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_HU" CMPNAME="CONSTRUCTOR" VERSION="1" LANGU="S" DESCRIPT="CONSTRUCTOR" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="2" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">

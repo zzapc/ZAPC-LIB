@@ -125,8 +125,7 @@
       ls_atta_key-atta_cat = &apos;MSG&apos;.
       TRY.
           DATA(ls_att_cont) = lo_ins-&gt;get_al_item( ls_atta_key ).
-        CATCH cx_root INTO DATA(o_root). &quot;#EC *
-&quot;#EC NO_HANDLER
+        CATCH cx_root INTO DATA(o_root) ##NO_HANDLER. &quot;#EC *
       ENDTRY.
       IF ls_att_cont-content &lt;&gt; url_old.
         CONTINUE.
@@ -612,7 +611,7 @@
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -706,7 +705,7 @@
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+      &quot;#EC EMPTY_IF_BRANCH
     ENDIF.
     ls_obj_data-objsns = &apos;O&apos;.
     ls_obj_data-objla  = sy-langu.
@@ -760,7 +759,7 @@
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -1263,6 +1262,7 @@
 
     FIELD-SYMBOLS &lt;fichero_m&gt; TYPE zal_files_m.
 
+    CLEAR i_ficheros.
     IF copiar_a_temp = &apos;X&apos;.
       l_dir_temp = zcl_ap_documentos=&gt;get_directorio_temporal( ).
     ENDIF.
@@ -1288,7 +1288,7 @@
                      convert           = &apos; &apos;
           EXCEPTIONS error_application = 1.
         IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+          &quot;#EC EMPTY_IF_BRANCH
         ENDIF.
       ENDIF.
 
@@ -1314,6 +1314,7 @@
 
     FIELD-SYMBOLS &lt;info&gt; TYPE toav0.
 
+    CLEAR i_ficheros.
     IF ar_object &lt;&gt; &apos;*&apos;.
       l_ar_object = ar_object.
     ENDIF.
@@ -1337,7 +1338,7 @@
       EXCEPTIONS error_connectiontable = 1.
     IF sy-subrc &lt;&gt; 0.
 *    MESSAGE &apos;Error recuperando adjuntos&apos;(era) TYPE &apos;E&apos;.
- &quot;#EC EMPTY_IF_BRANCH
+      &quot;#EC EMPTY_IF_BRANCH
     ENDIF.
 
     LOOP AT connect_info ASSIGNING &lt;info&gt;.
@@ -1829,7 +1830,7 @@
                          x_error                    = 3
                          OTHERS                     = 4.
             IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+              &quot;#EC EMPTY_IF_BRANCH
             ENDIF.
 
             o_filelength = l_document_data-doc_size.
@@ -2301,7 +2302,7 @@
         EXCEPTIONS err_conv_failed = 1
                    OTHERS          = 2.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
 
       l_size = l_len.
@@ -2312,7 +2313,7 @@
         EXCEPTIONS failed       = 1
                    OTHERS       = 2.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
 
       CALL FUNCTION &apos;SO_SOLIXTAB_TO_SOLITAB&apos;
@@ -2367,7 +2368,7 @@
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+      &quot;#EC EMPTY_IF_BRANCH
     ENDIF.
 
     ls_obj_data-objsns = &apos;O&apos;.
@@ -2517,7 +2518,7 @@
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+      &quot;#EC EMPTY_IF_BRANCH
     ENDIF.
 
     ls_obj_data-objsns = &apos;O&apos;.
@@ -2753,7 +2754,7 @@
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
       l_url-titulo   = l_sood2-objdes.
       l_url-file_ext = l_sood2-file_ext.
@@ -2767,7 +2768,7 @@
                    invalid_date_time = 3
                    OTHERS            = 4.
       IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+        &quot;#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -2864,7 +2865,7 @@
                        error_kernel             = 3
                        OTHERS                   = 4.
           IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+            &quot;#EC EMPTY_IF_BRANCH
           ENDIF.
         ENDIF.
       ENDIF.
@@ -3066,7 +3067,7 @@
               EXCEPTIONS no_valid_program = 1
                          OTHERS           = 2.
             IF sy-subrc &lt;&gt; 0.
- &quot;#EC EMPTY_IF_BRANCH
+              &quot;#EC EMPTY_IF_BRANCH
             ENDIF.
           ENDIF.
           IF NOT l_fichero IS INITIAL.
@@ -3085,7 +3086,7 @@
                 CASE l_extension.
                   WHEN &apos;PDF&apos;.
                     l_opc_imprimir = &apos;/t&apos;.
-                  WHEN &apos;DOC&apos; OR &apos;DOCX&apos; or &apos;XLS&apos; OR &apos;XLSX&apos;.
+                  WHEN &apos;DOC&apos; OR &apos;DOCX&apos; OR &apos;XLS&apos; OR &apos;XLSX&apos;.
                     l_opc_imprimir = &apos;/i&apos;.
 
                 ENDCASE.

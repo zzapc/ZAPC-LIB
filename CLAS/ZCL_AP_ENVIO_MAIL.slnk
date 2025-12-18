@@ -931,6 +931,112 @@
     set_text( l_linea ).
   ENDMETHOD.</source>
  </method>
+ <method CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="ALINK_2_ADJUNTO" VERSION="1" LANGU="S" DESCRIPT="Devuelve un registro rmps_post_content partiendo de ALINK" EXPOSURE="2" STATE="1" EDITORDER="34 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="ALINK_2_ADJUNTO" SCONAME="ARCHIV_ID" VERSION="1" LANGU="S" DESCRIPT="Identificación Repository contenidos" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SAEARCHIVI"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="ALINK_2_ADJUNTO" SCONAME="ARC_DOC_ID" VERSION="1" LANGU="S" DESCRIPT="SAP ArchiveLink: ID del documento de archivo" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SAEARDOID"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="ALINK_2_ADJUNTO" SCONAME="ADJUNTO" VERSION="1" LANGU="S" DESCRIPT="Estructura con atributos y contenido entrada correspondencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="RMPS_POST_CONTENT"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="ALINK_2_ADJUNTO" SCONAME="RET" VERSION="1" LANGU="S" DESCRIPT="Parámetro de retorno" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPIRET2"/>
+  <source>METHOD alink_2_adjunto.
+    DATA: l_adjunto     TYPE rmps_post_content,
+          l_filename    TYPE toaat-filename,
+          l_filecontent TYPE xstring,
+          l_message     TYPE bapi_msg.
+
+    l_filecontent = zcl_ap_gd=&gt;get_xstring_alink(
+      EXPORTING archive  = archiv_id
+                doc_id   = arc_doc_id
+      IMPORTING filename = l_filename
+                message  = l_message ).
+
+    CLEAR: l_adjunto.
+    l_adjunto-doc_type = zcl_ap_ficheros=&gt;get_extension( l_filename ).
+    TRANSLATE l_adjunto-doc_type TO UPPER CASE.
+
+    l_adjunto-binary   = &apos;X&apos;.
+
+    CALL FUNCTION &apos;SCMS_XSTRING_TO_BINARY&apos;
+      EXPORTING
+        buffer          = l_filecontent
+        append_to_table = &apos; &apos;
+      IMPORTING
+        output_length   = l_adjunto-docsize
+      TABLES
+        binary_tab      = l_adjunto-cont_hex.
+
+    l_adjunto-subject  = l_filename.
+
+    adjunto = l_adjunto.
+    ret-type = &apos;S&apos;.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_DATOS_VAR" VERSION="1" LANGU="S" DESCRIPT="Añade variables desdedatos" EXPOSURE="2" STATE="1" EDITORDER="36 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_DATOS_VAR" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_DATOS_VAR" SCONAME="NOMBRE_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_DATOS_VAR" SCONAME="I_VAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE"/>
+  <source>METHOD append_datos_var.
+    DATA: l_campo TYPE string,
+          l_valor TYPE text255.
+
+    DATA(i_comp) = zcl_ap_dev=&gt;get_fieldcatalog( linea = datos limpiar_tablas = &apos;X&apos; solo_tipos = &apos;ICNDTX&apos; ).
+
+
+    LOOP AT i_comp ASSIGNING FIELD-SYMBOL(&lt;comp&gt;).
+      ASSIGN COMPONENT &lt;comp&gt;-name OF STRUCTURE datos TO FIELD-SYMBOL(&lt;var&gt;).
+      IF sy-subrc = 0.
+        append_var( EXPORTING dato = &lt;var&gt;
+                              campo = &lt;comp&gt;-name
+                              nombre_tabla = nombre_tabla
+                    CHANGING  i_var = i_var ).
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_VAR" VERSION="1" LANGU="S" DESCRIPT="Añade variables" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_VAR" SCONAME="DATO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_VAR" SCONAME="NOMBRE_TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_VAR" SCONAME="CAMPO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="APPEND_VAR" SCONAME="I_VAR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE"/>
+  <source>METHOD append_var.
+    DATA: l_campo TYPE string,
+          l_valor TYPE text255.
+
+
+    DESCRIBE FIELD dato TYPE DATA(l_tipo) EDIT MASK DATA(l_mask).
+    IF l_tipo NE &apos;u&apos;. &quot;unicode
+      IF nombre_tabla IS INITIAL.
+        l_campo = campo.
+      ELSE.
+        l_campo = |{ nombre_tabla }-{ campo }|.
+      ENDIF.
+
+      DATA(l_cambios) = &apos;&apos;.
+      IF l_tipo = &apos;C&apos;.
+        IF l_mask = &apos;==ALPHA&apos;.
+          l_valor = dato.
+          __quitar_ceros l_valor.
+          l_cambios = &apos;X&apos;.
+        ENDIF.
+      ELSE.
+        WRITE dato TO l_valor.
+        CONDENSE l_valor NO-GAPS.
+        l_cambios = &apos;X&apos;.
+      ENDIF.
+
+      IF l_cambios IS INITIAL.
+        APPEND VALUE #( key   = &apos;{&apos; &amp;&amp; l_campo &amp;&amp; &apos;}&apos;
+                        value = dato ) TO i_var.
+      ELSE.
+        APPEND VALUE #( key   = &apos;{&apos; &amp;&amp; l_campo &amp;&amp; &apos;}&apos;
+                        value = l_valor ) TO i_var.
+      ENDIF.
+
+
+    ENDIF.
+
+  ENDMETHOD.</source>
+ </method>
  <method CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="CABECERA_HTML" VERSION="1" LANGU="S" DESCRIPT="Cabecera tabla HTML" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_ENVIO_MAIL" CMPNAME="CABECERA_HTML" SCONAME="CHARSET" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;Windows-1252&apos;"/>
   <source>METHOD cabecera_html.

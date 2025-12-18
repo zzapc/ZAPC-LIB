@@ -1,200 +1,225 @@
-CLASS zcl_ap_hu DEFINITION
-  PUBLIC
-  CREATE PUBLIC.
+class ZCL_AP_HU definition
+  public
+  create public .
 
-  PUBLIC SECTION.
-    DATA vekp     TYPE vekp.
-    DATA vepo     TYPE vepo.
-    DATA i_vepo   TYPE tab_vepo.
-    DATA return   TYPE bapiret2.
-    DATA i_return TYPE bapiret2_t.
-    DATA huheader TYPE bapihuheader.
-    DATA emkpf    TYPE emkpf.
+public section.
 
-    CONSTANTS c_traspaso TYPE huwbevent VALUE '0012' ##NO_TEXT.
+  data VEKP type VEKP .
+  data VEPO type VEPO .
+  data I_VEPO type TAB_VEPO .
+  data RETURN type BAPIRET2 .
+  data I_RETURN type BAPIRET2_T .
+  data HUHEADER type BAPIHUHEADER .
+  data EMKPF type EMKPF .
+  constants C_TRASPASO type HUWBEVENT value '0012' ##NO_TEXT.
+  data LIGHTS type LIGHTS .
+  data MENSAJE type BAPI_MSG .
 
-    DATA lights  TYPE lights.
-    DATA mensaje TYPE bapi_msg.
-
-    METHODS constructor
-      IMPORTING exidv TYPE exidv OPTIONAL
-                venum TYPE venum OPTIONAL
-      PREFERRED PARAMETER exidv.
-
-    METHODS get_vekp
-      IMPORTING venum          TYPE venum     OPTIONAL
-                exidv          TYPE exidv     OPTIONAL
-                solo_get_venum TYPE abap_bool DEFAULT ''.
-
-    METHODS get_vepo
-      IMPORTING exidv TYPE exidv OPTIONAL
-                venum TYPE venum OPTIONAL
-      PREFERRED PARAMETER exidv.
-
-    METHODS crear
-      IMPORTING matnr              TYPE matnr
-                werks              TYPE werks_d   OPTIONAL
-                lgort              TYPE lgort_d   OPTIONAL
-                exidv              TYPE exidv     OPTIONAL
-                validar_existencia TYPE abap_bool DEFAULT ''
-                exidv2             TYPE exidv2    OPTIONAL
-                vegr1              TYPE vegr1     DEFAULT ''
-      RETURNING VALUE(hukey)       TYPE bapihukey-hu_exid.
-
-    METHODS pack
-      IMPORTING hukey          TYPE exidv
-                matnr          TYPE matnr
-                charg          TYPE charg_d
-                werks          TYPE werks_d
-                lgort          TYPE lgort_d
-                item_type      TYPE velin DEFAULT '1'
-                pack_qty       TYPE any
-                meins          TYPE meins
-                bestq          TYPE bestq DEFAULT ''
-      RETURNING VALUE(mensaje) TYPE string.
-
-    CLASS-METHODS contiene_status
-      IMPORTING venum              TYPE venum
-                !status            TYPE any
-                spras              TYPE sy-langu DEFAULT sy-langu
-      RETURNING VALUE(si_contiene) TYPE abap_bool.
-
-    CLASS-METHODS get_siguiente_n_emb_prop
-      IMPORTING matnr      TYPE matnr
-      RETURNING VALUE(num) TYPE nriv-nrlevel.
-
-    CLASS-METHODS visualizar
-      IMPORTING venum TYPE venum OPTIONAL
-                exidv TYPE any   OPTIONAL
-      PREFERRED PARAMETER venum.
-
-    CLASS-METHODS esta_encajado
-      IMPORTING matnr        TYPE matnr
-                charg        TYPE charg_d
-                werks        TYPE werks_d
-                lgort        TYPE lgort_d
-      RETURNING VALUE(exidv) TYPE vekp-exidv.
-
-    METHODS borrar
-      IMPORTING exidv          TYPE exidv     OPTIONAL
-                venum          TYPE venum     OPTIONAL
-                !commit        TYPE abap_bool DEFAULT ''
-      PREFERRED PARAMETER exidv
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS get_materials
-      IMPORTING exidv               TYPE exidv
-      RETURNING VALUE(i_materiales) TYPE hum_cum_matererial_t.
-
-    METHODS unpack
-      IMPORTING hukey          TYPE exidv OPTIONAL
-                venum          TYPE venum OPTIONAL
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    METHODS mover
-      IMPORTING huwbevent        TYPE huwbevent          DEFAULT '0010'
-                matnr            TYPE matnr              OPTIONAL
-                werks            TYPE werks_d            OPTIONAL
-                lgort            TYPE lgort_d            OPTIONAL
-                bwart            TYPE bwart              OPTIONAL
-                grund            TYPE mb_grbew           OPTIONAL
-                kostl            TYPE kostl              OPTIONAL
-                espera_a_grabado TYPE abap_bool          DEFAULT 'X'
-                dequeue_all      TYPE abap_bool          DEFAULT 'X'
-                i_cajas_ext      TYPE hum_exidv_t        OPTIONAL
-                i_datos_mov      TYPE hum_data_move_to_t OPTIONAL
-                i_cajas_int      TYPE hum_venum_t        OPTIONAL
-                tcode            TYPE sy-tcode           DEFAULT 'VLMOVE'
-                xblnr            TYPE xblnr              OPTIONAL
-                budat            TYPE budat              DEFAULT sy-datum
-                bktxt            TYPE bktxt              DEFAULT ''
-                charg            TYPE charg_d            OPTIONAL.
-
-    CLASS-METHODS get_status
-      IMPORTING venum         TYPE venum
-      RETURNING VALUE(status) TYPE bsvx-sttxt.
-
-    CLASS-METHODS get_exidv
-      IMPORTING venum        TYPE venum
-      RETURNING VALUE(exidv) TYPE exidv.
-
-    CLASS-METHODS cambiar_estado_hu
-      IMPORTING venum          TYPE venum
-                estado_origen  TYPE any
-                estado_destino TYPE any
-                tcode          TYPE sy-tcode DEFAULT 'VLMOVE'
-                xblnr          TYPE xblnr    OPTIONAL
-                budat          TYPE budat    DEFAULT sy-datum
-                bktxt          TYPE bktxt    DEFAULT ''
-                grund          TYPE mb_grbew OPTIONAL
-      EXPORTING mensaje        TYPE any
-                emkpf          TYPE emkpf
-                tipo_mov       TYPE string.
-
-    CLASS-METHODS get_venum
-      IMPORTING VALUE(exidv) TYPE any
-      RETURNING VALUE(venum) TYPE venum.
-
-    CLASS-METHODS get_vekp_st
-      IMPORTING venum          TYPE venum     OPTIONAL
-                exidv          TYPE exidv     OPTIONAL
-                solo_get_venum TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(vekp)    TYPE vekp.
-
-    CLASS-METHODS get_mat_embalaje
-      IMPORTING matnr        TYPE any
-                werks        TYPE any
-      RETURNING VALUE(vhilm) TYPE vhilm.
-
-    CLASS-METHODS generar_num_exidv
-      IMPORTING exidv                 TYPE any
-      RETURNING VALUE(exidv_completa) TYPE exidv.
-
-    CLASS-METHODS lanzar_humo
-      IMPORTING exidv     TYPE any      OPTIONAL
-                lista_hus TYPE any      OPTIONAL
-                modo      TYPE bdc_mode DEFAULT 'E'.
-
-    CLASS-METHODS cambiar_status
-      IMPORTING venum TYPE venum   OPTIONAL
-                exidv TYPE exidv   OPTIONAL
-                stat  TYPE j_status
-                inact TYPE j_inact DEFAULT ''.
-
-    CLASS-METHODS get_nueva_sscc
-      IMPORTING !object      TYPE inri-object    DEFAULT 'LVS_LENUM'
-                !range       TYPE inri-nrrangenr DEFAULT '01'
-      RETURNING VALUE(exidv) TYPE exidv.
-
-    CLASS-METHODS insertar_log_hu
-      IMPORTING exidv          TYPE exidv       OPTIONAL
-                venum          TYPE venum       OPTIONAL
-                !handle        TYPE vevw-handle OPTIONAL
-                !object        TYPE vevw-object
-                objkey         TYPE any
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS esta_bloqueada
-      IMPORTING exidv            TYPE exidv OPTIONAL
-                venum            TYPE venum OPTIONAL
-      RETURNING VALUE(bloqueada) TYPE abap_bool.
-
-    CLASS-METHODS espera_si_bloqueada
-      IMPORTING exidv           TYPE exidv OPTIONAL
-                venum           TYPE venum OPTIONAL
-                segundos_espera TYPE int2  DEFAULT 10
-      RETURNING VALUE(message)  TYPE bapi_msg.
-
-    CLASS-METHODS calc_digito_control
-      IMPORTING hu            TYPE char18
-      RETURNING VALUE(digito) TYPE numc1.
-
-  PROTECTED SECTION.
-
-  PRIVATE SECTION.
+  methods CONSTRUCTOR
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+    preferred parameter EXIDV .
+  methods GET_VEKP
+    importing
+      !VENUM type VENUM optional
+      !EXIDV type EXIDV optional
+      !SOLO_GET_VENUM type ABAP_BOOL default '' .
+  methods GET_VEPO
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+    preferred parameter EXIDV .
+  methods CREAR
+    importing
+      !MATNR type MATNR
+      !WERKS type WERKS_D optional
+      !LGORT type LGORT_D optional
+      !EXIDV type EXIDV optional
+      !VALIDAR_EXISTENCIA type ABAP_BOOL default ''
+      !EXIDV2 type EXIDV2 optional
+      !VEGR1 type VEGR1 default ''
+    returning
+      value(HUKEY) type BAPIHUKEY-HU_EXID .
+  methods PACK
+    importing
+      !HUKEY type EXIDV
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D
+      !LGORT type LGORT_D
+      !ITEM_TYPE type VELIN default '1'
+      !PACK_QTY type ANY
+      !MEINS type MEINS
+      !BESTQ type BESTQ default ''
+    returning
+      value(MENSAJE) type STRING .
+  class-methods CONTIENE_STATUS
+    importing
+      !VENUM type VENUM
+      !STATUS type ANY
+      !SPRAS type SY-LANGU default SY-LANGU
+    returning
+      value(SI_CONTIENE) type ABAP_BOOL .
+  class-methods GET_SIGUIENTE_N_EMB_PROP
+    importing
+      !MATNR type MATNR
+    returning
+      value(NUM) type NRIV-NRLEVEL .
+  class-methods VISUALIZAR
+    importing
+      !VENUM type VENUM optional
+      !EXIDV type ANY optional
+    preferred parameter VENUM .
+  class-methods ESTA_ENCAJADO
+    importing
+      !MATNR type MATNR
+      !CHARG type CHARG_D
+      !WERKS type WERKS_D
+      !LGORT type LGORT_D
+    returning
+      value(EXIDV) type VEKP-EXIDV .
+  methods BORRAR
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+      !COMMIT type ABAP_BOOL default ''
+    preferred parameter EXIDV
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods GET_MATERIALS
+    importing
+      !EXIDV type EXIDV
+    returning
+      value(I_MATERIALES) type HUM_CUM_MATERERIAL_T .
+  methods UNPACK
+    importing
+      !HUKEY type EXIDV optional
+      !VENUM type VENUM optional
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  methods MOVER
+    importing
+      !HUWBEVENT type HUWBEVENT default '0010'
+      !MATNR type MATNR optional
+      !WERKS type WERKS_D optional
+      !LGORT type LGORT_D optional
+      !BWART type BWART optional
+      !GRUND type MB_GRBEW optional
+      !KOSTL type KOSTL optional
+      !ESPERA_A_GRABADO type ABAP_BOOL default 'X'
+      !DEQUEUE_ALL type ABAP_BOOL default 'X'
+      !I_CAJAS_EXT type HUM_EXIDV_T optional
+      !I_DATOS_MOV type HUM_DATA_MOVE_TO_T optional
+      !I_CAJAS_INT type HUM_VENUM_T optional
+      !TCODE type SY-TCODE default 'VLMOVE'
+      !XBLNR type XBLNR optional
+      !BUDAT type BUDAT default SY-DATUM
+      !BKTXT type BKTXT default ''
+      !CHARG type CHARG_D optional .
+  class-methods GET_STATUS
+    importing
+      !VENUM type VENUM
+    returning
+      value(STATUS) type BSVX-STTXT .
+  class-methods GET_EXIDV
+    importing
+      !VENUM type VENUM
+    returning
+      value(EXIDV) type EXIDV .
+  class-methods CAMBIAR_ESTADO_HU
+    importing
+      !VENUM type VENUM
+      !ESTADO_ORIGEN type ANY
+      !ESTADO_DESTINO type ANY
+      !TCODE type SY-TCODE default 'VLMOVE'
+      !XBLNR type XBLNR optional
+      !BUDAT type BUDAT default SY-DATUM
+      !BKTXT type BKTXT default ''
+      !GRUND type MB_GRBEW optional
+    exporting
+      !MENSAJE type ANY
+      !EMKPF type EMKPF
+      !TIPO_MOV type STRING .
+  class-methods GET_VENUM
+    importing
+      value(EXIDV) type ANY
+    returning
+      value(VENUM) type VENUM .
+  class-methods GET_VEKP_ST
+    importing
+      !VENUM type VENUM optional
+      !EXIDV type EXIDV optional
+      !SOLO_GET_VENUM type ABAP_BOOL default ''
+    returning
+      value(VEKP) type VEKP .
+  class-methods GET_MAT_EMBALAJE
+    importing
+      !MATNR type ANY
+      !WERKS type ANY
+    returning
+      value(VHILM) type VHILM .
+  class-methods GENERAR_NUM_EXIDV
+    importing
+      !EXIDV type ANY
+    returning
+      value(EXIDV_COMPLETA) type EXIDV .
+  class-methods LANZAR_HUMO
+    importing
+      !EXIDV type ANY optional
+      !LISTA_HUS type ANY optional
+      !MODO type BDC_MODE default 'E' .
+  class-methods CAMBIAR_STATUS
+    importing
+      !VENUM type VENUM optional
+      !EXIDV type EXIDV optional
+      !STAT type J_STATUS
+      !INACT type J_INACT default '' .
+  class-methods GET_NUEVA_SSCC
+    importing
+      !OBJECT type INRI-OBJECT default 'LVS_LENUM'
+      !RANGE type INRI-NRRANGENR default '01'
+    returning
+      value(EXIDV) type EXIDV .
+  class-methods INSERTAR_LOG_HU
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+      !HANDLE type VEVW-HANDLE optional
+      !OBJECT type VEVW-OBJECT
+      !OBJKEY type ANY
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods ESTA_BLOQUEADA
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+    returning
+      value(BLOQUEADA) type ABAP_BOOL .
+  class-methods ESPERA_SI_BLOQUEADA
+    importing
+      !EXIDV type EXIDV optional
+      !VENUM type VENUM optional
+      !SEGUNDOS_ESPERA type INT2 default 10
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods CALC_DIGITO_CONTROL
+    importing
+      !HU type CHAR17
+    returning
+      value(DIGITO) type NUMC1 .
+  class-methods CAMBIA_MATERIAL_EMBALAJE
+    importing
+      !VENUM type VENUM optional
+      !EXIDV type EXIDV optional
+      !VHILM type VHILM
+    returning
+      value(MESSAGE) type BAPI_MSG .
+protected section.
+private section.
 endclass. "ZCL_AP_HU definition
 class ZCL_AP_HU implementation.
-  METHOD borrar.
+METHOD borrar.
     DATA l_exidv TYPE exidv.
 
     IF NOT exidv IS INITIAL.
@@ -230,34 +255,94 @@ class ZCL_AP_HU implementation.
     ENDIF.
   ENDMETHOD.
   METHOD calc_digito_control.
-    DATA: work_string   TYPE c LENGTH 50,
-          length        TYPE i,
-          lv_first      TYPE int4        VALUE 1,
-          lv_temp       TYPE n LENGTH 1,
-          lv_sum_first  TYPE int4,
-          lv_second     TYPE int4        VALUE 2,
-          lv_sum_second TYPE int4,
-          lv_final_res  TYPE int4.
+    DATA: lv_len   TYPE i,
+          lv_digit TYPE i,
+          lv_pos   TYPE i,
+          lv_sum   TYPE i,
+          lv_mult  TYPE i.
 
     CLEAR digito.
-    work_string = hu.
-    length = strlen( work_string ).
-    SHIFT work_string LEFT DELETING LEADING space.
+    lv_len = strlen( hu ).
+    lv_sum = 0.
 
-    DO length TIMES.
-      WRITE work_string+lv_first(1) TO lv_temp.
-      lv_sum_first = lv_sum_first + lv_temp.
-      WRITE work_string+lv_second(1) TO lv_temp.
-      lv_sum_second = lv_sum_second + lv_temp.
-      lv_first = lv_first + 2.
-      lv_second = lv_second + 2.
+    " Recorremos de derecha a izquierda
+    DO lv_len TIMES.
+      lv_pos = lv_len - sy-index.
+      lv_digit = hu+lv_pos(1).
+      " Alternar multiplicador: derecha primero con 3
+      IF ( sy-index MOD 2 ) = 1.
+        lv_mult = 3.
+      ELSE.
+        lv_mult = 1.
+      ENDIF.
+      lv_sum = lv_sum + ( lv_digit * lv_mult ).
     ENDDO.
 
-    lv_final_res = ( lv_sum_first * 3 ) + lv_sum_second.
-
-    digito = 10 - ( lv_final_res MOD 10 ).
+    digito = ( 10 - ( lv_sum MOD 10 ) ) MOD 10.
   ENDMETHOD.
-  METHOD cambiar_estado_hu.
+  METHOD cambia_material_embalaje.
+    DATA: lt_fields TYPE vsep_t_changed,
+          g_hus     TYPE hum_exidv_t,
+          g_venum   TYPE hum_venum_t.
+
+
+    DATA(l_vekp) = get_vekp_st( venum = venum exidv = exidv ).
+    IF l_vekp IS INITIAL.
+      message = 'No existe la HU'.
+      RETURN.
+    ENDIF.
+
+    IF l_vekp-vhilm = vhilm.
+* El material de embalaje ya es el correcto
+      RETURN.
+    ENDIF.
+
+    APPEND l_vekp-exidv TO g_hus.
+    APPEND l_vekp-venum TO g_venum.
+
+    CALL FUNCTION 'HU_GET_HUS'
+      EXPORTING
+        if_lock_hus = 'X'
+        if_no_loop  = 'X'
+        it_hus      = g_hus
+        it_venum    = g_venum
+      EXCEPTIONS
+        hus_locked  = 1
+        no_hu_found = 2
+        fatal_error = 3
+        OTHERS      = 4.
+    IF sy-subrc <> 0.
+      message = 'No se pudo bloquear/leer la HU'.
+      RETURN.
+    ENDIF.
+
+    lt_fields = VALUE #( ( changed_f = 'VHILM'
+                           f_value = vhilm ) ).
+
+    CALL FUNCTION 'V51F_HU_HEADER_UPDATE'
+      EXPORTING
+        if_with_update      = 'U'
+        if_venum            = l_vekp-venum
+        it_changed_fields   = lt_fields
+      EXCEPTIONS
+        not_found           = 1
+        exidv_already_exist = 2
+        not_possible        = 3
+        overloading_w       = 4
+        overloading_v       = 5
+        fatal_error         = 6
+        OTHERS              = 7.
+    IF sy-subrc <> 0.
+      message = 'Error al actualizar cabecera HU'.
+      RETURN.
+    ENDIF.
+
+    CALL FUNCTION 'HU_POST'
+      EXPORTING
+        if_commit = 'X'.
+
+  ENDMETHOD.
+METHOD cambiar_estado_hu.
     DATA: o_hu   TYPE REF TO zcl_ap_hu,
           l_mov  TYPE huwbevent,
           l_aux1 TYPE c LENGTH 1,
@@ -349,7 +434,7 @@ class ZCL_AP_HU implementation.
     mensaje = o_hu->mensaje.
     emkpf = o_hu->emkpf.
   ENDMETHOD.
-  METHOD cambiar_status.
+METHOD cambiar_status.
     DATA: l_venum TYPE venum,
           l_objnr TYPE j_objnr,
           husstat TYPE husstat.
@@ -389,14 +474,14 @@ class ZCL_AP_HU implementation.
       MODIFY husstat FROM husstat.
     ENDIF.
   ENDMETHOD.
-  METHOD constructor.
+METHOD constructor.
     IF NOT exidv IS INITIAL OR NOT venum IS INITIAL.
       get_vekp( venum = venum
                 exidv = exidv ).
       get_vepo( ).
     ENDIF.
   ENDMETHOD.
-  METHOD contiene_status.
+METHOD contiene_status.
     DATA: r_status  TYPE RANGE OF j_status,
           i_status  TYPE TABLE OF j_txt04,
           l_txt04   TYPE j_txt04,
@@ -440,7 +525,7 @@ class ZCL_AP_HU implementation.
       si_contiene = 'X'.
     ENDIF.
   ENDMETHOD.
-  METHOD crear.
+METHOD crear.
     DATA l_exidv TYPE exidv.
     DATA: l_header TYPE bapihuhdrproposal,
           " TODO: variable is assigned but never used (ABAP cleaner)
@@ -499,7 +584,7 @@ class ZCL_AP_HU implementation.
       ENDDO.
     ENDIF.
   ENDMETHOD.
-  METHOD espera_si_bloqueada.
+METHOD espera_si_bloqueada.
     DATA bloqueada TYPE c LENGTH 1.
 
     DO segundos_espera TIMES.
@@ -513,14 +598,14 @@ class ZCL_AP_HU implementation.
       ENDIF.
     ENDDO.
   ENDMETHOD.
-  METHOD esta_bloqueada.
+METHOD esta_bloqueada.
     DATA(vekp) = get_vekp_st( venum = venum exidv = exidv solo_get_venum = 'X' ).
 
     bloqueada = zcl_ap_utils=>comprobar_bloqueo( tabla = 'VEKP'
                                                  clave = sy-mandt
                                                  clave2 = vekp-venum ).
   ENDMETHOD.
-  METHOD esta_encajado.
+METHOD esta_encajado.
     DATA l_venum TYPE venum.
 
     CLEAR exidv.
@@ -540,7 +625,7 @@ class ZCL_AP_HU implementation.
        WHERE venum = l_venum.
     ENDIF.
   ENDMETHOD.
-  METHOD generar_num_exidv.
+METHOD generar_num_exidv.
     DATA l_exidv TYPE exidv.
 
     zcl_ap_string=>poner_ceros( EXPORTING cadena = exidv
@@ -566,13 +651,13 @@ class ZCL_AP_HU implementation.
       zcl_ap_string=>poner_ceros_c( CHANGING cadena = l_exidv ).
     ENDIF.
   ENDMETHOD.
-  METHOD get_exidv.
+METHOD get_exidv.
     CLEAR exidv.
     SELECT SINGLE exidv FROM vekp
       INTO exidv
      WHERE venum = venum.
   ENDMETHOD.
-  METHOD get_mat_embalaje.
+METHOD get_mat_embalaje.
     DATA: l_komgp            TYPE komgp,
           Datos TYPE REF TO data.
 FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
@@ -609,7 +694,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
     ENDIF.
 
   ENDMETHOD.
-  METHOD get_materials.
+METHOD get_materials.
     CALL FUNCTION 'HU_GET_MATERIALS'
      EXPORTING
         if_identification         = exidv
@@ -626,7 +711,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       MESSAGE 'Error recuperando materiales' TYPE 'S'.
     ENDIF.
   ENDMETHOD.
-  METHOD get_nueva_sscc.
+METHOD get_nueva_sscc.
     CLEAR exidv.
     CALL FUNCTION 'NUMBER_GET_NEXT'
       EXPORTING
@@ -649,7 +734,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
               WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
     ENDIF.
 
-*   Calculamos el dÃ­gito de control
+*   Calculamos el dígito de control
     __quitar_ceros exidv.
     CALL FUNCTION 'LE_CHECK_DIGIT_CALCULATION'
       EXPORTING
@@ -664,7 +749,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
     ENDIF.
     __poner_ceros exidv.
   ENDMETHOD.
-  METHOD get_siguiente_n_emb_prop.
+METHOD get_siguiente_n_emb_prop.
     DATA: l_magrv     TYPE mara-magrv,
           l_vhart     TYPE mara-vhart,
           l_traty     TYPE tervh-traty,
@@ -700,7 +785,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDSELECT.
     ENDIF.
     IF NOT l_traty IS INITIAL.
-* Recuperamos el nÂº de
+* Recuperamos el nº de
       SELECT SINGLE nrverg int_nkr FROM tvty
         INTO (l_nrverg, l_int_nkr )
        WHERE traty = l_traty.
@@ -729,7 +814,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-  METHOD get_status.
+METHOD get_status.
     DATA: l_objnr TYPE jest-objnr,
           l_istat TYPE husstat-stat,
           l_txt04 TYPE tj02t-txt04.
@@ -766,7 +851,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDIF.
     ENDSELECT.
   ENDMETHOD.
-  METHOD get_vekp.
+METHOD get_vekp.
     CLEAR vekp.
 
     IF NOT venum IS INITIAL.
@@ -797,7 +882,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-  METHOD get_vekp_st.
+METHOD get_vekp_st.
     CLEAR vekp.
 
     IF NOT venum IS INITIAL.
@@ -828,7 +913,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-  METHOD get_venum.
+METHOD get_venum.
     CLEAR venum.
     SELECT venum FROM vekp
       INTO venum
@@ -837,7 +922,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
      ORDER BY venum DESCENDING.
     ENDSELECT.
   ENDMETHOD.
-  METHOD get_vepo.
+METHOD get_vepo.
     CLEAR: i_vepo, vepo.
 
     IF NOT venum IS INITIAL OR NOT exidv IS INITIAL.
@@ -853,7 +938,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       READ TABLE i_vepo INTO vepo INDEX 1.
     ENDIF.
   ENDMETHOD.
-  METHOD insertar_log_hu.
+METHOD insertar_log_hu.
     DATA l_handle TYPE vevw-handle.
     DATA vevw     TYPE vevw.
 
@@ -893,7 +978,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       ENDIF.
     ENDIF.
   ENDMETHOD.
-  METHOD lanzar_humo.
+METHOD lanzar_humo.
     DATA: l_exidv   TYPE exidv,
           i_exidv   TYPE TABLE OF exidv,
           o_bi      TYPE REF TO zcl_ap_batch_input,
@@ -954,7 +1039,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
 
     l_mensaje = o_bi->llamar_transaccion( tcode = 'HUMO' modo = modo ).
   ENDMETHOD.
-  METHOD mover.
+METHOD mover.
     DATA gt_venum TYPE hum_venum_t.
     DATA: gt_exidv TYPE hum_exidv_t,
           imkpf    TYPE imkpf.
@@ -1109,7 +1194,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       CLEAR mensaje.
     ENDIF.
   ENDMETHOD.
-  METHOD pack.
+METHOD pack.
     DATA item TYPE bapihuitmproposal.
 
     CLEAR item.
@@ -1145,7 +1230,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       mensaje = return-message.
     ENDIF.
   ENDMETHOD.
-  METHOD unpack.
+METHOD unpack.
     DATA: l_venum TYPE vekp-venum,
           l_exidv TYPE vekp-exidv,
           i_vepo  TYPE TABLE OF vepo,
@@ -1208,7 +1293,7 @@ FIELD-SYMBOLS: <tabla> TYPE STANDARD TABLE.
       message = 'No hay posiciones a desembalar'(npd).
     ENDIF.
   ENDMETHOD.
-  METHOD visualizar.
+METHOD visualizar.
     DATA: l_venum TYPE venum,
           i_venum TYPE hum_venum_t.
 

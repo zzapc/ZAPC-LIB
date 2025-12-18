@@ -1,5 +1,5 @@
-FUNCTION Z_POPUP_MAIL.
-*"--------------------------------------------------------------------
+ï»¿FUNCTION z_popup_mail.
+*"----------------------------------------------------------------------
 *"*"Interfase local
 *"  IMPORTING
 *"     REFERENCE(MOSTRAR_EMISOR) DEFAULT ' '
@@ -32,8 +32,8 @@ FUNCTION Z_POPUP_MAIL.
 *"     REFERENCE(CCO) TYPE  ANY OPTIONAL
 *"  EXCEPTIONS
 *"      ENVIO_CANCELADO
-*"--------------------------------------------------------------------
-DATA: l_msg    TYPE string,
+*"----------------------------------------------------------------------
+  DATA: l_msg    TYPE string,
         l_altura TYPE i VALUE 23.
 
   v_asunto = subject.
@@ -119,23 +119,26 @@ DATA: l_msg    TYPE string,
   IF no_mostrar_popup = 'X'.
     IF NOT v_proceso_log IS INITIAL.
       zcl_ap_log=>set_log( proceso = v_proceso_log
-                           p1 = 'Se envía mail' p2 = v_asunto p3 = 'a' p4 = v_destinatario
-                           msgty = 'S' ).
+                           p1      = 'Se envÃ­a mail'
+                           p2      = v_asunto
+                           p3      = 'a'
+                           p4      = v_destinatario
+                           msgty   = 'S' ).
     ENDIF.
 
-    zcl_ap_envio_mail=>mail( EXPORTING subject   = v_asunto
-                                       direccion = v_destinatario
+    zcl_ap_envio_mail=>mail( EXPORTING subject            = v_asunto
+                                       direccion          = v_destinatario
                                        lista_distribucion = v_lista_distribucion
-                                       dest_copia = v_copia
-                                       dest_copia_oculta = v_cco
-                                       emisor     = v_emisor
-                                       i_adjuntos = i_adjuntos
-                                       texto     = v_texto
-                                       i_textos  = i_textos[]
-                                       html      = v_html
-                                       clave     = v_clave
-                                       plantilla = v_plantilla
-                             IMPORTING message   = v_message ).
+                                       dest_copia         = v_copia
+                                       dest_copia_oculta  = v_cco
+                                       emisor             = v_emisor
+                                       i_adjuntos         = i_adjuntos
+                                       texto              = v_texto
+                                       i_textos           = i_textos[]
+                                       html               = v_html
+                                       clave              = v_clave
+                                       plantilla          = v_plantilla
+                             IMPORTING message            = v_message ).
     IF v_message IS INITIAL.
       MESSAGE 'Se ha enviado el mail' TYPE 'S'.
     ELSE.
@@ -151,7 +154,7 @@ DATA: l_msg    TYPE string,
     CLEAR v_info.
     IF NOT v_i_adjuntos[] IS INITIAL.
       DESCRIBE TABLE v_i_adjuntos LINES sy-tfill.
-      __concat2 v_info 'Nº de adjuntos' sy-tfill.
+      __concat2 v_info 'NÂº de adjuntos' sy-tfill.
 
       IF v_boton_adjuntos = 'X'.
         CONCATENATE icon_attachment v_info INTO v_info SEPARATED BY space.
@@ -188,8 +191,11 @@ DATA: l_msg    TYPE string,
     ELSE.
       IF NOT v_proceso_log IS INITIAL.
         zcl_ap_log=>set_log( proceso = v_proceso_log
-                             p1 = 'Se cancela envío del mail' p2 = v_asunto p3 = 'a' p4 = v_destinatario
-                             msgty = 'E' ).
+                             p1      = 'Se cancela envÃ­o del mail'
+                             p2      = v_asunto
+                             p3      = 'a'
+                             p4      = v_destinatario
+                             msgty   = 'E' ).
       ENDIF.
 
       RAISE envio_cancelado.

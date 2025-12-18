@@ -1,4 +1,4 @@
-***********************************************************************
+﻿***********************************************************************
 * TIPO : LISTADO
 * TITULO : Mantenimiento textos mail
 * DESCRIPCION : Mantenimiento textos mail
@@ -23,13 +23,12 @@ REPORT zap_textos_mail.
 
 CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
   PUBLIC SECTION.
-    METHODS: data_changed          REDEFINITION,
+    METHODS: data_changed REDEFINITION,
       data_changed_finished REDEFINITION,
-      toolbar               REDEFINITION,
-      user_command          REDEFINITION,
-      visualizar_objeto     REDEFINITION.
-ENDCLASS.
-
+      toolbar      REDEFINITION,
+      user_command REDEFINITION,
+      visualizar_objeto REDEFINITION.
+ENDCLASS.                    "lcl_event_grid DEFINITION
 
 *----------------------------------------------------------------------*
 *       CLASS zcl_report DEFINITION
@@ -67,25 +66,21 @@ CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
              color           TYPE lvc_t_scol,
            END OF t_listado,
            tt_listado TYPE STANDARD TABLE OF t_listado.
-
     DATA: i_listado     TYPE tt_listado,
           i_listado_ini TYPE tt_listado.
 
     DATA: o_alv   TYPE REF TO zcl_ap_alv_grid,
           o_event TYPE REF TO lcl_event_grid.
 
-    METHODS: buscar_datos REDEFINITION,
-
-      validaciones IMPORTING !mod    TYPE abap_bool DEFAULT ''
-                   CHANGING  listado TYPE t_listado ##NEEDED,
-
+    METHODS:  buscar_datos REDEFINITION,
+      validaciones IMPORTING mod TYPE abap_bool DEFAULT '' CHANGING listado TYPE t_listado, "#EC NEEDED
       status_dynpro_0100,
       command_dynpro_0100,
       enviar_mail IMPORTING direccion TYPE any.
 
-ENDCLASS.
+ENDCLASS.                    "REPORT DEFINITION
 
-DATA o_prog TYPE REF TO zcl_report ##NEEDED.
+DATA: o_prog  TYPE REF TO zcl_report.                       "#EC NEEDED
 
 DATA: grupo  TYPE zap_textos_mail-grupo,
       codigo TYPE zap_textos_mail-codigo.
@@ -94,8 +89,8 @@ SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
 SELECT-OPTIONS: s_grupo  FOR grupo,
                 s_codigo FOR codigo,
                 s_spras  FOR sy-langu.
-SELECTION-SCREEN SKIP 1.
-PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN: SKIP 1.
+PARAMETERS: p_vari LIKE disvariant-variant.
 SELECTION-SCREEN END OF BLOCK b01.
 __botones_plantilla.
 
@@ -105,9 +100,10 @@ __botones_plantilla.
 *
 ************************************************************************
 CLASS lcl_event_grid IMPLEMENTATION.
-  METHOD visualizar_objeto.
-    DATA l_list TYPE o_prog->t_listado.
 
+  METHOD visualizar_objeto.
+    DATA: l_list TYPE o_prog->t_listado,
+          l_mod  TYPE abap_bool.
     l_list = list.
     CASE column.
       WHEN 'ICO_ADJ' OR 'NOMBRE_ADJUNTO'.
@@ -118,17 +114,35 @@ CLASS lcl_event_grid IMPLEMENTATION.
         IF NOT l_list-binario2 IS INITIAL.
           zcl_ap_ficheros=>visualizar( fichero = l_list-nombre_adjunto2 xstring = l_list-binario2 ).
         ENDIF.
+      WHEN 'TEXTO'.
+        DATA(l_texto) = l_list-texto.
+        zcl_ap_string=>popup_texto( EXPORTING editar = 'X'
+                                              html = l_list-html
+                                    IMPORTING modificado = l_mod
+                                    CHANGING texto = l_texto ).
+        IF l_mod = abap_true.
+          ASSIGN o_prog->i_listado[ grupo     = l_list-grupo
+                             codigo    = l_list-codigo
+                             version   = l_list-version
+                             spras     = l_list-spras ] TO FIELD-SYMBOL(<list>).
+          IF sy-subrc = 0.
+            <list>-texto = l_texto.
+            <list>-updkz = 'U'.
+            o_alv->refrescar_grid( soft_refresh = '' ).
+          ENDIF.
+        ENDIF.
       WHEN OTHERS. message = 'No implementado'.
     ENDCASE.
-  ENDMETHOD. " handle_double_click
+  ENDMETHOD. "handle_double_click
 
   METHOD toolbar.
+
     super->toolbar( e_object = e_object e_interactive = e_interactive ).
-  ENDMETHOD.
+
+  ENDMETHOD.                                               "toolbar
 
   METHOD user_command.
     DATA l_listado TYPE o_prog->t_listado.
-
     CASE e_ucomm.
       WHEN 'NUEVO'.
         zcl_ap_alv_grid=>append_style_edit( EXPORTING campo = 'GRUPO,CODIGO,VERSION,SPRAS' CHANGING  tabla_style = l_listado-style ).
@@ -144,7 +158,9 @@ CLASS lcl_event_grid IMPLEMENTATION.
       WHEN OTHERS.
         super->user_command( e_ucomm = e_ucomm ).
     ENDCASE.
-  ENDMETHOD.
+
+  ENDMETHOD.                                               "USER_COMMAND
+
 
   METHOD data_changed.
     ini_data_changed( cambios = er_data_changed->mt_good_cells  ).
@@ -163,16 +179,18 @@ CLASS lcl_event_grid IMPLEMENTATION.
         actualizar_fila( fila_ini = l_listado_ini fila_fin = l_listado er_data_changed = er_data_changed fila = cambio_celda-row_id ).
       ENDAT.
     ENDLOOP.
-  ENDMETHOD.
+  ENDMETHOD.                                               "data_changed
 
   METHOD data_changed_finished.
+
     IF NOT tabla_data_changed IS INITIAL.
 *      o_alv->refrescar_grid( ).
       CLEAR tabla_data_changed.
     ENDIF.
-  ENDMETHOD.
-ENDCLASS.
 
+  ENDMETHOD.
+
+ENDCLASS.                    "lcl_event_grid IMPLEMENTATION
 
 *----------------------------------------------------------------------*
 *       CLASS zcl_report IMPLEMENTATION
@@ -180,14 +198,16 @@ ENDCLASS.
 *
 *----------------------------------------------------------------------*
 CLASS zcl_report IMPLEMENTATION.
+
   METHOD buscar_datos.
+
     sgpi_texto( 'Seleccionando datos'(sda) ).
     CLEAR i_listado.
     SELECT * FROM zap_textos_mail
       INTO CORRESPONDING FIELDS OF TABLE i_listado
-     WHERE grupo  IN s_grupo
+     WHERE grupo IN s_grupo
        AND codigo IN s_codigo
-       AND spras  IN s_spras
+       AND spras IN s_spras
      ORDER BY PRIMARY KEY.
 
     LOOP AT i_listado ASSIGNING FIELD-SYMBOL(<listado>).
@@ -195,58 +215,61 @@ CLASS zcl_report IMPLEMENTATION.
     ENDLOOP.
 
     i_listado_ini = i_listado.
-  ENDMETHOD.                                               " seleccionar_datos
+
+  ENDMETHOD.                                               "seleccionar_datos
 
   METHOD status_dynpro_0100.
+
+
     status_dynpro( EXPORTING cprog = 'ZAP_STATUS' status = 'ST_DYN' CHANGING i_listado = i_listado ).
-    IF inicio IS NOT INITIAL.
-      RETURN.
-    ENDIF.
+    IF inicio IS INITIAL.
+      inicio = 'X'.
+      o_alv->add_button( button = 'F01' text = 'Grabar'(GRA) icon = icon_system_save ucomm = 'GRABAR' ).
+      o_alv->add_button( button = 'F02' text = 'Test'(TES) icon = icon_test ucomm = 'TEST' ).
+      o_alv->add_button( button = 'F03' text = 'Subir adjunto'(SA1) icon = icon_pdf ucomm = 'ADJ' ).
+      o_alv->add_button( button = 'F04' qinfo = 'Subir adjunto 2'(SA2) icon = icon_pdf ucomm = 'ADJ2' ).
+      o_alv->add_button( button = 'M01' text = 'Borrar adjunto'(BA1) icon = icon_delete ucomm = 'BOR_ADJ' ).
+      o_alv->add_button( button = 'M02' text = 'Borrar adjunto 2'(BA2) icon = icon_delete ucomm = 'BOR_ADJ2' ).
+      IF sy-sysid NE zcl_c=>entorno_produccion.
+        o_alv->add_button( button = 'F05' text = 'Transporte'(TRA) icon = icon_ws_truck ucomm = 'OT' ).
+      ENDIF.
 
-    inicio = 'X'.
-    o_alv->add_button( button = 'F01' text = 'Grabar' icon = icon_system_save ucomm = 'GRABAR' ).
-    o_alv->add_button( button = 'F02' text = 'Test' icon = icon_test ucomm = 'TEST' ).
-    o_alv->add_button( button = 'F03' text = 'Subir adjunto' icon = icon_pdf ucomm = 'ADJ' ).
-    o_alv->add_button( button = 'F04' qinfo = 'Subir adjunto 2' icon = icon_pdf ucomm = 'ADJ2' ).
-    o_alv->add_button( button = 'M01' text = 'Borrar adjunto' icon = icon_delete ucomm = 'BOR_ADJ' ).
-    o_alv->add_button( button = 'M02' text = 'Borrar adjunto 2' icon = icon_delete ucomm = 'BOR_ADJ2' ).
-    IF sy-sysid <> zcl_c=>entorno_produccion.
-      o_alv->add_button( button = 'F05' text = 'Transporte' icon = icon_ws_truck ucomm = 'OT' ).
-    ENDIF.
-
-    o_alv->registrar_mod( ).
-    o_alv->set_layout( no_rowmove = 'X' no_rowins = 'X' style = 'STYLE' colort = 'COLOR' ).
-    o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
-    o_alv->set_campos_tabint( i_listado[] ).
-    o_alv->set_field_quitar( 'CHECK,LIGHTS,MESSAGE,UPDKZ,BINARIO,BINARIO2' ).
+      o_alv->registrar_mod( ).
+      o_alv->set_layout( no_rowmove = 'X' no_rowins = 'X' style = 'STYLE' colort = 'COLOR' ).
+      o_alv->quitar_opciones( cl_gui_alv_grid=>mc_fc_refresh ).
+      o_alv->set_campos_tabint( i_listado[] ).
+      o_alv->set_field_quitar( 'CHECK,LIGHTS,MESSAGE,UPDKZ,BINARIO,BINARIO2' ).
 *      o_alv->set_field_noout( 'EMAIL_PRUEBAS' ).
-    o_alv->set_field_hotspot( campo = 'TEXTO' valor = 'TEXT_EDT' ).
-    o_alv->set_field_input( 'DESCRIPCION,HTML,DEFECTO,ASUNTO,EMISOR,DESTINO,ADOBE,NOMBRE_ADJUNTO,NOMBRE_ADJUNTO2,EMAIL_PRUEBAS,AVISO_PRUEBAS' ).
-    o_alv->set_field( campo = 'HTML,DEFECTO,AVISO_PRUEBAS' op = 'CHECKBOX' ).
-    o_alv->set_field_text( 'GRUPO,CODIGO,ASUNTO,EMISOR,DESTINO,NOMBRE_ADJUNTO,NOMBRE_ADJUNTO2' ).
-    o_alv->set_field_text( campo = 'TEXTO' valor = 'Cuerpo mail' ).
-    o_alv->set_field_text( campo = 'ICO_ADJ' valor = 'Adj' valor2 = 'Adjunto' ).
-    o_alv->set_field_text( campo = 'ICO_ADJ2' valor = 'Adj2' valor2 = 'Adjunto 2' ).
-    o_alv->set_field_text( campo = 'EMAIL_PRUEBAS' valor = 'Email pruebas' valor2 = 'Email para pruebas en entorno no productivo' ).
-    o_alv->set_field_text( campo = 'AVISO_PRUEBAS' valor = 'Aviso' valor2 = 'Aviso entorno no productivo' ).
+      o_alv->set_field_hotspot( campo = 'TEXTO' valor = 'TEXT_EDT' ).
+      o_alv->set_field_input( 'DESCRIPCION,HTML,DEFECTO,ASUNTO,EMISOR,DESTINO,ADOBE,NOMBRE_ADJUNTO,NOMBRE_ADJUNTO2,EMAIL_PRUEBAS,AVISO_PRUEBAS' ).
+      o_alv->set_field( campo = 'HTML,DEFECTO,AVISO_PRUEBAS' op = 'CHECKBOX' ).
+      o_alv->set_field_text( 'GRUPO,CODIGO,ASUNTO,EMISOR,DESTINO,NOMBRE_ADJUNTO,NOMBRE_ADJUNTO2' ).
+      o_alv->set_field_text( campo = 'TEXTO' valor = 'Cuerpo mail'(CM1) ).
+      o_alv->set_field_text( campo = 'ICO_ADJ' valor = 'Adj'(ADJ) valor2 = 'Adjunto'(AD1) ).
+      o_alv->set_field_text( campo = 'ICO_ADJ2' valor = 'Adj2'(AD2) valor2 = 'Adjunto 2'(A21) ).
+      o_alv->set_field_text( campo = 'EMAIL_PRUEBAS' valor = 'Email pruebas'(EP1) valor2 = 'Email para pruebas en entorno no productivo'(EPP) ).
+      o_alv->set_field_text( campo = 'AVISO_PRUEBAS' valor = 'Aviso'(AVI) valor2 = 'Aviso entorno no productivo'(AEN) ).
 
-    o_alv->add_filtro( campo = 'UPDKZ' valor = 'D' sign = 'E'  ).
-    sgpi_texto( 'Generando informe' ).
-    o_alv->show( CHANGING tabla = i_listado ).
+      o_alv->add_filtro( campo = 'UPDKZ' valor = 'D' sign = 'E'  ).
+      sgpi_texto( 'Generando informe'(GI1) ).
+      o_alv->show( CHANGING tabla = i_listado ).
 
-    o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+      o_alv->set_seleccion( CHANGING t_tabla = i_listado ).
+    ENDIF.
+
   ENDMETHOD.
 
+
   METHOD command_dynpro_0100.
-    DATA: l_hay_sel       TYPE c LENGTH 1,
+    DATA: l_hay_sel,
           zap_textos_mail TYPE zap_textos_mail,
+          l_return,
           l_xstring       TYPE xstring.
-    DATA: l_key  TYPE c LENGTH 120,
-          i_keys TYPE TABLE OF string.
 
     o_alv->comprobar_cambios( ).
     command_dynpro( EXPORTING o_alv = o_alv seleccion = 'TEST,TEST_PDF,OT,ADJ,ADJ2,BOR_ADJ,BOR_ADJ2'
                             CHANGING i_listado = i_listado i_listado_ini = i_listado_ini hay_sel = l_hay_sel ).
+
 
     CASE ucomm.
       WHEN 'GRABAR'.
@@ -254,7 +277,7 @@ CLASS zcl_report IMPLEMENTATION.
           DELETE FROM zap_textos_mail WHERE grupo = <listado>-grupo AND codigo = <listado>-codigo AND version = <listado>-version AND spras = <listado>-spras.
           DELETE i_listado.
         ENDLOOP.
-        LOOP AT i_listado ASSIGNING <listado> WHERE updkz <> ''.
+        LOOP AT i_listado ASSIGNING <listado> WHERE updkz NE ''.
           CLEAR zap_textos_mail.
           MOVE-CORRESPONDING <listado> TO zap_textos_mail.
           IF <listado>-updkz = 'U'.
@@ -265,7 +288,7 @@ CLASS zcl_report IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         i_listado_ini = i_listado.
-        MESSAGE 'Se han guardado los datos' TYPE 'S'.
+        MESSAGE 'Se han guardado los datos'(SHG) TYPE 'S'.
         o_alv->refrescar_grid( soft_refresh = '' ).
       WHEN 'TEST'.
         LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
@@ -278,8 +301,8 @@ CLASS zcl_report IMPLEMENTATION.
                                          IMPORTING xstring = l_xstring
                                                    fichero_salida = string ).
           IF NOT string IS INITIAL.
-            <listado>-updkz          = 'U'.
-            <listado>-binario        = l_xstring.
+            <listado>-updkz = 'U'.
+            <listado>-binario = l_xstring.
             <listado>-nombre_adjunto = zcl_ap_ficheros=>get_nombre_fichero( fichero = string con_extension = 'X' ).
             o_prog->validaciones( EXPORTING mod = 'X' CHANGING listado = <listado> ).
           ENDIF.
@@ -292,8 +315,8 @@ CLASS zcl_report IMPLEMENTATION.
                                          IMPORTING xstring = l_xstring
                                                    fichero_salida = string ).
           IF NOT string IS INITIAL.
-            <listado>-updkz           = 'U'.
-            <listado>-binario2        = l_xstring.
+            <listado>-updkz = 'U'.
+            <listado>-binario2 = l_xstring.
             <listado>-nombre_adjunto2 = zcl_ap_ficheros=>get_nombre_fichero( fichero = string con_extension = 'X' ).
             o_prog->validaciones( EXPORTING mod = 'X' CHANGING listado = <listado> ).
           ENDIF.
@@ -315,6 +338,9 @@ CLASS zcl_report IMPLEMENTATION.
         o_alv->refrescar_grid( ).
 
       WHEN 'OT'.
+        DATA: l_key(120),
+              i_keys TYPE TABLE OF string.
+
         LOOP AT i_listado ASSIGNING <listado> WHERE check = 'X'.
           l_key(3) = sy-mandt.
           l_key+3(30) = <listado>-grupo.
@@ -326,9 +352,12 @@ CLASS zcl_report IMPLEMENTATION.
 
         zcl_ap_utils=>grabar_tabla_en_ot( tabla = 'ZAP_TEXTOS_MAIL' i_keys = i_keys ).
     ENDCASE.
+
   ENDMETHOD.
 
+
   METHOD validaciones.
+
     CLEAR: listado-message, listado-style, listado-color, listado-lights.
 
     IF mod = 'X'.
@@ -339,7 +368,7 @@ CLASS zcl_report IMPLEMENTATION.
 
     IF NOT listado-binario IS INITIAL.
       aux1 = zcl_ap_ficheros=>get_extension( fichero = listado-nombre_adjunto ).
-      aux1 = to_upper( aux1 ).
+      TRANSLATE aux1 TO UPPER CASE.
       CASE aux1(3).
         WHEN 'PDF'. listado-ico_adj = icon_pdf.
         WHEN 'DOC'. listado-ico_adj = icon_doc.
@@ -349,7 +378,7 @@ CLASS zcl_report IMPLEMENTATION.
 
     IF NOT listado-binario2 IS INITIAL.
       aux1 = zcl_ap_ficheros=>get_extension( fichero = listado-nombre_adjunto2 ).
-      aux1 = to_upper( aux1 ).
+      TRANSLATE aux1 TO UPPER CASE.
       CASE aux1(3).
         WHEN 'PDF'. listado-ico_adj2 = icon_pdf.
         WHEN 'DOC'. listado-ico_adj2 = icon_doc.
@@ -358,20 +387,27 @@ CLASS zcl_report IMPLEMENTATION.
     ENDIF.
 
     set_status_list( EXPORTING message = listado-message criterio = 'V' CHANGING list = listado ).
+
   ENDMETHOD.
 
   METHOD enviar_mail.
+
+
+
+
   ENDMETHOD.
-ENDCLASS.
+
+ENDCLASS.                    "REPORT IMPLEMENTATION
 *----------------------------------------------------------------------*
 * INITIALIZATION
 *----------------------------------------------------------------------*
 INITIALIZATION.
+
   o_prog = NEW #( status       = 'INICIO'
                   guardar_logz = 'X'
                   status_prog  = 'ZAP_STATUS' ).
 
-  o_prog->initialization_i( ).
+  o_prog->initialization_i(  ).
 
   IF sy-batch IS INITIAL.
     o_prog->o_event = NEW #( boton_refrescar = 'X'
@@ -386,10 +422,12 @@ INITIALIZATION.
   ENDIF.
 
 AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_grupo-low.
+
   DATA(o_mc_g) = NEW zcl_ap_matchcode_z( tabname = 'ZAP_TEXTOS_MAIL' ).
   o_mc_g->add_field( field = 'GRUPO' selectflag = 'X' ).
-  SELECT DISTINCT grupo FROM zap_textos_mail                "#EC *
+  SELECT DISTINCT grupo FROM zap_textos_mail
     INTO TABLE @DATA(i_grupos).
+
 
   LOOP AT i_grupos ASSIGNING FIELD-SYMBOL(<grupo>).
     o_mc_g->add_valor( <grupo> ).
@@ -399,6 +437,7 @@ AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_grupo-low.
                       CHANGING  valor   = s_grupo-low ).
 
 AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_codigo-low.
+
   DATA(o_mc_c) = NEW zcl_ap_matchcode_z( tabname = 'ZAP_TEXTOS_MAIL' ).
   o_mc_c->add_field( field = 'CODIGO' selectflag = 'X' ).
   o_mc_c->add_field( field = 'DESCRIPCION' ).
@@ -414,19 +453,11 @@ AT SELECTION-SCREEN ON VALUE-REQUEST FOR s_codigo-low.
   o_mc_c->matchcode( EXPORTING field   = 'CODIGO'
                       CHANGING  valor   = s_codigo-low ).
 
-AT SELECTION-SCREEN.
-  CASE sy-ucomm.
-    WHEN 'ONLI'.
-      o_prog->validar_seleccion_obligatoria( campos_or = '*' msgty = 'W' ).
-    WHEN OTHERS.
-      o_prog->at_selection( ).
-  ENDCASE.
-
-
 *----------------------------------------------------------------------
 * START-OF-SELECTION.
 *----------------------------------------------------------------------*
 START-OF-SELECTION.
+
   o_prog->buscar_datos( ).
 
   IF sy-batch IS INITIAL.
@@ -434,6 +465,7 @@ START-OF-SELECTION.
   ELSE.
     MESSAGE 'Este programa no se puede ejecutar en fondo'(pnf) TYPE 'E'.
   ENDIF.
+
 
 *&---------------------------------------------------------------------*
 *&      Module  STATUS_0100  OUTPUT
@@ -443,7 +475,7 @@ MODULE status_0100 OUTPUT.
 
   o_prog->status_dynpro_0100( ).
 
-ENDMODULE.
+ENDMODULE.                 " STATUS_0100  OUTPUT
 *&---------------------------------------------------------------------*
 *&      Module  USER_COMMAND_0100  INPUT
 *&---------------------------------------------------------------------*
@@ -452,4 +484,4 @@ MODULE user_command_0100 INPUT.
   o_prog->command_dynpro_0100( ).
 
 
-ENDMODULE.
+ENDMODULE.                 " USER_COMMAND_0100  INPUT

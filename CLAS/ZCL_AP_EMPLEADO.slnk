@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CLAS CLSNAME="ZCL_AP_EMPLEADO" VERSION="1" LANGU="S" DESCRIPT="Clase empleado" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
- <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="9 " SRCCOLUMN1="4 " SRCROW2="41 " SRCCOLUMN2="22 " TYPESRC_LENG="1325 " TYPESRC='BEGIN OF t_devengos,
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="1 " TYPTYPE="4" SRCROW1="8 " SRCCOLUMN1="6 " SRCROW2="40 " SRCCOLUMN2="22 " TYPESRC_LENG="1325 " TYPESRC='BEGIN OF t_devengos,
         pernr             TYPE pernr-pernr,
         name              TYPE c LENGTH 35,
         job_title         TYPE c LENGTH 15,
@@ -34,11 +34,11 @@
         color             TYPE c LENGTH 3,
       END OF t_devengos
 '/>
- <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="43 " SRCCOLUMN1="4 " SRCROW2="43 " SRCCOLUMN2="41 " TYPESRC_LENG="40 " TYPESRC="tt_devengos   TYPE TABLE OF t_devengos
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_DEVENGOS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="2 " TYPTYPE="4" SRCROW1="41 " SRCCOLUMN1="10 " SRCROW2="41 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_devengos   TYPE TABLE OF t_devengos
 "/>
- <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_BAPI7013_1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="45 " SRCCOLUMN1="4 " SRCROW2="45 " SRCCOLUMN2="41 " TYPESRC_LENG="40 " TYPESRC="tt_bapi7013_1 TYPE TABLE OF bapi7013_1
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_BAPI7013_1" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="3 " TYPTYPE="4" SRCROW1="42 " SRCCOLUMN1="10 " SRCROW2="42 " SRCCOLUMN2="47 " TYPESRC_LENG="40 " TYPESRC="tt_bapi7013_1 TYPE TABLE OF bapi7013_1
 "/>
- <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="47 " SRCCOLUMN1="4 " SRCROW2="56 " SRCCOLUMN2="25 " TYPESRC_LENG="308 " TYPESRC="BEGIN OF t_cond_fechas,
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="T_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="4 " TYPTYPE="4" SRCROW1="44 " SRCCOLUMN1="6 " SRCROW2="53 " SRCCOLUMN2="25 " TYPESRC_LENG="308 " TYPESRC="BEGIN OF t_cond_fechas,
         clave1 TYPE c LENGTH 40,
         clave2 TYPE c LENGTH 40,
         clave3 TYPE c LENGTH 40,
@@ -49,7 +49,7 @@
         linea  TYPE string,
       END OF t_cond_fechas
 "/>
- <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="58 " SRCCOLUMN1="4 " SRCROW2="58 " SRCCOLUMN2="45 " TYPESRC_LENG="44 " TYPESRC="tt_cond_fechas TYPE TABLE OF t_cond_fechas
+ <types CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="TT_COND_FECHAS" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="5 " TYPTYPE="4" SRCROW1="54 " SRCCOLUMN1="10 " SRCROW2="54 " SRCCOLUMN2="51 " TYPESRC_LENG="44 " TYPESRC="tt_cond_fechas TYPE TABLE OF t_cond_fechas
 "/>
  <localImplementation>*&quot;* local class implementation for public class
 *&quot;* use this source file for the implementation part of
@@ -104,7 +104,6 @@
   <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="RETURN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIRETURN1"/>
   <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="ACTUALIZAR_INFOTIPO" SCONAME="KEY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPIPAKEY"/>
   <source>METHOD actualizar_infotipo.
-
     CLEAR: key, message, return.
 
     ASSIGN COMPONENT &apos;PERNR&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;pernr&gt;).
@@ -112,10 +111,16 @@
       message = &apos;Estructura de entrada incorrecta&apos;.
       RETURN.
     ENDIF.
+    DATA(l_infty) = infty.
     ASSIGN COMPONENT &apos;INFTY&apos; OF STRUCTURE datos TO FIELD-SYMBOL(&lt;infty&gt;).
     IF sy-subrc = 0.
-      &lt;infty&gt; = infty.
-    else.
+      IF l_infty IS INITIAL.
+        l_infty = &lt;infty&gt;.
+      ELSEIF l_infty &lt;&gt; &lt;infty&gt; AND &lt;infty&gt; &lt;&gt; &apos;&apos;.
+        mESSAGE = &apos;Incoherencia en infotipos&apos;.
+        RETURN.
+      ENDIF.
+    ELSE.
       message = &apos;Estructura de entrada incorrecta&apos;.
       RETURN.
     ENDIF.
@@ -163,7 +168,7 @@
 
     CALL FUNCTION &apos;HR_INFOTYPE_OPERATION&apos;
       EXPORTING
-        infty         = infty
+        infty         = l_infty
         number        = &lt;pernr&gt;
         subtype       = &lt;subty&gt;
         validityend   = &lt;endda&gt;
@@ -322,20 +327,19 @@
  <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR" VERSION="1" LANGU="S" DESCRIPT="Unifica valores con fechas correlativas" EXPOSURE="2" STATE="1" EDITORDER="44 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR" SCONAME="IT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
   <source>METHOD condensar.
-    DATA: i_fechas TYPE tt_cond_fechas,
-          l_fechas TYPE t_cond_fechas,
+    DATA: l_cont   TYPE char1,
           i_key    TYPE apb_lpd_t_key_value,
-          l_cont   TYPE char1.
-
+          l_fechas TYPE t_cond_fechas,
+          i_fechas TYPE tt_cond_fechas.
 
     DATA(i_campos) = zcl_ap_dev=&gt;get_fieldcatalog( tabla = it ).
     LOOP AT i_campos ASSIGNING FIELD-SYMBOL(&lt;campo&gt;)
-                      WHERE name NE &apos;BEGDA&apos; AND name NE &apos;ENDDA&apos;.
-      ADD 1 TO l_cont.
+         WHERE name &lt;&gt; &apos;BEGDA&apos; AND name &lt;&gt; &apos;ENDDA&apos;.
+      l_cont = l_cont + 1.
       IF l_cont &gt; 5.
         MESSAGE &apos;Sólo es posible condensar 5 campos&apos; TYPE &apos;E&apos;.
       ENDIF.
-      APPEND VALUE #( key = &apos;CLAVE&apos; &amp;&amp; l_cont value = &lt;campo&gt;-name  ) TO i_key.
+      APPEND VALUE #( key = |CLAVE{ l_cont }| value = &lt;campo&gt;-name  ) TO i_key.
     ENDLOOP.
     LOOP AT it ASSIGNING FIELD-SYMBOL(&lt;it&gt;).
       CLEAR l_fechas.
@@ -347,7 +351,7 @@
       ENDLOOP.
       APPEND l_fechas TO i_fechas.
     ENDLOOP.
-    zcl_ap_empleado=&gt;condensar_fechas( CHANGING fechas = i_fechas[] ).
+    zcl_ap_empleado=&gt;condensar_fechas( CHANGING fechas = i_fechas ).
     CLEAR it.
     LOOP AT i_fechas ASSIGNING FIELD-SYMBOL(&lt;fechas&gt;).
       APPEND INITIAL LINE TO it ASSIGNING &lt;it&gt;.
@@ -358,8 +362,6 @@
         &lt;destino&gt; = &lt;origen&gt;.
       ENDLOOP.
     ENDLOOP.
-
-
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_EMPLEADO" CMPNAME="CONDENSAR_FECHAS" VERSION="1" LANGU="S" DESCRIPT="Unifica valores con fechas correlativas" EXPOSURE="2" STATE="1" EDITORDER="27 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
@@ -822,13 +824,18 @@
        WHERE spras = sy-langu
          AND land1 = l_pa0002-natio.
       datos-famst = l_pa0002-famst.
-      CASE l_pa0002-famst.
-        WHEN &apos;0&apos;. datos-fatxt = &apos;Soltero&apos;(sol).
-        WHEN &apos;1&apos;. datos-fatxt = &apos;Casado&apos;(cas).
-        WHEN &apos;2&apos;. datos-fatxt = &apos;Viudo&apos;(viu).
-        WHEN &apos;3&apos;. datos-fatxt = &apos;Divorciado&apos;(div).
-        WHEN &apos;5&apos;. datos-fatxt = &apos;Separado&apos;(sep).
-        WHEN &apos;6&apos;. datos-fatxt = &apos;Pareja de hecho&apos;(phe).
+
+      SELECT SINGLE ftext FROM t502t
+        INTO datos-fatxt
+       WHERE sprsl = sy-langu
+         AND famst = datos-famst.
+      CASE datos-fatxt.
+        WHEN &apos;sol.&apos;. datos-fatxt = &apos;Soltero&apos;(sol).
+        WHEN &apos;cas.&apos;. datos-fatxt = &apos;Casado&apos;(cas).
+        WHEN &apos;viu.&apos;. datos-fatxt = &apos;Viudo&apos;(viu).
+        WHEN &apos;div.&apos;. datos-fatxt = &apos;Divorciado&apos;(div).
+        WHEN &apos;sep.&apos;. datos-fatxt = &apos;Separado&apos;(sep).
+        WHEN &apos;Par.H.&apos;. datos-fatxt = &apos;Pareja de hecho&apos;(phe).
       ENDCASE.
       datos-gesch   = l_pa0002-gesch.
       datos-gesch_t = zcl_ap_utils=&gt;get_texto_dominio( dominio = &apos;GESCH&apos; valor = datos-gesch ).
@@ -1232,7 +1239,7 @@
     IF lista IS INITIAL.
       zcl_ap_utils=&gt;set_runtime_info( ).
       SUBMIT rplpay00
-         AND RETURN
+             AND RETURN
 *VIA SELECTION-SCREEN
              WITH pnppernr = pernr
              WITH pnpstat2 IN r_stat2
@@ -1244,7 +1251,7 @@
 
     ELSE.
       SUBMIT rplpay00
-         AND RETURN
+             AND RETURN
              WITH pnppernr = pernr
              WITH pnpstat2 IN r_stat2
              WITH pnpbegda = fecha
@@ -1778,7 +1785,7 @@
         OTHERS    = 2.
 
     IF sy-subrc &lt;&gt; 0.
-      message &apos;Error recuperando nota&apos; type &apos;S&apos;.
+      MESSAGE &apos;Error recuperando nota&apos; TYPE &apos;S&apos;.
     ENDIF.
   ENDMETHOD.</source>
  </method>
@@ -2291,7 +2298,7 @@
               resumen = resumen
             RECEIVING
               message = mensaje.
-        CATCH cx_root INTO DATA(o_root). &quot;#EC *
+        CATCH cx_root INTO DATA(o_root). &quot;#EC * &quot; TODO: variable is assigned but never used (ABAP cleaner)
           MESSAGE &apos;No implementada la opción de visualizar candidatos&apos; TYPE &apos;I&apos;.
       ENDTRY.
     ENDIF.

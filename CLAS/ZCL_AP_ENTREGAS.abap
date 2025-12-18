@@ -1,10 +1,11 @@
-CLASS zcl_ap_entregas DEFINITION
-  PUBLIC
-  CREATE PUBLIC.
+Ôªøclass ZCL_AP_ENTREGAS definition
+  public
+  create public .
 
-  PUBLIC SECTION.
-    TYPES:
-      BEGIN OF t_embalaje,
+public section.
+
+  types:
+    BEGIN OF t_embalaje,
         posnr TYPE posnr,
         matnr TYPE matnr,
         charg TYPE charg_d,
@@ -12,344 +13,388 @@ CLASS zcl_ap_entregas DEFINITION
         vrkme TYPE vrkme,
         exidv TYPE exidv,
         vhilm TYPE vhilm,
-      END OF t_embalaje.
-    TYPES tt_embalaje TYPE TABLE OF t_embalaje.
-    TYPES:
-      BEGIN OF t_vlpod,
+      END OF t_embalaje .
+  types:
+    tt_embalaje TYPE TABLE OF t_embalaje .
+  types:
+    BEGIN OF t_vlpod,
         posnr TYPE posnr,
         grund TYPE reacd,
         diff  TYPE lfimg_diff,
-      END OF t_vlpod.
-    TYPES tt_vlpod TYPE TABLE OF t_vlpod.
+      END OF t_vlpod .
+  types:
+    tt_vlpod TYPE TABLE OF t_vlpod .
 
-    CONSTANTS c_objectclas TYPE cdobjectcl         VALUE 'LIEFERUNG' ##NO_TEXT.
-    CONSTANTS c_tipo_gos   TYPE srgbtbrel-typeid_a VALUE 'LIKP' ##NO_TEXT.
+  constants C_OBJECTCLAS type CDOBJECTCL value 'LIEFERUNG' ##NO_TEXT.
+  constants C_TIPO_GOS type SRGBTBREL-TYPEID_A value 'LIKP' ##NO_TEXT.
 
-    CLASS-METHODS visualizar
-      IMPORTING vbeln TYPE any.
-
-    CLASS-METHODS get_texto_string
-      IMPORTING vbeln         TYPE vbeln_vl
-                posnr         TYPE posnr_vl OPTIONAL
-                !id           TYPE stxh-tdid
-                spras         TYPE spras    DEFAULT ''
-      RETURNING VALUE(string) TYPE string.
-
-    CLASS-METHODS picking
-      IMPORTING vbeln           TYPE likp-vbeln
-                i_lips          TYPE tab_lips
-                modoct          TYPE char1       DEFAULT 'N'
-                cambiar_ctd     TYPE abap_bool   DEFAULT ''
-                solo_part_lotes TYPE abap_bool   DEFAULT ''
-                ajustar_ctd     TYPE abap_bool   DEFAULT ''
-                i_embalaje      TYPE tt_embalaje OPTIONAL
-      RETURNING VALUE(mensaje)  TYPE bapiret2-message.
-
-    CLASS-METHODS salida_mercancias
-      IMPORTING vbeln          TYPE likp-vbeln
-                modoct         TYPE char1             DEFAULT 'N'
-                o_log          TYPE REF TO zcl_ap_log OPTIONAL
-      RETURNING VALUE(mensaje) TYPE bapiret2-message.
-
-    CLASS-METHODS deshacer_picking
-      IMPORTING vbeln           TYPE likp-vbeln
-                posnr           TYPE lips-posnr        OPTIONAL
-                modoct          TYPE char1             DEFAULT 'N'
-                mod_ctd_picking TYPE abap_bool         DEFAULT 'X'
-                o_log           TYPE REF TO zcl_ap_log OPTIONAL
-      RETURNING VALUE(mensaje)  TYPE bapiret2-message.
-
-    CLASS-METHODS desembalar_entrega
-      IMPORTING vbeln          TYPE likp-vbeln
-                modoct         TYPE char1 DEFAULT 'N'
-      RETURNING VALUE(mensaje) TYPE bapiret2-message.
-
-    CLASS-METHODS get_direccion
-      IMPORTING kunnr            TYPE kunnr     OPTIONAL
-                vbeln            TYPE vbeln_vl  OPTIONAL
-                ampliada         TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(direccion) TYPE string.
-
-    CLASS-METHODS picking_y_embalaje
-      IMPORTING vbeln              TYPE likp-vbeln
-                posnr              TYPE lips-posnr
-                charg              TYPE charg_d
-                lfimg              TYPE any
-                vrkme              TYPE lips-vrkme OPTIONAL
-                exidv              TYPE exidv      OPTIONAL
-                modoct             TYPE char1      DEFAULT 'N'
-                lstel              TYPE likp-lstel OPTIONAL
-                almacen_hu         TYPE abap_bool  DEFAULT ''
-                convertir_a_un_pos TYPE abap_bool  DEFAULT 'X'
-      RETURNING VALUE(mensaje)     TYPE bapiret2-message.
-
-    CLASS-METHODS desembalaje
-      IMPORTING vbeln          TYPE likp-vbeln
-                posnr          TYPE lips-posnr OPTIONAL
-                charg          TYPE charg_d    OPTIONAL
-                lfimg          TYPE any        OPTIONAL
-                vrkme          TYPE lips-vrkme OPTIONAL
-                exidv          TYPE exidv
-                modoct         TYPE char1      DEFAULT 'N'
-      RETURNING VALUE(mensaje) TYPE bapiret2-message.
-
-    CLASS-METHODS buscar_part_lote_sin_hu
-      IMPORTING vbeln               TYPE vbeln_vl
-                posnr               TYPE posnr
-      RETURNING VALUE(posnr_sin_hu) TYPE posnr.
-
-    CLASS-METHODS borrar_part_lote
-      IMPORTING vbeln          TYPE likp-vbeln
-                posnr          TYPE lips-posnr OPTIONAL
-                posnr_part     TYPE lips-posnr OPTIONAL
-                modoct         TYPE char1      DEFAULT 'N'
-      RETURNING VALUE(mensaje) TYPE bapiret2-message.
-
-    CLASS-METHODS set_texto_string
-      IMPORTING vbeln   TYPE vbeln_vl
-                posnr   TYPE posnr_vl OPTIONAL
-                !id     TYPE stxh-tdid
-                spras   TYPE spras    DEFAULT ''
-                !string TYPE string.
-
-    CLASS-METHODS get_part_lote_sin_hu
-      IMPORTING vbeln         TYPE vbeln_vl
-      RETURNING VALUE(i_lips) TYPE tab_lips.
-
-    CLASS-METHODS get_ctd_entrega
-      IMPORTING vbeln           TYPE any
-                posnr           TYPE any DEFAULT ''
-                unidad          TYPE any DEFAULT ''
-      RETURNING VALUE(cantidad) TYPE mengv13.
-
-    CLASS-METHODS get_ctd_sm
-      IMPORTING vbeln           TYPE any
-                posnr           TYPE any DEFAULT ''
-                unidad          TYPE any DEFAULT ''
-      RETURNING VALUE(cantidad) TYPE mengv13.
-
-    CLASS-METHODS hay_mod
-      IMPORTING vbeln             TYPE any
-                username          TYPE cdhdr-username DEFAULT sy-uname
-                tcode             TYPE cdhdr-tcode    DEFAULT 'VL02N'
-                segundos          TYPE i              DEFAULT 5
-      RETURNING VALUE(change_ind) TYPE cdhdr-change_ind.
-
-    CLASS-METHODS get_ctd_picking
-      IMPORTING vbeln        TYPE vbeln_vl
-                posnr        TYPE posnr
-                add_subpos   TYPE abap_bool DEFAULT 'X'
-                !buffer      TYPE abap_bool DEFAULT ''
-                !select      TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(pikmg) TYPE pikmg.
-
-    CLASS-METHODS get_ctd_pos
-      IMPORTING vbeln        TYPE vbeln_vl
-                posnr        TYPE posnr
-                add_subpos   TYPE abap_bool DEFAULT 'X'
-      RETURNING VALUE(lfimg) TYPE lfimg.
-
-    CLASS-METHODS modificar
-      IMPORTING vbeln      TYPE vbeln
-                i_lips_mod TYPE tab_lips          OPTIONAL
-                i_lips_new TYPE tab_lips          OPTIONAL
-                i_lips_del TYPE tab_lips          OPTIONAL
-                !commit    TYPE abap_bool         DEFAULT 'X'
-                modo_bi    TYPE char1             DEFAULT 'N'
-                o_log      TYPE REF TO zcl_ap_log OPTIONAL
-                mod_pesos  TYPE abap_bool         DEFAULT ''
-      EXPORTING i_return   TYPE bapiret2_t
-                !message   TYPE bapi_msg.
-
-    CLASS-METHODS insertar_nueva_posicion
-      IMPORTING lips     TYPE lips
-      EXPORTING !message TYPE bapi_msg
-                posnr    TYPE posnr
-                i_return TYPE bapiret2_t.
-
-    CLASS-METHODS insertar_nueva_posicion_ct
-      IMPORTING lips     TYPE lips
-                modo_bi  TYPE char1 DEFAULT 'N'
-      EXPORTING !message TYPE bapi_msg
-                posnr    TYPE posnr.
-
-    CLASS-METHODS get_solicitantep
-      IMPORTING vbeln        TYPE vbeln_vl
-      RETURNING VALUE(kunnr) TYPE kunnr.
-
-    CLASS-METHODS get_pedido
-      IMPORTING vbeln         TYPE vbeln_vl
-      RETURNING VALUE(pedido) TYPE vbeln_va.
-
-    CLASS-METHODS embalar
-      IMPORTING i_pos          TYPE tt_embalaje
-                vbeln          TYPE vbeln_vl
-                o_log          TYPE REF TO zcl_ap_log
-                modoct         TYPE char1 DEFAULT 'N'
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS tiene_sm
-      IMPORTING vbeln     TYPE any
-      RETURNING VALUE(sm) TYPE abap_bool.
-
-    CLASS-METHODS anyadir_pos_pedido
-      IMPORTING vbeln     TYPE vbeln_vl
-                pedido    TYPE vbeln_va
-                posnr     TYPE posnr
-                o_log     TYPE REF TO zcl_ap_log OPTIONAL
-                !commit   TYPE abap_bool         DEFAULT ''
-                modoct    TYPE char1             DEFAULT 'N'
-                forzar    TYPE abap_bool         DEFAULT ''
-      EXPORTING posnr_new TYPE posnr
-                !message  TYPE bapi_msg.
-
-    CLASS-METHODS esta_bloqueada
-      IMPORTING vbeln            TYPE vbeln_vl
-      RETURNING VALUE(bloqueada) TYPE abap_bool.
-
-    CLASS-METHODS modificar_fecha_sm
-      IMPORTING vbeln                       TYPE vbeln_vl
-                o_log                       TYPE REF TO zcl_ap_log OPTIONAL
-                modoct                      TYPE bdcmode           DEFAULT 'N'
-                forzar                      TYPE abap_bool         DEFAULT ''
-                wadat                       TYPE likp-wadat_ist
-                segundos_espera_si_bloqueos TYPE int2              DEFAULT 10
-                !tab                        TYPE any               DEFAULT ''
-      RETURNING VALUE(message)              TYPE bapi_msg.
-
-    CLASS-METHODS espera_si_bloqueada
-      IMPORTING vbeln           TYPE vbeln_vl
-                segundos_espera TYPE int2    DEFAULT 10
-                tiempo_espera   TYPE mengv13 DEFAULT 1
-      RETURNING VALUE(message)  TYPE bapi_msg.
-
-    CLASS-METHODS efectuar_sm
-      IMPORTING vbeln                       TYPE vbeln_vl
-                o_log                       TYPE REF TO zcl_ap_log OPTIONAL
-                modoct                      TYPE char1             DEFAULT 'N'
-                segundos_espera_si_bloqueos TYPE int2              DEFAULT 10
-      RETURNING VALUE(message)              TYPE bapi_msg.
-
-    CLASS-METHODS get_transporte
-      IMPORTING vbeln        TYPE any
-      RETURNING VALUE(tknum) TYPE tknum.
-
-    CLASS-METHODS crear_desde_vl10b
-      IMPORTING ebeln    TYPE ebeln
-                o_log    TYPE REF TO zcl_ap_log OPTIONAL
-                modoct   TYPE bdcmode           DEFAULT 'N'
-                dias     TYPE int2              DEFAULT -1
-                log_exit TYPE any               DEFAULT ''
-                bapi     TYPE abap_bool         DEFAULT ''
-      EXPORTING vbeln    TYPE vbeln
-                !message TYPE bapi_msg
-                warning  TYPE bapi_msg.
-
-    CLASS-METHODS vlpod
-      IMPORTING i_pos          TYPE tt_vlpod
-                vbeln          TYPE vbeln_vl
-                podat          TYPE likp-podat        OPTIONAL
-                potim          TYPE likp-potim        OPTIONAL
-                o_log          TYPE REF TO zcl_ap_log OPTIONAL
-                modoct         TYPE char1             DEFAULT 'N'
-                confirmar_are  TYPE abap_bool         DEFAULT ''
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS get_url_por_titulo_st
-      IMPORTING vbeln      TYPE ekko-ebeln
-                titulo     TYPE any
-      RETURNING VALUE(url) TYPE string.
-
-    CLASS-METHODS insertar_url_gos_st
-      IMPORTING vbeln  TYPE vbeln_vl
-                url    TYPE any OPTIONAL
-                titulo TYPE any OPTIONAL.
-
-    CLASS-METHODS insert_vbfa
-      IMPORTING vbeln   TYPE vbeln_vl
-                posnr   TYPE posnr
-                vbeln_n TYPE any
-                posnr_n TYPE any
-                mjahr   TYPE any DEFAULT ''
-                vbtyp_n TYPE any.
-
-    CLASS-METHODS crear_desde_vl10a
-      IMPORTING pedido   TYPE vbeln_va
-                o_log    TYPE REF TO zcl_ap_log OPTIONAL
-                modoct   TYPE bdcmode           DEFAULT 'N'
-                dias     TYPE int2              DEFAULT -1
-                log_exit TYPE any               DEFAULT ''
-                bapi     TYPE abap_bool         DEFAULT ''
-      EXPORTING vbeln    TYPE vbeln_vl
-                !message TYPE bapi_msg
-                warning  TYPE bapi_msg.
-
-    CLASS-METHODS get_fecha_hora_inicio
-      IMPORTING vbeln      TYPE vbeln_vl         OPTIONAL
-                !handle    TYPE likp-handle      OPTIONAL
-                tipo_fecha TYPE tsege-even       OPTIONAL
-                tipo       TYPE tsege-even_verty OPTIONAL
-      EXPORTING fecha      TYPE dats
-                hora       TYPE uzeit.
-
-    CLASS-METHODS set_fecha_hora_inicio
-      IMPORTING vbeln      TYPE vbeln_vl         OPTIONAL
-                !handle    TYPE likp-handle      OPTIONAL
-                tipo_fecha TYPE tsege-even       OPTIONAL
-                tipo       TYPE tsege-even_verty OPTIONAL
-                !tzone     TYPE tsege-even_zonfr DEFAULT 'CET'
-                fecha      TYPE dats
-                hora       TYPE uzeit.
-
-    CLASS-METHODS validar_entrega_modificable
-      IMPORTING vbeln          TYPE vbeln_vl
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS crear_entrega_desde_pedido
-      IMPORTING pedido   TYPE vbeln_va
-                o_log    TYPE REF TO zcl_ap_log OPTIONAL
-                modoct   TYPE bdcmode           DEFAULT 'N'
-                fecha    TYPE dats              DEFAULT '99991231'
-      EXPORTING vbeln    TYPE vbeln_vl
-                !message TYPE bapi_msg.
-
-    CLASS-METHODS modificar_ctd_picking
-      IMPORTING vbeln    TYPE vbeln
-                i_pos    TYPE tt_vbpok          OPTIONAL
-                !commit  TYPE abap_bool         DEFAULT 'X'
-                modo_bi  TYPE char1             DEFAULT 'N'
-                o_log    TYPE REF TO zcl_ap_log OPTIONAL
-      EXPORTING i_return TYPE bapiret2_t
-                !message TYPE bapi_msg.
-
-    CLASS-METHODS get_factura
-      IMPORTING vbeln          TYPE vbeln_vl
-      EXPORTING facturas       TYPE string
-      RETURNING VALUE(factura) TYPE vbeln_vf.
-
-    CLASS-METHODS get_lote_origen_pedido
-      IMPORTING vbeln        TYPE vbeln_vl
-                posnr        TYPE posnr
-      RETURNING VALUE(charg) TYPE charg_d.
-
-    CLASS-METHODS picking_opt
-      IMPORTING vbeln           TYPE likp-vbeln
-                i_lips          TYPE tab_lips
-                modoct          TYPE char1       DEFAULT 'N'
-                cambiar_ctd     TYPE abap_bool   DEFAULT ''
-                solo_part_lotes TYPE abap_bool   DEFAULT ''
-                ajustar_ctd     TYPE abap_bool   DEFAULT ''
-                i_embalaje      TYPE tt_embalaje OPTIONAL
-      RETURNING VALUE(mensaje)  TYPE bapiret2-message.
-
-    CLASS-METHODS borrar
-      IMPORTING vbeln               TYPE vbeln
-                !commit             TYPE abap_bool         DEFAULT 'X'
-                o_log               TYPE REF TO zcl_ap_log OPTIONAL
-                sacar_de_transporte TYPE abap_bool         DEFAULT ''
-      EXPORTING i_return            TYPE bapiret2_t
-                !message            TYPE bapi_msg.
-
+  class-methods VISUALIZAR
+    importing
+      !VBELN type ANY .
+  class-methods GET_TEXTO_STRING
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR_VL optional
+      !ID type STXH-TDID
+      !SPRAS type SPRAS default ''
+    returning
+      value(STRING) type STRING .
+  class-methods PICKING
+    importing
+      !VBELN type LIKP-VBELN
+      !I_LIPS type TAB_LIPS
+      !MODOCT type CHAR1 default 'N'
+      !CAMBIAR_CTD type ABAP_BOOL default ''
+      !SOLO_PART_LOTES type ABAP_BOOL default ''
+      !AJUSTAR_CTD type ABAP_BOOL default ''
+      !I_EMBALAJE type TT_EMBALAJE optional
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods SALIDA_MERCANCIAS
+    importing
+      !VBELN type LIKP-VBELN
+      !MODOCT type CHAR1 default 'N'
+      !O_LOG type ref to ZCL_AP_LOG optional
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods DESHACER_PICKING
+    importing
+      !VBELN type LIKP-VBELN
+      !POSNR type LIPS-POSNR optional
+      !MODOCT type CHAR1 default 'N'
+      !MOD_CTD_PICKING type ABAP_BOOL default 'X'
+      !O_LOG type ref to ZCL_AP_LOG optional
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods DESEMBALAR_ENTREGA
+    importing
+      !VBELN type LIKP-VBELN
+      !MODOCT type CHAR1 default 'N'
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods GET_DIRECCION
+    importing
+      !KUNNR type KUNNR optional
+      !VBELN type VBELN_VL optional
+      !AMPLIADA type ABAP_BOOL default ''
+    returning
+      value(DIRECCION) type STRING .
+  class-methods PICKING_Y_EMBALAJE
+    importing
+      !VBELN type LIKP-VBELN
+      !POSNR type LIPS-POSNR
+      !CHARG type CHARG_D
+      !LFIMG type ANY
+      !VRKME type LIPS-VRKME optional
+      !EXIDV type EXIDV optional
+      !MODOCT type CHAR1 default 'N'
+      !LSTEL type LIKP-LSTEL optional
+      !ALMACEN_HU type ABAP_BOOL default ''
+      !CONVERTIR_A_UN_POS type ABAP_BOOL default 'X'
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods DESEMBALAJE
+    importing
+      !VBELN type LIKP-VBELN
+      !POSNR type LIPS-POSNR optional
+      !CHARG type CHARG_D optional
+      !LFIMG type ANY optional
+      !VRKME type LIPS-VRKME optional
+      !EXIDV type EXIDV
+      !MODOCT type CHAR1 default 'N'
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods BUSCAR_PART_LOTE_SIN_HU
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR
+    returning
+      value(POSNR_SIN_HU) type POSNR .
+  class-methods BORRAR_PART_LOTE
+    importing
+      !VBELN type LIKP-VBELN
+      !POSNR type LIPS-POSNR optional
+      !POSNR_PART type LIPS-POSNR optional
+      !MODOCT type CHAR1 default 'N'
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods SET_TEXTO_STRING
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR_VL optional
+      !ID type STXH-TDID
+      !SPRAS type SPRAS default ''
+      !STRING type STRING .
+  class-methods GET_PART_LOTE_SIN_HU
+    importing
+      !VBELN type VBELN_VL
+    returning
+      value(I_LIPS) type TAB_LIPS .
+  class-methods GET_CTD_ENTREGA
+    importing
+      !VBELN type ANY
+      !POSNR type ANY default ''
+      !UNIDAD type ANY default ''
+    returning
+      value(CANTIDAD) type MENGV13 .
+  class-methods GET_CTD_SM
+    importing
+      !VBELN type ANY
+      !POSNR type ANY default ''
+      !UNIDAD type ANY default ''
+    returning
+      value(CANTIDAD) type MENGV13 .
+  class-methods HAY_MOD
+    importing
+      !VBELN type ANY
+      !USERNAME type CDHDR-USERNAME default SY-UNAME
+      !TCODE type CDHDR-TCODE default 'VL02N'
+      !SEGUNDOS type I default 5
+    returning
+      value(CHANGE_IND) type CDHDR-CHANGE_IND .
+  class-methods GET_CTD_PICKING
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR
+      !ADD_SUBPOS type ABAP_BOOL default 'X'
+      !BUFFER type ABAP_BOOL default ''
+      !SELECT type ABAP_BOOL default ''
+    returning
+      value(PIKMG) type PIKMG .
+  class-methods GET_CTD_POS
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR
+      !ADD_SUBPOS type ABAP_BOOL default 'X'
+    returning
+      value(LFIMG) type LFIMG .
+  class-methods MODIFICAR
+    importing
+      !VBELN type VBELN
+      !I_LIPS_MOD type TAB_LIPS optional
+      !I_LIPS_NEW type TAB_LIPS optional
+      !I_LIPS_DEL type TAB_LIPS optional
+      !COMMIT type ABAP_BOOL default 'X'
+      !MODO_BI type CHAR1 default 'N'
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MOD_PESOS type ABAP_BOOL default ''
+    exporting
+      !I_RETURN type BAPIRET2_T
+      !MESSAGE type BAPI_MSG .
+  class-methods INSERTAR_NUEVA_POSICION
+    importing
+      !LIPS type LIPS
+    exporting
+      !MESSAGE type BAPI_MSG
+      !POSNR type POSNR
+      !I_RETURN type BAPIRET2_T .
+  class-methods INSERTAR_NUEVA_POSICION_CT
+    importing
+      !LIPS type LIPS
+      !MODO_BI type CHAR1 default 'N'
+    exporting
+      !MESSAGE type BAPI_MSG
+      !POSNR type POSNR .
+  class-methods GET_SOLICITANTEP
+    importing
+      !VBELN type VBELN_VL
+    returning
+      value(KUNNR) type KUNNR .
+  class-methods GET_PEDIDO
+    importing
+      !VBELN type VBELN_VL
+    returning
+      value(PEDIDO) type VBELN_VA .
+  class-methods EMBALAR
+    importing
+      !I_POS type TT_EMBALAJE
+      !VBELN type VBELN_VL
+      !O_LOG type ref to ZCL_AP_LOG
+      !MODOCT type CHAR1 default 'N'
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods TIENE_SM
+    importing
+      !VBELN type ANY
+    returning
+      value(SM) type ABAP_BOOL .
+  class-methods ANYADIR_POS_PEDIDO
+    importing
+      !VBELN type VBELN_VL
+      !PEDIDO type VBELN_VA
+      !POSNR type POSNR
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !COMMIT type ABAP_BOOL default ''
+      !MODOCT type CHAR1 default 'N'
+      !FORZAR type ABAP_BOOL default ''
+    exporting
+      !POSNR_NEW type POSNR
+      !MESSAGE type BAPI_MSG .
+  class-methods ESTA_BLOQUEADA
+    importing
+      !VBELN type VBELN_VL
+    returning
+      value(BLOQUEADA) type ABAP_BOOL .
+  class-methods MODIFICAR_FECHA_SM
+    importing
+      !VBELN type VBELN_VL
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type BDCMODE default 'N'
+      !FORZAR type ABAP_BOOL default ''
+      !WADAT type LIKP-WADAT_IST
+      !SEGUNDOS_ESPERA_SI_BLOQUEOS type INT2 default 10
+      !TAB type ANY default ''
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods ESPERA_SI_BLOQUEADA
+    importing
+      !VBELN type VBELN_VL
+      !SEGUNDOS_ESPERA type INT2 default 10
+      !TIEMPO_ESPERA type MENGV13 default 1
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods EFECTUAR_SM
+    importing
+      !VBELN type VBELN_VL
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type CHAR1 default 'N'
+      !SEGUNDOS_ESPERA_SI_BLOQUEOS type INT2 default 10
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods GET_TRANSPORTE
+    importing
+      !VBELN type ANY
+    returning
+      value(TKNUM) type TKNUM .
+  class-methods CREAR_DESDE_VL10B
+    importing
+      !EBELN type EBELN
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type BDCMODE default 'N'
+      !DIAS type INT2 default -1
+      !LOG_EXIT type ANY default ''
+      !BAPI type ABAP_BOOL default ''
+    exporting
+      !VBELN type VBELN
+      !MESSAGE type BAPI_MSG
+      !WARNING type BAPI_MSG .
+  class-methods VLPOD
+    importing
+      !I_POS type TT_VLPOD
+      !VBELN type VBELN_VL
+      !PODAT type LIKP-PODAT optional
+      !POTIM type LIKP-POTIM optional
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type CHAR1 default 'N'
+      !CONFIRMAR_ARE type ABAP_BOOL default ''
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods GET_URL_POR_TITULO_ST
+    importing
+      !VBELN type EKKO-EBELN
+      !TITULO type ANY
+    returning
+      value(URL) type STRING .
+  class-methods INSERTAR_URL_GOS_ST
+    importing
+      !VBELN type VBELN_VL
+      !URL type ANY optional
+      !TITULO type ANY optional .
+  class-methods INSERT_VBFA
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR
+      !VBELN_N type ANY
+      !POSNR_N type ANY
+      !MJAHR type ANY default ''
+      !VBTYP_N type ANY .
+  class-methods CREAR_DESDE_VL10A
+    importing
+      !PEDIDO type VBELN_VA
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type BDCMODE default 'N'
+      !DIAS type INT2 default -1
+      !LOG_EXIT type ANY default ''
+      !BAPI type ABAP_BOOL default ''
+    exporting
+      !VBELN type VBELN_VL
+      !MESSAGE type BAPI_MSG
+      !WARNING type BAPI_MSG .
+  class-methods GET_FECHA_HORA_INICIO
+    importing
+      !VBELN type VBELN_VL optional
+      !HANDLE type LIKP-HANDLE optional
+      !TIPO_FECHA type TSEGE-EVEN optional
+      !TIPO type TSEGE-EVEN_VERTY optional
+    exporting
+      !FECHA type DATS
+      !HORA type UZEIT .
+  class-methods SET_FECHA_HORA_INICIO
+    importing
+      !VBELN type VBELN_VL optional
+      !HANDLE type LIKP-HANDLE optional
+      !TIPO_FECHA type TSEGE-EVEN optional
+      !TIPO type TSEGE-EVEN_VERTY optional
+      !TZONE type TSEGE-EVEN_ZONFR default 'CET'
+      !FECHA type DATS
+      !HORA type UZEIT .
+  class-methods VALIDAR_ENTREGA_MODIFICABLE
+    importing
+      !VBELN type VBELN_VL
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods CREAR_ENTREGA_DESDE_PEDIDO
+    importing
+      !PEDIDO type VBELN_VA
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !MODOCT type BDCMODE default 'N'
+      !FECHA type DATS default '99991231'
+    exporting
+      !VBELN type VBELN_VL
+      !MESSAGE type BAPI_MSG .
+  class-methods MODIFICAR_CTD_PICKING
+    importing
+      !VBELN type VBELN
+      !I_POS type TT_VBPOK optional
+      !COMMIT type ABAP_BOOL default 'X'
+      !MODO_BI type CHAR1 default 'N'
+      !O_LOG type ref to ZCL_AP_LOG optional
+    exporting
+      !I_RETURN type BAPIRET2_T
+      !MESSAGE type BAPI_MSG .
+  class-methods GET_FACTURA
+    importing
+      !VBELN type VBELN_VL
+    exporting
+      !FACTURAS type STRING
+    returning
+      value(FACTURA) type VBELN_VF .
+  class-methods GET_LOTE_ORIGEN_PEDIDO
+    importing
+      !VBELN type VBELN_VL
+      !POSNR type POSNR
+    returning
+      value(CHARG) type CHARG_D .
+  class-methods PICKING_OPT
+    importing
+      !VBELN type LIKP-VBELN
+      !I_LIPS type TAB_LIPS
+      !MODOCT type CHAR1 default 'N'
+      !CAMBIAR_CTD type ABAP_BOOL default ''
+      !SOLO_PART_LOTES type ABAP_BOOL default ''
+      !AJUSTAR_CTD type ABAP_BOOL default ''
+      !I_EMBALAJE type TT_EMBALAJE optional
+    returning
+      value(MENSAJE) type BAPIRET2-MESSAGE .
+  class-methods BORRAR
+    importing
+      !VBELN type VBELN
+      !COMMIT type ABAP_BOOL default 'X'
+      !O_LOG type ref to ZCL_AP_LOG optional
+      !SACAR_DE_TRANSPORTE type ABAP_BOOL default ''
+    exporting
+      !I_RETURN type BAPIRET2_T
+      !MESSAGE type BAPI_MSG .
   PROTECTED SECTION.
 
   PRIVATE SECTION.
@@ -389,7 +434,7 @@ class ZCL_AP_ENTREGAS implementation.
           WHERE vbeln = pedido
             AND posnr = posnr.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1 = 'Marcamos posiciÛn pedido' p2 = pedido p3 = posnr p4 = 'como completa. °REVISE PEDIDO!' msgty = 'W' ).
+            o_log->log( p1 = 'Marcamos posici√≥n pedido' p2 = pedido p3 = posnr p4 = 'como completa. ¬°REVISE PEDIDO!' msgty = 'W' ).
           ENDIF.
         ENDIF.
 
@@ -404,7 +449,7 @@ class ZCL_AP_ENTREGAS implementation.
             AND posnr = posnr
             AND etenr = '0001'.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1 = 'Marcamos posiciÛn pedido' p2 = pedido p3 = posnr p4 = 'como completa' msgty = 'W' ).
+            o_log->log( p1 = 'Marcamos posici√≥n pedido' p2 = pedido p3 = posnr p4 = 'como completa' msgty = 'W' ).
           ENDIF.
         ENDIF.
       ENDIF.
@@ -421,13 +466,13 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=RAUF_T' ).
 
-* Entrega:     Popup para agrupaciÛn de pedidos
+* Entrega:     Popup para agrupaci√≥n de pedidos
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '0105' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENT1' ).
-    o_bi->campos( campo = 'LV50C-DATBI' valor = '31.12.9999' ). " Fecha de selecciÛn de entrega
+    o_bi->campos( campo = 'LV50C-DATBI' valor = '31.12.9999' ). " Fecha de selecci√≥n de entrega
     o_bi->campos( campo = 'LV50C-VBELN' valor = pedido ). " Pedido
-    o_bi->campos( campo = 'LV50C-ABPOS' valor = posnr ). " Desde posiciÛn
-    o_bi->campos( campo = 'LV50C-BIPOS' valor = posnr ). " Hasta posiciÛn
+    o_bi->campos( campo = 'LV50C-ABPOS' valor = posnr ). " Desde posici√≥n
+    o_bi->campos( campo = 'LV50C-BIPOS' valor = posnr ). " Hasta posici√≥n
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH_T' ).
@@ -444,11 +489,11 @@ class ZCL_AP_ENTREGAS implementation.
     IF sy-subrc = 0.
       CLEAR message.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'En en entrega' p2 = vbeln p3 = 'se ha aÒadido la posiciÛn' p4 = posnr p6 = 'del pedido' p7 = pedido p8 = 'nueva posiciÛn entrega' p9 = posnr_new msgty = 'S' ).
+        o_log->log( p1 = 'En en entrega' p2 = vbeln p3 = 'se ha a√±adido la posici√≥n' p4 = posnr p6 = 'del pedido' p7 = pedido p8 = 'nueva posici√≥n entrega' p9 = posnr_new msgty = 'S' ).
       ENDIF.
 
       IF forzar = 'X'.
-* Si la cantidad de la entrega es inferior a la del pedido (por verificaciÛn de disponibilidad, modificamos la entrega)
+* Si la cantidad de la entrega es inferior a la del pedido (por verificaci√≥n de disponibilidad, modificamos la entrega)
         IF l_lfimg < l_vbap-kwmeng.
           o_bi->inicio( ).
 
@@ -472,7 +517,7 @@ class ZCL_AP_ENTREGAS implementation.
              AND posnr = @posnr.
           IF l_lfimg2 = l_vbap-kwmeng.
             IF NOT o_log IS INITIAL.
-              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creÛ por menos' p5 = l_lfimg p6 = 'se cambia a' p7 = l_vbap-kwmeng msgty = 'W' ).
+              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se cre√≥ por menos' p5 = l_lfimg p6 = 'se cambia a' p7 = l_vbap-kwmeng msgty = 'W' ).
             ENDIF.
           ELSE.
             UPDATE lips "#EC AOC_STD_TABLE
@@ -480,14 +525,14 @@ class ZCL_AP_ENTREGAS implementation.
              WHERE vbeln = vbeln
                AND posnr = posnr.
             IF NOT o_log IS INITIAL.
-              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se creÛ por menos' p5 = l_lfimg p6 = 'se fuerza a' p7 = l_vbap-kwmeng msgty = 'W' ).
+              o_log->log( p1 = 'La entrega ' p2 = vbeln p3 = posnr p4 = 'se cre√≥ por menos' p5 = l_lfimg p6 = 'se fuerza a' p7 = l_vbap-kwmeng msgty = 'W' ).
             ENDIF.
           ENDIF.
         ENDIF.
       ENDIF.
     ELSE.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'Error' p2 = message p3 = 'aÒadiendo en entrega' p4 = vbeln p5 = 'la posiciÛn' p6 = posnr p7 = 'del pedido' p8 = pedido msgty = 'E' ).
+        o_log->log( p1 = 'Error' p2 = message p3 = 'a√±adiendo en entrega' p4 = vbeln p5 = 'la posici√≥n' p6 = posnr p7 = 'del pedido' p8 = pedido msgty = 'E' ).
       ENDIF.
     ENDIF.
   ENDMETHOD.
@@ -595,7 +640,7 @@ class ZCL_AP_ENTREGAS implementation.
     ENDIF.
 
     IF l_lips-uecha <> posnr.
-      mensaje = 'PosiciÛn de la particiÛn no cuadra con posiciÛn principal'.
+      mensaje = 'Posici√≥n de la partici√≥n no cuadra con posici√≥n principal'.
       RETURN.
     ENDIF.
 
@@ -607,20 +652,20 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
     o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
 
-* Pulsamos para seleccionar posiciÛn
+* Pulsamos para seleccionar posici√≥n
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÛn
+* Entrega                Ventana   Posicionar    Posici√≥n
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-    o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N˙mero de posiciÛn del documento comercial
+    o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N√∫mero de posici√≥n del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÛn de lotes
+* Marcamos la primera fila y puslsamos sobre selecci√≥n de lotes
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
     o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÛn en dynpros de lista
+    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecci√≥n en dynpros de lista
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
@@ -629,17 +674,17 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
     o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ).
 
-* Borramos posiciÛn
+* Borramos posici√≥n
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÛn en dynpros de lista
+    o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecci√≥n en dynpros de lista
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=POLO_T' ).
 
 * Volvemos a la pantalla inicial (picking)
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK_T' ).
 
-* Nos aseguramos que estamos en la pesta√±a de picking
+* Nos aseguramos que estamos en la pesta√É¬±a de picking
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=T\02' ).
 
@@ -681,14 +726,14 @@ class ZCL_AP_ENTREGAS implementation.
       INTO l_lips-posnr
      WHERE vbeln = vbeln
        AND uecha = posnr.
-* Verificamos si ya est· asignada a entrega
+* Verificamos si ya est√° asignada a entrega
       SELECT SINGLE * FROM vepo JOIN vekp ON vepo~venum = vekp~venum
         INTO CORRESPONDING FIELDS OF l_vepo
        WHERE vbeln     = vbeln
          AND posnr     = l_lips-posnr
          AND vpobj    IN ( '01', '03' )
          AND vpobjkey  = vbeln.
-* Si no encuentro equivalencia en HU es que esa particiciÛn no tiene HU asignada
+* Si no encuentro equivalencia en HU es que esa particici√≥n no tiene HU asignada
       IF sy-subrc <> 0.
         posnr_sin_hu = l_lips-posnr.
         EXIT.
@@ -782,7 +827,7 @@ class ZCL_AP_ENTREGAS implementation.
            AND abgru = ''.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÛlo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'S√≥lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
       ELSE.
@@ -867,7 +912,7 @@ class ZCL_AP_ENTREGAS implementation.
         ENDLOOP.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÛlo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'S√≥lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
 
@@ -963,7 +1008,7 @@ class ZCL_AP_ENTREGAS implementation.
            AND loekz = ''.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÛlo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'S√≥lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
       ELSE.
@@ -1045,7 +1090,7 @@ class ZCL_AP_ENTREGAS implementation.
         ENDLOOP.
 
         IF l_vbsk-anzlp < l_pos_ped.
-          l_msg = zcl_ap_utils=>concat( p1 = 'SÛlo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
+          l_msg = zcl_ap_utils=>concat( p1 = 'S√≥lo se han creado' p2 = l_vbsk-anzlp p3 = 'pos.en entrega de las' p4 = l_pos_ped p5 = 'del pedido' ).
           __add_lista warning l_msg.
         ENDIF.
 
@@ -1071,8 +1116,8 @@ class ZCL_AP_ENTREGAS implementation.
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '4001' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-    o_bi->campos( campo = 'LIKP-VSTEL' valor = l_vstel ). " Pto.exped./depto.entrada mcÌa.
-    o_bi->campos( campo = 'LV50C-DATBI' valor = fecha ). " Fecha de selecciÛn de entrega
+    o_bi->campos( campo = 'LIKP-VSTEL' valor = l_vstel ). " Pto.exped./depto.entrada mc√≠a.
+    o_bi->campos( campo = 'LV50C-DATBI' valor = fecha ). " Fecha de selecci√≥n de entrega
     o_bi->campos( campo = 'LV50C-VBELN' valor = pedido ). " Pedido
 
     o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -1184,26 +1229,26 @@ class ZCL_AP_ENTREGAS implementation.
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=HUENTF' ).
 
     IF l_lips IS INITIAL.
-* Si la HU no tiene asignada ninguna posiciÛn de la entrega, grabamos
+* Si la HU no tiene asignada ninguna posici√≥n de la entrega, grabamos
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
     ELSE.
-* Si no borramos la posiciÛn de la entrega
+* Si no borramos la posici√≥n de la entrega
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK' ).
 
-* Pulsamos para seleccionar posiciÛn
+* Pulsamos para seleccionar posici√≥n
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÛn
+* Entrega                Ventana   Posicionar    Posici√≥n
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N˙mero de posiciÛn del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N√∫mero de posici√≥n del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÛn de lotes
+* Marcamos la primera fila y puslsamos sobre selecci√≥n de lotes
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÛn en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecci√≥n en dynpros de lista
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
@@ -1212,17 +1257,17 @@ class ZCL_AP_ENTREGAS implementation.
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
       o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ).
 
-* Borramos posiciÛn
+* Borramos posici√≥n
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÛn en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecci√≥n en dynpros de lista
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POLO_T' ).
 
 * Volvemos a la pantalla inicial (picking)
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=BACK_T' ).
 
-* Nos aseguramos que estamos en la pesta√±a de picking
+* Nos aseguramos que estamos en la pesta√É¬±a de picking
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=T\02' ).
 
@@ -1361,7 +1406,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND uecha <> ''.
       ENDSELECT.
       IF sy-subrc <> 0.
-        RETURN. " No hay particiÛn de picking.
+        RETURN. " No hay partici√≥n de picking.
       ENDIF.
 
       SELECT posnr FROM lips ##DB_FEATURE_MODE[TABLE_LEN_MAX1]
@@ -1379,7 +1424,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND uecha = posnr.
       ENDSELECT.
       IF sy-subrc <> 0.
-        RETURN. " No hay particiÛn de picking.
+        RETURN. " No hay partici√≥n de picking.
       ENDIF.
 
       SELECT posnr FROM lips ##DB_FEATURE_MODE[TABLE_LEN_MAX1]
@@ -1392,26 +1437,26 @@ class ZCL_AP_ENTREGAS implementation.
     LOOP AT i_lips2 INTO l_lips.
       AT FIRST.
         o_bi->inicio( ).
-* Pantalla selcciÛn de entrega
+* Pantalla selcci√≥n de entrega
         o_bi->dynpro( program = 'SAPMV50A' dynpro = CONV #( l_dynnr ) ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
         o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
       ENDAT.
 
-* Pulsamos para seleccionar posiciÛn
+* Pulsamos para seleccionar posici√≥n
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÛn
+* Entrega                Ventana   Posicionar    Posici√≥n
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N˙mero de posiciÛn del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N√∫mero de posici√≥n del documento comercial
 
-* Marcamos la primera fila y puslsamos sobre selecciÛn de lotes
+* Marcamos la primera fila y puslsamos sobre selecci√≥n de lotes
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=CHSP_T' ).
       o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
-      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecciÛn en dynpros de lista
+      o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de selecci√≥n en dynpros de lista
 
 * Marcamos todo
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
@@ -1464,7 +1509,7 @@ class ZCL_AP_ENTREGAS implementation.
     ELSE.
       IF l_wbstk = 'C'.
         IF NOT o_log IS INITIAL.
-          o_log->log( p1 = 'Entrega' p2 = vbeln p3 = 'ya tenÌa efectuada SM' msgty = 'I' ).
+          o_log->log( p1 = 'Entrega' p2 = vbeln p3 = 'ya ten√≠a efectuada SM' msgty = 'I' ).
         ENDIF.
       ELSE.
         message = espera_si_bloqueada( vbeln = vbeln segundos_espera = segundos_espera_si_bloqueos ).
@@ -1586,7 +1631,7 @@ class ZCL_AP_ENTREGAS implementation.
     LOOP AT i_pos ASSIGNING <hu>.
       o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-      o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÛn externa de la unidad de manipulaciÛn
+      o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificaci√≥n externa de la unidad de manipulaci√≥n
 
       CLEAR l_vhilm.
       SELECT COUNT( * ) FROM vekp
@@ -1606,9 +1651,9 @@ class ZCL_AP_ENTREGAS implementation.
       IF l_vhilm <> <hu>-vhilm.
         o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
       ENDIF.
-      o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N˙mero de material
-      o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N˙mero de lote
-      o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÛn de unidad manipulaciÛn
+      o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N√∫mero de material
+      o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N√∫mero de lote
+      o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posici√≥n de unidad manipulaci√≥n
       o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
       o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
     ENDLOOP.
@@ -1633,14 +1678,14 @@ class ZCL_AP_ENTREGAS implementation.
     ENDIF.
 
     IF message IS INITIAL.
-* Verificamos que todo estÈ ok.
+* Verificamos que todo est√© ok.
       LOOP AT i_pos ASSIGNING <hu>.
         SELECT SINGLE venum FROM vekp
           INTO @l_venum
          WHERE exidv = @<hu>-exidv
            AND ( vbeln_gen = @vbeln OR vpobjkey = @vbeln ).
         IF sy-subrc <> 0.
-          message = |La SSCC { <hu>-exidv ALPHA = OUT } no est· asignada a la entrega. Revise|.
+          message = |La SSCC { <hu>-exidv ALPHA = OUT } no est√° asignada a la entrega. Revise|.
         ENDIF.
       ENDLOOP.
     ENDIF.
@@ -1977,14 +2022,14 @@ class ZCL_AP_ENTREGAS implementation.
        WHERE vbeln = vbeln
          AND uecha = <lips>-posnr.
 
-* Verificamos si ya est· asignada a entrega
+* Verificamos si ya est√° asignada a entrega
         SELECT SINGLE * FROM vepo JOIN vekp ON vepo~venum = vekp~venum "#EC CI_SEL_NESTED
           INTO CORRESPONDING FIELDS OF l_vepo
          WHERE vbeln     = vbeln
            AND posnr     = l_lips-posnr
            AND vpobj    IN ( '01', '03' )
            AND vpobjkey  = vbeln.
-* Si no encuentro equivalencia en HU es que esa particiciÛn no tiene HU asignada
+* Si no encuentro equivalencia en HU es que esa particici√≥n no tiene HU asignada
         IF sy-subrc <> 0.
           APPEND l_lips TO i_lips.
         ENDIF.
@@ -2204,10 +2249,10 @@ class ZCL_AP_ENTREGAS implementation.
       ENDIF.
 
       o_bi->campos( campo = 'LV50C-VBELN' valor = l_vbap-vbeln ). " Pedido
-      o_bi->campos( campo = 'LV50C-ABPOS' valor = l_vbap-posnr ). " Desde posiciÛn
-      o_bi->campos( campo = 'LV50C-BIPOS' valor = l_vbap-posnr ). " Desde posiciÛn
+      o_bi->campos( campo = 'LV50C-ABPOS' valor = l_vbap-posnr ). " Desde posici√≥n
+      o_bi->campos( campo = 'LV50C-BIPOS' valor = l_vbap-posnr ). " Desde posici√≥n
     ELSE.
-* A√±adimos una nueva posiciÛn a la entrega
+* A√É¬±adimos una nueva posici√≥n a la entrega
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2423,7 +2468,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       IF NOT o_log IS INITIAL.
         IF i_return IS INITIAL.
-          o_log->log( p1 = 'øSe ha modificado la entrega?' msgty = 'W' ).
+          o_log->log( p1 = '¬øSe ha modificado la entrega?' msgty = 'W' ).
         ELSE.
           o_log->set_tabla_log_from_bapiret2_t( i_return ).
         ENDIF.
@@ -2488,7 +2533,7 @@ class ZCL_AP_ENTREGAS implementation.
          AND posnv    = <pos>-posnr_vl
          AND vbtyp_n  = 'Q'
          AND vbeln   <> vbeln.
-      IF l_ctd_pick_ot > 0. " Si hay cantidades de pocking por OT la funciÛn no hace el picking correctamente.
+      IF l_ctd_pick_ot > 0. " Si hay cantidades de pocking por OT la funci√≥n no hace el picking correctamente.
         IF l_ctd_pick_ot > <pos>-pikmg.
 *        <pos>-pikmg = - ( l_ctd_pick_ot - <pos>-pikmg ).
 *        <pos>-plmin = '-'.
@@ -2555,7 +2600,7 @@ class ZCL_AP_ENTREGAS implementation.
       LOOP AT i_vbpok_orig ASSIGNING <pos>.
         DATA(l_pikmg) = zcl_ap_entregas=>get_ctd_picking( vbeln = vbeln posnr = <pos>-posnr_vl select = 'X' add_subpos = '' buffer = 'N' ).
         IF l_pikmg <> <pos>-pikmg.
-          message = |No se ha realizado correctamente el picking en posiciÛn { <pos>-posnr_vl ALPHA = OUT }|.
+          message = |No se ha realizado correctamente el picking en posici√≥n { <pos>-posnr_vl ALPHA = OUT }|.
         ENDIF.
       ENDLOOP.
     ENDIF.
@@ -2599,7 +2644,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH_T' ).
-      o_bi->campos( campo = 'LIKP-WADAT_IST' valor = wadat ). " Fecha prevista para movimiento de mercancÌas
+      o_bi->campos( campo = 'LIKP-WADAT_IST' valor = wadat ). " Fecha prevista para movimiento de mercanc√≠as
 
       message = o_bi->llamar_transaccion( tcode = 'VL02N' modo = modoct ).
 
@@ -2624,7 +2669,7 @@ class ZCL_AP_ENTREGAS implementation.
             SET wadat_ist = wadat
            WHERE vbeln = vbeln.
           IF NOT o_log IS INITIAL.
-            o_log->log( p1    = 'Se ha forzado modificaciÛn fecha de  SM de la entrega'
+            o_log->log( p1    = 'Se ha forzado modificaci√≥n fecha de  SM de la entrega'
                         p2    = vbeln
                         p3    = 'de fecha anterior'
                         p4    = l_wadat
@@ -2728,7 +2773,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N˙mero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N√∫mero de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2778,14 +2823,14 @@ class ZCL_AP_ENTREGAS implementation.
         ENDAT.
 
         IF solo_part_lotes <> 'N'.
-* Pulsamos para a√±adir una nueva lÌnbea
+* Pulsamos para a√É¬±adir una nueva l√≠nbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           o_bi->campos( campo = 'LIPS-LGORT(02)' valor = l_lips-lgort ).
-          o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " N˙mero de lote
+          o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " N√∫mero de lote
           o_bi->campos( campo = 'LIPS-LFIMG(02)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           IF NOT l_lips-vrkme IS INITIAL.
             o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_lips-vrkme ).
@@ -2888,7 +2933,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N˙mero de posicion del documento comercial
+            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N√∫mero de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -2899,18 +2944,18 @@ class ZCL_AP_ENTREGAS implementation.
             CLEAR l_total_pos.
           ENDAT.
 
-* Pulsamos para a√±adir una nueva lÌnbea
+* Pulsamos para a√É¬±adir una nueva l√≠nbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N˙mero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N√∫mero de posicion del documento comercial
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           IF NOT l_lips-lgort IS INITIAL.
-            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " N˙mero de lote
+            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " N√∫mero de lote
           ENDIF.
           o_bi->campos( campo = 'LIPSD-PIKMG(01)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           l_total_pos = l_total_pos + l_lips-lgmng.
@@ -3055,14 +3100,14 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N˙mero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N√∫mero de posicion del documento comercial
 
           DATA(l_n_particiones) = 0.
           LOOP AT i_lips TRANSPORTING NO FIELDS WHERE posnr = l_lips-posnr.
             l_n_particiones = l_n_particiones + 1.
           ENDLOOP.
           IF l_n_particiones = 1.
-* Verificamos si no tenemos una particiÛn previa
+* Verificamos si no tenemos una partici√≥n previa
             SELECT COUNT( * ) FROM lips
               INTO @DATA(l_part_prev)
              WHERE vbeln  = @vbeln
@@ -3121,7 +3166,7 @@ class ZCL_AP_ENTREGAS implementation.
         IF l_n_particiones = 1.
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
-* Si se necesita cambiar el almacÈn, pero tenÌa lote informado, tenemos que borrarlo antes de volver a intentar ponerlo.
+* Si se necesita cambiar el almac√©n, pero ten√≠a lote informado, tenemos que borrarlo antes de volver a intentar ponerlo.
           ASSIGN i_lips_orig[ posnr = l_lips2-posnr
                               charg = l_lips2-charg ] TO <lips>.
           IF sy-subrc = 0.
@@ -3152,7 +3197,7 @@ class ZCL_AP_ENTREGAS implementation.
                 <hu>-posnr = l_max_posnr.
               ENDLOOP.
             ENDIF.
-* Pulsamos para aÒadir una nueva lÌnea
+* Pulsamos para a√±adir una nueva l√≠nea
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
 
@@ -3161,7 +3206,7 @@ class ZCL_AP_ENTREGAS implementation.
             IF l_lips-lgort IS INITIAL.
               o_bi->campos( campo = 'LIPS-LGORT(02)' valor = l_lips-lgort ).
             ENDIF.
-            o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " N˙mero de lote
+            o_bi->campos( campo = 'LIPS-CHARG(02)' valor = l_lips-charg ). " N√∫mero de lote
             o_bi->campos( campo = 'LIPS-LFIMG(02)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
             IF NOT l_lips-vrkme IS INITIAL.
               o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_lips-vrkme ).
@@ -3187,7 +3232,7 @@ class ZCL_AP_ENTREGAS implementation.
             LOOP AT i_embalaje_l ASSIGNING <hu>.
               o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
               o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-              o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÛn externa de la unidad de manipulaciÛn
+              o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificaci√≥n externa de la unidad de manipulaci√≥n
 
               CLEAR l_vhilm.
               SELECT COUNT( * ) FROM vekp
@@ -3205,9 +3250,9 @@ class ZCL_AP_ENTREGAS implementation.
               IF l_vhilm <> <hu>-vhilm.
                 o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
               ENDIF.
-              o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N˙mero de material
-              o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N˙mero de lote
-              o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÛn de unidad manipulaciÛn
+              o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N√∫mero de material
+              o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N√∫mero de lote
+              o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posici√≥n de unidad manipulaci√≥n
               o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
               o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
             ENDLOOP.
@@ -3304,7 +3349,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
             o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N˙mero de posicion del documento comercial
+            o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-posnr ). " N√∫mero de posicion del documento comercial
 
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
             o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -3315,18 +3360,18 @@ class ZCL_AP_ENTREGAS implementation.
             CLEAR l_total_pos.
           ENDAT.
 
-* Pulsamos para a√±adir una nueva lÌnbea
+* Pulsamos para a√É¬±adir una nueva l√≠nbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N˙mero de posicion del documento comercial
+          o_bi->campos( campo = 'RV50A-POSNR' valor = l_lips-uecha ). " N√∫mero de posicion del documento comercial
 
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '/00' ).
           IF NOT l_lips-lgort IS INITIAL.
-            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " N˙mero de lote
+            o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_lips-lgort ). " N√∫mero de lote
           ENDIF.
           o_bi->campos( campo = 'LIPSD-PIKMG(01)' valor = l_lips-lgmng ). " Cantidad entregada efectivamente en UMV
           l_total_pos = l_total_pos + l_lips-lgmng.
@@ -3353,7 +3398,7 @@ class ZCL_AP_ENTREGAS implementation.
               LOOP AT i_embalaje ASSIGNING <hu>.
                 o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
                 o_bi->campos( campo = 'BDC_OKCODE' valor = '=ENTR' ).
-                o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " IdentificaciÛn externa de la unidad de manipulaciÛn
+                o_bi->campos( campo = 'VEKP-EXIDV' valor = <hu>-exidv ). " Identificaci√≥n externa de la unidad de manipulaci√≥n
 
                 CLEAR l_vhilm.
                 SELECT COUNT( * ) FROM vekp
@@ -3371,9 +3416,9 @@ class ZCL_AP_ENTREGAS implementation.
                 IF l_vhilm <> <hu>-vhilm.
                   o_bi->campos( campo = 'VEKP-VHILM' valor = <hu>-vhilm ). " Material de embalaje
                 ENDIF.
-                o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N˙mero de material
-                o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N˙mero de lote
-                o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posiciÛn de unidad manipulaciÛn
+                o_bi->campos( campo = 'HUMV4-MATNR' valor = <hu>-matnr ). " N√∫mero de material
+                o_bi->campos( campo = 'HUMV4-CHARG' valor = <hu>-charg ). " N√∫mero de lote
+                o_bi->campos( campo = 'HUMV4-QUANTITY' valor = <hu>-lfimg ). " Cantidad base embalada en posici√≥n de unidad manipulaci√≥n
                 o_bi->campos( campo = 'HUMV4-VRKME' valor = <hu>-vrkme ). " Unidad de medida alternativa p.unidad de medida de stock
                 o_bi->campos( campo = 'HUMV4-POSNR' valor = <hu>-posnr ).
               ENDLOOP.
@@ -3441,7 +3486,7 @@ class ZCL_AP_ENTREGAS implementation.
      WHERE vbeln = vbeln
        AND posnr = posnr.
     IF sy-subrc <> 0.
-      mensaje = 'No existe la posiciÛn de la entrega'.
+      mensaje = 'No existe la posici√≥n de la entrega'.
       RETURN.
     ELSE.
       IF vrkme = l_lips-vrkme OR lfimg IS INITIAL.
@@ -3524,14 +3569,14 @@ class ZCL_AP_ENTREGAS implementation.
           ENDIF.
         ENDIF.
 
-* Pulsamos para seleccionar posiciÛn
+* Pulsamos para seleccionar posici√≥n
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
-* Entrega                Ventana   Posicionar    PosiciÛn
+* Entrega                Ventana   Posicionar    Posici√≥n
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-        o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " N˙mero de posiciÛn del documento comercial
+        o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " N√∫mero de posici√≥n del documento comercial
 
 *APC20200422 Verificamos si la entrega tiene lote informado y si viene de pedido
         DATA(l_lote_pedido) = get_lote_origen_pedido( vbeln = vbeln posnr = posnr ).
@@ -3557,7 +3602,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
           o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de seleccion en dynpros de lista
 
-* Pulsamos para aÒadir una nueva lÌnbea
+* Pulsamos para a√±adir una nueva l√≠nbea
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=POAN_T' ).
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '3000' ).
@@ -3574,7 +3619,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'LIPS-VRKME(02)' valor = l_unidad ).
         ELSE.
           o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
-* Si tenÌa un lote informado del pedido, directamente incrementamos la cantidad de picking
+* Si ten√≠a un lote informado del pedido, directamente incrementamos la cantidad de picking
           DATA(l_ctd_picking) = get_ctd_picking( vbeln = vbeln posnr = posnr add_subpos = '' select = 'X' ).
           l_cantidad = l_cantidad + l_ctd_picking.
 
@@ -3586,7 +3631,7 @@ class ZCL_AP_ENTREGAS implementation.
               IF l_ctd_picking = 0.
                 o_bi->campos( campo = 'LIPS-LGORT(01)' valor = l_vepo-lgort ).
               ELSE.
-                mensaje = |AlmacÈn de la HU es { l_vepo-lgort } diferente del de la posiciÛn { l_lips-lgort } que ya tiene picking|.
+                mensaje = |Almac√©n de la HU es { l_vepo-lgort } diferente del de la posici√≥n { l_lips-lgort } que ya tiene picking|.
                 RETURN.
               ENDIF.
             ENDIF.
@@ -3612,7 +3657,7 @@ class ZCL_AP_ENTREGAS implementation.
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=HU_MARKA' ).
 *
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=UE6VDIR' ).
-* Paso a pestaÒa Entrada individual
+* Paso a pesta√±a Entrada individual
 
           o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
           o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
@@ -3628,7 +3673,7 @@ class ZCL_AP_ENTREGAS implementation.
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=HU_MARKA' ).
 *
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=UE6VDIR' ).
-* Paso a pestaÒa Entrada individual
+* Paso a pesta√±a Entrada individual
 
         o_bi->dynpro( program = 'SAPLV51G' dynpro = '6000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=SICH' ).
@@ -3676,7 +3721,7 @@ class ZCL_AP_ENTREGAS implementation.
 *  ENDIF.
 
     IF l_vepo IS INITIAL.
-      mensaje = 'No se encuentra posiciÛn de embalaje'.
+      mensaje = 'No se encuentra posici√≥n de embalaje'.
       RETURN.
     ENDIF.
 
@@ -3701,7 +3746,7 @@ class ZCL_AP_ENTREGAS implementation.
 * Entrega                Ventana   Posicionar    Posicion
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
       o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-      o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " N˙mero de posicion del documento comercial
+      o_bi->campos( campo = 'RV50A-POSNR' valor = posnr ). " N√∫mero de posicion del documento comercial
 
       IF posnr <> l_vepo-posnr.
 * Marcamos la primera fila y puslsamos sobre seleccion de lotes
@@ -3710,13 +3755,13 @@ class ZCL_AP_ENTREGAS implementation.
         o_bi->campos( campo = 'BDC_CURSOR' valor = 'LIPS-POSNR(01)' ).
         o_bi->campos( campo = 'RV50A-LIPS_SELKZ(01)' valor = 'X' ). " Indicador de seleccion en dynpros de lista
 
-* Pulsamos para aÒadir una nueva lÌnbea
+* Pulsamos para a√±adir una nueva l√≠nbea
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=POPO_T' ).
 
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '0111' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WEIT' ).
-        o_bi->campos( campo = 'RV50A-POSNR' valor = l_vepo-posnr ). " N˙mero de posicion del documento comercial
+        o_bi->campos( campo = 'RV50A-POSNR' valor = l_vepo-posnr ). " N√∫mero de posicion del documento comercial
 
       ENDIF.
       o_bi->dynpro( program = 'SAPMV50A' dynpro = '1000' ).
@@ -3755,7 +3800,7 @@ class ZCL_AP_ENTREGAS implementation.
      WHERE vbeln = vbeln.
     IF l_wbstk = 'C'.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'La entrega' p2 = vbeln p3 = 'ya tenÌa efectuada la salida de mercancÌas' msgty = 'W' ).
+        o_log->log( p1 = 'La entrega' p2 = vbeln p3 = 'ya ten√≠a efectuada la salida de mercanc√≠as' msgty = 'W' ).
       ENDIF.
       RETURN.
     ELSE.
@@ -3774,7 +3819,7 @@ class ZCL_AP_ENTREGAS implementation.
 
         mensaje = o_bi->llamar_transaccion( tcode = 'VL32N' modo = modoct ).
       ELSE.
-* Pantalla selcciÛn de entrega
+* Pantalla selcci√≥n de entrega
         o_bi->dynpro( program = 'SAPMV50A' dynpro = '4004' ).
         o_bi->campos( campo = 'BDC_OKCODE' valor = '=WABU_T' ).
         o_bi->campos( campo = 'LIKP-VBELN' valor = vbeln ). " Entrega
@@ -3794,7 +3839,7 @@ class ZCL_AP_ENTREGAS implementation.
 
       IF NOT o_log IS INITIAL.
         IF mensaje IS INITIAL.
-          o_log->log( p1 = 'Se ha efectuado la salida de mercancÌas de la entrega' p2 = vbeln msgty = 'S' ).
+          o_log->log( p1 = 'Se ha efectuado la salida de mercanc√≠as de la entrega' p2 = vbeln msgty = 'S' ).
         ELSE.
           o_log->log( p1 = 'Error de SM de la entrega' p2 = vbeln p3 = mensaje msgty = 'E' ).
         ENDIF.
@@ -3909,7 +3954,7 @@ class ZCL_AP_ENTREGAS implementation.
           l_sttrg TYPE vttk-sttrg.
 
     IF tiene_sm( vbeln ) = 'X'.
-      message = 'Entrega ya tiene salida de mercancÌas. No es posible modificarla'.
+      message = 'Entrega ya tiene salida de mercanc√≠as. No es posible modificarla'.
     ELSE.
       l_tknum = get_transporte( vbeln ).
       IF NOT l_tknum IS INITIAL.
@@ -3917,7 +3962,7 @@ class ZCL_AP_ENTREGAS implementation.
           INTO l_sttrg
          WHERE tknum = l_tknum.
         IF l_sttrg = '7'.
-          __concat3 message 'Entrega est· incluÌda en transporte finalizado' l_tknum '. No es posible modificarla'.
+          __concat3 message 'Entrega est√° inclu√≠da en transporte finalizado' l_tknum '. No es posible modificarla'.
         ENDIF.
       ENDIF.
     ENDIF.
@@ -4079,7 +4124,7 @@ class ZCL_AP_ENTREGAS implementation.
     ENDLOOP.
 
     IF l_npos = 0.
-      o_log->log( p1 = 'No habia ninguna posiciÛn con modificaciones ARE' p2 = vbeln msgty = 'S' ).
+      o_log->log( p1 = 'No habia ninguna posici√≥n con modificaciones ARE' p2 = vbeln msgty = 'S' ).
       IF confirmar_are = 'X'.
         SELECT SINGLE pdstk FROM (l_tabla)
           INTO l_pdstk

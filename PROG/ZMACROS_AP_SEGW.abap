@@ -1,4 +1,4 @@
-*"* use this source file for any macro definitions you need
+ï»¿*"* use this source file for any macro definitions you need
 *"* in the implementation part of the class
 
 *"* use this source file for any macro definitions you need
@@ -143,9 +143,9 @@ DEFINE get_valor_parametro.
   READ TABLE it_parameter INTO ls_parameter WITH KEY name = &1.
   IF sy-subrc = 0.
     &2 = ls_parameter-value.
-    o_segw->set_log( p1 = 'Parámetro' p2 = &1 p3 = &2 type = 'S' ).
+    o_segw->set_log( p1 = 'ParÃ¡metro' p2 = &1 p3 = &2 type = 'S' ).
   ELSE.
-    __concat2 l_message 'No ha informado parámetro' &1.
+    __concat2 l_message 'No ha informado parÃ¡metro' &1.
     o_segw->set_log( p1 = l_message ).
   ENDIF.
 END-OF-DEFINITION.

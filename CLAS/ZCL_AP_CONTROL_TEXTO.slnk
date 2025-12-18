@@ -58,17 +58,17 @@ endmethod.</source>
   IF NOT l_control_tab IS INITIAL.
     l_tabix = sy-tabix.
 
-    CALL METHOD l_control_tab-ctrl_new-&gt;free
+    CALL METHOD l_control_tab-ctrl_new-&gt;free &quot;#EC *
       EXCEPTIONS
         OTHERS = 1.
 
-    CALL METHOD l_control_tab-editor_container-&gt;free
+    CALL METHOD l_control_tab-editor_container-&gt;free &quot;#EC *
       EXCEPTIONS
         OTHERS = 1.
 
     DELETE i_control_tab INDEX l_tabix.
 
-    CALL METHOD cl_gui_cfw=&gt;flush
+    CALL METHOD cl_gui_cfw=&gt;flush &quot;#EC *
       EXCEPTIONS
         OTHERS = 1.
 
@@ -166,14 +166,14 @@ ENDMETHOD.</source>
         CALL METHOD control_tab-ctrl_new-&gt;get_text_as_r3table
           IMPORTING
             is_modified = local_modif
-            table       = lines[]
+            table       = lines
           EXCEPTIONS
             OTHERS      = 4.
       ELSE.
         CALL METHOD control_tab-ctrl_new-&gt;get_text_as_stream
           IMPORTING
             is_modified = local_modif
-            text        = local_stream[]
+            text        = local_stream
           EXCEPTIONS
             OTHERS      = 4.
         CALL FUNCTION &apos;CONVERT_STREAM_TO_ITF_TEXT&apos;
@@ -379,7 +379,7 @@ ENDMETHOD.</source>
         OTHERS        = 1.
   ENDIF.
 
-  IF string IS SUPPLIED.
+  IF not string is initial.
     l_string = string.
     CALL METHOD control_tab-ctrl_new-&gt;set_textstream
       EXPORTING
@@ -392,10 +392,10 @@ ENDMETHOD.</source>
       RAISE internal_error.
     ENDIF.
 
-  ELSEIF lines IS SUPPLIED.
+  ELSEIF not lines is initial.
     CALL METHOD control_tab-ctrl_new-&gt;set_text_as_r3table
       EXPORTING
-        table           = lines[]
+        table           = lines
       EXCEPTIONS
         error_dp        = 1
         error_dp_create = 2.

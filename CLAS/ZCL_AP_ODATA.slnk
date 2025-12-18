@@ -32,11 +32,11 @@
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="ADD_TAG_SOAP" SCONAME="ESCAPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="ADD_TAG_SOAP" SCONAME="ADD_HORA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <source>METHOD add_tag_soap.
-    DATA: l_nivel_inicial TYPE i,
-          l_aux           TYPE string,
-          l_string        TYPE string,
-          l_valor         TYPE text4096,
-          l_nesp          TYPE i.
+    DATA l_nivel_inicial TYPE i.
+    DATA l_aux           TYPE string.
+    DATA l_string        TYPE string.
+    DATA l_valor         TYPE text4096.
+    DATA l_nesp          TYPE i.
 
     l_nivel_inicial = nivel_formato_soap.
 
@@ -46,7 +46,7 @@
       CONCATENATE tag subvalor INTO l_aux SEPARATED BY space.
     ENDIF.
 
-    IF NOT prefijo_tag IS INITIAL AND NOT tag CS &apos;soapenv:&apos;.
+    IF prefijo_tag IS NOT INITIAL AND NOT tag CS &apos;soapenv:&apos;.
       CONCATENATE prefijo_tag l_aux INTO l_aux.
     ENDIF.
 
@@ -87,13 +87,12 @@
           WRITE valor TO l_valor.                           &quot;#EC *
           CONDENSE l_valor.
 
-          IF NOT escape IS INITIAL.
+          IF escape IS NOT INITIAL.
             l_string = l_valor.
             IF escape = &apos;L&apos;.
               zcl_ap_string=&gt;quitar_caracteres_extranos( CHANGING string = l_string ).
             ELSEIF escape = &apos;X&apos;.
-              l_string = cl_http_utility=&gt;if_http_utility~escape_url(
-                             unescaped = l_string ).
+              l_string = cl_http_utility=&gt;if_http_utility~escape_url( unescaped = l_string ).
             ENDIF.
             IF l_string &lt;&gt; l_valor.
               l_valor = l_string.
@@ -102,7 +101,7 @@
       ENDCASE.
 
 **      CONCATENATE &apos;&lt;&apos; l_aux &apos;&gt;&apos; l_valor &apos;&lt;/&apos; l_aux &apos;&gt;&apos; INTO l_string. &quot;APC20241125
-      CONCATENATE &apos;&lt;&apos; l_aux &apos;&gt;&apos; l_valor &apos;&lt;/&apos; tag &apos;&gt;&apos; INTO l_string.     &quot;APC20241125
+      CONCATENATE &apos;&lt;&apos; l_aux &apos;&gt;&apos; l_valor &apos;&lt;/&apos; tag &apos;&gt;&apos; INTO l_string.     &quot; APC20241125
     ENDIF.
 
     IF l_nivel_inicial &gt; 0.
@@ -113,7 +112,7 @@
       ENDDO.
     ENDIF.
 
-    IF NOT l_string IS INITIAL.
+    IF l_string IS NOT INITIAL.
       IF peticion_soap IS INITIAL.
         peticion_soap = l_string.
       ELSE.
@@ -148,15 +147,20 @@
   <source>METHOD call_soap.
     &quot; TODO: parameter GET_TABLA is never used (ABAP cleaner)
 
-    DATA: l_url          TYPE string,
-          l_string       TYPE string,
-          l_parametros   TYPE string,
-          lo_http_client TYPE REF TO if_http_client,
-          l_xstring      TYPE xstring.
-    DATA l_lon_txt TYPE string.
-    DATA cvto_utf8 TYPE REF TO cl_abap_conv_out_ce.
+    DATA l_url          TYPE string.
+    DATA l_string       TYPE string.
+    DATA l_parametros   TYPE string.
+    DATA lo_http_client TYPE REF TO if_http_client.
+    DATA l_xstring      TYPE xstring.
+    DATA l_lon_txt      TYPE string.
+    DATA cvto_utf8      TYPE REF TO cl_abap_conv_out_ce.
 
-    CLEAR: status, status_i, reason.
+    CLEAR: status,
+           status_i,
+           reason,
+           message,
+           subrc,
+           respuesta.
 
     &quot; create HTTP client by url
     &quot; API endpoint for API sandbox
@@ -172,32 +176,28 @@
     REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_string WITH &apos;/&apos;.
     CONCATENATE l_url &apos;//&apos; l_string INTO l_url.
 
-    IF NOT parametros IS INITIAL.
+    IF parametros IS NOT INITIAL.
       l_parametros = parametros.
     ENDIF.
 
-    IF NOT sap_client IS INITIAL.
+    IF sap_client IS NOT INITIAL.
       l_string = |&amp;$sap_client={ sap_client }|.
       CONCATENATE l_parametros l_string INTO l_parametros.
     ENDIF.
 
-    IF NOT l_parametros IS INITIAL.
+    IF l_parametros IS NOT INITIAL.
       CONCATENATE l_url &apos;?&apos; l_parametros INTO l_url.
     ENDIF.
 
-    cl_http_client=&gt;create_by_url(
-      EXPORTING
-        url                = l_url
-        ssl_id             = ssl_id
-        proxy_host         = proxy_host
-        proxy_service      = proxy_service
-      IMPORTING
-        client             = lo_http_client
-      EXCEPTIONS
-        argument_not_found = 1
-        plugin_not_active  = 2
-        internal_error     = 3
-        OTHERS             = 4 ).
+    cl_http_client=&gt;create_by_url( EXPORTING  url                = l_url
+                                              ssl_id             = ssl_id
+                                              proxy_host         = proxy_host
+                                              proxy_service      = proxy_service
+                                   IMPORTING  client             = lo_http_client
+                                   EXCEPTIONS argument_not_found = 1
+                                              plugin_not_active  = 2
+                                              internal_error     = 3
+                                              OTHERS             = 4 ).
 
     IF sy-subrc &lt;&gt; 0.
       message = &apos;Error al abrir conexion&apos;.
@@ -206,7 +206,7 @@
         WHEN 2. message = |{ message }Plugin no activo|.
         WHEN 3. message = |{ message }Error interno|.
         WHEN OTHERS.
-          IF NOT sy-msgty IS INITIAL.
+          IF sy-msgty IS NOT INITIAL.
             MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO l_string.
             message = |{ message } { l_string }|.
           ENDIF.
@@ -217,14 +217,12 @@
     &quot; setting request method
     lo_http_client-&gt;request-&gt;set_method( method ).
 
-    lo_http_client-&gt;request-&gt;set_header_field(
-        name  = &apos;~server_protocol&apos;                          &quot;#EC *
-        value = &apos;HTTP/1.1&apos; ).                               &quot;#EC *
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;~server_protocol&apos;                          &quot;#EC *
+                                               value = &apos;HTTP/1.1&apos; ).                               &quot;#EC *
 
-    IF NOT action IS INITIAL.
-      lo_http_client-&gt;request-&gt;set_header_field(
-          name  = &apos;SOAPAction&apos;                              &quot;#EC *
-          value = action ).
+    IF action IS NOT INITIAL.
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;SOAPAction&apos;                              &quot;#EC *
+                                                 value = action ).
     ENDIF.
 
     IF content_type IS INITIAL.
@@ -233,24 +231,25 @@
       l_string = content_type.
     ENDIF.
 
-    lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Content-Type&apos; value = l_string ).
+    lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Type&apos;
+                                               value = l_string ).
 
     IF convert_to_utf8 IS INITIAL AND peticionx IS INITIAL.
-      IF NOT peticion IS INITIAL.
+      IF peticion IS NOT INITIAL.
         DATA(l_lon) = strlen( peticion ).
 
         l_string = peticion.
         l_lon_txt = l_lon.
-        CONDENSE l_lon_txt NO-GAPS.
+        l_lon_txt = condense( val  = l_lon_txt
+                              from = ` `
+                              to   = `` ).
 
-        lo_http_client-&gt;request-&gt;set_header_field(
-            name  = &apos;Content-Length&apos;                        &quot;#EC *
-            value = l_lon_txt ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Length&apos;                        &quot;#EC *
+                                                   value = l_lon_txt ).
 
-        lo_http_client-&gt;request-&gt;set_cdata(
-            data   = l_string
-            offset = 0
-            length = l_lon ).
+        lo_http_client-&gt;request-&gt;set_cdata( data   = l_string
+                                            offset = 0
+                                            length = l_lon ).
       ENDIF.
     ELSE.
       IF convert_to_utf8 IS INITIAL.
@@ -264,60 +263,55 @@
       l_lon = xstrlen( l_xstring ).
 
       l_lon_txt = l_lon.
-      CONDENSE l_lon_txt NO-GAPS.
+      l_lon_txt = condense( val  = l_lon_txt
+                            from = ` `
+                            to   = `` ).
 
-      lo_http_client-&gt;request-&gt;set_header_field(
-          name  = &apos;Content-Length&apos;                          &quot;#EC *
-          value = l_lon_txt ).
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Length&apos;                          &quot;#EC *
+                                                 value = l_lon_txt ).
 
-      lo_http_client-&gt;request-&gt;set_data(
-          data   = l_xstring
-          offset = 0
-          length = l_lon ).
+      lo_http_client-&gt;request-&gt;set_data( data   = l_xstring
+                                         offset = 0
+                                         length = l_lon ).
     ENDIF.
 
-    IF NOT apikey IS INITIAL.
-      lo_http_client-&gt;request-&gt;set_header_field( name = &apos;APIKey&apos; value = apikey ).
+    IF apikey IS NOT INITIAL.
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;APIKey&apos;
+                                                 value = apikey ).
     ENDIF.
 
-    IF NOT auth IS INITIAL.
-      lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Authorization&apos; value = auth ).
-    ELSEIF NOT password IS INITIAL.
+    IF auth IS NOT INITIAL.
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Authorization&apos;
+                                                 value = auth ).
+    ELSEIF password IS NOT INITIAL.
       l_string = |{ usuario }:{ password }|.
       l_xstring = zcl_ap_string=&gt;string2xstring( l_string ).
       l_string = zcl_ap_string=&gt;xstring2base64( l_xstring ).
       l_string = |Basic { l_string }|.
 
-      lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Authorization&apos; value = l_string ).
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Authorization&apos;
+                                                 value = l_string ).
     ENDIF.
 
-    lo_http_client-&gt;send(
-      EXCEPTIONS
-        http_communication_failure = 1
-        http_invalid_state         = 2
-        http_processing_failed     = 3
-        http_invalid_timeout       = 4
-        OTHERS                     = 5 ).
+    lo_http_client-&gt;send( EXCEPTIONS http_communication_failure = 1
+                                     http_invalid_state         = 2
+                                     http_processing_failed     = 3
+                                     http_invalid_timeout       = 4
+                                     OTHERS                     = 5 ).
     IF sy-subrc &lt;&gt; 0.
-      lo_http_client-&gt;get_last_error(
-        IMPORTING
-          code    = subrc
-          message = message ).
+      lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                message = message ).
       RETURN.
     ENDIF.
 
     IF sy-subrc = 0.
-      lo_http_client-&gt;receive(
-        EXCEPTIONS
-          http_communication_failure = 1
-          http_invalid_state         = 2
-          http_processing_failed     = 3
-          OTHERS                     = 5 ).
+      lo_http_client-&gt;receive( EXCEPTIONS http_communication_failure = 1
+                                          http_invalid_state         = 2
+                                          http_processing_failed     = 3
+                                          OTHERS                     = 5 ).
       IF sy-subrc &lt;&gt; 0.
-        lo_http_client-&gt;get_last_error(
-          IMPORTING
-            code    = subrc
-            message = message ).
+        lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                  message = message ).
         RETURN.
       ENDIF.
     ENDIF.
@@ -351,30 +345,27 @@
       SPLIT message AT &apos;&quot;&lt;&apos; INTO message l_string.
     ENDIF.
 
-    lo_http_client-&gt;response-&gt;get_status(
-      IMPORTING
-        code = status_i ).
-    lo_http_client-&gt;response-&gt;get_status(
-      IMPORTING
-        reason = reason ).
+    lo_http_client-&gt;response-&gt;get_status( IMPORTING code = status_i ).
+    lo_http_client-&gt;response-&gt;get_status( IMPORTING reason = reason ).
 
     IF popup_respuesta = &apos;X&apos;.
       l_string = |URL={ l_url }|.
 
-      IF NOT message IS INITIAL.
+      IF message IS NOT INITIAL.
         l_parametros = |MENSAJE={ message }|.
         CONCATENATE l_string l_parametros INTO l_string SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
       ENDIF.
-      IF NOT subrc IS INITIAL.
+      IF subrc IS NOT INITIAL.
         l_parametros = |SUBRC={ subrc }|.
         CONCATENATE l_string l_parametros INTO l_string SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
       ENDIF.
-      IF NOT status IS INITIAL.
+      IF status IS NOT INITIAL.
         l_parametros = |STATUS={ status }|.
         CONCATENATE l_string l_parametros INTO l_string SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
       ENDIF.
       CONCATENATE l_string respuesta INTO l_string SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
-      zcl_ap_ws=&gt;edit_xml_string( EXPORTING formatear = &apos;X&apos; CHANGING string = l_string ).
+      zcl_ap_ws=&gt;edit_xml_string( EXPORTING formatear = &apos;X&apos;
+                                  CHANGING  string    = l_string ).
     ENDIF.
   ENDMETHOD.</source>
  </method>
@@ -403,11 +394,13 @@
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="FIN_PET_SOAP" SCONAME="BODY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <source>METHOD fin_pet_soap.
     IF body = &apos;X&apos;.
-      add_tag_soap( tag = &apos;soapenv:Body&apos; cerrar = &apos;X&apos; ).
+      add_tag_soap( tag    = &apos;soapenv:Body&apos;
+                    cerrar = &apos;X&apos; ).
     ENDIF.
 
     IF envelope = &apos;X&apos;.
-      add_tag_soap( tag = &apos;soapenv:Envelope&apos; cerrar = &apos;X&apos; ).
+      add_tag_soap( tag    = &apos;soapenv:Envelope&apos;
+                    cerrar = &apos;X&apos; ).
     ENDIF.
   ENDMETHOD.</source>
  </method>
@@ -415,13 +408,15 @@
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ATRIBUTO" SCONAME="ATRIBUTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ATRIBUTO" SCONAME="VALOR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
   <source>METHOD get_atributo.
-    valor = zcl_ap_regexp=&gt;recuperar_valor( string = respuesta atributo = atributo ).
+    valor = zcl_ap_regexp=&gt;recuperar_valor( string   = respuesta
+                                            atributo = atributo ).
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" VERSION="1" LANGU="S" DESCRIPT="Devuelve elementos XML" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" SCONAME="ELEMENTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" SCONAME="XML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" SCONAME="I_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ELEMENTOS_XML" SCONAME="I_DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE"/>
   <source>METHOD get_elementos_xml.
     DATA l_datos TYPE wdy_key_value.
 
@@ -440,23 +435,22 @@
 
     DATA(l_node) = l_iterator-&gt;get_next( ).
 
-    WHILE NOT l_node IS INITIAL.
+    WHILE l_node IS NOT INITIAL.
       CASE l_node-&gt;get_type( ).
         WHEN if_ixml_node=&gt;co_node_element.
           l_datos-key = l_node-&gt;get_name( ).
 
           DATA(l_nodemap) = l_node-&gt;get_attributes( ).
 
-          IF NOT l_nodemap IS INITIAL.
+          IF l_nodemap IS NOT INITIAL.
             DATA(l_count) = l_nodemap-&gt;get_length( ).
 
             DO l_count TIMES.
               DATA(l_index) = sy-index - 1.
               DATA(l_attr) = l_nodemap-&gt;get_item( l_index ).
 
-              l_datos-key = l_attr-&gt;get_name( ).
-              &quot; TODO: variable is assigned but never used (ABAP cleaner)
-              DATA(l_prefix) = l_attr-&gt;get_namespace_prefix( ).
+              l_datos-key   = l_attr-&gt;get_name( ).
+*              DATA(l_prefix) = l_attr-&gt;get_namespace_prefix( ).
               l_datos-value = l_attr-&gt;get_value( ).
 
               APPEND l_datos TO i_datos.
@@ -470,17 +464,30 @@
       l_node = l_iterator-&gt;get_next( ).
     ENDWHILE.
 
-    IF NOT elementos IS INITIAL.
+    IF elementos IS NOT INITIAL.
       DATA(r_rango) = zcl_ap_lista=&gt;lista2rango( elementos ).
-      IF NOT r_rango IS INITIAL.
+      IF r_rango IS NOT INITIAL.
         DELETE i_datos WHERE NOT key IN r_rango.
       ENDIF.
+    ENDIF.
+
+    IF datos IS SUPPLIED.
+      LOOP AT i_Datos ASSIGNING FIELD-SYMBOL(&lt;dato&gt;).
+        DATA(val) = &lt;dato&gt;-value.
+        CONDENSE val NO-GAPS.
+        IF val IS NOT INITIAL.
+          ASSIGN COMPONENT &lt;dato&gt;-key OF STRUCTURE datos TO FIELD-SYMBOL(&lt;campo&gt;).
+          IF sy-subrc = 0.
+            &lt;campo&gt; = &lt;dato&gt;-value.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
     ENDIF.
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" VERSION="1" LANGU="S" DESCRIPT="Recupera ODATA" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="SERVICIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="ENTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="ENTIDAD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="ODATA_SAP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="APIKEY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="PARAMETROS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
@@ -497,50 +504,58 @@
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="PROXY_HOST" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="16 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="PROXY_SERVICE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="17 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="CONTENT_TYPE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="18 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;application/json&apos;"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="I_FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE" PAROPTIONL="X"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="PETICIONX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="SUBRC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="HTTP_CODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="HTTP_STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
-  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="ACCEPT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="19 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="I_FORM" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="20 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="APB_LPD_T_KEY_VALUE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="PETICIONX" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="21 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="22 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="RESPUESTA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="23 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="SUBRC" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="24 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="TABLA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="25 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="TABLE"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="DATOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="26 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="HTTP_CODE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="27 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="I"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="HTTP_STATUS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="28 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="GET_ODATA" SCONAME="XSTRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="29 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="XSTRING"/>
   <source>METHOD get_odata.
-    DATA: l_url          TYPE string,
-          l_string       TYPE string,
-          l_parametros   TYPE string,
-          lo_http_client TYPE REF TO if_http_client,
-          l_xstring      TYPE xstring,
-          l_c1           TYPE c LENGTH 1.
-    DATA l_lon_txt TYPE string.
+    DATA l_url          TYPE string.
+    DATA l_string       TYPE string.
+    DATA l_parametros   TYPE string.
+    DATA lo_http_client TYPE REF TO if_http_client.
+    DATA l_xstring      TYPE xstring.
+    DATA l_c1           TYPE c LENGTH 1.
+    DATA l_lon_txt      TYPE string.
 
-    CLEAR: message, respuesta, subrc, tabla, datos, http_code, http_status, xstring.
+    CLEAR: message,
+           respuesta,
+           subrc,
+           tabla,
+           datos,
+           http_code,
+           http_status,
+           xstring.
 
     l_url = host.
-    IF odata_sap = &apos;X&apos;.
+    IF odata_sap = &apos;X&apos; AND entidad IS NOT INITIAL.
       CONCATENATE l_url &apos;/sap/opu/odata/sap/&apos; INTO l_url.
     ENDIF.
 
-    IF NOT servicio IS INITIAL.
+    IF servicio IS NOT INITIAL.
       CONCATENATE l_url servicio INTO l_url SEPARATED BY &apos;/&apos;.
     ENDIF.
-    IF NOT entidad IS INITIAL.
+    IF entidad IS NOT INITIAL.
       CONCATENATE l_url entidad INTO l_url SEPARATED BY &apos;/&apos;.
     ENDIF.
 
     IF destination IS INITIAL.
       SPLIT l_url AT &apos;://&apos; INTO l_url l_string.
       REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_string WITH &apos;/&apos;.
-      IF NOT l_url IS INITIAL.
+      IF l_url IS NOT INITIAL.
         CONCATENATE l_url &apos;://&apos; l_string INTO l_url.
       ENDIF.
     ELSE.
       REPLACE ALL OCCURRENCES OF &apos;//&apos; IN l_url WITH &apos;/&apos;.
     ENDIF.
 
-    IF NOT key IS INITIAL.
+    IF key IS NOT INITIAL.
       IF key(1) = &apos;&apos;&apos;&apos;.
         l_string = key.
       ELSE.
@@ -549,80 +564,76 @@
       CONCATENATE l_url &apos;(&apos; l_string &apos;)&apos; INTO l_url.
     ENDIF.
 
-    IF NOT parametros IS INITIAL.
+    IF parametros IS NOT INITIAL.
       l_parametros = parametros.
     ENDIF.
 
-    IF NOT filter IS INITIAL.
+    IF filter IS NOT INITIAL.
       l_string = |&amp;$filter={ filter }|.
       CONCATENATE l_parametros l_string INTO l_parametros.
     ENDIF.
 
-    IF NOT campos IS INITIAL.
+    IF campos IS NOT INITIAL.
       l_string = |&amp;$select={ campos }|.
       CONCATENATE l_parametros l_string INTO l_parametros.
     ENDIF.
 
-    IF NOT top IS INITIAL.
+    IF top IS NOT INITIAL.
       l_string = |&amp;$top={ top }|.
       CONCATENATE l_parametros l_string INTO l_parametros.
     ENDIF.
 
-    IF NOT l_parametros IS INITIAL.
+    IF l_parametros IS NOT INITIAL.
       CONCATENATE l_url &apos;?&apos; l_parametros INTO l_url.
     ENDIF.
 
-    IF NOT get_valor IS INITIAL.
+    IF get_valor IS NOT INITIAL.
       CONCATENATE l_url get_valor &apos;$value&apos; INTO l_url SEPARATED BY &apos;/&apos;.
     ENDIF.
 
     IF destination IS INITIAL.
-      cl_http_client=&gt;create_by_url(
-        EXPORTING
-          url                = l_url
-          ssl_id             = ssl_id
-          proxy_host         = proxy_host
-          proxy_service      = proxy_service
-        IMPORTING
-          client             = lo_http_client
-        EXCEPTIONS
-          argument_not_found = 1
-          plugin_not_active  = 2
-          internal_error     = 3
-          OTHERS             = 4 ).
+      cl_http_client=&gt;create_by_url( EXPORTING  url                = l_url
+                                                ssl_id             = ssl_id
+                                                proxy_host         = proxy_host
+                                                proxy_service      = proxy_service
+                                     IMPORTING  client             = lo_http_client
+                                     EXCEPTIONS argument_not_found = 1
+                                                plugin_not_active  = 2
+                                                internal_error     = 3
+                                                OTHERS             = 4 ).
       IF sy-subrc &lt;&gt; 0.
         message = |Error accediendo a { l_url }|.
         RETURN.
       ENDIF.
-      IF NOT proceso_log IS INITIAL.
-        zcl_ap_log=&gt;set_log( proceso = proceso_log p1 = l_url msgty = &apos;I&apos; ).
+      IF proceso_log IS NOT INITIAL.
+        zcl_ap_log=&gt;set_log( proceso = proceso_log
+                             p1      = l_url
+                             msgty   = &apos;I&apos; ).
       ENDIF.
     ELSE.
-      cl_http_client=&gt;create_by_destination(
-        EXPORTING
-          destination              = destination
-        IMPORTING
-          client                   = lo_http_client
-        EXCEPTIONS
-          argument_not_found       = 1
-          destination_not_found    = 2
-          destination_no_authority = 3
-          plugin_not_active        = 4
-          internal_error           = 5 ).
+      cl_http_client=&gt;create_by_destination( EXPORTING  destination              = destination
+                                             IMPORTING  client                   = lo_http_client
+                                             EXCEPTIONS argument_not_found       = 1
+                                                        destination_not_found    = 2
+                                                        destination_no_authority = 3
+                                                        plugin_not_active        = 4
+                                                        internal_error           = 5 ).
 
       IF sy-subrc &lt;&gt; 0.
         message = |Error accediendo a { destination }|.
         RETURN.
       ENDIF.
 
-      IF NOT l_url IS INITIAL.
-        cl_http_utility=&gt;set_request_uri(
-            request = lo_http_client-&gt;request
-            uri     = l_url ).
+      IF l_url IS NOT INITIAL.
+        cl_http_utility=&gt;set_request_uri( request = lo_http_client-&gt;request
+                                          uri     = l_url ).
       ENDIF.
 
-      IF NOT proceso_log IS INITIAL.
-        zcl_ap_log=&gt;set_log( proceso = proceso_log p1 = destination p2 = l_url msgty = &apos;I&apos; ).
+      IF proceso_log IS NOT INITIAL.
+        zcl_ap_log=&gt;set_log( proceso = proceso_log
+                             p1      = destination
+                             p2      = l_url
+                             msgty   = &apos;I&apos; ).
       ENDIF.
 
     ENDIF.
@@ -634,18 +645,16 @@
         WHEN 2. message = |{ message }Plugin no activo|.
         WHEN 3. message = |{ message }Error interno|.
         WHEN OTHERS.
-          IF NOT sy-msgty IS INITIAL.
+          IF sy-msgty IS NOT INITIAL.
             MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO l_string.
             message = |{ message } { l_string }|.
           ENDIF.
       ENDCASE.
 
-      IF NOT lo_http_client IS INITIAL.
-        lo_http_client-&gt;get_last_error(
-          IMPORTING
-            code    = subrc
-            message = DATA(l_msg) ).
-        IF NOT l_msg IS INITIAL.
+      IF lo_http_client IS NOT INITIAL.
+        lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                  message = DATA(l_msg) ).
+        IF l_msg IS NOT INITIAL.
           message = |{ message } { l_msg }|.
         ENDIF.
       ENDIF.
@@ -654,110 +663,108 @@
     IF message IS INITIAL.
       lo_http_client-&gt;request-&gt;set_method( method ).
 
-      IF NOT content_type IS INITIAL.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Content-Type&apos; value = content_type ).
+      IF content_type IS NOT INITIAL.
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Type&apos;
+                                                   value = content_type ).
       ELSE.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Content-Type&apos; value = &apos;application/json&apos; ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Type&apos;
+                                                   value = &apos;application/json&apos; ).
       ENDIF.
-      lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Cache-Control&apos; value = &apos;no-cache&apos; ).
-      IF get_valor IS INITIAL.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Accept&apos; value = &apos;application/json&apos; ).
+      lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Cache-Control&apos;
+                                                 value = &apos;no-cache&apos; ).
+      IF accept IS INITIAL.
+        IF get_valor IS INITIAL.
+          lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Accept&apos;
+                                                     value = &apos;application/json&apos; ).
+        ELSE.
+          lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Accept&apos;
+                                                     value = &apos;*/*&apos; ).
+        ENDIF.
       ELSE.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Accept&apos; value = &apos;*/*&apos; ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Accept&apos;
+                                                   value = accept ).
       ENDIF.
 
-      IF NOT apikey IS INITIAL.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;APIKey&apos; value = apikey ).
+      IF apikey IS NOT INITIAL.
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;APIKey&apos;
+                                                   value = apikey ).
       ENDIF.
 
       LOOP AT i_form ASSIGNING FIELD-SYMBOL(&lt;form&gt;).
-        lo_http_client-&gt;request-&gt;set_form_field( name = &lt;form&gt;-key value = &lt;form&gt;-value ).
+        lo_http_client-&gt;request-&gt;set_form_field( name  = &lt;form&gt;-key
+                                                 value = &lt;form&gt;-value ).
       ENDLOOP.
 
-      IF NOT peticion IS INITIAL.
+      IF peticion IS NOT INITIAL.
         DATA(l_lon) = strlen( peticion ).
 
         l_string = peticion.
         l_lon_txt = l_lon.
 
-        lo_http_client-&gt;request-&gt;set_header_field(
-            name  = &apos;Content-Length&apos;                        &quot;#EC *
-            value = l_lon_txt ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Length&apos;                        &quot;#EC *
+                                                   value = l_lon_txt ).
 
-        lo_http_client-&gt;request-&gt;set_cdata(
-            data   = l_string
-            offset = 0
-            length = l_lon ).
+        lo_http_client-&gt;request-&gt;set_cdata( data   = l_string
+                                            offset = 0
+                                            length = l_lon ).
       ENDIF.
 
-      IF NOT peticionx IS INITIAL.
+      IF peticionx IS NOT INITIAL.
         l_lon = xstrlen( peticionx ).
 
         l_lon_txt = l_lon.
 
-        lo_http_client-&gt;request-&gt;set_header_field(
-            name  = &apos;Content-Length&apos;                        &quot;#EC *
-            value = l_lon_txt ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Content-Length&apos;                        &quot;#EC *
+                                                   value = l_lon_txt ).
 
-        lo_http_client-&gt;request-&gt;set_data(
-            data   = peticionx
-            offset = 0
-            length = l_lon ).
+        lo_http_client-&gt;request-&gt;set_data( data   = peticionx
+                                           offset = 0
+                                           length = l_lon ).
       ENDIF.
 
-      IF NOT password IS INITIAL.
+      IF password IS NOT INITIAL.
         l_string = |{ usuario }:{ password }|.
         l_xstring = zcl_ap_string=&gt;string2xstring( l_string ).
         l_string = zcl_ap_string=&gt;xstring2base64( l_xstring ).
         l_string = |Basic { l_string }|.
 
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Authorization&apos; value = l_string ).
-      ELSEIF NOT me-&gt;auth IS INITIAL.
-        lo_http_client-&gt;request-&gt;set_header_field( name = &apos;Authorization&apos; value = auth ).
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Authorization&apos;
+                                                   value = l_string ).
+      ELSEIF me-&gt;auth IS NOT INITIAL.
+        lo_http_client-&gt;request-&gt;set_header_field( name  = &apos;Authorization&apos;
+                                                   value = auth ).
       ENDIF.
 
-      lo_http_client-&gt;send(
-        EXCEPTIONS
-          http_communication_failure = 1
-          http_invalid_state         = 2
-          http_processing_failed     = 3
-          http_invalid_timeout       = 4
-          OTHERS                     = 5 ).
+      lo_http_client-&gt;send( EXCEPTIONS http_communication_failure = 1
+                                       http_invalid_state         = 2
+                                       http_processing_failed     = 3
+                                       http_invalid_timeout       = 4
+                                       OTHERS                     = 5 ).
       IF sy-subrc &lt;&gt; 0.
-        lo_http_client-&gt;get_last_error(
-          IMPORTING
-            code    = subrc
-            message = message ).
+        lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                  message = message ).
       ENDIF.
     ENDIF.
 
     IF message IS INITIAL.
-      lo_http_client-&gt;receive(
-        EXCEPTIONS
-          http_communication_failure = 1
-          http_invalid_state         = 2
-          http_processing_failed     = 3
-          OTHERS                     = 5 ).
+      lo_http_client-&gt;receive( EXCEPTIONS http_communication_failure = 1
+                                          http_invalid_state         = 2
+                                          http_processing_failed     = 3
+                                          OTHERS                     = 5 ).
       IF sy-subrc &lt;&gt; 0.
-        lo_http_client-&gt;get_last_error(
-          IMPORTING
-            code    = subrc
-            message = message ).
+        lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                  message = message ).
       ENDIF.
 
-      lo_http_client-&gt;response-&gt;get_status(
-        IMPORTING
-          code   = http_code
-          reason = http_status ).
+      lo_http_client-&gt;response-&gt;get_status( IMPORTING code   = http_code
+                                                      reason = http_status ).
 
       IF message IS INITIAL.
 
         respuesta = lo_http_client-&gt;response-&gt;get_cdata( ).
 
-        lo_http_client-&gt;response-&gt;get_status(
-          IMPORTING
-            code   = http_code
-            reason = http_status ).
+        lo_http_client-&gt;response-&gt;get_status( IMPORTING code   = http_code
+                                                        reason = http_status ).
 
         xstring = lo_http_client-&gt;response-&gt;get_data( ).
 
@@ -767,10 +774,8 @@
 *      DATA(L_STRING3) = ZCL_AP_STRING=&gt;XSTRING2STRING( L_XSTRING3 ).
 *      DATA(L_STRING2) = ZCL_AP_STRING=&gt;XSTRING2STRING( L_XSTRING2 ).
 
-        lo_http_client-&gt;get_last_error(
-          IMPORTING
-            code    = subrc
-            message = message ).
+        lo_http_client-&gt;get_last_error( IMPORTING code    = subrc
+                                                  message = message ).
 
         IF respuesta CS &apos;class=&quot;errorTextHeader&quot;&gt;&apos;.
           SPLIT respuesta AT &apos;class=&quot;errorTextHeader&quot;&gt;&apos; INTO l_string message.
@@ -786,7 +791,7 @@
         ELSEIF respuesta CS &apos;Error 403 (Forbidden)&apos;.
           message = &apos;403 (Forbidden)&apos;.
         ELSE.
-          IF NOT get_valor IS INITIAL.
+          IF get_valor IS NOT INITIAL.
             l_c1 = respuesta.
             IF l_c1 = &apos;{&apos;.
               message = &apos;Error recuperando valor&apos;.
@@ -797,7 +802,7 @@
     ENDIF.
 
     me-&gt;respuesta = respuesta.
-    IF NOT respuesta IS INITIAL AND ( get_tabla = &apos;X&apos; OR get_datos = &apos;X&apos; ).
+    IF respuesta IS NOT INITIAL AND ( get_tabla = &apos;X&apos; OR get_datos = &apos;X&apos; ).
       l_string = respuesta.
       IF strlen( respuesta ) &gt; 16.
         IF respuesta(16) = &apos;{&quot;d&quot;:{&quot;results&quot;:&apos;.
@@ -811,9 +816,9 @@
         ENDIF.
       ENDIF.
       IF get_tabla = &apos;X&apos;.
-        zcl_ap_segw=&gt;set_json( EXPORTING json = l_string
-                                 IMPORTING datos = tabla
-                                           message = DATA(l_msg2) ).
+        zcl_ap_segw=&gt;set_json( EXPORTING json    = l_string
+                               IMPORTING datos   = tabla
+                                         message = DATA(l_msg2) ).
         IF message IS INITIAL.
           message = l_msg2.
         ENDIF.
@@ -828,28 +833,32 @@
           ENDIF.
         ENDIF.
 
-        zcl_ap_segw=&gt;set_json( EXPORTING json = l_string
-                                 IMPORTING datos = datos
-                                           message = l_msg2 ).
+        zcl_ap_segw=&gt;set_json( EXPORTING json    = l_string
+                               IMPORTING datos   = datos
+                                         message = l_msg2 ).
         IF message IS INITIAL.
           message = l_msg.
         ENDIF.
       ENDIF.
     ENDIF.
 
-    IF NOT proceso_log IS INITIAL.
-      IF NOT message IS INITIAL.
-        zcl_ap_log=&gt;set_log( proceso = proceso_log p1 = message msgty = &apos;E&apos; ).
+    IF proceso_log IS NOT INITIAL.
+      IF message IS NOT INITIAL.
+        zcl_ap_log=&gt;set_log( proceso = proceso_log
+                             p1      = message
+                             msgty   = &apos;E&apos; ).
       ENDIF.
-      IF NOT respuesta IS INITIAL.
-        zcl_ap_log=&gt;set_log( proceso = proceso_log p1 = respuesta msgty = &apos;S&apos; ).
+      IF respuesta IS NOT INITIAL.
+        zcl_ap_log=&gt;set_log( proceso = proceso_log
+                             p1      = respuesta
+                             msgty   = &apos;S&apos; ).
       ENDIF.
     ENDIF.
 
-    IF popup_respuesta = &apos;X&apos; OR ( popup_respuesta = &apos;E&apos; AND NOT message IS INITIAL ).
+    IF popup_respuesta = &apos;X&apos; OR ( popup_respuesta = &apos;E&apos; AND message IS NOT INITIAL ).
       l_string = |URL={ l_url }|.
 
-      IF NOT message IS INITIAL.
+      IF message IS NOT INITIAL.
         l_parametros = |MENSAJE={ message }|.
         CONCATENATE l_string l_parametros INTO l_string SEPARATED BY cl_abap_char_utilities=&gt;cr_lf.
       ENDIF.
@@ -863,22 +872,29 @@
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="INI_PET_SOAP" SCONAME="HEADER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <parameter CLSNAME="ZCL_AP_ODATA" CMPNAME="INI_PET_SOAP" SCONAME="BODY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <source>METHOD ini_pet_soap.
-    CLEAR: peticion_soap, nivel_formato_soap.
+    CLEAR: peticion_soap,
+           nivel_formato_soap.
 
-    IF NOT envelope IS INITIAL.
+    IF envelope IS NOT INITIAL.
       IF envelope = &apos;X&apos;.
-        add_tag_soap( tag = &apos;soapenv:Envelope&apos; abrir = &apos;X&apos; ).
+        add_tag_soap( tag   = &apos;soapenv:Envelope&apos;
+                      abrir = &apos;X&apos; ).
       ELSE.
-        add_tag_soap( tag = &apos;soapenv:Envelope&apos; subvalor = envelope abrir = &apos;X&apos; ).
+        add_tag_soap( tag      = &apos;soapenv:Envelope&apos;
+                      subvalor = envelope
+                      abrir    = &apos;X&apos; ).
       ENDIF.
     ENDIF.
 
     IF header = &apos;X&apos; AND body = &apos;X&apos;.
-      add_tag_soap( tag = &apos;soapenv:Header&apos; abrir = &apos;X&apos; cerrar = &apos;X&apos; ).
+      add_tag_soap( tag    = &apos;soapenv:Header&apos;
+                    abrir  = &apos;X&apos;
+                    cerrar = &apos;X&apos; ).
     ENDIF.
 
     IF body = &apos;X&apos;.
-      add_tag_soap( tag = &apos;soapenv:Body&apos; abrir = &apos;X&apos; ).
+      add_tag_soap( tag   = &apos;soapenv:Body&apos;
+                    abrir = &apos;X&apos; ).
     ENDIF.
   ENDMETHOD.</source>
  </method>

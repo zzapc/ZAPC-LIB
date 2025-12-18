@@ -821,7 +821,7 @@ REPORT sapwl_stad MESSAGE-ID s1 NO STANDARD PAGE HEADING LINE-SIZE 1023
 
 TABLES: sapwlwamai, trdir, sapwlslins.
 
-CONTROLS: output_fields TYPE TABLEVIEW USING SCREEN &apos;0030&apos;,
+CONTROLS: output_fields    TYPE TABLEVIEW USING SCREEN &apos;0030&apos;,
           server_selection TYPE TABLEVIEW USING SCREEN &apos;0050&apos;.
 
 *-----------------------------------------------------------------------
@@ -839,7 +839,7 @@ INCLUDE sapwlstad_lv.
 
 
 *------TABLAS INTERNAS-------------------------------------------------*
-tables: tadir, zestadisticas.
+TABLES: tadir, zestadisticas.
 
 DATA: BEGIN OF i_datos OCCURS 1000,
         account    LIKE stad_output-account,
@@ -848,7 +848,7 @@ DATA: BEGIN OF i_datos OCCURS 1000,
         tcode      LIKE stad_output-tcode,
         terminalid LIKE stad_output-terminalid,
         report     LIKE stad_output-report,
-        btcjobname    LIKE stad_output-btcjobname,
+        btcjobname LIKE stad_output-btcjobname,
         jobstep    LIKE stad_output-btcstepnr,
         tabload    LIKE stad_output-tabload,
         dynpronr   LIKE stad_output-dynpronr,
@@ -861,7 +861,7 @@ DATA: BEGIN OF i_aux OCCURS 1000,
         date       LIKE stad_output-date,
         endti      LIKE stad_output-endti,
         terminalid LIKE stad_output-terminalid,
-        btcjobname    LIKE stad_output-btcjobname,
+        btcjobname LIKE stad_output-btcjobname,
       END OF i_aux.
 *------VARIABLES-------------------------------------------------------*
 
@@ -869,55 +869,55 @@ DATA: BEGIN OF i_aux OCCURS 1000,
 * selection parameters for single records-------------------------------
 *
 PARAMETERS:
-                 rstartti      TYPE swlstart,
-                 &quot;ab Uhrzeit
-                 rendti        TYPE swncuzeit,
-                 &quot;Endtime
-                 rday          TYPE swldate DEFAULT sy-datum,
-                 &quot;Enddatum
-                 rreadti       TYPE swlreadti DEFAULT &apos;001000&apos;,
-                 &quot;Lesezeitraum
-                 rmode         TYPE swlmode DEFAULT &apos;a&apos;.
-                 &quot;Anzeigemodus
+  rstartti TYPE swlstart,
+  &quot;ab Uhrzeit
+  rendti   TYPE swncuzeit,
+  &quot;Endtime
+  rday     TYPE swldate DEFAULT sy-datum,
+  &quot;Enddatum
+  rreadti  TYPE swlreadti DEFAULT &apos;001000&apos;,
+  &quot;Lesezeitraum
+  rmode    TYPE swlmode DEFAULT &apos;a&apos;.
+&quot;Anzeigemodus
 SELECTION-SCREEN ULINE.
-PARAMETERS:      rmandt     LIKE sapwlpfnrm-mandt,
-&quot;Mandant
-                 ruser      LIKE sapwlpfnrm-account,             &quot;User
-                 rtcode     LIKE sapwlpfnrm-tcode,               &quot;Tcode
-                 rprogram   LIKE sapwlpfnrm-report,              &quot;Report
-                 tasktype,
-                 &quot;Tasktyp nur in Modus a)
-                 rscreen    LIKE sapwlpfnrm-dynpronr.            &quot;Dynpro
+PARAMETERS: rmandt   LIKE sapwlpfnrm-mandt,
+            &quot;Mandant
+            ruser    LIKE sapwlpfnrm-account,             &quot;User
+            rtcode   LIKE sapwlpfnrm-tcode,               &quot;Tcode
+            rprogram LIKE sapwlpfnrm-report,              &quot;Report
+            tasktype,
+            &quot;Tasktyp nur in Modus a)
+            rscreen  LIKE sapwlpfnrm-dynpronr.            &quot;Dynpro
 *rwpid(2)                                        &quot;Work Process
 SELECTION-SCREEN ULINE.
-PARAMETERS:      rrspti        TYPE swlrespti2,
-&quot;Resp. time
-                 rdbti         TYPE sta_seltim,
-                 &quot;DB time
-                 rcputi        TYPE sta_seltim,
-                 &quot;CPU time
-                 rkbyte        TYPE sta_selbyt,
-                 &quot;Bytes trans
-                 rchg          TYPE sta_selchg.
-                 &quot;Phys.Aenderg.
+PARAMETERS: rrspti TYPE swlrespti2,
+            &quot;Resp. time
+            rdbti  TYPE sta_seltim,
+            &quot;DB time
+            rcputi TYPE sta_seltim,
+            &quot;CPU time
+            rkbyte TYPE sta_selbyt,
+            &quot;Bytes trans
+            rchg   TYPE sta_selchg.
+&quot;Phys.Aenderg.
 SELECTION-SCREEN ULINE.
 PARAMETERS:
 *rreaddel      LIKE sy-uzeit DEFAULT &apos;000200&apos;,   &quot;Lesezeitdelta
                  rwaitfac      TYPE i DEFAULT 150.
-                 &quot;Wartefaktor
+&quot;Wartefaktor
 SELECTION-SCREEN ULINE.
-PARAMETERS:      statfile      LIKE sapwlpstrc-filename DEFAULT space,
-                 as_statf      LIKE sapwlpstrc-filename DEFAULT space.
+PARAMETERS: statfile LIKE sapwlpstrc-filename DEFAULT space,
+            as_statf LIKE sapwlpstrc-filename DEFAULT space.
 *Änderung tc----------------------------------------------------------
 SELECTION-SCREEN ULINE.
-PARAMETERS:      ronly   LIKE server_list-name DEFAULT space,
-                 rtcodf  LIKE selection-stcod DEFAULT &apos;*&apos;,
-                 rprogf  LIKE selection-sprogram DEFAULT &apos;*&apos;.
+PARAMETERS: ronly  LIKE server_list-name DEFAULT space,
+            rtcodf LIKE selection-stcod DEFAULT &apos;*&apos;,
+            rprogf LIKE selection-sprogram DEFAULT &apos;*&apos;.
 *---------------------------------------------------------------------
 
 *** INICIO MODIFICACIONES
-parameters:      p_act as checkbox default &apos; &apos;,
-                 p_list as checkbox default &apos;X&apos;.
+PARAMETERS: p_act  AS CHECKBOX DEFAULT &apos; &apos;,
+            p_list AS CHECKBOX DEFAULT &apos;X&apos;.
 *** FIN MODIFICACIONES
 
 *@ZV 05.02.2006
@@ -926,19 +926,19 @@ PARAMETERS: simpmode(1) DEFAULT space  NO-DISPLAY.
 
 *** INICIO MODIFICACIONES
 ********************************** ALV *********************************
-type-pools: slis.
+TYPE-POOLS: slis.
 
-data: alv_fieldtab type slis_t_fieldcat_alv,
-      alv_heading  type slis_t_listheader,
-      alv_layout   type slis_layout_alv,
-      alv_events   type slis_t_event,
-      alv_sort     type slis_t_sortinfo_alv,
-      alv_filter   type slis_t_filter_alv,
-      alv_repname  like sy-repid,
-      alv_f2code   like sy-ucomm value  &apos;&amp;ETA&apos;,
-      alv_g_save(1) type c,
-      alv_g_exit(1) type c.
-data: alv_fieldcat type slis_fieldcat_alv.
+DATA: alv_fieldtab  TYPE slis_t_fieldcat_alv,
+      alv_heading   TYPE slis_t_listheader,
+      alv_layout    TYPE slis_layout_alv,
+      alv_events    TYPE slis_t_event,
+      alv_sort      TYPE slis_t_sortinfo_alv,
+      alv_filter    TYPE slis_t_filter_alv,
+      alv_repname   LIKE sy-repid,
+      alv_f2code    LIKE sy-ucomm VALUE  &apos;&amp;ETA&apos;,
+      alv_g_save(1) TYPE c,
+      alv_g_exit(1) TYPE c.
+DATA: alv_fieldcat TYPE slis_fieldcat_alv.
 *** FIN MODIFICACIONES
 
 * initialize -----------------------------------------------------------
@@ -984,7 +984,7 @@ START-OF-SELECTION.
   g_as_statistic_file = as_statf.
   PERFORM select_command USING &apos;INIT&apos;.
 
-  perform agrupar_informacion.
+  PERFORM agrupar_informacion.
 
 * line selection -------------------------------------------------------
 *
@@ -1095,7 +1095,7 @@ ENDFORM.                               &quot; CHECK_SELECTION_CRITERION
 *----------------------------------------------------------------------*
 *      --&gt;fcode  OK-code                                               *
 *----------------------------------------------------------------------*
-FORM select_command USING value(fcode).
+FORM select_command USING VALUE(fcode).
 
 * local data
 *
@@ -1117,7 +1117,7 @@ FORM select_command USING value(fcode).
       cli_text-quickinfo = &apos;Display only server actions/caller info&apos;.
       cli_text-icon_id = &apos;@KG@&apos;.
       PERFORM prepare_selection_criterion.  &quot;set further selection crit.
-      PERFORM fill_statistics USING rmode.    &quot;get data
+      PERFORM zfill_statistics USING rmode.    &quot;get data
       overall_opened_level = -1.      &quot;allways after new data collection
       PERFORM zwrite_mainlist USING rmode.     &quot;write mainlist
 
@@ -1394,7 +1394,7 @@ FORM transfer_selection_data.
 
   IF selection-sseltime1 &lt;&gt; &apos;X&apos;.       &quot;Terminal ID statt Account nehmen
     TRANSLATE ruser TO UPPER CASE.
-    &quot;#EC TRANSLANG &quot;Accountname in Grossbuchstaben
+                         &quot;#EC TRANSLANG &quot;Accountname in Grossbuchstaben
   ENDIF.
 
 *AD
@@ -1683,8 +1683,8 @@ ENDMODULE.                             &quot;D0020_SUBMIT
 *----------------------------------------------------------------------*
 FORM submit_change_mode USING    p_okcode.
 
-  DATA: save_mode        LIKE selection-smode,
-        lines            TYPE i.
+  DATA: save_mode LIKE selection-smode,
+        lines     TYPE i.
 
   save_mode = selection-smode.
 
@@ -1976,7 +1976,7 @@ MODULE d0030_submit INPUT.
 * header2 muß wenn &apos;leer&apos; zurückgesetzt werden (Table Control über-
 * schreibt leere Felder mit Inhalten der ersten 14 Zeilen!)
       READ TABLE save_header2 WITH KEY
-                                  INDEX = output_fields-current_line.
+                                  index = output_fields-current_line.
       IF sy-subrc = 0.
         ausgabe-header2 = space.
       ENDIF.
@@ -1988,7 +1988,7 @@ MODULE d0030_submit INPUT.
 * calculate the new expected line size (always for modes a) and b) which
 * are wider than c))
         PERFORM get_breite USING &apos;a&apos;.
-&quot;Hostnamenerweiterung! Screensize muß auch für abbrev = &apos; &apos; reichen
+        &quot;Hostnamenerweiterung! Screensize muß auch für abbrev = &apos; &apos; reichen
         IF server_abbrev = &apos;X&apos;.
           breite = breite + 23.
         ENDIF.
@@ -2309,13 +2309,13 @@ ENDMODULE.                             &quot; USER_COMMAND_0090  INPUT
 *----------------------------------------------------------------------*
 MODULE help_task_form INPUT.
   DATA: BEGIN OF helptable OCCURS 10,
-          field LIKE selection-stask,
+          field    LIKE selection-stask,
           expl(32),
         END OF helptable.
 
   DATA: BEGIN OF field_tab OCCURS 10.
           INCLUDE STRUCTURE help_value.
-  DATA: END OF field_tab.
+        DATA: END OF field_tab.
   DATA: helpfield(30).
 
 
@@ -2428,15 +2428,15 @@ MODULE help_task_form INPUT.
 *       EXPORTING
 *            FIELDNAME                 = &apos;HOST_ID&apos;
 *            TABNAME                   = &apos;SYNCTAB&apos;
-       IMPORTING
-            select_value              = selection-stask  &quot; &lt;----
-       TABLES
-            fields                    = field_tab
-            valuetab                  = helptable
-       EXCEPTIONS
-            field_not_in_ddic         = 01
-            more_then_one_selectfield = 02
-            no_selectfield            = 03.
+    IMPORTING
+      select_value              = selection-stask  &quot; &lt;----
+    TABLES
+      fields                    = field_tab
+      valuetab                  = helptable
+    EXCEPTIONS
+      field_not_in_ddic         = 01
+      more_then_one_selectfield = 02
+      no_selectfield            = 03.
 
 ENDMODULE.                 &quot; HELP_TASK_FORM  INPUT
 
@@ -2452,8 +2452,8 @@ ENDMODULE.                 &quot; HELP_TASK_FORM  INPUT
 FORM zwrite_mainlist USING rmode.
 
 * local help data
-  DATA: zeilen        TYPE i      VALUE 0,
-        kbyte         TYPE p,
+  DATA: zeilen      TYPE i      VALUE 0,
+        kbyte       TYPE p,
         output_flag.
 
 * progress indicator
@@ -2766,110 +2766,113 @@ ENDFORM.                               &quot; ZWRITE_MAINLIST
 FORM zwrite_main_record USING p_level p_opened_level.
 
 * Borramos datos de usuarios especiales
-  CHECK not ( wa_main-account = &apos;DDIC&apos;
+  CHECK NOT ( wa_main-account = &apos;DDIC&apos;
            OR wa_main-account = &apos;SAPSYS&apos; ).
 
 * Borramos datos de programas especiales.
-  check NOT ( wa_main-report = &apos;RSABAPPROGRAM&apos;
+  CHECK NOT ( wa_main-report = &apos;RSABAPPROGRAM&apos;
                   OR wa_main-report = &apos;SAPMSYST&apos;
                   OR wa_main-report = &apos;RSBTCRTE&apos;
                   OR wa_main-report = &apos;RSEDNAMT&apos;
                   OR wa_main-report = &apos;RSCONN01&apos;
                   OR wa_main-report = &apos;SAPRSEUT&apos;
                   OR wa_main-report = &apos;SAPRSLOG&apos;
-                  OR WA_MAIN-REPORT = &apos;SAPMSJOB&apos;
+                  OR wa_main-report = &apos;SAPMSJOB&apos;
                   OR wa_main-report = &apos;RSDBAJOB&apos;
-                  or wa_main-report = &apos;RSM13000&apos;
-                  or wa_main-report = &apos;RSVRSRS3&apos;
-                  or wa_main-report(4) = &apos;RSWW&apos;
+                  OR wa_main-report = &apos;RSM13000&apos;
+                  OR wa_main-report = &apos;RSVRSRS3&apos;
+                  OR wa_main-report(4) = &apos;RSWW&apos;
                   OR wa_main-report(1) = &apos;/&apos;
                   OR wa_main-report = &apos;RFC&apos;
                   OR wa_main-btcjobname(4) = &apos;SAP_&apos;
                   OR wa_main-btcjobname(13) = &apos;AUTO_SESSION_&apos;
                   OR wa_main-tcode = &apos;SMEN&apos;
-                  OR WA_MAIN-BTCJOBNAME = &apos;SWFSLSDLEX&apos;
-                  or wa_main-BTCJOBNAME = &apos;CODE_INSPECTOR_DELETION&apos;
+                  OR wa_main-btcjobname = &apos;SWFSLSDLEX&apos;
+                  OR wa_main-btcjobname = &apos;CODE_INSPECTOR_DELETION&apos;
                   ).
 
   MOVE-CORRESPONDING wa_main TO i_aux.
 
-    if i_aux-btcjobname is initial and
-       i_aux-tcode(1) ne &apos;Z&apos; and
-       i_aux-tcode ne &apos;SE38&apos; and
-       i_aux-tcode(7) ne &apos;SESSION&apos;.
-      clear i_aux-report.
-    endif.
+  IF i_aux-btcjobname IS INITIAL AND
+     i_aux-tcode(1) NE &apos;Z&apos; AND
+     i_aux-tcode NE &apos;SE38&apos; AND
+     i_aux-tcode(7) NE &apos;SESSION&apos;.
+    CLEAR i_aux-report.
+  ENDIF.
 
   APPEND i_aux.
 ENDFORM.                               &quot; zWRITE_MAIN_RECORD
 *&amp;---------------------------------------------------------------------*
 *&amp;      Form  agrupar_informacion
 *&amp;---------------------------------------------------------------------*
-form agrupar_informacion .
+FORM agrupar_informacion .
 
 * Eliminamos ejecuciones muy próximas
-  sort i_aux.
-  data: l_time like stad_output-endti,
-        l_secs type i,
+  SORT i_aux.
+  DATA: l_time LIKE stad_output-endti,
+        l_secs TYPE i,
         l_new,
-        l_aux like i_aux.
-  loop at i_aux.
+        l_aux  LIKE i_aux.
+  LOOP AT i_aux.
     l_aux = i_aux.
-    at new date.
+    AT NEW date.
       l_time = l_aux-endti.
       l_new  = &apos;X&apos;.
-    endat.
-    if l_new = &apos;X&apos;.
-      clear l_new.
-    else.
+    ENDAT.
+    IF l_new = &apos;X&apos;.
+      CLEAR l_new.
+    ELSE.
       l_secs = i_aux-endti - l_time.
-      if l_secs &lt; 300.
+      IF l_secs &lt; 300.
         l_time = i_aux-endti.
-        continue.
-      endif.
-    endif.
-    move-corresponding i_aux to i_datos.
-    append i_datos.
+        CONTINUE.
+      ENDIF.
+    ENDIF.
+    MOVE-CORRESPONDING i_aux TO i_datos.
+    APPEND i_datos.
     l_time = i_aux-endti.
-  endloop.
-  sort i_datos.
+  ENDLOOP.
+  SORT i_datos.
 
-  loop at i_datos.
-    if not i_datos-report is initial.
+  LOOP AT i_datos.
+    IF NOT i_datos-report IS INITIAL.
 * Comprobamos que existan los registros
-      select single * from  tadir
-             where  pgmid     = &apos;R3TR&apos;
-             and    object    = &apos;PROG&apos;
-             and    obj_name  = i_datos-report.
-      if sy-subrc ne 0.
-        delete i_datos.
-      endif.
-    elseif i_datos-tcode is initial.
-      delete i_datos.
-    endif.
-  endloop.
+      SELECT SINGLE * FROM  tadir
+             WHERE  pgmid     = &apos;R3TR&apos;
+             AND    object    = &apos;PROG&apos;
+             AND    obj_name  = i_datos-report.
+      IF sy-subrc NE 0.
+        DELETE i_datos.
+      ENDIF.
+    ELSEIF i_datos-tcode IS INITIAL.
+      DELETE i_datos.
+    ENDIF.
+  ENDLOOP.
 
-  if p_act = &apos;X&apos;.
-    loop at i_datos.
-      clear zestadisticas.
-      move-corresponding i_datos to zestadisticas.
+  IF p_act = &apos;X&apos;.
+    LOOP AT i_datos.
+      CLEAR zestadisticas.
+      MOVE-CORRESPONDING i_datos TO zestadisticas.
       zestadisticas-fecha = i_datos-date.
       zestadisticas-jobname = i_datos-btcjobname.
-      modify zestadisticas.
-    endloop.
+      MODIFY zestadisticas.
+    ENDLOOP.
 
-    submit ZBCU0007
-      and return
-     with s_FechaS = rday
-     with p_actu  = &apos;X&apos;.
-  endif.
+    IF p_list = &apos;N&apos;.
+      LEAVE PROGRAM.
+    ENDIF.
+    SUBMIT zbcu0007
+      AND RETURN
+     WITH s_fechas = rday
+     WITH p_actu  = &apos;X&apos;.
+  ENDIF.
 
-  if p_list = &apos;X&apos;.
-    perform alv_write_output tables i_datos using &apos;I_DATOS&apos;.
-  endif.
+  IF p_list = &apos;X&apos;.
+    PERFORM alv_write_output TABLES i_datos USING &apos;I_DATOS&apos;.
+  ENDIF.
 
 
-endform.                    &quot; agrupar_informacion
+ENDFORM.                    &quot; agrupar_informacion
 
 
 *&amp;---------------------------------------------------------------------*
@@ -2879,69 +2882,198 @@ endform.                    &quot; agrupar_informacion
 *----------------------------------------------------------------------*
 *      --&gt;P_EVENTS[]  text                                             *
 *----------------------------------------------------------------------*
-form alv_build_eventtab using p_events type slis_t_event.
-  data: ls_event type slis_alv_event.
-  call function &apos;REUSE_ALV_EVENTS_GET&apos;
-       exporting
-            i_list_type = 0
-       importing
-            et_events   = p_events.
-  read table p_events with key name = slis_ev_top_of_page
-                           into ls_event.
-  if sy-subrc = 0.
-    move slis_ev_top_of_page to ls_event-form.
-    modify p_events from ls_event index sy-tabix.
-  endif.
+FORM alv_build_eventtab USING p_events TYPE slis_t_event.
+  DATA: ls_event TYPE slis_alv_event.
+  CALL FUNCTION &apos;REUSE_ALV_EVENTS_GET&apos;
+    EXPORTING
+      i_list_type = 0
+    IMPORTING
+      et_events   = p_events.
+  READ TABLE p_events WITH KEY name = slis_ev_top_of_page
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_top_of_page TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
 
 *
-  read table p_events with key name = slis_ev_pf_status_set
-                           into ls_event.
-  if sy-subrc = 0.
-    move slis_ev_pf_status_set to ls_event-form.
-    modify p_events from ls_event index sy-tabix.
-  endif.
+  READ TABLE p_events WITH KEY name = slis_ev_pf_status_set
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_pf_status_set TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
 
-  read table p_events with key name = slis_ev_user_command
-                           into ls_event.
-  if sy-subrc = 0.
-    move slis_ev_user_command to ls_event-form.
-    modify p_events from ls_event index sy-tabix.
-  endif.
+  READ TABLE p_events WITH KEY name = slis_ev_user_command
+                           INTO ls_event.
+  IF sy-subrc = 0.
+    MOVE slis_ev_user_command TO ls_event-form.
+    MODIFY p_events FROM ls_event INDEX sy-tabix.
+  ENDIF.
 
-endform.                               &quot; BUILD_EVENTTAB
+ENDFORM.                               &quot; BUILD_EVENTTAB
 
 *&amp;---------------------------------------------------------------------*
 *&amp;      Form  WRITE_OUTPUT
 *&amp;---------------------------------------------------------------------*
-form alv_write_output tables pi_tabla
-                      using pe_tabla.
+FORM alv_write_output TABLES pi_tabla
+                      USING pe_tabla.
 
   alv_repname = sy-repid.
-  call function &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;
-       exporting
-            i_program_name     = alv_repname
-            i_internal_tabname = pe_tabla
-            i_inclname         = alv_repname
-       changing
-            ct_fieldcat        = alv_fieldtab.
-  if sy-subrc &lt;&gt; 0.
-    write: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;.
+  CALL FUNCTION &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;
+    EXPORTING
+      i_program_name     = alv_repname
+      i_internal_tabname = pe_tabla
+      i_inclname         = alv_repname
+    CHANGING
+      ct_fieldcat        = alv_fieldtab.
+  IF sy-subrc &lt;&gt; 0.
+    WRITE: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_FIELDCATALOG_MERGE&apos;.
+  ENDIF.
+  CALL FUNCTION &apos;REUSE_ALV_LIST_DISPLAY&apos;
+    EXPORTING
+      i_callback_program = alv_repname
+      i_structure_name   = pe_tabla
+      is_layout          = alv_layout
+      it_fieldcat        = alv_fieldtab
+      i_default          = &apos;A&apos;
+      i_save             = alv_g_save
+      it_events          = alv_events[]
+      it_sort            = alv_sort
+      it_filter          = alv_filter
+    TABLES
+      t_outtab           = pi_tabla.
+  IF sy-subrc &lt;&gt; 0.
+    WRITE: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_LIST_DISPLAY&apos;.
+  ENDIF.
+ENDFORM.                               &quot; WRITE_OUTPUT
+
+FORM zfill_statistics USING VALUE(mode).
+
+* refresh table and set (end) date and time for to collect trans-IDs
+*
+  CLEAR occurng_trids. REFRESH occurng_trids.
+
+* refresh navigation, data and &apos;high level&apos; tables
+*
+  CLEAR: navigate, all_stats, wa_stats_c_lv0, wa_stats_c_lv0, stats_b_lv1.
+  REFRESH: navigate, all_stats, stats_c_lv0, stats_c_lv1, stats_b_lv1.
+
+* refresh rfc-return table and minutes
+  CLEAR: rfc_returns, protocol, minutes.
+  REFRESH: rfc_returns, protocol, minutes.
+
+* special instance selected
+  IF selection-sonly &lt;&gt; space.                 &quot;change jtc
+    CLEAR server_list. REFRESH server_list.
+    server_list-name = selection-sonly.
+    server_list-serv = sy-host.
+    APPEND server_list.
+  ENDIF.
+
+* include application statstics?
+  IF g_as_statistic_file IS NOT INITIAL.
+    include_appl_stat = &apos;X&apos;.
+  ENDIF.
+
+* type conversion for wpid
+*
+  DATA  hex_wpid  TYPE swncrshrt.
+  IF selection-swpid CO &apos; 0123456789&apos;.
+    sy-tfill = selection-swpid.        &quot;Conversion to type I
+    hex_wpid = sy-tfill.               &quot;Conversion to type X
+  ELSE.
+    hex_wpid = &apos;FFFF&apos;.
+  ENDIF.
+
+* read statistic records
+* read statistic records
+
+  set PARAMETER ID &apos;ZBCU0007&apos; FIELD &apos;X&apos;.
+  CALL FUNCTION data_read_function &quot;&apos;SWNC_STAD_READ_STATRECS&apos;
+    EXPORTING
+      read_client       = selection-smandt
+      read_time         = selection-sreadti
+      read_start_date   = selection-sdat
+      read_start_time   = selection-stime
+      read_username     = selection-sbenu
+*     read_exclude_username =
+      read_workprocess  = hex_wpid
+*     read_tcode        =
+      statistic_file    = g_statistic_file
+      as_statistic_file = g_as_statistic_file
+      no_buffer_flush   = buffer_flush
+      wait_factor       = selection-swaitfac
+      include_appl_stat = include_appl_stat
+    IMPORTING
+      problems          = read_problems
+      total_recs_read   = no_recs_read
+      loghandle         = loghandle
+    TABLES
+      protocol          = minutes
+      rfc_returns       = rfc_returns
+      server_list       = server_list
+    CHANGING
+      all_stats         = all_stats
+    EXCEPTIONS
+      ERROR_MESSAGE     = 999
+      OTHERS            = 1.
+
+  if sy-subrc ne 0 and sy-batch = &apos;&apos;.
+    __break_ap.
   endif.
-  call function &apos;REUSE_ALV_LIST_DISPLAY&apos;
-       exporting
-            i_callback_program = alv_repname
-            i_structure_name   = pe_tabla
-            is_layout          = alv_layout
-            it_fieldcat        = alv_fieldtab
-            i_default          = &apos;A&apos;
-            i_save             = alv_g_save
-            it_events          = alv_events[]
-            it_sort            = alv_sort
-            it_filter          = alv_filter
-       tables
-            t_outtab           = pi_tabla.
-  if sy-subrc &lt;&gt; 0.
-    write: &apos;SY-SUBRC: &apos;, sy-subrc, &apos;REUSE_ALV_LIST_DISPLAY&apos;.
-  endif.
-endform.                               &quot; WRITE_OUTPUT</source>
+
+
+
+* write protocol + message
+*
+  IF sy-subrc &lt;&gt; 0.
+    CLEAR protocol.
+    GET TIME.
+    protocol-error = &apos;Call function SWNC_STAD_READ_STATISTICS failed&apos;.
+    protocol-sy_subrc = sy-subrc.
+    protocol-date = sy-datum.
+    protocol-time = sy-uzeit.
+    protocol-runti_arfc = 0.
+    protocol-server = &apos;*&apos;.
+    protocol-action = &apos;Function call in form FILL_STATISTICS&apos;.
+    APPEND protocol.
+    MESSAGE s333 WITH &apos;Read problems - see minutes&apos;.
+*   Read problems - see minutes
+  ELSE.
+* records read?
+    IF no_recs_read = 0.
+      IF read_problems &gt; 0.
+        MESSAGE s333 WITH
+                         &apos;Read problems - see minutes and RFC-protocol&apos;.
+* Read problems - see minutes and RFC-protocol
+      ELSE.
+        MESSAGE s006 WITH &apos;any server&apos;.
+*     No statistical record for $ found with given criteria
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+* fill protocol with protocol data from funtion call
+  APPEND LINES OF minutes TO protocol.
+
+* fill output main structure
+  PERFORM fill_output_main.
+
+* sort navigation table by trans-ID and enddate and -time
+  SORT navigate BY transid startdate starttime.
+
+* if output mode is b) or c): fill higher levels -----------------------
+  IF mode = &apos;b&apos;.
+    PERFORM fill_b_level_1.
+  ELSEIF mode = &apos;c&apos;.
+    PERFORM fill_c_level_0.
+  ENDIF.
+
+* get relevant texts of openkeys os appl. stat.
+  IF include_appl_stat = &apos;X&apos;.
+    PERFORM get_openkeys.
+  ENDIF.
+
+ENDFORM.                               &quot; FILL_STATISTICS</source>
 </PROG>

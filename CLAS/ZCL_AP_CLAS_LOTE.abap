@@ -1,4 +1,4 @@
-CLASS zcl_ap_clas_lote DEFINITION
+﻿CLASS zcl_ap_clas_lote DEFINITION
   PUBLIC
   INHERITING FROM zcl_ap_clasificacion
   CREATE PUBLIC.
@@ -834,6 +834,7 @@ class ZCL_AP_CLAS_LOTE implementation.
      WHERE class = classnum
       ORDER BY klart.
     ENDSELECT.
+    me->classnum = classnum.
 
     l_objek = matnr.
 

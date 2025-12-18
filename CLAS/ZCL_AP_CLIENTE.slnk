@@ -11,6 +11,198 @@
  <typeUsage CLSNAME="ZCL_AP_CLIENTE" TYPEGROUP="ABAP" VERSION="1" TPUTYPE="0" IMPLICIT="X"/>
  <forwardDeclaration>ABAP</forwardDeclaration>
  <attribute CLSNAME="ZCL_AP_CLIENTE" CMPNAME="I_KNA1" VERSION="1" LANGU="S" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="CIF_KNA1_TAB" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="KUNNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="VKORG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKORG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="VTWEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VTWEG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="SPART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPART"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="PARVW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PARVW"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="PARZA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KNVP-PARZA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="LIFNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="BORRAR_INTERLOCUTOR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD borrar_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          r_parza TYPE RANGE OF knvp-parza,
+          yknvp   TYPE TABLE OF fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr IS INITIAL.
+      r_lifnr = VALUE #( ( sign = &apos;I&apos; option = &apos;EQ&apos; low = lifnr ) ).
+    ENDIF.
+    IF NOT parzA IS INITIAL.
+      r_parzA = VALUE #( ( sign = &apos;I&apos; option = &apos;EQ&apos; low = parzA ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        &quot;#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND parza IN r_parza
+      AND lifnr IN r_lifnr
+     order BY PRIMARY KEY.
+    IF sy-subrc &lt;&gt; 0.
+      message = |No existe el interlocutor { parvw } { lifnr } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+
+    SELECT SINGLE * FROM kna1  &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv   &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION &apos;SD_CUSTOMER_MAINTAIN_ALL&apos;
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = &apos;X&apos;
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="16 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="KUNNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="VKORG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKORG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="VTWEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VTWEG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="SPART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPART"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="PARVW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PARVW"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="LIFNR_NEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="CREAR_INTERLOCUTOR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD crear_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          yknvp   TYPE TABLE OF fknvp,
+          l_knvp  TYPE fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr_new IS INITIAL.
+      r_lifnr = VALUE #( ( sign = &apos;I&apos; option = &apos;EQ&apos; low = lifnr_new ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        &quot;#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND lifnr IN r_lifnr
+     ORDER BY PRIMARY KEY.
+    IF sy-subrc = 0.
+      message = |Ya existe el interlocutor { parvw } { lifnr_new } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+    l_knvp-kunnr = kunnr.
+    l_knvp-vkorg = vkorg.
+    l_knvp-vtweg = vtweg.
+    l_knvp-spart = spart.
+    l_knvp-parvw = parvw.
+    IF NOT lifnr_new IS INITIAL.
+      l_knvp-lifnr = lifnr_new.
+    ENDIF.
+    l_knvp-kz = &apos;I&apos;.
+    APPEND l_knvp TO xknvp.
+
+*
+    SELECT SINGLE * FROM kna1        &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv         &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION &apos;SD_CUSTOMER_MAINTAIN_ALL&apos;
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = &apos;X&apos;
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
  <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="GET_DIRECCION" VERSION="1" LANGU="S" DESCRIPT="Devuelve dirección" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="GET_DIRECCION" SCONAME="KUNNR" VERSION="1" LANGU="S" DESCRIPT="Número de cuenta del proveedor o acreedor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="GET_DIRECCION" SCONAME="ADRNR" VERSION="1" LANGU="S" DESCRIPT="Dirección" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ADRNR" PAROPTIONL="X"/>
@@ -76,11 +268,11 @@
     CLEAR email.
     i_emails = get_emails( kunnr = kunnr remark = remark ).
 
-    LOOP AT i_emails INTO l_email.
+    LOOP AT i_emails ASSIGNING FIELD-SYMBOL(&lt;email&gt;).
       IF email IS INITIAL.
-        email = l_email-smtp_addr.
+        email = &lt;email&gt;-smtp_addr.
       ELSE.
-        CONCATENATE email &apos;,&apos; l_email-smtp_addr INTO email.
+        CONCATENATE email &apos;,&apos; &lt;email&gt;-smtp_addr INTO email.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.</source>
@@ -159,15 +351,116 @@
                                   url    = url ).
   ENDMETHOD.</source>
  </method>
+ <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" VERSION="1" LANGU="S" EXPOSURE="2" STATE="1" EDITORDER="15 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="KUNNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="VKORG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VKORG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="VTWEG" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="VTWEG"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="SPART" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPART"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="PARVW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="PARVW"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="PARZA" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KNVP-PARZA" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="LIFNR_OLD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="LIFNR_NEW" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="LIFNR" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="COMMIT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="MODIFICAR_INTERLOCUTOR" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD modificar_interlocutor.
+    DATA: r_lifnr TYPE RANGE OF lifnr,
+          r_parza TYPE RANGE OF knvp-parza,
+          yknvp   TYPE TABLE OF fknvp,
+          xknvp   TYPE TABLE OF fknvp.
+
+    IF NOT lifnr_old IS INITIAL.
+      r_lifnr = VALUE #( ( sign = &apos;I&apos; option = &apos;EQ&apos; low = lifnr_old ) ).
+    ENDIF.
+    IF NOT parzA IS INITIAL.
+      r_parzA = VALUE #( ( sign = &apos;I&apos; option = &apos;EQ&apos; low = parzA ) ).
+    ENDIF.
+
+    SELECT * FROM knvp                        &quot;#EC CI_ALL_FIELDS_NEEDED
+     INTO CORRESPONDING FIELDS OF TABLE yknvp
+    WHERE kunnr  = kunnr
+      AND vkorg  = vkorg
+      AND vtweg  = vtweg
+      AND spart  = spart
+      AND parvw  = parvw
+      AND parza IN r_parza
+      AND lifnr IN r_lifnr
+     ORDER BY PRIMARY KEY.
+    IF sy-subrc &lt;&gt; 0.
+      message = |No existe el interlocutor { parvw } { lifnr_old } para el cliente { kunnr }|.
+      RETURN.
+    ENDIF.
+
+    READ TABLE yknvp INTO DATA(l_knvp) INDEX 1.
+    l_knvp-kz = &apos;D&apos;.
+    APPEND l_knvp TO xknvp.
+    IF NOT lifnr_new IS INITIAL.
+      l_knvp-lifnr = lifnr_new.
+    ENDIF.
+    l_knvp-kz = &apos;I&apos;.
+    APPEND l_knvp TO xknvp.
+
+*
+    SELECT SINGLE * FROM kna1       &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_kna1)
+     WHERE kunnr = @kunnr.
+*
+    SELECT SINGLE * FROM knvv        &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO @DATA(l_knvv)
+     WHERE kunnr = @kunnr
+       AND vkorg = @vkorg
+       AND vtweg = @vtweg
+       AND spart = @spart.
+
+    CALL FUNCTION &apos;SD_CUSTOMER_MAINTAIN_ALL&apos;
+      EXPORTING
+        i_kna1                  = l_kna1
+        i_knvv                  = l_knvv
+        pi_postflag             = &apos;X&apos;
+      TABLES
+        t_xknvp                 = xknvp
+        t_yknvp                 = yknvp
+      EXCEPTIONS
+        client_error            = 1
+        kna1_incomplete         = 2
+        knb1_incomplete         = 3
+        knb5_incomplete         = 4
+        knvv_incomplete         = 5
+        kunnr_not_unique        = 6
+        sales_area_not_unique   = 7
+        sales_area_not_valid    = 8
+        insert_update_conflict  = 9
+        number_assignment_error = 10
+        number_not_in_range     = 11
+        number_range_not_extern = 12
+        number_range_not_intern = 13
+        account_group_not_valid = 14
+        parnr_invalid           = 15
+        bank_address_invalid    = 16
+        tax_data_not_valid      = 17
+        no_authority            = 18
+        company_code_not_unique = 19
+        dunning_data_not_valid  = 20
+        knb1_reference_invalid  = 21
+        cam_error               = 22
+        OTHERS                  = 23.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ELSE.
+      IF commit = &apos;X&apos;.
+        COMMIT WORK AND WAIT.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
  <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="SET_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Graba texto string en cliente" EXPOSURE="2" STATE="1" EDITORDER="13 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="SET_TEXTO_STRING" SCONAME="KUNNR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KUNNR"/>
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="SET_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDID"/>
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="SET_TEXTO_STRING" SCONAME="SPRAS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SPRAS" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_CLIENTE" CMPNAME="SET_TEXTO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
   <source>METHOD set_texto_string.
-
     zcl_ap_textos=&gt;save_texto_string( id = id object = &apos;KNA1&apos; name = kunnr spras = spras string = string ).
-
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_CLIENTE" CMPNAME="URLS_GOS_ST" VERSION="1" LANGU="S" DESCRIPT="Devuelve lista de URLs de GOS" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">

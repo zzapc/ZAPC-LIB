@@ -10,7 +10,7 @@ TABLES sscrfields .
 DATA: buttons    TYPE zcl_ap_alv=>t_buttons,
       buttons_v1 TYPE zcl_ap_alv=>t_buttons,
       buttons_v2 TYPE zcl_ap_alv=>t_buttons.
-DATA version TYPE string VALUE '20231004a'.
+DATA version TYPE string VALUE '20251215'.
 
 START-OF-SELECTION.
 

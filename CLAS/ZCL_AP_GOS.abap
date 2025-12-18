@@ -68,7 +68,6 @@ CLASS zcl_ap_gos DEFINITION
                 titulo       TYPE any
       RETURNING VALUE(error) TYPE ekko-loekz.
 
-
     CLASS-METHODS insertar_ata_gos_st
       IMPORTING tipo         TYPE srgbtbrel-typeid_a
                 clave        TYPE any
@@ -342,8 +341,7 @@ class ZCL_AP_GOS implementation.
       ls_atta_key-atta_cat = 'MSG'.
       TRY.
           DATA(ls_att_cont) = lo_ins->get_al_item( ls_atta_key ).
-        CATCH cx_root INTO DATA(o_root). "#EC *
-"#EC NO_HANDLER
+        CATCH cx_root INTO DATA(o_root) ##NO_HANDLER. "#EC *
       ENDTRY.
       IF ls_att_cont-content <> url_old.
         CONTINUE.
@@ -430,7 +428,7 @@ class ZCL_AP_GOS implementation.
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -887,7 +885,7 @@ class ZCL_AP_GOS implementation.
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+      "#EC EMPTY_IF_BRANCH
     ENDIF.
     ls_obj_data-objsns = 'O'.
     ls_obj_data-objla  = sy-langu.
@@ -941,7 +939,7 @@ class ZCL_AP_GOS implementation.
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -1400,6 +1398,7 @@ class ZCL_AP_GOS implementation.
 
     FIELD-SYMBOLS <fichero_m> TYPE zal_files_m.
 
+    CLEAR i_ficheros.
     IF copiar_a_temp = 'X'.
       l_dir_temp = zcl_ap_documentos=>get_directorio_temporal( ).
     ENDIF.
@@ -1425,7 +1424,7 @@ class ZCL_AP_GOS implementation.
                      convert           = ' '
           EXCEPTIONS error_application = 1.
         IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+          "#EC EMPTY_IF_BRANCH
         ENDIF.
       ENDIF.
 
@@ -1442,6 +1441,7 @@ class ZCL_AP_GOS implementation.
 
     FIELD-SYMBOLS <info> TYPE toav0.
 
+    CLEAR i_ficheros.
     IF ar_object <> '*'.
       l_ar_object = ar_object.
     ENDIF.
@@ -1465,7 +1465,7 @@ class ZCL_AP_GOS implementation.
       EXCEPTIONS error_connectiontable = 1.
     IF sy-subrc <> 0.
 *    MESSAGE 'Error recuperando adjuntos'(era) TYPE 'E'.
- "#EC EMPTY_IF_BRANCH
+      "#EC EMPTY_IF_BRANCH
     ENDIF.
 
     LOOP AT connect_info ASSIGNING <info>.
@@ -1926,7 +1926,7 @@ class ZCL_AP_GOS implementation.
                          x_error                    = 3
                          OTHERS                     = 4.
             IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+              "#EC EMPTY_IF_BRANCH
             ENDIF.
 
             o_filelength = l_document_data-doc_size.
@@ -2342,7 +2342,7 @@ class ZCL_AP_GOS implementation.
         EXCEPTIONS err_conv_failed = 1
                    OTHERS          = 2.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
 
       l_size = l_len.
@@ -2353,7 +2353,7 @@ class ZCL_AP_GOS implementation.
         EXCEPTIONS failed       = 1
                    OTHERS       = 2.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
 
       CALL FUNCTION 'SO_SOLIXTAB_TO_SOLITAB'
@@ -2408,7 +2408,7 @@ class ZCL_AP_GOS implementation.
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+      "#EC EMPTY_IF_BRANCH
     ENDIF.
 
     ls_obj_data-objsns = 'O'.
@@ -2551,7 +2551,7 @@ class ZCL_AP_GOS implementation.
       IMPORTING  folder_id = ls_fol_id
       EXCEPTIONS OTHERS    = 1.
     IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+      "#EC EMPTY_IF_BRANCH
     ENDIF.
 
     ls_obj_data-objsns = 'O'.
@@ -2765,7 +2765,7 @@ class ZCL_AP_GOS implementation.
                    x_error                    = 14 ##NUMBER_OK
                    OTHERS                     = 15 ##NUMBER_OK.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
       l_url-titulo   = l_sood2-objdes.
       l_url-file_ext = l_sood2-file_ext.
@@ -2779,7 +2779,7 @@ class ZCL_AP_GOS implementation.
                    invalid_date_time = 3
                    OTHERS            = 4.
       IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+        "#EC EMPTY_IF_BRANCH
       ENDIF.
 
       LOOP AT i_objcont INTO l_objcont.
@@ -2866,7 +2866,7 @@ class ZCL_AP_GOS implementation.
                        error_kernel             = 3
                        OTHERS                   = 4.
           IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+            "#EC EMPTY_IF_BRANCH
           ENDIF.
         ENDIF.
       ENDIF.
@@ -3050,7 +3050,7 @@ class ZCL_AP_GOS implementation.
               EXCEPTIONS no_valid_program = 1
                          OTHERS           = 2.
             IF sy-subrc <> 0.
- "#EC EMPTY_IF_BRANCH
+              "#EC EMPTY_IF_BRANCH
             ENDIF.
           ENDIF.
           IF NOT l_fichero IS INITIAL.
@@ -3069,7 +3069,7 @@ class ZCL_AP_GOS implementation.
                 CASE l_extension.
                   WHEN 'PDF'.
                     l_opc_imprimir = '/t'.
-                  WHEN 'DOC' OR 'DOCX' or 'XLS' OR 'XLSX'.
+                  WHEN 'DOC' OR 'DOCX' OR 'XLS' OR 'XLSX'.
                     l_opc_imprimir = '/i'.
 
                 ENDCASE.

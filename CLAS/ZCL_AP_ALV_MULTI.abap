@@ -1,4 +1,4 @@
-class ZCL_AP_ALV_MULTI definition
+﻿class ZCL_AP_ALV_MULTI definition
   public
   final
   create public .

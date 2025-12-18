@@ -1,4 +1,4 @@
-*/---------------------------------------------------------------------\
+﻿*/---------------------------------------------------------------------\
 *|   Development's Control                                             |
 *|                                                                     |
 *|   ZDEV_CONTROL is free software; you can redistribute it and/or     |
@@ -282,36 +282,42 @@ CLASS zcl_ap_popup DEFINITION
                 endda            TYPE dats DEFAULT sy-datum
       EXPORTING VALUE(begda_sel) TYPE dats
                 VALUE(endda_sel) TYPE dats
-                cancelado        TYPE abap_bool.
+                VALUE(cancelado) TYPE abap_bool.
 
     CLASS-METHODS popup_alv_ok_cancel
-      IMPORTING titulo       TYPE any OPTIONAL
-                texto        TYPE any OPTIONAL
-                texto2       TYPE any OPTIONAL
-                tabla        TYPE table
-                campos_noout TYPE any OPTIONAL
-                campos_texto TYPE any OPTIONAL
-                campos_sum   TYPE any OPTIONAL
-                campos_orden TYPE any OPTIONAL
-                ancho        TYPE i DEFAULT 120
-                botones      TYPE any DEFAULT 'OK_CANCEL'
-      RETURNING VALUE(ok)    TYPE abap_bool.
+      IMPORTING titulo         TYPE any               OPTIONAL
+                texto          TYPE any               OPTIONAL
+                texto2         TYPE any               OPTIONAL
+                tabla          TYPE table
+                campos_noout   TYPE any               OPTIONAL
+                campos_texto   TYPE any               OPTIONAL
+                campos_sum     TYPE any               OPTIONAL
+                campos_orden   TYPE any               OPTIONAL
+                campos_hotspot TYPE any               OPTIONAL
+                ancho          TYPE i                 DEFAULT 120
+                botones        TYPE any               DEFAULT 'OK_CANCEL'
+                opciones       TYPE any               DEFAULT ''
+                o_alv_helper   TYPE REF TO zcl_ap_alv OPTIONAL
+      RETURNING VALUE(ok)      TYPE abap_bool.
 
     CLASS-METHODS popup_alv_seleccion
-      IMPORTING titulo       TYPE any OPTIONAL
-                texto        TYPE any OPTIONAL
-                texto2       TYPE any OPTIONAL
-                campos_noout TYPE any OPTIONAL
-                campos_texto TYPE any OPTIONAL
-                campos_sum   TYPE any OPTIONAL
-                campos_orden TYPE any OPTIONAL
-                ancho        TYPE i DEFAULT 120
-                botones      TYPE any DEFAULT 'OK_CANCEL'
-                solo_una     TYPE abap_bool
-                obligatoria  TYPE abap_bool
-      EXPORTING registro     TYPE any
-                cancelado    TYPE abap_bool
-      CHANGING  tabla        TYPE table.
+      IMPORTING titulo         TYPE any               OPTIONAL
+                texto          TYPE any               OPTIONAL
+                texto2         TYPE any               OPTIONAL
+                campos_noout   TYPE any               OPTIONAL
+                campos_texto   TYPE any               OPTIONAL
+                campos_sum     TYPE any               OPTIONAL
+                campos_orden   TYPE any               OPTIONAL
+                campos_hotspot TYPE any               OPTIONAL
+                ancho          TYPE i                 DEFAULT 120
+                botones        TYPE any               DEFAULT 'OK_CANCEL'
+                solo_una       TYPE abap_bool         DEFAULT ''
+                obligatoria    TYPE abap_bool         DEFAULT ''
+                opciones       TYPE any               DEFAULT ''
+                o_alv_helper   TYPE REF TO zcl_ap_alv OPTIONAL
+      EXPORTING registro       TYPE any
+                cancelado      TYPE abap_bool
+      CHANGING  tabla          TYPE table.
 
   PROTECTED SECTION.
 
@@ -455,10 +461,8 @@ class ZCL_AP_POPUP implementation.
                  message = message2-message ).
   ENDMETHOD.
   METHOD add_message_bapiret2_t.
-    DATA l_bapiret2 TYPE bapiret2.
-
-    LOOP AT tabla INTO l_bapiret2.
-      add_message_bapiret2( l_bapiret2 ).
+    LOOP AT tabla ASSIGNING FIELD-SYMBOL(<bapiret2>).
+      add_message_bapiret2( <bapiret2> ).
     ENDLOOP.
   ENDMETHOD.
   METHOD add_message_bapireturn1.
@@ -532,7 +536,7 @@ class ZCL_AP_POPUP implementation.
       l_titulo = titulo.
     ENDIF.
 
-    CALL FUNCTION 'POPUP_TO_CONFIRM_STEP' "#EC FB_OLDED
+    CALL FUNCTION 'POPUP_TO_CONFIRM_STEP' ##FM_OLDED
       EXPORTING
         defaultoption  = opcion
         textline1      = texto
@@ -560,7 +564,7 @@ class ZCL_AP_POPUP implementation.
       l_titulo = titulo.
     ENDIF.
 
-    CALL FUNCTION 'POPUP_TO_CONFIRM_WITH_MESSAGE' "#EC FB_OLDED
+    CALL FUNCTION 'POPUP_TO_CONFIRM_WITH_MESSAGE' ##FM_OLDED
       EXPORTING
         defaultoption  = opcion
         diagnosetext1  = texto
@@ -706,10 +710,10 @@ class ZCL_AP_POPUP implementation.
     IF NOT valores IS INITIAL.
       i_values = valores.
     ELSEIF NOT dominio IS INITIAL.
-      SELECT domvalue_l ddtext FROM  dd07t
+      SELECT domvalue_l ddtext FROM dd07t
         INTO (l_value-key, l_value-text)
-       WHERE domname    = dominio
-         AND ddlanguage = sy-langu.
+        WHERE domname    = dominio
+          AND ddlanguage = sy-langu.
         APPEND l_value TO i_values.
       ENDSELECT.
     ELSEIF NOT tabla IS INITIAL.
@@ -728,9 +732,10 @@ class ZCL_AP_POPUP implementation.
           CONCATENATE l_where 'AND' where INTO l_where SEPARATED BY space.
         ENDIF.
       ENDIF.
-      SELECT * FROM (tabla)
+      SELECT *
+        FROM (tabla)
         INTO CORRESPONDING FIELDS OF TABLE <tabla>
-       WHERE (l_where).
+        WHERE (l_where).
       LOOP AT <tabla> ASSIGNING <linea>.
         CLEAR l_value.
         ASSIGN COMPONENT key OF STRUCTURE <linea> TO <fs>.
@@ -811,10 +816,6 @@ class ZCL_AP_POPUP implementation.
     ENDIF.
   ENDMETHOD.
   METHOD popup_2_opciones.
-    " TODO: parameter START_COL is never used (ABAP cleaner)
-    " TODO: parameter START_ROW is never used (ABAP cleaner)
-    " TODO: parameter CANCEL_DISPLAY is never used (ABAP cleaner)
-
     DATA l_titulo TYPE text80.
 
     IF titulo IS INITIAL.
@@ -861,8 +862,11 @@ class ZCL_AP_POPUP implementation.
         campos_texto = campos_texto
         campos_sum   = campos_sum
         campos_orden = campos_orden
+        campos_hotspot = campos_hotspot
         botones      = botones
         ancho        = ancho
+        opciones     = opciones
+        o_alv_helper = o_alv_helper
       IMPORTING
         ucomm        = l_ucomm
       TABLES
@@ -875,6 +879,7 @@ class ZCL_AP_POPUP implementation.
     DATA: l_ucomm TYPE sy-ucomm,
           l_fila  TYPE i.
 
+    CLEAR: registro, cancelado.
     DO.
       CALL FUNCTION 'Z_POPUP_ALV_AP'
         EXPORTING
@@ -885,9 +890,12 @@ class ZCL_AP_POPUP implementation.
           campos_texto = campos_texto
           campos_sum   = campos_sum
           campos_orden = campos_orden
+          campos_hotspot = campos_hotspot
           botones      = botones
           ancho        = ancho
           check        = 'X'
+          opciones     = opciones
+          o_alv_helper = o_alv_helper
         IMPORTING
           ucomm        = l_ucomm
           fila         = l_fila
@@ -919,7 +927,9 @@ class ZCL_AP_POPUP implementation.
           IF sy-subrc = 0.
             IF <check> = 'X'.
               cont = cont + 1.
-              registro = <registro>.
+              IF registro IS SUPPLIED.
+                registro = <registro>.
+              ENDIF.
             ENDIF.
           ENDIF.
         ENDLOOP.
@@ -953,14 +963,23 @@ class ZCL_AP_POPUP implementation.
       INSERT l_return INTO i_ret INDEX 1.
     ENDIF.
 
-    CALL FUNCTION 'ISH_BAPIRET2_DISPLAY'
-*             EXPORTING
-*               SEND_IF_ONE         = ' '
-*               OBJECT              = ' '
-*               SHOW_LINNO          = 'X'
-*               AMODAL_WINDOW       = ' '
-      TABLES
-        ss_bapiret2 = i_ret.
+    SELECT funcname FROM v_fdirt
+      INTO @DATA(l_funcname)
+      UP TO 1 ROWS
+      WHERE funcname = 'ISH_BAPIRET2_DISPLAY'
+      ORDER BY PRIMARY KEY.
+    ENDSELECT.
+    IF sy-subrc = 0.
+      CALL FUNCTION l_funcname
+        TABLES
+          ss_bapiret2 = i_ret.
+    ELSE.
+      l_funcname = 'FINB_BAPIRET2_DISPLAY'.
+      CALL FUNCTION l_funcname
+         EXPORTING
+            it_message = i_ret.
+
+    ENDIF.
   ENDMETHOD.
   METHOD popup_campos_estructura.
     TYPES: BEGIN OF t_alv,
@@ -1164,8 +1183,6 @@ class ZCL_AP_POPUP implementation.
         t_errores  = i_errores.
   ENDMETHOD.
   METHOD show_log.
-    " TODO: parameter QUITAR_MSG_TECNICOS is never used (ABAP cleaner)
-
     IF NOT titulo IS INITIAL.
       DATA(l_titulo) = titulo.
     ELSE.

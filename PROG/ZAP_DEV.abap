@@ -1,9 +1,9 @@
-***********************************************************************
+ï»¿***********************************************************************
 * TIPO : LISTADO
 * TITULO : Lista ultimos desarrollos
 * DESCRIPCION : Lista ultimos desarrollos
 *
-* AUTOR: Andrés Picazo                                FECHA: 18/04/2017
+* AUTOR: AndrÃ©s Picazo                                FECHA: 18/04/2017
 *
 ***********************************************************************
 REPORT zap_dev.
@@ -230,7 +230,7 @@ CLASS lcl_event_grid IMPLEMENTATION.
   METHOD toolbar.
     super->toolbar( e_object = e_object e_interactive = e_interactive ).
     IF tabla = ''.
-      add_boton( function = 'EDT_TEXT' icon = icon_text_act text = 'Editar texto' quickinfo = 'Editar text' e_object = e_object ).
+      add_boton( function = 'EDT_TEXT' icon = icon_text_act text = 'Editar texto'(ET1) e_object = e_object ).
     ENDIF.
   ENDMETHOD.
 
@@ -396,7 +396,7 @@ CLASS zcl_report IMPLEMENTATION.
     lr_busqueda-low = to_upper( lr_busqueda-low ).
     APPEND lr_busqueda TO r_busqueda.
 
-    sgpi_texto( 'Seleccionando datos' ).
+    sgpi_texto( 'Seleccionando datos'(SD1) ).
     CLEAR: i_listado, i_tcode, i_pc.
     SELECT * FROM zap_dev
       INTO CORRESPONDING FIELDS OF TABLE i_listado ##TOO_MANY_ITAB_FIELDS
@@ -420,7 +420,7 @@ CLASS zcl_report IMPLEMENTATION.
     o_prog->o_sgpi->get_filas_tabla( i_listado[] ).
     LOOP AT i_listado ASSIGNING <listado>.
       <listado>-tabix = sy-tabix.
-      sgpi_texto( texto1 = 'Procesando datos' cant_porc = 100 ).
+      sgpi_texto( texto1 = 'Procesando datos'(PD1) cant_porc = 100 ).
 
       validaciones( CHANGING listado = <listado> ).
 
@@ -602,7 +602,7 @@ CLASS zcl_report IMPLEMENTATION.
           EXIT.
         ENDLOOP.
         zcl_ap_popup=>popup_usuario( EXPORTING campo1 = 'E071-TRKORR'
-                                               titulo = 'Indique OT'
+                                               titulo = 'Indique OT'(IO1)
                                      IMPORTING return = l_ok
                                      CHANGING  valor1 = e071-trkorr ).
         IF l_ok <> 'A' AND NOT e071-trkorr IS INITIAL.
@@ -633,10 +633,10 @@ CLASS zcl_report IMPLEMENTATION.
 
     o_alv->registrar_mod( ).
     o_alv->set_campos_tabint( i_listado[] ).
-    o_alv->set_field_text( campo = 'TEXTO' valor = 'Desarrollo' ).
-    o_alv->set_field_text( campo = 'VALOR1' valor = 'Var 1' ).
-    o_alv->set_field_text( campo = 'VALOR2' valor = 'Var 2' ).
-    o_alv->set_field_text( campo = 'VALOR3' valor = 'Var 3' ).
+    o_alv->set_field_text( campo = 'TEXTO' valor = 'Desarrollo'(DES) ).
+    o_alv->set_field_text( campo = 'VALOR1' valor = 'Var 1'(V11) ).
+    o_alv->set_field_text( campo = 'VALOR2' valor = 'Var 2'(V21) ).
+    o_alv->set_field_text( campo = 'VALOR3' valor = 'Var 3'(V31) ).
     o_alv->quitar_botones( insercion = 'X' operaciones = 'X' resto = 'X' ).
 
     IF inicio IS INITIAL.
@@ -686,13 +686,13 @@ CLASS zcl_report IMPLEMENTATION.
           tabla           = 'TCODE' ).
 
       o_prog->o_alv_t   = NEW #(
-                    estructura     = ''
-                    o_event        = o_prog->o_event_t
-                    obj_contenedor = 'TCODE' ).
+                  estructura     = ''
+                  o_event        = o_prog->o_event_t
+                  obj_contenedor = 'TCODE' ).
 
       o_alv_t->registrar_mod( ).
       o_alv_t->set_campos_tabint( i_tcode[] ).
-      o_alv_t->set_field_text( campo = 'TEXTO' valor = 'Transacción' ).
+      o_alv_t->set_field_text( campo = 'TEXTO' valor = 'TransacciÃ³n'(TRA) ).
       o_alv_t->quitar_botones( insercion = 'X' operaciones = 'X' resto = 'X' ).
       o_alv_t->set_field_quitar( 'CHECK,TABIX,TRKORR,LIGHTS,TIPO' ).
       o_alv_t->set_field_input( 'VALOR1,VALOR2,VALOR3,TEXTO' ).
@@ -706,12 +706,12 @@ CLASS zcl_report IMPLEMENTATION.
           tabla           = 'PC' ).
 
       o_prog->o_alv_p   = NEW #(
-                    estructura     = ''
-                    o_event        = o_prog->o_event_p
-                    obj_contenedor = 'PC' ).
+                  estructura     = ''
+                  o_event        = o_prog->o_event_p
+                  obj_contenedor = 'PC' ).
       o_alv_p->registrar_mod( ).
       o_alv_p->set_campos_tabint( i_pc[] ).
-      o_alv_p->set_field_text( campo = 'TEXTO' valor = 'Ruta' ).
+      o_alv_p->set_field_text( campo = 'TEXTO' valor = 'Ruta'(RUT) ).
       o_alv_p->quitar_botones( insercion = 'X' operaciones = 'X' resto = 'X' ).
       o_alv_p->set_field_quitar( 'CHECK,TABIX,TRKORR,LIGHTS' ).
       o_alv_p->set_field_input( 'VALOR1,VALOR2,VALOR3,TEXTO' ).
@@ -942,7 +942,7 @@ CLASS zcl_report IMPLEMENTATION.
             INTO zap_dev_est-objeto
            WHERE name = zap_dev_est-objeto.
           IF sy-subrc <> 0.
-            MESSAGE i398(00) WITH 'No existe report' zap_dev_est-objeto '' ''.
+            MESSAGE i398(00) WITH 'No existe report'(NER) zap_dev_est-objeto '' ''.
           ELSE.
             SET PARAMETER ID 'RID' FIELD zap_dev_est-objeto.
             IF ucomm = 'EJEC' OR ucomm = 'LINK'.
@@ -1030,7 +1030,7 @@ CLASS zcl_report IMPLEMENTATION.
                 max_sesiones = 4.
 
           ELSE.
-            MESSAGE i398(00) WITH 'No existe transacción' zap_dev_est-objeto '' ''.
+            MESSAGE i398(00) WITH 'No existe transacciÃ³n'(NET) zap_dev_est-objeto '' ''.
           ENDIF.
         WHEN 'PC'.
           CALL FUNCTION 'WS_EXECUTE' ##FM_OLDED
@@ -1044,7 +1044,7 @@ CLASS zcl_report IMPLEMENTATION.
               gui_refuse_execute = 5
               OTHERS             = 6.
           IF sy-subrc <> 0.
-            MESSAGE 'Error lanzando programa' TYPE 'E'.
+            MESSAGE 'Error lanzando programa'(ELP) TYPE 'E'.
           ENDIF.
         WHEN 'UR'.
           aux1 = l_listado-string.
@@ -1070,7 +1070,7 @@ CLASS zcl_report IMPLEMENTATION.
                            WORD lv_word
                            PROGRAM name_report.
               IF sy-subrc <> 0.
-                MESSAGE i398(00) WITH 'Error de sintaxis, mensaje' syntax_check_message 'en linea' line_no.
+                MESSAGE i398(00) WITH 'Error de sintaxis, mensaje'(EDS) syntax_check_message 'en linea'(EL1) line_no.
               ELSE.
                 CLEAR ls_trdir.
                 ls_trdir-name    = name_report.
@@ -1389,40 +1389,38 @@ INITIALIZATION.
         o_prog          = o_prog ).
 
     o_prog->o_alv   = NEW #(
-                  estructura = ''
-                  o_event    = o_prog->o_event ).
+                estructura = ''
+                o_event    = o_prog->o_event ).
 
     IF o_prog->o_texto IS INITIAL.
       o_prog->o_texto = NEW #(
           controlname = 'TEXTO' ).
     ENDIF.
 
-    o_prog->o_alv->add_button( button = 'F01' text = 'Ejecutar' icon = icon_execute_object qinfo = 'Ejecutar' ucomm = 'EJEC' ).
-    o_prog->o_alv->add_button( button = 'F02' text = 'Editar' icon = icon_change qinfo = 'Editar' ucomm = 'EDITAR' ).
-    o_prog->o_alv->add_button( button = 'F03' text = 'Visualizar' icon = icon_display qinfo = 'Visualizar' ucomm = 'VIS' ).
-    o_prog->o_alv->add_button( button = 'F04' text = 'Nuevo' icon = icon_create qinfo = 'Nuevo' ucomm = 'NUEVO' ).
-    o_prog->o_alv->add_button( button = 'F05' text = 'Refrescar' icon = icon_refresh qinfo = 'Refrescar' ucomm = 'REFRESH' ).
-    o_prog->o_alv->add_button( button = 'F06' text = 'Listado' icon = icon_icon_list qinfo = 'Listado' ucomm = 'LIST' ).
-    o_prog->o_alv->add_button( button = 'F07' text = 'Desarrollos' icon = icon_calculation qinfo = 'Gestión desarrollos' ucomm = 'DEV' ).
-    o_prog->o_alv->add_button( button = 'F08' text = 'OTs' icon = icon_transport qinfo = 'Ordenes de transporte' ucomm = 'OT' ).
+    o_prog->o_alv->add_button( button = 'F01' text = 'Ejecutar'(EJE) icon = icon_execute_object qinfo = 'Ejecutar' ucomm = 'EJEC' ).
+    o_prog->o_alv->add_button( button = 'F02' text = 'Editar'(EDI) icon = icon_change qinfo = 'Editar' ucomm = 'EDITAR' ).
+    o_prog->o_alv->add_button( button = 'F03' text = 'Visualizar'(VIS) icon = icon_display qinfo = 'Visualizar' ucomm = 'VIS' ).
+    o_prog->o_alv->add_button( button = 'F04' text = 'Nuevo'(NUE) icon = icon_create qinfo = 'Nuevo' ucomm = 'NUEVO' ).
+    o_prog->o_alv->add_button( button = 'F05' text = 'Refrescar'(REF) icon = icon_refresh qinfo = 'Refrescar' ucomm = 'REFRESH' ).
+    o_prog->o_alv->add_button( button = 'F06' text = 'Listado'(LIS) icon = icon_icon_list qinfo = 'Listado' ucomm = 'LIST' ).
+    o_prog->o_alv->add_button( button = 'F07' text = 'Desarrollos'() icon = icon_calculation qinfo = 'GestiÃ³n desarrollos'(GD1) ucomm = 'DEV' ).
+    o_prog->o_alv->add_button( button = 'F08' text = 'OTs'(OTS) icon = icon_transport qinfo = 'Ordenes de transporte'(ODT) ucomm = 'OT' ).
     o_prog->o_alv->add_button( button = 'F09' text = 'SQL' icon = icon_question qinfo = 'SQL' ucomm = 'SQL' ).
-    o_prog->o_alv->add_button( button = 'M01' text = 'Descarga librería' qinfo = 'Descarga librería' ).
+    o_prog->o_alv->add_button( button = 'M01' text = 'Descarga librerÃ­a'(DL1) qinfo = 'Descarga librerÃ­a' ).
     o_prog->o_alv->add_button( button = 'M02' text = 'ZEDIT' qinfo = 'ZEDIT' ).
-    o_prog->o_alv->add_button( button = 'M03' text = 'No limitar' qinfo = 'Mostrar todos los programas' ).
-    o_prog->o_alv->add_button( button = 'M04' text = 'Añadir OT' qinfo = 'Añadir objetos de OT' ).
-    o_prog->o_alv->add_button( button = 'M05' text = 'SE16N editable' qinfo = 'Ejecutar SE16N editable' ).
-    o_prog->o_alv->add_button( button = 'M06' text = 'Backup datos' qinfo = 'Backup datos' ).
-    o_prog->o_alv->add_button( button = 'M07' text = 'Restaurar datos' qinfo = 'Restaurar datos' ).
-    o_prog->o_alv->add_button( button = 'M08' text = 'Recuperar objetos en OT' ).
+    o_prog->o_alv->add_button( button = 'M03' text = 'No limitar'(NL1) qinfo = 'Mostrar todos los programas'(MTL) ).
+    o_prog->o_alv->add_button( button = 'M04' text = 'AÃ±adir OT'(AO1) qinfo = 'AÃ±adir objetos de OT'(AOD) ).
+    o_prog->o_alv->add_button( button = 'M05' text = 'SE16N editable'(SE1) qinfo = 'Ejecutar SE16N editable'(ESE) ).
+    o_prog->o_alv->add_button( button = 'M06' text = 'Backup datos'(BD1) qinfo = 'Backup datos' ).
+    o_prog->o_alv->add_button( button = 'M07' text = 'Restaurar datos'(RD1) qinfo = 'Restaurar datos' ).
+    o_prog->o_alv->add_button( button = 'M08' text = 'Recuperar objetos en OT'(ROE) ).
   ENDIF.
 
   DATA l_nombre_pc TYPE text255.
   l_nombre_pc(4) = o_prog->nombre_pc.
   IF zcl_c=>usuario_ap = sy-uname AND o_prog->nombre_pc(2) <> 'NW' AND l_nombre_pc(4) <> 'TSEC'.
     IF NOT zcl_c=>nombre_pc CS o_prog->nombre_pc.
-      IF NOT zcl_c=>existe( constante = 'PC' valor = o_prog->nombre_pc ).
-        LEAVE TO TRANSACTION 'SMEN'.
-      ENDIF.
+      LEAVE TO TRANSACTION 'SMEN'.
     ENDIF.
   ENDIF.
 
@@ -1471,7 +1469,7 @@ ENDMODULE.
 MODULE validar_tipo INPUT.
 
 
-  IF sy-ucomm <> 'GRABAR'. " Si pulsan en grabar modificamos lo que había
+  IF sy-ucomm <> 'GRABAR'. " Si pulsan en grabar modificamos lo que habÃ­a
     IF zap_dev_est-objeto <> *zap_dev_est-objeto OR zap_dev_est-tipo <> *zap_dev_est-tipo.
       *zap_dev_est = zap_dev_est.
       CLEAR zap_dev_est.

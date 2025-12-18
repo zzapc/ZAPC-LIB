@@ -1,4 +1,4 @@
-CLASS zcl_ap_picture DEFINITION
+锘緾LASS zcl_ap_picture DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -247,7 +247,7 @@ class ZCL_AP_PICTURE implementation.
     l_mime = xstring_2_mime( l_xstring ).
 
     IF l_mime IS INITIAL.
-      message = 'Fallo en conversi髇 a MIME'.
+      message = 'Fallo en conversi贸n a MIME'.
       EXIT.
     ENDIF.
 
@@ -386,7 +386,7 @@ class ZCL_AP_PICTURE implementation.
         bds_no_content = 3
         OTHERS         = 4.
     IF sy-subrc <> 0.
-      MESSAGE 'Error en funci髇 SAPSCRIPT_GET_GRAPHIC_BDS' TYPE 'E'.
+      MESSAGE 'Error en funci贸n SAPSCRIPT_GET_GRAPHIC_BDS' TYPE 'E'.
     ENDIF.
 
     CALL FUNCTION 'SAPSCRIPT_CONVERT_BITMAP'
@@ -402,7 +402,7 @@ class ZCL_AP_PICTURE implementation.
       EXCEPTIONS
         OTHERS                   = 1.
     IF sy-subrc <> 0.
-      MESSAGE 'Error en funci髇 SAPSCRIPT_CONVERT_BITMAP' TYPE 'E'.
+      MESSAGE 'Error en funci贸n SAPSCRIPT_CONVERT_BITMAP' TYPE 'E'.
     ENDIF.
 
     CALL FUNCTION 'DP_CREATE_URL'
@@ -418,7 +418,7 @@ class ZCL_AP_PICTURE implementation.
       EXCEPTIONS
         OTHERS   = 4.
     IF sy-subrc <> 0.
-      MESSAGE 'Error en funci髇 DP_CREATE_URL' TYPE 'E'.
+      MESSAGE 'Error en funci贸n DP_CREATE_URL' TYPE 'E'.
     ENDIF.
   ENDMETHOD.
   METHOD handle_double_click.

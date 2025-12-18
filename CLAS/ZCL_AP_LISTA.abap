@@ -1,3 +1,4 @@
+ï»¿
 class ZCL_AP_LISTA definition
   public
   final
@@ -711,7 +712,7 @@ METHOD lista2rango.
         CLEAR l_rango.
         l_rango-option = 'EQ'.
         l_rango-sign   = 'I'.
-        l_rango-low    = '¿¿¿¿????'.
+        l_rango-low    = 'Â¿Â¿Â¿Â¿????'.
         APPEND l_rango TO rango.
       ENDIF.
     ENDIF.

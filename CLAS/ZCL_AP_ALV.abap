@@ -1,4 +1,4 @@
-CLASS zcl_ap_alv DEFINITION
+﻿CLASS zcl_ap_alv DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -713,7 +713,9 @@ class ZCL_AP_ALV implementation.
     FIELD-SYMBOLS <tabla> TYPE table.
 
 *
-    IF tabla = 'HELPER'. RETURN. ENDIF.
+    IF tabla = 'HELPER'.
+      RETURN.
+    ENDIF.
 
 * Si no se informa la tabla, debemos utilizar el falso constructor diferido
     IF tabla IS INITIAL.
@@ -2020,8 +2022,6 @@ class ZCL_AP_ALV implementation.
     ENDCASE.
   ENDMETHOD.
   METHOD inicializa_objetos.
-    " TODO: parameter LIST_DISPLAY is never used (ABAP cleaner)
-
     DATA l_cprog  TYPE sy-cprog.
     DATA l_status TYPE sypfkey.
 
@@ -2748,8 +2748,6 @@ class ZCL_AP_ALV implementation.
     o_layout->set_initial_layout( layout ).
   ENDMETHOD.
   METHOD set_orden.
-    " TODO: parameter UP is never used (ABAP cleaner)
-
     DATA: l_sequence  TYPE salv_de_sort_sequence,
           l_columname TYPE lvc_fname,
           i_columnas  TYPE TABLE OF lvc_fname,
@@ -3836,6 +3834,13 @@ class ZCL_AP_ALV implementation.
 
           WHEN 'KB13N'.
             SET PARAMETER ID 'BLN' FIELD <valor>.
+            SET PARAMETER ID 'CO_BLN' FIELD <valor>.
+
+            ASSIGN COMPONENT 'KOKRS' OF STRUCTURE list TO <valor2>.
+            IF sy-subrc = 0.
+              SET PARAMETER ID 'CAC' FIELD <valor2>.
+            ENDIF.
+
             CALL TRANSACTION 'KB13N ' AND SKIP FIRST SCREEN.
             RETURN.
 
@@ -3985,10 +3990,6 @@ class ZCL_AP_ALV implementation.
     ENDIF.
   ENDMETHOD.
   METHOD visualizar_objeto.
-    " TODO: parameter HOTSPOT is never used (ABAP cleaner)
-    " TODO: parameter LIST is never used (ABAP cleaner)
-    " TODO: parameter ROW is never used (ABAP cleaner)
-
     CASE column.
       WHEN 'X'.
 

@@ -359,6 +359,7 @@ public section.
       !BANDEJA type STRING default ''
       !SEARCH type STRING default ''
       !GET_ADJUNTOS type ABAP_BOOL default ''
+      !ID type STRING default ''
     exporting
       !RESPUESTA type STRING
       !MESSAGE type STRING
@@ -404,6 +405,7 @@ public section.
       !USER_ID type STRING default ''
       !SERVICIO type STRING optional
       !SERVICIO_FORZADO type STRING default ''
+      !ID type STRING default ''
     exporting
       !MESSAGE type STRING
       !SERVICIO_FINAL type STRING .
@@ -680,6 +682,10 @@ METHOD format_servicio.
       ELSE.
         CONCATENATE l_prefix '/' servicio INTO servicio_final.
       ENDIF.
+    ENDIF.
+
+    IF NOT id IS INITIAL.
+      CONCATENATE servicio_final '/' id INTO servicio_final.
     ENDIF.
   ENDIF.
 
@@ -977,7 +983,7 @@ METHOD get_mails.
 
   CLEAR: respuesta, message, i_emails, i_attachments.
 
-  format_servicio( EXPORTING servicio = 'messages' user_id = user_id servicio_forzado = servicio
+  format_servicio( EXPORTING servicio = 'messages' user_id = user_id servicio_forzado = servicio id = id
                    IMPORTING servicio_final = l_servicio
                              message = message ).
   IF NOT message IS INITIAL.
@@ -1002,7 +1008,7 @@ METHOD get_mails.
   IF NOT respuesta IS INITIAL AND message IS INITIAL.
     TRY.
         SPLIT respuesta AT '"value":[' INTO l_aux l_json.
-        l_long = STRLEN( l_json ) - 1.
+        l_long = strlen( l_json ) - 1.
         CONCATENATE '[' l_json(l_long) INTO l_json.
 
         json2tabla( EXPORTING json = l_json IMPORTING tabla = i_emails message = message ).
@@ -1028,8 +1034,6 @@ METHOD get_mails.
     ENDTRY.
   ENDIF.
 
-  CHECK message IS INITIAL.
-
   IF get_adjuntos = 'X'.
     DATA i_ata TYPE tt_attachments.
     FIELD-SYMBOLS <ata> TYPE t_attachment.
@@ -1044,6 +1048,10 @@ METHOD get_mails.
       ENDLOOP.
     ENDLOOP.
   ENDIF.
+
+  CHECK message IS INITIAL.
+
+
 
 ENDMETHOD.
 METHOD get_rango_worksheet.

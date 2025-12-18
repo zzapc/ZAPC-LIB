@@ -1,4 +1,4 @@
-************************************************************************
+﻿************************************************************************
 * APLICACION  : BC                                                    *
 * TIPO        : Listado
 * TITULO      : Listado seguimiento desarrollos
@@ -128,7 +128,7 @@ DATA: v_ans                TYPE c LENGTH 1,
       i_ficheros_ftp       TYPE TABLE OF string WITH HEADER LINE.
 
 DATA o_bi      TYPE REF TO zcl_ap_batch_input.
-DATA l_mensaje TYPE bapireturn1-message.                    "#EC *
+DATA l_mensaje TYPE bapireturn1-message. "#EC *
 
 DATA o_prog    TYPE REF TO zcl_ap_dev.
 
@@ -160,8 +160,8 @@ END-OF-DEFINITION.
 CLASS lcl_event_grid DEFINITION INHERITING FROM zcl_ap_alv_grid_eventos FINAL.
   PUBLIC SECTION.
     METHODS: double_click REDEFINITION,
-      toolbar      REDEFINITION,
-      user_command REDEFINITION.
+             toolbar      REDEFINITION,
+             user_command REDEFINITION.
 ENDCLASS. " lcl_event_grid_100 DEFINITION
 
 DATA: o_event        TYPE REF TO lcl_event_grid,
@@ -363,9 +363,9 @@ START-OF-SELECTION.
         REPLACE '\LIB' IN v_directorio WITH v_aux1.
       ENDIF.
 
-      v_fichero_excel = zcl_ap_ficheros=>concat_ruta( directorio = v_directorio fichero = 'desarrollos.xlsx' ).
+      v_fichero_excel = zcl_ap_ficheros=>concat_ruta( directorio = v_directorio fichero = 'desarrollos.xlsx' ) ##NO_TEXT.
     ELSE.
-      v_fichero_excel = zcl_ap_ficheros=>concat_ruta( directorio = v_directorio fichero = 'libreria.xlsx' ).
+      v_fichero_excel = zcl_ap_ficheros=>concat_ruta( directorio = v_directorio fichero = 'libreria.xlsx' ) ##NO_TEXT.
     ENDIF.
   ENDIF.
 
@@ -374,21 +374,25 @@ START-OF-SELECTION.
   ENDIF.
 
   IF p_solom = 'X' AND p_onedr IS INITIAL.
+    zcl_ap_sgpi=>text( 'Recuperando lista de ficheros' ).
     i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( directory = v_directorio recursivo = 'X' max_ficheros = 99999 ).
     DELETE i_ficheros WHERE filelength = 0.
-    DELETE i_ficheros WHERE NOT ( filename CS '.txt' OR filename CS '.slnk' ).
+    DELETE i_ficheros WHERE NOT ( filename CS '.txt' OR filename CS '.slnk' OR filename CS '.abap' ) ##NO_TEXT.
   ENDIF.
 
   sgpi = NEW #( ).
   o_bi = NEW #( ).
 
   IF NOT s_ot[] IS INITIAL.
-    SELECT DISTINCT object, obj_name FROM e070 JOIN e071 ON e070~trkorr = e071~trkorr
+    SELECT DISTINCT object, obj_name
+      FROM e070
+             JOIN
+               e071 ON e070~trkorr = e071~trkorr
       INTO TABLE @DATA(i_obj)
-     WHERE (    e070~trkorr  IN @s_ot
-             OR e070~strkorr IN @s_ot )
-       AND obj_name IN @s_report
-       AND object   IN ( 'CINC', 'CLAS', 'CLSD', 'CPRI', 'CPRO', 'CPUB', 'CUAD', 'DDLS', 'DOMA', 'DOMD', 'DTEL', 'DYNP', 'ENHO', 'FUGR', 'FUNC', 'METH', 'PROG', 'REPS', 'REPT', 'SFPF', 'SFPI', 'TABD', 'TABL', 'TTYD', 'TTYP' ).
+      WHERE (    e070~trkorr  IN @s_ot
+              OR e070~strkorr IN @s_ot )
+        AND obj_name IN @s_report
+        AND object   IN ( 'CINC', 'CLAS', 'CLSD', 'CPRI', 'CPRO', 'CPUB', 'CUAD', 'DDLS', 'DOMA', 'DOMD', 'DTEL', 'DYNP', 'ENHO', 'FUGR', 'FUNC', 'METH', 'PROG', 'REPS', 'REPT', 'SFPF', 'SFPI', 'TABD', 'TABL', 'TTYD', 'TTYP' ).
 
     LOOP AT i_obj ASSIGNING FIELD-SYMBOL(<obj>).
       CASE <obj>-object.
@@ -421,6 +425,9 @@ START-OF-SELECTION.
 *----------------------------------------------------------------------*
 
 FORM seleccionar_datos.
+  RANGES: r_name_apc FOR trdir-name,
+          r_name FOR trdir-name.
+
   DATA r_obj    TYPE TABLE OF rstt_s_range_string WITH HEADER LINE.
   DATA l_tabla  TYPE tabname VALUE 'ZESTADISTICAS'.
   DATA i_zbc003 LIKE zbc003 OCCURS 0 WITH HEADER LINE.
@@ -434,10 +441,11 @@ FORM seleccionar_datos.
   DATA: i_dd02l   TYPE TABLE OF dd02l WITH HEADER LINE,
         l_tabname LIKE d010tab-tabname,
         i_progs   LIKE d010tab OCCURS 0 WITH HEADER LINE.
-  DATA i_tbe    TYPE TABLE OF tbe32 WITH HEADER LINE.
-  DATA i_bsp    TYPE TABLE OF o2appl WITH HEADER LINE.
-  DATA i_webd   TYPE TABLE OF wdy_application WITH HEADER LINE.
-  DATA r_object TYPE RANGE OF e071-object.
+  DATA i_tbe      TYPE TABLE OF tbe32 WITH HEADER LINE.
+  DATA i_bsp      TYPE TABLE OF o2appl WITH HEADER LINE.
+  DATA i_webd     TYPE TABLE OF wdy_application WITH HEADER LINE.
+  DATA r_filename TYPE RANGE OF string.
+  DATA r_object   TYPE RANGE OF e071-object.
   DATA: i_trdir LIKE trdir OCCURS 1000 WITH HEADER LINE,
         BEGIN OF i_tstc  OCCURS 300,
           pgmna LIKE tstc-pgmna,
@@ -485,19 +493,32 @@ FORM seleccionar_datos.
   ELSE.
     r_devclass_open-sign = 'I'.
   ENDIF.
-  r_devclass_open-low = 'ZABAPGIT*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZOPENCHECK*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'TEST_*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZAPCMD*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZABAP2XLSX*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZSAPLINK*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZEXCEL*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZCUTE*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'YAPCMD*'. APPEND r_devclass_open.
-  r_devclass_open-low = 'ZAPCMD*'. APPEND r_devclass_open.
-  r_devclass_open-low = '*CODEPAL*'. APPEND r_devclass_open.
-  r_devclass_open-low = '*AOC_CHECK*'. APPEND r_devclass_open.
-  r_devclass_open-low = '$*'. APPEND r_devclass_open.
+  r_devclass_open-low = 'ZABAPGIT*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZOPENCHECK*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'TEST_*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZAPCMD*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZABAP2XLSX*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZSAPLINK*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZEXCEL*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZCUTE*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'YAPCMD*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = 'ZAPCMD*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = '*CODEPAL*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = '*AOC_CHECK*'.
+  APPEND r_devclass_open.
+  r_devclass_open-low = '$*'.
+  APPEND r_devclass_open.
 
   IF p_open IS INITIAL.
     r_devclass_openf[] = r_devclass_open[].
@@ -507,15 +528,16 @@ FORM seleccionar_datos.
     SELECT tabname FROM dd02l
       UP TO 1 ROWS
       INTO l_tabla
-     WHERE tabname = l_tabla
-     ORDER BY PRIMARY KEY.
+      WHERE tabname = l_tabla
+      ORDER BY PRIMARY KEY.
     ENDSELECT.
     IF sy-subrc = 0.
-      SELECT * FROM (l_tabla)
+      SELECT *
+        FROM (l_tabla)
         INTO CORRESPONDING FIELDS OF TABLE i_est
-       WHERE report IN s_report
-         AND ( report IN r_obj
-          OR   report LIKE 'SAPMZ%' ).
+        WHERE report IN s_report
+          AND (    report   IN r_obj
+                OR report LIKE 'SAPMZ%' ).
       SORT i_est.
       LOOP AT i_est.
         AT NEW report.
@@ -542,24 +564,29 @@ FORM seleccionar_datos.
   IF NOT v_fichero_excel IS INITIAL.
     IF p_onedr = 'X'.
       o_ms->get_contenido_fichero( EXPORTING nombre = v_fichero_excel popup_respuesta = '' IMPORTING message = DATA(l_msg) tabla_xlsx = i_list_excel[] ).
-      IF NOT l_msg IS INITIAL. MESSAGE l_msg TYPE 'I'. ENDIF.
+      IF NOT l_msg IS INITIAL.
+        MESSAGE l_msg TYPE 'I'.
+      ENDIF.
     ELSE.
       IF zcl_ap_ficheros=>existe(  v_fichero_excel ).
-        zcl_ap_sgpi=>text( 'Leyendo excel con listado objetos' ).
+        zcl_ap_sgpi=>text( 'Leyendo excel con listado objetos'(LEC) ).
 
         NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel
                                                        get_datos     = 'X'
                                                        huge          = 'X'
                                                        mostrar_error = ''
                                              IMPORTING datos         = i_list_excel[] ).
+        IF i_list_excel[] IS INITIAL AND p_solom = 'X'.
+          MESSAGE 'El fichero excel parece estar dañado o no tiene datos'(EFE) TYPE 'I'.
+        ENDIF.
 
         IF p_lib IS INITIAL.
           v_fichero_excel_dic = v_fichero_excel.
-          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_dic WITH 'desarrollos_dic.xlsx'.
+          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_dic WITH 'desarrollos_dic.xlsx' ##NO_TEXT.
 
           IF p_tablas = 'X'.
             v_fichero_excel_dic = v_fichero_excel.
-            REPLACE 'desarrollos.xlsx' IN v_fichero_excel_dic WITH 'desarrollos_dic.xlsx'.
+            REPLACE 'desarrollos.xlsx' IN v_fichero_excel_dic WITH 'desarrollos_dic.xlsx' ##NO_TEXT.
             NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel_dic
                                                            get_datos     = 'X'
                                                            huge          = 'X'
@@ -569,7 +596,7 @@ FORM seleccionar_datos.
           ENDIF.
 
           v_fichero_excel_ext = v_fichero_excel.
-          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_ext WITH 'desarrollos_ext.xlsx'.
+          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_ext WITH 'desarrollos_ext.xlsx' ##NO_TEXT.
           IF p_ext = 'X'.
             NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel_ext
                                                            get_datos     = 'X'
@@ -580,7 +607,7 @@ FORM seleccionar_datos.
           ENDIF.
 
           v_fichero_excel_opn = v_fichero_excel.
-          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_opn WITH 'desarrollos_open.xlsx'.
+          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_opn WITH 'desarrollos_open.xlsx' ##NO_TEXT.
 
           IF p_open = 'X'.
             NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel_opn
@@ -592,7 +619,7 @@ FORM seleccionar_datos.
           ENDIF.
 
           v_fichero_excel_gen = v_fichero_excel.
-          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_gen WITH 'desarrollos_generated.xlsx'.
+          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_gen WITH 'desarrollos_generated.xlsx' ##NO_TEXT.
 
           IF p_gen = 'X'.
             NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel_gen
@@ -604,7 +631,7 @@ FORM seleccionar_datos.
           ENDIF.
 
           v_fichero_excel_tmp = v_fichero_excel.
-          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_tmp WITH 'desarrollos_tmp.xlsx'.
+          REPLACE 'desarrollos.xlsx' IN v_fichero_excel_tmp WITH 'desarrollos_tmp.xlsx' ##NO_TEXT.
 
           IF p_tmp = 'X'.
             NEW zcl_ap_abap2xls( )->lee_fichero( EXPORTING fichero       = v_fichero_excel_tmp
@@ -619,9 +646,6 @@ FORM seleccionar_datos.
     ENDIF.
   ENDIF.
 
-  RANGES: r_name FOR trdir-name,
-          r_name_apc FOR trdir-name.
-
   addrango_eq r_name_apc '&&&&&'.
   IF    NOT s_grupo[] IS INITIAL
      OR NOT s_asign[] IS INITIAL
@@ -630,13 +654,13 @@ FORM seleccionar_datos.
      OR NOT p_lib     IS INITIAL.
     SELECT * FROM zbc003
       INTO TABLE i_zbc003
-     WHERE (    grupo  IN s_grupo
-             OR grupo2 IN s_grupo
-             OR grupo3 IN s_grupo )
-       AND asignado_a    IN s_asign
-       AND procesado_por IN s_progr
-       AND name          IN s_report
-       AND prioridad     IN s_prior.
+      WHERE (    grupo  IN s_grupo
+              OR grupo2 IN s_grupo
+              OR grupo3 IN s_grupo )
+        AND asignado_a    IN s_asign
+        AND procesado_por IN s_progr
+        AND name          IN s_report
+        AND prioridad     IN s_prior.
     IF sy-subrc <> 0.
       addrango_eq r_name '&&&&&'.
     ELSE.
@@ -650,10 +674,10 @@ FORM seleccionar_datos.
   ELSEIF p_vivas = 'X'.
     SELECT * FROM zbc003
       INTO TABLE i_zbc003
-     WHERE name IN s_report
-       AND (    asignado_a     = sy-uname
-             OR procesado_por  = sy-uname
-             OR prioridad     <> 0 ).
+      WHERE name IN s_report
+        AND (    asignado_a     = sy-uname
+              OR procesado_por  = sy-uname
+              OR prioridad     <> 0 ).
     IF sy-subrc = 0.
       IF p_lib = 'X'.
         DELETE i_zbc003 WHERE libreria = ''.
@@ -669,39 +693,38 @@ FORM seleccionar_datos.
 * Buscamos programas
 
     IF p_vivas IS INITIAL.
-      SELECT * FROM  trdir
+      SELECT * FROM trdir
         INTO TABLE i_trdir
-       WHERE ( name  IN r_obj
-            OR name  LIKE 'SAPMZ%'
-            OR name  LIKE 'MZ%'
-            OR name  LIKE 'LZ%F01' )
+        WHERE (    name   IN r_obj
+                OR name LIKE 'SAPMZ%'
+                OR name LIKE 'MZ%'
+                OR name LIKE 'LZ%F01' )
           AND NOT name LIKE '%==%'
-          AND name IN s_report
-          AND name IN r_name
-      AND ( subc = '1' OR subc = 'M' OR subc = 'I' OR subc = 'S' )
-      AND subc IN s_subc
-      AND ( cnam IN s_cnam
-        AND unam IN s_unam
-        AND cdat IN s_cdat
-        AND udat IN s_udat )
-      ORDER BY name.
+          AND     name   IN s_report
+          AND     name   IN r_name
+          AND ( subc = '1' OR subc = 'M' OR subc = 'I' OR subc = 'S' )
+          AND subc IN s_subc
+          AND (     cnam IN s_cnam
+                AND unam IN s_unam
+                AND cdat IN s_cdat
+                AND udat IN s_udat )
+        ORDER BY name.
     ELSE.
-      SELECT * FROM  trdir
+      SELECT * FROM trdir
         INTO TABLE i_trdir
-       WHERE
-        name IN r_name_apc
-         OR (
-            ( name  IN r_obj
-           OR name  LIKE 'SAPMZ%'
-           OR name  LIKE 'MZ%'
-           OR name  LIKE 'LZ%F01' )
-         AND NOT name LIKE '%=====%'
-         AND name IN s_report
-         AND name IN r_name
-      AND ( subc = '1' OR subc = 'M' OR subc = 'I' OR subc = 'S' )
-      AND subc IN s_subc
-      AND ( cnam = sy-uname OR unam = sy-uname )
-      AND ( cdat >= v_fechas_vivas OR udat >= v_fechas_vivas ) )
+        WHERE name IN r_name_apc
+           OR (
+                (    name   IN r_obj
+                  OR name LIKE 'SAPMZ%'
+                  OR name LIKE 'MZ%'
+                  OR name LIKE 'LZ%F01' )
+                AND NOT name LIKE '%=====%'
+                AND     name   IN s_report
+                AND     name   IN r_name
+                AND ( subc = '1' OR subc = 'M' OR subc = 'I' OR subc = 'S' )
+                AND subc IN s_subc
+                AND ( cnam  = sy-uname       OR unam  = sy-uname )
+                AND ( cdat >= v_fechas_vivas OR udat >= v_fechas_vivas ) )
         ORDER BY name.
 
       LOOP AT i_zbc003 WHERE prioridad = '88888'.
@@ -713,17 +736,17 @@ FORM seleccionar_datos.
       SELECT * FROM tstc                                "#EC CI_GENBUFF
         INTO CORRESPONDING FIELDS OF TABLE i_tstc
         FOR ALL ENTRIES IN i_trdir
-       WHERE pgmna = i_trdir-name.
+        WHERE pgmna = i_trdir-name.
     ENDIF.
     SORT i_tstc.
     sgpi->get_filas_tabla( i_trdir[] ).
     LOOP AT i_trdir.
-      SELECT SINGLE devclass FROM  tadir
+      SELECT SINGLE devclass FROM tadir
         INTO i_listado-devclass
-       WHERE pgmid    = 'R3TR'
-         AND object   = 'PROG'
-         AND obj_name = i_trdir-name
-         AND delflag  = ''.
+        WHERE pgmid    = 'R3TR'
+          AND object   = 'PROG'
+          AND obj_name = i_trdir-name
+          AND delflag  = ''.
       IF NOT ( sy-subrc = 0 OR i_trdir-rmand IS INITIAL ). " Reports raros a borrar
         CONTINUE.
       ENDIF.
@@ -760,7 +783,7 @@ FORM seleccionar_datos.
       i_listado-name   = i_tstc-pgmna.
       IF i_listado-name IS INITIAL.
         SELECT SINGLE * FROM tstcp
-         WHERE tcode = i_tstc-tcode.
+          WHERE tcode = i_tstc-tcode.
         IF sy-subrc = 0.
           i_listado-subc = '1'.
           IF tstcp-param+2(12) = 'START_REPORT'.
@@ -787,9 +810,9 @@ FORM seleccionar_datos.
         IF sy-subrc = 0.
           MOVE-CORRESPONDING i_trdir TO i_listado.
         ELSE.
-          SELECT SINGLE * FROM  trdir
-           WHERE name  = i_listado-name
-             AND name IN s_report.
+          SELECT SINGLE * FROM trdir
+            WHERE name  = i_listado-name
+              AND name IN s_report.
           IF sy-subrc = 0.
             MOVE-CORRESPONDING trdir TO i_listado.
           ENDIF.
@@ -809,7 +832,7 @@ FORM seleccionar_datos.
       IF NOT i_listado-tcode IS INITIAL.
         IF i_listado-name IS INITIAL.
           SELECT SINGLE * FROM tstcp
-           WHERE tcode = i_listado-tcode.
+            WHERE tcode = i_listado-tcode.
           SEARCH tstcp FOR 'EXTDREPORT=KE'.
           IF sy-subrc = 0.
             DELETE i_listado.
@@ -818,19 +841,19 @@ FORM seleccionar_datos.
         ENDIF.
 
         SELECT SINGLE ttext FROM tstct
-      INTO i_listado-ttext
-     WHERE sprsl = sy-langu
-       AND tcode = i_listado-tcode.
+          INTO i_listado-ttext
+          WHERE sprsl = sy-langu
+            AND tcode = i_listado-tcode.
       ENDIF.
       SELECT SINGLE text FROM trdirt
         INTO i_listado-text
-       WHERE sprsl = sy-langu
-         AND name  = i_listado-name.
-      SELECT SINGLE devclass FROM  tadir
+        WHERE sprsl = sy-langu
+          AND name  = i_listado-name.
+      SELECT SINGLE devclass FROM tadir
         INTO i_listado-devclass
-       WHERE pgmid    = 'R3TR'
-         AND object   = 'PROG'
-         AND obj_name = i_listado-name.
+        WHERE pgmid    = 'R3TR'
+          AND object   = 'PROG'
+          AND obj_name = i_listado-name.
       IF i_listado-devclass IN s_devcla AND i_listado-devclass IN r_devclass_openf.
         IF NOT i_listado-name IS INITIAL.
           READ TABLE i_estad WITH KEY report = i_listado-name
@@ -860,8 +883,8 @@ FORM seleccionar_datos.
     LOOP AT i_listado WHERE subc = '1'.
       SELECT include FROM cross
         INTO cross-include
-       WHERE type = 'R'
-         AND name = i_listado-name.
+        WHERE type = 'R'
+          AND name = i_listado-name.
         IF i_listado-aux IS INITIAL.
           i_listado-aux = cross-include.
         ELSE.
@@ -882,7 +905,7 @@ FORM seleccionar_datos.
 
     LOOP AT i_listado WHERE subc = 'I'.
       SELECT * FROM rseuinc
-       WHERE include = i_listado-name.
+        WHERE include = i_listado-name.
         IF i_listado-aux IS INITIAL.
           i_listado-aux = rseuinc-master.
         ELSE.
@@ -902,9 +925,9 @@ FORM seleccionar_datos.
           IF sy-subrc = 0.
             i_listado-tcode = i_tstc-tcode.
             SELECT SINGLE ttext FROM tstct
-          INTO i_listado-ttext
-         WHERE sprsl = sy-langu
-           AND tcode = i_listado-tcode.
+              INTO i_listado-ttext
+              WHERE sprsl = sy-langu
+                AND tcode = i_listado-tcode.
           ENDIF.
         ENDIF.
       ENDSELECT.
@@ -913,21 +936,21 @@ FORM seleccionar_datos.
   ENDIF.
 
   IF p_funcio = 'X'.
-    zcl_ap_sgpi=>text( 'Seleccionando funciones' ).
+    zcl_ap_sgpi=>text( 'Seleccionando funciones'(SF1) ).
     SELECT * FROM v_fdirt
-     WHERE area           IN r_obj
-       AND funcname       IN s_report
-       AND funcname NOT LIKE 'TABLE%'
-       AND funcname NOT LIKE 'VIEW%'
-       AND active          = 'X'
-       AND spras           = sy-langu.
+      WHERE area           IN r_obj
+        AND funcname       IN s_report
+        AND funcname NOT LIKE 'TABLE%'
+        AND funcname NOT LIKE 'VIEW%'
+        AND active          = 'X'
+        AND spras           = sy-langu.
       IF v_fdirt-funcname IN r_name.
         SELECT SINGLE * FROM tadir
-         WHERE pgmid     = 'R3TR'
-           AND object    = 'FUGR'
-           AND obj_name  = v_fdirt-area
-           AND devclass IN s_devcla
-           AND devclass IN r_devclass_openf.
+          WHERE pgmid     = 'R3TR'
+            AND object    = 'FUGR'
+            AND obj_name  = v_fdirt-area
+            AND devclass IN s_devcla
+            AND devclass IN r_devclass_openf.
         IF sy-subrc = 0.
           CLEAR i_listado.
           i_listado-object   = 'FUGR'.  " APC03112010
@@ -936,8 +959,8 @@ FORM seleccionar_datos.
           IF p_utili = 'X'.
             SELECT include FROM cross
               INTO cross-include
-             WHERE type = 'F'
-               AND name = i_listado-name.
+              WHERE type = 'F'
+                AND name = i_listado-name.
               IF i_listado-aux IS INITIAL.
                 i_listado-aux = cross-include.
               ELSE.
@@ -965,30 +988,32 @@ FORM seleccionar_datos.
     zcl_ap_sgpi=>text( 'Seleccionando clases'(scl) ).
 
     IF i_zbc003[] IS INITIAL.
-      SELECT  devclass object obj_name FROM  tadir      "#EC CI_GENBUFF
+      SELECT  devclass object obj_name
+        FROM tadir      "#EC CI_GENBUFF
         INTO CORRESPONDING FIELDS OF TABLE i_tadir
-       WHERE pgmid     = 'R3TR'
-         AND object    = 'CLAS'
-         AND obj_name IN r_obj
-         AND obj_name IN s_report
-         AND devclass IN s_devcla
-         AND devclass IN r_devclass_openf
-         AND delflag   = ''.
+        WHERE pgmid     = 'R3TR'
+          AND object    = 'CLAS'
+          AND obj_name IN r_obj
+          AND obj_name IN s_report
+          AND devclass IN s_devcla
+          AND devclass IN r_devclass_openf
+          AND delflag   = ''.
     ELSE.
-      SELECT  devclass object obj_name FROM  tadir      "#EC CI_GENBUFF
+      SELECT  devclass object obj_name
+        FROM tadir      "#EC CI_GENBUFF
         INTO CORRESPONDING FIELDS OF TABLE i_tadir
-         FOR ALL ENTRIES IN i_zbc003
-       WHERE pgmid     = 'R3TR'
-         AND object    = 'CLAS'
-         AND obj_name  = i_zbc003-name
-         AND devclass IN s_devcla
-         AND devclass IN r_devclass_openf
-         AND delflag   = ''.
+        FOR ALL ENTRIES IN i_zbc003
+        WHERE pgmid     = 'R3TR'
+          AND object    = 'CLAS'
+          AND obj_name  = i_zbc003-name
+          AND devclass IN s_devcla
+          AND devclass IN r_devclass_openf
+          AND delflag   = ''.
     ENDIF.
     LOOP AT i_tadir INTO tadir.
       SELECT SINGLE clsname FROM seoclass
         INTO tadir-obj_name
-       WHERE clsname = tadir-obj_name.
+        WHERE clsname = tadir-obj_name.
       IF sy-subrc <> 0.
         CONTINUE.
       ENDIF.
@@ -1007,23 +1032,23 @@ FORM seleccionar_datos.
         UP TO 1 ROWS
         INTO (i_listado-text, i_listado-cnam, i_listado-cdat,
               i_listado-unam, i_listado-udat)
-       WHERE clsname = tadir-obj_name
-         AND langu   = sy-langu
-       ORDER BY PRIMARY KEY.
+        WHERE clsname = tadir-obj_name
+          AND langu   = sy-langu
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
 
       CONCATENATE tadir-obj_name '%' INTO l_aux.
       SELECT MAX( udat ) FROM progdir
         INTO i_listado-udat
-       WHERE name LIKE l_aux.
+        WHERE name LIKE l_aux.
 
       SELECT unam FROM progdir
         INTO i_listado-unam
         UP TO 1 ROWS
-       WHERE name  LIKE l_aux
-         AND state    = 'A'
-         AND udat     = i_listado-udat
-       ORDER BY PRIMARY KEY.
+        WHERE name  LIKE l_aux
+          AND state    = 'A'
+          AND udat     = i_listado-udat
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
 
       APPEND i_listado.
@@ -1033,11 +1058,12 @@ FORM seleccionar_datos.
   IF p_enhan = 'X'.                                                              " NOLIB
     o_enh = NEW #( ).
     zcl_ap_sgpi=>text( 'Seleccionando enhancement'(sen) ).                            " NOLIB
-    SELECT  devclass object obj_name FROM  tadir        "#EC CI_GENBUFF
+    SELECT  devclass object obj_name
+      FROM tadir        "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-     WHERE object   IN ( 'ENHO', 'ENHS' )
-       AND obj_name IN r_obj                                                   " NOLIB
-       AND obj_name IN s_report.                                                 " NOLIB
+      WHERE object   IN ( 'ENHO', 'ENHS' )
+        AND obj_name IN r_obj                                                   " NOLIB
+        AND obj_name IN s_report.                                                 " NOLIB
       " NOLIB
       CLEAR i_listado.                                                           " NOLIB
       i_listado-name   = tadir-obj_name.  " NOLIB
@@ -1048,20 +1074,21 @@ FORM seleccionar_datos.
       SELECT enhinclude FROM enhincinx
         INTO enhincinx-enhinclude
         UP TO 1 ROWS
-       WHERE enhname = i_listado-name
+        WHERE enhname = i_listado-name
         ORDER BY PRIMARY KEY.
       ENDSELECT.
       IF NOT enhincinx-enhinclude IS INITIAL.
-        SELECT SINGLE cnam cdat unam udat vern FROM trdir
+        SELECT SINGLE cnam cdat unam udat vern
+          FROM trdir
           INTO CORRESPONDING FIELDS OF i_listado
-         WHERE name = enhincinx-enhinclude.
+          WHERE name = enhincinx-enhinclude.
       ENDIF.
 
       SELECT obj_name FROM enhobj                                " NOLIB
         INTO (i_listado-tcode )                                " NOLIB
         UP TO 1 ROWS
-       WHERE enhname = tadir-obj_name                                           " NOLIB
-       ORDER BY PRIMARY KEY.
+        WHERE enhname = tadir-obj_name                                           " NOLIB
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
       i_listado-devclass = tadir-devclass.                                       " NOLIB
       APPEND i_listado.                                                          " NOLIB
@@ -1071,7 +1098,7 @@ FORM seleccionar_datos.
 
       SELECT * FROM enhincinx
         INTO TABLE i_enhincinx
-       WHERE enhname = i_listado-name.
+        WHERE enhname = i_listado-name.
 
       LOOP AT i_enhincinx.                               "#EC CI_NESTED
         i_listado-text = i_enhincinx-full_name.
@@ -1090,15 +1117,16 @@ FORM seleccionar_datos.
   ENDIF.                                                                         " NOLIB
 
   IF p_formul = 'X'.
-    zcl_ap_sgpi=>text( 'Seleccionando formularios' ).
-    SELECT tdfdate tdform tdfuser tdldate tdluser tdtitle FROM stxh
+    zcl_ap_sgpi=>text( 'Seleccionando formularios'(SF2) ).
+    SELECT tdfdate tdform tdfuser tdldate tdluser tdtitle
+      FROM stxh
       INTO CORRESPONDING FIELDS OF stxh
-   WHERE tdobject  = 'FORM'
-     AND tdform   IN s_report
+      WHERE tdobject  = 'FORM'
+        AND tdform   IN s_report
 *     AND tdform IN r_name
-     AND tdform   IN r_obj
-     AND tdid      = 'DEF'
-     AND tdspras   = 'S'.
+        AND tdform   IN r_obj
+        AND tdid      = 'DEF'
+        AND tdspras   = 'S'.
       IF stxh-tdform IN r_name.
         CLEAR i_listado.
         i_listado-name   = stxh-tdform.
@@ -1111,15 +1139,15 @@ FORM seleccionar_datos.
         i_listado-unam   = stxh-tdluser.
         i_listado-object = 'FORM'.  " APC03112010
 
-        SELECT SINGLE devclass FROM  tadir
+        SELECT SINGLE devclass FROM tadir
           INTO i_listado-devclass
-         WHERE pgmid    = 'R3TR'
-           AND object   = 'FORM'
-           AND obj_name = i_listado-name.
+          WHERE pgmid    = 'R3TR'
+            AND object   = 'FORM'
+            AND obj_name = i_listado-name.
 
         IF p_utili = 'X'.
           SELECT * FROM ttxfp                           "#EC CI_GENBUFF
-           WHERE tdform = i_listado-name.
+            WHERE tdform = i_listado-name.
             IF i_listado-ttext IS INITIAL.
               i_listado-ttext = ttxfp-print_name.
             ELSE.
@@ -1132,12 +1160,12 @@ FORM seleccionar_datos.
       ENDIF.
     ENDSELECT.
 
-    SELECT * FROM  stxfadm
-           WHERE formname   IN s_report
-             AND formname   IN r_obj
-             AND masterlang  = sy-langu
-             AND devclass   IN s_devcla
-             AND devclass   IN r_devclass_openf.
+    SELECT * FROM stxfadm
+      WHERE formname   IN s_report
+        AND formname   IN r_obj
+        AND masterlang  = sy-langu
+        AND devclass   IN s_devcla
+        AND devclass   IN r_devclass_openf.
       IF stxfadm-formname IN r_name.
         CLEAR i_listado.
         i_listado-name   = stxfadm-formname.
@@ -1149,8 +1177,7 @@ FORM seleccionar_datos.
         i_listado-udat   = stxfadm-lastdate.
         i_listado-unam   = stxfadm-lastuser.
 
-        SELECT pgnam, kschl
-          FROM tnapr
+        SELECT pgnam, kschl FROM tnapr
           WHERE nacha = '1'
             AND sform = @stxfadm-formname
           ORDER BY PRIMARY KEY
@@ -1158,10 +1185,10 @@ FORM seleccionar_datos.
           UP TO 1 ROWS.
         ENDSELECT.
 
-        SELECT SINGLE caption FROM  stxfadmt
+        SELECT SINGLE caption FROM stxfadmt
           INTO i_listado-text
-               WHERE langu    = sy-langu
-                 AND formname = stxfadm-formname.
+          WHERE langu    = sy-langu
+            AND formname = stxfadm-formname.
         APPEND i_listado.
       ENDIF.
     ENDSELECT.
@@ -1172,8 +1199,8 @@ FORM seleccionar_datos.
     zcl_ap_sgpi=>text( 'Seleccionando proyectos de ampliacion'(spa) ).
     REFRESH i_list.
     SELECT * FROM modtext
-     WHERE sprsl  = sy-langu
-       AND name  IN s_report.
+      WHERE sprsl  = sy-langu
+        AND name  IN s_report.
       IF modtext-name IN r_name.
         CLEAR i_list.
         i_list-name = modtext-name.
@@ -1186,42 +1213,43 @@ FORM seleccionar_datos.
     LOOP AT i_list.
       CLEAR l_ok.
       SELECT * FROM modact
-       WHERE name = i_list-name.
+        WHERE name = i_list-name.
         i_listado-devclass = modact-devclass.
         SELECT * FROM modsap
-         WHERE name = modact-member
-           AND typ  = 'E'.
+          WHERE name = modact-member
+            AND typ  = 'E'.
           i_listado       = i_list.
           i_listado-tcode = modsap-member.
-          SELECT SINGLE modtext FROM  modsapt
+          SELECT SINGLE modtext FROM modsapt
             INTO i_listado-aux
-                 WHERE sprsl = sy-langu
-                   AND name  = modsap-name.
+            WHERE sprsl = sy-langu
+              AND name  = modsap-name.
           SELECT SINGLE * FROM tfdir
-           WHERE funcname = modsap-member.
+            WHERE funcname = modsap-member.
           CONCATENATE tfdir-pname+3 'U' tfdir-include INTO
           i_listado-ttext.
 
           i_listado-ttext(1) = 'Z'.
           SELECT SINGLE name FROM trdir
             INTO trdir-name
-           WHERE name = i_listado-ttext.
+            WHERE name = i_listado-ttext.
           IF sy-subrc = 0.
 
             IF i_listado-ttext(2) = 'ZX'.
-              SELECT SINGLE cnam unam cdat udat FROM  trdir
+              SELECT SINGLE cnam unam cdat udat
+                FROM trdir
                 INTO (i_listado-cnam, i_listado-unam,
                       i_listado-cdat, i_listado-udat)
-               WHERE name = i_listado-ttext.
+                WHERE name = i_listado-ttext.
               i_listado-object = 'PROG'.
             ENDIF.
 
             IF i_listado-devclass IS INITIAL.
-              SELECT SINGLE devclass FROM  tadir
+              SELECT SINGLE devclass FROM tadir
                 INTO i_listado-devclass
-               WHERE pgmid    = 'R3TR'
-                 AND object   = 'PROG'
-                 AND obj_name = i_listado-ttext.
+                WHERE pgmid    = 'R3TR'
+                  AND object   = 'PROG'
+                  AND obj_name = i_listado-ttext.
             ENDIF.
 
             APPEND i_listado.
@@ -1237,53 +1265,55 @@ FORM seleccionar_datos.
   ENDIF.
 
   IF p_badis = 'X'.
-    SELECT devclass object obj_name FROM tadir          "#EC CI_GENBUFF
+    SELECT devclass object obj_name
+      FROM tadir          "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-     WHERE pgmid     = 'R3TR'
-       AND object    = 'SXCI'
-       AND obj_name IN s_report
-       AND obj_name IN r_name
-       AND obj_name IN r_obj
-       AND devclass IN s_devcla
-       AND devclass IN r_devclass_openf
-       AND delflag   = ''.
+      WHERE pgmid     = 'R3TR'
+        AND object    = 'SXCI'
+        AND obj_name IN s_report
+        AND obj_name IN r_name
+        AND obj_name IN r_obj
+        AND devclass IN s_devcla
+        AND devclass IN r_devclass_openf
+        AND delflag   = ''.
       CLEAR i_listado.
       i_listado-name  = tadir-obj_name.
       i_listado-subc  = 'B'.
       i_listado-tcode = 'SE19'.
 
-      SELECT SINGLE text FROM  sxc_attrt
+      SELECT SINGLE text FROM sxc_attrt
         INTO i_listado-text
-       WHERE imp_name = tadir-obj_name
-         AND sprsl    = sy-langu.
+        WHERE imp_name = tadir-obj_name
+          AND sprsl    = sy-langu.
 
       SELECT imp_class FROM sxc_class                   "#EC CI_GENBUFF
         INTO i_listado-ttext
         UP TO 1 ROWS
-       WHERE imp_name = tadir-obj_name
-       ORDER BY PRIMARY KEY.
+        WHERE imp_name = tadir-obj_name
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
 
-      SELECT SINGLE descript author createdon
-                    changedby changedon
+      SELECT descript author createdon changedby changedon
         FROM vseoclass
-        INTO (i_listado-aux, i_listado-cnam, i_listado-cdat,
-              i_listado-unam, i_listado-udat)
-       WHERE clsname = i_listado-ttext.
+        INTO ( i_listado-aux , i_listado-cnam , i_listado-cdat , i_listado-unam , i_listado-udat )
+        UP TO 1 ROWS
+        WHERE clsname = i_listado-ttext
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
 
       IF i_listado-ttext(1) = 'Z'.
         CONCATENATE i_listado-ttext '%' INTO l_aux.
         SELECT MAX( udat ) FROM progdir
           INTO i_listado-udat
-         WHERE name LIKE l_aux.
+          WHERE name LIKE l_aux.
 
-        SELECT  unam FROM progdir
+        SELECT unam FROM progdir
           INTO i_listado-unam
           UP TO 1 ROWS
-         WHERE name  LIKE l_aux
-           AND state    = 'A'
-           AND udat     = i_listado-udat
-         ORDER BY PRIMARY KEY.
+          WHERE name  LIKE l_aux
+            AND state    = 'A'
+            AND udat     = i_listado-udat
+          ORDER BY PRIMARY KEY.
         ENDSELECT.
       ENDIF.
 
@@ -1295,48 +1325,49 @@ FORM seleccionar_datos.
 
   IF p_userex = 'X'.
     zcl_ap_sgpi=>text( 'Seleccionando Userexits'(sue) ).
-    SELECT * FROM  trdir
+    SELECT * FROM trdir
       INTO TABLE i_trdir
-     WHERE ( ( name  LIKE 'MV%Z%' )
-         OR  ( name  LIKE 'RV%Z%' )
-         OR  ( name  LIKE 'LV%Z%' )
-         OR  ( name  LIKE 'RPC%Z%' )
-         OR  ( name  LIKE 'VV05HF%' )
-         OR  ( name  LIKE 'LV0%CFZZ' ) )
-        AND name IN s_report
-        AND name IN r_name
-        AND subc = 'I'
-        AND unam <> 'SAP'
-        AND unam <> 'SAP*'
-        AND unam <> 'DDIC'.
+      WHERE (    ( name LIKE 'MV%Z%' )
+              OR ( name LIKE 'RV%Z%' )
+              OR ( name LIKE 'LV%Z%' )
+              OR ( name LIKE 'RPC%Z%' )
+              OR ( name LIKE 'VV05HF%' )
+              OR ( name LIKE 'LV0%CFZZ' ) )
+         OR     ( name LIKE 'V05%EXIT' )
+            AND name IN s_report
+            AND name IN r_name
+            AND subc  = 'I'
+            AND unam <> 'SAP'
+            AND unam <> 'SAP*'
+            AND unam <> 'DDIC'.
     LOOP AT i_trdir WHERE name IN r_name.
       CLEAR i_listado.
       MOVE-CORRESPONDING i_trdir TO i_listado.
       i_listado-object = 'PROG'.
       SELECT SINGLE text FROM trdirt
         INTO i_listado-text
-       WHERE sprsl = sy-langu
-         AND name  = i_listado-name.
-      SELECT SINGLE devclass FROM  tadir
+        WHERE sprsl = sy-langu
+          AND name  = i_listado-name.
+      SELECT SINGLE devclass FROM tadir
         INTO i_listado-devclass
-       WHERE pgmid    = 'R3TR'
-         AND object   = 'PROG'
-         AND obj_name = i_listado-name.
+        WHERE pgmid    = 'R3TR'
+          AND object   = 'PROG'
+          AND obj_name = i_listado-name.
       APPEND i_listado.
     ENDLOOP.
   ENDIF.
 
   IF p_rutina = 'X'.
     zcl_ap_sgpi=>text( 'Seleccionando Rutinas'(sru) ).
-    SELECT * FROM  trdir
+    SELECT * FROM trdir
       INTO TABLE i_trdir
-     WHERE name      LIKE 'RV%'
-       AND name  NOT LIKE 'RV%NN'
-       AND name  NOT LIKE 'RV%CC'
-       AND name  NOT LIKE 'RV%Z%'
-       AND name        IN s_report
-       AND subc         = 'I'
-       AND unam        <> 'SAP'.
+      WHERE name      LIKE 'RV%'
+        AND name  NOT LIKE 'RV%NN'
+        AND name  NOT LIKE 'RV%CC'
+        AND name  NOT LIKE 'RV%Z%'
+        AND name        IN s_report
+        AND subc         = 'I'
+        AND unam        <> 'SAP'.
     LOOP AT i_trdir WHERE name IN r_name.
       CLEAR i_listado.
       MOVE-CORRESPONDING i_trdir TO i_listado.
@@ -1344,13 +1375,13 @@ FORM seleccionar_datos.
       i_listado-tcode  = 'VOFM'.  " APC03112010
       SELECT SINGLE text FROM trdirt
         INTO i_listado-text
-       WHERE sprsl = sy-langu
-         AND name  = i_listado-name.
-      SELECT SINGLE devclass FROM  tadir
+        WHERE sprsl = sy-langu
+          AND name  = i_listado-name.
+      SELECT SINGLE devclass FROM tadir
         INTO i_listado-devclass
-       WHERE pgmid    = 'R3TR'
-         AND object   = 'PROG'
-         AND obj_name = i_listado-name.
+        WHERE pgmid    = 'R3TR'
+          AND object   = 'PROG'
+          AND obj_name = i_listado-name.
       APPEND i_listado.
     ENDLOOP.
   ENDIF.
@@ -1359,16 +1390,18 @@ FORM seleccionar_datos.
     zcl_ap_sgpi=>text( 'Seleccionando tablas'(sta) ).
 
     IF p_vivas IS INITIAL.
-      SELECT  as4date as4user tabclass tabname FROM  dd02l
+      SELECT  as4date as4user tabclass tabname
+        FROM dd02l
         INTO CORRESPONDING FIELDS OF TABLE i_dd02l
-       WHERE tabname IN r_obj
-         AND tabname IN s_report
-         AND as4user IN s_cnam
-         AND as4user IN s_unam
-         AND as4date IN s_cdat
-         AND as4date IN s_udat.
+        WHERE tabname IN r_obj
+          AND tabname IN s_report
+          AND as4user IN s_cnam
+          AND as4user IN s_unam
+          AND as4date IN s_cdat
+          AND as4date IN s_udat.
     ELSE.
-      SELECT as4date as4user tabclass tabname FROM  dd02l
+      SELECT as4date as4user tabclass tabname
+        FROM dd02l
         INTO CORRESPONDING FIELDS OF TABLE i_dd02l
         WHERE tabname IN r_name_apc
            OR (     tabname IN r_obj
@@ -1383,20 +1416,20 @@ FORM seleccionar_datos.
 
       CLEAR i_listado.
       i_listado-name = dd02l-tabname.
-      SELECT ddtext FROM  dd02t
+      SELECT ddtext FROM dd02t
         UP TO 1 ROWS
         INTO i_listado-text
-             WHERE tabname    = i_listado-name
-               AND ddlanguage = sy-langu
-       ORDER BY PRIMARY KEY.
+        WHERE tabname    = i_listado-name
+          AND ddlanguage = sy-langu
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
 
-      SELECT SINGLE devclass object FROM tadir          "#EC CI_GENBUFF
-        INTO (i_listado-devclass, i_listado-object)
-       WHERE pgmid     = 'R3TR'
-         AND object   IN ( 'TABL', 'VIEW' )
-         AND obj_name  = dd02l-tabname
-         AND delflag   = ''.
+      SELECT devclass object FROM tadir
+        INTO ( i_listado-devclass , i_listado-object )
+        UP TO 1 ROWS
+        WHERE pgmid = 'R3TR' AND object IN ( 'TABL' , 'VIEW' ) AND obj_name = dd02l-tabname AND delflag = ''
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
       IF NOT ( i_listado-devclass IN s_devcla AND i_listado-devclass IN r_devclass_openf ).
         CONTINUE.
       ENDIF.
@@ -1411,7 +1444,8 @@ FORM seleccionar_datos.
         WHEN OTHERS.
           i_listado-subc = 'T'.
           IF p_numlin = 'X'.
-            SELECT COUNT( * ) FROM (i_listado-name)
+            SELECT COUNT( * )
+              FROM (i_listado-name)
               INTO i_listado-numlin.
           ENDIF.
       ENDCASE.
@@ -1452,27 +1486,26 @@ FORM seleccionar_datos.
 
     IF p_vivas IS INITIAL AND p_libt IS INITIAL.
       zcl_ap_sgpi=>text( 'Seleccionando tipos'(sti) ).
-      SELECT * FROM  ddtypes
-       WHERE typename IN r_obj
-         AND typename IN s_report.
+      SELECT * FROM ddtypes
+        WHERE typename IN r_obj
+          AND typename IN s_report.
         IF ddtypes-typename IN r_name.
 
-          SELECT SINGLE as4date as4user FROM  dd40l
+          SELECT as4date as4user FROM dd40l
             INTO CORRESPONDING FIELDS OF dd04l
-           WHERE typename  = ddtypes-typename
-             AND as4user  IN s_cnam
-             AND as4user  IN s_unam
-             AND as4user  <> 'SAP'
-             AND as4date  IN s_cdat
-             AND as4date  IN s_udat.
+            UP TO 1 ROWS
+            WHERE typename = ddtypes-typename AND as4user IN s_cnam AND as4user IN s_unam AND as4user <> 'SAP' AND as4date IN s_cdat AND as4date IN s_udat
+            ORDER BY PRIMARY KEY.
+          ENDSELECT.
           IF sy-subrc = 0.
             CLEAR i_listado.
             i_listado-name = ddtypes-typename.
-            SELECT SINGLE devclass object FROM tadir    "#EC CI_GENBUFF
-               INTO (i_listado-devclass, i_listado-object)
-              WHERE pgmid       = 'R3TR'
-                AND object   LIKE 'T%'
-                AND obj_name    = ddtypes-typename.
+            SELECT devclass object FROM tadir
+              INTO ( i_listado-devclass , i_listado-object )
+              UP TO 1 ROWS
+              WHERE pgmid = 'R3TR' AND object LIKE 'T%' AND obj_name = ddtypes-typename
+              ORDER BY PRIMARY KEY.
+            ENDSELECT.
             IF i_listado-devclass IN s_devcla AND i_listado-devclass IN r_devclass_openf.
 
               i_listado-cdat  = dd40l-as4date.
@@ -1480,12 +1513,12 @@ FORM seleccionar_datos.
               i_listado-tcode = 'SE11'.
               i_listado-subc  = 'D'.
 
-              SELECT ddtext FROM  dd40t
+              SELECT ddtext FROM dd40t
                 INTO i_listado-text
                 UP TO 1 ROWS
-              WHERE typename   = i_listado-name
-                AND ddlanguage = sy-langu
-               ORDER BY PRIMARY KEY.
+                WHERE typename   = i_listado-name
+                  AND ddlanguage = sy-langu
+                ORDER BY PRIMARY KEY.
               ENDSELECT.
 
               APPEND i_listado.
@@ -1496,21 +1529,22 @@ FORM seleccionar_datos.
 
       zcl_ap_sgpi=>text( 'Seleccionando elementos de datos'(sed) ).
 
-      SELECT  as4date as4user rollname FROM  dd04l
+      SELECT  as4date as4user rollname
+        FROM dd04l
         INTO CORRESPONDING FIELDS OF dd04l
-       WHERE rollname IN s_report
-         AND rollname IN r_name
-         AND rollname IN r_obj
-         AND as4user  IN s_cnam
-         AND as4user  <> 'SAP'
-         AND as4user  IN s_unam
-         AND as4date  IN s_cdat
-         AND as4date  IN s_udat.
+        WHERE rollname IN s_report
+          AND rollname IN r_name
+          AND rollname IN r_obj
+          AND as4user  IN s_cnam
+          AND as4user  <> 'SAP'
+          AND as4user  IN s_unam
+          AND as4date  IN s_cdat
+          AND as4date  IN s_udat.
         IF sy-subrc = 0.
           CLEAR i_listado.
           i_listado-name = dd04l-rollname.
           SELECT SINGLE devclass object FROM tadir
-             INTO (i_listado-devclass, i_listado-object)
+            INTO (i_listado-devclass, i_listado-object)
             WHERE pgmid    = 'R3TR'
               AND object   = 'DTEL'
               AND obj_name = i_listado-name.
@@ -1521,11 +1555,11 @@ FORM seleccionar_datos.
             i_listado-tcode = 'SE11'.
             i_listado-subc  = 'D'.
 
-            SELECT ddtext FROM  dd04t
+            SELECT ddtext FROM dd04t
               INTO i_listado-text
               UP TO 1 ROWS
-            WHERE rollname   = i_listado-name
-              AND ddlanguage = sy-langu
+              WHERE rollname   = i_listado-name
+                AND ddlanguage = sy-langu
               ORDER BY PRIMARY KEY.
             ENDSELECT.
 
@@ -1535,21 +1569,21 @@ FORM seleccionar_datos.
       ENDSELECT.
 
       zcl_ap_sgpi=>text( 'Seleccionando dominios'(sdo) ).
-      SELECT  as4date as4user domname FROM  dd01l
+      SELECT as4date as4user domname FROM dd01l
         INTO CORRESPONDING FIELDS OF dd01l
-       WHERE domname IN s_report
-         AND domname IN r_obj
-         AND domname IN r_name
-         AND as4user IN s_cnam
-         AND as4user <> 'SAP'
-         AND as4user IN s_unam
-         AND as4date IN s_cdat
-         AND as4date IN s_udat.
+        WHERE domname IN s_report
+          AND domname IN r_obj
+          AND domname IN r_name
+          AND as4user IN s_cnam
+          AND as4user <> 'SAP'
+          AND as4user IN s_unam
+          AND as4date IN s_cdat
+          AND as4date IN s_udat.
         IF sy-subrc = 0.
           CLEAR i_listado.
           i_listado-name = dd01l-domname.
           SELECT SINGLE devclass object FROM tadir
-             INTO (i_listado-devclass, i_listado-object)
+            INTO (i_listado-devclass, i_listado-object)
             WHERE pgmid    = 'R3TR'
               AND object   = 'DOMA'
               AND obj_name = i_listado-name.
@@ -1560,12 +1594,12 @@ FORM seleccionar_datos.
             i_listado-tcode = 'SE11'.
             i_listado-subc  = 'D'.
 
-            SELECT ddtext FROM  dd01t
+            SELECT ddtext FROM dd01t
               INTO i_listado-text
               UP TO 1 ROWS
-            WHERE domname    = i_listado-name
-              AND ddlanguage = sy-langu
-             ORDER BY PRIMARY KEY.
+              WHERE domname    = i_listado-name
+                AND ddlanguage = sy-langu
+              ORDER BY PRIMARY KEY.
             ENDSELECT.
 
             APPEND i_listado.
@@ -1577,25 +1611,28 @@ FORM seleccionar_datos.
 
   IF p_cds = 'X'.
     CLEAR i_listado.
-    SELECT  as4date as4user ddlname FROM  ddddlsrc
+    SELECT as4date as4user ddlname FROM ddddlsrc
       INTO (i_listado-cdat, i_listado-cnam, i_listado-name )
-     WHERE ddlname IN r_obj
-       AND ddlname IN s_report
-       AND as4user IN s_cnam
-       AND as4user IN s_unam
-       AND as4date IN s_cdat
-       AND as4date IN s_udat.
+      WHERE ddlname IN r_obj
+        AND ddlname IN s_report
+        AND as4user IN s_cnam
+        AND as4user IN s_unam
+        AND as4date IN s_cdat
+        AND as4date IN s_udat.
 
-      SELECT SINGLE ddtext FROM ddddlsrct
+      SELECT ddtext FROM ddddlsrct
         INTO i_listado-text
-       WHERE ddlname = i_listado-name.
+        UP TO 1 ROWS
+        WHERE ddlname = i_listado-name
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
 
-      SELECT SINGLE devclass object FROM tadir          "#EC CI_GENBUFF
-        INTO (i_listado-devclass, i_listado-object)
-       WHERE pgmid     = 'R3TR'
-         AND object   IN ('DDLS')
-         AND obj_name  = i_listado-name
-         AND delflag   = ''.
+      SELECT devclass object FROM tadir
+        INTO ( i_listado-devclass , i_listado-object )
+        UP TO 1 ROWS
+        WHERE pgmid = 'R3TR' AND object IN ('DDLS') AND obj_name = i_listado-name AND delflag = ''
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
       i_listado-tcode = 'SE11'.
       i_listado-subc  = 'C'.
       APPEND i_listado.
@@ -1614,38 +1651,41 @@ FORM seleccionar_datos.
 
       IF NOT i_listado-tcode IS INITIAL.
         SELECT SINGLE ttext FROM tstct
-      INTO i_listado-ttext
-     WHERE sprsl = sy-langu
-       AND tcode = i_listado-tcode.
+          INTO i_listado-ttext
+          WHERE sprsl = sy-langu
+            AND tcode = i_listado-tcode.
       ENDIF.
       SELECT SINGLE text FROM trdirt
         INTO i_listado-text
-       WHERE sprsl = sy-langu
-         AND name  = i_listado-name.
-      SELECT SINGLE devclass object FROM  tadir
+        WHERE sprsl = sy-langu
+          AND name  = i_listado-name.
+      SELECT SINGLE devclass object FROM tadir
         INTO (i_listado-devclass, i_listado-object)
-       WHERE pgmid    = 'R3TR'
-         AND object   = 'PROG'
-         AND obj_name = i_listado-name.
+        WHERE pgmid    = 'R3TR'
+          AND object   = 'PROG'
+          AND obj_name = i_listado-name.
       IF sy-subrc <> 0.
-        SELECT SINGLE devclass object FROM  tadir       "#EC CI_GENBUFF
-        INTO (i_listado-devclass, i_listado-object)
-         WHERE pgmid    = 'R3TR'
-           AND obj_name = i_listado-name.
+        SELECT devclass object FROM tadir
+          INTO ( i_listado-devclass , i_listado-object )
+          UP TO 1 ROWS
+          WHERE pgmid = 'R3TR' AND obj_name = i_listado-name
+          ORDER BY PRIMARY KEY.
+        ENDSELECT.
       ENDIF.
       IF i_listado-object IS INITIAL.                          " APC03112010
         SELECT SINGLE name FROM trdir                             " APC03112010
           INTO trdir-name
-         WHERE name = i_listado-name.                          " APC03112010
+          WHERE name = i_listado-name.                          " APC03112010
         IF sy-subrc = 0.                                       " APC03112010
           i_listado-object = 'PROG'.                           " APC03112010
         ENDIF.                                                 " APC03112010
       ENDIF.                                                   " APC03112010
 
-      SELECT SINGLE cnam unam cdat udat FROM  trdir
+      SELECT SINGLE cnam unam cdat udat
+        FROM trdir
         INTO (i_listado-cnam, i_listado-unam,
               i_listado-cdat, i_listado-udat)
-       WHERE name = i_listado-name.
+        WHERE name = i_listado-name.
 
       PERFORM icono_status USING i_listado-estado
               CHANGING i_listado-icono.
@@ -1702,11 +1742,11 @@ FORM seleccionar_datos.
       CLEAR i_listado.
       SELECT * FROM v_fdirt
         UP TO 1 ROWS
-       WHERE area     IN r_obj
-         AND funcname  = i_tbe-funct
-         AND active    = 'X'
-         AND spras     = sy-langu
-       ORDER BY PRIMARY KEY.
+        WHERE area     IN r_obj
+          AND funcname  = i_tbe-funct
+          AND active    = 'X'
+          AND spras     = sy-langu
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
       IF sy-subrc = 0.
         PERFORM get_funcion USING v_fdirt-funcname.
@@ -1771,14 +1811,15 @@ FORM seleccionar_datos.
       APPEND i_listado.
     ENDLOOP.
 
-    SELECT  devclass object obj_name FROM tadir         "#EC CI_GENBUFF
+    SELECT  devclass object obj_name
+      FROM tadir         "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-     WHERE pgmid       = 'R3TR'
-       AND object   LIKE 'WD%'
-       AND obj_name   IN s_report
-       AND obj_name   IN r_obj
-       AND devclass   IN s_devcla
-       AND delflag     = ''.
+      WHERE pgmid       = 'R3TR'
+        AND object   LIKE 'WD%'
+        AND obj_name   IN s_report
+        AND obj_name   IN r_obj
+        AND devclass   IN s_devcla
+        AND delflag     = ''.
       IF NOT line_exists( i_listado[ subc   = 'W'
                                      object = tadir-object
                                      name   = tadir-obj_name ] ).
@@ -1796,9 +1837,9 @@ FORM seleccionar_datos.
 
   IF p_mime = 'X'.
     SELECT * FROM smimloio                              "#EC CI_GENBUFF
-     WHERE crea_user <> 'SAP'
-       AND crea_time  > '20100101000000'
-       AND prop09    IN s_report.
+      WHERE crea_user <> 'SAP'
+        AND crea_time  > '20100101000000'
+        AND prop09    IN s_report.
 
       CLEAR i_listado.
       i_listado-tcode  = 'MIME'.
@@ -1824,8 +1865,8 @@ FORM seleccionar_datos.
         IF smimloio-prop02 = 'M_FOLDER' AND NOT smimloio-prop08 IS INITIAL.
           SELECT SINGLE prop09 FROM smimloio
             INTO i_listado-tcode
-           WHERE loio_id  = smimloio-prop08
-             AND lo_class = smimloio-prop02.
+            WHERE loio_id  = smimloio-prop08
+              AND lo_class = smimloio-prop02.
         ENDIF.
         APPEND i_listado.
       ENDIF.
@@ -1835,13 +1876,13 @@ FORM seleccionar_datos.
   IF p_pdf = 'X'.
     SELECT devclass obj_name FROM tadir                 "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-     WHERE pgmid     = 'R3TR'
-       AND object    = 'SFPF'
-       AND obj_name IN s_report
-       AND obj_name IN r_name
-       AND obj_name IN r_obj
-       AND devclass IN s_devcla
-       AND delflag   = ''.
+      WHERE pgmid     = 'R3TR'
+        AND object    = 'SFPF'
+        AND obj_name IN s_report
+        AND obj_name IN r_name
+        AND obj_name IN r_obj
+        AND devclass IN s_devcla
+        AND delflag   = ''.
       CLEAR i_listado.
       i_listado-name     = tadir-obj_name.
       i_listado-subc     = 'P'.
@@ -1852,8 +1893,8 @@ FORM seleccionar_datos.
       SELECT * FROM fpcontext
         INTO fpcontext
         UP TO 1 ROWS
-       WHERE name = tadir-obj_name
-       ORDER BY PRIMARY KEY.
+        WHERE name = tadir-obj_name
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
 
       i_listado-cdat = fpcontext-firstdate.
@@ -1861,24 +1902,25 @@ FORM seleccionar_datos.
       i_listado-udat = fpcontext-lastdate.
       i_listado-unam = fpcontext-lastuser.
 
-      SELECT SINGLE text FROM  fpcontextt
+      SELECT text FROM fpcontextt
         INTO i_listado-text
-             WHERE name     = fpcontext-name
-               AND state    = fpcontext-state
-               AND language = sy-langu.
+        UP TO 1 ROWS
+        WHERE name = fpcontext-name AND state = fpcontext-state AND language = sy-langu
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
 
       APPEND i_listado.
     ENDSELECT.
 
     SELECT devclass obj_name FROM tadir                 "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-         WHERE pgmid     = 'R3TR'
-           AND object    = 'SFPI'
-           AND obj_name IN s_report
-           AND obj_name IN r_name
-           AND obj_name IN r_obj
-           AND devclass IN s_devcla
-           AND delflag   = ''.
+      WHERE pgmid     = 'R3TR'
+        AND object    = 'SFPI'
+        AND obj_name IN s_report
+        AND obj_name IN r_name
+        AND obj_name IN r_obj
+        AND devclass IN s_devcla
+        AND delflag   = ''.
       CLEAR i_listado.
       i_listado-name     = tadir-obj_name.
       i_listado-subc     = 'P'.
@@ -1886,10 +1928,11 @@ FORM seleccionar_datos.
       i_listado-object   = 'SFPI'.
       i_listado-devclass = tadir-devclass.
 
-      SELECT firstdate firstuser lastdate lastuser FROM fpinterface
+      SELECT firstdate firstuser lastdate lastuser
+        FROM fpinterface
         UP TO 1 ROWS
         INTO CORRESPONDING FIELDS OF fpinterface
-       WHERE name = tadir-obj_name
+        WHERE name = tadir-obj_name
         ORDER BY PRIMARY KEY.
       ENDSELECT.
 
@@ -1898,11 +1941,12 @@ FORM seleccionar_datos.
       i_listado-udat = fpinterface-lastdate.
       i_listado-unam = fpinterface-lastuser.
 
-      SELECT SINGLE text FROM  fpinterfacet
+      SELECT text FROM fpinterfacet
         INTO i_listado-text
-             WHERE name     = fpinterface-name
-               AND state    = fpinterface-state
-               AND language = sy-langu.
+        UP TO 1 ROWS
+        WHERE name = fpinterface-name AND state = fpinterface-state AND language = sy-langu
+        ORDER BY PRIMARY KEY.
+      ENDSELECT.
 
       APPEND i_listado.
     ENDSELECT.
@@ -1911,18 +1955,19 @@ FORM seleccionar_datos.
   IF p_xslt = 'X'.
     SELECT devclass obj_name FROM tadir                 "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF tadir
-             WHERE pgmid     = 'R3TR'
-               AND object    = 'XSLT'
-               AND obj_name IN s_report
-               AND obj_name IN r_name
-               AND obj_name IN r_obj
-               AND devclass IN s_devcla
-               AND delflag   = ''.
-      SELECT author createdon changedby changedon FROM o2xsltdesc
+      WHERE pgmid     = 'R3TR'
+        AND object    = 'XSLT'
+        AND obj_name IN s_report
+        AND obj_name IN r_name
+        AND obj_name IN r_obj
+        AND devclass IN s_devcla
+        AND delflag   = ''.
+      SELECT author createdon changedby changedon
+        FROM o2xsltdesc
         INTO CORRESPONDING FIELDS OF o2xsltdesc
         UP TO 1 ROWS
-       WHERE relid = 'TR' AND xsltdesc = tadir-obj_name
-       ORDER BY PRIMARY KEY.
+        WHERE relid = 'TR' AND xsltdesc = tadir-obj_name
+        ORDER BY PRIMARY KEY.
       ENDSELECT.
       IF sy-subrc = 0.
 
@@ -1942,13 +1987,14 @@ FORM seleccionar_datos.
   ENDIF.
 
   IF p_wf = 'X'.
-    SELECT mc_short stext uname aedtm FROM hrs1000      "#EC CI_GENBUFF
+    SELECT mc_short stext uname aedtm
+      FROM hrs1000      "#EC CI_GENBUFF
       INTO CORRESPONDING FIELDS OF hrs1000
-     WHERE otype    IN ( 'AC', 'TS', 'WS' )
-       AND uname    <> 'SAP'
-       AND mc_short IN s_report
-       AND mc_short IN r_name
-       AND mc_short IN r_obj.
+      WHERE otype    IN ( 'AC', 'TS', 'WS' )
+        AND uname    <> 'SAP'
+        AND mc_short IN s_report
+        AND mc_short IN r_name
+        AND mc_short IN r_obj.
       CLEAR i_listado.
       i_listado-name = hrs1000-mc_short.
       i_listado-subc = 'W'.
@@ -1956,9 +2002,10 @@ FORM seleccionar_datos.
       i_listado-object = hrs1000-otype.
       i_listado-text   = hrs1000-stext.
       IF hrs1000-otype = 'WS'.
-        SELECT SINGLE created_by created_on changed_by changed_on FROM swdsheader "#EC CI_GENBUFF
+        SELECT SINGLE created_by created_on changed_by changed_on
+          FROM swdsheader "#EC CI_GENBUFF
           INTO (i_listado-cnam, i_listado-cdat, i_listado-unam, i_listado-udat)
-        WHERE wfd_id = i_listado-tcode.
+          WHERE wfd_id = i_listado-tcode.
       ELSE.
         i_listado-unam = hrs1000-uname.
         i_listado-cnam = hrs1000-uname.
@@ -1969,15 +2016,15 @@ FORM seleccionar_datos.
     ENDSELECT.
   ENDIF.
 
-  zcl_ap_sgpi=>text( 'Analizando información'(ain) ).
+  zcl_ap_sgpi=>text( 'Analizando informaciÃ³n'(ain) ).
 
   LOOP AT i_listado WHERE devclass = ''.
-    SELECT devclass FROM  tadir                         "#EC CI_GENBUFF
+    SELECT devclass FROM tadir                         "#EC CI_GENBUFF
       INTO i_listado-devclass
       UP TO 1 ROWS
-     WHERE object   = i_listado-object
-       AND obj_name = i_listado-name
-     ORDER BY PRIMARY KEY.
+      WHERE object   = i_listado-object
+        AND obj_name = i_listado-name
+      ORDER BY PRIMARY KEY.
     ENDSELECT.
     MODIFY i_listado.
   ENDLOOP.
@@ -1987,8 +2034,8 @@ FORM seleccionar_datos.
 
   LOOP AT i_listado.
     SELECT SINGLE * FROM zbc003
-     WHERE name  = i_listado-name
-       AND tcode = i_listado-tcode.
+      WHERE name  = i_listado-name
+        AND tcode = i_listado-tcode.
     IF sy-subrc = 0.
       MOVE-CORRESPONDING zbc003 TO i_listado.
     ENDIF.
@@ -2012,11 +2059,11 @@ FORM seleccionar_datos.
 
     SELECT SINGLE tcode FROM zdocumentos
       INTO l_tcode
-     WHERE tcode = i_listado-name.
+      WHERE tcode = i_listado-name.
     IF sy-subrc <> 0 AND i_listado-grupo <> ''.
       SELECT SINGLE tcode FROM zdocumentos
         INTO l_tcode
-       WHERE tcode = i_listado-grupo.
+        WHERE tcode = i_listado-grupo.
     ENDIF.
     IF sy-subrc = 0.
       i_listado-doc = icon_word_processing.
@@ -2025,8 +2072,8 @@ FORM seleccionar_datos.
     SELECT comentarios FROM zbc003t
       UP TO 1 ROWS
       INTO i_listado-comentarios
-     WHERE name  = i_listado-name
-       AND tcode = i_listado-tcode
+      WHERE name  = i_listado-name
+        AND tcode = i_listado-tcode
       ORDER BY PRIMARY KEY.
     ENDSELECT.
     MODIFY i_listado.
@@ -2080,7 +2127,7 @@ FORM seleccionar_datos.
   ENDLOOP.
 
   IF p_hash = 'X' OR p_lib = 'X' OR p_solom = 'X' OR p_buscar <> ''.
-    zcl_ap_sgpi=>text( 'Calculando hash' ).
+    zcl_ap_sgpi=>text( 'Calculando hash'(CH1) ).
     LOOP AT i_listado.
       CLEAR i_listado-color.
       PERFORM get_hash.
@@ -2092,7 +2139,17 @@ FORM seleccionar_datos.
         i_listado-fecha_descarga   = i_list_excel-fecha_descarga.
       ENDIF.
       IF i_list_excel-hash = i_listado-hash.
-        i_listado-icono = icon_equal_green.
+* Antes de darlo por bueno verifico si existe, porque si no lo tengo que descargar
+        data(l_filename) = |{ i_listado-object }_{ i_listado-name }|.
+        LOOP AT i_ficheros WHERE     filename CS l_filename.
+          EXIT.
+        ENDLOOP.
+        IF sy-subrc = 0.
+          i_listado-icono = icon_equal_green.
+        ELSE.
+          i_listado-icono = icon_incoming_object.
+          i_listado-marca = 'X'.
+        ENDIF.
       ELSE.
         i_listado-icono = icon_incoming_object.
         i_listado-marca = 'X'.
@@ -2159,7 +2216,7 @@ FORM seleccionar_datos.
 
     SELECT SINGLE parentcl FROM tdevc
       INTO <listado>-parentcl
-     WHERE devclass = <listado>-devclass.
+      WHERE devclass = <listado>-devclass.
     IF <listado>-parentcl = 'ZDESGREF'.
       CLEAR <listado>-parentcl.
     ENDIF.
@@ -2168,8 +2225,8 @@ FORM seleccionar_datos.
       DO 4 TIMES.
         SELECT SINGLE parentcl FROM tdevc
           INTO <listado>-parentcl
-         WHERE devclass  = <listado>-parentcl
-           AND parentcl <> ''.
+          WHERE devclass  = <listado>-parentcl
+            AND parentcl <> ''.
         IF sy-subrc <> 0.
           EXIT.
         ENDIF.
@@ -2182,28 +2239,34 @@ FORM seleccionar_datos.
     ENDIF.
     IF <listado>-object = 'CLAS'.
       DATA(aux1) = |{ <listado>-name(30) }%|.
-      SELECT e071~trkorr e070~strkorr FROM e071 JOIN e070 ON e071~trkorr = e070~trkorr
+      SELECT e071~trkorr e070~strkorr
+        FROM e071
+               JOIN
+                 e070 ON e071~trkorr = e070~trkorr
         INTO CORRESPONDING FIELDS OF <listado>
         UP TO 1 ROWS
-       WHERE object     IN ( 'CLAS', 'METH', 'CLSD', 'CPRI', 'CPRO', 'CPUB' )
-         AND obj_name LIKE aux1
-         AND trstatus    = 'D' " Pendiente de liberar
-       ORDER BY e070~trkorr DESCENDING.
+        WHERE object     IN ( 'CLAS', 'METH', 'CLSD', 'CPRI', 'CPRO', 'CPUB' )
+          AND obj_name LIKE aux1
+          AND trstatus    = 'D' " Pendiente de liberar
+        ORDER BY e070~trkorr DESCENDING.
       ENDSELECT.
     ELSE.
-      SELECT e071~trkorr e070~strkorr FROM e071 JOIN e070 ON e071~trkorr = e070~trkorr
+      SELECT e071~trkorr e070~strkorr
+        FROM e071
+               JOIN
+                 e070 ON e071~trkorr = e070~trkorr
         INTO CORRESPONDING FIELDS OF <listado>
         UP TO 1 ROWS
-       WHERE object   IN r_object
-         AND obj_name  = <listado>-name
-         AND trstatus  = 'D' " Pendiente de liberar
-       ORDER BY e070~trkorr DESCENDING.
+        WHERE object   IN r_object
+          AND obj_name  = <listado>-name
+          AND trstatus  = 'D' " Pendiente de liberar
+        ORDER BY e070~trkorr DESCENDING.
       ENDSELECT.
     ENDIF.
     IF NOT <listado>-strkorr IS INITIAL.
-      SELECT SINGLE as4text FROM  e07t
+      SELECT SINGLE as4text FROM e07t
         INTO <listado>-as4text
-      WHERE trkorr = <listado>-strkorr.
+        WHERE trkorr = <listado>-strkorr.
     ENDIF.
   ENDLOOP.
 
@@ -2250,8 +2313,8 @@ FORM editar_nota USING pe_name
 
   SELECT comentarios FROM zbc003t
     INTO CORRESPONDING FIELDS OF TABLE i_zbc003t
-   WHERE name  = pe_name
-     AND tcode = pe_tcode.
+    WHERE name  = pe_name
+      AND tcode = pe_tcode.
 
   LOOP AT i_zbc003t.
     i_lineas = i_zbc003t-comentarios.
@@ -2303,6 +2366,7 @@ FORM descargar_slnk USING pe_mail.
   DATA errorflag    TYPE flag.
   DATA deffilename3 TYPE string.
   DATA i_tabla      TYPE TABLE OF text255.
+  DATA l_extension  TYPE string.
   DATA: l_version TYPE string,
         zbc003v   TYPE zbc003v.
   DATA deffilename2 TYPE string.
@@ -2326,9 +2390,12 @@ FORM descargar_slnk USING pe_mail.
       IF p_lib = 'X'.
         CONCATENATE '__BACKUP_' zcl_c=>empresa '_' sy-datum '_' sy-uzeit INTO v_dif.
       ELSE.
-        MESSAGE '�?' TYPE 'E'.
-        DATA(l_versiones) = 'X'.
-        CONCATENATE '_' sy-datum '_' sy-uzeit INTO v_dif.
+*APC20251217 Ya no quieroversiones, todo al git
+        BREAK-POINT.
+
+*        MESSAGE '¿?' TYPE 'E'.
+*        DATA(l_versiones) = 'X'.
+*        CONCATENATE '_' sy-datum '_' sy-uzeit INTO v_dif.
       ENDIF.
     ENDIF.
   ENDIF.
@@ -2371,7 +2438,7 @@ FORM descargar_slnk USING pe_mail.
     WHEN 'SMIM'.
       _objname = i_listado-text.
     WHEN 'SHLP'.
-      EXIT.
+      RETURN.
   ENDCASE.
 
   IF i_listado-object <> 'FORM' AND i_listado-object <> 'SFPF' AND i_listado-object <> 'DDLS'.
@@ -2401,12 +2468,12 @@ FORM descargar_slnk USING pe_mail.
 *      CONCATENATE i_listado-object '_' _objname
       CONCATENATE v_directorio '\' i_listado-object '\'
                v_dif
-               '.slnk' INTO deffilename.
+               '.slnk' INTO deffilename ##NO_TEXT.
     ELSE.
       CONCATENATE i_listado-object '_' _objname '_'
                  i_listado-text
                  v_dif
-                 '.slnk' INTO deffilename.
+                 '.slnk' INTO deffilename ##NO_TEXT.
     ENDIF.
     IF p_zip = 'X'.
       izip = NEW #( ).
@@ -2434,20 +2501,20 @@ FORM descargar_slnk USING pe_mail.
   REPLACE ALL OCCURRENCES OF '\' IN l_devclass WITH '_'.
 
   IF p_lib IS INITIAL AND i_listado-object <> 'FUGR'.
-    IF l_versiones = 'X'.
-      CONCATENATE v_directorio '\VERSIONES\'
-                 l_object '_' l_objname '_'
-                 i_listado-text
-                 v_dif
-                 '.slnk' INTO deffilename.
-    ELSE.
-      CONCATENATE v_directorio
-                 l_object '_' l_objname '_'
-                 i_listado-text
-                 v_dif
-                 '.slnk' INTO deffilename.
+*    IF l_versiones = 'X'.
+*      CONCATENATE v_directorio '\VERSIONES\'
+*                 l_object '_' l_objname '_'
+*                 i_listado-text
+*                 v_dif
+*                 '.slnk' INTO deffilename.
+*    ELSE.
+    CONCATENATE v_directorio
+               l_object '_' l_objname '_'
+               i_listado-text
+               v_dif
+               '.slnk' INTO deffilename.
 
-    ENDIF.
+*    ENDIF.
   ELSE.
     CONCATENATE v_directorio '\' i_listado-object '\' l_objname
 *               l_object '_' l_objname
@@ -2490,7 +2557,7 @@ FORM descargar_slnk USING pe_mail.
         PERFORM putonmachine USING deffilename xml.
         IF errorflag IS NOT INITIAL.
           MESSAGE s398(00) WITH 'Error descargando'(ede) deffilename '' ''.
-          EXIT.
+          RETURN.
         ENDIF.
       ENDIF.
     ENDIF.
@@ -2523,7 +2590,7 @@ FORM descargar_slnk USING pe_mail.
     CONCATENATE v_directorio '\' l_devclass '\'
                i_listado-object '_'
                i_listado-name
-               '.txt' INTO deffilename3.
+               '.txt' INTO deffilename3 ##NO_TEXT.
     IF deffilename3(2) <> '\\'.
       REPLACE '\\' WITH '\' INTO deffilename3.
     ENDIF.
@@ -2545,7 +2612,6 @@ FORM descargar_slnk USING pe_mail.
   ENDIF.
 
   IF NOT i_tabla[] IS INITIAL.
-    DATA l_extension TYPE string.
     l_extension = '.txt'.
     IF i_listado-object = 'PROG' OR i_listado-object = 'CLAS' OR i_listado-object = 'FUGR'.
       l_extension = '.abap'.
@@ -2563,21 +2629,21 @@ FORM descargar_slnk USING pe_mail.
 
     ELSE.
       IF p_lib IS INITIAL.
-        IF l_versiones IS INITIAL.
-          CONCATENATE v_directorio '\' l_devclass '\' i_listado-object '\'
-                     i_listado-object '_'
-                     _objname '_'
-                     i_listado-text
-                     v_dif
-                     l_extension INTO deffilename2.
-        ELSE.
-          CONCATENATE v_directorio '\VERSIONES\'
-                     i_listado-object '_'
-                     _objname '_'
-                     i_listado-text
-                     v_dif
-                     l_extension INTO deffilename2.
-        ENDIF.
+*        IF l_versiones IS INITIAL.
+        CONCATENATE v_directorio '\' l_devclass '\' i_listado-object '\'
+                   i_listado-object '_'
+                   _objname '_'
+                   i_listado-text
+                   v_dif
+                   l_extension INTO deffilename2.
+*        ELSE.
+*          CONCATENATE v_directorio '\VERSIONES\'
+*                     i_listado-object '_'
+*                     _objname '_'
+*                     i_listado-text
+*                     v_dif
+*                     l_extension INTO deffilename2.
+*        ENDIF.
       ELSE.
         CONCATENATE v_directorio '\' i_listado-object '\'
 *                   i_listado-object '_'
@@ -2602,6 +2668,9 @@ FORM descargar_slnk USING pe_mail.
         IF p_rfc IS INITIAL.
           zcl_ap_ficheros=>grabar( EXPORTING fichero       = deffilename2
                                              mostrar_error = 'I'
+                                             codepage      = '4110'
+                                             write_bom    = 'X'
+                                             write_lf_after_last_line = ''
                                    CHANGING  tabla         = i_tabla ).
         ENDIF.
       ELSEIF sy-ucomm(4) <> 'COMP'.
@@ -2614,7 +2683,9 @@ FORM descargar_slnk USING pe_mail.
                                           contenidox   = l_stringx
                                           content_type = 'text/plain'
                                 IMPORTING message      = DATA(l_msg) ).
-          IF NOT l_msg IS INITIAL. MESSAGE l_msg TYPE 'E'. ENDIF.
+          IF NOT l_msg IS INITIAL.
+            MESSAGE l_msg TYPE 'E'.
+          ENDIF.
         ENDIF.
       ENDIF.
 
@@ -2662,6 +2733,9 @@ FORM descargar_slnk USING pe_mail.
 
             zcl_ap_ficheros=>grabar( EXPORTING fichero       = deffilename2
                                                mostrar_error = 'I'
+                                               codepage      = '4110'
+                                               write_bom    = 'X'
+                                               write_lf_after_last_line = ''
                                      CHANGING  tabla         = i_tabla ).
 
             CLEAR i_codigo.
@@ -2690,6 +2764,9 @@ FORM descargar_slnk USING pe_mail.
 
             zcl_ap_ficheros=>grabar( EXPORTING fichero       = deffilename3
                                                mostrar_error = 'I'
+                                               codepage      = '4110'
+                                               write_bom    = 'X'
+                                               write_lf_after_last_line = ''
                                      CHANGING  tabla         = i_codigo ).
           ENDIF.
           CONCATENATE '"' deffilename2 '"' INTO deffilename2.
@@ -2830,7 +2907,9 @@ FORM putonmachine USING fullpath  TYPE string
                                       contenidox   = l_xstring
                                       content_type = 'text/plain'
                             IMPORTING message      = DATA(l_msg) ).
-      IF NOT l_msg IS INITIAL. MESSAGE l_msg TYPE 'E'. ENDIF.
+      IF NOT l_msg IS INITIAL.
+        MESSAGE l_msg TYPE 'E'.
+      ENDIF.
     ENDIF.
   ELSE.
     TRY.
@@ -3072,7 +3151,7 @@ FORM comparar_ficheros.
         i_t2_255 TYPE TABLE OF text255.
   DATA abaptext_delta LIKE vxabapt255 OCCURS 0 WITH HEADER LINE.
 
-  i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( DIRECTORY = v_directorio RECURSIVO = 'X' ).
+  i_ficheros[] = zcl_ap_ficheros=>lista_ficheros( directory = v_directorio recursivo = 'X' ).
   LOOP AT i_ficheros.
     i_ficheros-filename = to_upper( i_ficheros-filename ). "#EC TRANSLANG
     MODIFY i_ficheros.
@@ -3086,9 +3165,9 @@ FORM comparar_ficheros.
     REFRESH: i_tabla, i_tabla2.
 
     IF i_listado-object = 'PROG' OR i_listado-object = 'CLAS' OR i_listado-object = 'FUGR'.
-      CONCATENATE i_listado-object '\' i_listado-name '.abap' INTO DATA(l_nf).
+      CONCATENATE i_listado-object '\' i_listado-name '.abap' INTO DATA(l_nf) ##NO_TEXT.
     ELSE.
-      CONCATENATE i_listado-object '\' i_listado-name '.txt' INTO l_nf.
+      CONCATENATE i_listado-object '\' i_listado-name '.txt' INTO l_nf ##NO_TEXT.
     ENDIF.
     IF o_ms IS INITIAL.
       IF p_rfc IS INITIAL.
@@ -3229,7 +3308,8 @@ FORM comparar_ficheros.
               DATA(l_idx) = sy-tabix + 1.
               READ TABLE i_tabla INTO DATA(l_t2) INDEX l_idx.
               IF sy-subrc = 0.
-                CONDENSE l_t2 NO-GAPS. l_t2 = to_upper( l_t2 ).
+                CONDENSE l_t2 NO-GAPS.
+                l_t2 = to_upper( l_t2 ).
                 <t> = |TYPES{ l_t2 }|.
                 DELETE i_tabla INDEX l_idx.
                 l_reintentar = 'X'.
@@ -3239,7 +3319,8 @@ FORM comparar_ficheros.
               l_idx = sy-tabix + 1.
               READ TABLE i_tabla INTO l_t2 INDEX l_idx.
               IF sy-subrc = 0.
-                CONDENSE l_t2 NO-GAPS. l_t2 = to_upper( l_t2 ).
+                CONDENSE l_t2 NO-GAPS.
+                l_t2 = to_upper( l_t2 ).
                 <t> = |CONSTANTS{ l_t2 }|.
                 DELETE i_tabla INDEX l_idx.
                 l_reintentar = 'X'.
@@ -3286,7 +3367,8 @@ FORM comparar_ficheros.
               l_idx = sy-tabix + 1.
               READ TABLE i_tabla2 INTO l_t2 INDEX l_idx.
               IF sy-subrc = 0.
-                CONDENSE l_t2 NO-GAPS. l_t2 = to_upper( l_t2 ).
+                CONDENSE l_t2 NO-GAPS.
+                l_t2 = to_upper( l_t2 ).
                 <t> = |TYPES{ l_t2 }|.
                 DELETE i_tabla2 INDEX l_idx.
                 l_reintentar = 'X'.
@@ -3297,7 +3379,8 @@ FORM comparar_ficheros.
               l_idx = sy-tabix + 1.
               READ TABLE i_tabla INTO l_t2 INDEX l_idx.
               IF sy-subrc = 0.
-                CONDENSE l_t2 NO-GAPS. l_t2 = to_upper( l_t2 ).
+                CONDENSE l_t2 NO-GAPS.
+                l_t2 = to_upper( l_t2 ).
                 <t> = |CONSTANTS{ l_t2 }|.
                 DELETE i_tabla INDEX l_idx.
                 l_reintentar = 'X'.
@@ -3335,7 +3418,9 @@ FORM comparar_ficheros.
           ENDIF.
 
           IF zcl_ap_string=>ultimo_caracter( <t> ) = '.'.
-            IF i_listado-object = 'CLAS'. REPLACE ALL OCCURRENCES OF '!' IN string WITH ''. ENDIF.
+            IF i_listado-object = 'CLAS'.
+              REPLACE ALL OCCURRENCES OF '!' IN string WITH ''.
+            ENDIF.
             CONDENSE string NO-GAPS.
             APPEND string TO i_tabla.
             CLEAR string.
@@ -3350,7 +3435,9 @@ FORM comparar_ficheros.
             CONCATENATE string <t> INTO string SEPARATED BY space.
           ENDIF.
           IF zcl_ap_string=>ultimo_caracter( <t> ) = '.'.
-            IF i_listado-object = 'CLAS'. REPLACE ALL OCCURRENCES OF '!' IN string WITH ''. ENDIF.
+            IF i_listado-object = 'CLAS'.
+              REPLACE ALL OCCURRENCES OF '!' IN string WITH ''.
+            ENDIF.
             CONDENSE string NO-GAPS.
             APPEND string TO i_tabla2.
             CLEAR string.
@@ -3368,10 +3455,14 @@ FORM comparar_ficheros.
       ELSE.
         IF p_rfc IS INITIAL.
           LOOP AT i_tabla INTO l_tabla.                  "#EC CI_NESTED
-            IF l_tabla(6) = 'TYPES:'. l_tabla+5 = l_tabla+6. ENDIF.
+            IF l_tabla(6) = 'TYPES:'.
+              l_tabla+5 = l_tabla+6.
+            ENDIF.
             CLEAR i_tabla2.
             READ TABLE i_tabla2 INDEX sy-tabix.
-            IF i_tabla2(6) = 'TYPES:'. i_tabla2+5 = i_tabla2+6. ENDIF.
+            IF i_tabla2(6) = 'TYPES:'.
+              i_tabla2+5 = i_tabla2+6.
+            ENDIF.
             IF l_tabla = i_tabla2.
               CONTINUE.
             ENDIF.
@@ -3394,7 +3485,7 @@ FORM comparar_ficheros.
                 DO l_long TIMES.
                   DATA(l_inx) = sy-index - 1.
                   IF l_tabla+l_inx(1) <> i_tabla2+l_inx(1).
-                    IF l_tabla+l_inx(1) = '?' OR l_tabla+l_inx(1) = '.' OR l_tabla+l_inx(1) = '�'.
+                    IF l_tabla+l_inx(1) = '?' OR l_tabla+l_inx(1) = '.' OR l_tabla+l_inx(1) = '¡'.
                     ELSE.
                       l_dif = l_dif + 1.
                     ENDIF.
@@ -3577,8 +3668,8 @@ FORM ver_versiones.
 
   SELECT * FROM zbc003v
     INTO TABLE o_alv->i_versiones
-   WHERE name  = i_listado-name
-     AND tcode = i_listado-tcode.
+    WHERE name  = i_listado-name
+      AND tcode = i_listado-tcode.
 
   o_alv->constructor_tabla( EXPORTING tabla   = 'I_VERSIONES'
                             CHANGING  t_tabla = o_alv->i_versiones ).
@@ -3651,23 +3742,24 @@ FORM get_funcion USING pe_funcion.
   i_listado-ttext = v_fdirt-area.
 
   SELECT SINGLE * FROM tfdir
-   WHERE funcname = v_fdirt-funcname.
+    WHERE funcname = v_fdirt-funcname.
   CONCATENATE tfdir-pname+3 'U' tfdir-include INTO trdir-name.
 
-  SELECT SINGLE cdat cnam udat unam FROM trdir
+  SELECT SINGLE cdat cnam udat unam
+    FROM trdir
     INTO (i_listado-cdat, i_listado-cnam,
           i_listado-udat, i_listado-unam)
-   WHERE name  = trdir-name
-     AND cnam IN s_cnam
-     AND unam IN s_unam
-     AND cdat IN s_cdat
-     AND udat IN s_udat.
+    WHERE name  = trdir-name
+      AND cnam IN s_cnam
+      AND unam IN s_unam
+      AND cdat IN s_cdat
+      AND udat IN s_udat.
   IF sy-subrc = 0.
-    SELECT SINGLE devclass FROM  tadir
+    SELECT SINGLE devclass FROM tadir
       INTO i_listado-devclass
-     WHERE pgmid    = 'R3TR'
-       AND object   = 'PROG'
-       AND obj_name = trdir-name.
+      WHERE pgmid    = 'R3TR'
+        AND object   = 'PROG'
+        AND obj_name = trdir-name.
     IF sy-subrc = 0.
       IF p_numlin = 'X'.
         READ REPORT trdir-name INTO i_source.
@@ -3744,7 +3836,7 @@ MODULE user_command_0100 INPUT.
     WHEN 'TCODE'.
       CLEAR tstc.
       zcl_ap_popup=>popup_usuario( EXPORTING campo1 = 'TSTC-TCODE'
-                                             titulo = 'Ejecutar transacción'(etr)
+                                             titulo = 'Ejecutar transacciÃ³n'(etr)
                                    IMPORTING return = l_ok
                                    CHANGING  valor1 = tstc-tcode ).
       IF l_ok = ''.
@@ -3764,9 +3856,10 @@ MODULE user_command_0100 INPUT.
       ENDIF.
 
       LOOP AT i_listado WHERE marca = 'X'.
-        IF i_listado-icono = icon_incoming_object AND i_listado-devclass(1) <> '/' AND i_listado-object <> 'DOMA' AND i_listado-object <> 'DTEL'.
-          PERFORM guardar_version.
-        ENDIF.
+* Ya no guardamos versiones
+*        IF i_listado-icono = icon_incoming_object AND i_listado-devclass(1) <> '/' AND i_listado-object <> 'DOMA' AND i_listado-object <> 'DTEL'.
+*          PERFORM guardar_version.
+*        ENDIF.
         PERFORM descargar_slnk USING ''.
         MODIFY i_listado.
       ENDLOOP.
@@ -3807,7 +3900,7 @@ MODULE user_command_0100 INPUT.
         CLEAR l_ok.
         IF i_listado-icono <> icon_incoming_object AND i_listado-icono <> icon_equal_green.
           l_ok = zcl_ap_popup=>confirmar( titulo = 'Descargar objeto' "#EC *
-                                          texto  = '�Esta seguro de querer descargar el objeto?' "#EC *
+                                          texto  = '¿Esta seguro de querer descargar el objeto?' "#EC *
                                           texto2 = i_listado-name ).
           sy-ucomm = 'MACHACAR'.
         ELSE.
@@ -3815,7 +3908,7 @@ MODULE user_command_0100 INPUT.
         ENDIF.
 
         IF l_ok = 'X'.
-          PERFORM descargar_slnk USING 'B'.
+*          PERFORM descargar_slnk USING 'B'.
           PERFORM descargar_slnk USING ''.
           i_listado-cliente_descarga = zcl_c=>cliente_tasks.
           i_listado-fecha_descarga   = sy-datum.
@@ -3836,7 +3929,7 @@ MODULE user_command_0100 INPUT.
           CLEAR l_ok.
           IF i_listado-icono <> icon_outgoing_object.                      " BAJAR
             l_ok = zcl_ap_popup=>confirmar( titulo = 'Subir objeto' "#EC *
-                                            texto  = '�Esta seguro de querer subir el objeto?' "#EC *
+                                            texto  = '¿Esta seguro de querer subir el objeto?' "#EC *
                                             texto2 = i_listado-name ).
             sy-ucomm = 'SUBIR_LIB'.
           ELSE.
@@ -3948,7 +4041,9 @@ MODULE user_command_0100 INPUT.
                               AND ( subc = 'T' OR subc = 'E' OR subc = 'D' OR subc = 'V' ).
         l_objname = i_listado-name.
         l_objtype = i_listado-object.
-        IF i_listado-object = 'DTEL'. l_objtype = 'E'. ENDIF.
+        IF i_listado-object = 'DTEL'.
+          l_objtype = 'E'.
+        ENDIF.
         CALL FUNCTION 'RS_DD_DELETE_OBJ'
           EXPORTING
             no_ask               = 'X'
@@ -4073,16 +4168,16 @@ MODULE user_command_0100 INPUT.
             ENDIF.
             SELECT name FROM wbcrossgt
               INTO CORRESPONDING FIELDS OF TABLE i_inc
-             WHERE otype   = 'TY'
-               AND include = i_listado-name
-               AND direct  = 'X'.
+              WHERE otype   = 'TY'
+                AND include = i_listado-name
+                AND direct  = 'X'.
             SORT i_inc.
             DELETE i_inc WHERE name CS '\' OR name CS ':'.
             DELETE ADJACENT DUPLICATES FROM i_inc.
             SELECT name FROM cross
               INTO CORRESPONDING FIELDS OF TABLE i_fun
-             WHERE type    = 'F'
-               AND include = i_listado-name.
+              WHERE type    = 'F'
+                AND include = i_listado-name.
           WHEN OTHERS.
             l_no = 'X'.
         ENDCASE.
@@ -4091,12 +4186,12 @@ MODULE user_command_0100 INPUT.
         ENDIF.
 
         LOOP AT i_inc.                                   "#EC CI_NESTED
-          SELECT ddtext FROM  dd02t
+          SELECT ddtext FROM dd02t
             INTO dd02t-ddtext
             UP TO 1 ROWS
-           WHERE tabname    = i_inc-name
-             AND ddlanguage = sy-langu
-           ORDER BY PRIMARY KEY.
+            WHERE tabname    = i_inc-name
+              AND ddlanguage = sy-langu
+            ORDER BY PRIMARY KEY.
           ENDSELECT.
           IF sy-subrc = 0.
             IF i_inc-name(1) <> 'Z'.
@@ -4112,20 +4207,20 @@ MODULE user_command_0100 INPUT.
         LOOP AT i_fun.                                   "#EC CI_NESTED
           CLEAR v_fdirt.
           SELECT SINGLE * FROM v_fdirt
-           WHERE funcname = i_fun-name
-             AND active   = 'X'
-             AND spras    = sy-langu.
+            WHERE funcname = i_fun-name
+              AND active   = 'X'
+              AND spras    = sy-langu.
           IF sy-subrc <> 0.
             SELECT SINGLE * FROM v_fdirt
-             WHERE funcname = i_fun-name
-               AND active   = 'X'
-               AND spras    = 'E'.
+              WHERE funcname = i_fun-name
+                AND active   = 'X'
+                AND spras    = 'E'.
             IF sy-subrc <> 0.
               SELECT * FROM v_fdirt
                 UP TO 1 ROWS
-               WHERE funcname = i_fun-name
-                 AND active   = 'X'
-               ORDER BY PRIMARY KEY.
+                WHERE funcname = i_fun-name
+                  AND active   = 'X'
+                ORDER BY PRIMARY KEY.
               ENDSELECT.
             ENDIF.
           ENDIF.
@@ -4227,30 +4322,32 @@ MODULE user_command_0100 INPUT.
       LOOP AT i_list INTO i_listado WHERE marca = 'X' AND object = 'TABL'.
         SELECT dd05q~fieldname, dd05q~checktable, dd05q~checkfield,
                dd08l~tabname, '                  ' AS texto
-          FROM dd05q LEFT OUTER JOIN dd08l ON  dd08l~checktable = dd05q~checktable
-                                           AND dd08l~fieldname  = dd05q~checkfield
-                                           AND dd08l~frkart     = 'TEXT'
+          FROM dd05q
+                 LEFT OUTER JOIN
+                   dd08l ON  dd08l~checktable = dd05q~checktable
+                         AND dd08l~fieldname  = dd05q~checkfield
+                         AND dd08l~frkart     = 'TEXT'
           INTO TABLE @DATA(i_rel)
-         WHERE dd05q~tabname     = @i_listado-name
-           AND dd05q~checktable <> ''
-           AND dd05q~fieldname  <> 'MANDT'
-           AND dd05q~checkfield <> 'MANDT'.
+          WHERE dd05q~tabname     = @i_listado-name
+            AND dd05q~checktable <> ''
+            AND dd05q~fieldname  <> 'MANDT'
+            AND dd05q~checkfield <> 'MANDT'.
 
         LOOP AT i_rel ASSIGNING FIELD-SYMBOL(<rel>) WHERE NOT checkfield IS INITIAL.
           SELECT SINGLE position FROM dd03l
             INTO @DATA(l_pos)
-           WHERE tabname   = @<rel>-tabname
-             AND fieldname = @<rel>-checkfield.
+            WHERE tabname   = @<rel>-tabname
+              AND fieldname = @<rel>-checkfield.
           l_pos = l_pos + 1.
           SELECT SINGLE fieldname FROM dd03l
             INTO <rel>-texto
-           WHERE tabname  = <rel>-tabname
-             AND position = l_pos.
+            WHERE tabname  = <rel>-tabname
+              AND position = l_pos.
         ENDLOOP.
 
-        cl_demo_output=>begin_section( 'Campos' ).
+        cl_demo_output=>begin_section( 'Campos'(CAM) ).
         cl_demo_output=>write_data( i_rel ).
-        cl_demo_output=>begin_section( 'Declaraciones' ).
+        cl_demo_output=>begin_section( 'Declaraciones'(DEC) ).
         LOOP AT i_rel ASSIGNING <rel> WHERE NOT checkfield IS INITIAL.
           cl_demo_output=>write_text( |{ <rel>-fieldname }_t type { <rel>-tabname }-{ <rel>-texto },| ).
         ENDLOOP.
@@ -4262,9 +4359,9 @@ MODULE user_command_0100 INPUT.
       LOOP AT i_listado WHERE marca = 'X' AND object = 'WAPA' AND ttext CS 'UI5'.
         SELECT SINGLE obj_name FROM tadir
           INTO @DATA(l_obj_name)
-         WHERE pgmid    = 'R3TR'
-           AND object   = 'PROG'
-           AND obj_name = 'ZUI5_REPOSITORY_LOAD'.
+          WHERE pgmid    = 'R3TR'
+            AND object   = 'PROG'
+            AND obj_name = 'ZUI5_REPOSITORY_LOAD'.
         IF sy-subrc = 0.
           SUBMIT (l_obj_name)
             AND RETURN
@@ -4286,11 +4383,11 @@ MODULE user_command_0100 INPUT.
       IF NOT i_list_excel[] IS INITIAL.
         DATA(i_list_tmp) = i_list_excel[].
         LOOP AT i_list_tmp ASSIGNING FIELD-SYMBOL(<list>).
-          SELECT SINGLE name FROM  zbc003
+          SELECT SINGLE name FROM zbc003
             INTO <list>-name
-           WHERE name     = <list>-name
-             AND tcode    = <list>-tcode
-             AND libreria = 'X'.
+            WHERE name     = <list>-name
+              AND tcode    = <list>-tcode
+              AND libreria = 'X'.
           IF sy-subrc = 0.
             DELETE i_list_tmp.
           ENDIF.
@@ -4358,8 +4455,8 @@ MODULE status_0100 OUTPUT.
     o_alv->set_field( op = 'CHECKBOX' campo = 'LIBRERIA' ).
 
     o_alv->set_field_text( campo = 'CLIENTE_DESCARGA' valor = 'UsModOtrSist' valor2 = 'Usuario modificador en otro sistema' ).
-    o_alv->set_field_text( campo = 'FECHA_DESCARGA' valor = 'FModOtrSist' valor2 = 'Fecha modificaci�n en otro sistema' ).
-    o_alv->set_field_text( campo = 'TCODE' valor = 'Transacci�n' ).
+    o_alv->set_field_text( campo = 'FECHA_DESCARGA' valor = 'FModOtrSist' valor2 = 'Fecha modificación en otro sistema' ).
+    o_alv->set_field_text( campo = 'TCODE' valor = 'Transacción' ).
 
 
     o_alv->set_field( op = 'NO_OUT' campo = 'MARCA' ).
@@ -4568,7 +4665,7 @@ FORM descargar_sfp USING pe_path
   TRY.
       l_xstring = cl_fp_helper=>convert_form_to_xstring( l_form ).
     CATCH cx_fp_api_internal.
-      EXIT.
+      RETURN.
   ENDTRY.
 
   CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
@@ -4631,7 +4728,8 @@ FORM grabar_list_excel.
 
   IF p_lib IS INITIAL.
     IF p_ext = 'X'.
-      REFRESH i_list_excel_ext. CLEAR i_list_excel_ext.
+      REFRESH i_list_excel_ext.
+      CLEAR i_list_excel_ext.
       LOOP AT i_list_excel WHERE devclass(1) = '/'.
         APPEND i_list_excel TO i_list_excel_ext.
         DELETE i_list_excel.
@@ -4639,7 +4737,8 @@ FORM grabar_list_excel.
     ENDIF.
 
     IF p_tmp = 'X'.
-      REFRESH i_list_excel_tmp. CLEAR i_list_excel_tmp.
+      REFRESH i_list_excel_tmp.
+      CLEAR i_list_excel_tmp.
       LOOP AT i_list_excel WHERE devclass = '$TMP'.
         APPEND i_list_excel TO i_list_excel_tmp.
         DELETE i_list_excel.
@@ -4647,7 +4746,8 @@ FORM grabar_list_excel.
     ENDIF.
 
     IF p_gen = 'X'.
-      REFRESH i_list_excel_gen. CLEAR i_list_excel_gen.
+      REFRESH i_list_excel_gen.
+      CLEAR i_list_excel_gen.
       LOOP AT i_list_excel WHERE text CS '(generated)'.
         APPEND i_list_excel TO i_list_excel_gen.
         DELETE i_list_excel.
@@ -4655,7 +4755,8 @@ FORM grabar_list_excel.
     ENDIF.
 
     IF p_open = 'X'.
-      REFRESH i_list_excel_opn. CLEAR i_list_excel_opn.
+      REFRESH i_list_excel_opn.
+      CLEAR i_list_excel_opn.
       LOOP AT i_list_excel WHERE    devclass IN r_devclass_open
                                  OR ( devclass(1) = '$' AND devclass <> '$TMP' ).
 
@@ -4665,7 +4766,8 @@ FORM grabar_list_excel.
     ENDIF.
 
     IF p_tablas = 'X'.
-      REFRESH i_list_excel_dic. CLEAR i_list_excel_dic.
+      REFRESH i_list_excel_dic.
+      CLEAR i_list_excel_dic.
       LOOP AT i_list_excel WHERE object = 'DOMA' OR object = 'DTEL' OR object = 'TABL' OR object = 'TTYP' OR object = 'VIEW'.
         APPEND i_list_excel TO i_list_excel_dic.
         DELETE i_list_excel.
@@ -4703,7 +4805,9 @@ FORM grabar_list_excel.
                                       contenidox   = l_xstring
                                       content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                             IMPORTING message      = DATA(l_msg) ).
-      IF NOT l_msg IS INITIAL. MESSAGE l_msg TYPE 'E'. ENDIF.
+      IF NOT l_msg IS INITIAL.
+        MESSAGE l_msg TYPE 'E'.
+      ENDIF.
     ENDIF.
   ENDIF.
 ENDFORM.
@@ -4739,7 +4843,7 @@ FORM get_hash.
                                                        IMPORTING ef_hashstring = l_key ).
       i_listado-hash = l_key.
     CATCH cx_abap_message_digest.
-      MESSAGE 'Error calculando hash' TYPE 'S'.
+      MESSAGE 'Error calculando hash'(ECH) TYPE 'S'.
   ENDTRY.
 ENDFORM.
 
@@ -4790,7 +4894,6 @@ FORM zip.
         v_27e  TYPE string VALUE '..\zip.exe -r -m ZIP_OPENSOURCE.zip * -i "*ZABAPGIT*.*"',
         v_27f  TYPE string VALUE '..\zip.exe -r -m ZIP_OPENSOURCE.zip * -i "*ZJSON*.*"',
         v_27g  TYPE string VALUE '..\zip.exe -r -m ZIP_OPENSOURCE.zip * -i "*CODEPAL*.*"',
-        v_27h  TYPE string VALUE '..\zip.exe -r -m ZIP_OPENSOURCE.zip * -i "*AOC_CHECK*.*"',
         v_l0   TYPE string VALUE '..\zip.exe -r -m VERSIONES.zip VERSIONES',
         v_l1   TYPE string VALUE '..\zip.exe -r -m ZIP_DTEL.zip * -i "DTEL_*.*"',
         v_l2   TYPE string VALUE '..\zip.exe -r -m ZIP_DOMA.zip * -i "DOMA_*.*"',
@@ -4895,7 +4998,7 @@ FORM zip.
                                                 not_supported_by_gui   = 8
                                                 OTHERS                 = 9 ).
   IF sy-subrc <> 0.
-    MESSAGE 'Error lanzando ZIP' TYPE 'I'.
+    MESSAGE 'Error lanzando ZIP'(ELZ) TYPE 'I'.
   ENDIF.
 ENDFORM.
 
@@ -4956,10 +5059,10 @@ FORM corregir_status.
       OTHERS               = 4.
 
   IF sy-subrc <> 0.
-    MESSAGE 'Error leyendo status' TYPE 'E'.
+    MESSAGE 'Error leyendo status'(ELS) TYPE 'E'.
   ENDIF.
 
-* Copia de c�digo en ZABAPGIT
+* Copia de código en ZABAPGIT
   IF     lw_adm         IS NOT INITIAL
      AND lw_adm-actcode CO lc_num_n_space
      AND lw_adm-mencode CO lc_num_n_space
@@ -4984,12 +5087,13 @@ FORM corregir_status.
     ENDLOOP.
   ENDIF.
 
-  SELECT SINGLE devclass object obj_name FROM tadir     "#EC CI_GENBUFF
+  SELECT SINGLE devclass object obj_name
+    FROM tadir     "#EC CI_GENBUFF
     INTO (tr_key-devclass, tr_key-obj_type, tr_key-obj_name)
-   WHERE object   = 'PROG'
-     AND obj_name = p_prog.
+    WHERE object   = 'PROG'
+      AND obj_name = p_prog.
   IF sy-subrc <> 0.
-    MESSAGE 'Error en SELECT TADIR' TYPE 'E'.
+    MESSAGE 'Error en SELECT TADIR'(EES) TYPE 'E'.
   ENDIF.
 
   CALL FUNCTION 'RS_CUA_INTERNAL_WRITE'
@@ -5016,6 +5120,6 @@ FORM corregir_status.
       invalid_data = 2.
 
   IF sy-subrc <> 0.
-    MESSAGE 'Error escribiendo status' TYPE 'E'.
+    MESSAGE 'Error escribiendo status'(EE1) TYPE 'E'.
   ENDIF.
 ENDFORM.

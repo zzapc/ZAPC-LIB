@@ -3019,7 +3019,7 @@ CLASS lcl_htdb_cl_command_select IMPLEMENTATION.
         CLEAR l_error.
       ELSE.
         IF zcl_ap_lista=>es_elemento( lista = zcl_c=>usuarios_sistemas elemento = sy-uname ) = 'X'.
-          IF zcl_ap_popup=>confirmar( texto = 'Esta acciÃ³n puede ser peligrosa' texto2 = 'Â¿EstÃ¡ seguro de continuar?' ) = ''.
+          IF zcl_ap_popup=>confirmar( texto = 'Esta acción puede ser peligrosa' texto2 = '¿Está seguro de continuar?' ) = ''.
             l_error = 'X'.
             EXIT.
           ENDIF.
@@ -8953,7 +8953,7 @@ WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 .
       WHEN 'INDEXES'.
 
 *       if ddxx-tabclass ne 'TRANSP'.
-*         Indexpflege nur fÃ¼r transparente Tabellen mÃ¶glich
+*         Indexpflege nur für transparente Tabellen möglich
 *         message s807.
 *       else.
 
@@ -12204,7 +12204,7 @@ ENDCLASS.                    "LCL_COMMANDS IMPLEMENTATION
 *----------------------------------------------------------------------*
 FORM mem_export .
 
-  DATA: BEGIN OF mode,                 " Schnittstelle fÃ¼r SE13
+  DATA: BEGIN OF mode,                 " Schnittstelle für SE13
           show(1),
           edit(1),
         END OF mode.

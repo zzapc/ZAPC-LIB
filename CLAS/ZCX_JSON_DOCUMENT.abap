@@ -1,4 +1,4 @@
-class ZCX_JSON_DOCUMENT definition
+﻿class ZCX_JSON_DOCUMENT definition
   public
   inheriting from CX_STATIC_CHECK
   final

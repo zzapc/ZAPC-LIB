@@ -1,3 +1,4 @@
+Ôªø
 CLASS zcl_ap_abap2xls DEFINITION
   PUBLIC
   CREATE PUBLIC.
@@ -57,7 +58,8 @@ CLASS zcl_ap_abap2xls DEFINITION
                 !visible TYPE abap_bool DEFAULT ''
                 autosize TYPE abap_bool DEFAULT ''
                 col_int  TYPE int4      OPTIONAL
-      PREFERRED PARAMETER col.
+          PREFERRED PARAMETER col
+     exporting  message TYPE bapi_msg.
 
     METHODS set_border_outline_range
       IMPORTING col_start           TYPE string                   DEFAULT 'A'
@@ -121,7 +123,7 @@ CLASS zcl_ap_abap2xls DEFINITION
                 opciones             TYPE string         DEFAULT ''
       EXPORTING fila_existe_valor    TYPE int4
                 columna_existe_valor TYPE int4
-                !message             TYPE bapi_msg
+                message              TYPE bapi_msg
                 datos                TYPE STANDARD TABLE
                 errores              TYPE table_of_strings
                 si_existe_valor      TYPE abap_bool.
@@ -146,8 +148,10 @@ CLASS zcl_ap_abap2xls DEFINITION
 
     METHODS get_xstring
       IMPORTING huge     TYPE abap_bool DEFAULT ''
+                csv      TYPE abap_bool DEFAULT ''
       EXPORTING xstring  TYPE xstring
-                longitud TYPE int4.
+                longitud TYPE int4
+                message  TYPE bapi_msg.
 
     METHODS set_alv
       IMPORTING tabla                TYPE table
@@ -184,7 +188,9 @@ CLASS zcl_ap_abap2xls DEFINITION
                 !local   TYPE abap_bool DEFAULT ''
                 dialogo  TYPE abap_bool DEFAULT ''
                 abrir    TYPE abap_bool DEFAULT ''
-      EXPORTING !message TYPE bapi_msg.
+                csv      TYPE abap_bool DEFAULT ''
+      EXPORTING !message TYPE bapi_msg
+      CHANGING  xstring  TYPE xstring   OPTIONAL.
 
     METHODS reemplazar_valor
       IMPORTING !var         TYPE any
@@ -267,7 +273,7 @@ CLASS zcl_ap_abap2xls DEFINITION
                 fichero       TYPE string    OPTIONAL
                 binario       TYPE xstring
       EXPORTING xstring       TYPE xstring
-                !message      TYPE bapi_msg.
+                message      TYPE bapi_msg.
 
     METHODS existe_valor
       IMPORTING valor            TYPE any
@@ -292,9 +298,9 @@ CLASS zcl_ap_abap2xls DEFINITION
 endclass. "ZCL_AP_ABAP2XLS definition
 class ZCL_AP_ABAP2XLS implementation.
   METHOD add_adj_mail.
-    DATA: l_xstring  TYPE xstring,
-          l_longitud TYPE int4,
-          l_fichero  TYPE string.
+    DATA l_xstring  TYPE xstring.
+    DATA l_longitud TYPE int4.
+    DATA l_fichero  TYPE string.
 
     IF o_mail IS INITIAL.
       RETURN.
@@ -324,15 +330,15 @@ class ZCL_AP_ABAP2XLS implementation.
                          longitud = l_longitud ).
   ENDMETHOD.
   METHOD alv_2_xls.
-    DATA: o_xls     TYPE REF TO zcl_ap_abap2xls,
-          l_aux1    TYPE text255,
-          l_fichero TYPE string,
-          l_message TYPE bapi_msg.
-    DATA: o_alv_local TYPE REF TO cl_salv_table,
-          o_colt      TYPE REF TO cl_salv_columns_table,
-          i_cols      TYPE salv_t_column_ref.
-    DATA: o_grid_local TYPE REF TO cl_gui_alv_grid,
-          t_fcat       TYPE lvc_t_fcat.
+    DATA o_xls        TYPE REF TO zcl_ap_abap2xls.
+    DATA l_aux1       TYPE text255.
+    DATA o_alv_local  TYPE REF TO cl_salv_table.
+    DATA o_colt       TYPE REF TO cl_salv_columns_table.
+    DATA i_cols       TYPE salv_t_column_ref.
+    DATA o_grid_local TYPE REF TO cl_gui_alv_grid.
+    DATA t_fcat       TYPE lvc_t_fcat.
+    DATA l_fichero    TYPE string.
+    DATA l_message    TYPE bapi_msg.
 
     FIELD-SYMBOLS <col> TYPE salv_s_column_ref.
 
@@ -357,7 +363,7 @@ class ZCL_AP_ABAP2XLS implementation.
           LOOP AT i_cols ASSIGNING <col>.
             IF <col>-r_column->is_visible( ) = ''.
               <col>-r_column->set_technical( if_salv_c_bool_sap=>true ).
-            ELSEIF NOT quitar_campos IS INITIAL.
+            ELSEIF quitar_campos IS NOT INITIAL.
               IF zcl_ap_lista=>es_elemento( lista    = quitar_campos
                                             elemento = <col>-columnname ).
                 <col>-r_column->set_technical( if_salv_c_bool_sap=>true ).
@@ -368,12 +374,12 @@ class ZCL_AP_ABAP2XLS implementation.
           o_xls->set_alv( alv                  = o_alv_local
                           tabla                = tabla
                           refresh_metadata     = refresh_metadata
-                          convert_txt_2_number = convert_txt_2_number  ).
+                          convert_txt_2_number = convert_txt_2_number ).
         ELSEIF l_aux1 CS 'CL_GUI_ALV_GRID'.
           o_grid_local ?= alv.
           o_grid_local->get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = t_fcat ).
           DELETE t_fcat WHERE no_out = 'X'.              "#EC CI_STDSEQ
-          IF NOT quitar_campos IS INITIAL.
+          IF quitar_campos IS NOT INITIAL.
             LOOP AT t_fcat ASSIGNING FIELD-SYMBOL(<fcat>).
               IF zcl_ap_lista=>es_elemento( lista    = quitar_campos
                                             elemento = <fcat>-fieldname ).
@@ -401,7 +407,7 @@ class ZCL_AP_ABAP2XLS implementation.
     TRY.
         o_xls->o_worksheet->set_title( titulo ).
       CATCH zcx_excel.
-        error = 'Error modificando tÌtulo'.
+        error = 'Error modificando t√≠tulo'.
         RETURN.
     ENDTRY.
 
@@ -439,7 +445,8 @@ class ZCL_AP_ABAP2XLS implementation.
                                       huge     = huge
                                       servidor = servidor
                                       local    = local
-                            IMPORTING message  = l_message ).
+                            IMPORTING message  = l_message
+                            CHANGING  xstring  = xstring ).
       IF grabar = 'X'.
         IF l_message IS INITIAL.
           MESSAGE s106(lx) WITH l_fichero.
@@ -453,7 +460,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-    IF NOT mail_destino IS INITIAL.
+    IF mail_destino IS NOT INITIAL.
       zcl_ap_envio_mail=>mail( EXPORTING subject              = mail_asunto
                                          direccion            = mail_destino
                                          nombre_fichero_tabla = l_fichero
@@ -485,14 +492,14 @@ class ZCL_AP_ABAP2XLS implementation.
     o_border_m->border_color-rgb = zcl_excel_style_color=>c_black.
     o_border_m->border_style = zcl_excel_style_border=>c_border_medium.
 
-    o_style_guid_recuadro          = get_style_guid( borders = 'DOWN=X,TOP=X,LEFT=X,RIGHT=X'  ).
+    o_style_guid_recuadro          = get_style_guid( borders = 'DOWN=X,TOP=X,LEFT=X,RIGHT=X' ).
     o_style_guid_recuadro_centrado = get_style_guid( centrado = 'X'
                                                      borders  = 'DOWN=X,TOP=X,LEFT=X,RIGHT=X' ).
   ENDMETHOD.
   METHOD copiar_fila.
-    DATA: i_nueva_fila TYPE zexcel_t_cell_data,
-          l_fila       TYPE int4,
-          i_cambios    TYPE zexcel_t_cell_data.
+    DATA i_nueva_fila TYPE zexcel_t_cell_data.
+    DATA l_fila       TYPE int4.
+    DATA i_cambios    TYPE zexcel_t_cell_data.
 
     CLEAR message.
 
@@ -528,22 +535,22 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDLOOP.
   ENDMETHOD.
   METHOD existe_valor.
-*--------------------------------------------------------------------*
-* Comment D. Rauchenstein
-* With this method, we get a fully functional Excel Upload, which solves
-* a few issues of the other excel upload tools
-* ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
-* in row-Numbers. Other have Limitations of Lines, or you are not able
-* to ignore filters or choosing the right tab.
-*
-* To get a fully functional XLSX Upload, you can use it e.g. with method
-* CL_EXCEL_READER_2007->ZIF_EXCEL_READER~LOAD_FILE()
-*--------------------------------------------------------------------*
+    " ---------------------------------------------------------------------
+    " Comment D. Rauchenstein
+    " With this method, we get a fully functional Excel Upload, which solves
+    " a few issues of the other excel upload tools
+    " ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
+    " in row-Numbers. Other have Limitations of Lines, or you are not able
+    " to ignore filters or choosing the right tab.
+    "
+    " To get a fully functional XLSX Upload, you can use it e.g. with method
+    " CL_EXCEL_READER_2007->ZIF_EXCEL_READER~LOAD_FILE()
+    " ---------------------------------------------------------------------
 
     " TODO: variable is assigned but never used (ABAP cleaner)
-    DATA: l_nombre_hoja TYPE string,
-          o_error_excel TYPE REF TO zcx_excel.
+    DATA l_nombre_hoja TYPE string.
     DATA lv_max_col    TYPE zexcel_cell_column.
+    DATA o_error_excel TYPE REF TO zcx_excel.
     DATA lv_max_row    TYPE int4.
     DATA lv_actual_row TYPE int4.
     DATA lv_actual_col TYPE int4.
@@ -621,11 +628,13 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD get_cell_coord.
-    DATA: lv_row_alpha TYPE string,
-          lv_col_alpha TYPE zexcel_cell_column_alpha.
+    DATA lv_row_alpha TYPE string.
+    DATA lv_col_alpha TYPE zexcel_cell_column_alpha.
 
     lv_row_alpha = fila.
-    CONDENSE lv_row_alpha NO-GAPS.
+    lv_row_alpha = condense( val  = lv_row_alpha
+                             from = ` `
+                             to   = `` ).
     TRY.
         lv_col_alpha = zcl_excel_common=>convert_column2alpha( col ).
       CATCH zcx_excel INTO DATA(zcx_excel).
@@ -636,6 +645,8 @@ class ZCL_AP_ABAP2XLS implementation.
   ENDMETHOD.
   METHOD get_fichero_desde_zip.
     DATA o_reader TYPE REF TO zif_excel_reader.
+
+CLEAR MESSAGE.
 
     IF huge IS INITIAL.
       o_reader = NEW zcl_excel_reader_2007( ).
@@ -654,22 +665,21 @@ class ZCL_AP_ABAP2XLS implementation.
 *    xstring = o_reader->get_fichero_desde_zip( fichero ).
         CALL METHOD o_reader->('get_fichero_desde_zip')
           EXPORTING
-            I_FILENAME = fichero
+            i_filename = fichero
           RECEIVING
-            R_CONTENT = xstring.
+            r_content  = xstring.
       CATCH cx_root INTO DATA(o_root).
         message = o_root->get_longtext( ).
     ENDTRY.
 
-
-    IF mostrar_error = 'X' AND NOT message IS INITIAL.
+    IF mostrar_error = 'X' AND message IS NOT INITIAL.
       MESSAGE message TYPE 'E'.
     ENDIF.
   ENDMETHOD.
   METHOD get_msg.
     FIELD-SYMBOLS <error> TYPE t_error.
 
-    CLEAR message.
+    CLEAR: message.
 
     LOOP AT i_error ASSIGNING <error> WHERE row = row.   "#EC CI_STDSEQ
       IF <error>-col = col OR col IS INITIAL.
@@ -678,11 +688,11 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDLOOP.
   ENDMETHOD.
   METHOD get_style_guid.
-    DATA: o_style  TYPE REF TO zcl_excel_style,
-          tabla    TYPE TABLE OF string,
-          lado     TYPE string,
-          borde    TYPE string,
-          o_border TYPE REF TO zcl_excel_style_border.
+    DATA o_style  TYPE REF TO zcl_excel_style.
+    DATA tabla    TYPE TABLE OF string.
+    DATA lado     TYPE string.
+    DATA borde    TYPE string.
+    DATA o_border TYPE REF TO zcl_excel_style_border.
 
     FIELD-SYMBOLS <tabla> TYPE string.
 
@@ -707,7 +717,7 @@ class ZCL_AP_ABAP2XLS implementation.
 
     o_style->font->bold = bold.
 
-    IF NOT font_size IS INITIAL.
+    IF font_size IS NOT INITIAL.
       o_style->font->size = font_size.
     ENDIF.
 
@@ -717,47 +727,34 @@ class ZCL_AP_ABAP2XLS implementation.
       o_style->alignment->horizontal = 'right'.
     ENDIF.
 
-    IF NOT color_fondo IS INITIAL.
+    IF color_fondo IS NOT INITIAL.
       o_style->fill->filltype = zcl_excel_style_fill=>c_fill_solid.
       o_style->fill->fgcolor-rgb = color_fondo.
     ENDIF.
 
-    IF NOT number_format IS INITIAL.
+    IF number_format IS NOT INITIAL.
       o_style->number_format->format_code = number_format.
     ENDIF.
 
     guid = o_style->get_guid( ).
   ENDMETHOD.
   METHOD get_tabla.
-*--------------------------------------------------------------------*
-* Comment D. Rauchenstein
-* With this method, we get a fully functional Excel Upload, which solves
-* a few issues of the other excel upload tools
-* ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
-* in row-Numbers. Other have Limitations of Lines, or you are not able
-* to ignore filters or choosing the right tab.
-*
-* To get a fully functional XLSX Upload, you can use it e.g. with method
-* CL_EXCEL_READER_2007->ZIF_EXCEL_READER~LOAD_FILE()
-*--------------------------------------------------------------------*
+    " ---------------------------------------------------------------------
+    " Comment D. Rauchenstein
+    " With this method, we get a fully functional Excel Upload, which solves
+    " a few issues of the other excel upload tools
+    " ZBCABA_ALSM_EXCEL_UPLOAD_EXT: Reads only up to 50 signs per Cell, Limit
+    " in row-Numbers. Other have Limitations of Lines, or you are not able
+    " to ignore filters or choosing the right tab.
+    "
+    " To get a fully functional XLSX Upload, you can use it e.g. with method
+    " CL_EXCEL_READER_2007->ZIF_EXCEL_READER~LOAD_FILE()
+    " ---------------------------------------------------------------------
 
-    DATA: l_nombre_hoja TYPE string,
-          o_error_excel TYPE REF TO zcx_excel,
-          l_msg         TYPE bapi_msg,
-          l_tipo        TYPE c LENGTH 1,
-          l_mask        TYPE string,
-          l_fecha       TYPE d,
-          l_string      TYPE string,
-          l_aux         TYPE string,
-          l_horat       TYPE string,
-          l_long        TYPE i,
-          l_segundos    TYPE int4,
-          l_hora        TYPE uzeit,
-          l_potencia    TYPE string,
-          cx_root       TYPE REF TO cx_root,
-          l_long2       TYPE i,
-          l_error       TYPE t_error.
+    DATA l_nombre_hoja    TYPE string.
     DATA lv_max_col       TYPE zexcel_cell_column.
+    DATA o_error_excel    TYPE REF TO zcx_excel.
+    DATA l_msg            TYPE bapi_msg.
     DATA lv_max_row       TYPE int4.
     DATA lv_actual_row    TYPE int4.
     DATA lv_actual_col    TYPE int4.
@@ -766,12 +763,25 @@ class ZCL_AP_ABAP2XLS implementation.
     DATA lv_col_ficticias TYPE int4.
     DATA lv_value         TYPE zexcel_cell_value.
     DATA lv_rc            TYPE sysubrc.
+    DATA l_tipo           TYPE c LENGTH 1.
+    DATA l_mask           TYPE string.
+    DATA l_fecha          TYPE d.
+    DATA l_string         TYPE string.
+    DATA l_aux            TYPE string.
+    DATA l_horat          TYPE string.
+    DATA l_long           TYPE i.
     DATA l_campo_hora     TYPE fieldname.
+    DATA l_segundos       TYPE int4.
+    DATA l_hora           TYPE uzeit.
+    DATA l_potencia       TYPE string.
+    DATA cx_root          TYPE REF TO cx_root.
+    DATA l_long2          TYPE i.
 
     FIELD-SYMBOLS <ls_line>  TYPE data.
     FIELD-SYMBOLS <lv_value> TYPE data.
-
     FIELD-SYMBOLS <fs>       TYPE any.
+
+    DATA l_error TYPE t_error.
 
     l_nombre_hoja = o_worksheet->get_title( ).
     DEFINE add_error.
@@ -783,7 +793,7 @@ class ZCL_AP_ABAP2XLS implementation.
       APPEND l_error TO i_error.
     END-OF-DEFINITION.
 
-    CLEAR et_errores.
+    CLEAR: et_errores, et_table.
 
     TRY.
         lv_max_col = o_worksheet->get_highest_column( ).
@@ -811,9 +821,9 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-*--------------------------------------------------------------------*
-* The row counter begins with 1 and should be corrected with the skips
-*--------------------------------------------------------------------*
+    " ---------------------------------------------------------------------
+    " The row counter begins with 1 and should be corrected with the skips
+    " ---------------------------------------------------------------------
     lv_actual_row = iv_skipped_rows + 1.
     lv_actual_col = iv_skipped_cols + 1.
 
@@ -841,13 +851,13 @@ class ZCL_AP_ABAP2XLS implementation.
           ENDDO.
 *           ELSE. "APC20180702
           IF lv_max_col > 0. " APC20180702
-*--------------------------------------------------------------------*
-*now we are ready for handle the table data
-*--------------------------------------------------------------------*
+            " ---------------------------------------------------------------------
+            " now we are ready for handle the table data
+            " ---------------------------------------------------------------------
             REFRESH et_table.
-*--------------------------------------------------------------------*
-* Handle each Row until end on right side
-*--------------------------------------------------------------------*
+            " ---------------------------------------------------------------------
+            " Handle each Row until end on right side
+            " ---------------------------------------------------------------------
             WHILE lv_actual_row <= lv_max_row.
               IF lv_actual_row <= lineas_cabecera.
                 lv_actual_row = lv_actual_row + 1.
@@ -855,17 +865,17 @@ class ZCL_AP_ABAP2XLS implementation.
               ENDIF.
 
               CLEAR lv_col_ficticias.
-*--------------------------------------------------------------------*
-* Handle each Column until end on bottom
-* First step is to step back on first column
-*--------------------------------------------------------------------*
+              " ---------------------------------------------------------------------
+              " Handle each Column until end on bottom
+              " First step is to step back on first column
+              " ---------------------------------------------------------------------
               lv_actual_col = iv_skipped_cols + 1.
 
               UNASSIGN <ls_line>.
               APPEND INITIAL LINE TO et_table ASSIGNING <ls_line>.
               IF sy-subrc <> 0 OR <ls_line> IS NOT ASSIGNED.
                 lv_errormessage = 'Error insertando nueva entrada en tabla interna'(eit).
-*APC
+                " APC
                 APPEND lv_errormessage TO et_errores.
 *           RAISE EXCEPTION TYPE zcx_excel
 *             EXPORTING
@@ -913,7 +923,7 @@ class ZCL_AP_ABAP2XLS implementation.
                     IF     lv_rc <> 0
                        AND lv_rc <> 4.                                                   " No found error means, zero/no value in cell
                       IF lv_actual_row <> lv_max_row.
-* En la ˙ltima fila no est·n rellenas todas las columnas si est·n en blanco
+                        " En la √∫ltima fila no est√°n rellenas todas las columnas si est√°n en blanco
                         __concat4 lv_errormessage 'Error leyendo campo'(elc) lv_actual_col ' Fila:'(005) lv_actual_row.
                         APPEND lv_errormessage TO et_errores.
                         add_error 'Error leyendo campo'(elc).
@@ -957,7 +967,7 @@ class ZCL_AP_ABAP2XLS implementation.
 *                      elseif lv_value = '2958465'.
 *                        l_fecha = '99991231'.
                                   ENDIF.
-                                CATCH cx_root. "#EC *
+                                CATCH cx_root.              "#EC *
                                   MESSAGE 'Error convirtiendo fecha' TYPE 'S'.
                               ENDTRY.
                             ENDIF.
@@ -973,15 +983,15 @@ class ZCL_AP_ABAP2XLS implementation.
                         ELSE.
                           <lv_value> = '88888888'.
                           lv_errormessage = zcl_ap_utils=>concat( p1 = lv_value
-                                                                  p2 = 'no es fecha v·lida. (Col:'(nfv)
+                                                                  p2 = 'no es fecha v√°lida. (Col:'(nfv)
                                                                   p3 = lv_actual_col
                                                                   p4 = ' Fila:'(005)
                                                                   p5 = lv_actual_row ).
-                          CONCATENATE 'Fecha'(fec) lv_value 'no v·lida'(nva) INTO l_msg SEPARATED BY space.
+                          CONCATENATE 'Fecha'(fec) lv_value 'no v√°lida'(nva) INTO l_msg SEPARATED BY space.
                           add_error l_msg.
                         ENDIF.
 
-                        IF NOT l_horat IS INITIAL.
+                        IF l_horat IS NOT INITIAL.
                           ASSIGN it_fieldcat[ lv_delta_col ] TO FIELD-SYMBOL(<fcat>).
                           IF sy-subrc = 0.
                             l_campo_hora = |{ <fcat>-fieldname }_HORA_NO_F|.
@@ -995,7 +1005,7 @@ class ZCL_AP_ABAP2XLS implementation.
                                     CLEAR l_hora.
                                     l_hora = l_hora + l_segundos.
                                     <fs> = l_hora.
-                                  CATCH cx_root. "#EC *
+                                  CATCH cx_root.            "#EC *
                                     l_aux = 'X'.
                                 ENDTRY.
                               ENDIF.
@@ -1003,7 +1013,7 @@ class ZCL_AP_ABAP2XLS implementation.
                           ENDIF.
                         ENDIF.
                       WHEN 'T'.
-*                  if lv_actual_col = 21. BREAK-POINT. endif.
+                        " if lv_actual_col = 21. BREAK-POINT. endif.
                         CLEAR: l_hora,
                                l_aux.
 
@@ -1030,7 +1040,7 @@ class ZCL_AP_ABAP2XLS implementation.
                                 l_segundos = lv_value * 86400.
                               ENDIF.
                               l_hora = l_hora + l_segundos.
-                            CATCH cx_root. "#EC *
+                            CATCH cx_root.                  "#EC *
                               l_aux = 'X'.
                           ENDTRY.
                         ELSE.
@@ -1040,11 +1050,11 @@ class ZCL_AP_ABAP2XLS implementation.
                         IF l_aux = 'X'.
                           <lv_value> = '888888'.
                           lv_errormessage = zcl_ap_utils=>concat( p1 = lv_value
-                                                                  p2 = 'no es hora v·lida. (Col:'(nfv)
+                                                                  p2 = 'no es hora v√°lida. (Col:'(nfc)
                                                                   p3 = lv_actual_col
                                                                   p4 = ' Fila:'(005)
                                                                   p5 = lv_actual_row ).
-                          CONCATENATE 'Hora'(hor) lv_value 'no v·lida'(nva) INTO l_msg SEPARATED BY space.
+                          CONCATENATE 'Hora'(hor) lv_value 'no v√°lida'(nva) INTO l_msg SEPARATED BY space.
                           add_error l_msg.
                         ELSE.
                           <lv_value> = l_hora.
@@ -1057,14 +1067,14 @@ class ZCL_AP_ABAP2XLS implementation.
                               zcl_ap_string=>string2ctd( EXPORTING ctd_texto = lv_value
                                                          IMPORTING cantidad  = <lv_value>
                                                                    mensaje   = l_msg ).
-                              IF NOT l_msg IS INITIAL.
-                                CONCATENATE lv_value 'no es una cantidad v·lida'(ncv) INTO l_msg SEPARATED BY space.
+                              IF l_msg IS NOT INITIAL.
+                                CONCATENATE lv_value 'no es una cantidad v√°lida'(ncv) INTO l_msg SEPARATED BY space.
                                 add_error l_msg.
                               ENDIF.
                             ELSE.
                               <lv_value> = lv_value.
                             ENDIF.
-                          CATCH cx_root INTO cx_root. "#EC *
+                          CATCH cx_root INTO cx_root.       "#EC *
                             l_msg = cx_root->get_longtext( ).
                             add_error l_msg.
                         ENDTRY.
@@ -1098,7 +1108,7 @@ class ZCL_AP_ABAP2XLS implementation.
                                   output = <lv_value>.
                             ENDIF.
                             IF validar_maestros = 'X'.
-                              IF NOT <lv_value> IS INITIAL.
+                              IF <lv_value> IS NOT INITIAL.
                                 CASE fcat-rollname.
                                   WHEN 'KSTAR'.
                                     SELECT SINGLE kstar FROM cska
@@ -1123,10 +1133,11 @@ class ZCL_AP_ABAP2XLS implementation.
                                       add_error lv_errormessage.
                                     ENDIF.
                                   WHEN 'PERNR'.
-                                    SELECT pernr FROM pa0000 INTO @DATA(l_pernr)
-                                     UP TO 1 ROWS
-                                     WHERE pernr = @<lv_value>
-                                     ORDER BY PRIMARY KEY.
+                                    SELECT pernr FROM pa0000
+                                      INTO @DATA(l_pernr)
+                                      UP TO 1 ROWS
+                                      WHERE pernr = @<lv_value>
+                                      ORDER BY PRIMARY KEY.
                                     ENDSELECT.
                                     IF sy-subrc <> 0.
                                       lv_errormessage = |Empleado { lv_value } no existe|.
@@ -1147,17 +1158,17 @@ class ZCL_AP_ABAP2XLS implementation.
                                       COLLECT lv_errormessage INTO et_errores.
                                       add_error lv_errormessage.
                                     ENDIF.
-                                  when 'WERKS'.
-                                    SELECT SINGLE WERKS FROM T001W INTO @DATA(L_WERKS) WHERE WERKS = @<lv_value>.
+                                  WHEN 'WERKS'.
+                                    SELECT SINGLE werks FROM t001w INTO @DATA(l_werks) WHERE werks = @<lv_value>.
                                     IF sy-subrc <> 0.
                                       lv_errormessage = |Centro { lv_value } no existe|.
                                       COLLECT lv_errormessage INTO et_errores.
                                       add_error lv_errormessage.
                                     ENDIF.
-                                  when 'LGORT'.
-                                    SELECT single lgort FROM T001l INTO @DATA(l_lgort) WHERE lgort = @<lv_value>.
+                                  WHEN 'LGORT'.
+                                    SELECT SINGLE lgort FROM t001l INTO @DATA(l_lgort) WHERE lgort = @<lv_value>. "#EC CI_GENBUFF
                                     IF sy-subrc <> 0.
-                                      lv_errormessage = |AlmacÈn { lv_value } no existe|.
+                                      lv_errormessage = |Almac√©n { lv_value } no existe|.
                                       COLLECT lv_errormessage INTO et_errores.
                                       add_error lv_errormessage.
                                     ENDIF.
@@ -1179,7 +1190,7 @@ class ZCL_AP_ABAP2XLS implementation.
                               add_error lv_errormessage.
                             ELSE.
                               IF validar_maestros = 'X'.
-                                IF NOT <lv_value> IS INITIAL.
+                                IF <lv_value> IS NOT INITIAL.
                                   SELECT SINGLE matnr FROM mara
                                     INTO @DATA(l_matnr)
                                     WHERE matnr = @<lv_value>.
@@ -1246,22 +1257,32 @@ class ZCL_AP_ABAP2XLS implementation.
   METHOD get_xstring.
     DATA cl_writer TYPE REF TO zif_excel_writer.
 
-    IF huge IS INITIAL.
+    IF csv = abap_true.
+      cl_writer = NEW zcl_excel_writer_csv( ).
+    ELSEIF huge IS INITIAL.
       cl_writer = NEW zcl_excel_writer_2007( ).
     ELSE.
       cl_writer = NEW zcl_excel_writer_huge_file( ).
     ENDIF.
+    try.
     xstring = cl_writer->write_file( o_excel ).
+    catch zcx_excel into data(l_cx_excel).
+      message = l_cx_excel->get_longtext( ).
+    endtry.
     longitud = xstrlen( xstring ).
   ENDMETHOD.
   METHOD graba_fichero.
-    DATA: l_xstring       TYPE xstring,
-          l_fichero_final TYPE string.
+    DATA l_fichero_final TYPE string.
 
-    get_xstring( EXPORTING huge    = huge
-                 IMPORTING xstring = l_xstring ).
+    CLEAR message.
 
-    zcl_ap_ficheros=>grabar_xstring( EXPORTING xstring       = l_xstring
+    IF xstring IS INITIAL.
+      get_xstring( EXPORTING huge    = huge
+                             csv     = csv
+                   IMPORTING xstring = xstring ).
+    ENDIF.
+
+    zcl_ap_ficheros=>grabar_xstring( EXPORTING xstring       = xstring
                                                fichero       = fichero
                                                servidor      = servidor
                                                local         = local
@@ -1270,14 +1291,16 @@ class ZCL_AP_ABAP2XLS implementation.
                                      IMPORTING mensaje       = message
                                                fichero_final = l_fichero_final ).
 
-    IF abrir = 'X' AND NOT l_fichero_final IS INITIAL AND message IS INITIAL.
+    IF abrir = 'X' AND l_fichero_final IS NOT INITIAL AND message IS INITIAL.
       zcl_ap_ficheros=>visualizar( fichero = l_fichero_final ).
     ENDIF.
   ENDMETHOD.
   METHOD lee_fichero.
-    DATA: o_reader  TYPE REF TO zif_excel_reader,
-          l_xstring TYPE xstring,
-          l_fichero TYPE string.
+    DATA o_reader  TYPE REF TO zif_excel_reader.
+    DATA l_xstring TYPE xstring.
+    DATA l_fichero TYPE string.
+
+CLEAR MESSAGE.
 
     IF huge IS INITIAL.
       o_reader = NEW zcl_excel_reader_2007( ).
@@ -1301,8 +1324,8 @@ class ZCL_AP_ABAP2XLS implementation.
           ENDTRY.
         ENDIF.
       ENDIF.
-    ELSEIF NOT fichero IS INITIAL OR popup_select_file = 'X'.
-      IF NOT fichero IS INITIAL.
+    ELSEIF fichero IS NOT INITIAL OR popup_select_file = 'X'.
+      IF fichero IS NOT INITIAL.
         l_fichero = fichero.
       ELSEIF popup_select_file = 'X'.
         l_fichero = zcl_ap_ficheros=>popup_select_fichero( file_filter = zcl_ap_ficheros=>c_filtro_xlsx ).
@@ -1313,12 +1336,12 @@ class ZCL_AP_ABAP2XLS implementation.
       ELSE.
         TRY.
             o_excel = o_reader->load_file( i_filename        = l_fichero
-                                            i_from_applserver = servidor ).
+                                           i_from_applserver = servidor ).
           CATCH zcx_excel INTO zcx_excel.
             message = zcx_excel->get_longtext( ).
         ENDTRY.
       ENDIF.
-    ELSEIF NOT xstring IS INITIAL.
+    ELSEIF xstring IS NOT INITIAL.
       TRY.
           o_excel = o_reader->load( i_excel2007 = xstring ).
         CATCH zcx_excel INTO zcx_excel.
@@ -1352,14 +1375,16 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-    IF mostrar_error = 'X' AND NOT message IS INITIAL.
+    IF mostrar_error = 'X' AND message IS NOT INITIAL.
       MESSAGE message TYPE 'E'.
     ENDIF.
   ENDMETHOD.
   METHOD lee_hoja.
-    DATA: l_sheet_name  TYPE zexcel_sheet_title,
-          o_error_excel TYPE REF TO zcx_excel,
-          l_msg         TYPE c LENGTH 1.
+    DATA l_sheet_name  TYPE zexcel_sheet_title.
+    DATA o_error_excel TYPE REF TO zcx_excel.
+    DATA l_msg         TYPE c LENGTH 1.
+
+clear: si_existe_valor, message, datos, errores, fila_existe_valor, columna_existe_valor.
 
     nombre_hoja = o_worksheet->get_title( ).
 
@@ -1371,7 +1396,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-    IF NOT o_worksheet IS INITIAL.
+    IF o_worksheet IS NOT INITIAL.
       TRY.
           highest_column = o_worksheet->get_highest_column( ).
           highest_row    = o_worksheet->get_highest_row( ).
@@ -1394,7 +1419,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-    IF mostrar_error = 'X' AND NOT message IS INITIAL.
+    IF mostrar_error = 'X' AND message IS NOT INITIAL.
       MESSAGE message TYPE 'E'.
     ENDIF.
   ENDMETHOD.
@@ -1413,14 +1438,14 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD mail.
-    DATA: o_mail    TYPE REF TO zcl_ap_envio_mail,
-          l_texto   TYPE solisti1,
-          o_xls     TYPE REF TO zcl_ap_abap2xls,
-          l_fichero TYPE string.
+    DATA o_mail    TYPE REF TO zcl_ap_envio_mail.
+    DATA l_texto   TYPE solisti1.
+    DATA o_xls     TYPE REF TO zcl_ap_abap2xls.
+    DATA l_fichero TYPE string.
 
     o_mail = NEW #( usar_clases = 'X' ).
 
-    IF NOT texto IS INITIAL.
+    IF texto IS NOT INITIAL.
       o_mail->set_text( texto ).
     ENDIF.
 
@@ -1452,7 +1477,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     END-OF-DEFINITION.
 
-    IF NOT tabla1 IS INITIAL.
+    IF tabla1 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_tabla( tabla = tabla1 ).
       set_nombre 1 tabla.
@@ -1461,7 +1486,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT tabla2 IS INITIAL.
+    IF tabla2 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_tabla( tabla = tabla2 ).
       set_nombre 2 tabla.
@@ -1470,7 +1495,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT tabla3 IS INITIAL.
+    IF tabla3 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_tabla( tabla = tabla3 ).
       set_nombre 3 tabla.
@@ -1479,7 +1504,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT o_alv1 IS INITIAL.
+    IF o_alv1 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_alv( alv              = o_alv1->o_alv
                       tabla            = tabla_alv1
@@ -1490,7 +1515,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT o_alv2 IS INITIAL.
+    IF o_alv2 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_alv( alv              = o_alv2->o_alv
                       tabla            = tabla_alv2
@@ -1501,7 +1526,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT o_grid1 IS INITIAL.
+    IF o_grid1 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_alv( alv              = o_grid1->o_grid
                       tabla            = tabla_grid1
@@ -1512,7 +1537,7 @@ class ZCL_AP_ABAP2XLS implementation.
       CLEAR o_xls.
     ENDIF.
 
-    IF NOT o_grid2 IS INITIAL.
+    IF o_grid2 IS NOT INITIAL.
       o_xls = NEW #( ).
       o_xls->set_alv( alv              = o_grid2->o_grid
                       tabla            = tabla_grid2
@@ -1531,12 +1556,12 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDIF.
   ENDMETHOD.
   METHOD mostrar_en_pantalla.
-    DATA: xdata     TYPE xstring,   " Will be used for sending as email
-          bytecount TYPE i,         " Will be used for downloading or open directly
-          t_rawdata TYPE solix_tab. " Will be used for downloading or open directly
-    DATA: cl_control  TYPE REF TO i_oi_container_control, " OIContainerCtrl "#EC DEFAULT_KEY
-          error       TYPE REF TO i_oi_error,
-          cl_document TYPE REF TO i_oi_document_proxy.    " Office Dokument
+    DATA xdata       TYPE xstring.                       " Will be used for sending as email
+    DATA bytecount   TYPE i.                             " Will be used for downloading or open directly
+    DATA t_rawdata   TYPE solix_tab.                     " Will be used for downloading or open directly
+    DATA cl_control  TYPE REF TO i_oi_container_control. " OIContainerCtrl "#EC DEFAULT_KEY
+    DATA error       TYPE REF TO i_oi_error.
+    DATA cl_document TYPE REF TO i_oi_document_proxy.    " Office Dokument
 
     get_xstring( IMPORTING xstring  = xdata
                            longitud = bytecount ).
@@ -1544,7 +1569,6 @@ class ZCL_AP_ABAP2XLS implementation.
 
     c_oi_container_control_creator=>get_container_control( IMPORTING control = cl_control
                                                                      error   = error ).
-
 
     cl_control->init_control( EXPORTING  inplace_enabled     = 'X'
                                          no_flush            = 'X'
@@ -1556,13 +1580,12 @@ class ZCL_AP_ABAP2XLS implementation.
       MESSAGE 'Error abriendo Excel' TYPE 'E'.
     ENDIF.
 
-
     cl_control->get_document_proxy( EXPORTING document_type  = 'Excel.Sheet'                " EXCEL
                                               no_flush       = ' '
                                     IMPORTING document_proxy = cl_document
                                               error          = error ).
 
-* Errorhandling should be inserted here
+    " Errorhandling should be inserted here
 
     cl_document->open_document_from_table( document_size  = bytecount
                                            document_table = t_rawdata
@@ -1576,7 +1599,7 @@ class ZCL_AP_ABAP2XLS implementation.
 
     CALL FUNCTION 'Z_POPUP_ALV_AP'
       EXPORTING
-        titulo  = 'Errores de conversiÛn'(eco)
+        titulo  = 'Errores de conversi√≥n'(eco)
         texto   = 'Se han producido errores en la carga del fichero Excel'(spe)
 *       TEXTO2  =
 *       CHECK   = ''
@@ -1598,9 +1621,9 @@ class ZCL_AP_ABAP2XLS implementation.
         t_datos = i_error.
   ENDMETHOD.
   METHOD reemplazar_valor.
-    DATA: l_var   TYPE string,
-          l_marca TYPE string,
-          l_valor TYPE text255.
+    DATA l_var   TYPE string.
+    DATA l_marca TYPE string.
+    DATA l_valor TYPE text255.
 
     FIELD-SYMBOLS <cell_data> TYPE zexcel_s_cell_data.
 
@@ -1655,17 +1678,15 @@ class ZCL_AP_ABAP2XLS implementation.
           IF l_tipo_alv CS 'CL_SALV_TABLE'.
             CALL METHOD alv->('DISPLAY').
           ELSE.
-            NEW zcl_excel_converter( )->set_option( VALUE #(
-                filter           = abap_true
-                subtot           = abap_true
-                hidenc           = abap_true
-                hidehd           = abap_false ) ).
-            o_worksheet->bind_alv(
-                io_alv   = alv
-                it_table = tabla  ).
+            NEW zcl_excel_converter( )->set_option( VALUE #( filter = abap_true
+                                                             subtot = abap_true
+                                                             hidenc = abap_true
+                                                             hidehd = abap_false ) ).
+            o_worksheet->bind_alv( io_alv   = alv
+                                   it_table = tabla ).
           ENDIF.
-        CATCH cx_root INTO DATA(o_root).  "#EC *
-          MESSAGE |Error refrescando metadatos del ALV {  o_root->get_text(  ) }|  TYPE 'I'.
+        CATCH cx_root INTO DATA(o_root).                    "#EC *
+          MESSAGE |Error refrescando metadatos del ALV { o_root->get_text( ) }| TYPE 'I'.
       ENDTRY.
     ENDIF.
 
@@ -1739,7 +1760,8 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col_start.
           WHILE lv_col <= lv_col_end.
             lv_col_alpha =
-              zcl_excel_common=>convert_column2alpha( ip_column = lv_col ).
+              zcl_excel_common=>convert_column2alpha(
+              ip_column = lv_col ).
             o_worksheet->change_cell_style( ip_column = lv_col_alpha
                                             ip_row    = lv_row
                                             ip_fill   = lv_fill ).
@@ -1748,7 +1770,7 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_row = lv_row + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando color' TYPE 'S'.
 
     ENDTRY.
@@ -1828,7 +1850,7 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando borde' TYPE 'S'.
 
     ENDTRY.
@@ -1880,7 +1902,8 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col_start.
           WHILE lv_col <= lv_col_end.
             lv_col_alpha =
-              zcl_excel_common=>convert_column2alpha( ip_column = lv_col ).
+              zcl_excel_common=>convert_column2alpha(
+              ip_column = lv_col ).
             o_worksheet->change_cell_style( ip_column  = lv_col_alpha
                                             ip_row     = lv_row
                                             ip_borders = lv_borders ).
@@ -1889,16 +1912,12 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_row = lv_row + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando borde' TYPE 'S'.
 
     ENDTRY.
   ENDMETHOD.
   METHOD set_cell.
-    " TODO: parameter HYPERLINK is never used (ABAP cleaner)
-    " TODO: parameter DATA_TYPE is never used (ABAP cleaner)
-    " TODO: parameter ABAP_TYPE is never used (ABAP cleaner)
-
     DATA l_error TYPE t_error.
 
     TRY.
@@ -1923,11 +1942,11 @@ class ZCL_AP_ABAP2XLS implementation.
     ENDTRY.
   ENDMETHOD.
   METHOD set_column.
-    DATA: l_col_txt TYPE char20,
-          o_column  TYPE REF TO zcl_excel_column.
-    DATA l_error TYPE t_error.
+    DATA l_col_txt TYPE char20.
+    DATA l_error   TYPE t_error.
+    DATA o_column  TYPE REF TO zcl_excel_column.
 
-    IF NOT col IS INITIAL.
+    IF col IS NOT INITIAL.
       l_col_txt = col.
     ELSE.
       TRY.
@@ -1939,13 +1958,15 @@ class ZCL_AP_ABAP2XLS implementation.
           APPEND l_error TO i_error.
       ENDTRY.
     ENDIF.
-
+try.
     o_column = o_worksheet->get_column( l_col_txt ).
-    IF o_column IS INITIAL.
+    catch zcx_excel into data(l_cx_excel).
+      message = l_cx_excel->get_longtext( ).
       RETURN.
-    ENDIF.
+    endtry.
 
-    IF NOT width IS INITIAL.
+
+    IF width IS NOT INITIAL.
       TRY.
           o_column->set_width( width ).
         CATCH zcx_excel INTO zcx_excel.
@@ -1956,7 +1977,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDTRY.
     ENDIF.
 
-    IF NOT visible IS INITIAL.
+    IF visible IS NOT INITIAL.
       IF visible = 'N'.
         o_column->set_visible( '' ).
       ELSE.
@@ -1964,7 +1985,7 @@ class ZCL_AP_ABAP2XLS implementation.
       ENDIF.
     ENDIF.
 
-    IF NOT autosize IS INITIAL.
+    IF autosize IS NOT INITIAL.
       IF autosize = 'N'.
         o_column->set_auto_size( '' ).
       ELSE.
@@ -2013,7 +2034,8 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col_start.
           WHILE lv_col <= lv_col_end.
             lv_col_alpha =
-              zcl_excel_common=>convert_column2alpha( ip_column = lv_col ).
+              zcl_excel_common=>convert_column2alpha(
+              ip_column = lv_col ).
             o_worksheet->change_cell_style( ip_column = lv_col_alpha
                                             ip_row    = lv_row
                                             ip_font   = lv_fonts ).
@@ -2022,7 +2044,7 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_row = lv_row + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando fuente' TYPE 'S'.
 
     ENDTRY.
@@ -2067,7 +2089,8 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col_start.
           WHILE lv_col <= lv_col_end.
             lv_col_alpha =
-              zcl_excel_common=>convert_column2alpha( ip_column = lv_col ).
+              zcl_excel_common=>convert_column2alpha(
+              ip_column = lv_col ).
             o_worksheet->change_cell_style( ip_column = lv_col_alpha
                                             ip_row    = lv_row
                                             ip_font   = lv_fonts ).
@@ -2076,7 +2099,7 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_row = lv_row + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando fuente' TYPE 'S'.
 
     ENDTRY.
@@ -2121,7 +2144,8 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_col = lv_col_start.
           WHILE lv_col <= lv_col_end.
             lv_col_alpha =
-              zcl_excel_common=>convert_column2alpha( ip_column = lv_col ).
+              zcl_excel_common=>convert_column2alpha(
+              ip_column = lv_col ).
             o_worksheet->change_cell_style( ip_column = lv_col_alpha
                                             ip_row    = lv_row
                                             ip_font   = lv_fonts ).
@@ -2130,22 +2154,22 @@ class ZCL_AP_ABAP2XLS implementation.
           lv_row = lv_row + 1.
         ENDWHILE.
 
-      CATCH cx_root. "#EC *
+      CATCH cx_root.                                        "#EC *
         MESSAGE 'Error cambiando a negrita' TYPE 'S'.
 
     ENDTRY.
   ENDMETHOD.
   METHOD set_tabla.
-    DATA: table_settings   TYPE zexcel_s_table_settings,
-          lt_field_catalog TYPE zexcel_t_fieldcatalog.
-    DATA l_error    TYPE t_error.
+    DATA table_settings   TYPE zexcel_s_table_settings.
+    DATA lt_field_catalog TYPE zexcel_t_fieldcatalog.
+    DATA l_error          TYPE t_error.
     "-Variables---------------------------------------------------------
-    DATA lv_col_end TYPE i.
-    DATA lv_col     TYPE i.
+    DATA lv_col_end       TYPE i.
+    DATA lv_col           TYPE i.
 
     FIELD-SYMBOLS <field_catalog> TYPE zexcel_s_fieldcatalog.
 
-    IF NOT titulo IS INITIAL.
+    IF titulo IS NOT INITIAL.
       table_settings-table_name = titulo.
     ENDIF.
 
@@ -2188,7 +2212,7 @@ class ZCL_AP_ABAP2XLS implementation.
     TRY.
         lv_col_end = o_worksheet->get_highest_column( ).
       CATCH zcx_excel INTO zcx_excel.
-        MESSAGE 'Error obteniendo n∫ columnas' TYPE 'S'.
+        MESSAGE 'Error obteniendo n¬∫ columnas' TYPE 'S'.
     ENDTRY.
 
     lv_col = 1.

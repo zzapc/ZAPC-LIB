@@ -1,4 +1,4 @@
-CLASS zcl_ap_batch_input DEFINITION
+锘緾LASS zcl_ap_batch_input DEFINITION
   PUBLIC FINAL
   CREATE PUBLIC.
 
@@ -95,10 +95,10 @@ class ZCL_AP_BATCH_INPUT implementation.
   METHOD cambiar_modo.
     IF modo IS INITIAL OR modo = 'A'.
       modo = 'N'.
-      MESSAGE 'Se cambia modo ejecuci髇 call transacti髇 a NO VISIBLE'(nov) TYPE 'S'.
+      MESSAGE 'Se cambia modo ejecuci贸n call transacti贸n a NO VISIBLE'(nov) TYPE 'S'.
     ELSEIF modo = 'N' OR modo = 'E'.
       modo = 'A'.
-      MESSAGE 'Se cambia modo ejecuci髇 call transacti髇 a VISIBLE'(vis) TYPE 'S'.
+      MESSAGE 'Se cambia modo ejecuci贸n call transacti贸n a VISIBLE'(vis) TYPE 'S'.
     ENDIF.
   ENDMETHOD.
   METHOD campos.
@@ -429,7 +429,7 @@ class ZCL_AP_BATCH_INPUT implementation.
               msgv1 msgv2 msgv3 msgv4 INTO texto.
     ELSE.
       msgty = 'E'.
-      texto = 'e ha producido un error inesperado!'(spe).
+      texto = '隆Se ha producido un error inesperado!'(spe).
     ENDIF.
   ENDMETHOD.
   METHOD get_atributos_campo.

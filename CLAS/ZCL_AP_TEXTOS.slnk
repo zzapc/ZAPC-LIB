@@ -17,7 +17,6 @@
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="BORRAR_TEXTO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDOBJECT"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="BORRAR_TEXTO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Variable booleana (X=verdadero, -=falso, space=descon.)" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BOOLEAN"/>
   <source>METHOD borrar_texto.
-
     CALL FUNCTION &apos;DELETE_TEXT&apos;
       EXPORTING
 *       CLIENT          = SY-MANDT
@@ -31,13 +30,11 @@
       EXCEPTIONS
         not_found       = 1
         OTHERS          = 2.
-    IF sy-subrc NE 0.
+    IF sy-subrc &lt;&gt; 0.
       return = 0.
     ELSE.
       return = 1.
     ENDIF.
-
-
   ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="EDITAR_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto" EXPOSURE="2" STATE="1" EDITORDER="5 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
@@ -47,90 +44,76 @@
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="EDITAR_TEXTO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDOBJECT"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="EDITAR_TEXTO" SCONAME="DISPLAY" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla tline" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="EDITAR_TEXTO" SCONAME="FORZAR_NUEVO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
-  <source>method EDITAR_TEXTO.
-  DATA: l_stxh TYPE stxh,
-        lineas TYPE tlinetab,
-        l_header TYPE  thead,
-        l_name TYPE stxh-tdname,
-        l_line TYPE tline.
-  CLEAR lineas.
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="EDITAR_TEXTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD editar_texto.
+    DATA: l_name   TYPE stxh-tdname,
+          l_stxh   TYPE stxh,
+          l_header TYPE thead,
+          l_line   TYPE tline,
+          lineas   TYPE tlinetab.
 
-  l_name = name.
-  l_stxh = get_stxh( id     = id
-                     spras  = spras
-                     name   = l_name
-                     object = object ).
-  IF l_stxh IS INITIAL AND NOT spras IS INITIAL.
+    l_name = name.
     l_stxh = get_stxh( id     = id
+                       spras  = spras
                        name   = l_name
                        object = object ).
-  ENDIF.
-
-  CHECK NOT l_stxh IS INITIAL OR forzar_nuevo = &apos;X&apos;.
-
-  IF l_stxh IS INITIAL AND forzar_nuevo = &apos;X&apos;.
-    l_header-tdid = id.
-    l_header-tdname = l_name.
-    l_header-tdobject = object.
-    IF spras IS INITIAL.
-      l_header-tdspras = sy-langu.
-    ELSE.
-      l_header-tdspras = spras.
+    IF l_stxh IS INITIAL AND NOT spras IS INITIAL.
+      l_stxh = get_stxh( id     = id
+                         name   = l_name
+                         object = object ).
     ENDIF.
-    MOVE-CORRESPONDING l_header TO l_stxh.
-    l_line-tdformat = &apos;*&apos;.
-    APPEND l_line TO lineas.
-    CALL FUNCTION &apos;SAVE_TEXT&apos;
+
+    IF l_stxh IS INITIAL AND forzar_nuevo &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
+
+    IF l_stxh IS INITIAL AND forzar_nuevo = &apos;X&apos;.
+      l_header-tdid     = id.
+      l_header-tdname   = l_name.
+      l_header-tdobject = object.
+      IF spras IS INITIAL.
+        l_header-tdspras = sy-langu.
+      ELSE.
+        l_header-tdspras = spras.
+      ENDIF.
+      MOVE-CORRESPONDING l_header TO l_stxh.
+      l_line-tdformat = &apos;*&apos;.
+      APPEND l_line TO lineas.
+      message = save_texto( id = l_header-tdid
+                             object = l_header-tdobject
+                             name = l_header-tdname
+                             spras = l_header-tdspras
+                             lineas          = lineas  ).
+      CLEAR lineas.
+    ENDIF.
+    CALL FUNCTION &apos;READ_TEXT&apos;
       EXPORTING
-*       CLIENT                = SY-MANDT
-        header                = l_header
-        insert                = &apos;X&apos;
-*       SAVEMODE_DIRECT       = &apos; &apos;
-*       OWNER_SPECIFIED       = &apos; &apos;
-*       LOCAL_CAT             = &apos; &apos;
-*     IMPORTING
-*       FUNCTION              =
-*       NEWHEADER             =
+        id                      = l_stxh-tdid
+        language                = l_stxh-tdspras
+        name                    = l_stxh-tdname
+        object                  = l_stxh-tdobject
+      IMPORTING
+        header                  = l_header
       TABLES
-        lines                 = lineas
-     EXCEPTIONS
-       id                    = 1
-       language              = 2
-       name                  = 3
-       object                = 4
-       OTHERS                = 5
-              .
+        lines                   = lineas
+      EXCEPTIONS
+        id                      = 1
+        language                = 2
+        name                    = 3
+        not_found               = 4
+        object                  = 5
+        reference_check         = 6
+        wrong_access_to_archive = 7
+        OTHERS                  = 8.
     IF sy-subrc &lt;&gt; 0.
       MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
               WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-    ENDIF.
-    CLEAR lineas.
-  ENDIF.
-  CALL FUNCTION &apos;READ_TEXT&apos;
-    EXPORTING
-      id                      = l_stxh-tdid
-      language                = l_stxh-tdspras
-      name                    = l_stxh-tdname
-      object                  = l_stxh-tdobject
-    IMPORTING
-      header                  = l_header
-    TABLES
-      lines                   = lineas
-    EXCEPTIONS
-      id                      = 1
-      language                = 2
-      name                    = 3
-      not_found               = 4
-      object                  = 5
-      reference_check         = 6
-      wrong_access_to_archive = 7
-      OTHERS                  = 8.
-
-  CALL FUNCTION &apos;EDIT_TEXT&apos;
-    EXPORTING
-      display             = display
+    endif.
+    CALL FUNCTION &apos;EDIT_TEXT&apos;
+      EXPORTING
+        display             = display
 *   EDITOR_TITLE        = &apos; &apos;
-      header              = l_header
+        header              = l_header
 *   PAGE                = &apos; &apos;
 *   WINDOW              = &apos; &apos;
 *   SAVE                = &apos;X&apos;
@@ -142,45 +125,28 @@
 *   FUNCTION            =
 *   NEWHEADER           =
 *   RESULT              =
-    TABLES
-      lines               = lineas
- EXCEPTIONS
-   id                  = 1
-   language            = 2
-   linesize            = 3
-   name                = 4
-   object              = 5
-   textformat          = 6
-   communication       = 7
-   OTHERS              = 8
-            .
-  IF sy-subrc &lt;&gt; 0.
-    MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-            WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-  ELSE.
-    CALL FUNCTION &apos;SAVE_TEXT&apos;
-      EXPORTING
-*       CLIENT                = SY-MANDT
-        header                = l_header
-        insert                = &apos;X&apos;
-        savemode_direct       = &apos;X&apos;
-*       OWNER_SPECIFIED       = &apos; &apos;
-*       LOCAL_CAT             = &apos; &apos;
-*     IMPORTING
-*       FUNCTION              =
-*       NEWHEADER             =
       TABLES
-        lines                 = lineas
-     EXCEPTIONS
-       id                    = 1
-       language              = 2
-       name                  = 3
-       object                = 4
-       OTHERS                = 5
-              .
-  ENDIF.
-
-endmethod.</source>
+        lines               = lineas
+   EXCEPTIONS
+     id                  = 1
+     language            = 2
+     linesize            = 3
+     name                = 4
+     object              = 5
+     textformat          = 6
+     communication       = 7
+     OTHERS              = 8.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ELSE.
+      message = save_texto( id = l_header-tdid
+                             object = l_header-tdobject
+                             name = l_header-tdname
+                             spras = l_header-tdspras
+                             lineas          = lineas  ).
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_CATALOG" VERSION="1" LANGU="S" DESCRIPT="Recupera textos en memoria" EXPOSURE="2" STATE="1" EDITORDER="14 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_CATALOG" SCONAME="CATALOG" VERSION="1" LANGU="S" DESCRIPT="Tabla de memoria texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="CMS_TAB_TEXT_MEMORY"/>
@@ -194,29 +160,27 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_STXH" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDSPRAS" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_STXH" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_STXH" SCONAME="STXH" VERSION="1" LANGU="S" DESCRIPT="STXD SAPscript Cabecera fichero texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STXH"/>
-  <source>method GET_STXH.
-
-  clear stxh.
-  IF not spras IS SUPPLIED OR spras IS INITIAL.
-    SELECT *
-      FROM stxh
-      WHERE tdid = @id
-        AND tdname = @name
-        AND tdobject = @object
-      ORDER BY PRIMARY KEY
-      INTO @stxh
-      UP TO 1 ROWS.
-    ENDSELECT.
-  ELSE.
-    SELECT SINGLE * FROM stxh
-      INTO stxh
-     WHERE tdid = id
-       AND tdspras = spras
-       AND tdname = name
-       AND tdobject = object.
-  ENDIF.
-
-endmethod.</source>
+  <source>METHOD get_stxh.
+    CLEAR stxh.
+    IF NOT spras IS SUPPLIED OR spras IS INITIAL.
+      SELECT *
+        FROM stxh
+        WHERE tdid     = @id
+          AND tdname   = @name
+          AND tdobject = @object
+        ORDER BY PRIMARY KEY
+        INTO @stxh
+        UP TO 1 ROWS.
+      ENDSELECT.
+    ELSE.
+      SELECT SINGLE * FROM stxh
+        INTO stxh
+       WHERE tdid     = id
+         AND tdspras  = spras
+         AND tdname   = name
+         AND tdobject = object.
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
@@ -225,55 +189,62 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="MEMORY" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="ELIM_REGEXP" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
-  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="LINEAS" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla tline" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TLINETAB"/>
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO" SCONAME="LINEAS" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla tline" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TLINETAB"/>
   <source>METHOD get_texto.
-  DATA l_stxh TYPE stxh.
+    DATA l_stxh TYPE stxh.
 
-  CLEAR lineas.
+    CLEAR: lineas, message.
 
-  l_stxh = get_stxh( id     = id
-                     spras  = spras
-                     name   = name
-                     object = object ).
+    l_stxh = get_stxh( id     = id
+                       spras  = spras
+                       name   = name
+                       object = object ).
 
-  IF memory = &apos;X&apos; AND l_stxh IS INITIAL.
-    l_stxh-tdid = id.
-    l_stxh-tdspras = spras.
-    l_stxh-tdname = name.
-    l_stxh-tdobject = object.
-  ENDIF.
+    IF memory = &apos;X&apos; AND l_stxh IS INITIAL.
+      l_stxh-tdid     = id.
+      l_stxh-tdspras  = spras.
+      l_stxh-tdname   = name.
+      l_stxh-tdobject = object.
+    ENDIF.
 
-  CHECK NOT l_stxh IS INITIAL.
+    IF l_stxh IS INITIAL.
+      RETURN.
+    ENDIF.
 
-  CALL FUNCTION &apos;READ_TEXT&apos;
-    EXPORTING
-      id                      = l_stxh-tdid
-      language                = l_stxh-tdspras
-      name                    = l_stxh-tdname
-      object                  = l_stxh-tdobject
-    TABLES
-      lines                   = lineas
-    EXCEPTIONS
-      id                      = 1
-      language                = 2
-      name                    = 3
-      not_found               = 4
-      object                  = 5
-      reference_check         = 6
-      wrong_access_to_archive = 7
-      OTHERS                  = 8.
+    CALL FUNCTION &apos;READ_TEXT&apos;
+      EXPORTING
+        id                      = l_stxh-tdid
+        language                = l_stxh-tdspras
+        name                    = l_stxh-tdname
+        object                  = l_stxh-tdobject
+      TABLES
+        lines                   = lineas
+      EXCEPTIONS
+        id                      = 1
+        language                = 2
+        name                    = 3
+        not_found               = 4
+        object                  = 5
+        reference_check         = 6
+        wrong_access_to_archive = 7
+        OTHERS                  = 8.
 
-  IF NOT elim_regexp IS INITIAL.
-    LOOP AT lineas ASSIGNING FIELD-SYMBOL(&lt;linea&gt;) WHERE tdformat = &apos;&gt;X&apos; AND tdline(2) = &apos;*&apos;.
-      IF &lt;linea&gt; CS &apos;.&apos; AND &lt;linea&gt; CS &apos;:&apos; AND &lt;linea&gt; CS &apos;(&apos; AND &lt;linea&gt; CS &apos;)&apos;.
-        DELETE lineas.
-      ELSE.
-        &lt;linea&gt;-tdline = &lt;linea&gt;-tdline+2.
-      ENDIF.
-    ENDLOOP.
-  ENDIF.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
 
-ENDMETHOD.</source>
+    IF NOT elim_regexp IS INITIAL.
+      LOOP AT lineas ASSIGNING FIELD-SYMBOL(&lt;linea&gt;) WHERE tdformat = &apos;&gt;X&apos; AND tdline(2) = &apos;*&apos;.
+        IF &lt;linea&gt; CS &apos;.&apos; AND &lt;linea&gt; CS &apos;:&apos; AND &lt;linea&gt; CS &apos;(&apos; AND &lt;linea&gt; CS &apos;)&apos;.
+          DELETE lineas.
+        ELSE.
+          &lt;linea&gt;-tdline = &lt;linea&gt;-tdline+2.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto y devuelve un string" EXPOSURE="2" STATE="1" EDITORDER="4 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
@@ -286,19 +257,17 @@ ENDMETHOD.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING" SCONAME="TODO_SALTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
   <source>METHOD get_texto_string.
-  DATA: i_lineas TYPE tlinetab.
+    DATA i_lineas TYPE tlinetab.
 
-  i_lineas = get_texto( id     = id
-                        name   = name
-                        spras  = spras
-                        object = object
-                        memory = memory
-                        elim_regexp = elim_regexp ).
+    i_lineas = get_texto( id     = id
+                          name   = name
+                          spras  = spras
+                          object = object
+                          memory = memory
+                          elim_regexp = elim_regexp ).
 
-  string = tline2string( lineas = i_lineas separar_con_espacio = separar_con_espacio todo_saltos = todo_saltos ).
-
-
-ENDMETHOD.</source>
+    string = tline2string( lineas = i_lineas separar_con_espacio = separar_con_espacio todo_saltos = todo_saltos ).
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING_HTML" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto y devuelve un string con formato HTML" EXPOSURE="2" STATE="1" EDITORDER="8 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING_HTML" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
@@ -306,39 +275,35 @@ ENDMETHOD.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING_HTML" SCONAME="SPRAS" VERSION="1" LANGU="S" DESCRIPT="Clave de idioma" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDSPRAS" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING_HTML" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_STRING_HTML" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
-  <source>method GET_TEXTO_STRING_HTML.
-  DATA: i_lineas TYPE tlinetab,
-        l_tline TYPE tline,
-        i_tdline TYPE TABLE OF tdline,
-        l_format_ant TYPE tdformat,
-        l_first.
+  <source>METHOD get_texto_string_html.
+    DATA: i_lineas     TYPE tlinetab,
+          l_tline      TYPE tline,
+          l_first      TYPE c LENGTH 1.
 
-  i_lineas = get_texto( id     = id
-                        name   = name
-                        spras  = spras
-                        object = object ).
+    i_lineas = get_texto( id     = id
+                          name   = name
+                          spras  = spras
+                          object = object ).
 
-  IF i_lineas IS INITIAL.
-    CLEAR string.
-  ELSE.
-    string = &apos;&lt;P&gt;&apos;.
-    LOOP AT i_lineas INTO l_tline.
-      CLEAR l_first.
-      AT FIRST.
-        l_first = &apos;X&apos;.
-      ENDAT.
-      IF l_first = &apos;&apos;.
-        IF NOT l_tline-tdformat IS INITIAL.
-          CONCATENATE string &apos;&lt;/B&gt;&apos; INTO string.
+    IF i_lineas IS INITIAL.
+      CLEAR string.
+    ELSE.
+      string = &apos;&lt;P&gt;&apos;.
+      LOOP AT i_lineas INTO l_tline.
+        CLEAR l_first.
+        AT FIRST.
+          l_first = &apos;X&apos;.
+        ENDAT.
+        IF l_first = &apos;&apos;.
+          IF NOT l_tline-tdformat IS INITIAL.
+            CONCATENATE string &apos;&lt;/B&gt;&apos; INTO string.
+          ENDIF.
         ENDIF.
-      ENDIF.
-      CONCATENATE string l_tline-tdline INTO string.
-      l_format_ant = l_tline-tdformat.
-    ENDLOOP.
-    CONCATENATE string &apos;&lt;/P&gt;&apos; INTO string.
-  ENDIF.
-
-endmethod.</source>
+        CONCATENATE string l_tline-tdline INTO string.
+      ENDLOOP.
+      CONCATENATE string &apos;&lt;/P&gt;&apos; INTO string.
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_TABLE_STRING" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto y devuelve una tabla de strings" EXPOSURE="2" STATE="1" EDITORDER="10 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_TABLE_STRING" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
@@ -347,47 +312,47 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_TABLE_STRING" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_TABLE_STRING" SCONAME="SEPARAR_CON_ESPACIO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="GET_TEXTO_TABLE_STRING" SCONAME="T_STRING" VERSION="1" LANGU="S" DESCRIPT="String" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TABLE_OF_STRINGS"/>
-  <source>method GET_TEXTO_TABLE_STRING.
-  DATA: i_lineas TYPE tlinetab,
-        l_tline TYPE tline,
-        l_string TYPE string,
-        l_first,
-        l_last.
+  <source>METHOD get_texto_table_string.
+    &quot; TODO: parameter SEPARAR_CON_ESPACIO is never used (ABAP cleaner)
 
-  clear t_string.
+    DATA: i_lineas TYPE tlinetab,
+          l_tline  TYPE tline,
+          l_first  TYPE c LENGTH 1,
+          l_last   TYPE c LENGTH 1,
+          l_string TYPE string.
 
-  i_lineas = get_texto( id     = id
-                        name   = name
-                        spras  = spras
-                        object = object ).
+    CLEAR t_string.
 
-  LOOP AT i_lineas INTO l_tline.
-    CLEAR: l_first, l_last.
-    AT FIRST.
-      l_first = &apos;X&apos;.
-    ENDAT.
-    AT LAST.
-      l_last = &apos;X&apos;.
-    ENDAT.
-    IF l_first = &apos;X&apos;.
-      l_string = l_tline-tdline.
-    ELSE.
-      IF l_tline-tdformat = &apos;&apos; OR l_tline-tdformat = &apos;=&apos;.
-        CONCATENATE l_string l_tline-tdline INTO l_string SEPARATED BY space.
-      ELSE.
-        IF l_first = &apos;&apos;.
-          APPEND l_string TO t_string.
-        ENDIF.
+    i_lineas = get_texto( id     = id
+                          name   = name
+                          spras  = spras
+                          object = object ).
+
+    LOOP AT i_lineas INTO l_tline.
+      CLEAR: l_first, l_last.
+      AT FIRST.
+        l_first = &apos;X&apos;.
+      ENDAT.
+      AT LAST.
+        l_last = &apos;X&apos;.
+      ENDAT.
+      IF l_first = &apos;X&apos;.
         l_string = l_tline-tdline.
+      ELSE.
+        IF l_tline-tdformat = &apos;&apos; OR l_tline-tdformat = &apos;=&apos;.
+          CONCATENATE l_string l_tline-tdline INTO l_string SEPARATED BY space.
+        ELSE.
+          IF l_first = &apos;&apos;.
+            APPEND l_string TO t_string.
+          ENDIF.
+          l_string = l_tline-tdline.
+        ENDIF.
       ENDIF.
-    ENDIF.
-    IF l_last = &apos;X&apos;.
-      APPEND l_string TO t_string.
-    ENDIF.
-  ENDLOOP.
-
-
-endmethod.</source>
+      IF l_last = &apos;X&apos;.
+        APPEND l_string TO t_string.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Graba texto" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDID"/>
@@ -396,41 +361,57 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" SCONAME="OBJECT" VERSION="1" LANGU="S" DESCRIPT="Textos: Objeto de aplicación" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" SCONAME="LINEAS" VERSION="1" LANGU="S" DESCRIPT="Tipo tabla tline" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" SCONAME="SAVEMODE_DIRECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
-  <source>method SAVE_TEXTO.
-  DATA: l_header TYPE thead,
-        l_stxh   TYPE stxh.
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD save_texto.
+    DATA: l_stxh   TYPE stxh,
+          l_header TYPE thead.
 
-  l_stxh = get_stxh( id     = id
-                     spras  = spras
-                     name   = name
-                     object = object ).
+    CLEAR message.
+    l_stxh = get_stxh( id     = id
+                       spras  = spras
+                       name   = name
+                       object = object ).
 
-  CLEAR l_header.
-  MOVE-CORRESPONDING l_stxh TO l_header.
-  l_header-tdname    =  name.
-  l_header-tdobject  = object.
-  l_header-tdid    = id.
-  IF spras IS INITIAL.
-    l_header-tdspras  = sy-langu.
-  ELSE.
-    l_header-tdspras  = spras.
-  ENDIF.
+    CLEAR l_header.
+    MOVE-CORRESPONDING l_stxh TO l_header.
+    l_header-tdname   = name.
+    l_header-tdobject = object.
+    l_header-tdid     = id.
+    IF spras IS INITIAL.
+      l_header-tdspras = sy-langu.
+    ELSE.
+      l_header-tdspras = spras.
+    ENDIF.
 
-  CALL FUNCTION &apos;SAVE_TEXT&apos;
-    EXPORTING
-      header          = l_header
-      insert          = &apos;X&apos;
-      savemode_direct = savemode_direct
-    TABLES
-      lines           = lineas
-    EXCEPTIONS
-      id              = 1
-      language        = 2
-      name            = 3
-      object          = 4
-      OTHERS          = 5.
+    SELECT SINGLE tdname FROM stxh
+      INTO l_header-tdname
+      WHERE tdid     = l_header-tdid
+        AND tdspras  = l_header-tdspras
+        AND tdobject = l_header-tdobject
+        AND tdname   = l_header-tdname.
+    IF sy-subrc &lt;&gt; 0.
+      DATA(l_insert) = &apos;X&apos;.
+    ENDIF.
 
-endmethod.</source>
+    CALL FUNCTION &apos;SAVE_TEXT&apos;
+      EXPORTING
+        header          = l_header
+        insert          = l_insert
+        savemode_direct = savemode_direct
+      TABLES
+        lines           = lineas
+      EXCEPTIONS
+        id              = 1
+        language        = 2
+        name            = 3
+        object          = 4
+        OTHERS          = 5.
+
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" VERSION="1" LANGU="S" DESCRIPT="Graba texto en formato string" EXPOSURE="2" STATE="1" EDITORDER="7 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDID"/>
@@ -443,75 +424,81 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" SCONAME="DELIMITER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" SCONAME="SAVEMODE_DIRECT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" SCONAME="INSERT" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SAVE_TEXTO_STRING" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="11 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
   <source>METHOD save_texto_string.
-  DATA: l_header     TYPE thead,
-        l_stxh       TYPE stxh,
-        lineas       TYPE TABLE OF tline,
-        i_lineas     TYPE TABLE OF tdline,
-        i_lineas_aux TYPE TABLE OF tdline,
-        i_strings    TYPE TABLE OF string,
-        l_text132    TYPE tdline,
-        l_tline      TYPE tline.
+    DATA: l_stxh       TYPE stxh,
+          l_header     TYPE thead,
+          i_strings    TYPE TABLE OF string,
+          i_lineas_aux TYPE TABLE OF tdline,
+          l_tline      TYPE tline,
+          lineas       TYPE TABLE OF tline,
+          l_text132    TYPE tdline,
+          i_lineas     TYPE TABLE OF tdline.
+    DATA: l_textline TYPE c LENGTH 5000,
+          l_nlineas  TYPE i,
+          l_index    TYPE i,
+          l_long     TYPE i.
 
-  l_stxh = get_stxh( id     = id
-                     spras  = spras
-                     name   = name
-                     object = object ).
+    CLEAR message.
+    l_stxh = get_stxh( id     = id
+                       spras  = spras
+                       name   = name
+                       object = object ).
 
-  CLEAR l_header.
-  MOVE-CORRESPONDING l_stxh TO l_header.
-  l_header-tdname    =  name.
-  l_header-tdobject  = object.
-  l_header-tdid    = id.
-  IF spras IS INITIAL.
-    l_header-tdspras  = sy-langu.
-  ELSE.
-    l_header-tdspras  = spras.
-  ENDIF.
+    CLEAR l_header.
+    MOVE-CORRESPONDING l_stxh TO l_header.
+    l_header-tdname   = name.
+    l_header-tdobject = object.
+    l_header-tdid     = id.
+    IF spras IS INITIAL.
+      l_header-tdspras = sy-langu.
+    ELSE.
+      l_header-tdspras = spras.
+    ENDIF.
 
-  IF word_wrap = &apos;X&apos;.
-    DATA: l_textline(5000),
-          l_lin_aux        TYPE tdline,
-          l_long           TYPE i,
-          l_nlineas        TYPE i,
-          l_index          TYPE i.
-
-    zcl_ap_string=&gt;string2tabla( EXPORTING string = string
-                                           longitud = 99999
-                                 CHANGING  tabla  = i_strings ).
-    LOOP AT i_strings INTO l_textline.
-      CLEAR i_lineas_aux.
-      CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
-        EXPORTING
-          textline            = l_textline
-          delimiter           = delimiter
-          outputlen           = longitud
+    IF word_wrap = &apos;X&apos;.
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = string
+                                             longitud = 99999
+                                   CHANGING  tabla  = i_strings ).
+      LOOP AT i_strings INTO l_textline.
+        CLEAR i_lineas_aux.
+        CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
+          EXPORTING
+            textline            = l_textline
+            delimiter           = delimiter
+            outputlen           = longitud
 *   IMPORTING
 *         OUT_LINE1           =
 *         OUT_LINE2           =
 *         OUT_LINE3           =
-        TABLES
-          out_lines           = i_lineas_aux
-        EXCEPTIONS
-          outputlen_too_large = 1
-          OTHERS              = 2.
-
-      IF lines( i_lineas_aux ) = 1.
-        READ TABLE i_lineas_aux INTO DATA(l_lin) INDEX 1.
-        CLEAR l_tline.
-        l_tline-tdformat = &apos;*&apos;.
-        l_tline-tdline = l_lin.
-        APPEND l_tline TO lineas.
-      ELSE.
+          TABLES
+            out_lines           = i_lineas_aux
+          EXCEPTIONS
+            outputlen_too_large = 1
+            OTHERS              = 2.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
+        IF lines( i_lineas_aux ) = 1.
+          READ TABLE i_lineas_aux INTO DATA(l_lin) INDEX 1.
+          CLEAR l_tline.
+          l_tline-tdformat = &apos;*&apos;.
+          l_tline-tdline   = l_lin.
+          APPEND l_tline TO lineas.
+        ELSE.
 * Buscamos posibles finales de líneas.
-        DESCRIBE TABLE i_lineas_aux LINES l_nlineas.
-        DO l_nlineas TIMES.
-          READ TABLE i_lineas_aux INTO l_text132 INDEX sy-index.
-          IF sy-subrc = 0.
+          l_nlineas = lines( i_lineas_aux ).
+          DO l_nlineas TIMES.
+            READ TABLE i_lineas_aux INTO l_text132 INDEX sy-index.
+            IF sy-subrc &lt;&gt; 0.
+              CONTINUE.
+            ENDIF.
+
             l_index = sy-tabix.
             l_long = strlen( l_text132 ).
             IF l_long &lt; longitud.
-              ADD 1 TO l_index.
+              l_index = l_index + 1.
               READ TABLE i_lineas_aux INTO l_text132 INDEX l_index.
               IF sy-subrc = 0.
                 IF l_long &lt; longitud.
@@ -521,81 +508,60 @@ endmethod.</source>
                 ENDIF.
               ENDIF.
             ENDIF.
-          ENDIF.
-        ENDDO.
+          ENDDO.
 
-        LOOP AT i_lineas_aux INTO l_text132.
-          CLEAR l_tline.
-          l_tline-tdformat = &apos;=&apos;.
-          AT FIRST.
-            l_tline-tdformat = &apos;*&apos;.
-          ENDAT.
-          l_tline-tdline = l_text132.
-          APPEND l_tline TO lineas.
-        ENDLOOP.
-      ENDIF.
-    ENDLOOP.
-  ELSE.
-    zcl_ap_string=&gt;string2tabla( EXPORTING string = string
-                                           longitud = longitud
-                                 CHANGING  tabla  = i_lineas ).
+          LOOP AT i_lineas_aux INTO l_text132.
+            CLEAR l_tline.
+            l_tline-tdformat = &apos;=&apos;.
+            AT FIRST.
+              l_tline-tdformat = &apos;*&apos;.
+            ENDAT.
+            l_tline-tdline = l_text132.
+            APPEND l_tline TO lineas.
+          ENDLOOP.
+        ENDIF.
+      ENDLOOP.
+    ELSE.
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = string
+                                             longitud = longitud
+                                   CHANGING  tabla  = i_lineas ).
 
-    LOOP AT i_lineas INTO l_text132.
-      CLEAR l_tline.
-      l_tline-tdformat = &apos;*&apos;.
-      l_tline-tdline = l_text132.
-      APPEND l_tline TO lineas.
-    ENDLOOP.
-  ENDIF.
+      LOOP AT i_lineas INTO l_text132.
+        CLEAR l_tline.
+        l_tline-tdformat = &apos;*&apos;.
+        l_tline-tdline   = l_text132.
+        APPEND l_tline TO lineas.
+      ENDLOOP.
+    ENDIF.
 
-*  LOOP AT i_lineas INTO l_text132.
-*    CLEAR l_tline.
-*    l_tline-tdformat = &apos;=&apos;.
-*    AT FIRST.
-*      l_tline-tdformat = &apos;*&apos;.
-*    ENDAT.
-*    l_tline-tdline = l_text132.
-*    APPEND l_tline TO lineas.
-*  ENDLOOP.
+    IF string IS INITIAL.
+      zcl_ap_textos=&gt;borrar_texto( id = l_header-tdid
+                                   object = l_header-tdobject
+                                   name = l_header-tdname
+                                   spras = l_header-tdspras ).
+    ELSE.
+      message = save_texto( id = l_header-tdid
+                            object = l_header-tdobject
+                            name = l_header-tdname
+                            spras = l_header-tdspras
+                            lineas          = lineas  ).
 
-  IF string IS INITIAL.
-    zcl_ap_textos=&gt;borrar_texto( id = l_header-tdid
-                                 object = l_header-tdobject
-                                 name = l_header-tdname
-                                 spras = l_header-tdspras ).
-  ELSE.
-    CALL FUNCTION &apos;SAVE_TEXT&apos;
-      EXPORTING
-        header          = l_header
-        insert          = insert
-        savemode_direct = savemode_direct
-      TABLES
-        lines           = lineas
-      EXCEPTIONS
-        id              = 1
-        language        = 2
-        name            = 3
-        object          = 4
-        OTHERS          = 5.
-  ENDIF.
-
-ENDMETHOD.</source>
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SHOW_POPUP" VERSION="1" LANGU="S" DESCRIPT="Muestra el texto en un popup" EXPOSURE="2" STATE="1" EDITORDER="9 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SHOW_POPUP" SCONAME="TITULO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SHOW_POPUP" SCONAME="I_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Líneas de ITF" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
-  <source>method SHOW_POPUP.
-
-  CALL FUNCTION &apos;COPO_POPUP_TO_DISPLAY_TEXTLIST&apos;
-    EXPORTING
+  <source>METHOD show_popup.
+    CALL FUNCTION &apos;COPO_POPUP_TO_DISPLAY_TEXTLIST&apos;
+      EXPORTING
 *   TASK             = &apos;DISPLAY&apos;
-      titel            = titulo
+        titel            = titulo
 * IMPORTING
 *   FUNCTION         =
-    TABLES
-      text_table       = i_texto.
-
-endmethod.</source>
+      TABLES
+        text_table       = i_texto.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="STRING2TLINE" VERSION="1" LANGU="S" DESCRIPT="Genera una tabla TLINE en función string" EXPOSURE="2" STATE="1" EDITORDER="12 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="STRING2TLINE" SCONAME="LONGITUD" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="72"/>
@@ -604,50 +570,55 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="STRING2TLINE" SCONAME="DELIMITER" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="C" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="STRING2TLINE" SCONAME="LINEAS" VERSION="1" LANGU="S" DESCRIPT="Lines of ITF" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="TLINETAB"/>
   <source>METHOD string2tline.
-  TYPES: BEGIN OF t_linea,
-           linea(60000),
-         END OF t_linea.
-  DATA: i_lineas          TYPE TABLE OF tdline,
-        l_text132         TYPE tdline,
-        l_tline           TYPE tline,
-        l_textline(60000),
-        l_lin_aux         TYPE tdline,
-        l_long            TYPE i,
-        l_nlineas         TYPE i,
-        l_index           TYPE i,
-        l_linea           TYPE t_linea,
-        tabla             TYPE TABLE OF t_linea,
-        i_lineas_aux      TYPE TABLE OF tdline.
+    TYPES: BEGIN OF t_linea,
+             linea TYPE c LENGTH 60000,
+           END OF t_linea.
 
-  IF word_wrap = &apos;X&apos;.
-    SPLIT string AT cl_abap_char_utilities=&gt;cr_lf INTO TABLE tabla.
-    LOOP AT tabla INTO l_linea.
-      l_textline = l_linea.
-      CLEAR i_lineas.
-      CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
-        EXPORTING
-          textline            = l_textline
-          delimiter           = delimiter
-          outputlen           = longitud
+    DATA: tabla      TYPE TABLE OF t_linea,
+          l_linea    TYPE t_linea,
+          l_textline TYPE c LENGTH 60000,
+          i_lineas   TYPE TABLE OF tdline,
+          l_nlineas  TYPE i,
+          l_text132  TYPE tdline,
+          l_index    TYPE i,
+          l_long     TYPE i,
+          l_tline    TYPE tline.
+
+    IF word_wrap = &apos;X&apos;.
+      SPLIT string AT cl_abap_char_utilities=&gt;cr_lf INTO TABLE tabla.
+      LOOP AT tabla INTO l_linea.
+        l_textline = l_linea.
+        CLEAR i_lineas.
+        CALL FUNCTION &apos;RKD_WORD_WRAP&apos;
+          EXPORTING
+            textline            = l_textline
+            delimiter           = delimiter
+            outputlen           = longitud
 *   IMPORTING
 *         OUT_LINE1           =
 *         OUT_LINE2           =
 *         OUT_LINE3           =
-        TABLES
-          out_lines           = i_lineas
-        EXCEPTIONS
-          outputlen_too_large = 1
-          OTHERS              = 2.
-
+          TABLES
+            out_lines           = i_lineas
+          EXCEPTIONS
+            outputlen_too_large = 1
+            OTHERS              = 2.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+                  WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        ENDIF.
 * Buscamos posibles finales de líneas.
-      DESCRIBE TABLE i_lineas LINES l_nlineas.
-      DO l_nlineas TIMES.
-        READ TABLE i_lineas INTO l_text132 INDEX sy-index.
-        IF sy-subrc = 0.
+        l_nlineas = lines( i_lineas ).
+        DO l_nlineas TIMES.
+          READ TABLE i_lineas INTO l_text132 INDEX sy-index.
+          IF sy-subrc &lt;&gt; 0.
+            CONTINUE.
+          ENDIF.
+
           l_index = sy-tabix.
           l_long = strlen( l_text132 ).
           IF l_long &lt; longitud.
-            ADD 1 TO l_index.
+            l_index = l_index + 1.
             READ TABLE i_lineas INTO l_text132 INDEX l_index.
             IF sy-subrc = 0.
               IF l_long &lt; longitud.
@@ -657,49 +628,42 @@ endmethod.</source>
               ENDIF.
             ENDIF.
           ENDIF.
-        ENDIF.
-      ENDDO.
+        ENDDO.
+
+        LOOP AT i_lineas INTO l_text132.
+          CLEAR l_tline.
+          l_tline-tdformat = &apos;=&apos;.
+          l_tline-tdline   = l_text132.
+          AT FIRST.
+            l_tline-tdformat = &apos;*&apos;.
+          ENDAT.
+          APPEND l_tline TO lineas.
+        ENDLOOP.
+      ENDLOOP.
+
+    ELSEIF word_wrap = &apos;F&apos;.
+      l_textline = string.
+      CALL FUNCTION &apos;C14W_STRING_TO_TLINE&apos;
+        EXPORTING
+          i_string    = l_textline
+        TABLES
+          e_tline_tab = lineas.
+    ELSE.
+      zcl_ap_string=&gt;string2tabla( EXPORTING string = string
+                                             longitud = longitud
+                                   CHANGING  tabla  = i_lineas ).
 
       LOOP AT i_lineas INTO l_text132.
         CLEAR l_tline.
         l_tline-tdformat = &apos;=&apos;.
-        l_tline-tdline = l_text132.
         AT FIRST.
           l_tline-tdformat = &apos;*&apos;.
         ENDAT.
-        append l_tline to lineas.
+        l_tline-tdline = l_text132.
+        APPEND l_tline TO lineas.
       ENDLOOP.
-    ENDLOOP.
-
-
-  ELSEIF word_wrap = &apos;F&apos;.
-    l_textline = string.
-    CALL FUNCTION &apos;C14W_STRING_TO_TLINE&apos;
-      EXPORTING
-        i_string    = l_textline
-      TABLES
-        e_tline_tab = lineas.
-  ELSE.
-    zcl_ap_string=&gt;string2tabla( EXPORTING string = string
-                                           longitud = longitud
-                                 CHANGING  tabla  = i_lineas ).
-
-    LOOP AT i_lineas INTO l_text132.
-      CLEAR l_tline.
-      l_tline-tdformat = &apos;=&apos;.
-      AT FIRST.
-        l_tline-tdformat = &apos;*&apos;.
-      ENDAT.
-      l_tline-tdline = l_text132.
-      APPEND l_tline TO lineas.
-    ENDLOOP.
-  ENDIF.
-
-
-
-
-
-ENDMETHOD.</source>
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" VERSION="1" LANGU="S" DESCRIPT="Sustituye parte de texto por otro" EXPOSURE="2" STATE="1" EDITORDER="6 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="ID" VERSION="1" LANGU="S" DESCRIPT="ID de texto" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STXH-TDID"/>
@@ -709,76 +673,80 @@ ENDMETHOD.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="TEXTO_ORIGINAL" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="TEXTO_REEMPLAZO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="CASE" VERSION="1" LANGU="S" DESCRIPT="Distinguir Mayusculas/Minúsculas" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
-  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Código retorno de sentencias ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SY-SUBRC"/>
-  <source>method SUSTITUIR_TEXTO.
-  DATA: l_stxh TYPE stxh,
-        lineas TYPE tlinetab,
-        l_header TYPE  thead,
-        l_cambio.
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="SUSTITUIR_TEXTO" SCONAME="RETURN" VERSION="1" LANGU="S" DESCRIPT="Código retorno de sentencias ABAP" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="SY-SUBRC"/>
+  <source>METHOD sustituir_texto.
+    DATA: l_stxh   TYPE stxh,
+          l_header TYPE thead,
+          lineas   TYPE tlinetab,
+          l_cambio TYPE c LENGTH 1.
 
-  FIELD-SYMBOLS &lt;linea&gt; TYPE tline.
+    FIELD-SYMBOLS &lt;linea&gt; TYPE tline.
 
-  CLEAR lineas.
+    CLEAR message.
+    l_stxh = get_stxh( id     = id
+                       spras  = spras
+                       name   = name
+                       object = object ).
 
-  l_stxh = get_stxh( id     = id
-                     spras  = spras
-                     name   = name
-                     object = object ).
-
-  CHECK NOT l_stxh IS INITIAL.
-
-  CALL FUNCTION &apos;READ_TEXT&apos;
-    EXPORTING
-      id                      = l_stxh-tdid
-      language                = l_stxh-tdspras
-      name                    = l_stxh-tdname
-      object                  = l_stxh-tdobject
-    IMPORTING
-      header                  = l_header
-    TABLES
-      lines                   = lineas
-    EXCEPTIONS
-      id                      = 1
-      language                = 2
-      name                    = 3
-      not_found               = 4
-      object                  = 5
-      reference_check         = 6
-      wrong_access_to_archive = 7
-      OTHERS                  = 8.
-
-  LOOP AT lineas ASSIGNING &lt;linea&gt;.
-    IF &lt;linea&gt;-tdline CS texto_original.
-      IF case = &apos;X&apos;.
-    REPLACE ALL OCCURRENCES OF texto_original IN &lt;linea&gt;-tdline WITH texto_reemplazo
-              IN CHARACTER MODE RESPECTING CASE.
-      ELSE.
-    REPLACE ALL OCCURRENCES OF texto_original IN &lt;linea&gt;-tdline WITH texto_reemplazo
-              IN CHARACTER MODE IGNORING CASE.
-      ENDIF.
-      l_cambio = &apos;X&apos;.
+    IF l_stxh IS INITIAL.
+      RETURN.
     ENDIF.
-  ENDLOOP.
 
-  CHECK l_cambio = &apos;X&apos;.
+    CALL FUNCTION &apos;READ_TEXT&apos;
+      EXPORTING
+        id                      = l_stxh-tdid
+        language                = l_stxh-tdspras
+        name                    = l_stxh-tdname
+        object                  = l_stxh-tdobject
+      IMPORTING
+        header                  = l_header
+      TABLES
+        lines                   = lineas
+      EXCEPTIONS
+        id                      = 1
+        language                = 2
+        name                    = 3
+        not_found               = 4
+        object                  = 5
+        reference_check         = 6
+        wrong_access_to_archive = 7
+        OTHERS                  = 8.
+    IF sy-subrc &lt;&gt; 0.
+      return = sy-subrc.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+    ENDIF.
 
-  CALL FUNCTION &apos;SAVE_TEXT&apos;
-    EXPORTING
-      header          = l_header
-      insert          = &apos; &apos;
-      savemode_direct = &apos;X&apos;
-    TABLES
-      lines           = lineas
-    EXCEPTIONS
-      id              = 1
-      language        = 2
-      name            = 3
-      object          = 4
-      OTHERS          = 5.
+    LOOP AT lineas ASSIGNING &lt;linea&gt;.
+      IF &lt;linea&gt;-tdline CS texto_original.
+        IF case = &apos;X&apos;.
+          REPLACE ALL OCCURRENCES OF texto_original IN &lt;linea&gt;-tdline WITH texto_reemplazo
+                  IN CHARACTER MODE RESPECTING CASE.
+        ELSE.
+          REPLACE ALL OCCURRENCES OF texto_original IN &lt;linea&gt;-tdline WITH texto_reemplazo
+                  IN CHARACTER MODE IGNORING CASE.
+        ENDIF.
+        l_cambio = &apos;X&apos;.
+      ENDIF.
+    ENDLOOP.
 
-  RETURN = sy-subrc.
+    IF l_cambio &lt;&gt; &apos;X&apos;.
+      RETURN.
+    ENDIF.
 
-endmethod.</source>
+    message = save_texto( id = l_header-tdid
+                           object = l_header-tdobject
+                           name = l_header-tdname
+                           spras = l_header-tdspras
+                           lineas          = lineas  ).
+
+    IF NOT message IS INITIAL.
+      return = 4.
+      MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno
+              WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_TEXTOS" CMPNAME="TLINE2STRING" VERSION="1" LANGU="S" DESCRIPT="Recupera el texto y devuelve un string" EXPOSURE="2" STATE="1" EDITORDER="11 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="TLINE2STRING" SCONAME="LINEAS" VERSION="1" LANGU="S" DESCRIPT="Lines of ITF" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="TLINETAB"/>
@@ -787,54 +755,52 @@ endmethod.</source>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="TLINE2STRING" SCONAME="TODO_SALTOS" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_TEXTOS" CMPNAME="TLINE2STRING" SCONAME="STRING" VERSION="1" LANGU="S" DESCRIPT="String" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="STRING"/>
   <source>METHOD tline2string.
-  DATA: l_tline  TYPE tline,
-        i_lineas TYPE tlinetab,
-        l_lin    TYPE i,
-        i_tdline TYPE TABLE OF string,
-        l_string TYPE string,
-        l_first,
-        l_last.
+    DATA: i_lineas TYPE tlinetab,
+          l_lin    TYPE i,
+          l_tline  TYPE tline,
+          l_first  TYPE c LENGTH 1,
+          l_last   TYPE c LENGTH 1,
+          l_string TYPE string,
+          i_tdline TYPE TABLE OF string.
 
-  i_lineas = lineas.
-  IF empezar_en_linea &gt; 1.
-    l_lin = empezar_en_linea - 1.
-    DO l_lin TIMES.
-      DELETE i_lineas INDEX 1.
-    ENDDO.
-  ENDIF.
-
-  LOOP AT i_lineas INTO l_tline.
-    IF todo_saltos IS INITIAL.
-      CLEAR: l_first, l_last.
-      AT FIRST.
-        l_first = &apos;X&apos;.
-      ENDAT.
-      AT LAST.
-        l_last = &apos;X&apos;.
-      ENDAT.
-      IF l_first = &apos;X&apos;.
-        l_string = l_tline-tdline.
-      ELSE.
-        IF l_tline-tdformat = &apos;&apos; OR l_tline-tdformat = &apos;=&apos; OR l_tline-tdformat = &apos;/&apos;.
-          CONCATENATE l_string l_tline-tdline INTO l_string SEPARATED BY space.
-        ELSE.
-          IF l_first = &apos;&apos;.
-            APPEND l_string TO i_tdline.
-          ENDIF.
-          l_string = l_tline-tdline.
-        ENDIF.
-      ENDIF.
-      IF l_last = &apos;X&apos;.
-        APPEND l_string TO i_tdline.
-      ENDIF.
-    ELSE.
-      APPEND l_tline-tdline TO i_tdline.
+    i_lineas = lineas.
+    IF empezar_en_linea &gt; 1.
+      l_lin = empezar_en_linea - 1.
+      DO l_lin TIMES.
+        DELETE i_lineas INDEX 1.
+      ENDDO.
     ENDIF.
-  ENDLOOP.
 
+    LOOP AT i_lineas INTO l_tline.
+      IF todo_saltos IS INITIAL.
+        CLEAR: l_first, l_last.
+        AT FIRST.
+          l_first = &apos;X&apos;.
+        ENDAT.
+        AT LAST.
+          l_last = &apos;X&apos;.
+        ENDAT.
+        IF l_first = &apos;X&apos;.
+          l_string = l_tline-tdline.
+        ELSE.
+          IF l_tline-tdformat = &apos;&apos; OR l_tline-tdformat = &apos;=&apos; OR l_tline-tdformat = &apos;/&apos;.
+            CONCATENATE l_string l_tline-tdline INTO l_string SEPARATED BY space.
+          ELSE.
+            IF l_first = &apos;&apos;.
+              APPEND l_string TO i_tdline.
+            ENDIF.
+            l_string = l_tline-tdline.
+          ENDIF.
+        ENDIF.
+        IF l_last = &apos;X&apos;.
+          APPEND l_string TO i_tdline.
+        ENDIF.
+      ELSE.
+        APPEND l_tline-tdline TO i_tdline.
+      ENDIF.
+    ENDLOOP.
 
-  string = zcl_ap_string=&gt;tabla2string( tabla = i_tdline separar_con_espacio = separar_con_espacio ).
-
-ENDMETHOD.</source>
+    string = zcl_ap_string=&gt;tabla2string( tabla = i_tdline separar_con_espacio = separar_con_espacio ).
+  ENDMETHOD.</source>
  </method>
 </CLAS>

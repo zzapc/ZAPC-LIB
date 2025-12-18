@@ -1,4 +1,4 @@
-CLASS lcl_alv_private DEFINITION
+ï»¿CLASS lcl_alv_private DEFINITION
   FINAL
   CREATE PUBLIC .
   PUBLIC SECTION.
@@ -34,7 +34,7 @@ CLASS lcl_alv_private IMPLEMENTATION.
         IF rv_results IS INITIAL.
           MESSAGE 'Error convirtiendo los datos a XLSX' TYPE 'E'.
         ENDIF.
-      CATCH cx_root.
+      CATCH cx_root. "#EC *
         MESSAGE 'No es posible convertir los datos a XLSX' TYPE 'E'.
     ENDTRY.
 *    rv_results =  me->grid=->create_ex_result( ).
@@ -52,53 +52,53 @@ CLASS zcl_ap_alv_grid DEFINITION
     TYPES:   ucomm TYPE sy-ucomm,
            END OF t_boton.
     TYPES t_botones TYPE TABLE OF t_boton.
-    TYPES:BEGIN OF t_buttons,
-        f01 TYPE rsfunc_txt,
-        f02 TYPE rsfunc_txt,
-        f03 TYPE rsfunc_txt,
-        f04 TYPE rsfunc_txt,
-        f05 TYPE rsfunc_txt,
-        f06 TYPE rsfunc_txt,
-        f07 TYPE rsfunc_txt,
-        f08 TYPE rsfunc_txt,
-        f09 TYPE rsfunc_txt,
-        f10 TYPE rsfunc_txt,
-        f11 TYPE rsfunc_txt,
-        f12 TYPE rsfunc_txt,
-        f13 TYPE rsfunc_txt,
-        f14 TYPE rsfunc_txt,
-        f15 TYPE rsfunc_txt,
-        f16 TYPE rsfunc_txt,
-        f17 TYPE rsfunc_txt,
-        f18 TYPE rsfunc_txt,
-        f19 TYPE rsfunc_txt,
-        f20 TYPE rsfunc_txt,
-        f21 TYPE rsfunc_txt,
-        f22 TYPE rsfunc_txt,
-        f23 TYPE rsfunc_txt,
-        f24 TYPE rsfunc_txt,
-        f25 TYPE rsfunc_txt,
-        f26 TYPE rsfunc_txt,
-        f27 TYPE rsfunc_txt,
-        f28 TYPE rsfunc_txt,
-        f29 TYPE rsfunc_txt,
-        f30 TYPE rsfunc_txt,
-        f31 TYPE rsfunc_txt,
-        f32 TYPE rsfunc_txt,
-        f33 TYPE rsfunc_txt,
-        f34 TYPE rsfunc_txt,
-        f35 TYPE rsfunc_txt,
-        m01 TYPE rsfunc_txt,
-        m02 TYPE rsfunc_txt,
-        m03 TYPE rsfunc_txt,
-        m04 TYPE rsfunc_txt,
-        m05 TYPE rsfunc_txt,
-        m06 TYPE rsfunc_txt,
-        m07 TYPE rsfunc_txt,
-        m08 TYPE rsfunc_txt,
-        m09 TYPE rsfunc_txt,
-        m10 TYPE rsfunc_txt,
-      END OF t_buttons.
+    TYPES: BEGIN OF t_buttons,
+             f01 TYPE rsfunc_txt,
+             f02 TYPE rsfunc_txt,
+             f03 TYPE rsfunc_txt,
+             f04 TYPE rsfunc_txt,
+             f05 TYPE rsfunc_txt,
+             f06 TYPE rsfunc_txt,
+             f07 TYPE rsfunc_txt,
+             f08 TYPE rsfunc_txt,
+             f09 TYPE rsfunc_txt,
+             f10 TYPE rsfunc_txt,
+             f11 TYPE rsfunc_txt,
+             f12 TYPE rsfunc_txt,
+             f13 TYPE rsfunc_txt,
+             f14 TYPE rsfunc_txt,
+             f15 TYPE rsfunc_txt,
+             f16 TYPE rsfunc_txt,
+             f17 TYPE rsfunc_txt,
+             f18 TYPE rsfunc_txt,
+             f19 TYPE rsfunc_txt,
+             f20 TYPE rsfunc_txt,
+             f21 TYPE rsfunc_txt,
+             f22 TYPE rsfunc_txt,
+             f23 TYPE rsfunc_txt,
+             f24 TYPE rsfunc_txt,
+             f25 TYPE rsfunc_txt,
+             f26 TYPE rsfunc_txt,
+             f27 TYPE rsfunc_txt,
+             f28 TYPE rsfunc_txt,
+             f29 TYPE rsfunc_txt,
+             f30 TYPE rsfunc_txt,
+             f31 TYPE rsfunc_txt,
+             f32 TYPE rsfunc_txt,
+             f33 TYPE rsfunc_txt,
+             f34 TYPE rsfunc_txt,
+             f35 TYPE rsfunc_txt,
+             m01 TYPE rsfunc_txt,
+             m02 TYPE rsfunc_txt,
+             m03 TYPE rsfunc_txt,
+             m04 TYPE rsfunc_txt,
+             m05 TYPE rsfunc_txt,
+             m06 TYPE rsfunc_txt,
+             m07 TYPE rsfunc_txt,
+             m08 TYPE rsfunc_txt,
+             m09 TYPE rsfunc_txt,
+             m10 TYPE rsfunc_txt,
+           END OF t_buttons.
 
     DATA o_grid             TYPE REF TO cl_gui_alv_grid.
     DATA t_fcat             TYPE lvc_t_fcat.
@@ -165,7 +165,7 @@ CLASS zcl_ap_alv_grid DEFINITION
                 internal_tabname TYPE slis_tabname DEFAULT ''
                 programa         TYPE sy-repid     DEFAULT sy-cprog
       CHANGING  it_fieldcatalog  TYPE lvc_t_fcat   OPTIONAL
-                tabla            TYPE STANDARD TABLE.
+                tabla            TYPE STANDARD TABLE. ##NEEDED
 
     METHODS set_layout
       IMPORTING sel_mode         TYPE char1  OPTIONAL
@@ -252,7 +252,7 @@ CLASS zcl_ap_alv_grid DEFINITION
       IMPORTING !include         TYPE sy-repid DEFAULT sy-cprog
                 internal_tabname TYPE slis_tabname
                 programa         TYPE sy-repid DEFAULT sy-cprog
-      CHANGING  tabla            TYPE table
+      CHANGING  tabla            TYPE table    ##NEEDED
                 it_fieldcatalog  TYPE lvc_t_fcat.
 
     METHODS exportar_excel
@@ -835,7 +835,7 @@ class ZCL_AP_ALV_GRID implementation.
     quitar_opciones( cl_gui_alv_grid=>mc_fc_expcrtempl ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_call_report ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_maintain_variant ).
-*FPG04/05/2011 - Se muestra el botón de filtro.
+*FPG04/05/2011 - Se muestra el botÃ³n de filtro.
 * quitar_opciones( cl_gui_alv_grid=>mc_fc_filter  ).
     quitar_opciones( cl_gui_alv_grid=>mc_fc_subtot  ).
     quitar_opciones( cl_gui_alv_grid=>mc_mb_export  ).
@@ -1017,7 +1017,7 @@ class ZCL_AP_ALV_GRID implementation.
 
     DATA l_event TYPE cntl_simple_event.
 
-* Si no se había creado el objeto...
+* Si no se habÃ­a creado el objeto...
     IF o_custom_container IS NOT INITIAL.
       RETURN.
     ENDIF.
@@ -1082,6 +1082,9 @@ class ZCL_AP_ALV_GRID implementation.
         l_event-eventid = cl_gui_alv_grid=>mc_evt_delayed_change_select.
         o_grid->register_delayed_event( EXPORTING  i_event_id = l_event-eventid
                                         EXCEPTIONS OTHERS     = 1 ).
+        IF sy-subrc <> 0.
+          MESSAGE 'Error registrando evento delayed_changed_sel' TYPE 'S'.
+        ENDIF.
 
         SET HANDLER o_event->delayed_changed_sel_callback FOR o_grid.
       ENDIF.
@@ -1099,7 +1102,7 @@ class ZCL_AP_ALV_GRID implementation.
       get_catalogo_campos( ).
     ENDIF.
 
-    IF nombre_layout = '¡No!'.
+    IF nombre_layout = 'Â¡No!'.
       CONCATENATE sy-cprog(30) '-' estructura INTO variant-report.
     ELSEIF nombre_layout IS INITIAL.
       IF estructura IS INITIAL.
@@ -1575,6 +1578,7 @@ class ZCL_AP_ALV_GRID implementation.
           l_fichero TYPE string,
           l_mensaje TYPE bapi_msg.
 
+    CLEAR xstring.
     IF    cl_salv_bs_a_xml_base=>get_version( ) = if_salv_bs_xml=>version_25
        OR cl_salv_bs_a_xml_base=>get_version( ) = if_salv_bs_xml=>version_26.
 
@@ -1642,10 +1646,10 @@ class ZCL_AP_ALV_GRID implementation.
 
     layout-cwidth_opt = 'X'.
     layout-zebra      = 'X'.
-    layout-sel_mode   = 'D'.                " Permite selección multiple
-    layout-no_rowmark = ''.               " Permitir selección de filas
+    layout-sel_mode   = 'D'.                " Permite selecciÃ³n multiple
+    layout-no_rowmark = ''.               " Permitir selecciÃ³n de filas
 *    ls_layo-info_fname = 'COLOR'.          "Campo que indica el color
-**    ls_layo-excp_fname = 'LIGHTS'.         "Campo que indica semáfor
+**    ls_layo-excp_fname = 'LIGHTS'.         "Campo que indica semÃ¡for
 *    ls_layo-stylefname = 'ESTILO_CELDA'.   "Campo que indica el estilo
     layout-no_merging = ''.               " Permite mezclar filas
     CONCATENATE sy-repid sy-dynnr INTO variant-report.
@@ -1706,7 +1710,7 @@ class ZCL_AP_ALV_GRID implementation.
       CLEAR o_custom_container.
     ENDIF.
     IF NOT o_grid IS INITIAL.
-      o_grid->free( EXCEPTIONS cntl_error        = 1
+      o_grid->free( EXCEPTIONS cntl_error        = 1   ##SUBRC_OK
                                cntl_system_error = 2
                                OTHERS            = 3 ).
 
@@ -1761,7 +1765,7 @@ class ZCL_AP_ALV_GRID implementation.
       MESSAGE 'No se han recuperado campos'(nrc) TYPE 'S'.
     ENDIF.
 
-* Alguna vez, y no sé por qué, me han aparecido campos marcados como NOOUT por defecto
+* Alguna vez, y no sÃ© por quÃ©, me han aparecido campos marcados como NOOUT por defecto
     LOOP AT t_fcat ASSIGNING <fcat> WHERE no_out = 'X'.
       CLEAR <fcat>-no_out.
     ENDLOOP.
@@ -1779,7 +1783,7 @@ class ZCL_AP_ALV_GRID implementation.
 *  TRY.
 *      READ REPORT include INTO l_abap_source.
 *    CATCH cx_sy_read_src_line_too_long INTO ex_too_long.
-*      MESSAGE 'Longitud de línea demasiado larga' type 'E'.
+*      MESSAGE 'Longitud de lÃ­nea demasiado larga' type 'E'.
 *  ENDTRY.
 *  CHECK sy-subrc EQ 0.
 *
@@ -2085,6 +2089,10 @@ class ZCL_AP_ALV_GRID implementation.
                                                IMPORTING  ep_table                  = tabla
                                                EXCEPTIONS generate_subpool_dir_full = 1
                                                           OTHERS                    = 2 ).
+    IF sy-subrc <> 0.
+      MESSAGE 'No se ha podido crear la tabla dinÃ¡mica' TYPE 'S'.
+      RETURN.
+    ENDIF.
 
     ASSIGN tabla->* TO <l_table>.
     CREATE DATA ep_line LIKE LINE OF <l_table>.
@@ -2368,10 +2376,10 @@ class ZCL_AP_ALV_GRID implementation.
                                                          r_aggregations = lo_aggregations ).
 
     LOOP AT t_fcat ASSIGNING <fieldcat>.
-      data(l_tabix) = sy-tabix.
-      if <fieldcat>-col_pos is initial.
+      DATA(l_tabix) = sy-tabix.
+      IF <fieldcat>-col_pos IS INITIAL.
         <fieldcat>-col_pos = l_tabix.
-      endif.
+      ENDIF.
 
 * gt_alv_out is the table to be displayed using i.e.FUNCTION 'REUSE_ALV_GRID_DISPLAY'
       IF <rec> IS NOT ASSIGNED.
@@ -2515,11 +2523,13 @@ class ZCL_AP_ALV_GRID implementation.
           WHEN 'CHECKBOX'. <fcat>-checkbox = 'X'.
           WHEN 'ICON'. <fcat>-icon = 'X'.
           WHEN 'COLOR'. <fcat>-emphasize = valor.
-          WHEN 'ANCHO'. <fcat>-dd_outlen = valor.
-                        <fcat>-outputlen = valor.
-                        <fcat>-col_opt   = ''.
-          WHEN 'DECIMALS'. <fcat>-decimals_o = valor.
-                           <fcat>-decimals   = valor.
+          WHEN 'ANCHO'.
+            <fcat>-dd_outlen = valor.
+            <fcat>-outputlen = valor.
+            <fcat>-col_opt   = ''.
+          WHEN 'DECIMALS'.
+            <fcat>-decimals_o = valor.
+            <fcat>-decimals   = valor.
           WHEN 'DRDN_FIELD'.
             <fcat>-drdn_field = campo.
           WHEN 'DROPDOWN'.
@@ -2751,7 +2761,7 @@ class ZCL_AP_ALV_GRID implementation.
           WHEN 'CURSO'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'CURSO' ).
           WHEN 'CURSO_EDT'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'CURSO_EDT' ).
           WHEN 'DOCNUM'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'WEDI' ).
-          WHEN 'ANLN1' OR 'ANLN1'.
+          WHEN 'ANLN1' OR 'ANLN2'.
             set_field( op = 'HOTSPOT' campo = l_campo valor = 'AS03' ).
           WHEN 'KNUMA'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'VBO3' ).
           WHEN 'PS_PSP_PNR'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'CJ13' ).
@@ -2763,6 +2773,8 @@ class ZCL_AP_ALV_GRID implementation.
           WHEN 'NLTYP' OR 'NLPLA'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'LS03N_N' ).
           WHEN 'REINR' OR 'TRIPNO'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'PR05' ).
           WHEN 'PERNR'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'PA20' ).
+          WHEN 'CHARG'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'MSC3N' ).
+          WHEN 'BUSINESSPARTNER' OR 'PARTNER'. set_field( op = 'HOTSPOT' campo = l_campo valor = 'BP' ).
           WHEN 'OBSERVACIONES' OR 'TEXTO' OR 'COMENTARIOS'.
             set_field( op = 'HOTSPOT' campo = l_campo valor = 'TEXT' ).
           WHEN OTHERS.
@@ -2788,13 +2800,13 @@ class ZCL_AP_ALV_GRID implementation.
     set_field( op = 'TEXTO' campo = campo valor = valor valor2 = valor2 ).
   ENDMETHOD.
   METHOD set_layout.
-* Indicador de selección:
+* Indicador de selecciÃ³n:
 * http://help.sap.com/saphelp_erp2004/helpdata/en/ef/a2e9eff88311d2b48d006094192fe3/content.htm
     " A -> Fila y columna
     " B (y blanco) Simple
-    " D -> Múltiple
+    " D -> MÃºltiple
     IF sel_mode IS SUPPLIED.
-      IF sel_mode = 'N'.          " No queremos selección
+      IF sel_mode = 'N'.          " No queremos selecciÃ³n
         layout-no_rowmark = 'X'.
       ELSE.
         layout-sel_mode = sel_mode.

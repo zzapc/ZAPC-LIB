@@ -1,4 +1,4 @@
-***********************************************************************
+﻿***********************************************************************
 * TIPO : LISTADO
 * TITULO : Gestión tablas AP
 *
@@ -181,7 +181,7 @@ CLASS zcl_report IMPLEMENTATION.
     __data_set_vart tadir.
     DATA zcache TYPE zcache.
 
-    sgpi_texto( 'Seleccionando datos' ).
+    sgpi_texto( 'Seleccionando datos'(SD1) ).
 
     IF p_temp = 'X'.
       SELECT * FROM ztemp
@@ -241,7 +241,7 @@ CLASS zcl_report IMPLEMENTATION.
 
             cont = l_cont-cont.
             IF l_cont-tabname(4) = 'ZLOG' OR l_cont-tabname = 'ZESTADISTICAS' or l_cont-tabname = 'ZAP_MAIL_LOG'.
-              cont  = l_cont-cont / 300. "La tabla de LOG o estadísticas, es normal que se llene mas.
+              cont  = l_cont-cont / 200. "La tabla de LOG o estadísticas, es normal que se llene mas.
             elseIF l_cont-tabname(5) = 'ZTEMP'.
               cont  = l_cont-cont / 10. "La tabla de LOG o estadísticas, es normal que se llene mas.
             ELSEIF l_cont-tabname = 'ZCACHE'.
@@ -267,7 +267,7 @@ CLASS zcl_report IMPLEMENTATION.
 
   METHOD listado.
 
-    sgpi_texto( 'Generando informe' ).
+    sgpi_texto( 'Generando informe'(GI1) ).
 
     DATA(l_campo_color) = COND lvc_fname( WHEN p_cache = 'X' THEN 'COLOR' ).
 
@@ -281,7 +281,7 @@ CLASS zcl_report IMPLEMENTATION.
         top_of_page_titulo = 'X'
         tabla              = v_tabla.
 
-    o_alv->add_button( button = 'F01' text = 'Borrar'  icon = icon_delete ).
+    o_alv->add_button( button = 'F01' text = 'Borrar'(BOR)  icon = icon_delete ).
 
     o_alv->set_top_of_page( ).
 

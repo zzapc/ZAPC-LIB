@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_BORRADO_TABLAS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="        Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="        Generating ALV output" LENGTH="29 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="        Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="        Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="        Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="        Selection criteria" LENGTH="26 "/>
+   <textElement ID="R" ENTRY="        Deleting entries in tables" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_EJEC" ENTRY="        Immediate execution" LENGTH="38 "/>
+   <textElement ID="S" KEY="S_TABLA" ENTRY="        Table" LENGTH="38 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+  </language>
+  <language SPRAS="F">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="I">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Borrado entradas en tablas" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_EJEC" ENTRY="        Ejecución inmediata" LENGTH="27 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_TABLA" ENTRY="        Tabla" LENGTH="13 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Borrado tablas
+* DESCRIPCION : Borrado tablas
+*
+* AUTOR: Andrés Picazo                                FECHA: 23/09/2025
+*
+***********************************************************************
+REPORT zap_borrado_tablas.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES dd02t.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS handle_user_command REDEFINITION.
+    METHODS visualizar_objeto   REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check       TYPE xfeld,
+             lights      TYPE zico_estado_mensaje,
+             tabla       TYPE tabname,
+             ddtext      TYPE dd02t-ddtext,
+             dias_txt    TYPE zparametros-atributo1,
+             dias        TYPE int4,
+             where_cond  TYPE string,
+             campo_fecha TYPE string,
+             registros   TYPE int4,
+             where       TYPE string,
+             message     TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv ##NEEDED.
+
+    METHODS  main.
+
+    METHODS: listado,
+             seleccionar_datos.
+
+ENDCLASS.
+
+*------VARIABLES-------------------------------------------------------*
+DATA o_prog TYPE REF TO zcl_report.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+  SELECT-OPTIONS s_tabla FOR dd02t-tabname.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS p_ejec AS CHECKBOX.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+    DATA l_list TYPE o_prog-&gt;t_listado.
+
+    l_list = list.
+    CASE column.
+*      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;?&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot; handle_double_click
+
+  METHOD handle_user_command.
+    check_ucomm_sel = &apos;EJEC&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;EJEC&apos;.
+        LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos; AND message IS INITIAL AND registros &gt; 0.
+          TRY.
+              DELETE FROM (&lt;listado&gt;-tabla)
+               WHERE (&lt;listado&gt;-where).
+               o_prog-&gt;message( p1 = |Se han borrado { &lt;listado&gt;-registros } de tabla {  &lt;listado&gt;-tabla } { &lt;listado&gt;-where }| type = &apos;I&apos; SOLO_LOG = &apos;X&apos; ).
+            CATCH cx_root INTO DATA(o_root).
+              &lt;listado&gt;-message = o_root-&gt;get_text( ).
+          ENDTRY.
+          IF &lt;listado&gt;-message IS INITIAL.
+            o_prog-&gt;set_status_list( EXPORTING message = &lt;listado&gt;-message icono = icon_green_light CHANGING list = &lt;listado&gt; ).
+          ELSE.
+            o_prog-&gt;set_status_list( EXPORTING message = &lt;listado&gt;-message icono = icon_red_light CHANGING list = &lt;listado&gt; ).
+          ENDIF.
+
+        ENDLOOP.
+        IF sy-subrc = 0.
+          refresh( ).
+        ENDIF.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot; REPORT
+
+  METHOD seleccionar_datos.
+    DATA l_fecha_minima TYPE dats.
+
+    sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+    SELECT campo AS tabla, valor AS where_cond, atributo1 AS dias_txt, atributo2 AS campo_fecha FROM zparametros
+      INTO CORRESPONDING FIELDS OF TABLE @i_listado
+     WHERE clave  = &apos;BOR_TABLAS&apos;
+       AND campo IN @s_tabla.
+
+    o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_listado[] ).
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+      SELECT ddtext FROM dd02t
+      INTO &lt;listado&gt;-ddtext
+      UP TO 1 ROWS
+        WHERE tabname    = &lt;listado&gt;-tabla
+          AND ddlanguage = sy-langu.
+      ENDSELECT.
+      IF sy-subrc &lt;&gt; 0.
+        SELECT ddtext FROM dd02t
+        INTO &lt;listado&gt;-ddtext
+        UP TO 1 ROWS
+          WHERE tabname = &lt;listado&gt;-tabla.
+        ENDSELECT.
+        IF sy-subrc &lt;&gt; 0.
+          &lt;listado&gt;-message = &apos;No existe la tabla&apos;(NEL).
+        ENDIF.
+      ENDIF.
+
+      TRY.
+          &lt;listado&gt;-dias = &lt;listado&gt;-dias_txt.
+        CATCH cx_root INTO DATA(o_root).
+          IF &lt;listado&gt;-message IS INITIAL.
+            &lt;listado&gt;-message = o_root-&gt;get_text( ).
+          ENDIF.
+      ENDTRY.
+
+      CLEAR l_fecha_minima.
+      IF &lt;listado&gt;-message IS INITIAL.
+        IF &lt;listado&gt;-dias = 0.
+          &lt;listado&gt;-message = &apos;No indicado días a considerar&apos;(NID).
+        ELSE.
+          l_fecha_minima = sy-datum - &lt;listado&gt;-dias.
+        ENDIF.
+      ENDIF.
+
+      IF &lt;listado&gt;-message IS INITIAL.
+        IF &lt;listado&gt;-campo_fecha IS INITIAL.
+          &lt;listado&gt;-message = &apos;No ha informado campo fecha&apos;(NHI).
+        ELSE.
+          &lt;listado&gt;-where = |{ &lt;listado&gt;-campo_fecha } &lt; &apos;{ l_fecha_minima }&apos;|.
+        ENDIF.
+      ENDIF.
+      IF NOT &lt;listado&gt;-where_cond IS INITIAL.
+        &lt;listado&gt;-where = |{ &lt;listado&gt;-where } AND { &lt;listado&gt;-where_cond }|.
+      ENDIF.
+
+      IF not &lt;listado&gt;-message IS INITIAL.
+        DATA(l_icono) = icon_red_light.
+      ELSE.
+        TRY.
+            SELECT COUNT( * ) FROM (&lt;listado&gt;-tabla)
+              INTO &lt;listado&gt;-registros
+             WHERE (&lt;listado&gt;-where).
+
+            IF &lt;listado&gt;-registros &gt; 0.
+              IF p_ejec = &apos;X&apos;.
+                DELETE FROM (&lt;listado&gt;-tabla)
+                 WHERE (&lt;listado&gt;-where).
+                IF sy-subrc = 0.
+                  l_icono = icon_delete.
+                  message( p1 = |Se han borrado { &lt;listado&gt;-registros } de tabla {  &lt;listado&gt;-tabla } { &lt;listado&gt;-where }| type = &apos;I&apos; SOLO_LOG = &apos;X&apos; ).
+                ENDIF.
+              ELSE.
+                l_icono = icon_yellow_light.
+              ENDIF.
+            ELSE.
+              l_icono = icon_dummy.
+            ENDIF.
+          CATCH cx_root INTO o_root.
+            &lt;listado&gt;-message = o_root-&gt;get_text( ).
+            l_icono = icon_message_critical.
+            message( p1 = &lt;listado&gt;-tabla p2 = &lt;listado&gt;-message type = &apos;E&apos; SOLO_LOG = &apos;X&apos; ).
+        ENDTRY.
+      ENDIF.
+
+      set_status_list( EXPORTING message = &lt;listado&gt;-message icono = l_icono CHANGING list = &lt;listado&gt; ).
+    ENDLOOP.
+
+    SORT i_listado.
+  ENDMETHOD.
+
+  METHOD listado.
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Borrar registros&apos;(BR1) icon = icon_delete ucomm = &apos;EJEC&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field_text( &apos;DIAS,WHERE_COND,CAMPO_FECHA,REGISTROS&apos; ).
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK,DIAS_TXT,WHERE&apos; ).
+
+*    o_alv-&gt;set_orden( &apos;&apos; ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; tabla_ref = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+  ENDMETHOD.
+ENDCLASS.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;X&apos;
+                  prog         = &apos;BOR_TABLAS&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Parámetros&apos;(PAR) &apos;&apos; &apos;&apos;.
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M02&apos; &apos;Log&apos;(LOG) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                         status_prog        = &apos;ZAP_STATUS&apos;
+                         top_of_page_auto   = &apos;X&apos;
+                         top_of_page_titulo = &apos;X&apos;
+                         o_dev              = o_prog ).
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN OUTPUT.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;main( ).</source>
+</PROG>

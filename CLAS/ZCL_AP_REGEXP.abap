@@ -70,6 +70,12 @@ public section.
       !PATRON type STRING default '\{([^{}]*)\}'
     returning
       value(OCURRENCIAS) type TABLE_OF_STRINGS .
+  class-methods buscar_numeros
+    importing
+      !STRING type STRING
+      !PATRON type STRING default '\d+'
+    returning
+      value(OCURRENCIAS) type TABLE_OF_STRINGS .
   class-methods HTML2TEXT
     importing
       !HTML type STRING
@@ -92,6 +98,10 @@ public section.
     returning
       value(SALIDA) type STRING .
 
+    CLASS-METHODS convert_posix_to_pcre
+      IMPORTING iv_pattern TYPE string
+      RETURNING VALUE(rv_pattern) TYPE string.
+
 
 endclass. "ZCL_AP_REGEXP definition
 class ZCL_AP_REGEXP implementation.
@@ -105,6 +115,9 @@ class ZCL_AP_REGEXP implementation.
     ocurrencias = buscar_patron( string = string patron = patron ).
   ENDMETHOD.
   METHOD buscar_llaves.
+    ocurrencias = buscar_patron( string = string patron = patron ).
+  ENDMETHOD.
+  METHOD buscar_numeros.
     ocurrencias = buscar_patron( string = string patron = patron ).
   ENDMETHOD.
   METHOD buscar_parentesis.
@@ -152,7 +165,7 @@ class ZCL_AP_REGEXP implementation.
 *    ^ : Matches the starting position within the string
 * () : The string matched within the parentheses can be recalled later.
 * [] : Matches a character that is contained within the brackets.
-* â€“ : Specifies a range.
+* – : Specifies a range.
 * {} : Number of characters.
 * \d : Digits.
 * \. : Mandatory dot.
@@ -164,6 +177,17 @@ class ZCL_AP_REGEXP implementation.
 
 * Ejemplo buscar pedidos 4599999999 ->'45[0-9]{8}'.
   ENDMETHOD.
+  METHOD CONVERT_POSIX_TO_PCRE.
+    rv_pattern = iv_pattern.
+
+    " Mapas básicos POSIX -> PCRE/Unicode
+    REPLACE ALL OCCURRENCES OF '[[:digit:]]' IN rv_pattern WITH '\d'.
+    REPLACE ALL OCCURRENCES OF '[[:space:]]' IN rv_pattern WITH '\s'.
+    REPLACE ALL OCCURRENCES OF '[[:alpha:]]' IN rv_pattern WITH '[A-Za-z]'.
+    REPLACE ALL OCCURRENCES OF '[[:alnum:]]' IN rv_pattern WITH '[A-Za-z0-9]'.
+    REPLACE ALL OCCURRENCES OF '[[:lower:]]' IN rv_pattern WITH '[a-z]'.
+    REPLACE ALL OCCURRENCES OF '[[:upper:]]' IN rv_pattern WITH '[A-Z]'.
+  ENDMETHOD.
   METHOD ELIMINAR_PATRON.
 
 salida = string.
@@ -172,7 +196,7 @@ salida = string.
     SORT i_var.
     DELETE ADJACENT DUPLICATES FROM i_var.
 
-* Hay que ordenar por tamaÃ±o, porque sino el reeplazar falla.
+* Hay que ordenar por tamaño, porque sino el reeplazar falla.
     TYPES: BEGIN OF t_var_t,
              var  TYPE string,
              long TYPE int4,

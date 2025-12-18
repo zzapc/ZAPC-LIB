@@ -1,141 +1,154 @@
-CLASS zcl_ap_exits DEFINITION
-  PUBLIC
-  CREATE PUBLIC.
+ï»¿
+class ZCL_AP_EXITS definition
+  public
+  create public .
 
-  PUBLIC SECTION.
-    DATA o_log               TYPE REF TO zcl_ap_log.
-    DATA id                  TYPE zap_exits-id.
-    DATA guardar_log         TYPE abap_bool.
-    DATA zap_exits           TYPE zap_exits.
-    DATA i_condiciones       TYPE zap_exits_par_t.
-    DATA i_variables         TYPE zap_exits_par_t.
-    DATA i_condiciones_agrup TYPE zap_exits_par_t.
-    DATA uname               TYPE sy-uname.
-    DATA clave               TYPE string.
-    DATA cond_or             TYPE xfeld.
+public section.
 
-    METHODS constructor
-      IMPORTING !exit    TYPE any
-                !include TYPE any      DEFAULT ''
-                clave    TYPE any      DEFAULT ''
-                !form    TYPE any      DEFAULT ''
-                !uname   TYPE sy-uname DEFAULT sy-uname.
+  data O_LOG type ref to ZCL_AP_LOG .
+  data ID type ZAP_EXITS-ID .
+  data GUARDAR_LOG type ABAP_BOOL .
+  data ZAP_EXITS type ZAP_EXITS .
+  data I_CONDICIONES type ZAP_EXITS_PAR_T .
+  data I_VARIABLES type ZAP_EXITS_PAR_T .
+  data I_CONDICIONES_AGRUP type ZAP_EXITS_PAR_T .
+  data UNAME type SY-UNAME .
+  data CLAVE type STRING .
+  data COND_OR type XFELD .
 
-    METHODS activa
-      IMPORTING condicion     TYPE any DEFAULT ''
-                valor_clave2  TYPE any DEFAULT ''
-      RETURNING VALUE(activa) TYPE abap_bool.
-
-    METHODS get_variable
-      IMPORTING clave        TYPE any
-                clave2       TYPE any       OPTIONAL
-                clave3       TYPE any       OPTIONAL
-                ctd          TYPE abap_bool DEFAULT ''
-                obligatorio  TYPE abap_bool DEFAULT 'X'
-      RETURNING VALUE(valor) TYPE zap_exits_par-valor.
-
-    CLASS-METHODS exit_activa
-      IMPORTING !exit         TYPE any      OPTIONAL
-                !uname        TYPE sy-uname DEFAULT sy-uname
-                clave         TYPE any      DEFAULT ''
-                condicion     TYPE any      DEFAULT ''
-                valor_clave2  TYPE any      DEFAULT ''
-    PREFERRED PARAMETER exit
-      RETURNING VALUE(activa) TYPE abap_bool.
-
-    METHODS log
-      IMPORTING p1             TYPE any
-                p2             TYPE any       OPTIONAL
-                p3             TYPE any       OPTIONAL
-                p4             TYPE any       OPTIONAL
-                p5             TYPE any       OPTIONAL
-                p6             TYPE any       OPTIONAL
-                p7             TYPE any       OPTIONAL
-                p8             TYPE any       OPTIONAL
-                p9             TYPE any       OPTIONAL
-                p10            TYPE any       OPTIONAL
-                p11            TYPE any       OPTIONAL
-                p12            TYPE any       OPTIONAL
-                p13            TYPE any       OPTIONAL
-                p14            TYPE any       OPTIONAL
-                siempre        TYPE abap_bool DEFAULT ''
-                msgty          TYPE sy-msgty  DEFAULT 'E'
-                msgid          TYPE any       DEFAULT ''
-                msgno          TYPE any       DEFAULT ''
-                msgv1          TYPE any       DEFAULT ''
-                msgv2          TYPE any       DEFAULT ''
-                msgv3          TYPE any       DEFAULT ''
-                msgv4          TYPE any       DEFAULT ''
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    CLASS-METHODS log_st
-      IMPORTING !exit          TYPE any      OPTIONAL
-                !uname         TYPE sy-uname DEFAULT sy-uname
-                clave          TYPE any      DEFAULT ''
-                p1             TYPE any      OPTIONAL
-                p2             TYPE any      OPTIONAL
-                p3             TYPE any      OPTIONAL
-                p4             TYPE any      OPTIONAL
-                p5             TYPE any      OPTIONAL
-                p6             TYPE any      OPTIONAL
-                msgty          TYPE any      DEFAULT 'E'
-                msgid          TYPE any      DEFAULT ''
-                msgno          TYPE any      DEFAULT ''
-                msgv1          TYPE any      DEFAULT ''
-                msgv2          TYPE any      DEFAULT ''
-                msgv3          TYPE any      DEFAULT ''
-                msgv4          TYPE any      DEFAULT ''
-    PREFERRED PARAMETER exit
-      RETURNING VALUE(message) TYPE bapi_msg.
-
-    METHODS get_lista_variable
-      IMPORTING clave        TYPE any
-                obligatorio  TYPE abap_bool DEFAULT 'X'
-      RETURNING VALUE(lista) TYPE string.
-
-    METHODS cumple_cond
-      RETURNING VALUE(si) TYPE abap_bool.
-
-    METHODS eval_cond
-      IMPORTING valor         TYPE any
-                clave         TYPE any
-      RETURNING VALUE(cumple) TYPE abap_bool.
-
-    CLASS-METHODS get_rango_variables_st
-      IMPORTING !exit                  TYPE any
-                clave                  TYPE any       DEFAULT ''
-                clave2                 TYPE any       DEFAULT ''
-                clave3                 TYPE any       DEFAULT ''
-                campo_rango            TYPE any       DEFAULT 'CLAVE2'
-                !option                TYPE any       DEFAULT 'EQ'
-                !sign                  TYPE any       DEFAULT 'I'
-                todo                   TYPE abap_bool DEFAULT ''
-                error_si_vacio         TYPE any       DEFAULT ''
-                filtro_por_campo       TYPE any       DEFAULT ''
-                valor_filtro_por_campo TYPE any       DEFAULT ''
-      RETURNING VALUE(r_rango)         TYPE rstt_t_range_string.
-
-    CLASS-METHODS cumple_cond_clave2
-      IMPORTING !exit         TYPE any
-                condicion     TYPE any
-                valor         TYPE any
-                sin_ceros     TYPE any DEFAULT ''
-      RETURNING VALUE(cumple) TYPE abap_bool.
-
-    METHODS existe_variable
-      IMPORTING clave        TYPE any
-                clave2       TYPE any       OPTIONAL
-                clave3       TYPE any       OPTIONAL
-                quitar_ceros TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(si)    TYPE abap_bool.
-
-    METHODS existe_condicion
-      IMPORTING clave        TYPE any
-                clave2       TYPE any       OPTIONAL
-                clave3       TYPE any       OPTIONAL
-                quitar_ceros TYPE abap_bool DEFAULT ''
-      RETURNING VALUE(si)    TYPE abap_bool.
-
+  methods CONSTRUCTOR
+    importing
+      !EXIT type ANY
+      !INCLUDE type ANY default ''
+      !CLAVE type ANY default ''
+      !FORM type ANY default ''
+      !UNAME type SY-UNAME default SY-UNAME .
+  methods ACTIVA
+    importing
+      !CONDICION type ANY default ''
+      !VALOR_CLAVE2 type ANY default ''
+    returning
+      value(ACTIVA) type ABAP_BOOL .
+  methods GET_VARIABLE
+    importing
+      !CLAVE type ANY
+      !CLAVE2 type ANY optional
+      !CLAVE3 type ANY optional
+      !CTD type ABAP_BOOL default ''
+      !OBLIGATORIO type ABAP_BOOL default 'X'
+    returning
+      value(VALOR) type ZAP_EXITS_PAR-VALOR .
+  class-methods EXIT_ACTIVA
+    importing
+      !EXIT type ANY optional
+      !UNAME type SY-UNAME default SY-UNAME
+      !CLAVE type ANY default ''
+      !CONDICION type ANY default ''
+      !VALOR_CLAVE2 type ANY default ''
+    preferred parameter EXIT
+    returning
+      value(ACTIVA) type ABAP_BOOL .
+  methods LOG
+    importing
+      !P1 type ANY
+      !P2 type ANY optional
+      !P3 type ANY optional
+      !P4 type ANY optional
+      !P5 type ANY optional
+      !P6 type ANY optional
+      !P7 type ANY optional
+      !P8 type ANY optional
+      !P9 type ANY optional
+      !P10 type ANY optional
+      !P11 type ANY optional
+      !P12 type ANY optional
+      !P13 type ANY optional
+      !P14 type ANY optional
+      !SIEMPRE type ABAP_BOOL default ''
+      !MSGTY type SY-MSGTY default 'E'
+      !MSGID type ANY default ''
+      !MSGNO type ANY default ''
+      !MSGV1 type ANY default ''
+      !MSGV2 type ANY default ''
+      !MSGV3 type ANY default ''
+      !MSGV4 type ANY default ''
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  class-methods LOG_ST
+    importing
+      !EXIT type ANY optional
+      !UNAME type SY-UNAME default SY-UNAME
+      !CLAVE type ANY default ''
+      !P1 type ANY optional
+      !P2 type ANY optional
+      !P3 type ANY optional
+      !P4 type ANY optional
+      !P5 type ANY optional
+      !P6 type ANY optional
+      !MSGTY type ANY default 'E'
+      !MSGID type ANY default ''
+      !MSGNO type ANY default ''
+      !MSGV1 type ANY default ''
+      !MSGV2 type ANY default ''
+      !MSGV3 type ANY default ''
+      !MSGV4 type ANY default ''
+    preferred parameter EXIT
+    returning
+      value(MESSAGE) type BAPI_MSG .
+  methods GET_LISTA_VARIABLE
+    importing
+      !CLAVE type ANY
+      !OBLIGATORIO type ABAP_BOOL default 'X'
+    returning
+      value(LISTA) type STRING .
+  methods CUMPLE_COND
+    returning
+      value(SI) type ABAP_BOOL .
+  methods EVAL_COND
+    importing
+      !VALOR type ANY
+      !CLAVE type ANY
+    returning
+      value(CUMPLE) type ABAP_BOOL .
+  class-methods GET_RANGO_VARIABLES_ST
+    importing
+      !EXIT type ANY
+      !CLAVE type ANY default ''
+      !CLAVE2 type ANY default ''
+      !CLAVE3 type ANY default ''
+      !CAMPO_RANGO type ANY default 'CLAVE2'
+      !OPTION type ANY default 'EQ'
+      !SIGN type ANY default 'I'
+      !TODO type ABAP_BOOL default ''
+      !ERROR_SI_VACIO type ANY default ''
+      !FILTRO_POR_CAMPO type ANY default ''
+      !VALOR_FILTRO_POR_CAMPO type ANY default ''
+    returning
+      value(R_RANGO) type RSTT_T_RANGE_STRING .
+  class-methods CUMPLE_COND_CLAVE2
+    importing
+      !EXIT type ANY
+      !CONDICION type ANY
+      !VALOR type ANY
+      !SIN_CEROS type ANY default ''
+    returning
+      value(CUMPLE) type ABAP_BOOL .
+  methods EXISTE_VARIABLE
+    importing
+      !CLAVE type ANY
+      !CLAVE2 type ANY optional
+      !CLAVE3 type ANY optional
+      !QUITAR_CEROS type ABAP_BOOL default ''
+    returning
+      value(SI) type ABAP_BOOL .
+  methods EXISTE_CONDICION
+    importing
+      !CLAVE type ANY
+      !CLAVE2 type ANY optional
+      !CLAVE3 type ANY optional
+      !QUITAR_CEROS type ABAP_BOOL default ''
+    returning
+      value(SI) type ABAP_BOOL .
   PROTECTED SECTION.
 
   PRIVATE SECTION.
@@ -146,12 +159,12 @@ class ZCL_AP_EXITS implementation.
       activa = zap_exits-activa.
     ELSEIF zap_exits-activa = 'U'.
       IF zap_exits-usuarios_activos IS INITIAL.
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa dependiente de usuario, pero lista usuarios vacía'(adu) msgty = 'W' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa dependiente de usuario, pero lista usuarios vacÃ­a'(adu) msgty = 'W' ).
       ELSEIF zcl_ap_lista=>es_elemento( lista = zap_exits-usuarios_activos elemento = uname ) = 'X'.
         activa = 'X'.
         log( p1 = 'Exit'(exi) p2 = id p3 = 'activa para los usuarios'(apu) p4 = zap_exits-usuarios_activos msgty = 'S' ).
       ELSE.
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa SÓLO para los usuarios'(asu) p4 = zap_exits-usuarios_activos msgty = 'E' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'activa SÃ“LO para los usuarios'(asu) p4 = zap_exits-usuarios_activos msgty = 'E' ).
       ENDIF.
     ELSE.
       log( p1 = 'Exit'(exi) p2 = id p3 = 'inactiva'(ina) msgty = 'W' ).
@@ -166,7 +179,7 @@ class ZCL_AP_EXITS implementation.
 
     IF activa = 'X' AND NOT zap_exits-ffin IS INITIAL.
       IF NOT ( zap_exits-ffin >= sy-datum AND zap_exits-finicio <= sy-datum ).
-        log( p1 = 'Exit'(exi) p2 = id p3 = 'no activa a fecha de hoy' p4 = 'Sólo desde' p5 = zap_exits-finicio p6 = 'a' p7 = zap_exits-ffin msgty = 'S' ).
+        log( p1 = 'Exit'(exi) p2 = id p3 = 'no activa a fecha de hoy' p4 = 'SÃ³lo desde' p5 = zap_exits-finicio p6 = 'a' p7 = zap_exits-ffin msgty = 'S' ).
         CLEAR activa.
       ENDIF.
     ENDIF.
@@ -174,7 +187,7 @@ class ZCL_AP_EXITS implementation.
     IF activa = 'X'.
       IF NOT condicion IS INITIAL.
         IF NOT line_exists( i_condiciones[ clave = condicion clave2 = valor_clave2 ] ).
-          IF line_exists( i_condiciones[ clave = condicion  ] ). " Sólo desactivamos si hay alguna entrada para la condición
+          IF line_exists( i_condiciones[ clave = condicion  ] ). " SÃ³lo desactivamos si hay alguna entrada para la condiciÃ³n
             CLEAR activa.
           ENDIF.
         ENDIF.
@@ -253,7 +266,7 @@ class ZCL_AP_EXITS implementation.
             IF sy-subrc = 0.
               l_valor_cond = <fs>.
             ELSE.
-              log( p1 = 'Condición' p2 = l_cond-clave p3 = 'desconocida' ).
+              log( p1 = 'CondiciÃ³n' p2 = l_cond-clave p3 = 'desconocida' ).
             ENDIF.
         ENDCASE.
 
@@ -285,7 +298,7 @@ class ZCL_AP_EXITS implementation.
     IF sy-subrc = 0.
       cumple = 'X'.
     ELSE.
-      SELECT SINGLE clave2 FROM zap_exits_par " Si no existe la condición, también lo doy por buena
+      SELECT SINGLE clave2 FROM zap_exits_par " Si no existe la condiciÃ³n, tambiÃ©n lo doy por buena
       INTO l_valor_sin_ceros
      WHERE id    = exit
        AND tipo  = 'C'
@@ -421,9 +434,9 @@ class ZCL_AP_EXITS implementation.
       IF NOT condicion IS INITIAL.
         SELECT id
           FROM zap_exits_par
-          WHERE id = @exit
-            AND tipo = 'C'
-            AND clave = @condicion
+          WHERE id     = @exit
+            AND tipo   = 'C'
+            AND clave  = @condicion
             AND clave2 = @valor_clave2
           ORDER BY PRIMARY KEY
           INTO @zap_exits-id
@@ -432,8 +445,8 @@ class ZCL_AP_EXITS implementation.
         IF sy-subrc <> 0.
           SELECT id
             FROM zap_exits_par
-            WHERE id = @exit
-              AND tipo = 'C'
+            WHERE id    = @exit
+              AND tipo  = 'C'
               AND clave = @condicion
             ORDER BY PRIMARY KEY
             INTO @zap_exits-id

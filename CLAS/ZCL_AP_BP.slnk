@@ -9,6 +9,102 @@
  <localMacros>*&quot;* use this source file for any macro definitions you need
 *&quot;* in the implementation part of the class</localMacros>
  <localTestClasses>*&quot;* use this source file for your ABAP unit test classes</localTestClasses>
+ <method CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" VERSION="1" LANGU="S" DESCRIPT="Actualizar segmento de credito" EXPOSURE="2" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="PARTNER" VERSION="1" LANGU="S" DESCRIPT="Número de interlocutor" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BU_PARTNER"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="KKBER" VERSION="1" LANGU="S" DESCRIPT="Área de control de créditos" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="KKBER"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="LIMIT_RULE" VERSION="1" LANGU="S" DESCRIPT="Proceso p.determinación límite de crédito y solvencia" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UKM_LIMIT_RULE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="RISK_CLASS" VERSION="1" LANGU="S" DESCRIPT="Clase de riesgo" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UKM_RISK_CLASS" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="CHECK_RULE" VERSION="1" LANGU="S" DESCRIPT="Regla p.verif.créditos" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UKM_CHECK_RULE" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="CREDIT_LIMIT" VERSION="1" LANGU="S" DESCRIPT="Límite de crédito" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="UKM_CREDIT_LIMIT" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_BP" CMPNAME="ACTUALIZAR_CREDITO" SCONAME="MESSAGE" VERSION="1" LANGU="S" DESCRIPT="Texto de mensaje" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <source>METHOD actualizar_credito.
+
+    DATA:    ls_bupa_error TYPE mds_ctrls_error.
+    DATA(lo_bupa) = NEW cl_im_mds_bupa_lock( ).
+    lo_bupa-&gt;if_ex_bupa_lock~lock(
+      EXPORTING
+        iv_partner = partner
+      CHANGING
+        cs_error   = ls_bupa_error ).
+
+    IF NOT ls_bupa_error-is_error IS INITIAL.
+      message = &apos;BP bloqueado&apos;.
+    ELSE.
+      DATA: lo_account       TYPE REF TO cl_ukm_account,
+            ls_bp_credit_sgm TYPE ukm_s_bp_cms_sgm,
+            ls_ukm_s_bp_cms  TYPE ukm_s_bp_cms.
+
+      &quot;set &amp; fetch Parent data
+      DATA(lo_facade) = cl_ukm_facade=&gt;create( i_activity = cl_ukm_cnst_eventing=&gt;bp_maintenance ).
+      DATA(lo_bupa_factory) = lo_facade-&gt;get_bupa_factory( ).
+      DATA(lo_partner) = lo_bupa_factory-&gt;get_business_partner( partner ).
+
+      &quot; Fetch &amp; update credit profile data
+      lo_partner-&gt;get_bp_cms(
+        IMPORTING
+          es_bp_cms = ls_ukm_s_bp_cms
+      ).
+
+      IF NOT limit_rule IS INITIAL AND ls_ukm_s_bp_cms-limit_rule NE limit_rule.
+        ls_ukm_s_bp_cms-limit_rule = limit_rule.
+        DATA(l_mod) = &apos;X&apos;.
+      ENDIF.
+      IF NOT risk_class IS INITIAL AND ls_ukm_s_bp_cms-risk_class NE risk_class.
+        ls_ukm_s_bp_cms-risk_class = risk_class.
+        l_mod = &apos;X&apos;.
+      ENDIF.
+
+      IF NOT check_rule IS INITIAL AND ls_ukm_s_bp_cms-check_rule NE check_rule.
+        ls_ukm_s_bp_cms-check_rule = check_rule.
+        l_mod = &apos;X&apos;.
+      ENDIF.
+      IF l_mod = &apos;X&apos;.
+        ls_ukm_s_bp_cms-rating_chg_date = sy-datum.
+        ls_ukm_s_bp_cms-rating_val_date = sy-datum.
+        lo_partner-&gt;set_bp_cms(
+          EXPORTING
+            is_bp_cms = ls_ukm_s_bp_cms
+        ).
+      ENDIF.
+
+      &quot;Fetch &amp; update credit segment data
+      lo_account = lo_bupa_factory-&gt;get_credit_account(
+        i_partner      = partner
+        i_credit_sgmnt = CONV ukm_credit_sgmnt( kkber ) ).
+
+      lo_account-&gt;get_bp_cms_sgm(
+        IMPORTING
+          es_bp_cms_sgm = ls_bp_credit_sgm ).
+
+      IF NOT credit_limit IS INITIAL AND credit_limit NE ls_bp_credit_sgm-credit_limit.
+        ls_bp_credit_sgm-credit_limit = credit_limit.
+        ls_bp_credit_sgm-limit_chg_date = sy-datum.
+        ls_bp_credit_sgm-req_date  = sy-datum.
+
+
+        lo_account-&gt;set_bp_cms_sgm(
+          EXPORTING
+            is_bp_cms_sgm = ls_bp_credit_sgm
+        ).
+        l_mod = &apos;X&apos;.
+      ENDIF.
+
+      IF l_mod = &apos;X&apos;.
+        lo_bupa_factory-&gt;save_all( i_upd_task = abap_false ). &quot;For Factory methods
+
+        CALL FUNCTION &apos;BAPI_TRANSACTION_COMMIT&apos;               &quot;For API Methods
+          EXPORTING
+            wait = abap_true.
+      ENDIF.
+
+      lo_bupa-&gt;if_ex_bupa_lock~unlock(
+        EXPORTING
+          iv_partner = partner
+        CHANGING
+          cs_error   = ls_bupa_error ).
+    ENDIF.
+  ENDMETHOD.</source>
+ </method>
  <method CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" VERSION="1" LANGU="S" DESCRIPT="Visualizar" EXPOSURE="2" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0" MTDTYPE2="00">
   <parameter CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" SCONAME="BP" VERSION="1" LANGU="S" DESCRIPT="Número interlocutor comercial" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BU_PARTNER"/>
   <parameter CLSNAME="ZCL_AP_BP" CMPNAME="VISUALIZAR" SCONAME="ROLE" VERSION="1" LANGU="S" DESCRIPT="Rol interlocutor comercial incluido agrupación roles" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="BUS_ROLES" PAROPTIONL="X"/>

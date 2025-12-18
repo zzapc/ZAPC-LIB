@@ -6,6 +6,16 @@
    <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
    <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
   </language>
+  <language SPRAS="F">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="I">
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
   <language SPRAS="S">
    <textElement ID="I" KEY="CON" ENTRY="contiene" LENGTH="18 "/>
    <textElement ID="I" KEY="REG" ENTRY="registros en" LENGTH="22 "/>
@@ -208,7 +218,7 @@ CLASS zcl_report IMPLEMENTATION.
     __data_set_vart tadir.
     DATA zcache TYPE zcache.
 
-    sgpi_texto( &apos;Seleccionando datos&apos; ).
+    sgpi_texto( &apos;Seleccionando datos&apos;(SD1) ).
 
     IF p_temp = &apos;X&apos;.
       SELECT * FROM ztemp
@@ -268,7 +278,7 @@ CLASS zcl_report IMPLEMENTATION.
 
             cont = l_cont-cont.
             IF l_cont-tabname(4) = &apos;ZLOG&apos; OR l_cont-tabname = &apos;ZESTADISTICAS&apos; or l_cont-tabname = &apos;ZAP_MAIL_LOG&apos;.
-              cont  = l_cont-cont / 300. &quot;La tabla de LOG o estadísticas, es normal que se llene mas.
+              cont  = l_cont-cont / 200. &quot;La tabla de LOG o estadísticas, es normal que se llene mas.
             elseIF l_cont-tabname(5) = &apos;ZTEMP&apos;.
               cont  = l_cont-cont / 10. &quot;La tabla de LOG o estadísticas, es normal que se llene mas.
             ELSEIF l_cont-tabname = &apos;ZCACHE&apos;.
@@ -294,7 +304,7 @@ CLASS zcl_report IMPLEMENTATION.
 
   METHOD listado.
 
-    sgpi_texto( &apos;Generando informe&apos; ).
+    sgpi_texto( &apos;Generando informe&apos;(GI1) ).
 
     DATA(l_campo_color) = COND lvc_fname( WHEN p_cache = &apos;X&apos; THEN &apos;COLOR&apos; ).
 
@@ -308,7 +318,7 @@ CLASS zcl_report IMPLEMENTATION.
         top_of_page_titulo = &apos;X&apos;
         tabla              = v_tabla.
 
-    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Borrar&apos;  icon = icon_delete ).
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Borrar&apos;(BOR)  icon = icon_delete ).
 
     o_alv-&gt;set_top_of_page( ).
 

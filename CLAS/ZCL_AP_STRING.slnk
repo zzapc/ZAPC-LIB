@@ -1004,10 +1004,11 @@
   <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="INTRO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PARVALUE="&apos;&apos;"/>
   <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="MAX_COLS" VERSION="1" LANGU="S" DESCRIPT="Número natural" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="I" PARVALUE="132"/>
   <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TITULO_TEXTO_CORTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING" PARVALUE="&apos;&apos;"/>
-  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="MODIFICADO" VERSION="1" LANGU="S" DESCRIPT="String de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
-  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="CANCELADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
-  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="String de entrada" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
-  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO_CORTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="HTML" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="6 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;&apos;"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="MODIFICADO" VERSION="1" LANGU="S" DESCRIPT="String de salida" CMPTYPE="1" MTDTYPE="0" EDITORDER="7 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="CANCELADO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="8 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO" VERSION="1" LANGU="S" DESCRIPT="String de entrada" CMPTYPE="1" MTDTYPE="0" EDITORDER="9 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
+  <parameter CLSNAME="ZCL_AP_STRING" CMPNAME="POPUP_TEXTO" SCONAME="TEXTO_CORTO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="10 " DISPID="0 " PARDECLTYP="2" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY" PAROPTIONL="X"/>
   <source>METHOD popup_texto.
     DATA: l_titulo  TYPE string,
           l_display TYPE xfeld,
@@ -1035,19 +1036,23 @@
 
     l_string = texto.
     CALL FUNCTION &apos;Z_POPUP_EDIT_TEXT&apos;
-      EXPORTING titulo       = l_titulo
-                texto        = intro
-*                INI_X        = 5
-*                INI_Y        = 3
-*                FIN_X        = 140
-*                FIN_Y        = 24
-                max_cols     = max_cols
-                display_mode = l_display
-                titulo_texto_corto = titulo_texto_corto
-      IMPORTING modificado   = l_mod
-                cancelado    = l_canc
-      CHANGING  string       = l_string
-                texto_corto  = texto_corto.
+      EXPORTING
+        titulo             = l_titulo
+        texto              = intro
+*       INI_X              = 5
+*       INI_Y              = 3
+*       FIN_X              = 140
+*       FIN_Y              = 24
+        max_cols           = max_cols
+        display_mode       = l_display
+        titulo_texto_corto = titulo_texto_corto
+        html               = html
+      IMPORTING
+        modificado         = l_mod
+        cancelado          = l_canc
+      CHANGING
+        string             = l_string
+        texto_corto        = texto_corto.
 
     modificado = l_mod.
     cancelado = l_canc.

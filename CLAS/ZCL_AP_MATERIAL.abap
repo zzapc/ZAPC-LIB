@@ -1,4 +1,4 @@
-* Tabla caché con algunos datos importantes de material
+ï»¿* Tabla cachÃ© con algunos datos importantes de material
 TYPES: BEGIN OF t_mat,
          matnr TYPE matnr,
          meins TYPE meins,
@@ -1030,7 +1030,7 @@ class ZCL_AP_MATERIAL implementation.
           class_not_valid          = 2.           " ch zu 3.0D
 
       IF sy-subrc <> 0.
-        MESSAGE 'Error recuperando clasificación' TYPE 'S'.
+        MESSAGE 'Error recuperando clasificacion' TYPE 'S'.
       ENDIF.
 
       IF sy-ucomm <> 'WECH'.
@@ -1104,7 +1104,7 @@ class ZCL_AP_MATERIAL implementation.
       SELECT SINGLE klart, objek FROM inob
         INTO (@DATA(l_klart), @DATA(l_objek))
        WHERE cuobj = @<cdpos>-objectid(18)
-         AND obtab = 'MARA'.  " Sólo cambios en mara
+         AND obtab = 'MARA'.  " SÃ³lo cambios en mara
       IF sy-subrc <> 0.
         DELETE i_cdpos.
       ELSE.
@@ -1165,14 +1165,14 @@ class ZCL_AP_MATERIAL implementation.
       RETURN.
     ENDIF.
 
-* Si no encuentra el texto en el idioma dado, lo devuelve en inglés, si lo hay
+* Si no encuentra el texto en el idioma dado, lo devuelve en inglÃ©s, si lo hay
     IF maktx IS INITIAL.
       SELECT SINGLE maktx FROM  makt               "#EC CI_SEL_NESTED
         INTO maktx
        WHERE matnr = matnr
          AND spras = 'E'.
     ENDIF.
-* Sino en español, si lo hay
+* Sino en espaÃ±ol, si lo hay
     IF spras <> 'S'.
       SELECT SINGLE maktx FROM  makt               "#EC CI_SEL_NESTED
         INTO maktx
@@ -1507,7 +1507,7 @@ class ZCL_AP_MATERIAL implementation.
              haben(09)     TYPE p          DECIMALS 3, " XJD
              sollwert(09)  TYPE p          DECIMALS 2, " n497992
              habenwert(09) TYPE p          DECIMALS 2, " n497992
-             waers         TYPE t001-waers,            " Währungsschlüssel
+             waers         TYPE t001-waers,            " WÃ¤hrungsschlÃ¼ssel
            END OF t_bestand.
 
     DATA: rr_matnr TYPE range_t_matnr,
@@ -1565,7 +1565,7 @@ class ZCL_AP_MATERIAL implementation.
            WITH sbbst = ''
            WITH xsum  = ''
            WITH pa_sumfl = 'X'
-           WITH xchar = solo_mat_suj_lotes " Sólo materiales sujetos a lote
+           WITH xchar = solo_mat_suj_lotes " SÃ³lo materiales sujetos a lote
            WITH pa_wdzer = 'X'
            WITH pa_wdzew = 'X'
            WITH pa_wdwiz = 'X'
@@ -1951,7 +1951,7 @@ class ZCL_AP_MATERIAL implementation.
         INTO tq34
        WHERE art = art.
       IF sy-subrc <> 0.
-        __concat2 message 'No existe la clase de inspección'(nec) art.
+        __concat2 message 'No existe la clase de inspeccion'(nec) art.
         RETURN.
       ELSE.
         MOVE-CORRESPONDING tq34 TO qmat.
@@ -1996,7 +1996,7 @@ class ZCL_AP_MATERIAL implementation.
           INTO tq34
          WHERE art = art2.
         IF sy-subrc <> 0.
-          __concat2 message 'No existe la clase de inspección'(nec) art2.
+          __concat2 message 'No existe la clase de inspeccion'(nec) art2.
           RETURN.
         ELSE.
           MOVE-CORRESPONDING tq34 TO qmat.
@@ -2170,10 +2170,10 @@ class ZCL_AP_MATERIAL implementation.
 
     o_bi = NEW #( ).
 
-* Acceso: Nº de material, clase de material, ramo etc.
+* Acceso: NÂº de material, clase de material, ramo etc.
     o_bi->dynpro( program = 'SAPLMGMM' dynpro = '0060' ).
     o_bi->campos( campo = 'BDC_OKCODE' valor = '=AUSW' ).
-    o_bi->campos( campo = 'RMMG1-MATNR' valor = matnr ). " Número de material
+    o_bi->campos( campo = 'RMMG1-MATNR' valor = matnr ). " NÃºmero de material
 
     FREE i_bdcmm.
     CALL FUNCTION 'MATERIAL_BTCI_SELECTION_NEW'
@@ -2223,13 +2223,13 @@ class ZCL_AP_MATERIAL implementation.
         o_bi->campos( campo = 'RMMG1-WERKS' valor = werks ). " Centro
       ENDIF.
       IF NOT lgort IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGORT' valor = lgort ). " Almacén
+        o_bi->campos( campo = 'RMMG1-LGORT' valor = lgort ). " AlmacÃ©n
       ENDIF.
       IF NOT lgnum IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGNUM' valor = lgnum ). " NºAlmacén
+        o_bi->campos( campo = 'RMMG1-LGNUM' valor = lgnum ). " NÂºAlmacÃ©n
       ENDIF.
       IF NOT lgtyp IS INITIAL.
-        o_bi->campos( campo = 'RMMG1-LGTYP' valor = lgtyp ). " Tipo Almacén
+        o_bi->campos( campo = 'RMMG1-LGTYP' valor = lgtyp ). " Tipo AlmacÃ©n
       ENDIF.
       IF NOT vkorg IS INITIAL.
         o_bi->campos( campo = 'RMMG1-VKORG' valor = vkorg ).

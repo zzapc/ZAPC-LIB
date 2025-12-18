@@ -3514,6 +3514,11 @@ class ZCL_AP_DOCX implementation.
       ENDIF.
     ENDIF.
 
+*APC20251015 El caracter & da problemas
+    IF l_valor CS '&'.
+      REPLACE ALL OCCURRENCES OF '&' IN l_valor WITH ` `.
+    ENDIF.
+
     IF todas IS INITIAL.
       IF NOT doc IS INITIAL.
         REPLACE l_var IN doc WITH l_valor IGNORING CASE.

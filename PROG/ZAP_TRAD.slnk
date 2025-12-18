@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_TRAD" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="44 "/>
+   <textElement ID="R" ENTRY="Traducciones" LENGTH="12 "/>
+   <textElement ID="S" KEY="P_DTEL" ENTRY="        Elementos de datos" LENGTH="26 "/>
+   <textElement ID="S" KEY="P_FICHE" ENTRY="        Fichero" LENGTH="15 "/>
+   <textElement ID="S" KEY="P_LANGD" ENTRY="        Idioma destino" LENGTH="22 "/>
+   <textElement ID="S" KEY="P_LANGO" ENTRY="        Idioma origen" LENGTH="21 "/>
+   <textElement ID="S" KEY="P_PROG" ENTRY="        Programas" LENGTH="17 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_DTEL" ENTRY="D       ." LENGTH="9 "/>
+   <textElement ID="S" KEY="S_NAME" ENTRY="D       ." LENGTH="9 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Traducciones de programas
+*
+* AUTOR: Andrés Picazo                                FECHA: 11/11/2025
+*
+***********************************************************************
+REPORT zrbc0004.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES: trdir, dd04l.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS handle_user_command REDEFINITION.
+    METHODS visualizar_objeto   REDEFINITION.
+ENDCLASS.
+
+TYPES: BEGIN OF t_CARGA,
+         name          TYPE trdir-name,
+         tipo          TYPE srmelemtyp,
+         lango         TYPE char1,
+         id            TYPE string,             &quot; textpoolid,
+         key           TYPE string,             &quot; textpoolky,
+         campo_texto   TYPE fieldname,
+         entry         TYPE textpooltx,
+         length        TYPE textpoolln,
+         langd         TYPE sy-langu,
+         sobreescribir TYPE abadrflagoverwrite,
+         entry_d       TYPE textpooltx,
+       END OF t_CARGA.
+
+DATA i_carga TYPE TABLE OF t_carga.
+
+DATA: ls_e071 TYPE e071,
+      lt_e071 TYPE tr_objects.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check         TYPE xfeld,
+             lights        TYPE zico_estado_mensaje,
+             name          TYPE trdir-name,
+             tipo          TYPE srmelemtyp,
+             lango         TYPE sy-langu,
+             id            TYPE string,              &quot; textpoolid,
+             key           TYPE string,              &quot; textpoolky,
+             campo_texto   TYPE fieldname,
+             entry         TYPE textpooltx,
+             length        TYPE textpoolln,
+             langd         TYPE sy-langu,
+             sobreescribir TYPE abadrflagoverwrite,
+             entry_d       TYPE textpooltx,
+             message       TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado,
+           BEGIN OF t_conf_tabla,
+             name         TYPE trdir-name,
+             campo_idioma TYPE dd03l-fieldname,
+             long_clave   TYPE int4,
+             pos_idioma   TYPE int4,
+           END OF t_conf_tabla.
+
+    DATA: i_listado    TYPE tt_listado,
+          i_conf_tabla TYPE TABLE OF t_conf_tabla,
+          o_alv        TYPE REF TO lcl_alv ##NEEDED.
+
+    METHODS  main.
+
+    METHODS: listado,
+             seleccionar_datos,
+
+      grabar_textos
+        IMPORTING !name TYPE progname
+                  !lang TYPE sy-langu,
+
+      grabar_cuad
+        IMPORTING !name TYPE progname
+                  !lang TYPE sy-langu,
+
+      grabar_dtel
+        IMPORTING !name TYPE progname
+                  !lang TYPE sy-langu,
+
+      grabar_propuesta
+        IMPORTING lango TYPE char1
+                  texto TYPE textpooltx
+                  langd TYPE syst_langu
+                  textd TYPE textpooltx.
+
+  PRIVATE SECTION.
+    METHODS get_tabla
+      IMPORTING tabla       TYPE string
+                campo_clave TYPE string
+                campo_texto TYPE string
+                !name       TYPE progname.
+
+    METHODS grabar_registro
+      IMPORTING tabla       TYPE string
+                clave       TYPE string
+                idioma      TYPE any
+                campo_texto TYPE fieldname
+                texto       TYPE textpooltx
+      RETURNING VALUE(ok)   TYPE abap_bool.
+
+ENDCLASS.
+
+*------VARIABLES-------------------------------------------------------*
+DATA o_prog TYPE REF TO zcl_report.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-sel.
+  PARAMETERS p_prog RADIOBUTTON GROUP g DEFAULT &apos;X&apos; USER-COMMAND g.
+  SELECT-OPTIONS s_name FOR trdir-name.
+  PARAMETERS p_dtel RADIOBUTTON GROUP g.
+  SELECT-OPTIONS s_dtel FOR dd04l-rollname.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS: p_lango TYPE sy-langu DEFAULT sy-langu OBLIGATORY,
+              p_langd TYPE sy-langu OBLIGATORY.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS p_fiche TYPE text255.
+  SELECTION-SCREEN SKIP 1.
+  PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    &quot; TODO: variable is assigned but only used in commented-out code (ABAP cleaner)
+    DATA l_list TYPE o_prog-&gt;t_listado.
+
+    l_list = list.
+    CASE column.
+*      WHEN &apos;BUKRS&apos;.
+*        MESSAGE l_list-bukrs TYPE &apos;I&apos;.
+      WHEN OTHERS. message = &apos;?&apos;.
+    ENDCASE.
+  ENDMETHOD. &quot; handle_double_click
+
+  METHOD handle_user_command.
+    DATA i_sel TYPE TABLE OF t_carga.
+
+    check_ucomm_sel = &apos;PROP&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;EXCELC&apos;.
+        MOVE-CORRESPONDING o_prog-&gt;i_listado TO i_carga.
+        DATA(o_alvl) = NEW zcl_ap_alv( tabla = &apos;I_CARGA&apos; handle = &apos;CARG&apos; ).
+
+        IF p_fiche IS INITIAL.
+          zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alvl-&gt;o_alv refresh_metadata = &apos;X&apos; tabla = i_carga abrir = &apos;X&apos; nombre_fichero = &apos;Traducciones.xlsx&apos; ).
+        ELSE.
+          zcl_ap_abap2xls=&gt;alv_2_xls( alv = o_alvl-&gt;o_alv refresh_metadata = &apos;X&apos; tabla = i_carga abrir = &apos;X&apos; ruta = p_fiche ).
+        ENDIF.
+      WHEN &apos;CARGAR&apos;.
+        NEW zcl_ap_abap2xls( )-&gt;lee_fichero( EXPORTING popup_select_file = &apos;X&apos;
+                                                       get_datos         = &apos;X&apos;
+                                                       huge              = &apos;X&apos;
+                                                       mostrar_error     = &apos;X&apos;
+                                                       fichero           = p_fiche
+                                             IMPORTING datos             = i_carga ).
+
+        LOOP AT i_carga ASSIGNING FIELD-SYMBOL(&lt;carga&gt;) WHERE entry_d &lt;&gt; &apos;&apos;.
+          IF &lt;carga&gt;-sobreescribir = abap_true.
+            ASSIGN o_prog-&gt;i_listado[ name  = &lt;carga&gt;-name
+                                      langd = &lt;carga&gt;-langd
+                                      id    = &lt;carga&gt;-id
+                                      key   = &lt;carga&gt;-key
+                                      campo_Texto = &lt;carga&gt;-campo_Texto ] TO FIELD-SYMBOL(&lt;listado&gt;).
+            IF sy-subrc = 0.
+              IF &lt;listado&gt;-entry_d &lt;&gt; &lt;carga&gt;-entry_d.
+                &lt;listado&gt;-entry_d = &lt;carga&gt;-entry_d.
+                &lt;listado&gt;-lights  = icon_change.
+
+                o_prog-&gt;grabar_propuesta( lango = &lt;carga&gt;-lango
+                                          texto = &lt;listado&gt;-entry
+                                          langd = &lt;carga&gt;-langd
+                                          textd = &lt;listado&gt;-entry_d  ).
+              ENDIF.
+            ENDIF.
+          ELSE.
+            ASSIGN o_prog-&gt;i_listado[ name  = &lt;carga&gt;-name
+                                      langd = &lt;carga&gt;-langd
+                                      id    = &lt;carga&gt;-id
+                                      key   = &lt;carga&gt;-key
+                                      campo_Texto = &lt;carga&gt;-campo_Texto
+                                      entry_d = &apos;&apos; ] TO &lt;listado&gt;.
+            IF sy-subrc = 0.
+              &lt;listado&gt;-entry_d = &lt;carga&gt;-entry_d.
+              &lt;listado&gt;-lights  = icon_change.
+
+              o_prog-&gt;grabar_propuesta( lango = &lt;carga&gt;-lango
+                                        texto = &lt;listado&gt;-entry
+                                        langd = &lt;carga&gt;-langd
+                                        textd = &lt;listado&gt;-entry_d ).
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+
+        refresh( ).
+
+      WHEN &apos;GRABAR&apos;.
+        CLEAR lt_e071.
+        LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE lights = icon_change.
+          IF NOT line_exists( i_sel[ name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Textos&apos; ] ).
+            APPEND VALUE #( name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Textos&apos; ) TO i_sel.
+            o_prog-&gt;grabar_textos(  name = &lt;listado&gt;-name
+                                    lang = &lt;listado&gt;-langd ).
+          ENDIF.
+
+          IF NOT line_exists( i_sel[ name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Tabla&apos; id = &apos;RSMPTEXTS&apos; ] ).
+            APPEND VALUE #( name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Tabla&apos; id = &apos;RSMPTEXTS&apos;  ) TO i_sel.
+            o_prog-&gt;grabar_cuad(  name = &lt;listado&gt;-name
+                                  lang = &lt;listado&gt;-langd ).
+          ENDIF.
+
+          IF NOT line_exists( i_sel[ name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Tabla&apos; id = &apos;DD04T&apos; ] ).
+            APPEND VALUE #( name = &lt;listado&gt;-name langd = &lt;listado&gt;-langd tipo = &apos;Tabla&apos; id = &apos;DD04T&apos;  ) TO i_sel.
+
+            o_prog-&gt;grabar_dtel(  name = &lt;listado&gt;-name
+                                  lang = &lt;listado&gt;-langd ).
+          ENDIF.
+        ENDLOOP.
+
+        IF NOT lt_e071 IS INITIAL.
+          SORT lt_e071.
+          DELETE ADJACENT DUPLICATES FROM lt_e071.
+          CALL FUNCTION &apos;TR_REQUEST_CHOICE&apos;
+            EXPORTING
+*         IV_REQUEST_TYPES     =
+*         IV_CLI_DEP           = &apos; &apos;
+*         IV_REQUEST           = &apos; &apos;
+              it_e071  = lt_e071
+*         IV_LOCK_OBJECTS      = &apos; &apos;
+*         IV_NO_OWNER_CHECK    = &apos; &apos;
+            EXCEPTIONS
+              OTHERS   = 1.
+          IF sy-subrc &lt;&gt; 0.
+            MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+                    WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          ENDIF.
+        ENDIF.
+
+        refresh( ).
+
+      WHEN &apos;PROP&apos;.
+        LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+          DATA(l_idiomas) = |{ &lt;listado&gt;-lango }-{ &lt;listado&gt;-langd }|.
+          SELECT SINGLE string FROM ztemps
+            INTO @DATA(texto)
+            WHERE clave = &apos;TRAD&apos;
+              AND valor = @l_idiomas
+              AND texto = @&lt;listado&gt;-entry.
+          IF sy-subrc = 0 AND NOT texto IS INITIAL.
+            IF &lt;listado&gt;-entry_d &lt;&gt; texto.
+              &lt;listado&gt;-entry_d = texto.
+              &lt;listado&gt;-lights  = icon_change.
+            ENDIF.
+          ENDIF.
+        ENDLOOP.
+        refresh( ).
+
+      WHEN &apos;DESC_PROP&apos;.
+        SELECT * FROM ztemps
+          INTO TABLE @DATA(i_trad)
+          WHERE clave = &apos;TRAD&apos;.
+        zcl_ap_segw=&gt;get_json( EXPORTING datos = i_trad IMPORTING json = DATA(l_json) ).
+        IF NOT l_json IS INITIAL.
+          zcl_ap_ficheros=&gt;grabar_xstring( fichero = |propuesta traducciones.json| dialogo = &apos;X&apos; string = l_json ).
+        ENDIF.
+
+      WHEN &apos;SUBIR_PROP&apos;.
+        zcl_ap_ficheros=&gt;leer_xstring( EXPORTING popup_select_fichero = &apos;X&apos; get_string = &apos;X&apos;
+                                       IMPORTING string = l_json ).
+        zcl_ap_segw=&gt;set_json( EXPORTING json = l_json
+                                IMPORTING datos = i_trad ).
+
+        MODIFY ztemps FROM TABLE i_trad.
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot; REPORT
+
+  METHOD seleccionar_datos.
+    DATA: text_o TYPE TABLE OF textpool,
+          text_d TYPE TABLE OF textpool.
+
+    IF p_prog = &apos;X&apos;.
+      sgpi_texto( &apos;Seleccionando datos&apos;(sda) ).
+      SELECT name FROM trdir
+        INTO TABLE @DATA(i_prog)
+       WHERE name IN @s_name.
+
+      o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_prog[] ).
+      LOOP AT i_prog ASSIGNING FIELD-SYMBOL(&lt;prog&gt;).
+        sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+        READ TEXTPOOL &lt;prog&gt;-name INTO text_o LANGUAGE p_lango.
+        READ TEXTPOOL &lt;prog&gt;-name INTO text_d LANGUAGE p_langd.
+        LOOP AT text_o ASSIGNING FIELD-SYMBOL(&lt;to&gt;) WHERE entry &lt;&gt; &apos;D       .&apos;.
+          APPEND INITIAL LINE TO i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+          &lt;listado&gt;-name = &lt;prog&gt;-name.
+          &lt;listado&gt;-tipo = &apos;Textos&apos;.
+          MOVE-CORRESPONDING &lt;to&gt; TO &lt;listado&gt;.
+          &lt;listado&gt;-lango = p_lango.
+          &lt;listado&gt;-langd = p_langd.
+          ASSIGN text_d[ key = &lt;to&gt;-key
+                         id = &lt;to&gt;-id ] TO FIELD-SYMBOL(&lt;td&gt;).
+          IF sy-subrc = 0.
+            &lt;listado&gt;-entry_d = &lt;td&gt;-entry.
+            &lt;listado&gt;-lights  = icon_yellow_light.
+          ENDIF.
+
+          IF &lt;listado&gt;-id = &apos;S&apos;.
+            &lt;listado&gt;-entry   = &lt;listado&gt;-entry+8.
+            &lt;listado&gt;-entry_d = &lt;listado&gt;-entry_d+8.
+          ENDIF.
+        ENDLOOP.
+
+        get_tabla( tabla = &apos;RSMPTEXTS&apos;
+                   campo_clave = &apos;PROGNAME&apos;
+                   campo_texto = &apos;TEXT&apos;
+                   name = &lt;prog&gt;-name ).
+
+      ENDLOOP.
+    ELSEIF p_dtel = &apos;X&apos;.
+      SELECT rollname FROM dd04l
+        INTO TABLE @DATA(i_dtel)
+       WHERE rollname IN @s_dtel.
+
+      o_prog-&gt;o_sgpi-&gt;get_filas_tabla( i_dtel[] ).
+      LOOP AT i_dtel ASSIGNING FIELD-SYMBOL(&lt;dtel&gt;).
+        sgpi_texto( texto1 = &apos;Procesando datos&apos;(pda) cant_porc = 100 ).
+
+        get_tabla( tabla = &apos;DD04T&apos;
+                   campo_clave = &apos;ROLLNAME&apos;
+                   campo_texto = &apos;DDTEXT&apos;
+                   name = CONV #( &lt;dtel&gt;-rollname ) ).
+
+        get_tabla( tabla = &apos;DD04T&apos;
+                   campo_clave = &apos;ROLLNAME&apos;
+                   campo_texto = &apos;REPTEXT&apos;
+                   name = CONV #( &lt;dtel&gt;-rollname ) ).
+
+        get_tabla( tabla = &apos;DD04T&apos;
+                   campo_clave = &apos;ROLLNAME&apos;
+                   campo_texto = &apos;SCRTEXT_M&apos;
+                   name = CONV #( &lt;dtel&gt;-rollname ) ).
+
+        get_tabla( tabla = &apos;DD04T&apos;
+                   campo_clave = &apos;ROLLNAME&apos;
+                   campo_texto = &apos;SCRTEXT_L&apos;
+                   name = CONV #( &lt;dtel&gt;-rollname ) ).
+
+        get_tabla( tabla = &apos;DD04T&apos;
+                   campo_clave = &apos;ROLLNAME&apos;
+                   campo_texto = &apos;SCRTEXT_S&apos;
+                   name = CONV #( &lt;dtel&gt;-rollname ) ).
+
+      ENDLOOP.
+    ENDIF.
+
+    SORT i_listado BY name lango id key.
+  ENDMETHOD.
+
+  METHOD listado.
+    sgpi_texto( &apos;Generando informe&apos;(gin) ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Excel&apos;  icon = icon_xls ucomm = &apos;EXCELC&apos; ).
+    o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Carga Traducción&apos;  icon = icon_import ucomm = &apos;CARGAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Grabar traducción&apos;  icon = icon_system_save ucomm = &apos;GRABAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F04&apos; text = &apos;Propuesta&apos;  icon = icon_execute_object ucomm = &apos;PROP&apos; ).
+    o_alv-&gt;add_button( button = &apos;M01&apos; text = &apos;Descarga propuestas&apos;  ucomm = &apos;DESC_PROP&apos; ).
+    o_alv-&gt;add_button( button = &apos;M02&apos; text = &apos;Importar propuestas&apos;  ucomm = &apos;SUBIR_PROP&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK&apos; ).
+
+    o_alv-&gt;set_orden( &apos;NAME,TIPO,LANGO,ID,KEY&apos; ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; tabla_ref = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+  ENDMETHOD.
+
+  METHOD grabar_textos.
+    DATA text TYPE TABLE OF textpool.
+
+    READ TEXTPOOL name INTO text LANGUAGE lang.
+
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;)
+         WHERE name = name AND tipo = &apos;Textos&apos; AND langd = lang AND lights = icon_change AND entry_d IS NOT INITIAL.
+      ASSIGN text[ id = &lt;listado&gt;-id key = &lt;listado&gt;-key ] TO FIELD-SYMBOL(&lt;t&gt;).
+      IF sy-subrc = 0.
+        &lt;t&gt;-entry = &lt;listado&gt;-entry_d.
+      ELSE.
+        APPEND INITIAL LINE TO text ASSIGNING &lt;t&gt;.
+        MOVE-CORRESPONDING &lt;listado&gt; TO &lt;t&gt;.
+        &lt;t&gt;-entry = &lt;listado&gt;-entry_d.
+      ENDIF.
+      &lt;listado&gt;-lights = icon_green_light.
+    ENDLOOP.
+    IF sy-subrc = 0.
+
+      LOOP AT text ASSIGNING &lt;t&gt;.
+        IF &lt;listado&gt;-id = &apos;S&apos;.
+          &lt;t&gt;-entry+8 = &lt;t&gt;-entry.
+          CLEAR &lt;t&gt;-entry(8).
+        ENDIF.
+
+        IF strlen( &lt;t&gt;-entry ) &gt; &lt;t&gt;-length.
+          &lt;t&gt;-length = strlen( &lt;t&gt;-entry ).
+        ENDIF.
+
+      ENDLOOP.
+
+      INSERT TEXTPOOL name FROM text LANGUAGE lang.
+      IF sy-subrc &lt;&gt; 0.
+        MESSAGE ID sy-msgid TYPE &apos;E&apos; NUMBER sy-msgno
+                WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      ELSE.
+
+        ls_e071-as4pos   = 1.
+        ls_e071-pgmid    = &apos;LIMU&apos;.
+        ls_e071-object   = &apos;REPT&apos;.
+        ls_e071-obj_name = name.
+        ls_e071-lang     = sy-langu.
+        INSERT ls_e071 INTO TABLE lt_e071.
+      ENDIF.
+    ENDIF.
+
+* Grabamos la traducción estándar para que SAP refresque
+    DATA(o_bi) = NEW zcl_ap_batch_input( ).
+
+    o_bi-&gt;inicio( ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPLWBABAP&apos; dynpro = &apos;0100&apos; okcode = &apos;=TRAN&apos; ).
+    o_bi-&gt;campos( campo = &apos;RS38M-PROGRAMM&apos; valor = name ). &quot; Nombre de programa ABAP
+    o_bi-&gt;campos( campo = &apos;RS38M-FUNC_EDIT&apos; valor = &apos;&apos; ). &quot; Editor
+    o_bi-&gt;campos( campo = &apos;RS38M-FUNC_TEXT&apos; valor = &apos;X&apos; ). &quot; Elementos de texto
+
+* Idioma objetivo para la traducción
+    o_bi-&gt;dynpro( program = &apos;SAPLSETX&apos; dynpro = &apos;0200&apos; okcode = &apos;=NEXT&apos; ).
+    WRITE p_lango TO aux1.
+    WRITE p_langd TO aux2.
+    o_bi-&gt;campos( campo = &apos;RSETX-MASTERLANG&apos; valor = aux1 ). &quot; Clave de idioma
+    o_bi-&gt;campos( campo = &apos;RSETX-TARG_LANGU&apos; valor = aux2 ). &quot; Clave de idioma
+
+    o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos; okcode = &apos;=SAVE&apos; ).
+
+    o_bi-&gt;llamar_transaccion( tcode = &apos;SE38&apos; modo = &apos;N&apos; ).
+  ENDMETHOD.
+
+  METHOD grabar_cuad.
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;)
+         WHERE name = name AND tipo = &apos;Tabla&apos; AND id = &apos;RSMPTEXTS&apos; AND langd = lang AND lights = icon_change AND entry_d IS NOT INITIAL.
+
+      IF grabar_registro( tabla = &apos;RSMPTEXTS&apos;
+                       clave = &lt;listado&gt;-key
+                       idioma = p_langd
+                       campo_texto = &apos;TEXT&apos;
+                       texto = &lt;listado&gt;-entry_d ) = abap_true.
+        &lt;listado&gt;-lights = icon_green_light.
+        DATA(ok) = abap_true.
+      ELSE.
+        &lt;listado&gt;-lights = icon_red_light.
+      ENDIF.
+    ENDLOOP.
+    IF ok = abap_true.
+      ls_e071-as4pos   = 1.
+      ls_e071-pgmid    = &apos;LIMU&apos;.
+      ls_e071-object   = &apos;CUAD&apos;.
+      ls_e071-obj_name = name.
+      ls_e071-lang     = sy-langu.
+      INSERT ls_e071 INTO TABLE lt_e071.
+
+* Grabamos la traducción estándar para que SAP refresque
+      DATA(o_bi) = NEW zcl_ap_batch_input( ).
+
+      o_bi-&gt;inicio( ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPMSMPE&apos; dynpro = &apos;0100&apos; okcode = &apos;=TRAN&apos; ).
+      o_bi-&gt;campos( campo = &apos;RSMPE-PROGRAM&apos; valor = name ). &quot; Nombre de programa ABAP
+
+* Idioma objetivo para la traducción
+      o_bi-&gt;dynpro( program = &apos;SAPLSETX&apos; dynpro = &apos;0200&apos; okcode = &apos;=NEXT&apos; ).
+      WRITE p_lango TO aux1.
+      WRITE p_langd TO aux2.
+      o_bi-&gt;campos( campo = &apos;RSETX-MASTERLANG&apos; valor = aux1 ). &quot; Clave de idioma
+      o_bi-&gt;campos( campo = &apos;RSETX-TARG_LANGU&apos; valor = aux2 ). &quot; Clave de idioma
+
+      o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos; okcode = &apos;=SEQU&apos; ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos; okcode = &apos;=SAVE&apos; ).
+
+      o_bi-&gt;llamar_transaccion( tcode = &apos;SE41&apos; modo = &apos;N&apos; ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD grabar_dtel.
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;)
+         WHERE name = name AND tipo = &apos;Tabla&apos; AND id = &apos;DD04T&apos; AND langd = lang AND lights = icon_change AND entry_d IS NOT INITIAL.
+
+      IF grabar_registro( tabla = &apos;DD04T&apos;
+                       clave = &lt;listado&gt;-key
+                       idioma = p_langd
+                       campo_texto = &lt;listado&gt;-campo_texto
+                       texto = &lt;listado&gt;-entry_d ) = abap_true.
+        &lt;listado&gt;-lights = icon_green_light.
+        DATA(ok) = abap_true.
+      ELSE.
+        &lt;listado&gt;-lights = icon_red_light.
+      ENDIF.
+    ENDLOOP.
+    IF ok = abap_true.
+      ls_e071-as4pos   = 1.
+      ls_e071-pgmid    = &apos;LIMU&apos;.
+      ls_e071-object   = &apos;DTED&apos;.
+      ls_e071-obj_name = name.
+      ls_e071-lang     = sy-langu.
+      INSERT ls_e071 INTO TABLE lt_e071.
+
+* Grabamos la traducción estándar para que SAP refresque
+      DATA(o_bi) = NEW zcl_ap_batch_input( ).
+
+      o_bi-&gt;inicio( ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPLSD_ENTRY&apos; dynpro = &apos;1000&apos; okcode = &apos;=CHANGE_RADIO&apos; ).
+      o_bi-&gt;campos( campo = &apos;RSRD1-TBMA&apos; valor = &apos;&apos; ).
+      o_bi-&gt;campos( campo = &apos;RSRD1-DDTYPE&apos; valor = &apos;X&apos; ).
+
+      o_bi-&gt;dynpro( program = &apos;SAPLSD_ENTRY&apos; dynpro = &apos;1000&apos; okcode = &apos;=WB_TRANSLATION&apos; ).
+      o_bi-&gt;campos( campo = &apos;RSRD1-DDTYPE_VAL&apos; valor = name ).
+
+* Idioma objetivo para la traducción
+      o_bi-&gt;dynpro( program = &apos;SAPLSETX&apos; dynpro = &apos;0200&apos; okcode = &apos;=NEXT&apos; ).
+      WRITE p_lango TO aux1.
+      WRITE p_langd TO aux2.
+      o_bi-&gt;campos( campo = &apos;RSETX-MASTERLANG&apos; valor = aux1 ). &quot; Clave de idioma
+      o_bi-&gt;campos( campo = &apos;RSETX-TARG_LANGU&apos; valor = aux2 ). &quot; Clave de idioma
+      o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos; okcode = &apos;=SAVE&apos; ).
+
+      o_bi-&gt;llamar_transaccion( tcode = &apos;SE11&apos; modo = &apos;N&apos; ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD get_tabla.
+    DATA:
+      lr_struct_descr TYPE REF TO cl_abap_structdescr,
+      lr_table_descr  TYPE REF TO cl_abap_tabledescr,
+      lr_data         TYPE REF TO data,
+      where           TYPE string.
+
+    FIELD-SYMBOLS &lt;tabla&gt; TYPE ANY TABLE.
+
+    SELECT fieldname, keyflag, leng, position, languflag FROM dd03l
+      INTO TABLE @DATA(i_campos_tabla)
+     WHERE tabname = @tabla
+     ORDER BY position.
+    IF sy-subrc &lt;&gt; 0.
+      MESSAGE |No existe tabla { tabla }| TYPE &apos;E&apos;.
+    ENDIF.
+
+    APPEND INITIAL LINE TO i_conf_tabla ASSIGNING FIELD-SYMBOL(&lt;conf&gt;).
+    &lt;conf&gt;-name = tabla.
+    LOOP AT i_campos_tabla ASSIGNING FIELD-SYMBOL(&lt;campo&gt;) WHERE keyflag = &apos;X&apos;.
+      IF &lt;campo&gt;-languflag = &apos;X&apos;.
+        &lt;conf&gt;-campo_idioma = &lt;campo&gt;-fieldname.
+        &lt;conf&gt;-pos_idioma   = &lt;conf&gt;-long_clave.
+      ENDIF.
+      add &lt;campo&gt;-leng to &lt;conf&gt;-long_clave.
+    ENDLOOP.
+
+    IF &lt;conf&gt;-campo_idioma IS INITIAL.
+      MESSAGE |La tabla { tabla } no tiene campo de idioma en la clave| TYPE &apos;E&apos;.
+    ENDIF.
+
+    TRY.
+        lr_struct_descr ?= cl_abap_typedescr=&gt;describe_by_name( tabla ).
+        lr_table_descr = cl_abap_tabledescr=&gt;create( p_line_type = lr_struct_descr ).
+        CREATE DATA lr_data TYPE HANDLE lr_table_descr.
+        ASSIGN lr_data-&gt;* TO &lt;tabla&gt;.
+      CATCH cx_root INTO DATA(lx_type).
+        MESSAGE lx_type-&gt;get_text( ) TYPE &apos;E&apos;.
+    ENDTRY.
+
+    where = |{ &lt;conf&gt;-campo_idioma } = &apos;{ p_lango }&apos;|.
+    IF NOT campo_clave IS INITIAL.
+      where = |{ where } AND { campo_clave } = &apos;{ name }&apos;|.
+    ENDIF.
+    SELECT * FROM (tabla) INTO TABLE @&lt;tabla&gt; WHERE (where).
+    LOOP AT &lt;tabla&gt; ASSIGNING FIELD-SYMBOL(&lt;wa&gt;).
+      APPEND INITIAL LINE TO i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      &lt;listado&gt;-name        = name.
+      &lt;listado&gt;-lango       = p_lango.
+      &lt;listado&gt;-langD       = p_langD.
+      &lt;listado&gt;-tipo        = &apos;Tabla&apos;.
+      &lt;listado&gt;-campo_texto = campo_texto.
+      &lt;listado&gt;-id          = tabla.
+      &lt;listado&gt;-key         = &lt;wa&gt;(&lt;conf&gt;-long_clave).
+      ASSIGN COMPONENT campo_Texto OF STRUCTURE &lt;wa&gt; TO FIELD-SYMBOL(&lt;texto&gt;).
+      IF sy-subrc = 0.
+        &lt;listado&gt;-entry = &lt;texto&gt;.
+      ENDIF.
+
+      CLEAR where.
+      LOOP AT i_campos_tabla ASSIGNING &lt;campo&gt; WHERE keyflag = &apos;X&apos;.
+        ASSIGN COMPONENT &lt;campo&gt;-fieldname OF STRUCTURE &lt;wa&gt; TO FIELD-SYMBOL(&lt;clave&gt;).
+        IF &lt;campo&gt;-fieldname = &lt;conf&gt;-campo_idioma.
+          ASSIGN p_langd TO &lt;clave&gt;.
+        ENDIF.
+        IF where IS INITIAL.
+          where = |{ &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+        ELSE.
+          where = |{ where } and { &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+        ENDIF.
+      ENDLOOP.
+
+      SELECT SINGLE (campo_texto) FROM (tabla) INTO @&lt;listado&gt;-entry_d WHERE (where).
+      IF NOT &lt;listado&gt;-entry_D IS INITIAL.
+        &lt;listado&gt;-lights = icon_yellow_light.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD grabar_registro.
+    DATA: lr_row     TYPE REF TO data,
+          where      TYPE string,
+          where_Dest TYPE string.
+
+    FIELD-SYMBOLS &lt;row&gt; TYPE any.
+
+    CLEAR ok.
+
+    ASSIGN i_conf_tabla[ name = tabla ] TO FIELD-SYMBOL(&lt;conf&gt;).
+
+    TRY.
+        cl_abap_typedescr=&gt;describe_by_name( tabla ).
+
+        CREATE DATA lr_row TYPE (tabla).
+        ASSIGN lr_row-&gt;* TO &lt;row&gt;.
+
+        &lt;row&gt; = clave.
+
+        SELECT fieldname, keyflag, leng, position, languflag FROM dd03l
+          INTO TABLE @DATA(i_campos_tabla)
+         WHERE tabname = @tabla
+         ORDER BY position.
+        IF sy-subrc &lt;&gt; 0.
+          MESSAGE |No existe tabla { tabla }| TYPE &apos;E&apos;.
+        ENDIF.
+
+        CLEAR: where, where_dest.
+        LOOP AT i_campos_tabla ASSIGNING FIELD-SYMBOL(&lt;campo&gt;) WHERE keyflag = &apos;X&apos;.
+          ASSIGN COMPONENT &lt;campo&gt;-fieldname OF STRUCTURE &lt;row&gt; TO FIELD-SYMBOL(&lt;clave&gt;).
+          IF where IS INITIAL.
+            where = |{ &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+          ELSE.
+            where = |{ where } and { &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+          ENDIF.
+
+          IF &lt;campo&gt;-fieldname = &lt;conf&gt;-campo_idioma.
+            ASSIGN idioma TO &lt;clave&gt;.
+          ENDIF.
+          IF where_Dest IS INITIAL.
+            where_Dest = |{ &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+          ELSE.
+            where_Dest = |{ where_Dest } and { &lt;campo&gt;-fieldname } = &apos;{ &lt;clave&gt; }&apos;|.
+          ENDIF.
+        ENDLOOP.
+
+* Si existe en idioma destino, modificamos
+        SELECT SINGLE * FROM (tabla) INTO &lt;row&gt; WHERE (where_dest).
+        IF sy-subrc &lt;&gt; 0.
+* Si no, copiamos del origen
+          SELECT SINGLE * FROM (tabla) INTO &lt;row&gt; WHERE (where).
+        ENDIF.
+        IF sy-subrc = 0.
+          ASSIGN COMPONENT &lt;conf&gt;-campo_idioma OF STRUCTURE &lt;row&gt; TO FIELD-SYMBOL(&lt;idioma&gt;).
+          &lt;idioma&gt; = idioma.
+          ASSIGN COMPONENT campo_texto OF STRUCTURE &lt;row&gt; TO FIELD-SYMBOL(&lt;texto&gt;).
+          IF &lt;texto&gt; &lt;&gt; texto.
+            &lt;texto&gt; = texto.
+
+            MODIFY (tabla) FROM &lt;row&gt;.
+            IF sy-subrc = 0.
+              ok = abap_true.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root INTO DATA(lx_root).
+        MESSAGE lx_root-&gt;get_text( ) TYPE &apos;E&apos;.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD grabar_propuesta.
+    DATA ztemps TYPE ztemps.
+
+    ztemps-clave      = &apos;TRAD&apos;.
+    ztemps-subclave   = |{ lango }-{ langd }-{ texto }|.
+    ztemps-valor      = |{ lango }-{ langd }|.
+    ztemps-texto      = textO.
+    ztemps-string     = textD.
+    ztemps-permanente = &apos;X&apos;.
+    ztemps-erdat      = sy-datum.
+    ztemps-erzet      = sy-uzeit.
+    ztemps-ernam      = sy-uname.
+    MODIFY ztemps FROM ztemps.
+  ENDMETHOD.
+ENDCLASS.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                         status_prog        = &apos;ZAP_STATUS&apos;
+                         top_of_page_auto   = &apos;X&apos;
+                         top_of_page_titulo = &apos;X&apos;
+                         o_dev              = o_prog ).
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN OUTPUT.
+  o_prog-&gt;handle = &apos;&apos;.
+  IF o_prog-&gt;o_alv IS INITIAL OR o_prog-&gt;handle &lt;&gt; o_prog-&gt;aux1.
+    o_prog-&gt;aux1 = o_prog-&gt;handle.
+    IF NOT o_prog-&gt;o_alv IS INITIAL.
+      o_prog-&gt;o_alv-&gt;free( ).
+      CLEAR o_prog-&gt;o_alv.
+    ENDIF.
+    o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                           status_prog        = &apos;ZAP_STATUS&apos;
+                           top_of_page_auto   = &apos;X&apos;
+                           top_of_page_titulo = &apos;X&apos;
+                           handle             = o_prog-&gt;handle
+                           o_dev              = o_prog ).
+    p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_fiche.
+  p_fiche = zcl_ap_ficheros=&gt;popup_select_fichero( file_filter = zcl_ap_ficheros=&gt;c_filtro_xlsx ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      IF p_prog = &apos;X&apos; AND s_name[] IS INITIAL.
+        MESSAGE &apos;Informe selección de programas&apos; TYPE &apos;E&apos;.
+      ELSEIF p_dtel = &apos;X&apos; AND s_dtel[] IS INITIAL.
+        MESSAGE &apos;Informe selección de elementos de datos&apos; TYPE &apos;E&apos;.
+      ENDIF.
+
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;main( ).</source>
+</PROG>

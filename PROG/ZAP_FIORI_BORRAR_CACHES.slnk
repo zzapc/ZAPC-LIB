@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_FIORI_BORRAR_CACHES" VARCL="X" SUBC="1" RMAND="600" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="ZAP_FIORI_BORRAR_CACHES" LENGTH="23 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report ZAP_FIORI_BORRAR_CACHES
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT zap_fiori_borrar_caches.
+
+PARAMETERS: smicm AS CHECKBOX DEFAULT &apos; &apos;,
+            chip  AS CHECKBOX DEFAULT &apos;&apos;,
+            fiori AS CHECKBOX DEFAULT &apos;&apos;,
+            segw  AS CHECKBOX DEFAULT &apos;X&apos;.
+
+START-OF-SELECTION.
+
+
+  DATA: o_bi      TYPE REF TO zcl_ap_batch_input,
+        l_mensaje TYPE bapireturn1-message.
+
+
+  IF smicm = &apos;X&apos;.
+    CREATE OBJECT o_bi.
+
+    o_bi-&gt;inicio( ).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=CACHE_INVL&apos;).
+
+* popup_to_confirm_step
+    o_bi-&gt;dynpro( program = &apos;SAPLSPO1&apos; dynpro = &apos;0100&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=YES&apos;).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=CACHE_INVG&apos;).
+
+* popup_to_confirm_step
+    o_bi-&gt;dynpro( program = &apos;SAPLSPO1&apos; dynpro = &apos;0100&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=YES&apos;).
+
+    o_bi-&gt;dynpro( program = &apos;SAPMSSY0&apos; dynpro = &apos;0120&apos;).
+    o_bi-&gt;campos( campo = &apos;BDC_OKCODE&apos; valor = &apos;=&amp;F03&apos;).
+
+    l_mensaje = o_bi-&gt;llamar_transaccion( tcode = &apos;SMICM&apos; modo = &apos;E&apos;).
+  ENDIF.
+
+  IF chip = &apos;X&apos;.
+    SUBMIT /ui2/chip_synchronize_cache
+       AND RETURN.
+  ENDIF.
+
+  IF fiori = &apos;X&apos;.
+    SUBMIT /ui2/invalidate_global_caches
+      AND RETURN
+      WITH gv_test = &apos;&apos;
+      WITH gv_exe = &apos;X&apos;.
+  ENDIF.
+
+  IF segw = &apos;X&apos;.
+    SUBMIT /iwbep/r_mgw_med_cache_cleanup
+      AND RETURN
+      WITH allmodel = &apos;X&apos;.
+
+    SUBMIT /iwfnd/r_med_cache_cleanup
+      AND RETURN.
+  ENDIF.</source>
+</PROG>

@@ -1,4 +1,4 @@
-CLASS zcl_ap_envio_mail DEFINITION
+ÔªøCLASS zcl_ap_envio_mail DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -49,7 +49,7 @@ CLASS zcl_ap_envio_mail DEFINITION
     METHODS ini_textos.
 
     METHODS cabecera_html
-      IMPORTING charset TYPE string DEFAULT 'Windows-1252'.
+      IMPORTING charset TYPE string DEFAULT 'Windows-1252' ##NO_TEXT.
 
     METHODS inicio_tabla_html
       IMPORTING longitud TYPE any DEFAULT '800'
@@ -313,6 +313,23 @@ CLASS zcl_ap_envio_mail DEFINITION
     CLASS-METHODS mod_subject_cliente_entorno
       CHANGING subject TYPE any.
 
+    CLASS-METHODS alink_2_adjunto
+      IMPORTING archiv_id  TYPE saearchivi
+                arc_doc_id TYPE saeardoid
+      EXPORTING adjunto    TYPE rmps_post_content
+      RETURNING VALUE(ret) TYPE bapiret2.
+
+    CLASS-METHODS append_var
+      IMPORTING dato         TYPE any
+                nombre_tabla TYPE any DEFAULT ''
+                campo        TYPE any DEFAULT ''
+      CHANGING  i_var        TYPE apb_lpd_t_key_value.
+
+    CLASS-METHODS append_datos_var
+      IMPORTING datos        TYPE any
+                nombre_tabla TYPE any DEFAULT ''
+      CHANGING  i_var        TYPE apb_lpd_t_key_value.
+
   PROTECTED SECTION.
 
   PRIVATE SECTION.
@@ -465,21 +482,22 @@ class ZCL_AP_ENVIO_MAIL implementation.
       REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN l_destinatario WITH ''.
       REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>horizontal_tab IN l_destinatario WITH ''.
       CONDENSE l_destinatario NO-GAPS.
-      IF     forzar_mail_externo  = 'X'
+      IF     forzar_mail_externo  = 'X' ##BOOL_OK
          AND lista_distribucion  IS INITIAL
          AND l_destinatario(1)   <> '$'
          AND (    zcl_c=>salida_mail_desarrollo = 'X'
                OR zcl_c=>entorno_produccion     = sy-sysid ).
         l_destinatario = to_upper( l_destinatario ).
-        SELECT SINGLE addrnumber persnumber FROM usr21
+        SELECT SINGLE addrnumber persnumber
+          FROM usr21
           INTO CORRESPONDING FIELDS OF l_usr21
-         WHERE bname = l_destinatario.
+          WHERE bname = l_destinatario.
         IF sy-subrc = 0.
           SELECT smtp_addr FROM adr6
             INTO l_destinatario
             UP TO 1 ROWS
-           WHERE addrnumber = l_usr21-addrnumber
-             AND persnumber = l_usr21-persnumber
+            WHERE addrnumber = l_usr21-addrnumber
+              AND persnumber = l_usr21-persnumber
             ORDER BY PRIMARY KEY.
           ENDSELECT.
         ENDIF.
@@ -553,9 +571,9 @@ class ZCL_AP_ENVIO_MAIL implementation.
                                            i_express    = urgente ).
           CATCH cx_send_req_bcs.
             IF parar_en_error = 'X'.
-              MESSAGE e398(00) WITH 'Error al aÒadir destinatario'(ead) destinatario '' ''.
+              MESSAGE e398(00) WITH 'Error al a√±adir destinatario'(ead) destinatario '' ''.
             ELSE.
-              CONCATENATE 'Error al aÒadir destinatario'(ead) destinatario INTO message SEPARATED BY space.
+              CONCATENATE 'Error al a√±adir destinatario'(ead) destinatario INTO message SEPARATED BY space.
             ENDIF.
         ENDTRY.
       ENDIF.
@@ -822,7 +840,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
     l_extension = zcl_ap_ficheros=>get_extension( l_fichero ).
     IF l_extension IS INITIAL.
       IF conversion_sap = 'X' OR conversion_sap = 'Y'.
-        CONCATENATE l_fichero '.xlsx' INTO l_fichero.
+        CONCATENATE l_fichero '.xlsx' INTO l_fichero ##NO_TEXT.
       ELSE.
         CONCATENATE l_fichero '.' tipo INTO l_fichero.
       ENDIF.
@@ -1081,22 +1099,104 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
     set_text( l_linea ).
   ENDMETHOD.
+  METHOD alink_2_adjunto.
+    DATA: l_filecontent TYPE xstring,
+          l_filename    TYPE toaat-filename,
+          " TODO: variable is assigned but never used (ABAP cleaner)
+          l_message     TYPE bapi_msg,
+          l_adjunto     TYPE rmps_post_content.
+
+    l_filecontent = zcl_ap_gd=>get_xstring_alink(
+      EXPORTING archive  = archiv_id
+                doc_id   = arc_doc_id
+      IMPORTING filename = l_filename
+                message  = l_message ).
+
+    CLEAR l_adjunto.
+    l_adjunto-doc_type = zcl_ap_ficheros=>get_extension( l_filename ).
+    TRANSLATE l_adjunto-doc_type TO UPPER CASE.
+
+    l_adjunto-binary = 'X'.
+
+    CALL FUNCTION 'SCMS_XSTRING_TO_BINARY'
+      EXPORTING
+        buffer          = l_filecontent
+        append_to_table = ' '
+      IMPORTING
+        output_length   = l_adjunto-docsize
+      TABLES
+        binary_tab      = l_adjunto-cont_hex.
+
+    l_adjunto-subject = l_filename.
+
+    adjunto = l_adjunto.
+    ret-type = 'S'.
+  ENDMETHOD.
+  METHOD append_datos_var.
+
+    DATA(i_comp) = zcl_ap_dev=>get_fieldcatalog( linea = datos limpiar_tablas = 'X' solo_tipos = 'ICNDTX' ).
+
+    LOOP AT i_comp ASSIGNING FIELD-SYMBOL(<comp>).
+      ASSIGN COMPONENT <comp>-name OF STRUCTURE datos TO FIELD-SYMBOL(<var>).
+      IF sy-subrc = 0.
+        append_var( EXPORTING dato = <var>
+                              campo = <comp>-name
+                              nombre_tabla = nombre_tabla
+                    CHANGING  i_var = i_var ).
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+  METHOD append_var.
+    DATA: l_campo TYPE string,
+          l_valor TYPE text255.
+
+    DESCRIBE FIELD dato TYPE DATA(l_tipo) EDIT MASK DATA(l_mask).
+    IF l_tipo <> 'u'. " unicode
+      IF nombre_tabla IS INITIAL.
+        l_campo = campo.
+      ELSE.
+        l_campo = |{ nombre_tabla }-{ campo }|.
+      ENDIF.
+
+      DATA(l_cambios) = ''.
+      IF l_tipo = 'C'.
+        IF l_mask = '==ALPHA'.
+          l_valor = dato.
+          __quitar_ceros l_valor.
+          l_cambios = 'X'.
+        ENDIF.
+      ELSE.
+        WRITE dato TO l_valor. "#EC *
+        CONDENSE l_valor NO-GAPS.
+        l_cambios = 'X'.
+      ENDIF.
+
+      IF l_cambios IS INITIAL.
+        APPEND VALUE #( key   = |\{{ l_campo }\}|
+                        value = dato ) TO i_var.
+      ELSE.
+        APPEND VALUE #( key   = |\{{ l_campo }\}|
+                        value = l_valor ) TO i_var.
+      ENDIF.
+
+    ENDIF.
+  ENDMETHOD.
   METHOD cabecera_html.
     DATA l_meta TYPE string.
 
-    set_text( '<head>' ).
-    set_text( '<title>Documento sin t&iacute;tulo</title>' ).
+    set_text( '<head>' ) ##NO_TEXT.
+    set_text( '<title>Documento sin t&iacute;tulo</title>' ) ##NO_TEXT.
     CONCATENATE '<meta http-equiv="Content-Type" content="text/html;'
-                'charset=' charset '">' INTO l_meta SEPARATED BY space.
+                'charset=' charset '">' INTO l_meta SEPARATED BY space ##NO_TEXT.
     set_text( l_meta ).
-    set_text( '<style type="text/css">' ).
-    set_text( '<!--' ).
-    set_text( 'Estilo1 {font-family: Arial, Helvetica, sans-serif}' ).
-    set_text( '-->' ).
-    set_text( '</style>' ).
-    set_text( '</head>' ).
+    set_text( '<style type="text/css">' ) ##NO_TEXT.
+    set_text( '<!--' ) ##NO_TEXT.
+    set_text( 'Estilo1 {font-family: Arial, Helvetica, sans-serif}' ) ##NO_TEXT.
+    set_text( '-->' ) ##NO_TEXT.
+    set_text( '</style>' ) ##NO_TEXT.
+    set_text( '</head>' ) ##NO_TEXT.
 
-    set_text( '<body class="Estilo1">' ).
+    set_text( '<body class="Estilo1">' ) ##NO_TEXT.
   ENDMETHOD.
   METHOD constructor.
     me->usar_clases = usar_clases.
@@ -1188,9 +1288,9 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
       CASE l_sndrec-sndart.
         WHEN 'INT'.
-          l_sost-forma_envio = 'Email'.
+          l_sost-forma_envio = 'Email' ##NO_TEXT.
         WHEN 'PAG'.
-          l_sost-forma_envio = 'SMS'.
+          l_sost-forma_envio = 'SMS' ##NO_TEXT.
         WHEN OTHERS.
           l_sost-forma_envio = l_sndrec-sndart.
       ENDCASE.
@@ -1249,7 +1349,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
     IF me->usar_clases IS INITIAL.
       SELECT SINGLE funcname FROM tfdir
         INTO l_funcname
-       WHERE funcname = 'Z_ENVIO_MAIL'.
+        WHERE funcname = 'Z_ENVIO_MAIL'.
       IF sy-subrc = 0.
         CALL FUNCTION l_funcname
           EXPORTING
@@ -1344,7 +1444,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             TRY.
                 o_sender = cl_sapuser_bcs=>create( l_uname ).
               CATCH cx_bcs.
-                message = 'Error al aÒadir emisor'(eae).
+                message = 'Error al a√±adir emisor'(eae).
                 IF mostrar_info_error = 'X'.
                   MESSAGE message TYPE 'I'.
                 ENDIF.
@@ -1397,7 +1497,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         TRY.
             o_send_request->set_sender( o_sender ).
           CATCH cx_bcs.
-            message = 'Error al aÒadir emisor'(eae).
+            message = 'Error al a√±adir emisor'(eae).
             IF mostrar_info_error = 'X'.
               MESSAGE message TYPE 'I'.
             ENDIF.
@@ -1406,7 +1506,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           TRY.
               o_send_request->set_send_immediately( abap_true ).
             CATCH cx_bcs.
-              message = 'Error en envÌo inmediato'(eei).
+              message = 'Error en env√≠o inmediato'(eei).
               IF mostrar_info_error = 'X'.
                 MESSAGE message TYPE 'I'.
               ENDIF.
@@ -1444,7 +1544,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                   l_total_megas = l_total_megas + l_megas.
                   IF l_megas > <limite>.
                     DATA(l_aviso_megas) = 'X'.
-                    message = |El tamaÒo en megas del fichero { l_titulo } es { l_megas }, superior al m·ximo permitido { <limite> }|.
+                    message = |El tama√±o en megas del fichero { l_titulo } es { l_megas }, superior al m√°ximo permitido { <limite> }|.
                     IF mostrar_info_error = 'X'.
                       MESSAGE message TYPE 'I'.
                     ENDIF.
@@ -1484,7 +1584,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         ENDLOOP.
 
         IF l_limite_megas > 0 AND l_total_megas > l_limite_megas AND l_aviso_megas IS INITIAL.
-          message = |El tamaÒo en megas del total de adjuntos { l_total_megas } es superior al m·ximo permitido { <limite> }|.
+          message = |El tama√±o en megas del total de adjuntos { l_total_megas } es superior al m√°ximo permitido { <limite> }|.
           IF mostrar_info_error = 'X'.
             MESSAGE message TYPE 'I'.
           ENDIF.
@@ -1506,7 +1606,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             IF mostrar_info_error = 'X'.
               MESSAGE message TYPE 'I'.
             ENDIF.
-          CATCH cx_root INTO DATA(o_root).
+          CATCH cx_root INTO DATA(o_root). "#EC *
             message = |Error al insertar receptores { o_root->get_text( ) }|.
             IF mostrar_info_error = 'X'.
               MESSAGE message TYPE 'I'.
@@ -1549,8 +1649,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             DATA(l_string) = zcl_ap_string=>tabla2string( i_texto_mail ).
             zap_mail_log-hash = zcl_ap_string=>get_hash( l_string ).
             IF NOT zap_mail_log-hash IS INITIAL.
-              SELECT clave
-                FROM zap_mail_log                       "#EC CI_NOFIRST
+              SELECT clave FROM zap_mail_log                       "#EC CI_NOFIRST
                 WHERE clave   = @zap_mail_log-clave
                   AND destino = @zap_mail_log-destino
                   AND grupo   = @zap_mail_log-grupo
@@ -1607,7 +1706,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                   OTHERS               = 2.
               IF sy-subrc <> 0.
                 error = 'X'.
-                message = 'Se ha cancelado el envÌo del mail'.
+                message = 'Se ha cancelado el env√≠o del mail'.
               ENDIF.
             ELSE.
               outlook( subject           = zap_mail_log-asunto
@@ -1620,7 +1719,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           ENDIF.
 
           IF commit = 'X'.
-* Si es un proceso en fondo, nos aseguramos que no es en UPDATE, si es asÌ, lanzamos la funcion Z_MAIL_REMOTO que lo lanza en otro hilo de ejecucion
+* Si es un proceso en fondo, nos aseguramos que no es en UPDATE, si es as√≠, lanzamos la funcion Z_MAIL_REMOTO que lo lanza en otro hilo de ejecucion
             DATA(l_upd_task) = zcl_ap_utils=>es_in_update_task( ).
             IF l_upd_task IS INITIAL.
               l_upd_task = zcl_ap_utils=>existe_en_pila( evento = 'BADI_IN_UPDATE' ).
@@ -1653,7 +1752,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                 OTHERS             = 1.
 
             IF sy-subrc <> 0.
-              message = 'Error llamando funciÛn Z_MAIL_REMOTO'.
+              message = 'Error llamando funci√≥n Z_MAIL_REMOTO'.
             ENDIF.
 
             RETURN.
@@ -1674,16 +1773,17 @@ class ZCL_AP_ENVIO_MAIL implementation.
             IF controlar_salida = 'X' AND message IS INITIAL.
               DO 3 TIMES.
                 SELECT  *
-                   FROM soos AS f JOIN soes AS g
-                         ON  f~rectp = g~rectp
-                         AND f~recyr = g~recyr
-                         AND f~recno = g~recno
-                                  JOIN sood AS s
-                           ON  f~objtp = s~objtp
-                           AND f~objyr = s~objyr
-                           AND f~objno = s~objno
-                                  JOIN bcst_sr AS e
-                           ON f~sndreq = e~os_guid
+                  FROM soos AS f
+                         JOIN
+                           soes AS g ON  f~rectp = g~rectp
+                                     AND f~recyr = g~recyr
+                                     AND f~recno = g~recno
+                             JOIN
+                               sood AS s ON  f~objtp = s~objtp
+                                         AND f~objyr = s~objyr
+                                         AND f~objno = s~objno
+                                 JOIN
+                                   bcst_sr AS e ON f~sndreq = e~os_guid
                   INTO CORRESPONDING FIELDS OF l_soes
                   UP TO 1 ROWS
                   WHERE s~objdes  = subject
@@ -1696,7 +1796,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
                 IF sy-subrc = 0.
                   CASE l_soes-status.
                     WHEN '850'.
-                      message = 'Mensaje no enviado porque se ha sobrepasado el tamaÒo m·ximo de adjuntos'(mne).
+                      message = 'Mensaje no enviado porque se ha sobrepasado el tama√±o m√°ximo de adjuntos'(mne).
                   ENDCASE.
                   IF mostrar_info_error = 'X' AND NOT message IS INITIAL.
                     MESSAGE message TYPE 'I'.
@@ -1732,13 +1832,14 @@ class ZCL_AP_ENVIO_MAIL implementation.
   ENDMETHOD.
   METHOD get_dir_envio_from_adrnr.
     SELECT g~name_text
-           FROM adcp AS f JOIN adrp AS g
-           ON  f~persnumber = g~persnumber
-           AND f~date_from  = g~date_from
-           AND f~nation     = g~nation
-     INTO (email)
+      FROM adcp AS f
+             JOIN
+               adrp AS g ON  f~persnumber = g~persnumber
+                         AND f~date_from  = g~date_from
+                         AND f~nation     = g~nation
+      INTO (email)
       UP TO 1 ROWS
-    WHERE f~so_key = adrnr
+      WHERE f~so_key = adrnr
       ORDER BY f~addrnumber g~persnumber f~date_from f~nation.
     ENDSELECT.
   ENDMETHOD.
@@ -1746,20 +1847,21 @@ class ZCL_AP_ENVIO_MAIL implementation.
     DATA l_texto TYPE string.
 
     IF version <> '88'.
-      SELECT SINGLE * FROM  zap_textos_mail INTO plantilla
-       WHERE grupo   = grupo
-         AND codigo  = codigo
-         AND version = version
-         AND spras   = spras.
+      SELECT SINGLE * FROM zap_textos_mail
+        INTO plantilla
+        WHERE grupo   = grupo
+          AND codigo  = codigo
+          AND version = version
+          AND spras   = spras.
       IF sy-subrc <> 0.
-        SELECT SINGLE * FROM  zap_textos_mail INTO plantilla
-         WHERE grupo   = grupo
-           AND codigo  = codigo
-           AND version = version
-           AND spras   = ''.
+        SELECT SINGLE * FROM zap_textos_mail
+          INTO plantilla
+          WHERE grupo   = grupo
+            AND codigo  = codigo
+            AND version = version
+            AND spras   = ''.
         IF sy-subrc <> 0.
-          SELECT *
-            FROM zap_textos_mail
+          SELECT * FROM zap_textos_mail
             WHERE grupo   = @grupo
               AND codigo  = @codigo
               AND version = @version
@@ -1770,8 +1872,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         ENDIF.
       ENDIF.
     ELSE.
-      SELECT *
-        FROM zap_textos_mail
+      SELECT * FROM zap_textos_mail
         WHERE grupo   = @grupo
           AND codigo  = @codigo
           AND defecto = 'X'
@@ -1781,8 +1882,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         UP TO 1 ROWS.
       ENDSELECT.
       IF sy-subrc <> 0.
-        SELECT *
-          FROM zap_textos_mail
+        SELECT * FROM zap_textos_mail
           WHERE grupo   = @grupo
             AND codigo  = @codigo
             AND defecto = 'X'
@@ -1792,8 +1892,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           UP TO 1 ROWS.
         ENDSELECT.
         IF sy-subrc <> 0.
-          SELECT *
-            FROM zap_textos_mail
+          SELECT * FROM zap_textos_mail
             WHERE grupo   = @grupo
               AND codigo  = @codigo
               AND defecto = 'X'
@@ -1804,8 +1903,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         ENDIF.
       ENDIF.
       IF plantilla IS INITIAL.
-        SELECT *
-          FROM zap_textos_mail
+        SELECT * FROM zap_textos_mail
           WHERE grupo  = @grupo
             AND codigo = @codigo
             AND spras  = @spras
@@ -1814,8 +1912,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           UP TO 1 ROWS.
         ENDSELECT.
         IF sy-subrc <> 0.
-          SELECT *
-            FROM zap_textos_mail
+          SELECT * FROM zap_textos_mail
             WHERE grupo  = @grupo
               AND codigo = @codigo
               AND spras  = ''
@@ -1824,8 +1921,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             UP TO 1 ROWS.
           ENDSELECT.
           IF sy-subrc <> 0.
-            SELECT *
-              FROM zap_textos_mail
+            SELECT * FROM zap_textos_mail
               WHERE grupo  = @grupo
                 AND codigo = @codigo
               ORDER BY PRIMARY KEY
@@ -1839,14 +1935,13 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
     IF NOT plantilla-email_pruebas IS INITIAL.
       IF plantilla-email_pruebas = 'SY-UNAME'.
-        IF sy-uname = 'WF-BATCH' OR sy-uname = 'SCP' OR sy-uname = 'SAP_WFRT'. "#EC EMPTY_IF_BRANCH
+        IF not ( sy-uname = 'WF-BATCH' OR sy-uname = 'SCP' OR sy-uname = 'SAP_WFRT' ) ##USER_OK.
 * Usuarios no "reales", no pueden recibir email de pruebas.
-        ELSE.
           plantilla-email_pruebas = sy-uname.
         ENDIF.
       ENDIF.
       IF NOT plantilla-email_pruebas IS INITIAL.
-        l_texto = 'Destino al que deberÌa haber ido el mail {mail_destino}'.
+        l_texto = 'Destino al que deber√≠a haber ido el mail {mail_destino}'.
         IF plantilla-html = 'X'.
           CONCATENATE '<P><B>' l_texto '</B></P>' INTO l_texto.
         ENDIF.
@@ -1907,13 +2002,13 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
         IF NOT o_sfp->output IS INITIAL.
           IF plantilla-nombre_adjunto IS INITIAL OR NOT plantilla-binario IS INITIAL.
-            l_texto = 'Contenido.pdf'.
+            l_texto = 'Contenido.pdf' ##NO_TEXT.
           ELSE.
             l_texto = plantilla-nombre_adjunto.
             DATA(l_ext) = zcl_ap_ficheros=>get_extension( plantilla-nombre_adjunto ).
             TRANSLATE l_ext TO LOWER CASE.
             IF l_ext <> 'pdf'.
-              CONCATENATE l_texto '.pdf' INTO l_texto.
+              CONCATENATE l_texto '.pdf' INTO l_texto ##NO_TEXT.
             ENDIF.
           ENDIF.
 
@@ -1942,6 +2037,8 @@ class ZCL_AP_ENVIO_MAIL implementation.
           lr_msgv1 LIKE LINE OF r_msgv1,
           l_icono  TYPE icon_d.
 
+    CLEAR message.
+
     IF NOT mail IS INITIAL.
       CLEAR lr_msgv1.
       lr_msgv1-option = 'EQ'.
@@ -1951,16 +2048,17 @@ class ZCL_AP_ENVIO_MAIL implementation.
     ENDIF.
 
     SELECT status crdat crtim sndnam msgv1
-       FROM soos AS f JOIN soes AS g
-             ON  f~rectp = g~rectp
-             AND f~recyr = g~recyr
-             AND f~recno = g~recno
-                      JOIN sood AS s
-               ON  f~objtp = s~objtp
-               AND f~objyr = s~objyr
-               AND f~objno = s~objno
-                      JOIN bcst_sr AS e
-               ON f~sndreq = e~os_guid
+      FROM soos AS f
+             JOIN
+               soes AS g ON  f~rectp = g~rectp
+                         AND f~recyr = g~recyr
+                         AND f~recno = g~recno
+                 JOIN
+                   sood AS s ON  f~objtp = s~objtp
+                             AND f~objyr = s~objyr
+                             AND f~objno = s~objno
+                     JOIN
+                       bcst_sr AS e ON f~sndreq = e~os_guid
       INTO (status, crdat, crtim, sndnam, msgv1)
       UP TO 1 ROWS
       WHERE s~objdes  = subject
@@ -1978,7 +2076,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
         WHEN '672'.
           type = 'W'.
           l_icono = icon_time. " ICON_TIME
-          message = zcl_ap_utils=>concat( p1 = 'Mail en espera de envÌo. Creado el'(mev) p2 = crdat p3 = 'a las'(ala) p4 = crtim p5 = 'por'(por) p6 = sndnam ).
+          message = zcl_ap_utils=>concat( p1 = 'Mail en espera de env√≠o. Creado el'(mev) p2 = crdat p3 = 'a las'(ala) p4 = crtim p5 = 'por'(por) p6 = sndnam ).
         WHEN '751'.
           type = 'W'.
           l_icono = icon_failure. " FAILURE
@@ -1986,11 +2084,11 @@ class ZCL_AP_ENVIO_MAIL implementation.
         WHEN '850'.
           type = 'E'.
           l_icono = icon_led_red. " ICON_LED_RED
-          message = 'Mensaje no enviado porque se ha sobrepasado el tamaÒo m·ximo de adjuntos'(mta).
+          message = 'Mensaje no enviado porque se ha sobrepasado el tama√±o m√°ximo de adjuntos'(mta).
         WHEN OTHERS.
           type = 'E'.
           l_icono = icon_led_red. " ICON_LED_RED
-          message = zcl_ap_utils=>concat( p1 = 'Mail con status'(mcs) p2 = status p3 = 'no envÌado. Creado el'(nec) p4 = crdat p5 = 'a las'(ala) p6 = crtim p7 = 'por'(por) p8 = sndnam  ).
+          message = zcl_ap_utils=>concat( p1 = 'Mail con status'(mcs) p2 = status p3 = 'no env√≠ado. Creado el'(nec) p4 = crdat p5 = 'a las'(ala) p6 = crtim p7 = 'por'(por) p8 = sndnam  ).
       ENDCASE.
 
       IF add_destino = 'X' AND NOT msgv1 IS INITIAL.
@@ -2105,6 +2203,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
           l_html           TYPE abap_bool,
           l_emisor         TYPE string.
 
+    CLEAR message.
     o_mail = NEW #(
         usar_clases = 'X' ).
 
@@ -2192,7 +2291,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
             xstring = l_xstring ).
       ELSE.
         DESCRIBE TABLE i_tabla LINES sy-tfill.
-        IF sy-tfill > 20000. " Si tiene m·s de 20000 lÌneas lo m·s securo es que casque por rendimiento, asÌ que en lugar de enviar la tabla enviamos un mensaje diciendo que no se envÌa
+        IF sy-tfill > 20000. " Si tiene m√°s de 20000 l√≠neas lo m√°s securo es que casque por rendimiento, as√≠ que en lugar de enviar la tabla enviamos un mensaje diciendo que no se env√≠a
           l_aux = sy-tfill.
           CONCATENATE 'Tabla demasiado grande ('(tdg) l_aux '). No es posible adjuntar contenido'(npa) INTO l_texto.
           o_mail->set_text( l_texto ).
@@ -2277,7 +2376,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
     ENDIF.
 
     TRY.
-* Buscamos si existe el mÈtodo especico en la clase
+* Buscamos si existe el m√©todo especico en la clase
         CALL METHOD ('ZCL_C')=>('ES_PRODUCCION')
           EXPORTING
             sistema  = sy-sysid
@@ -2300,10 +2399,12 @@ class ZCL_AP_ENVIO_MAIL implementation.
   ENDMETHOD.
   METHOD nombre_usuario.
     SELECT adrp~name_text
-     FROM usr21 JOIN adrp ON usr21~persnumber = adrp~persnumber
+      FROM usr21
+             JOIN
+               adrp ON usr21~persnumber = adrp~persnumber
       UP TO 1 ROWS
       INTO (nombre)
-     WHERE usr21~bname = uname
+      WHERE usr21~bname = uname
       ORDER BY adrp~date_from DESCENDING.
     ENDSELECT.
   ENDMETHOD.
@@ -2317,18 +2418,18 @@ class ZCL_AP_ENVIO_MAIL implementation.
           commandline    TYPE c LENGTH 1000.
     DATA l_string TYPE string.
 
-    APPEND: 'Dim myolapp ' TO t_vbs,
-        'Dim olNamespace ' TO t_vbs,
-        'Dim myItem ' TO t_vbs,
-        'Dim myRecipient ' TO t_vbs,
-        'Dim myRecipientCC ' TO t_vbs,
-        'Dim myRecipientCCO ' TO t_vbs,
-        'Dim myAttachments ' TO t_vbs,
+    APPEND: 'Dim myolapp ' TO t_vbs ##NO_TEXT,
+        'Dim olNamespace ' TO t_vbs ##NO_TEXT,
+        'Dim myItem ' TO t_vbs ##NO_TEXT,
+        'Dim myRecipient ' TO t_vbs ##NO_TEXT,
+        'Dim myRecipientCC ' TO t_vbs ##NO_TEXT,
+        'Dim myRecipientCCO ' TO t_vbs ##NO_TEXT,
+        'Dim myAttachments ' TO t_vbs ##NO_TEXT,
         ' ' TO t_vbs,
-        'Set myolapp = CreateObject("Outlook.Application") ' TO t_vbs,
-        'Set olNamespace = myolapp.GetNamespace("MAPI") ' TO t_vbs,
-        'Set myItem = myolapp.CreateItem(olMailItem) ' TO t_vbs,
-        ' ' TO t_vbs.
+        'Set myolapp = CreateObject("Outlook.Application") ' TO t_vbs ##NO_TEXT,
+        'Set olNamespace = myolapp.GetNamespace("MAPI") ' TO t_vbs ##NO_TEXT,
+        'Set myItem = myolapp.CreateItem(olMailItem) ' TO t_vbs ##NO_TEXT,
+        ' ' TO t_vbs ##NO_TEXT.
 
     IF NOT direccion IS INITIAL.
       l_dir = direccion.
@@ -2336,7 +2437,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
       SPLIT l_dir AT ',' INTO TABLE DATA(i_dest1).
 
       LOOP AT i_dest1 ASSIGNING FIELD-SYMBOL(<des>).
-        CONCATENATE 'Set myRecipient = myItem.Recipients.Add("' <des> '")' INTO l_vbs.
+        CONCATENATE 'Set myRecipient = myItem.Recipients.Add("' <des> '")' INTO l_vbs ##NO_TEXT.
         APPEND l_vbs TO t_vbs.
       ENDLOOP.
     ENDIF.
@@ -2347,11 +2448,11 @@ class ZCL_AP_ENVIO_MAIL implementation.
       SPLIT l_dir AT ',' INTO TABLE DATA(i_dest2).
 
       LOOP AT i_dest2 ASSIGNING FIELD-SYMBOL(<dest2>).
-        CONCATENATE 'Set myRecipientCC = myItem.Recipients.Add("' <dest2> '")' INTO l_vbs.
+        CONCATENATE 'Set myRecipientCC = myItem.Recipients.Add("' <dest2> '")' INTO l_vbs ##NO_TEXT.
         APPEND l_vbs TO t_vbs.
-        APPEND 'myRecipientCC.Type = olCC' TO t_vbs.
-        APPEND 'myRecipientCC.Resolve' TO t_vbs.
-        CONCATENATE 'myItem.CC = "' <dest2> '"' INTO l_vbs.
+        APPEND 'myRecipientCC.Type = olCC' TO t_vbs ##NO_TEXT.
+        APPEND 'myRecipientCC.Resolve' TO t_vbs ##NO_TEXT.
+        CONCATENATE 'myItem.CC = "' <dest2> '"' INTO l_vbs ##NO_TEXT.
         APPEND l_vbs TO t_vbs.
       ENDLOOP.
     ENDIF.
@@ -2362,42 +2463,22 @@ class ZCL_AP_ENVIO_MAIL implementation.
       SPLIT l_dir AT ',' INTO TABLE DATA(i_dest3).
 
       LOOP AT i_dest3 ASSIGNING FIELD-SYMBOL(<dest3>).
-        CONCATENATE 'Set myRecipientCCO = myItem.Recipients.Add("' <dest3> '")' INTO l_vbs.
+        CONCATENATE 'Set myRecipientCCO = myItem.Recipients.Add("' <dest3> '")' INTO l_vbs ##NO_TEXT.
         APPEND l_vbs TO t_vbs.
-        APPEND 'myRecipientCCO.Type = olBCC' TO t_vbs.
-        APPEND 'myRecipientCCO.Resolve' TO t_vbs.
-        CONCATENATE 'myItem.BCC = "' <dest3> '"' INTO l_vbs.
+        APPEND 'myRecipientCCO.Type = olBCC' TO t_vbs ##NO_TEXT.
+        APPEND 'myRecipientCCO.Resolve' TO t_vbs ##NO_TEXT.
+        CONCATENATE 'myItem.BCC = "' <dest3> '"' INTO l_vbs ##NO_TEXT.
         APPEND l_vbs TO t_vbs.
       ENDLOOP.
     ENDIF.
 
-    CONCATENATE 'myItem.Subject = "' subject '"' INTO l_vbs.
+    CONCATENATE 'myItem.Subject = "' subject '"' INTO l_vbs ##NO_TEXT.
     APPEND l_vbs TO t_vbs.
 
 *- Ficheros adjuntos
-    APPEND 'Set myAttachments = myItem.Attachments' TO t_vbs.
+    APPEND 'Set myAttachments = myItem.Attachments' TO t_vbs ##NO_TEXT.
 
 *- Chequeamos la existencia de los ficheros adjuntos
-
-***    g_file = l_titulo.
-***
-***    CALL FUNCTION 'WS_QUERY'
-***      EXPORTING
-***        filename       = g_file
-***        query          = 'FE'
-***      EXCEPTIONS
-***        inv_query      = 1
-***        no_batch       = 2
-***        frontend_error = 3
-***        OTHERS         = 4.
-***    IF sy-subrc EQ 0.
-***      CONCATENATE 'myAttachments.Add("' l_titulo '")'
-***      INTO l_vbs.
-***      APPEND l_vbs TO t_vbs.
-***    ELSE.
-***      MESSAGE i000(38) WITH
-***        'No se ha podido adjuntar el fichero' g_file.
-***    ENDIF.
 
 *- Cuerpo del email
     CLEAR: g_last, l_vbs.
@@ -2413,7 +2494,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
     LOOP AT i_text ASSIGNING FIELD-SYMBOL(<text>).
       AT FIRST.
-        APPEND 'myitem.body = _' TO t_vbs.
+        APPEND 'myitem.body = _' TO t_vbs ##NO_TEXT.
       ENDAT.
       AT LAST.
         g_last = 'X'.
@@ -2428,15 +2509,15 @@ class ZCL_AP_ENVIO_MAIL implementation.
 
       IF g_last = 'X'.
         CONCATENATE '"' <text> '" &vbCrLf '
-                    INTO l_vbs.
+                    INTO l_vbs ##NO_TEXT.
       ELSE.
         CONCATENATE '"' <text> '" &vbCrLf &_'
-                    INTO l_vbs.
+                    INTO l_vbs ##NO_TEXT.
       ENDIF.
       APPEND l_vbs TO t_vbs.
     ENDLOOP.
 
-    APPEND 'myItem.Display' TO t_vbs.
+    APPEND 'myItem.Display' TO t_vbs ##NO_TEXT.
 *  APPEND 'myItem.Send' TO t_vbs.
 
 *- Preparamos el nombre de fichero vbscript para descargarlo
@@ -2458,7 +2539,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
       MESSAGE 'Error buscando directorio temporal' TYPE 'E'.
     ENDIF.
 
-    CONCATENATE g_vbs_filename 'mail.vbs' INTO g_vbs_filename.
+    CONCATENATE g_vbs_filename 'mail.vbs' INTO g_vbs_filename ##NO_TEXT.
     commandline = g_vbs_filename.
 
     l_string = g_vbs_filename.
@@ -2631,14 +2712,14 @@ class ZCL_AP_ENVIO_MAIL implementation.
     SELECT adr6~smtp_addr date_from
       INTO (email, l_date_from)
       UP TO 1 ROWS
-     FROM usr21 JOIN adr6 ON usr21~persnumber = adr6~persnumber
-     WHERE usr21~bname = uname
+      FROM usr21
+             JOIN
+               adr6 ON usr21~persnumber = adr6~persnumber
+      WHERE usr21~bname = uname
       ORDER BY adr6~date_from DESCENDING.
     ENDSELECT.
   ENDMETHOD.
   METHOD validar_email.
-    " TODO: parameter EMAIL_NORMALIZADO is never cleared or assigned (ABAP cleaner)
-
     TYPES: sx_addr_type TYPE sx_addrtyp, " R/3 Addresstype
            sx_addr      TYPE so_rec_ext. " Address in plain string
 
@@ -2661,6 +2742,7 @@ class ZCL_AP_ENVIO_MAIL implementation.
     " TODO: variable is assigned but never used (ABAP cleaner)
     DATA ls_addr           TYPE sx_address.
 
+    CLEAR email_normalizado.
     ls_addr_unst-type    = cx_t_int.
     ls_addr_unst-address = email.
 

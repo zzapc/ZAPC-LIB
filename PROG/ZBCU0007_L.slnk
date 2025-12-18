@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZBCU0007_L" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="S">
+   <textElement ID="R" ENTRY="Lanzador ZBCU0007" LENGTH="17 "/>
+   <textElement ID="S" KEY="S_FECHA" ENTRY="        Fecha" LENGTH="13 "/>
+   <textElement ID="S" KEY="S_HORA" ENTRY="        Hora" LENGTH="12 "/>
+  </language>
+ </textPool>
+ <source>*&amp;---------------------------------------------------------------------*
+*&amp; Report ZBCU0007_L
+*&amp;---------------------------------------------------------------------*
+*&amp;
+*&amp;---------------------------------------------------------------------*
+REPORT zbcu0007_l.
+
+SELECT-OPTIONS: s_fecha FOR sy-datum NO-EXTENSION OBLIGATORY DEFAULT sy-datum,
+                s_hora  FOR sy-uzeit NO-EXTENSION OBLIGATORY.
+
+START-OF-SELECTION.
+
+  zcl_ap_fechas=&gt;rango2fechas( EXPORTING r_fechas = s_fecha[] IMPORTING fecha_desde = DATA(l_fini) fecha_hasta = DATA(l_ffin) ).
+  zcl_ap_fechas=&gt;rango2horas( EXPORTING r_horas = s_hora[] IMPORTING hora_desde = DATA(l_hini) hora_hasta = DATA(l_hfin) ).
+
+  DATA(l_cont) = 0.
+  WHILE l_fini &lt;= l_ffin.
+    WHILE l_hini &lt;= l_hfin.
+      IF l_cont &gt; 1000.
+        MESSAGE &apos;Salimos porque se han procesado 1000 interaciones&apos; TYPE &apos;S&apos;.
+        LEAVE PROGRAM.
+      ENDIF.
+      MESSAGE |Procesando { l_fini DATE = USER } { l_hini TIME = USER }| TYPE &apos;S&apos;.
+      IF l_hini &lt; sy-uzeit.
+        IF zcl_ap_temp=&gt;existe_st( clave = &apos;ZBCU0007_L&apos; subclave = l_fini &amp;&amp; l_hini ).
+          MESSAGE |Ya procesado| TYPE &apos;S&apos;.
+          COMMIT WORK AND WAIT.
+          IF l_hini &gt;= &apos;230000&apos;.
+            EXIT.
+          ELSE.
+            ADD 3600 TO l_hini.
+            CONTINUE.
+          ENDIF.
+        ENDIF.
+      ENDIF.
+
+      SUBMIT zbcu0007
+        AND RETURN
+       WITH rstartti = l_hini
+       WITH rreadti = &apos;010000&apos;
+       WITH rday = l_fini
+       WITH p_act  = &apos;X&apos;
+       WITH p_list = &apos;N&apos;.
+      MESSAGE |Fin proceso { l_fini DATE = USER } { l_hini TIME = USER }| TYPE &apos;S&apos;.
+      COMMIT WORK AND WAIT.
+      IF l_hini &gt;= &apos;230000&apos;.
+        EXIT.
+      ENDIF.
+      IF l_hini &lt; sy-uzeit.
+        zcl_ap_temp=&gt;set_st( clave = &apos;ZBCU0007_L&apos; subclave = l_fini &amp;&amp; l_hini ).
+      ENDIF.
+      ADD 3600 TO l_hini.
+    ENDWHILE.
+    clear l_hini.
+    ADD 1 TO l_fini.
+  ENDWHILE.</source>
+</PROG>

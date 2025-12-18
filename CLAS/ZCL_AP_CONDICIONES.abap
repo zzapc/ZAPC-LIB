@@ -1,4 +1,4 @@
-
+Ôªø
 class ZCL_AP_CONDICIONES definition
   public
   final
@@ -38,6 +38,8 @@ public section.
       !REGISTRO type ANY
       !KBETR type KONP-KBETR optional
       !KPEIN type KONP-KPEIN optional
+      !KMEIN type KONP-KMEIN optional
+      !KONWA type KONP-KONWA optional
       !DATAB type DATAB optional
       !DATBI type DATBI optional
       !O_LOG type ref to ZCL_AP_LOG optional
@@ -45,6 +47,7 @@ public section.
       !STFKZ type KONP-STFKZ optional
       !KZBZG type KONP-KZBZG optional
       !KONMS type KONP-KONMS default ''
+      !ACCION type CHAR1 default 'C'
     exporting
       !MESSAGE type BAPI_MSG
       !KNUMH_NEW type KNUMH .
@@ -61,25 +64,30 @@ class ZCL_AP_CONDICIONES implementation.
           registros  TYPE ty_komv.
 
     CLEAR: message, knumh_new.
-    ASSIGN COMPONENT 'KNUMH' OF STRUCTURE registro TO FIELD-SYMBOL(<knumh>).
-    IF sy-subrc NE 0.
-      message = 'Datos origen no tienen campo KNUMH'.
-    ENDIF.
 
-    IF message IS INITIAL.
-      get_datos_cond( EXPORTING knumh   = <knumh>
-                      IMPORTING konh    = DATA(konh)
-                                i_konp  = DATA(i_konp)
-                                i_konm  = DATA(i_konm)
-                                message = message ).
-    ENDIF.
-
-
-    IF NOT message IS INITIAL.
-      IF NOT o_log IS INITIAL.
-        o_log->log( p1 = message msgty = 'E' ).
+    IF accion = 'C'.
+      ASSIGN COMPONENT 'KNUMH' OF STRUCTURE registro TO FIELD-SYMBOL(<knumh>).
+      IF sy-subrc NE 0.
+        message = 'Datos origen no tienen campo KNUMH'.
       ENDIF.
-      RETURN.
+
+      IF message IS INITIAL.
+        get_datos_cond( EXPORTING knumh   = <knumh>
+                        IMPORTING konh    = DATA(konh)
+                                  i_konp  = DATA(i_konp)
+                                  i_konm  = DATA(i_konm)
+                                  message = message ).
+      ENDIF.
+
+
+      IF NOT message IS INITIAL.
+        IF NOT o_log IS INITIAL.
+          o_log->log( p1 = message msgty = 'E' ).
+        ENDIF.
+        RETURN.
+      ENDIF.
+    ELSEIF accion = 'I'.
+      APPEND VALUE #( kopos = '01' kbetr = kbetr kpein = kpein kmein = kmein konwa = konwa ) TO i_konp.
     ENDIF.
 
 
@@ -110,8 +118,8 @@ class ZCL_AP_CONDICIONES implementation.
       ENDIF.
     ENDLOOP.
 
-    IF datab IS INITIAL.
-      DATA(l_operacion) = 'B'. "Actualizamos sÛlo precio
+    IF datab IS INITIAL AND accion NE 'I'.
+      DATA(l_operacion) = 'B'. "Actualizamos s√≥lo precio
     ELSE.
       IF ( datab = konh-datab AND datbi = konh-datbi ) OR ( datab IS INITIAL AND datbi IS INITIAL ).
         l_operacion = 'B'. "La fecha de inicio es la misma, actualizamos y no creamos
@@ -223,8 +231,8 @@ class ZCL_AP_CONDICIONES implementation.
     READ TABLE registros ASSIGNING FIELD-SYMBOL(<reg>) INDEX 1.
     IF sy-subrc NE 0.
       message = 'No se han pasado registros a actualizar'.
-    ELSEIF <reg>-knumv IS INITIAL.
-      message = 'No se ha indicado el n∫ de registro de condiciÛn'.
+    ELSEIF <reg>-knumv IS INITIAL and operacion ne 'A'.
+      message = 'No se ha indicado el n¬∫ de registro de condici√≥n'.
     ENDIF.
 
     IF NOT message IS INITIAL.
@@ -304,7 +312,7 @@ class ZCL_AP_CONDICIONES implementation.
       IF sy-msgty = 'E'.
         MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
       ELSE.
-        message = |Error { sy-subrc } actualizando registro de condiciÛn|.
+        message = |Error { sy-subrc } actualizando registro de condici√≥n|.
       ENDIF.
       IF NOT o_log IS INITIAL.
         o_log->log( p1 = message msgty = 'E' ).
@@ -312,7 +320,7 @@ class ZCL_AP_CONDICIONES implementation.
       RETURN.
     ELSE.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'Se ha actualizado el registro de condiciÛn' msgty = 'S' ).
+        o_log->log( p1 = 'Se ha actualizado el registro de condici√≥n' msgty = 'S' ).
       ENDIF.
     ENDIF.
 
@@ -325,7 +333,7 @@ class ZCL_AP_CONDICIONES implementation.
     COMMIT WORK AND WAIT.
 
 
-* Ha veces no se copia bien las unidades, si es asÌ corregimos algunos valroes
+* Ha veces no se copia bien las unidades, si es as√≠ corregimos algunos valroes
     LOOP AT knumh_map ASSIGNING FIELD-SYMBOL(<knumh>) WHERE knumh_new NE '' AND knumh_new(1) NE '$'.
       DO 2 TIMES.
         SELECT * FROM konp
@@ -404,7 +412,7 @@ class ZCL_AP_CONDICIONES implementation.
       INTO konh
       WHERE knumh = knumh.
     IF sy-subrc NE 0.
-      message = 'No existe la condiciÛn'.
+      message = 'No existe la condici√≥n'.
       RETURN.
     ENDIF.
 
@@ -420,7 +428,7 @@ class ZCL_AP_CONDICIONES implementation.
      ORDER BY PRIMARY KEY.
     IF sy-subrc NE 0.
       IF incluir_borrados IS INITIAL.
-        message = 'La condiciÛn est· borrada'.
+        message = 'La condici√≥n est√° borrada'.
       ENDIF.
     ENDIF.
 

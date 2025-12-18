@@ -1,4 +1,4 @@
-CLASS zcl_ap_ws DEFINITION
+锘緾LASS zcl_ap_ws DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -160,7 +160,7 @@ class ZCL_AP_WS implementation.
         http_invalid_state = 1
         OTHERS             = 2 ).
     IF sy-subrc NE 0.
-      MESSAGE 'Error cerrando conexi髇' TYPE 'S'.
+      MESSAGE 'Error cerrando conexi贸n' TYPE 'S'.
     ENDIF.
   ENDMETHOD.
   METHOD constructor.
@@ -196,12 +196,12 @@ class ZCL_AP_WS implementation.
       l_string = string.
     ENDIF.
 
-*  l_string = zcl_ap_string=>editor_popup_string( string = l_string titulo = 'Edici髇 XML' ). "#EC *
+*  l_string = zcl_ap_string=>editor_popup_string( string = l_string titulo = 'Edici贸n XML' ). "#EC *
 *  IF l_string NE '#!#'.
 *    string = l_string.
 *  ENDIF.
 
-    zcl_ap_string=>popup_texto( EXPORTING titulo = 'Edici髇 XML'
+    zcl_ap_string=>popup_texto( EXPORTING titulo = 'Edici贸n XML'
                                           editar = editar
                                 IMPORTING modificado = l_mod
                                 CHANGING  texto = l_string ).
@@ -315,11 +315,11 @@ class ZCL_AP_WS implementation.
         internal_error           = 5 ).
 
     IF sy-subrc <> 0.
-      message = |Error { sy-subrc } creando conexi髇|.
+      message = |Error { sy-subrc } creando conexi贸n|.
     ENDIF.
 
     IF lo_http_client IS INITIAL.
-      message = |Error creando conexi髇. No se ha instanciado el objeto|.
+      message = |Error creando conexi贸n. No se ha instanciado el objeto|.
     ENDIF.
 
     IF NOT url IS INITIAL.
@@ -424,7 +424,7 @@ class ZCL_AP_WS implementation.
         data_error                  = 5
         system_failure              = 6
         communication_failure       = 7
-        error_message               = 999 " Cualquier otra excepci髇!
+        error_message               = 999 " Cualquier otra excepci贸n!
         OTHERS                      = 8.
 
     IF sy-subrc <> 0.
@@ -464,7 +464,7 @@ class ZCL_AP_WS implementation.
              proxy         TYPE ole2_parameter, " Proxy (incl. Port)
              proxyuser     TYPE ole2_parameter, " User am Proxy
              proxypassword TYPE ole2_parameter, " Password am Proxy
-             scrambled     TYPE c LENGTH 1,     " Flag ob verschl黶selt
+             scrambled     TYPE c LENGTH 1,     " Flag ob verschl眉sselt
            END OF cndp_user_info.
 
     DATA: l_url           TYPE saeuri,
@@ -841,9 +841,9 @@ class ZCL_AP_WS implementation.
           l_err_call_st TYPE REF TO cx_call_st_error.
 
     IF transformacion IS INITIAL.
-      mensaje = 'No es posible generar l韓ea'(ngl).
+      mensaje = 'No es posible generar l铆nea'(ngl).
     ELSEIF string IS INITIAL.
-      mensaje = 'Mensaje vac韔'(mva).
+      mensaje = 'Mensaje vac铆o'(mva).
     ELSE.
       TRY.
           CALL TRANSFORMATION (transformacion)
@@ -869,7 +869,7 @@ class ZCL_AP_WS implementation.
       ENDTRY.
 
       IF xml IS INITIAL.
-        CONCATENATE 'Error en la transformaci髇'(etr) transformacion INTO mensaje SEPARATED BY space.
+        CONCATENATE 'Error en la transformaci贸n'(etr) transformacion INTO mensaje SEPARATED BY space.
       ENDIF.
     ENDIF.
   ENDMETHOD.

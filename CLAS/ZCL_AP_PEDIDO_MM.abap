@@ -1,4 +1,4 @@
-CLASS zcl_ap_pedido_mm DEFINITION
+ï»¿CLASS zcl_ap_pedido_mm DEFINITION
   PUBLIC
   CREATE PUBLIC.
 
@@ -488,7 +488,7 @@ class ZCL_AP_PEDIDO_MM implementation.
      WHERE ebeln = ebeln
        AND ebelp = ebelp.
       IF sy-subrc <> 0.
-        message = 'Posición de pedido no existe'(ppn).
+        message = 'PosiciÃ³n de pedido no existe'(ppn).
       ENDIF.
 
       IF l_ekpo-loekz IS NOT INITIAL.
@@ -759,7 +759,7 @@ class ZCL_AP_PEDIDO_MM implementation.
 
     IF NOT matnr_new IS INITIAL.
       IF NOT o_log IS INITIAL.
-        o_log->log( p1 = 'Copiamos posicion'(cpo) p2 = ebelp p3 = 'a nueva posición con nuevo material'(npm) p4 = matnr_new p5 = menge_new msgty = 'I' ).
+        o_log->log( p1 = 'Copiamos posicion'(cpo) p2 = ebelp p3 = 'a nueva posiciÃ³n con nuevo material'(npm) p4 = matnr_new p5 = menge_new msgty = 'I' ).
       ENDIF.
     ENDIF.
 
@@ -942,7 +942,7 @@ class ZCL_AP_PEDIDO_MM implementation.
               l_meins = <ekpo>-meins.
             ENDIF.
             IF l_menge <> poitem-quantity.
-* Verificamos si el registro info tiene perfil de redondeo y si es así ignoramos la diferencia
+* Verificamos si el registro info tiene perfil de redondeo y si es asÃ­ ignoramos la diferencia
               SELECT rdprf FROM  eine JOIN eina ON eine~infnr = eina~infnr
                 INTO @DATA(l_rdprf)
                 UP TO 1 ROWS
@@ -982,7 +982,7 @@ class ZCL_AP_PEDIDO_MM implementation.
       CALL FUNCTION 'DEQUEUE_ALL'.
     ENDIF.
 
-* Borramos mensaje de ampliación
+* Borramos mensaje de ampliaciÃ³n
     DELETE i_errores WHERE type = 'W' AND message CS 'CI_EK'.
     DELETE i_errores WHERE message = 'No se ha creado ninguna instancia de tipo objeto PurchaseOrder; ref.externa:'(nrf).
     DELETE i_errores WHERE message CS 'ME_PROCESS_PO_CUST'.
@@ -1151,8 +1151,8 @@ class ZCL_AP_PEDIDO_MM implementation.
     IF ekko-frggr IS INITIAL. " No hay estrategia
       estado = 'S'. " SIN ESTRATEGIA DE LIBERACION
     ELSE.
-      IF ekko-frgrl = 'X'. " Liberación incompleta
-        IF ekko-frgzu IS INITIAL. " No se ha efectuado ningún paso de liberación
+      IF ekko-frgrl = 'X'. " LiberaciÃ³n incompleta
+        IF ekko-frgzu IS INITIAL. " No se ha efectuado ningÃºn paso de liberaciÃ³n
           estado = 'I'. " LIBERACION NO INICIADA
         ELSE.
           estado = 'P'. " LIBERACION PARCIAL
@@ -1638,7 +1638,7 @@ class ZCL_AP_PEDIDO_MM implementation.
                                                  ddic         = 'X'
                                        CHANGING  cambios      = poheaderx ).
 
-    poheaderx-item_intvl = 'X'. " Respetar numeración posiciones
+    poheaderx-item_intvl = 'X'. " Respetar numeraciÃ³n posiciones
 
     IF campos_usuario = 'X'.
       zcl_ap_utils=>busca_cambios_datos( EXPORTING original     = l_ekko
@@ -1663,7 +1663,7 @@ class ZCL_AP_PEDIDO_MM implementation.
       ENDIF.
     ENDIF.
 
-***************** EIKP DATOS CABECERA IMPORTACIÓN
+***************** EIKP DATOS CABECERA IMPORTACIÃ“N
     MOVE-CORRESPONDING eikp TO wrf_pohf_data_eikp_sty.
     CALL FUNCTION 'MAP2E_EIKP_TO_BAPIEIKP'
       EXPORTING
@@ -1684,7 +1684,7 @@ class ZCL_AP_PEDIDO_MM implementation.
     LOOP AT i_ekpo INTO l_ekpo.
       MOVE-CORRESPONDING l_ekpo TO wrf_pohf_data_ekpo_sty.
 
-* Ñapa para poder especificar posiciones gratuitas
+* Ã‘apa para poder especificar posiciones gratuitas
       ASSIGN ('L_EKPO-SPE_CRM_FKREL') TO <fs>.
       IF sy-subrc = 0.
         IF <fs> = 'X'.
@@ -1699,7 +1699,7 @@ class ZCL_AP_PEDIDO_MM implementation.
           bapimepoitem           = poitem.
 
 * Como no podemos indicar que no queremos factura final, si detectamos una N en este campo
-* luego indicadmos que es posición sin cargo.
+* luego indicadmos que es posiciÃ³n sin cargo.
       IF poitem-ir_ind = 'N'.
         CLEAR poitem-ir_ind.
         poitem-free_item = 'X'.
@@ -2035,7 +2035,7 @@ class ZCL_AP_PEDIDO_MM implementation.
        WHERE ebeln = ebeln
          AND ebelp = ebelp.
       IF sy-subrc <> 0.
-        message = 'Posición de pedido no existe'(ppn).
+        message = 'PosiciÃ³n de pedido no existe'(ppn).
       ENDIF.
 
 * Han solicitado modificar flag de entrega completa
@@ -2043,9 +2043,9 @@ class ZCL_AP_PEDIDO_MM implementation.
         IF l_ekpo-eglkz = eglkz.
           IF NOT o_log IS INITIAL.
             IF eglkz = 'X'.
-              o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'ya tenía entrega completa' msgty = 'W' ).
+              o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'ya tenÃ­a entrega completa' msgty = 'W' ).
             ELSE.
-              o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'no tenía entrega completa' msgty = 'W' ).
+              o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'no tenÃ­a entrega completa' msgty = 'W' ).
             ENDIF.
           ENDIF.
         ELSE.
@@ -2056,9 +2056,9 @@ class ZCL_AP_PEDIDO_MM implementation.
       IF l_ekpo-elikz = elikz.
         IF NOT o_log IS INITIAL.
           IF elikz = 'X'.
-            o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'ya tenía entrega final'(yte) msgty = 'W' ).
+            o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'ya tenÃ­a entrega final'(yte) msgty = 'W' ).
           ELSE.
-            o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'no tenía entrega final'(nef) msgty = 'W' ).
+            o_log->log( p1 = 'La posicion'(lap) p2 = ebelp p3 = 'del pedido'(del) p4 = ebeln p5 = 'no tenÃ­a entrega final'(nef) msgty = 'W' ).
           ENDIF.
         ENDIF.
       ELSE.
@@ -2266,8 +2266,8 @@ class ZCL_AP_PEDIDO_MM implementation.
     ENDIF.
 
     IF error_si_no_mod_campos = 'X'.
-* A veces la BAPI no hace lo que se le indica, pero sólo da una advertencia de la que no nos damos cuenta
-      LOOP AT i_errores ASSIGNING FIELD-SYMBOL(<error>) WHERE type = 'I' AND id = 'ME' AND number = '664'. " No se ha podido ejecutar la modificación de XXX
+* A veces la BAPI no hace lo que se le indica, pero sÃ³lo da una advertencia de la que no nos damos cuenta
+      LOOP AT i_errores ASSIGNING FIELD-SYMBOL(<error>) WHERE type = 'I' AND id = 'ME' AND number = '664'. " No se ha podido ejecutar la modificaciÃ³n de XXX
         <error>-type = 'E'.
       ENDLOOP.
     ENDIF.
@@ -2284,14 +2284,14 @@ class ZCL_AP_PEDIDO_MM implementation.
                                OR message CS 'No se ha creado ninguna instancia'(nni).
       ENDIF.
 
-* Devolvemos el último mensaje de error, que es el más explicativo
+* Devolvemos el Ãºltimo mensaje de error, que es el mÃ¡s explicativo
       LOOP AT i_errores INTO bapiret2 WHERE type = 'E'.
         message = bapiret2-message.
       ENDLOOP.
       CALL FUNCTION 'DEQUEUE_ALL'.
     ENDIF.
 
-* Borramos mensaje de ampliación
+* Borramos mensaje de ampliaciÃ³n
     DELETE i_errores WHERE type = 'W' AND message CS 'CI_EK'.
     DELETE i_errores WHERE message = 'No se ha creado ninguna instancia de tipo objeto PurchaseOrder; ref.externa:'(nrf).
 

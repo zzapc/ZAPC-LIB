@@ -233,27 +233,34 @@
   <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="FICHERO_ORIGEN" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="FICHERO_DESTINO" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>
   <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="MOSTRAR_ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ABAP_BOOL" PARVALUE="&apos;X&apos;"/>
-  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="MESSAGE" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="4 " DISPID="0 " PARDECLTYP="1" PARPASSTYP="1" TYPTYPE="1" TYPE="BAPI_MSG"/>
+  <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="COPIA_SERV_2_LOCAL" SCONAME="ERROR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="5 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ABAP_BOOL"/>
   <source>METHOD copia_serv_2_local.
-    DATA: path       TYPE sapb-sappfad,
-          targetpath TYPE sapb-sappfad.
+  DATA: path       TYPE sapb-sappfad,
+        targetpath TYPE sapb-sappfad.
 
-    path = fichero_origen.
-    targetpath = fichero_destino.
+  path = fichero_origen.
+  targetpath = fichero_destino.
 
-    CALL FUNCTION &apos;ARCHIVFILE_SERVER_TO_CLIENT&apos;
-      EXPORTING
-        path       = path
-        targetpath = targetpath
-      EXCEPTIONS
-        error_file = 1.
-    IF sy-subrc &lt;&gt; 0.
-      error = &apos;X&apos;.
-      IF mostrar_error = &apos;X&apos;.
-        MESSAGE e398(00) WITH &apos;Error al copiar&apos;(eac) path &apos;a&apos;(aaa) targetpath.
-      ENDIF.
+  CALL FUNCTION &apos;ARCHIVFILE_SERVER_TO_CLIENT&apos;
+    EXPORTING
+      path       = path
+      targetpath = targetpath
+    EXCEPTIONS
+      error_file = 1.
+  IF sy-subrc NE 0.
+    IF sy-msgty = &apos;E&apos;.
+        MESSAGE ID sy-msgid TYPE &apos;S&apos; NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+      ELSE.
+      message = |Error al copiar { path } a { targetpath }|.
     ENDIF.
-  ENDMETHOD.</source>
+    error = &apos;X&apos;.
+    IF mostrar_error = &apos;X&apos;.
+      MESSAGE e398(00) WITH message.
+    ENDIF.
+  ENDIF.
+
+ENDMETHOD.</source>
  </method>
  <method CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CREAR_DIRECTORIO_SERV" VERSION="1" LANGU="S" DESCRIPT="Crea directorio en servidor" EXPOSURE="2" STATE="1" EDITORDER="35 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="1" BCMTDCAT="00" BCMTDSYN="0">
   <parameter CLSNAME="ZCL_AP_FICHEROS" CMPNAME="CREAR_DIRECTORIO_SERV" SCONAME="DIR" VERSION="1" LANGU="S" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="ANY"/>

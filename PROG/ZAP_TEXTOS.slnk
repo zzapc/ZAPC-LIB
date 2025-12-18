@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PROG NAME="ZAP_TEXTOS" VARCL="X" SUBC="1" RMAND="100" RLOAD="S" FIXPT="X" UCCHECK="X">
+ <textPool>
+  <language SPRAS="E">
+   <textElement ID="I" KEY="EJE" ENTRY="Execute" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generating ALV output" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Processing data" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Selecting data" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Selection criteria" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="ALV Template" LENGTH="70 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_VBELN" ENTRY="D       ." LENGTH="15 "/>
+  </language>
+  <language SPRAS="S">
+   <textElement ID="I" KEY="EJE" ENTRY="Ejecutar" LENGTH="18 "/>
+   <textElement ID="I" KEY="GIN" ENTRY="Generando informe" LENGTH="27 "/>
+   <textElement ID="I" KEY="LOG" ENTRY="Log" LENGTH="13 "/>
+   <textElement ID="I" KEY="PDA" ENTRY="Procesando datos" LENGTH="26 "/>
+   <textElement ID="I" KEY="SDA" ENTRY="Seleccionando datos" LENGTH="29 "/>
+   <textElement ID="I" KEY="SEL" ENTRY="Criterios de selección" LENGTH="22 "/>
+   <textElement ID="R" ENTRY="Busqueda en textos estándar" LENGTH="31 "/>
+   <textElement ID="S" KEY="P_BUSQU1" ENTRY="                Texto 1" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_BUSQU2" ENTRY="                Texto 2" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_BUSQU3" ENTRY="                Texto 3" LENGTH="23 "/>
+   <textElement ID="S" KEY="P_CASE" ENTRY="        Distinguir mayusculas/Min." LENGTH="34 "/>
+   <textElement ID="S" KEY="P_VARI" ENTRY="D       ." LENGTH="14 "/>
+   <textElement ID="S" KEY="S_ID" ENTRY="        ID texto" LENGTH="16 "/>
+   <textElement ID="S" KEY="S_NAME" ENTRY="        Nombre de texto" LENGTH="23 "/>
+   <textElement ID="S" KEY="S_OBJECT" ENTRY="        Objeto texto" LENGTH="20 "/>
+   <textElement ID="S" KEY="S_SPRAS" ENTRY="        Clave de idioma" LENGTH="23 "/>
+  </language>
+ </textPool>
+ <source>***********************************************************************
+* TIPO : LISTADO
+* TITULO : Textos estándar
+* DESCRIPCION : Textos estándar
+*
+* AUTOR: Andrés Picazo                                FECHA: 18/09/2025
+*
+***********************************************************************
+REPORT zap_textos.
+
+*------TABLAS/ESTRUCTURAS----------------------------------------------*
+TABLES stxh.
+
+*------TABLAS INTERNAS-------------------------------------------------*
+*----------------------------------------------------------------------*
+* CLASS lcl_alv DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv DEFINITION INHERITING FROM zcl_ap_alv_check FINAL.
+  PUBLIC SECTION.
+    METHODS handle_user_command REDEFINITION.
+    METHODS visualizar_objeto   REDEFINITION.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report DEFINITION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report DEFINITION INHERITING FROM zcl_ap_dev FINAL.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF t_listado,
+             check    TYPE xfeld,
+             lights   TYPE zico_estado_mensaje,
+             tdobject TYPE stxh-tdobject,
+             tdname   TYPE stxh-tdname,
+             tdid     TYPE stxh-tdid,
+             tdspras  TYPE stxh-tdspras,
+             string   TYPE string,
+             color    TYPE lvc_t_scol,
+             message  TYPE bapi_msg,
+           END OF t_listado,
+           tt_listado TYPE STANDARD TABLE OF t_listado.
+
+    DATA: i_listado TYPE tt_listado,
+          o_alv     TYPE REF TO lcl_alv ##NEEDED.
+
+    METHODS  main.
+
+    METHODS: listado,
+      seleccionar_datos.
+
+ENDCLASS.
+
+*------VARIABLES-------------------------------------------------------*
+DATA o_prog TYPE REF TO zcl_report.
+
+
+*------PARAMETER/SELECT-OPTIONS EN PANTALLA----------------------------*
+SELECTION-SCREEN BEGIN OF BLOCK zpse WITH FRAME TITLE TEXT-sel.
+  SELECT-OPTIONS: s_object FOR stxh-tdobject,
+                  s_name   FOR stxh-tdname,
+                  s_id     FOR stxh-tdid,
+                  s_spras  FOR stxh-tdspras.
+SELECTION-SCREEN END OF BLOCK zpse.
+SELECTION-SCREEN BEGIN OF BLOCK zps2 WITH FRAME TITLE TEXT-bus.
+  PARAMETERS: p_busqu1 TYPE tline-tdline,
+              p_busqu2 TYPE tline-tdline,
+              p_busqu3 TYPE tline-tdline.
+  SELECTION-SCREEN SKIP.
+  PARAMETERS p_case AS CHECKBOX.
+SELECTION-SCREEN END OF BLOCK zps2.
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-var.
+  PARAMETERS p_vari LIKE disvariant-variant.
+SELECTION-SCREEN END OF BLOCK b01.
+__botones_plantilla.
+
+
+************************************************************************
+*
+* LOGICA DEL PROGRAMA
+*
+************************************************************************
+
+*----------------------------------------------------------------------*
+* CLASS lcl_alv IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS lcl_alv IMPLEMENTATION.
+  METHOD visualizar_objeto.
+    DATA l_list TYPE o_prog-&gt;t_listado.
+
+    l_list = list.
+    CASE column.
+      WHEN OTHERS.
+        zcl_ap_textos=&gt;editar_texto( id      = l_list-tdid
+                                     name    = l_list-tdname
+                                     spras   = l_list-tdspras
+                                     object  = l_list-tdobject
+                                     display = &apos;&apos; ).
+        o_prog-&gt;i_listado[ tdid     = l_list-tdid
+                           tdname   = l_list-tdname
+                           tdspras  = l_list-tdspras
+                           tdobject = l_list-tdobject ]-string = zcl_ap_textos=&gt;get_texto_string(
+                                               id     = l_list-tdid
+                                               name   = l_list-tdname
+                                               spras  = l_list-tdspras
+                                               object = l_list-tdobject ).
+        o_alv-&gt;refresh( ).
+
+    ENDCASE.
+  ENDMETHOD. &quot; handle_double_click
+
+  METHOD handle_user_command.
+    DATA: l_return    TYPE c LENGTH 1,
+          l_reemplazo TYPE hap_s_text_subst-substitution_text,
+          l_sytabix   LIKE sy-tabix,
+          l_ok        TYPE abap_bool.
+
+    check_ucomm_sel = &apos;REEMPLAZAR,BORRAR,IDIOMA&apos;.
+
+    super-&gt;handle_user_command( e_salv_function ).
+
+    CASE ucomm.
+      WHEN &apos;REEMPLAZAR&apos;.
+        zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;HAP_S_TEXT_SUBST-SUBSTITUTION_TEXT&apos;
+                                               titulo = &apos;Texto de reeemplazo&apos;
+                                     IMPORTING return = l_return
+                                     CHANGING  valor1 = l_reemplazo ).
+        IF l_return = &apos;&apos;.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;) WHERE check = &apos;X&apos;.
+            CLEAR &lt;listado&gt;-color.
+            IF NOT p_busqu1 IS INITIAL.
+              IF &lt;listado&gt;-string CS p_busqu1.
+                l_return =
+                  zcl_ap_textos=&gt;sustituir_texto(
+                  id              = &lt;listado&gt;-tdid
+                  name            = &lt;listado&gt;-tdname
+                  spras           = &lt;listado&gt;-tdspras
+                  object          = &lt;listado&gt;-tdobject
+                  texto_original  = p_busqu1
+                  texto_reemplazo = l_reemplazo
+                  case            = p_case ).
+              ENDIF.
+            ENDIF.
+            IF NOT p_busqu2 IS INITIAL.
+              IF &lt;listado&gt;-string CS p_busqu2.
+                l_return =
+                  zcl_ap_textos=&gt;sustituir_texto(
+                  id              = &lt;listado&gt;-tdid
+                  name            = &lt;listado&gt;-tdname
+                  spras           = &lt;listado&gt;-tdspras
+                  object          = &lt;listado&gt;-tdobject
+                  texto_original  = p_busqu2
+                  texto_reemplazo = l_reemplazo
+                  case            = p_case ).
+              ENDIF.
+            ENDIF.
+            IF NOT p_busqu3 IS INITIAL.
+              IF &lt;listado&gt;-string CS p_busqu3.
+                l_return = zcl_ap_textos=&gt;sustituir_texto(
+                  id              = &lt;listado&gt;-tdid
+                  name            = &lt;listado&gt;-tdname
+                  spras           = &lt;listado&gt;-tdspras
+                  object          = &lt;listado&gt;-tdobject
+                  texto_original  = p_busqu3
+                  texto_reemplazo = l_reemplazo
+                  case            = p_case ).
+              ENDIF.
+            ENDIF.
+
+            &lt;listado&gt;-string = zcl_ap_textos=&gt;get_texto_string(
+              id     = &lt;listado&gt;-tdid
+              name   = &lt;listado&gt;-tdname
+              spras  = &lt;listado&gt;-tdspras
+              object = &lt;listado&gt;-tdobject ).
+          ENDLOOP.
+
+          IF l_return &lt;&gt; &apos;&apos; AND l_return &lt;&gt; &apos;0&apos;.
+            append_color( EXPORTING colorc      = &apos;ROJO&apos;
+                          CHANGING  tabla_color = &lt;listado&gt;-color ).
+          ENDIF.
+          refresh( ).
+        ENDIF.
+      WHEN &apos;BORRAR&apos;.
+
+        l_return = zcl_ap_popup=&gt;confirmar(
+          titulo = &apos;Textos a borrar&apos;
+          texto  = &apos;¿Está seguro de que desea&apos;
+          texto2 = &apos;borrar los textos seleccionados?&apos; ).
+
+        IF l_return = &apos;X&apos;.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+            l_sytabix = sy-tabix.
+            l_return =
+              zcl_ap_textos=&gt;borrar_texto(
+              id     = &lt;listado&gt;-tdid
+              name   = &lt;listado&gt;-tdname
+              spras  = &lt;listado&gt;-tdspras
+              object = &lt;listado&gt;-tdobject ).
+            IF l_return = 0.
+              append_color( EXPORTING colorc      = &apos;ROJO&apos;
+                            CHANGING  tabla_color = &lt;listado&gt;-color ).
+            ELSE.
+              DELETE o_prog-&gt;i_listado INDEX l_sytabix.
+            ENDIF.
+
+          ENDLOOP.
+
+          refresh( ).
+        ENDIF.
+      WHEN &apos;IDIOMA&apos;.
+        CLEAR stxh-tdspras.
+        zcl_ap_popup=&gt;popup_usuario( EXPORTING campo1 = &apos;STXH-TDSPRAS&apos;
+                                               titulo = &apos;Indique nuevo idioma&apos;
+                                     IMPORTING return = l_ok
+                                     CHANGING  valor1 = stxh-tdspras ).
+        IF l_ok &lt;&gt; &apos;A&apos; AND NOT stxh-tdspras IS INITIAL.
+          LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+            IF &lt;listado&gt;-tdspras = stxh-tdspras.
+              MESSAGE &apos;No seleccione registros con el idioma a modificar&apos; TYPE &apos;I&apos;.
+              RETURN.
+            ENDIF.
+            IF line_exists( o_prog-&gt;i_listado[ tdid     = &lt;listado&gt;-tdid
+                                               tdname   = &lt;listado&gt;-tdname
+                                               tdspras  = stxh-tdspras
+                                               tdobject = &lt;listado&gt;-tdobject ] ).
+              MESSAGE |El registro { &lt;listado&gt;-tdid } { &lt;listado&gt;-tdname } ya tiene el nuevo idioma. Borre primero| TYPE &apos;I&apos;.
+              RETURN.
+            ENDIF.
+          ENDLOOP.
+
+          LOOP AT o_prog-&gt;i_listado ASSIGNING &lt;listado&gt; WHERE check = &apos;X&apos;.
+            data(l_tabix) = sy-tabix.
+            zcl_ap_textos=&gt;save_texto_string(
+              id     = &lt;listado&gt;-tdid
+              name   = &lt;listado&gt;-tdname
+              spras  = stxh-tdspras
+              object = &lt;listado&gt;-tdobject
+              string = &lt;listado&gt;-string ).
+* Verificamos si se ha grabado realmente
+            DATA(l_string) = zcl_ap_textos=&gt;get_texto_string(
+              id     = &lt;listado&gt;-tdid
+              name   = &lt;listado&gt;-tdname
+              spras  = stxh-tdspras
+              object = &lt;listado&gt;-tdobject ).
+            IF not l_string is initial.
+              IF zcl_ap_textos=&gt;borrar_texto(
+                id     = &lt;listado&gt;-tdid
+                name   = &lt;listado&gt;-tdname
+                spras  = &lt;listado&gt;-tdspras
+                object = &lt;listado&gt;-tdobject ) = 1.
+                &lt;listado&gt;-lights  = zcl_ap_alv=&gt;set_icono( icono = icon_green_light mensaje = &apos;Se ha modificado el idioma&apos; ).
+                &lt;listado&gt;-tdspras = stxh-tdspras.
+              ELSE.
+                &lt;listado&gt;-lights  = zcl_ap_alv=&gt;set_icono( icono = icon_yellow_light mensaje = &apos;Se ha copiado el texto al nuevo idioma pero no se ha podido borrar el original&apos; ).
+                data(l_listado) = &lt;listado&gt;.
+                insert l_listado into o_prog-&gt;i_listado index l_tabix.
+              ENDIF.
+            ELSE.
+              &lt;listado&gt;-lights = zcl_ap_alv=&gt;set_icono( icono = icon_red_light mensaje = &apos;Error modificando el idioma&apos; ).
+            ENDIF.
+          ENDLOOP.
+          refresh( ).
+        ENDIF.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+
+*----------------------------------------------------------------------*
+*       CLASS zcl_report IMPLEMENTATION
+*----------------------------------------------------------------------*
+*
+*----------------------------------------------------------------------*
+CLASS zcl_report IMPLEMENTATION.
+  METHOD main.
+    seleccionar_datos( ).
+    listado( ).
+  ENDMETHOD.                    &quot; REPORT
+
+  METHOD seleccionar_datos.
+
+    sgpi_texto( &apos;Seleccionando datos&apos; ).
+    SELECT * FROM stxh                        &quot;#EC CI_ALL_FIELDS_NEEDED
+      INTO CORRESPONDING FIELDS OF TABLE i_listado
+     WHERE tdobject IN s_object
+       AND tdname   IN s_name
+       AND tdid     IN s_id
+       AND tdspras  IN s_spras.
+
+    o_sgpi-&gt;get_filas_tabla( tabla = i_listado ).
+
+    LOOP AT i_listado ASSIGNING FIELD-SYMBOL(&lt;listado&gt;).
+      o_sgpi-&gt;porcentaje( texto    = &apos;Leyendo textos&apos;
+                          cantidad = 500 ).
+
+      &lt;listado&gt;-string = zcl_ap_textos=&gt;get_texto_string(
+        id     = &lt;listado&gt;-tdid
+        name   = &lt;listado&gt;-tdname
+        spras  = &lt;listado&gt;-tdspras
+        object = &lt;listado&gt;-tdobject ).
+
+      IF    NOT p_busqu1 IS INITIAL OR NOT p_busqu2 IS INITIAL
+         OR NOT p_busqu3 IS INITIAL.
+        DATA(l_ok) = &apos;&apos;.
+        IF NOT p_busqu1 IS INITIAL.
+*        IF &lt;listado&gt;-string CS p_busqu1.
+          IF p_case = &apos;X&apos;.
+            FIND FIRST OCCURRENCE OF p_busqu1 IN &lt;listado&gt;-string RESPECTING CASE.
+          ELSE.
+            FIND FIRST OCCURRENCE OF p_busqu1 IN &lt;listado&gt;-string IGNORING CASE.
+          ENDIF.
+          IF sy-subrc = 0.
+            l_ok = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+        IF NOT p_busqu2 IS INITIAL.
+          IF &lt;listado&gt;-string CS p_busqu2.
+            l_ok = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+        IF NOT p_busqu3 IS INITIAL.
+          IF &lt;listado&gt;-string CS p_busqu3.
+            l_ok = &apos;X&apos;.
+          ENDIF.
+        ENDIF.
+        IF l_ok IS INITIAL.
+          DELETE i_listado.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    SORT i_listado.
+  ENDMETHOD.
+
+  METHOD listado.
+    sgpi_texto( &apos;Generando informe&apos; ).
+
+    o_alv-&gt;add_button( button = &apos;F01&apos; text = &apos;Reemplazar&apos; icon = icon_replace ucomm = &apos;REEMPLAZAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F02&apos; text = &apos;Borrar&apos; icon = icon_delete ucomm = &apos;BORRAR&apos; ).
+    o_alv-&gt;add_button( button = &apos;F03&apos; text = &apos;Cambiar idioma&apos; icon = icon_change ucomm = &apos;IDIOMA&apos; ).
+
+    o_alv-&gt;set_layout( p_vari ).
+
+    o_alv-&gt;set_top_of_page( ).
+
+    o_alv-&gt;set_field( campo = &apos;LIGHTS&apos; op = &apos;KEY&apos; ).
+    o_alv-&gt;set_field_quitar( &apos;CHECK,MESSAGE&apos; ).
+
+    o_alv-&gt;set_orden( &apos;TDOBJECT,TDNAME,TDID,TDSPRAS&apos; ).
+    o_alv-&gt;get_datos_layout( EXPORTING reordenar_tabla = &apos;X&apos; tabla_ref = &apos;X&apos; CHANGING t_tabla = i_listado ).
+    o_alv-&gt;set_seleccion( CHANGING t_tabla = i_listado ).
+
+    o_alv-&gt;show( ).
+  ENDMETHOD.
+ENDCLASS.
+
+*----------------------------------------------------------------------*
+* INITIALIZATION
+*----------------------------------------------------------------------*
+INITIALIZATION.
+  o_prog = NEW #( status       = &apos;INICIO_DYN&apos;
+                  status_prog  = &apos;ZAP_STATUS&apos;
+                  no_param     = &apos;X&apos;
+                  guardar_logz = &apos;&apos; ).
+
+  PERFORM add_button IN PROGRAM zap_status USING &apos;M01&apos; &apos;Log&apos;(log) &apos;&apos; &apos;&apos;.
+
+  o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                         status_prog        = &apos;ZAP_STATUS&apos;
+                         top_of_page_auto   = &apos;X&apos;
+                         top_of_page_titulo = &apos;X&apos;
+                         o_dev              = o_prog ).
+
+  p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+
+  o_prog-&gt;initialization_i( CHANGING sscrfields = sscrfields ).
+
+AT SELECTION-SCREEN OUTPUT.
+  o_prog-&gt;handle = &apos;&apos;.
+  IF o_prog-&gt;o_alv IS INITIAL OR o_prog-&gt;handle &lt;&gt; o_prog-&gt;aux1.
+    o_prog-&gt;aux1 = o_prog-&gt;handle.
+    IF NOT o_prog-&gt;o_alv IS INITIAL.
+      o_prog-&gt;o_alv-&gt;free( ).
+      CLEAR o_prog-&gt;o_alv.
+    ENDIF.
+    o_prog-&gt;o_alv = NEW #( status             = &apos;STANDARD_ALV_DYN&apos;
+                           status_prog        = &apos;ZAP_STATUS&apos;
+                           top_of_page_auto   = &apos;X&apos;
+                           top_of_page_titulo = &apos;X&apos;
+                           handle             = o_prog-&gt;handle
+                           o_dev              = o_prog ).
+    p_vari = o_prog-&gt;o_alv-&gt;get_default_layout( ).
+  ENDIF.
+
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_vari.
+  p_vari = o_prog-&gt;o_alv-&gt;get_f4_layout( ).
+
+************************************************************************
+* AT SELECTION-SCREEN.
+************************************************************************
+AT SELECTION-SCREEN.
+  CASE sy-ucomm.
+    WHEN &apos;ONLI&apos;.
+      o_prog-&gt;validar_seleccion_obligatoria( campos_or = &apos;*&apos; msgty = &apos;W&apos; ).
+    WHEN OTHERS.
+      o_prog-&gt;at_selection( ).
+  ENDCASE.
+
+AT SELECTION-SCREEN ON EXIT-COMMAND.
+  o_prog-&gt;at_selection( ).
+
+*----------------------------------------------------------------------
+* START-OF-SELECTION.
+*----------------------------------------------------------------------*
+START-OF-SELECTION.
+  o_prog-&gt;main( ).</source>
+</PROG>

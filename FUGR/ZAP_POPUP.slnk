@@ -40,6 +40,16 @@ PROCESS ON HELP-REQUEST.
   FIELD svald3-value   MODULE p100_help3.
   FIELD svald3-keytext MODULE p100_help3.</dynproflowsource>
    </dynpro>
+   <dynpro PROG="SAPLZAP_POPUP" DNUM="0200" TYPE="M" FNUM="0200" BZMX="1 " BZBR="85 " MILI="192 " MICO="37 " MALI="0 " MACO="0 " NOLI="27 " NOCO="121 " VALP="0 " CUAN="G" SPRA="S" DTEXT="Ventana edición campo">
+    <dynprofield FNAM="V_NOMBRE_CAMPO" DIDX="0000" FLG1="80" FLG2="00" FLG3="80" FMB1="31" FMB2="00" LENG="18" LINE="01" COLN="02" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="00" ADEZ="00" STXT="________________________" RES1="                                                                                                                                                                                                                                                        X"/>
+    <dynprofield FNAM="TVARVC-LOW" DIDX="003C" FLG1="B1" FLG2="02" FLG3="80" FMB1="00" FMB2="00" LENG="FF" LINE="01" COLN="1B" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" ITYP="C" AGLT="FF" ADEZ="00" STXT="____________________________________________________________________________________________________________________________________" RES1="                                       00"/>
+    <dynprofield DIDX="0000" FLG1="80" FLG2="10" FLG3="00" FMB1="00" FMB2="00" LENG="14" LINE="FF" COLN="01" LTYP="O" LANF="00" LBLK="00" LREP="00" TYPE="CHAR" AGLT="00" ADEZ="00" STXT="____________________"/>
+    <dynproflowsource>PROCESS BEFORE OUTPUT.
+ MODULE STATUS_0200.
+
+PROCESS AFTER INPUT.
+ MODULE USER_COMMAND_0200.</dynproflowsource>
+   </dynpro>
   </dynpros>
   <pfstatus>
    <pfstatus_tit CODE="001" TEXT="&amp;"/>
@@ -1108,6 +1118,28 @@ MODULE p100_value3 INPUT.
 
   PERFORM p100_value  USING 3 CHANGING svald3.
 
+ENDMODULE.
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  USER_COMMAND_0200  INPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE user_command_0200 INPUT.
+
+  CASE sy-ucomm.
+    WHEN &apos;F03&apos;.
+      v_cancelado = &apos;X&apos;.
+      LEAVE TO SCREEN 0.
+    WHEN &apos;F01&apos;.
+      IF v_obligatorio IS INITIAL AND tvarvc-low IS INITIAL.
+        MESSAGE &apos;Informe valor&apos; TYPE &apos;I&apos;.
+      ELSE.
+        LEAVE TO SCREEN 0.
+      ENDIF.
+    WHEN &apos;F02&apos;.
+      v_edit = &apos;X&apos;.
+  ENDCASE.
+
 ENDMODULE.</include_source>
   </include>
   <include NAME="LZAP_POPUPO01" VARCL="X" SUBC="I" APPL="S" RMAND="600" RLOAD="S" UCCHECK="X">
@@ -1441,7 +1473,31 @@ MODULE status_0100 OUTPUT.
   ENDIF.
 
 
-ENDMODULE.                 &quot; STATUS_0100  OUTPUT</include_source>
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0200 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  SET TITLEBAR &apos;001&apos; WITH v_titulo.
+
+  zcl_ap_dynpro=&gt;screen_input( campo = &apos;TVARVC-LOW&apos; variable = v_edit ).
+  PERFORM remove_button IN PROGRAM zap_status USING &apos;F02&apos;.
+  PERFORM add_button IN PROGRAM zap_status USING &apos;F03&apos; &apos;Cancelar&apos; icon_cancel &apos;Cancelar&apos;.
+  IF v_edit = &apos;X&apos;.
+    PERFORM add_button IN PROGRAM zap_status USING &apos;F01&apos; &apos;Aceptar&apos; icon_okay &apos;Aceptar cambios&apos;.
+  ELSE.
+    PERFORM remove_button IN PROGRAM zap_status USING &apos;F01&apos;.
+    IF v_editable = &apos;X&apos;.
+      PERFORM add_button IN PROGRAM zap_status USING &apos;F02&apos; &apos;Modificar&apos; icon_change &apos;Modificar valor&apos;.
+    ENDIF.
+  ENDIF.
+
+ENDMODULE.</include_source>
   </include>
   <include NAME="LZAP_POPUPO01" VARCL="X" SUBC="I" APPL="S" RMAND="600" RLOAD="S" UCCHECK="X">
    <include_source>*----------------------------------------------------------------------*
@@ -1774,10 +1830,36 @@ MODULE status_0100 OUTPUT.
   ENDIF.
 
 
-ENDMODULE.                 &quot; STATUS_0100  OUTPUT</include_source>
+ENDMODULE.                 &quot; STATUS_0100  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*&amp;      Module  STATUS_0200  OUTPUT
+*&amp;---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE status_0200 OUTPUT.
+
+  SET PF-STATUS &apos;ST_POPUP_DYN&apos; OF PROGRAM &apos;ZAP_STATUS&apos;.
+
+  SET TITLEBAR &apos;001&apos; WITH v_titulo.
+
+  zcl_ap_dynpro=&gt;screen_input( campo = &apos;TVARVC-LOW&apos; variable = v_edit ).
+  PERFORM remove_button IN PROGRAM zap_status USING &apos;F02&apos;.
+  PERFORM add_button IN PROGRAM zap_status USING &apos;F03&apos; &apos;Cancelar&apos; icon_cancel &apos;Cancelar&apos;.
+  IF v_edit = &apos;X&apos;.
+    PERFORM add_button IN PROGRAM zap_status USING &apos;F01&apos; &apos;Aceptar&apos; icon_okay &apos;Aceptar cambios&apos;.
+  ELSE.
+    PERFORM remove_button IN PROGRAM zap_status USING &apos;F01&apos;.
+    IF v_editable = &apos;X&apos;.
+      PERFORM add_button IN PROGRAM zap_status USING &apos;F02&apos; &apos;Modificar&apos; icon_change &apos;Modificar valor&apos;.
+    ENDIF.
+  ENDIF.
+
+ENDMODULE.</include_source>
   </include>
   <include NAME="LZAP_POPUPTOP" VARCL="X" DBAPL="S" DBNA="D$" SUBC="I" APPL="S" RMAND="600" FIXPT="X" LDBNAME="D$S" UCCHECK="X">
    <include_source>FUNCTION-POOL zap_popup.                    &quot;MESSAGE-ID ..
+
+TABLES: tvarvc.
 
 TYPES: BEGIN OF t_msg_nast,
          check,
@@ -1847,7 +1929,13 @@ DATA: v_hay_objeto,
       v_campo_usuario1    TYPE string,
       v_campo_usuario2    TYPE string,
       v_campo_usuario3    TYPE string,
-      v_controlar_cambios TYPE string.
+      v_controlar_cambios TYPE string,
+      v_nombre_campo      TYPE string,
+      v_editable type abap_bool,
+      v_Edit type abap_bool,
+      v_cancelado type abap_bool,
+      v_modificado type abap_bool,
+      v_obligatorio type abap_bool.
 
 FIELD-SYMBOLS &lt;tabla&gt; TYPE table.
 
@@ -2646,6 +2734,53 @@ data(l_obj_name) = obj_name.
        ORDER BY PRIMARY KEY.
       ENDSELECT.
   ENDCASE.</fm_source>
+   <functionModuleDocumentation/>
+  </functionmodule>
+  <functionmodule NAME="Z_POPUP_EDIT_CAMPO" STEXT="Edición de valor">
+   <importing PARAMETER="TITULO" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="NOMBRE_CAMPO" REFERENCE="X" TYP="ANY"/>
+   <importing PARAMETER="EDITABLE" DEFAULT="&apos;X&apos;" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <importing PARAMETER="VISIBLE_INICIAL" DEFAULT="&apos;&apos;" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <importing PARAMETER="OBLIGATORIO" DEFAULT="&apos;&apos;" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <importing PARAMETER="X" DEFAULT="10" REFERENCE="X" TYP="INT1"/>
+   <importing PARAMETER="Y" DEFAULT="10" REFERENCE="X" TYP="INT1"/>
+   <exporting PARAMETER="MODIFICADO" REFERENCE="X" TYP="ABAP_BOOL"/>
+   <changing PARAMETER="VALOR" REFERENCE="X" TYP="ANY"/>
+   <exceptions EXCEPTION="CANCELADO"/>
+   <documentation PARAMETER="TITULO" KIND="P" STEXT="Titulo" INDEX=" 001"/>
+   <documentation PARAMETER="NOMBRE_CAMPO" KIND="P" STEXT="Nombre campo" INDEX=" 002"/>
+   <documentation PARAMETER="EDITABLE" KIND="P" STEXT="Editable" INDEX=" 003"/>
+   <documentation PARAMETER="VISIBLE_INICIAL" KIND="P" STEXT="Inicialmente visible" INDEX=" 004"/>
+   <documentation PARAMETER="OBLIGATORIO" KIND="P" STEXT="Obligatorio" INDEX=" 005"/>
+   <documentation PARAMETER="X" KIND="P" STEXT="Posición X" INDEX=" 006"/>
+   <documentation PARAMETER="Y" KIND="P" STEXT="Posición Y" INDEX=" 007"/>
+   <documentation PARAMETER="MODIFICADO" KIND="P" INDEX=" 008"/>
+   <documentation PARAMETER="VALOR" KIND="P" INDEX=" 009"/>
+   <documentation PARAMETER="CANCELADO" KIND="X" STEXT="Cancelado" INDEX=" 010"/>
+   <fm_source>CLEAR: tvarvc, v_cancelado, v_modificado, v_edit, modificado.
+  v_nombre_campo = nombre_campo.
+  v_titulo = titulo.
+  v_editable = editable.
+  IF visible_inicial = &apos;X&apos;.
+    CLEAR v_edit.
+  ELSE.
+    v_edit = v_editable.
+  ENDIF.
+  tvarvc-low = valor.
+
+  PERFORM guardar_botones_v2 IN PROGRAM zap_status.
+  PERFORM clear_botones IN PROGRAM zap_status.
+  CALL SCREEN 0200 STARTING AT x y.
+  PERFORM restaurar_botones_v2 IN PROGRAM zap_status.
+
+  IF v_cancelado = &apos;X&apos;.
+    RAISE cancelado.
+  else.
+    if valor ne tvarvc-low.
+      modificado = &apos;X&apos;.
+      valor = tvarvc-low.
+    endif.
+  ENDIF.</fm_source>
    <functionModuleDocumentation/>
   </functionmodule>
  </functionmodules>
